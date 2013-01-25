@@ -1,0 +1,42 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# python files
+*.pyc
+*.pyo
+
+# packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+
+# installer logs
+pip-log.txt
+
+# vi swap and temp files
+*.swp
+*.swo
+*~
+
+# compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
