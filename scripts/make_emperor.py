@@ -11,7 +11,7 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
-from os.path import join
+from os.path import join, exists
 from qiime.util import parse_command_line_parameters, make_option, create_dir
 from qiime.parse import parse_mapping_file, parse_coords
 
@@ -59,6 +59,20 @@ def main():
     add_unique_columns = opts.add_unique_columns
     add_columns = opts.add_columns
 
+    # before creating any output, check correct parsing of the main input files
+    try:
+        parsed_coords = parse_coords(open(pcoa_fp,'U'))
+    except:
+        option_parser.error(('The PCoA file \'%s\' does not seem to be a '
+            'coordinates formatted file, verify by manuall inspecting '
+            'the contents.') % pcoa_fp)
+    try:
+        mapping_data, header, comments = parse_mapping_file(open(map_fp,'U'))
+    except:
+        option_parser.error(('The metadata mapping file \'%s\' does not seem '
+            'to be formatted correctly, verify the formatting is QIIME '
+            'compliant by using check_id_map.py') % map_fp)
+
     # use the current working directory as default
     if opts.output_dir:
         create_dir(opts.output_dir,False)
@@ -66,11 +80,8 @@ def main():
     else:
         dir_path='./'
 
-    fp_out = open(join(output_dir, 'emperor.html'),'w')
+    fp_out = open(join(dir_path, 'emperor.html'),'w')
     fp_out.write(EMPEROR_HEADER_HTML_STRING)
-
-    # parse the mapping file
-    mapping_data, header, comments = parse_mapping_file(open(map_fp,'U'))
 
     # check that all the required columns exist in the metadata mapping file
     if add_columns:
@@ -89,7 +100,7 @@ def main():
             add_columns)
 
     fp_out.write(format_mapping_file_to_js(mapping_data, header, add_columns))
-    fp_out.write(format_pcoa_to_js(*parse_coords(open(pcoa_fp,'U'))))
+    fp_out.write(format_pcoa_to_js(*parsed_coords)) # unpack the data
     fp_out.write(EMPEROR_FOOTER_HTML_STRING)
     copy_support_files(dir_path)
 
