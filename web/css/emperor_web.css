@@ -1,0 +1,161 @@
+<style type="text/css">
+
+body {
+}
+
+ul.menu {
+	background: #333;
+	float: left;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+ul.menu li {
+	float: left;
+	font: 67.5% Helvetica, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+ul.menu a {
+	background: #333 url("../img/seperator.gif") bottom right no-repeat;
+	color: #eee;
+	display: block;
+	float: left;
+	margin: 0;
+	padding: 8px 12px;
+	text-decoration: none;
+	font-weight:normal;
+}
+ul.menu a:hover {
+	background: #fbb03b url("../img/hover.gif") bottom center no-repeat;
+	color: black;
+	padding-bottom: 8px;
+	}
+
+ul.features {
+    list-style-type: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+img.screenshot {
+    width: 25%;
+    height: 25%;
+}
+
+div {
+    font-family: sans-serif;
+}
+
+div.content {
+    float: left;
+    margin-top: 10px;
+}
+
+div.topwrapper {
+    float:left;
+    margin-left: 10px;
+    width: 98%;
+/*    text-align: center;*/
+}
+
+div.menudiv {
+    margin-top: 10px;
+    float: left;
+    width: 100%;
+}
+
+div.rightjust {
+    float: right;
+}
+
+div.wrapper {
+    border-left: 1px dashed #ddd;
+    border-right: 1px dashed #ddd;
+    margin-left: 20%;
+    margin-right: 20%;
+    width: 58%;
+}
+
+div.bodywrapper {
+/*    background-image: url('../images/tree_bg.png');*/
+    width: 100%;
+    float:left;
+/*    padding: 5px;*/
+}
+
+div.col {
+    width: 31.5%;
+    float: left;
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+div.bottomwrapper {
+    float: left;
+    width: 100%;
+    background-color: white;
+}
+
+div.footerwrapper {
+    width: 100%;
+    text-align: center;
+}
+
+div.hidden {
+    display: none;
+}
+
+h2 {
+    margin: 0px;
+}
+
+p {
+    padding-right: 1em;
+    padding-left: 1em;
+}
+
+p.blurb {
+/*    border-right: 1px solid black;*/
+    padding-left: auto;
+}
+
+p.code {
+    background-color: #ddd;
+    font-family: monospace;
+    padding-left: 2em;
+}
+
+img {
+    border: none;
+}
+
+.fifty {
+	width: 50px;
+}
+
+/* Clearfix */
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.clearfix {
+    display: inline-block;
+}
+
+html[xmlns] .clearfix {
+    display: block;
+}
+
+* html .clearfix {
+    height: 1%;
+}
