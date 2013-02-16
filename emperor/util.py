@@ -14,7 +14,11 @@ __status__ = "Development"
 
 from os.path import abspath, dirname, join, exists
 
-from qiime.util import qiime_system_call, create_dir
+from copy import deepcopy
+from qiime.format import format_mapping_file
+from qiime.filter import filter_mapping_file
+from qiime.parse import mapping_file_to_dict
+from qiime.util import qiime_system_call, create_dir, MetadataMap
 
 class EmperorSupportFilesError(IOError):
     """Exception for missing support files"""
@@ -94,3 +98,94 @@ def process_mapping_file(data, header, valid_columns):
             [final_mapping_data[j].append(col[i]) for j,col in enumerate(data)]
 
     return final_mapping_data, final_header
+
+def preprocess_mapping_file(data, headers, columns, unique=False, single=False):
+    """ """
+
+    # The sample ID must always be there, else it's meaningless data
+    if 'SampleID' != columns[0]:
+        columns = ['SampleID'] + columns
+
+    # process concatenated columns if needed
+    merge = []
+    for column in columns:
+        if '&&' in column:
+            merge.append(column)
+    # each element needs several columns to be merged
+    for new_column in merge:
+        indices = [headers.index(header_name) for header_name in
+            new_column.split('&&')]
+
+        # join all the fields of the metadata that are listed in indices
+        for line in data:
+            line.append(''.join([element for i, element in enumerate(line)
+                if i in indices]))
+        headers.append(new_column)
+
+    if unique or single:
+        columns_to_remove = []
+
+        metadata = MetadataMap(mapping_file_to_dict(data, headers), [])
+
+        # find columns that have values that are all unique
+        if unique == True:
+            columns_to_remove += [column_name for column_name in headers[1::]
+                if metadata.hasUniqueCategoryValues(column_name)]
+
+        # remove categories where there is only one value
+        if single == True:
+            columns_to_remove += [column_name for column_name in headers[1::]
+                if metadata.hasSingleCategoryValue(column_name)]
+        columns_to_remove = list(set(columns_to_remove))
+
+        # remove the single or unique columns
+        data, headers = keep_columns_from_mapping_file(data, headers,
+            columns_to_remove, negate=True)
+
+    # remove anything not specified in the input
+    data, headers = keep_columns_from_mapping_file(data, headers, columns)
+
+    return data, headers
+
+
+def keep_columns_from_mapping_file(data, headers, columns, negate=False):
+    """Select the header names to remove/keep from the mapping file
+
+    Inputs:
+    data: mapping file data
+    headers: mapping file headers names
+    columns: header names to keep/remove, see negate
+    negate: False will _keep_ the listed columns; True will _remove_ them
+
+    Outputs:
+    data: filtered mapping file data
+    headers: filtered mapping file headers
+    """
+    data = deepcopy(data)
+    headers = deepcopy(headers)
+
+    if negate:
+        indices_of_interest = range(0, len(headers))
+    else:
+        indices_of_interest = []
+
+    # get the indices that you want to keep; either by removing the
+    # indices listed (negate is True) or by adding them (negate is False)
+    for column in columns:
+        try:
+            if negate:
+                del indices_of_interest[indices_of_interest.index(
+                    headers.index(column))]
+            else:
+                indices_of_interest.append(headers.index(column))
+        except ValueError:
+            continue
+
+    # keep the elements at the positions indices
+    keep_elements = lambda elements, indices :[element for i, element in
+        enumerate(elements) if i in indices]
+
+    headers = keep_elements(headers, indices_of_interest)
+    data = [keep_elements(row, indices_of_interest) for row in data]
+
+    return data, headers
