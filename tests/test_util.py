@@ -16,8 +16,8 @@ from shutil import rmtree
 from os.path import exists, join
 from cogent.util.unit_test import TestCase, main
 from qiime.util import get_qiime_temp_dir, get_tmp_filename
-from emperor.util import (copy_support_files, process_mapping_file,
-    keep_columns_from_mapping_file, preprocess_mapping_file)
+from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
+    preprocess_mapping_file)
 
 class TopLevelTests(TestCase):
 
@@ -34,40 +34,8 @@ class TopLevelTests(TestCase):
         self.assertTrue(exists(join(self.support_files_filename,
             'emperor_required_resources/')))
 
-    def test_process_mapping_file(self):
-        """Test a mapping file is correctly processed"""
-        # do not add unique columns
-        out_data, out_headers = process_mapping_file(self.mapping_file_data,
-            self.mapping_file_headers, self.valid_columns)
-
-        expected_data = [['PC.354', 'Control'], ['PC.355', 'Control'],
-            ['PC.356', 'Control'], ['PC.481', 'Control'], ['PC.593', 'Control'],
-            ['PC.607', 'Fast'], ['PC.634', 'Fast'], ['PC.635', 'Fast'],
-            ['PC.636', 'Fast']]
-        expected_headers = ['SampleID', 'Treatment']
-
-        self.assertEquals(out_data, expected_data)
-        self.assertEquals(out_headers, expected_headers)
-
-        expected_data = [['PC.354', 'AGCACGAGCCTA', 'Control'],
-            ['PC.355', 'AACTCGTCGATG', 'Control'],
-            ['PC.356', 'ACAGACCACTCA', 'Control'],
-            ['PC.481', 'ACCAGCGACTAG', 'Control'],
-            ['PC.593', 'AGCAGCACTTGT', 'Control'],
-            ['PC.607', 'AACTGTGCGTAC', 'Fast'],
-            ['PC.634', 'ACAGAGTCGGCT', 'Fast'],
-            ['PC.635', 'ACCGCAGAGTCA', 'Fast'],
-            ['PC.636', 'ACGGTGAGTGTC', 'Fast']]
-
-        out_data, out_headers = process_mapping_file(self.mapping_file_data,
-            self.mapping_file_headers, self.mapping_file_headers)
-
-        self.assertEquals(out_data, expected_data)
-        self.assertEquals(out_headers, ['SampleID', 'BarcodeSequence',
-            'Treatment'])
-
     def test_preprocess_mapping_file(self):
-        """ """
+        """Check correct preprocessing of metadata is done"""
 
         # test it concatenates columns together correctly
         out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,

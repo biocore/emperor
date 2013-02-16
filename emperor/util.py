@@ -64,43 +64,22 @@ def copy_support_files(file_path):
 
     return
 
-def process_mapping_file(data, header, valid_columns):
-    """Remove non-valid and non-useful columns in the mapping file
+def preprocess_mapping_file(data, headers, columns, unique=False, single=False):
+    """Process a mapping file to expand the data or remove unuseful fields
 
     Inputs:
-    data: full mapping file data
-    header: column names of the metadata mapping file
-    valid_columns: list of valid columns
+    data: mapping file data
+    headers: mapping file headers
+    columns: list of headers to keep, if one of these headers includes two
+    ampersands, this function will create a new column by merging the delimited
+    columns.
+    unique: keep columns where all values are unique
+    single: keep columns where all values are the same
 
     Outputs:
-    data: contents of the mapping file data that meet all the criteria
-    specified in the input arguments; a list of lists
-    header: complementary to data, a list of the columns that met the criteria
-    specified in the input arguments
-
-    Removes any column that has data unique for each of the fields.
+    data: processed mapping file data
+    headers: processed mapping file headers
     """
-
-    final_header = [header[0]]
-    final_mapping_data = [[col[0]] for col in data]
-
-    len_header = len(header)
-    for i in range(1,len_header-1):
-        # validating existence of column 
-        if header[i] not in valid_columns:
-            continue
-
-        # validating that the column values are not unique per sample or the
-        # same for all of them
-        unique_columns = len(set([col[i] for col in data]))
-        if unique_columns!=len_header and unique_columns!=1:
-            final_header.append(header[i])
-            [final_mapping_data[j].append(col[i]) for j,col in enumerate(data)]
-
-    return final_mapping_data, final_header
-
-def preprocess_mapping_file(data, headers, columns, unique=False, single=False):
-    """ """
 
     # The sample ID must always be there, else it's meaningless data
     if 'SampleID' != columns[0]:
@@ -122,9 +101,9 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False):
                 if i in indices]))
         headers.append(new_column)
 
+    # remove all unique or singled valued columns
     if unique or single:
         columns_to_remove = []
-
         metadata = MetadataMap(mapping_file_to_dict(data, headers), [])
 
         # find columns that have values that are all unique
