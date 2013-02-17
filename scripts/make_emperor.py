@@ -15,7 +15,7 @@ from os.path import join, exists
 from qiime.util import parse_command_line_parameters, make_option, create_dir
 from qiime.parse import parse_mapping_file, parse_coords
 
-from emperor.util import copy_support_files, process_mapping_file
+from emperor.util import copy_support_files, preprocess_mapping_file
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     EMPEROR_FOOTER_HTML_STRING, EMPEROR_HEADER_HTML_STRING)
 
@@ -26,7 +26,17 @@ script_info['script_description'] = "This script automates the creation  of "+\
     "Chrome."
 script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "colored using a corresponding mapping file.","%prog -i "
-    "unweighted_unifrac_pc.txt -m Fasting_Map.txt -o emperor_output")]
+    "unweighted_unifrac_pc.txt -m Fasting_Map.txt -o emperor_output"),
+    ("Coloring by metadata mapping file", "Additionally, using the supplied "
+    "mapping file and a specific category or any combination of the available "
+    "categories. When using the -b option, the user can specify "
+    "the coloring for multiple header names, where each header is separated by "
+    "a comma. The user can also combine mapping headers and color by the "
+    "combined headers that are created by inserting an '&&' between the input "
+    "header names. Color by 'Treatment' and by the result of concatenating "
+    "the 'DOB' category and the 'Treatment' category","%prog -i "
+    "unweighted_unifrac_pc.txt -m Fasting_Map.txt -b 'Treatment&&DOB,Treatment'"
+    )]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'emperor.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening emperor.html with "+\
@@ -40,13 +50,20 @@ script_info['required_options'] = [
     'metadata mapping file'),
 ]
 script_info['optional_options'] = [
-    make_option('-o','--output_dir',type="new_dirpath", help='path to the '
-    'output directory that will contain the PCoA plot.'),
     make_option('--add_unique_columns',action="store_true",help='add to the '
-    'output unique columns [default: %default]', default=False),
-    make_option('-c','--add_columns',help='name of the columns to add. '
-    'A list of column names separated by commas. Empty means all.'
-    '[default: %default]', default=None)
+    'output categories of the mapping file the columns where all values are '
+    'different. Note: if the result of one of the concatenated fields in '
+    '--color_by is a column where all values are unique, the resulting column '
+    'will get removed as well [default: %default]', default=False),
+    make_option('-b', '--color_by', dest='color_by', type='string', help=
+    'Comma-separated list of metadata categories (column headers) to color by'
+    ' in the plots. The categories must match the name of a column header in '
+    'the mapping file exactly. Multiple categories can be listed by comma '
+    'separating them without spaces. The user can also combine columns in'
+    ' the mapping file by separating the categories by "&&" without spaces. '
+    '[default=color by all categories]', default=''),
+    make_option('-o','--output_dir',type="new_dirpath", help='path to the '
+    'output directory that will contain the PCoA plot.')
 ]
 script_info['version'] = __version__
 
@@ -56,8 +73,8 @@ def main():
     pcoa_fp = opts.pcoa_fp
     map_fp = opts.map_fp
     output_dir = opts.output_dir
+    color_by_column_names = opts.color_by
     add_unique_columns = opts.add_unique_columns
-    add_columns = opts.add_columns
 
     # before creating any output, check correct parsing of the main input files
     try:
@@ -84,22 +101,31 @@ def main():
     fp_out.write(EMPEROR_HEADER_HTML_STRING)
 
     # check that all the required columns exist in the metadata mapping file
-    if add_columns:
-        add_columns = add_columns.split(',')
-        for col in add_columns:
-            if col not in header:
-                raise ValueError, "Column '%s' is not valid, valid ones are %s"\
-                    % (col, header)
+    if color_by_column_names:
+        offending_fields = []
+        color_by_column_names = color_by_column_names.split(',')
+
+        # check for all the mapping fields
+        for col in color_by_column_names:
+            if col not in header and '&&' not in col:
+                offending_fields.append(col)
+
+        # terminate the program
+        if offending_fields:
+            option_parser.error("Invalid field(s) '%s'; the valid field(s) are:"
+                " '%s'" % (', '.join(offending_fields), ', '.join(header)))
     else:
-        add_columns = header
+        # if the user didn't specify the header names display everything
+        color_by_column_names = header[:]
 
     # remove the columns in the mapping file that are not informative taking
     # into account the header names that were already authorized to be used
-    if not add_unique_columns:
-        mapping_data, header = process_mapping_file(mapping_data, header,
-            add_columns)
+    # and take care of concatenating the fields for the && merged columns
+    mapping_data, header = preprocess_mapping_file(mapping_data, header,
+        color_by_column_names, unique=not add_unique_columns)
 
-    fp_out.write(format_mapping_file_to_js(mapping_data, header, add_columns))
+    # write the html file
+    fp_out.write(format_mapping_file_to_js(mapping_data, header, header))
     fp_out.write(format_pcoa_to_js(*parsed_coords)) # unpack the data
     fp_out.write(EMPEROR_FOOTER_HTML_STRING)
     copy_support_files(dir_path)

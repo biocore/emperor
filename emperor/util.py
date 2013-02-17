@@ -14,7 +14,11 @@ __status__ = "Development"
 
 from os.path import abspath, dirname, join, exists
 
-from qiime.util import qiime_system_call, create_dir
+from copy import deepcopy
+from qiime.format import format_mapping_file
+from qiime.filter import filter_mapping_file
+from qiime.parse import mapping_file_to_dict
+from qiime.util import qiime_system_call, create_dir, MetadataMap
 
 class EmperorSupportFilesError(IOError):
     """Exception for missing support files"""
@@ -60,37 +64,107 @@ def copy_support_files(file_path):
 
     return
 
-def process_mapping_file(data, header, valid_columns):
-    """Remove non-valid and non-useful columns in the mapping file
+def preprocess_mapping_file(data, headers, columns, unique=False, single=False):
+    """Process a mapping file to expand the data or remove unuseful fields
 
     Inputs:
-    data: full mapping file data
-    header: column names of the metadata mapping file
-    valid_columns: list of valid columns
+    data: mapping file data
+    headers: mapping file headers
+    columns: list of headers to keep, if one of these headers includes two
+    ampersands, this function will create a new column by merging the delimited
+    columns.
+    unique: keep columns where all values are unique
+    single: keep columns where all values are the same
 
     Outputs:
-    data: contents of the mapping file data that meet all the criteria
-    specified in the input arguments; a list of lists
-    header: complementary to data, a list of the columns that met the criteria
-    specified in the input arguments
-
-    Removes any column that has data unique for each of the fields.
+    data: processed mapping file data
+    headers: processed mapping file headers
     """
 
-    final_header = [header[0]]
-    final_mapping_data = [[col[0]] for col in data]
+    # The sample ID must always be there, else it's meaningless data
+    if 'SampleID' != columns[0]:
+        columns = ['SampleID'] + columns
 
-    len_header = len(header)
-    for i in range(1,len_header-1):
-        # validating existence of column 
-        if header[i] not in valid_columns:
+    # process concatenated columns if needed
+    merge = []
+    for column in columns:
+        if '&&' in column:
+            merge.append(column)
+    # each element needs several columns to be merged
+    for new_column in merge:
+        indices = [headers.index(header_name) for header_name in
+            new_column.split('&&')]
+
+        # join all the fields of the metadata that are listed in indices
+        for line in data:
+            line.append(''.join([element for i, element in enumerate(line)
+                if i in indices]))
+        headers.append(new_column)
+
+    # remove all unique or singled valued columns
+    if unique or single:
+        columns_to_remove = []
+        metadata = MetadataMap(mapping_file_to_dict(data, headers), [])
+
+        # find columns that have values that are all unique
+        if unique == True:
+            columns_to_remove += [column_name for column_name in headers[1::]
+                if metadata.hasUniqueCategoryValues(column_name)]
+
+        # remove categories where there is only one value
+        if single == True:
+            columns_to_remove += [column_name for column_name in headers[1::]
+                if metadata.hasSingleCategoryValue(column_name)]
+        columns_to_remove = list(set(columns_to_remove))
+
+        # remove the single or unique columns
+        data, headers = keep_columns_from_mapping_file(data, headers,
+            columns_to_remove, negate=True)
+
+    # remove anything not specified in the input
+    data, headers = keep_columns_from_mapping_file(data, headers, columns)
+
+    return data, headers
+
+
+def keep_columns_from_mapping_file(data, headers, columns, negate=False):
+    """Select the header names to remove/keep from the mapping file
+
+    Inputs:
+    data: mapping file data
+    headers: mapping file headers names
+    columns: header names to keep/remove, see negate
+    negate: False will _keep_ the listed columns; True will _remove_ them
+
+    Outputs:
+    data: filtered mapping file data
+    headers: filtered mapping file headers
+    """
+    data = deepcopy(data)
+    headers = deepcopy(headers)
+
+    if negate:
+        indices_of_interest = range(0, len(headers))
+    else:
+        indices_of_interest = []
+
+    # get the indices that you want to keep; either by removing the
+    # indices listed (negate is True) or by adding them (negate is False)
+    for column in columns:
+        try:
+            if negate:
+                del indices_of_interest[indices_of_interest.index(
+                    headers.index(column))]
+            else:
+                indices_of_interest.append(headers.index(column))
+        except ValueError:
             continue
 
-        # validating that the column values are not unique per sample or the
-        # same for all of them
-        unique_columns = len(set([col[i] for col in data]))
-        if unique_columns!=len_header and unique_columns!=1:
-            final_header.append(header[i])
-            [final_mapping_data[j].append(col[i]) for j,col in enumerate(data)]
+    # keep the elements at the positions indices
+    keep_elements = lambda elements, indices :[element for i, element in
+        enumerate(elements) if i in indices]
 
-    return final_mapping_data, final_header
+    headers = keep_elements(headers, indices_of_interest)
+    data = [keep_elements(row, indices_of_interest) for row in data]
+
+    return data, headers
