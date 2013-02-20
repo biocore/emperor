@@ -12,8 +12,8 @@ __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
 from os.path import join, exists
-from qiime.util import parse_command_line_parameters, make_option, create_dir
 from qiime.parse import parse_mapping_file, parse_coords
+from qiime.util import parse_command_line_parameters, make_option, create_dir
 
 from emperor.util import copy_support_files, preprocess_mapping_file
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
@@ -62,6 +62,11 @@ script_info['optional_options'] = [
     'separating them without spaces. The user can also combine columns in'
     ' the mapping file by separating the categories by "&&" without spaces. '
     '[default=color by all categories]', default=''),
+     make_option('--ignore_missing_samples', help='This will overpass the error'
+    ' raised when the coordinates file contains samples that are not present in'
+    ' the mapping file. Be aware that this is very misleading as the PCoA is '
+    'accounting for all the samples and removing some samples could lead to '
+    ' erroneous/skewed interpretations.', action='store_true', default=False),
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
     'output directory that will contain the PCoA plot.')
 ]
@@ -75,6 +80,7 @@ def main():
     output_dir = opts.output_dir
     color_by_column_names = opts.color_by
     add_unique_columns = opts.add_unique_columns
+    ignore_missing_samples = opts.ignore_missing_samples
 
     # before creating any output, check correct parsing of the main input files
     try:
@@ -89,6 +95,26 @@ def main():
         option_parser.error(('The metadata mapping file \'%s\' does not seem '
             'to be formatted correctly, verify the formatting is QIIME '
             'compliant by using check_id_map.py') % map_fp)
+
+    # number of samples ids that are shared between coords and mapping files
+    sids_intersection = len(set(zip(*mapping_data)[0]) & set(parsed_coords[0]))
+
+    # sample ids must be shared between files
+    if sids_intersection > 0:
+        option_parser.error('The sample identifiers in the coordinates file '
+            'must have at least one match with the data contained in mapping '
+            'file. Verify you are using a coordinates file and a mapping file '
+            'that belong to the same dataset.')
+
+    # the intersection of the sample ids in the coords and the sample ids in the
+    # mapping file must at the very least include all ids in the coords file
+    # Otherwise it isn't valid; unless --ignore_missing_samples is set True
+    if sids_intersection!=len(parsed_coords[0]) and not ignore_missing_samples:
+        option_parser.error('The metadata mapping file has fewer sample '
+            'identifiers than the coordinates file. Verify you are using a '
+            'mapping file that contains at least all the samples contained in '
+            'the coordinates file. You can force the script to ignore these '
+            ' samples by passing the \'--ignore_missing_samples\' flag.')
 
     # use the current working directory as default
     if opts.output_dir:
