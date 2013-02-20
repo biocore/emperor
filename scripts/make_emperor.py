@@ -100,7 +100,7 @@ def main():
     sids_intersection = len(set(zip(*mapping_data)[0]) & set(parsed_coords[0]))
 
     # sample ids must be shared between files
-    if sids_intersection > 0:
+    if sids_intersection <= 0:
         option_parser.error('The sample identifiers in the coordinates file '
             'must have at least one match with the data contained in mapping '
             'file. Verify you are using a coordinates file and a mapping file '
