@@ -19,6 +19,8 @@ from qiime.format import format_mapping_file
 from qiime.filter import filter_mapping_file
 from qiime.parse import mapping_file_to_dict
 from qiime.util import qiime_system_call, create_dir, MetadataMap
+from qiime.make_3d_plots import (get_custom_coords, remove_nans,
+    scale_custom_coords)
 
 class EmperorSupportFilesError(IOError):
     """Exception for missing support files"""
@@ -168,3 +170,34 @@ def keep_columns_from_mapping_file(data, headers, columns, negate=False):
     data = [keep_elements(row, indices_of_interest) for row in data]
 
     return data, headers
+
+def preprocess_coords_file(coords_header, coords_data, mapping_header,
+                        mapping_data, custom_axes=None):
+    """Process a PCoA data and handle customizations in the contents
+
+    Inputs:
+    coords_header: list of sample identifiers in the PCoA file
+    coords_data: matrix of coordinates in the PCoA file
+    mapping_header: mapping file headers names
+    mapping_data: mapping file data
+
+    custom_axes: name of the mapping data fields to add to coords_data
+
+    Outputs:
+    coords_header: list of sample identifiers in the PCoA file
+    coords_data: matrix of coordinates in the PCoA file with custom_axes if
+    provided
+
+    This controller function handles any customization that has to be done to
+    the PCoA data.
+    """
+    mapping_file = [mapping_header] + mapping_data
+    coords_file = [coords_header, coords_data]
+
+    if custom_axes:
+        # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
+        get_custom_coords(custom_axes, mapping_file, coords_file)
+        remove_nans(coords_file)
+        scale_custom_coords(custom_axes, coords_file)
+
+    return coords_file[0], coords_file[1]
