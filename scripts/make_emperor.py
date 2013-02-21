@@ -12,10 +12,12 @@ __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
 from os.path import join, exists
-from qiime.parse import parse_mapping_file, parse_coords
-from qiime.util import parse_command_line_parameters, make_option, create_dir
+from qiime.parse import parse_mapping_file, parse_coords, mapping_file_to_dict
+from qiime.util import (parse_command_line_parameters, make_option, create_dir,
+    MetadataMap)
 
-from emperor.util import copy_support_files, preprocess_mapping_file
+from emperor.util import (copy_support_files, preprocess_mapping_file,
+    preprocess_coords_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     EMPEROR_FOOTER_HTML_STRING, EMPEROR_HEADER_HTML_STRING)
 
@@ -50,7 +52,13 @@ script_info['required_options'] = [
     'metadata mapping file'),
 ]
 script_info['optional_options'] = [
-    make_option('--add_unique_columns',action="store_true",help='add to the '
+    make_option('-a', '--custom_axes', type='string', help='Comma-separated '
+    'list of metadata categories to use as custom axes in the plot. For '
+    'instance, if there is a time category and you would like to see the '
+    'samples plotted on that axis instead of PC1, PC2, etc., you would pass '
+    'time as the value of this option.  Note: if there is any non-numeric data '
+    'in the column, it will not be plotted [default: %default]', default=None),
+    make_option('--add_unique_columns',action="store_true",help='Add to the '
     'output categories of the mapping file the columns where all values are '
     'different. Note: if the result of one of the concatenated fields in '
     '--color_by is a column where all values are unique, the resulting column '
@@ -80,11 +88,18 @@ def main():
     output_dir = opts.output_dir
     color_by_column_names = opts.color_by
     add_unique_columns = opts.add_unique_columns
+    custom_axes = opts.custom_axes
     ignore_missing_samples = opts.ignore_missing_samples
+
+    # append headernames that the script didn't find in the mapping file
+    # according to different criteria to the following variables
+    offending_fields = []
+    non_numeric_categories = []
 
     # before creating any output, check correct parsing of the main input files
     try:
-        parsed_coords = parse_coords(open(pcoa_fp,'U'))
+        coords_headers, coords_data, coords_eigenvalues, coords_pct =\
+            parse_coords(open(pcoa_fp,'U'))
     except:
         option_parser.error(('The PCoA file \'%s\' does not seem to be a '
             'coordinates formatted file, verify by manuall inspecting '
@@ -97,7 +112,7 @@ def main():
             'compliant by using check_id_map.py') % map_fp)
 
     # number of samples ids that are shared between coords and mapping files
-    sids_intersection = len(set(zip(*mapping_data)[0]) & set(parsed_coords[0]))
+    sids_intersection = len(set(zip(*mapping_data)[0]) & set(coords_headers))
 
     # sample ids must be shared between files
     if sids_intersection <= 0:
@@ -109,12 +124,56 @@ def main():
     # the intersection of the sample ids in the coords and the sample ids in the
     # mapping file must at the very least include all ids in the coords file
     # Otherwise it isn't valid; unless --ignore_missing_samples is set True
-    if sids_intersection!=len(parsed_coords[0]) and not ignore_missing_samples:
+    if sids_intersection!=len(coords_headers) and not ignore_missing_samples:
         option_parser.error('The metadata mapping file has fewer sample '
             'identifiers than the coordinates file. Verify you are using a '
             'mapping file that contains at least all the samples contained in '
             'the coordinates file. You can force the script to ignore these '
             ' samples by passing the \'--ignore_missing_samples\' flag.')
+
+    # extract a list of the custom axes provided and each element is numeric
+    if custom_axes:
+        custom_axes = custom_axes.strip().strip("'").strip('"').split(',')
+
+        # the MetadataMap object makes some checks easier
+        map_object = MetadataMap(mapping_file_to_dict(mapping_data, header), [])
+        for axis in custom_axes:
+            # append the field to the error queue that it belongs to
+            if axis not in header:
+                offending_fields.append(axis)
+            if map_object.isNumericCategory(axis) == False:
+                non_numeric_categories.append(axis)
+
+    # check that all the required columns exist in the metadata mapping file
+    if color_by_column_names:
+        color_by_column_names = color_by_column_names.split(',')
+
+        # check for all the mapping fields
+        for col in color_by_column_names:
+            if col not in header and '&&' not in col:
+                offending_fields.append(col)
+    else:
+        # if the user didn't specify the header names display everything
+        color_by_column_names = header[:]
+
+    # terminate the program for the cases where a mapping field was not found
+    # or when a mapping field didn't meet the criteria of being numeric
+    if offending_fields:
+        option_parser.error("Invalid field(s) '%s'; the valid field(s) are:"
+            " '%s'" % (', '.join(offending_fields), ', '.join(header)))
+    if non_numeric_categories:
+        option_parser.error(('The following field(s): \'%s\' contains values '
+            'that are not numeric, hence not suitable for \'--custom_axes\'.' %
+            ', '.join(non_numeric_categories)))
+
+    # remove the columns in the mapping file that are not informative taking
+    # into account the header names that were already authorized to be used
+    # and take care of concatenating the fields for the && merged columns
+    mapping_data, header = preprocess_mapping_file(mapping_data, header,
+        color_by_column_names, unique=not add_unique_columns)
+
+    coords_headers, coords_data = preprocess_coords_file(coords_headers,
+        coords_data, header, mapping_data, custom_axes)
 
     # use the current working directory as default
     if opts.output_dir:
@@ -126,33 +185,10 @@ def main():
     fp_out = open(join(dir_path, 'emperor.html'),'w')
     fp_out.write(EMPEROR_HEADER_HTML_STRING)
 
-    # check that all the required columns exist in the metadata mapping file
-    if color_by_column_names:
-        offending_fields = []
-        color_by_column_names = color_by_column_names.split(',')
-
-        # check for all the mapping fields
-        for col in color_by_column_names:
-            if col not in header and '&&' not in col:
-                offending_fields.append(col)
-
-        # terminate the program
-        if offending_fields:
-            option_parser.error("Invalid field(s) '%s'; the valid field(s) are:"
-                " '%s'" % (', '.join(offending_fields), ', '.join(header)))
-    else:
-        # if the user didn't specify the header names display everything
-        color_by_column_names = header[:]
-
-    # remove the columns in the mapping file that are not informative taking
-    # into account the header names that were already authorized to be used
-    # and take care of concatenating the fields for the && merged columns
-    mapping_data, header = preprocess_mapping_file(mapping_data, header,
-        color_by_column_names, unique=not add_unique_columns)
-
     # write the html file
     fp_out.write(format_mapping_file_to_js(mapping_data, header, header))
-    fp_out.write(format_pcoa_to_js(*parsed_coords)) # unpack the data
+    fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
+        coords_eigenvalues, coords_pct))
     fp_out.write(EMPEROR_FOOTER_HTML_STRING)
     copy_support_files(dir_path)
 
