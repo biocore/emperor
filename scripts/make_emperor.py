@@ -18,7 +18,7 @@ from qiime.util import (parse_command_line_parameters, make_option, create_dir,
     MetadataMap)
 
 from emperor.util import (copy_support_files, preprocess_mapping_file,
-    preprocess_coords_file)
+    preprocess_coords_file, fill_mapping_field_from_mapping_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     EMPEROR_FOOTER_HTML_STRING, EMPEROR_HEADER_HTML_STRING)
 
@@ -76,6 +76,12 @@ script_info['optional_options'] = [
     ' the mapping file. Be aware that this is very misleading as the PCoA is '
     'accounting for all the samples and removing some samples could lead to '
     ' erroneous/skewed interpretations.', action='store_true', default=False),
+    make_option('--missing_custom_axes_values', help='Option to override '
+    'the error shown when the \'--custom_axes\' categories, have non-numeric '
+    'values in the mapping file. For example, if you wanted to see all the '
+    'control samples that do not have a time gradient value in the mapping '
+    'file at the time-point zero and the missing pH values at 7, you would have'
+    ' to pass  \'Time:0;pH:7\'.', default=None),
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
     'output directory that will contain the PCoA plot.')
 ]
@@ -91,6 +97,7 @@ def main():
     add_unique_columns = opts.add_unique_columns
     custom_axes = opts.custom_axes
     ignore_missing_samples = opts.ignore_missing_samples
+    missing_custom_axes_values = opts.missing_custom_axes_values
 
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
@@ -140,6 +147,17 @@ def main():
     header, mapping_data = filter_mapping_file(mapping_data, header,
         sids_intersection, include_repeat_cols=True)
 
+
+    # catch the errors that could ocurr when filling the mapping file values
+    if missing_custom_axes_values:
+        try:
+            mapping_data = fill_mapping_field_from_mapping_file(mapping_data,
+                header, missing_custom_axes_values)
+        except AssertionError, e:
+            option_parser.error(e.message)
+        except ValueError, e:
+            option_parser.error(e.message)
+
     # extract a list of the custom axes provided and each element is numeric
     if custom_axes:
         custom_axes = custom_axes.strip().strip("'").strip('"').split(',')
@@ -172,8 +190,9 @@ def main():
             " '%s'" % (', '.join(offending_fields), ', '.join(header)))
     if non_numeric_categories:
         option_parser.error(('The following field(s): \'%s\' contains values '
-            'that are not numeric, hence not suitable for \'--custom_axes\'.' %
-            ', '.join(non_numeric_categories)))
+            'that are not numeric, hence not suitable for \'--custom_axes\'. '
+            'Try the \'--missing_custom_axes_values\' option to fix these '
+            'values.' % ', '.join(non_numeric_categories)))
 
     # remove the columns in the mapping file that are not informative taking
     # into account the header names that were already authorized to be used
