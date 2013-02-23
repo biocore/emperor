@@ -17,8 +17,8 @@ from os.path import abspath, dirname, join, exists
 from copy import deepcopy
 from qiime.format import format_mapping_file
 from qiime.filter import filter_mapping_file
-from qiime.parse import mapping_file_to_dict
 from qiime.util import qiime_system_call, create_dir, MetadataMap
+from qiime.parse import mapping_file_to_dict, parse_metadata_state_descriptions
 from qiime.make_3d_plots import (get_custom_coords, remove_nans,
     scale_custom_coords)
 
@@ -201,3 +201,56 @@ def preprocess_coords_file(coords_header, coords_data, mapping_header,
         scale_custom_coords(custom_axes, coords_file)
 
     return coords_file[0], coords_file[1]
+
+def _is_numeric(x):
+    """Return true if x is a numeric value, return false else
+
+    Inputs:
+    x: string to test whether something is or not a number
+    """
+    try:
+        float(x)
+    except:
+        return False
+    return True
+
+def fill_mapping_field_from_mapping_file(data, headers, values,
+                                        criteria=_is_numeric):
+    """
+    Inputs:
+    data: mapping file data
+    headers: mapping file headers
+    values: string with the format a format of
+    Category:ValueToFill;Category:ValueToFill ...
+    criteria: function that takes a value and returns true or false, default is
+    to check if the inputed value is numeric or not.
+
+    Output:
+    data: Filled in mapping file data
+
+    """
+    out_data = deepcopy(data)
+
+    # since this is a hack, assert the lengths are made of only one element
+    values_dict = parse_metadata_state_descriptions(values)
+
+    for key, value in values_dict.items():
+        value = list(value)
+
+        # this function can parse more than one value, but make sure it's only 1
+        assert len(value) == 1, ("Missing values cannot be padded with more "
+            "than one value. Verify '%s' has a single value." % key)
+
+        # in case the mapping file header is not in the headers
+        try:
+            header_index = headers.index(key)
+        except ValueError:
+            raise ValueError, ("The header %s does not exist in the mapping file"
+                % key)
+
+        # fill in the data
+        for line in out_data:
+            if _is_numeric(line[header_index]) == False:
+                line[header_index] = value[0]
+
+    return out_data
