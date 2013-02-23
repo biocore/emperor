@@ -28,7 +28,7 @@ script_info['script_description'] = "This script automates the creation  of "+\
     "three-dimensional PCoA plots to be visualized with Emperor using Google "+\
     "Chrome."
 script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
-    "colored using a corresponding mapping file.","%prog -i "
+    "colored using a corresponding mapping file: ","%prog -i "
     "unweighted_unifrac_pc.txt -m Fasting_Map.txt -o emperor_output"),
     ("Coloring by metadata mapping file", "Additionally, using the supplied "
     "mapping file and a specific category or any combination of the available "
@@ -37,9 +37,13 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "a comma. The user can also combine mapping headers and color by the "
     "combined headers that are created by inserting an '&&' between the input "
     "header names. Color by 'Treatment' and by the result of concatenating "
-    "the 'DOB' category and the 'Treatment' category","%prog -i "
+    "the 'DOB' category and the 'Treatment' category: ","%prog -i "
     "unweighted_unifrac_pc.txt -m Fasting_Map.txt -b 'Treatment&&DOB,Treatment'"
-    )]
+    ),
+    ("PCoA plot with an explicit axis", "Create a PCoA plot with an axis of "
+    "the plot representing the 'DOB' of the samples. This option is useful when"
+    " presenting a gradient from your metadata e. g. 'Time' or 'pH': ", "%prog "
+    "-i unweighted_unifrac_pc.txt -m Fasting_Map.txt -a DOB -o pcoa_dob")]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'emperor.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening emperor.html with "+\
@@ -58,7 +62,8 @@ script_info['optional_options'] = [
     'instance, if there is a time category and you would like to see the '
     'samples plotted on that axis instead of PC1, PC2, etc., you would pass '
     'time as the value of this option.  Note: if there is any non-numeric data '
-    'in the column, it will not be plotted [default: %default]', default=None),
+    'in the metadata column, an error will be presented [default: %default]',
+    default=None),
     make_option('--add_unique_columns',action="store_true",help='Add to the '
     'output categories of the mapping file the columns where all values are '
     'different. Note: if the result of one of the concatenated fields in '
