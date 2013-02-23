@@ -12,6 +12,7 @@ __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
 from os.path import join, exists
+from qiime.filter import filter_mapping_file
 from qiime.parse import parse_mapping_file, parse_coords, mapping_file_to_dict
 from qiime.util import (parse_command_line_parameters, make_option, create_dir,
     MetadataMap)
@@ -112,10 +113,11 @@ def main():
             'compliant by using check_id_map.py') % map_fp)
 
     # number of samples ids that are shared between coords and mapping files
-    sids_intersection = len(set(zip(*mapping_data)[0]) & set(coords_headers))
+    sids_intersection = list(set(zip(*mapping_data)[0]) & set(coords_headers))
+    number_intersected_sids = len(sids_intersection)
 
     # sample ids must be shared between files
-    if sids_intersection <= 0:
+    if number_intersected_sids <= 0:
         option_parser.error('The sample identifiers in the coordinates file '
             'must have at least one match with the data contained in mapping '
             'file. Verify you are using a coordinates file and a mapping file '
@@ -124,12 +126,19 @@ def main():
     # the intersection of the sample ids in the coords and the sample ids in the
     # mapping file must at the very least include all ids in the coords file
     # Otherwise it isn't valid; unless --ignore_missing_samples is set True
-    if sids_intersection!=len(coords_headers) and not ignore_missing_samples:
+    if number_intersected_sids!=len(coords_headers) and\
+        not ignore_missing_samples:
         option_parser.error('The metadata mapping file has fewer sample '
             'identifiers than the coordinates file. Verify you are using a '
             'mapping file that contains at least all the samples contained in '
             'the coordinates file. You can force the script to ignore these '
             ' samples by passing the \'--ignore_missing_samples\' flag.')
+
+    # ignore samples that exist in the coords but not in the mapping file, note:
+    # we're using sids_intersection so if --ignore_missing_samples is enabled we
+    # account for unmapped coords, else the program will exit before this point
+    header, mapping_data = filter_mapping_file(mapping_data, header,
+        sids_intersection, include_repeat_cols=True)
 
     # extract a list of the custom axes provided and each element is numeric
     if custom_axes:
