@@ -156,6 +156,9 @@ def main():
     # catch the errors that could ocurr when filling the mapping file values
     if missing_custom_axes_values:
         try:
+            # the fact that this uses parse_metadata_state_descriptions makes
+            # the follwoing option '-x Category:7;PH:12' to work as well as the 
+            # script-interface-documented '-x Category:7 -x PH:12' option
             mapping_data = fill_mapping_field_from_mapping_file(mapping_data,
                 header, ';'.join(missing_custom_axes_values))
         except AssertionError, e:
