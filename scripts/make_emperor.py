@@ -54,7 +54,7 @@ script_info['required_options'] = [
     make_option('-i','--pcoa_fp',type="existing_filepath",help='path to a PCoA'
     ' file'),
     make_option('-m','--map_fp',type="existing_filepath",help='path to a '
-    'metadata mapping file'),
+    'metadata mapping file')
 ]
 script_info['optional_options'] = [
     make_option('-a', '--custom_axes', type='string', help='Comma-separated '
@@ -81,12 +81,12 @@ script_info['optional_options'] = [
     ' the mapping file. Be aware that this is very misleading as the PCoA is '
     'accounting for all the samples and removing some samples could lead to '
     ' erroneous/skewed interpretations.', action='store_true', default=False),
-    make_option('--missing_custom_axes_values', help='Option to override '
+    make_option('-x', '--missing_custom_axes_values', help='Option to override '
     'the error shown when the \'--custom_axes\' categories, have non-numeric '
     'values in the mapping file. For example, if you wanted to see all the '
     'control samples that do not have a time gradient value in the mapping '
     'file at the time-point zero and the missing pH values at 7, you would have'
-    ' to pass  \'Time:0;pH:7\'.', default=None),
+    ' to pass  \'-x Time:0 -x pH:7\'.', action='append', default=None),
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
     'output directory that will contain the PCoA plot.')
 ]
@@ -157,7 +157,7 @@ def main():
     if missing_custom_axes_values:
         try:
             mapping_data = fill_mapping_field_from_mapping_file(mapping_data,
-                header, missing_custom_axes_values)
+                header, ';'.join(missing_custom_axes_values))
         except AssertionError, e:
             option_parser.error(e.message)
         except ValueError, e:
