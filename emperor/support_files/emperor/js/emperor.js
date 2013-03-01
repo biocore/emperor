@@ -1,7 +1,7 @@
 /*
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2012, E-vident"
- * __credits__ = ["Meg Pirrung, Antonio Gonzalez Pena"]
+ * __credits__ = ["Meg Pirrung, Antonio Gonzalez Pena", "Yoshiki Vazquez Baeza"]
  * __license__ = "GPL"
  * __version__ = "0.01-dev"
  * __maintainer__ = "Meg Pirrung"
@@ -968,15 +968,15 @@ $(document).ready(function() {
       // var xcoords = toScreenXY(new THREE.Vector3(0, 0, 0),camera,$('#main_plot'));
       var xcoords = toScreenXY(new THREE.Vector3(axesLen, min_y, min_z),camera,$('#main_plot'));
       axislabelhtml += "<label id=\"pc1_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(xcoords['x'])+"px; top:"+parseInt(xcoords['y'])+"px;\">";
-      axislabelhtml += pc1+"%";
+      axislabelhtml += pc1;
       axislabelhtml += "</label>";
 	  var ycoords = toScreenXY(new THREE.Vector3(min_x, axesLen, min_z),camera,$('#main_plot'));
       axislabelhtml += "<label id=\"pc2_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(ycoords['x'])+"px; top:"+parseInt(ycoords['y'])+"px;\">";
-      axislabelhtml += pc2+"%";
+      axislabelhtml += pc2;
       axislabelhtml += "</label>";
 	  var zcoords = toScreenXY(new THREE.Vector3(min_x, min_y, axesLen),camera,$('#main_plot'));
       axislabelhtml += "<label id=\"pc3_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(zcoords['x'])+"px; top:"+parseInt(zcoords['y'])+"px;\">";
-      axislabelhtml += pc3+"%";
+      axislabelhtml += pc3;
       axislabelhtml += "</label>";
       document.getElementById("axislabels").innerHTML = axislabelhtml;
    }

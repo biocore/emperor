@@ -40,6 +40,13 @@ class TopLevelTests(TestCase):
             self.pcoa_coords, self.pcoa_eigen_values, self.pcoa_pct_var)
         self.assertEquals(out_js_pcoa_string, PCOA_JS)
 
+        # test custom axes and the labels
+        print 'separator'
+        out_js_pcoa_string = format_pcoa_to_js(self.pcoa_headers,
+            self.pcoa_coords, self.pcoa_eigen_values, self.pcoa_pct_var,
+            ['Instant'])
+        self.assertEquals(out_js_pcoa_string, PCOA_JS_CUSTOM_AXES)
+
     def test_format_mapping_file_to_js(self):
         """Tests correct formatting of the metadata mapping file"""
         out_js_mapping_file_string = format_mapping_file_to_js(
@@ -80,9 +87,36 @@ var min_x = -0.293353;
 var min_y = -0.166234;
 var min_z = -0.141717;
 var max = 34912.621000;
-pc1 = 27
-pc2 = 16
-pc3 = 14
+pc1 = "PC1 (27 %)";
+pc2 = "PC2 (16 %)";
+pc3 = "PC3 (14 %)";
+"""
+
+PCOA_JS_CUSTOM_AXES = """
+var points = new Array()
+points[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': -0.109166, \'y\': 0.087777, \'z\': 0.011587 };
+points[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 0.068896, \'y\': -0.166234, \'z\': -0.099830 };
+points[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.204685, \'y\': 0.128911, \'z\': -0.029361 };
+points[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 0.126132, \'y\': -0.002660, \'z\': -0.141717 };
+points[\'PC.593\'] = { \'name\': \'PC.593\', \'color\': 0, \'x\': 0.096847, \'y\': -0.159388, \'z\': 0.135272 };
+points[\'PC.636\'] = { \'name\': \'PC.636\', \'color\': 0, \'x\': 0.281535, \'y\': 0.071066, \'z\': 0.097154 };
+points[\'PC.481\'] = { \'name\': \'PC.481\', \'color\': 0, \'x\': -0.192383, \'y\': 0.014783, \'z\': -0.014787 };
+points[\'PC.354\'] = { \'name\': \'PC.354\', \'color\': 0, \'x\': -0.293353, \'y\': 0.018396, \'z\': 0.032988 };
+points[\'PC.356\'] = { \'name\': \'PC.356\', \'color\': 0, \'x\': -0.183191, \'y\': 34912.621000, \'z\': 0.008695 };
+var segments = 16, rings = 16, radius = 0.011498;
+var xaxislength = 0.574888;
+var yaxislength = 34912.787234;
+var zaxislength = 0.276989;
+var max_x = 0.281535;
+var max_y = 34912.621000;
+var max_z = 0.135272;
+var min_x = -0.293353;
+var min_y = -0.166234;
+var min_z = -0.141717;
+var max = 34912.621000;
+pc1 = "Instant";
+pc2 = "PC1 (27 %)";
+pc3 = "PC2 (16 %)";
 """
 
 MAPPING_FILE_DATA = [\

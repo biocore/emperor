@@ -224,7 +224,7 @@ def main():
     # write the html file
     fp_out.write(format_mapping_file_to_js(mapping_data, header, header))
     fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
-        coords_eigenvalues, coords_pct))
+        coords_eigenvalues, coords_pct, custom_axes))
     fp_out.write(EMPEROR_FOOTER_HTML_STRING)
     copy_support_files(dir_path)
 
