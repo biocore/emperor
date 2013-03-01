@@ -12,12 +12,14 @@ __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 
+from numpy import array
 from shutil import rmtree
 from os.path import exists, join
 from cogent.util.unit_test import TestCase, main
 from qiime.util import get_qiime_temp_dir, get_tmp_filename
 from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
-    preprocess_mapping_file)
+    preprocess_mapping_file, preprocess_coords_file,
+    fill_mapping_field_from_mapping_file)
 
 class TopLevelTests(TestCase):
 
@@ -27,6 +29,16 @@ class TopLevelTests(TestCase):
             'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description']
         self.valid_columns = ['Treatment', 'DOB']
         self.support_files_filename = get_qiime_temp_dir()
+
+        # data for the custom axes, contains columns that are gradients
+        self.mapping_file_data_gradient = MAPPING_FILE_DATA_GRADIENT
+        self.mapping_file_headers_gradient = ['SampleID', 'Treatment', 'Time',
+            'Weight', 'Description']
+
+        self.coords_header = ['PC.355', 'PC.635', 'PC.636', 'PC.354']
+        self.coords_data = COORDS_DATA
+
+        self.broken_mapping_file_data = BROKEN_MAPPING_FILE
 
     def test_copy_support_files(self):
         """Test the support files are correctly copied to a file path"""
@@ -101,6 +113,52 @@ class TopLevelTests(TestCase):
         self.assertEquals(out_data, PRE_PROCESS_A)
         self.assertEquals(out_headers,  ['SampleID', 'BarcodeSequence',
             'Treatment', 'DOB'])
+
+    def test_preprocess_coords_file(self):
+        """Check correct processing is applied to the coords"""
+
+        # case with custom axes
+        out_coords_header, out_coords_data = preprocess_coords_file(
+            self.coords_header, self.coords_data,
+            self.mapping_file_headers_gradient, self.mapping_file_data_gradient,
+            ['Time'])
+
+        expected_coords_data = array([[ 0.03333333, -0.2, -0.1,0.06, -0.06],
+           [0.03333333, -0.3, 0.04, -0.1,0.15],
+           [0.2, 0.1, -0.1, -0.2, 0.08],
+           [-0.3, 0.04, -0.01,  0.06, -0.34]])
+
+        self.assertEquals(out_coords_header, self.coords_header)
+
+        # check each individual value because currently cogent assertEquals
+        # fails when comparing the whole matrix at once
+        for out_el, exp_el in zip(out_coords_data, expected_coords_data):
+            for out_el_sub, exp_el_sub in zip(out_el, exp_el):
+                self.assertAlmostEquals(out_el_sub, exp_el_sub)        
+
+
+    def test_fill_mapping_field_from_mapping_file(self):
+        """Check the values are being correctly filled in"""
+
+        # common usage example
+        out_data = fill_mapping_field_from_mapping_file(
+            self.broken_mapping_file_data, self.mapping_file_headers_gradient,
+            'Time:200;Weight:800')
+        self.assertEquals(out_data, [
+            ['PC.354', 'Control','3', '40', 'Control20061218'],
+            ['PC.355', 'Control','200', '44', 'Control20061218'],
+            ['PC.635', 'Fast','9', '800', 'Fast20080116'],
+            ['PC.636', 'Fast','12', '37.22', 'Fast20080116']])
+
+        # more than one value to fill empty values with
+        self.assertRaises(AssertionError, fill_mapping_field_from_mapping_file,
+            self.broken_mapping_file_data, self.mapping_file_headers_gradient,
+            'Time:200,300;Weight:800')
+
+        # non-existing header in mapping file
+        self.assertRaises(ValueError, fill_mapping_field_from_mapping_file,
+            self.broken_mapping_file_data, self.mapping_file_headers_gradient,
+            'Spam:Foo')
 
 MAPPING_FILE_DATA = [
     ['PC.354','AGCACGAGCCTA','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._354'],
@@ -183,6 +241,24 @@ MAPPING_FILE_DATA_CAT_E = [
     ['PC.634', 'Fast', 'Fast20080116'],
     ['PC.635', 'Fast', 'Fast20080116'],
     ['PC.636', 'Fast', 'Fast20080116']]
+
+MAPPING_FILE_DATA_GRADIENT = [
+    ['PC.354', 'Control','3', '40', 'Control20061218'],
+    ['PC.355', 'Control','9', '44', 'Control20061218'],
+    ['PC.635', 'Fast','9', '44', 'Fast20080116'],
+    ['PC.636', 'Fast','12', '37.22', 'Fast20080116']]
+
+COORDS_DATA = array([
+    [-0.2, -0.1, 0.06, -0.06],
+    [-0.3, 0.04, -0.1, 0.15],
+    [0.1, -0.1, -0.2, 0.08],
+    [0.04, -0.01, 0.06, -0.34]])
+
+BROKEN_MAPPING_FILE = [
+    ['PC.354', 'Control','3', '40', 'Control20061218'],
+    ['PC.355', 'Control','y', '44', 'Control20061218'],
+    ['PC.635', 'Fast','9', 'x', 'Fast20080116'],
+    ['PC.636', 'Fast','12', '37.22', 'Fast20080116']]
 
 
 if __name__ == "__main__":
