@@ -16,7 +16,7 @@ from numpy import max, min, abs
 
 from qiime.parse import mapping_file_to_dict
 
-def format_pcoa_to_js(header, coords, eigvals, pct_var):
+def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=None):
     """Write the javascript necessary to represent a pcoa file in emperor
 
     Inputs:
@@ -59,10 +59,18 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var):
     js_pcoa_string += 'var min_z = %f;\n' % min_z
     js_pcoa_string += 'var max = %f;\n' % maximum
 
-    # percentage explained by each of the PCoA axis
-    js_pcoa_string += "pc1 = %.0f\n" % pcoalabels[0]
-    js_pcoa_string += "pc2 = %.0f\n" % pcoalabels[1]
-    js_pcoa_string += "pc3 = %.0f\n" % pcoalabels[2]
+    offset = 0
+    # create three vars, pc1, pc2 and pc3 if no custom_axes are passed, then use
+    # the values of the percent explained by the PCoA; if custom_axes are passed
+    # use as many as you can (since customs axes can be either [0, 1, 2, 3])
+    for i in range(0, 3):
+        try:
+            js_pcoa_string += 'pc%d = \"%s\";\n' % (i+1, custom_axes[i])
+            offset+=1 # offset will help us retrieve the correct pcoalabels val
+        except:
+            # if there are custom axes then subtract the number of custom axes
+            js_pcoa_string += 'pc%d = \"PC%d (%.0f %%)\";\n' % (i+1, i+1-offset,
+                pcoalabels[i-offset])
 
     return js_pcoa_string
 
