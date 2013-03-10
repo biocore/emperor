@@ -38,13 +38,19 @@
 	padding-top: 0px;
 	}
 	div#colorby {
-    padding-top: 0px;
-    padding-bottom: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	width:100%;
+	height:100%;
+	overflow:scroll;
 	}
 	
 	div#showby{
 	padding-top: 0px;
-    padding-bottom: 0px;
+	padding-bottom: 0px;
+	width:100%;
+	height:100%;
+	overflow:scroll;
 	}
 	
 	div#keytab {
