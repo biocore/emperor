@@ -16,7 +16,7 @@ from numpy import max, min, abs
 
 from qiime.parse import mapping_file_to_dict
 
-def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=None):
+def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[]):
     """Write the javascript necessary to represent a pcoa file in emperor
 
     Inputs:
@@ -71,6 +71,16 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=None):
             # if there are custom axes then subtract the number of custom axes
             js_pcoa_string += 'pc%d = \"PC%d (%.0f %%)\";\n' % (i+1, i+1-offset,
                 pcoalabels[i-offset])
+
+    js_pcts = []
+    if custom_axes == None: custom_axes = []
+    for element in custom_axes + list(pct_var):
+        try:
+            # scale the percent so it's a number from 0 to 1
+            js_pcts.append('%f' % (float(element)/100))
+        except ValueError:
+            js_pcts.append('1.0')
+    js_pcoa_string += 'var percents = [%s];\n' % ', '.join(js_pcts)
 
     return js_pcoa_string
 
@@ -205,7 +215,7 @@ EMPEROR_FOOTER_HTML_STRING =\
             <div class="list" id="labellist">
             </div>
         </div>
-        <!-- <div id="animations">
+<!--         <div id="animations">
                 <div id="animationsTop">
                     <a class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor/img/reset.png" ></img></a>
                     <a class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor/img/play.png"></img></a>
@@ -229,6 +239,11 @@ EMPEROR_FOOTER_HTML_STRING =\
                     </div>
                 </div> -->
         <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggle_scale_coordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
             <br>

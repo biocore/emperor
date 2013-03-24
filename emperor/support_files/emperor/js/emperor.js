@@ -34,7 +34,10 @@ var keyBuilt = false;
 var animationSpeed = 60;
 var time;
 var visiblePoints = 0;
-
+var x_axis_line;
+var y_axis_line;
+var z_axis_line;
+var scaling = false;
 
 /* This function recenters the camera, needs to be fixed so that it
 actually resets to the original position */
@@ -54,6 +57,63 @@ function dedupe(list) {
    for (var obj in set)
 	  list.push(obj);
    return list;
+}
+
+function toggle_scale_coordinates(element){
+	/* */
+
+	var current_points = new Array();
+	var buffer_position;
+
+	// retrieve the coordinates from all the mesh objects
+	for (sample_id in plotSpheres){
+		current_points[sample_id] = {'x':plotSpheres[sample_id].position.x, 'y': plotSpheres[sample_id].position.y, 'z':plotSpheres[sample_id].position.z};
+	}
+
+	// XOR operation for the checkbox widget
+	if(element.checked == true){
+		console.log('Scaling coordinates');
+		points = scale_coordinates(current_points, percents);
+	}
+	else{
+		console.log('Unscaling coordinates');
+		points = unscale_coordinates(current_points, percents);
+	}
+
+	// set the new position of each of the mesh objects
+	for (sample_id in plotSpheres){
+		plotSpheres[sample_id].position.set(points[sample_id].x, points[sample_id].y, points[sample_id].z);
+	}
+}
+
+function scale_coordinates(coords, percent_explained){
+	/* */
+
+	var scaled_coords = new Array();
+	var coord_object;
+
+	for (var sample_id in coords){
+		coord_object = coords[sample_id];
+		scaled_coords[sample_id] = {'x': coord_object.x*percent_explained[0],
+			'y':coord_object.y*percent_explained[1],
+			'z':coord_object.z*percent_explained[2]};
+	}
+
+	return scaled_coords;
+}
+
+function unscale_coordinates(coords, percent_explained){
+	/* */
+	var unscaled_coords = new Array();
+	var coord_object;
+
+	for (var sample_id in coords){
+		coord_object = coords[sample_id];
+		unscaled_coords[sample_id] = {'x': coord_object.x/percent_explained[0],
+			'y': coord_object.y/percent_explained[1],
+			'z': coord_object.z/percent_explained[2]}
+	}
+	return unscaled_coords;
 }
 
 /* generates a list of colors that corresponds to a list of values
@@ -545,7 +605,7 @@ function sradiuschange(ui) {
 	document.getElementById('sphereradius').innerHTML = ui.value/5;
 	var scale = ui.value/5.0;
 	sphereScale = new THREE.Vector3(scale,scale,scale)
-	
+
 	for(var sid in plotSpheres)
 		plotSpheres[sid].scale = sphereScale;
 	
@@ -775,6 +835,29 @@ function SVGSaved(response){
     console.log(fileName)
 }
 
+var debugaxis = function(axisLength, xstart, ystart, zstart){
+    //Shorten the vertex function
+    function v(x,y,z){ 
+            return new THREE.Vertex(new THREE.Vector3(x,y,z)); 
+    }
+
+    //Create axis (point1, point2, colour)
+    function createAxis(p1, p2, color){
+            var line, lineGeometry = new THREE.Geometry(),
+            lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 1});
+            lineMat.matrixAutoUpdate = true;
+            lineGeometry.vertices.push(p1, p2);
+            line = new THREE.Line(lineGeometry, lineMat);
+            scene.add(line);
+
+            return line;
+    }
+
+    x_axis_line = createAxis(v(xstart, ystart, zstart), v(axisLength, ystart, zstart), 0xFF0000);
+    y_axis_line = createAxis(v(xstart, ystart, zstart), v(xstart, axisLength, zstart), 0x00FF00);
+    z_axis_line = createAxis(v(xstart, ystart, zstart), v(xstart, ystart, axisLength), 0x0000FF);    
+};
+
 /* update point count label */
 function changePointCount() {
     document.getElementById('pointCount').innerHTML = visiblePoints+'/'+plotIds.length+' points'
@@ -799,6 +882,49 @@ $(document).ready(function() {
 	  camera.aspect = winAspect;
 	  camera.updateProjectionMatrix();
    });
+
+	$("#scale_checkbox").click(function(){
+		// modifying the properties basically requires to create the elemnts
+		// again from scratch, so just remove them from scene and re-build them
+		// the lines are all global variables hence just a call to remove them
+		scene.remove(x_axis_line);
+		scene.remove(y_axis_line);
+		scene.remove(z_axis_line);
+
+		if (scaling){
+			scaling = false;
+
+			// xaxislength = xaxislength*percents[0];
+			// yaxislength = yaxislength*percents[1];
+			// zaxislength = zaxislength*percents[2];
+			max_x = max_x/percents[0];
+			max_y = max_y/percents[1];
+			max_z = max_z/percents[2];
+			min_x = min_x/percents[0];
+			min_y = min_y/percents[1];
+			min_z = min_z/percents[2];
+
+			var axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));
+			debugaxis(axesLen, min_x, min_y, min_z);
+		}
+		else{
+			scaling = true;
+
+			// xaxislength = xaxislength/percents[0];
+			// yaxislength = yaxislength/percents[1];
+			// zaxislength = zaxislength/percents[2];
+			max_x = max_x*percents[0];
+			max_y = max_y*percents[1];
+			max_z = max_z*percents[2];
+			min_x = min_x*percents[0];
+			min_y = min_y*percents[1];
+			min_z = min_z*percents[2];
+
+			var axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));
+			debugaxis(axesLen, min_x, min_y, min_z);
+		}
+   });
+
    
    init();
    animate();
@@ -869,27 +995,6 @@ $(document).ready(function() {
 	       
            var rv = colorByMenuChanged();
            showByMenuChanged();
-
-	var debugaxis = function(axisLength, xstart, ystart, zstart){
-	    //Shorten the vertex function
-	    function v(x,y,z){ 
-	            return new THREE.Vertex(new THREE.Vector3(x,y,z)); 
-	    }
-    
-	    //Create axis (point1, point2, colour)
-	    function createAxis(p1, p2, color){
-	            var line, lineGeometry = new THREE.Geometry(),
-	            lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 1});
-	            lineGeometry.vertices.push(p1, p2);
-	            line = new THREE.Line(lineGeometry, lineMat);
-	            scene.add(line);
-	    }
-    
-	    createAxis(v(xstart, ystart, zstart), v(axisLength, ystart, zstart), 0xFF0000);
-	    createAxis(v(xstart, ystart, zstart), v(xstart, axisLength, zstart), 0x00FF00);
-	    createAxis(v(xstart, ystart, zstart), v(xstart, ystart, axisLength), 0x0000FF);
-	    
-	};
 		
 	  var axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));	  
 	  debugaxis(axesLen, min_x, min_y, min_z);
