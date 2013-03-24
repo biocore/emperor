@@ -59,61 +59,58 @@ function dedupe(list) {
    return list;
 }
 
+/* call back to the scale coordinates UI element in the options tab */
 function toggle_scale_coordinates(element){
-	/* */
 
 	var current_points = new Array();
 	var buffer_position;
+	var current_radius;
+	var axesLen;
+	var operation;
 
-	// retrieve the coordinates from all the mesh objects
-	for (sample_id in plotSpheres){
-		current_points[sample_id] = {'x':plotSpheres[sample_id].position.x, 'y': plotSpheres[sample_id].position.y, 'z':plotSpheres[sample_id].position.z};
+	// modifying the properties basically requires to create the elemnts
+	// again from scratch, so just remove them from scene and re-build them
+	// the lines are all global variables hence just a call to remove them
+	scene.remove(x_axis_line);
+	scene.remove(y_axis_line);
+	scene.remove(z_axis_line);
+
+	// javascript doesn't provide any other way to retrieve the first element of
+	// an associative array; retrieve the current radius and scale the elements
+	for(var sid in plotSpheres){
+		current_radius=plotSpheres[sid].scale.x;
+		break;
 	}
 
-	// XOR operation for the checkbox widget
+	// XOR operation for the checkbox widget, scale the position and radius
+	// operation will either divide or multply by the percent explained
 	if(element.checked == true){
-		console.log('Scaling coordinates');
-		points = scale_coordinates(current_points, percents);
+		scaleSpheresAndEllipses(current_radius*percents[0]);
+		operation = function(a, b){return a*b};
 	}
 	else{
-		console.log('Unscaling coordinates');
-		points = unscale_coordinates(current_points, percents);
+		scaleSpheresAndEllipses(current_radius/percents[0]);
+		operation = function(a, b){return a/b};
 	}
+
+	// scale other properties
+	max_x = operation(max_x,percents[0]);
+	max_y = operation(max_y,percents[1]);
+	max_z = operation(max_z,percents[2]);
+	min_x = operation(min_x,percents[0]);
+	min_y = operation(min_y,percents[1]);
+	min_z = operation(min_z,percents[2]);
+
+	axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));
+	debugaxis(axesLen, min_x, min_y, min_z);
 
 	// set the new position of each of the mesh objects
 	for (sample_id in plotSpheres){
-		plotSpheres[sample_id].position.set(points[sample_id].x, points[sample_id].y, points[sample_id].z);
+		plotSpheres[sample_id].position.set(
+			operation(plotSpheres[sample_id].position.x,percents[0]),
+			operation(plotSpheres[sample_id].position.y,percents[1]),
+			operation(plotSpheres[sample_id].position.z,percents[2]));
 	}
-}
-
-function scale_coordinates(coords, percent_explained){
-	/* */
-
-	var scaled_coords = new Array();
-	var coord_object;
-
-	for (var sample_id in coords){
-		coord_object = coords[sample_id];
-		scaled_coords[sample_id] = {'x': coord_object.x*percent_explained[0],
-			'y':coord_object.y*percent_explained[1],
-			'z':coord_object.z*percent_explained[2]};
-	}
-
-	return scaled_coords;
-}
-
-function unscale_coordinates(coords, percent_explained){
-	/* */
-	var unscaled_coords = new Array();
-	var coord_object;
-
-	for (var sample_id in coords){
-		coord_object = coords[sample_id];
-		unscaled_coords[sample_id] = {'x': coord_object.x/percent_explained[0],
-			'y': coord_object.y/percent_explained[1],
-			'z': coord_object.z/percent_explained[2]}
-	}
-	return unscaled_coords;
 }
 
 /* generates a list of colors that corresponds to a list of values
@@ -604,11 +601,16 @@ function lopacitychange(ui) {
 function sradiuschange(ui) {
 	document.getElementById('sphereradius').innerHTML = ui.value/5;
 	var scale = ui.value/5.0;
+	scaleSpheresAndEllipses(scale);
+}
+
+function scaleSpheresAndEllipses(value){
+	scale = value;
 	sphereScale = new THREE.Vector3(scale,scale,scale)
 
 	for(var sid in plotSpheres)
 		plotSpheres[sid].scale = sphereScale;
-	
+
 	for(var sid in plotEllipses)
 	{
 		plotEllipses[sid].scale.x = scale*ellipses[sid]['width']/radius;
@@ -883,49 +885,6 @@ $(document).ready(function() {
 	  camera.updateProjectionMatrix();
    });
 
-	$("#scale_checkbox").click(function(){
-		// modifying the properties basically requires to create the elemnts
-		// again from scratch, so just remove them from scene and re-build them
-		// the lines are all global variables hence just a call to remove them
-		scene.remove(x_axis_line);
-		scene.remove(y_axis_line);
-		scene.remove(z_axis_line);
-
-		if (scaling){
-			scaling = false;
-
-			// xaxislength = xaxislength*percents[0];
-			// yaxislength = yaxislength*percents[1];
-			// zaxislength = zaxislength*percents[2];
-			max_x = max_x/percents[0];
-			max_y = max_y/percents[1];
-			max_z = max_z/percents[2];
-			min_x = min_x/percents[0];
-			min_y = min_y/percents[1];
-			min_z = min_z/percents[2];
-
-			var axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));
-			debugaxis(axesLen, min_x, min_y, min_z);
-		}
-		else{
-			scaling = true;
-
-			// xaxislength = xaxislength/percents[0];
-			// yaxislength = yaxislength/percents[1];
-			// zaxislength = zaxislength/percents[2];
-			max_x = max_x*percents[0];
-			max_y = max_y*percents[1];
-			max_z = max_z*percents[2];
-			min_x = min_x*percents[0];
-			min_y = min_y*percents[1];
-			min_z = min_z*percents[2];
-
-			var axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));
-			debugaxis(axesLen, min_x, min_y, min_z);
-		}
-   });
-
-   
    init();
    animate();
    
