@@ -101,6 +101,10 @@ function toggle_scale_coordinates(element){
 	min_y = operation(min_y,percents[1]);
 	min_z = operation(min_z,percents[2]);
 
+	// scale the position of the camera in the Z axis
+	max = operation(max, percents[0])
+	camera.position.z = max*4;
+
 	axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));
 	debugaxis(axesLen, min_x, min_y, min_z);
 
@@ -875,7 +879,7 @@ $(document).ready(function() {
    var renderer, particles, geometry, parameters, i, h, color;
    var mouseX = 0, mouseY = 0;
    
-   var winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight), view_angle = 35, view_near = 1, view_far = 10000;
+   var winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight), view_angle = 35, view_near = 0.1, view_far = 10000;
    var winAspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
    
    $(window).resize(function() {
