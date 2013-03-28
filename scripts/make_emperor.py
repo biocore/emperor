@@ -11,7 +11,9 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
-from os.path import join, exists
+from os import listdir
+from os.path import join, exists, isdir
+
 from qiime.filter import filter_mapping_file
 from qiime.parse import parse_mapping_file, parse_coords, mapping_file_to_dict
 from qiime.util import (parse_command_line_parameters, make_option, create_dir,
@@ -51,8 +53,10 @@ script_info['output_description']= "This script creates an output directory "+\
     "visualization of the processed PCoA data file and the corresponding "+\
     "metadata mapping file."
 script_info['required_options'] = [
-    make_option('-i','--pcoa_fp',type="existing_filepath",help='path to a PCoA'
-    ' file'),
+    make_option('-i','--input_coords',type="existing_path",help='Path to a '
+    'coordinates file to create a PCoA plot. Alternatively a path to a '
+    'directory containing only coordinates files to create a jackknifed PCoA '
+    'plot.'),
     make_option('-m','--map_fp',type="existing_filepath",help='path to a '
     'metadata mapping file')
 ]
@@ -95,7 +99,7 @@ script_info['version'] = __version__
 
 def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
-    pcoa_fp = opts.pcoa_fp
+    input_coords = opts.input_coords
     map_fp = opts.map_fp
     output_dir = opts.output_dir
     color_by_column_names = opts.color_by
@@ -110,13 +114,60 @@ def main():
     non_numeric_categories = []
 
     # before creating any output, check correct parsing of the main input files
-    try:
-        coords_headers, coords_data, coords_eigenvalues, coords_pct =\
-            parse_coords(open(pcoa_fp,'U'))
-    except:
-        option_parser.error(('The PCoA file \'%s\' does not seem to be a '
-            'coordinates formatted file, verify by manuall inspecting '
-            'the contents.') % pcoa_fp)
+    if isdir(input_coords): # dir means jackknifing type of processing
+        offending_coords_fp = []
+        coords_headers, coords_data, coords_eigenvalues, coords_pct=[],[],[],[]
+
+        # iterate only over the non-hidden files
+        coord_fps = [join(input_coords, f) for f in listdir(input_coords)
+            if not f.startswith('.')]
+
+        if not coord_fps:
+            option_parser.error('The input path is empty; if passing a folder '
+                'as the input, please make sure it contains coordinates files.')
+
+        for fp in coord_fps:
+            try:
+                _coords_headers, _coords_data, _coords_eigenvalues,_coords_pct=\
+                    parse_coords(open(fp,'U'))
+
+                # pack all the data correspondingly
+                coords_headers.append(_coords_headers)
+                coords_data.append(_coords_data)
+                coords_eigenvalues.append(_coords_eigenvalues)
+                coords_pct.append(_coords_pct)
+            except:
+                offending_coords_fp.append(fp)
+
+        # in case there were files that couldn't be parsed
+        if offending_coords_fp:
+            option_parser.error(('The following file(s): \'%s\' could not be '
+                'parsed properly. Make sure the input folder only contains '
+                'coordinates files.') % ', '.join(offending_coords_fp))
+
+        # check all files contain the same sample identifiers by flattening the
+        # list of available sample ids and returning the sample ids that are
+        # in one of the sets of sample ids but not in the globablly shared ids
+        non_shared_ids = set(sum([list(set(sum(coords_headers, []))^set(e))
+            for e in coords_headers],[]))
+        if non_shared_ids and len(coords_headers) > 1:
+            option_parser.error(('The following sample identifier(s): \'%s\''
+                'are not shared between all the files. The files used to '
+                'make a jackknifed PCoA plot must share all the same sample '
+                'identifiers') % ', '.join(list(non_shared_ids)))
+
+        # flatten the list of lists into a 1-d list
+        coords_headers = list(set(sum(coords_headers, [])))
+    else:
+        try:
+            coords_headers, coords_data, coords_eigenvalues, coords_pct =\
+                parse_coords(open(input_coords,'U'))
+        except:
+            option_parser.error(('The PCoA file \'%s\' does not seem to be a '
+                'coordinates formatted file, verify by manuall inspecting '
+                'the contents.') % input_coords)
+
+    # try parsing the mapping file
     try:
         mapping_data, header, comments = parse_mapping_file(open(map_fp,'U'))
     except:
@@ -143,7 +194,7 @@ def main():
         option_parser.error('The metadata mapping file has fewer sample '
             'identifiers than the coordinates file. Verify you are using a '
             'mapping file that contains at least all the samples contained in '
-            'the coordinates file. You can force the script to ignore these '
+            'the coordinates file(s). You can force the script to ignore these '
             ' samples by passing the \'--ignore_missing_samples\' flag.')
 
     # ignore samples that exist in the coords but not in the mapping file, note:
