@@ -41,7 +41,6 @@ class TopLevelTests(TestCase):
         self.assertEquals(out_js_pcoa_string, PCOA_JS)
 
         # test custom axes and the labels
-        print 'separator'
         out_js_pcoa_string = format_pcoa_to_js(self.pcoa_headers,
             self.pcoa_coords, self.pcoa_eigen_values, self.pcoa_pct_var,
             ['Instant'])
@@ -90,6 +89,7 @@ var max = 34912.621000;
 pc1 = "PC1 (27 %)";
 pc2 = "PC2 (16 %)";
 pc3 = "PC3 (14 %)";
+var percents = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
 """
 
 PCOA_JS_CUSTOM_AXES = """
@@ -117,6 +117,7 @@ var max = 34912.621000;
 pc1 = "Instant";
 pc2 = "PC1 (27 %)";
 pc3 = "PC2 (16 %)";
+var percents = [1.0, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
 """
 
 MAPPING_FILE_DATA = [\
