@@ -62,9 +62,6 @@ function dedupe(list) {
 /* call back to the scale coordinates UI element in the options tab */
 function toggle_scale_coordinates(element){
 
-	var current_points = new Array();
-	var buffer_position;
-	var current_radius;
 	var axesLen;
 	var operation;
 
@@ -75,21 +72,12 @@ function toggle_scale_coordinates(element){
 	scene.remove(y_axis_line);
 	scene.remove(z_axis_line);
 
-	// javascript doesn't provide any other way to retrieve the first element of
-	// an associative array; retrieve the current radius and scale the elements
-	for(var sid in plotSpheres){
-		current_radius=plotSpheres[sid].scale.x;
-		break;
-	}
-
-	// XOR operation for the checkbox widget, scale the position and radius
-	// operation will either divide or multply by the percent explained
+	// XOR operation for the checkbox widget, this will select an operation
+	// to perform over various properties, either a multiplication or a division
 	if(element.checked == true){
-		scaleSpheresAndEllipses(current_radius*percents[0]);
 		operation = function(a, b){return a*b};
 	}
 	else{
-		scaleSpheresAndEllipses(current_radius/percents[0]);
 		operation = function(a, b){return a/b};
 	}
 
@@ -100,21 +88,48 @@ function toggle_scale_coordinates(element){
 	min_x = operation(min_x,percents[0]);
 	min_y = operation(min_y,percents[1]);
 	min_z = operation(min_z,percents[2]);
-
-	// scale the position of the camera in the Z axis
 	max = operation(max, percents[0])
-	camera.position.z = max*4;
 
+	// scale the position of the camera according to pc1
+	camera.position.set(operation(camera.position.x, percents[0]),
+		operation(camera.position.y, percents[0]),
+		operation(camera.position.z, percents[0]))
+
+	// scale the axis lines
 	axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));
 	debugaxis(axesLen, min_x, min_y, min_z);
 
-	// set the new position of each of the mesh objects
+	// set the new position of each of the sphere objects
 	for (sample_id in plotSpheres){
+		// change the dimensions of the spheres according to pc1 only, if doing
+		// this using pc2 and pc3 then the result would not be a sphere
+		plotSpheres[sample_id].scale.set(
+			operation(plotSpheres[sample_id].scale.x, percents[0]),
+			operation(plotSpheres[sample_id].scale.y, percents[0]),
+			operation(plotSpheres[sample_id].scale.z, percents[0]));
+
+		// scale the position of the spheres
 		plotSpheres[sample_id].position.set(
 			operation(plotSpheres[sample_id].position.x,percents[0]),
 			operation(plotSpheres[sample_id].position.y,percents[1]),
 			operation(plotSpheres[sample_id].position.z,percents[2]));
 	}
+
+	// ellipses won't always be available hence the two separate loops
+	for (sample_id in plotEllipses){
+		// scale the dimensions of the positions of each ellipse
+		plotEllipses[sample_id].position.set(
+			operation(plotEllipses[sample_id].position.x, percents[0]),
+			operation(plotEllipses[sample_id].position.y, percents[1]),
+			operation(plotEllipses[sample_id].position.z, percents[2]));
+
+		// scale the dimensions of the ellipse
+		plotEllipses[sample_id].scale.set(
+			operation(plotEllipses[sample_id].scale.x, percents[0]),
+			operation(plotEllipses[sample_id].scale.y, percents[1]),
+			operation(plotEllipses[sample_id].scale.z, percents[2]));
+	}
+
 }
 
 /* generates a list of colors that corresponds to a list of values
@@ -605,22 +620,12 @@ function lopacitychange(ui) {
 function sradiuschange(ui) {
 	document.getElementById('sphereradius').innerHTML = ui.value/5;
 	var scale = ui.value/5.0;
-	scaleSpheresAndEllipses(scale);
-}
 
-function scaleSpheresAndEllipses(value){
-	scale = value;
-	sphereScale = new THREE.Vector3(scale,scale,scale)
-
-	for(var sid in plotSpheres)
-		plotSpheres[sid].scale = sphereScale;
-
-	for(var sid in plotEllipses)
-	{
-		plotEllipses[sid].scale.x = scale*ellipses[sid]['width']/radius;
-	    plotEllipses[sid].scale.y = scale*ellipses[sid]['height']/radius;
-	    plotEllipses[sid].scale.z = scale*ellipses[sid]['length']/radius;
+	// set the value to all the spheres
+	for(var sample_id in plotSpheres){
+		plotSpheres[sample_id].scale.set(scale, scale, scale);
 	}
+
 }
 
 // function animSpeedChange(ui) {
