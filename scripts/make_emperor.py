@@ -80,6 +80,11 @@ script_info['optional_options'] = [
     'separating them without spaces. The user can also combine columns in'
     ' the mapping file by separating the categories by "&&" without spaces. '
     '[default=color by all categories]', default=''),
+    make_option('-e', '--ellipsoid_method', help='Used only when plotting '
+    'ellipsoids for jackknifed beta diversity (i.e. using a directory of coord '
+    'files instead of a single coord file). Valid values are "IQR" (for '
+    'inter-quartile ranges) and "sdev" (for standard deviation). '
+    '[default=%default]', default='IQR', type='choice', choices=['IQR','sdev']),
      make_option('--ignore_missing_samples', help='This will overpass the error'
     ' raised when the coordinates file contains samples that are not present in'
     ' the mapping file. Be aware that this is very misleading as the PCoA is '
@@ -107,6 +112,7 @@ def main():
     custom_axes = opts.custom_axes
     ignore_missing_samples = opts.ignore_missing_samples
     missing_custom_axes_values = opts.missing_custom_axes_values
+    jackknifing_method = opts.ellipsoid_method
 
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
@@ -114,7 +120,15 @@ def main():
     non_numeric_categories = []
 
     # before creating any output, check correct parsing of the main input files
-    if isdir(input_coords): # dir means jackknifing type of processing
+    try:
+        mapping_data, header, comments = parse_mapping_file(open(map_fp,'U'))
+    except:
+        option_parser.error(('The metadata mapping file \'%s\' does not seem '
+            'to be formatted correctly, verify the formatting is QIIME '
+            'compliant by using check_id_map.py') % map_fp)
+
+    # dir means jackknifing type of processing
+    if isdir(input_coords):
         offending_coords_fp = []
         coords_headers, coords_data, coords_eigenvalues, coords_pct=[],[],[],[]
 
@@ -157,7 +171,16 @@ def main():
                 'identifiers') % ', '.join(list(non_shared_ids)))
 
         # flatten the list of lists into a 1-d list
-        coords_headers = list(set(sum(coords_headers, [])))
+        _coords_headers = list(set(sum(coords_headers, [])))
+
+        # number of samples ids that are shared between coords and mapping files
+        sids_intersection=list(set(zip(*mapping_data)[0])&set(_coords_headers))
+
+        # used to perform different validations in the script, very similar for
+        # the case where the input is not a directory
+        number_intersected_sids = len(sids_intersection)
+        required_number_of_sids = len(coords_headers[0])
+
     else:
         try:
             coords_headers, coords_data, coords_eigenvalues, coords_pct =\
@@ -167,17 +190,10 @@ def main():
                 'coordinates formatted file, verify by manuall inspecting '
                 'the contents.') % input_coords)
 
-    # try parsing the mapping file
-    try:
-        mapping_data, header, comments = parse_mapping_file(open(map_fp,'U'))
-    except:
-        option_parser.error(('The metadata mapping file \'%s\' does not seem '
-            'to be formatted correctly, verify the formatting is QIIME '
-            'compliant by using check_id_map.py') % map_fp)
-
-    # number of samples ids that are shared between coords and mapping files
-    sids_intersection = list(set(zip(*mapping_data)[0]) & set(coords_headers))
-    number_intersected_sids = len(sids_intersection)
+        # number of samples ids that are shared between coords and mapping files
+        sids_intersection = list(set(zip(*mapping_data)[0])&set(coords_headers))
+        number_intersected_sids = len(sids_intersection)
+        required_number_of_sids = len(coords_headers)
 
     # sample ids must be shared between files
     if number_intersected_sids <= 0:
@@ -189,7 +205,7 @@ def main():
     # the intersection of the sample ids in the coords and the sample ids in the
     # mapping file must at the very least include all ids in the coords file
     # Otherwise it isn't valid; unless --ignore_missing_samples is set True
-    if number_intersected_sids!=len(coords_headers) and\
+    if number_intersected_sids != required_number_of_sids and\
         not ignore_missing_samples:
         option_parser.error('The metadata mapping file has fewer sample '
             'identifiers than the coordinates file. Verify you are using a '
@@ -259,8 +275,10 @@ def main():
     mapping_data, header = preprocess_mapping_file(mapping_data, header,
         color_by_column_names, unique=not add_unique_columns)
 
-    coords_headers, coords_data = preprocess_coords_file(coords_headers,
-        coords_data, header, mapping_data, custom_axes)
+    coords_headers, coords_data, coords_eigenvalues, coords_pct, coords_low,\
+        coords_high = preprocess_coords_file(coords_headers, coords_data,
+        coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
+        jackknifing_method=jackknifing_method)
 
     # use the current working directory as default
     if opts.output_dir:
@@ -275,7 +293,7 @@ def main():
     # write the html file
     fp_out.write(format_mapping_file_to_js(mapping_data, header, header))
     fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
-        coords_eigenvalues, coords_pct, custom_axes))
+        coords_eigenvalues, coords_pct, custom_axes, coords_low, coords_high))
     fp_out.write(EMPEROR_FOOTER_HTML_STRING)
     copy_support_files(dir_path)
 
