@@ -167,17 +167,19 @@ class TopLevelTests(TestCase):
             jackknifing_method='sdev')
 
         self.assertEquals(out_coords_header, ['1', '2', '3'])
-        self.assertFloatEqual(out_coords_data, array([[-1.36666667, 0,
-            1.36666667], [ 2.5, 4.03333333, -4.66666667]]))
-        self.assertFloatEqual(out_eigenvals, array([ 0.8 ,  0.15,  0.05]))
-        self.assertFloatEqual(out_pcts, array([ 0.84 ,  0.15,  0.01]))
+        self.assertFloatEqual(out_coords_data, array([[1.46666666667, -0.05,
+            -1.5], [-2.46666666667, -4.03333333333, 4.76666666667]]))
+        self.assertFloatEqual(out_eigenvals, array([0.813333333333, 0.15,
+            0.0366666666667]))
+        self.assertFloatEqual(out_pcts, array([0.8, 0.1, 0.1]))
 
         # test the coords are working fine
-        self.assertFloatEqual(out_coords_low, array([[-0.07637626, -0.04330127,
-            -0.1040833 ], [-0.05, -0.02886751, -0.07637626]]))
-        self.assertFloatEqual(out_coords_high, array([[0.0763762615826,
-            0.0433012701892, 0.104083299973], [0.05, 0.0288675134595,
-            0.0763762615826]]))
+        self.assertFloatEqual(out_coords_low, array([[-0.0288675134595,
+            -4.24918736097e-18, -0.0866025403784], [-0.057735026919,
+            -0.0288675134595, -0.0288675134595]]))
+        self.assertFloatEqual(out_coords_high, array([[0.0288675134595,
+            4.24918736097e-18, 0.0866025403784], [0.057735026919,
+            0.0288675134595, 0.0288675134595]]))
 
     def test_fill_mapping_field_from_mapping_file(self):
         """Check the values are being correctly filled in"""

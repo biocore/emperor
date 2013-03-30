@@ -208,7 +208,9 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
     if no jackknifing is applied
 
     This controller function handles any customization that has to be done to
-    the PCoA data prior to the formatting.
+    the PCoA data prior to the formatting. Note that the first element in each
+    list (coords, headers, eigenvalues & percents) will be considered the master
+    set of coordinates.
     """
     mapping_file = [mapping_header] + mapping_data
     coords_file = [coords_header, coords_data]
@@ -233,9 +235,9 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
                 index += 1
 
     if type(coords_data) == list:
-        # take the last pcoa file as the master set of coordinates
-        master_pcoa = [coords_header.pop(), coords_data.pop(),
-            coords_eigenvals.pop(), coords_pct.pop()]
+        # take the first pcoa file as the master set of coordinates
+        master_pcoa = [coords_header.pop(0), coords_data.pop(0),
+            coords_eigenvals.pop(0), coords_pct.pop(0)]
 
         # support pcoas must be a list of lists where each list contain
         # all the elements that compose a coordinates file
