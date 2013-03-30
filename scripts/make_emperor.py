@@ -90,6 +90,11 @@ script_info['optional_options'] = [
     ' the mapping file. Be aware that this is very misleading as the PCoA is '
     'accounting for all the samples and removing some samples could lead to '
     ' erroneous/skewed interpretations.', action='store_true', default=False),
+    make_option('-s', '--master_pcoa', help='Used only when plotting ellipsoids'
+    ' for jackknifed beta diversity (i.e. using a directory of coord files'
+    ' instead of a single coord file). The coordinates in this file will be the'
+    ' center of each ellipisoid. [default: arbitrarily selected file from the '
+    'input directory]', default=None, type='existing_filepath'),
     make_option('-x', '--missing_custom_axes_values', help='Option to override '
     'the error shown when the \'--custom_axes\' categories, have non-numeric '
     'values in the mapping file. For example, if you wanted to see all the '
@@ -113,6 +118,7 @@ def main():
     ignore_missing_samples = opts.ignore_missing_samples
     missing_custom_axes_values = opts.missing_custom_axes_values
     jackknifing_method = opts.ellipsoid_method
+    master_pcoa = opts.master_pcoa
 
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
@@ -139,6 +145,12 @@ def main():
         if not coord_fps:
             option_parser.error('The input path is empty; if passing a folder '
                 'as the input, please make sure it contains coordinates files.')
+
+        # the master pcoa must be the first in the list of coordinates
+        if master_pcoa:
+            if master_pcoa in coord_fps: # remove it if duplicated
+                coord_fps.remove(master_pcoa)
+            coord_fps = [master_pcoa] + coord_fps # prepend it to the list
 
         for fp in coord_fps:
             try:
