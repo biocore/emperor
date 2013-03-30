@@ -38,6 +38,7 @@ var x_axis_line;
 var y_axis_line;
 var z_axis_line;
 var scaling = false;
+var freeze = false;
 
 /* This function recenters the camera, needs to be fixed so that it
 actually resets to the original position */
@@ -96,18 +97,16 @@ function toggle_scale_coordinates(element){
 		operation(camera.position.z, percents[0]))
 
 	// scale the axis lines
-	axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));
+	axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),
+		max_z+Math.abs(min_z));
 	debugaxis(axesLen, min_x, min_y, min_z);
+
+	// scale the size of the spheres
+	$("#sradiusslider").slider("value",operation(
+		$("#sradiusslider").slider("value"), percents[0]));
 
 	// set the new position of each of the sphere objects
 	for (sample_id in plotSpheres){
-		// change the dimensions of the spheres according to pc1 only, if doing
-		// this using pc2 and pc3 then the result would not be a sphere
-		plotSpheres[sample_id].scale.set(
-			operation(plotSpheres[sample_id].scale.x, percents[0]),
-			operation(plotSpheres[sample_id].scale.y, percents[0]),
-			operation(plotSpheres[sample_id].scale.z, percents[0]));
-
 		// scale the position of the spheres
 		plotSpheres[sample_id].position.set(
 			operation(plotSpheres[sample_id].position.x,percents[0]),
