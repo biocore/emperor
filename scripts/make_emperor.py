@@ -91,6 +91,9 @@ script_info['optional_options'] = [
     'separating them without spaces. The user can also combine columns in'
     ' the mapping file by separating the categories by "&&" without spaces. '
     '[default=color by all categories]', default=''),
+    make_option('--biplot_output_file', help='Output filepath that will contain'
+    ' the coordinates when creating a BiPlot. [default: %default]',
+    default=None, type='new_filepath'),
     make_option('-e', '--ellipsoid_method', help='Used only when plotting '
     'ellipsoids for jackknifed beta diversity (i.e. using a directory of coord '
     'files instead of a single coord file). Valid values are "IQR" (for '
@@ -101,11 +104,19 @@ script_info['optional_options'] = [
     ' the mapping file. Be aware that this is very misleading as the PCoA is '
     'accounting for all the samples and removing some samples could lead to '
     ' erroneous/skewed interpretations.', action='store_true', default=False),
+    make_option('--n_taxa_keep', help='Number of taxonomic groups from the '
+    '"--taxa_fname" file to display. Passing "-1" will cause to display all the'
+    ' taxonomic groups This option is only used when creating BiPlots. '
+    '[default=%default]', default=10, type='int'),
     make_option('-s', '--master_pcoa', help='Used only when plotting ellipsoids'
     ' for jackknifed beta diversity (i.e. using a directory of coord files'
     ' instead of a single coord file). The coordinates in this file will be the'
     ' center of each ellipisoid. [default: arbitrarily selected file from the '
     'input directory]', default=None, type='existing_filepath'),
+    make_option('-t', '--taxa_fname', help='Path to a summarized taxa file (i. '
+    'e. the output of summarize_taxa.py). This option is only used when '
+    'creating BiPlots. [default=%default]', default=None, type=
+    'existing_filepath'),
     make_option('-x', '--missing_custom_axes_values', help='Option to override '
     'the error shown when the \'--custom_axes\' categories, have non-numeric '
     'values in the mapping file. For example, if you wanted to see all the '
