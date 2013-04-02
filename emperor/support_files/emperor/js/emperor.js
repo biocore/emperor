@@ -37,8 +37,7 @@ var visiblePoints = 0;
 var x_axis_line;
 var y_axis_line;
 var z_axis_line;
-var scaling = false;
-var freeze = false;
+var sphere_scaler = 1.0;
 
 /* This function recenters the camera, needs to be fixed so that it
 actually resets to the original position */
@@ -77,10 +76,15 @@ function toggle_scale_coordinates(element){
 	// to perform over various properties, either a multiplication or a division
 	if(element.checked == true){
 		operation = function(a, b){return a*b};
+		sphere_scaler = percents[0];
 	}
 	else{
 		operation = function(a, b){return a/b};
+		sphere_scaler = 1;
 	}
+
+	// force an update of the size of the spheres
+	$("#sradiusslider").slider("value",$("#sradiusslider").slider("value"));
 
 	// scale other properties
 	max_x = operation(max_x,percents[0]);
@@ -100,10 +104,6 @@ function toggle_scale_coordinates(element){
 	axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),
 		max_z+Math.abs(min_z));
 	debugaxis(axesLen, min_x, min_y, min_z);
-
-	// scale the size of the spheres
-	$("#sradiusslider").slider("value",operation(
-		$("#sradiusslider").slider("value"), percents[0]));
 
 	// set the new position of each of the sphere objects
 	for (sample_id in plotSpheres){
@@ -618,7 +618,7 @@ function lopacitychange(ui) {
 /* handle events from the sphere radius slider */
 function sradiuschange(ui) {
 	document.getElementById('sphereradius').innerHTML = ui.value/5;
-	var scale = ui.value/5.0;
+	var scale = (ui.value/5.0)*sphere_scaler;
 
 	// set the value to all the spheres
 	for(var sample_id in plotSpheres){
