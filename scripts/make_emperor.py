@@ -136,6 +136,12 @@ def main():
     offending_fields = []
     non_numeric_categories = []
 
+    # can't do averaged pcoa plots _and_ custom axes in the same plot
+    if custom_axes != None and isdir(input_coords):
+        option_parser.error('You cannot use the \'--custom_axes\' option with a'
+            ' jackknifed plot (the input as a directory); please use one or the'
+            ' other but not both')
+
     # before creating any output, check correct parsing of the main input files
     try:
         mapping_data, header, comments = parse_mapping_file(open(map_fp,'U'))
