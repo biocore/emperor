@@ -26,6 +26,7 @@ var particle;       //generic particle use for plots
 var scene;          //scene that holds the plot
 var group;          //group that holds the plotted shapes
 var camera;			//plot camera
+var light;
 var max; 			//maximum value of a plot, used for camera placement
 var category = "";	//current coloring category
 var catIndex = 0;	//current coloring category index
@@ -99,6 +100,11 @@ function toggle_scale_coordinates(element){
 	camera.position.set(operation(camera.position.x, percents[0]),
 		operation(camera.position.y, percents[0]),
 		operation(camera.position.z, percents[0]))
+
+	// scale the position of the light
+	light.position.set(operation(light.position.x, percents[0]),
+		operation(light.position.y, percents[0]),
+		operation(light.position.z, percents[0]));
 
 	// scale the axis lines
 	axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),
@@ -965,42 +971,14 @@ $(document).ready(function() {
 		
 	  var axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));	  
 	  debugaxis(axesLen, min_x, min_y, min_z);
-	  //debugaxis(axesLen, 0, 0, 0);
 	  buildAxisLabels()
-      // lights
-      var light = new THREE.DirectionalLight( 0xffffff, 2 );
-	  light.position.set( 1, 1, 1 ).normalize();
-	  scene.add( light );
-      
-	  var light = new THREE.DirectionalLight( 0xffffff );
-	  light.position.set( -1, -1, -1 ).normalize();
-	  scene.add( light );
-				
-      // light1 = new THREE.DirectionalLight( 0xffffff );
-      // light1.position.set( max, 0, 0 );
-      // scene.add( light1 );
-      // light2 = new THREE.DirectionalLight( 0xffffff );
-      // light2.position.set( -max, 0, 0 );
-      // scene.add( light2 );
-      // 
-      // light3 = new THREE.DirectionalLight( 0xffffff );
-      // light3.position.set( 0, max, 0 );
-      // scene.add( light3 );
-      // light4 = new THREE.DirectionalLight( 0xffffff );
-      // light4.position.set( 0, -max, 0 );
-      // scene.add( light4 );
-      // 
-      // light5 = new THREE.DirectionalLight( 0xffffff );
-      // light5.position.set( 0, 0, max );
-      // scene.add( light5 );
-      // light6 = new THREE.DirectionalLight( 0xffffff );
-      // light6.position.set( 0, 0, -max );
-      // scene.add( light6 );
-      
+
+      // the light is attached to the camera to provide a 3d perspective
+      light = new THREE.DirectionalLight(0x999999, 2);
+	  light.position.set(1,1,1).normalize();
+	  camera.add(light);
+
       // Adding camera
-	  
-	  
-      light = new THREE.DirectionalLight( 0xffffff );
 	  controls = new THREE.TrackballControls(camera, document.getElementById('main_plot'));
       controls.rotateSpeed = 1.0;
       controls.zoomSpeed = 1.2;
