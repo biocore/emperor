@@ -26,6 +26,7 @@ var particle;       //generic particle use for plots
 var scene;          //scene that holds the plot
 var group;          //group that holds the plotted shapes
 var camera;			//plot camera
+var light;
 var max; 			//maximum value of a plot, used for camera placement
 var category = "";	//current coloring category
 var catIndex = 0;	//current coloring category index
@@ -99,6 +100,11 @@ function toggle_scale_coordinates(element){
 	camera.position.set(operation(camera.position.x, percents[0]),
 		operation(camera.position.y, percents[0]),
 		operation(camera.position.z, percents[0]))
+
+	// scale the position of the light
+	light.position.set(operation(light.position.x, percents[0]),
+		operation(light.position.y, percents[0]),
+		operation(light.position.z, percents[0]));
 
 	// scale the axis lines
 	axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),
@@ -968,7 +974,7 @@ $(document).ready(function() {
 	  buildAxisLabels()
 
       // the light is attached to the camera to provide a 3d perspective
-      var light = new THREE.DirectionalLight(0x999999, 2);
+      light = new THREE.DirectionalLight(0x999999, 2);
 	  light.position.set(1,1,1).normalize();
 	  camera.add(light);
 
