@@ -79,7 +79,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[]):
             # scale the percent so it's a number from 0 to 1
             js_pcts.append('%f' % (float(element)/100))
         except ValueError:
-            js_pcts.append('1.0')
+            js_pcts.append('%f' % (float(pct_var[0]/100)))
     js_pcoa_string += 'var percents = [%s];\n' % ', '.join(js_pcts)
 
     return js_pcoa_string
