@@ -34,7 +34,10 @@ var keyBuilt = false;
 var animationSpeed = 60;
 var time;
 var visiblePoints = 0;
-
+var x_axis_line;
+var y_axis_line;
+var z_axis_line;
+var sphere_scaler = 1.0;
 
 /* This function recenters the camera, needs to be fixed so that it
 actually resets to the original position */
@@ -54,6 +57,78 @@ function dedupe(list) {
    for (var obj in set)
 	  list.push(obj);
    return list;
+}
+
+/* call back to the scale coordinates UI element in the options tab */
+function toggle_scale_coordinates(element){
+
+	var axesLen;
+	var operation;
+
+	// modifying the properties basically requires to create the elemnts
+	// again from scratch, so just remove them from scene and re-build them
+	// the lines are all global variables hence just a call to remove them
+	scene.remove(x_axis_line);
+	scene.remove(y_axis_line);
+	scene.remove(z_axis_line);
+
+	// XOR operation for the checkbox widget, this will select an operation
+	// to perform over various properties, either a multiplication or a division
+	if(element.checked == true){
+		operation = function(a, b){return a*b};
+		sphere_scaler = percents[0];
+	}
+	else{
+		operation = function(a, b){return a/b};
+		sphere_scaler = 1;
+	}
+
+	// force an update of the size of the spheres
+	$("#sradiusslider").slider("value",$("#sradiusslider").slider("value"));
+
+	// scale other properties
+	max_x = operation(max_x,percents[0]);
+	max_y = operation(max_y,percents[1]);
+	max_z = operation(max_z,percents[2]);
+	min_x = operation(min_x,percents[0]);
+	min_y = operation(min_y,percents[1]);
+	min_z = operation(min_z,percents[2]);
+	max = operation(max, percents[0])
+
+	// scale the position of the camera according to pc1
+	camera.position.set(operation(camera.position.x, percents[0]),
+		operation(camera.position.y, percents[0]),
+		operation(camera.position.z, percents[0]))
+
+	// scale the axis lines
+	axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),
+		max_z+Math.abs(min_z));
+	debugaxis(axesLen, min_x, min_y, min_z);
+
+	// set the new position of each of the sphere objects
+	for (sample_id in plotSpheres){
+		// scale the position of the spheres
+		plotSpheres[sample_id].position.set(
+			operation(plotSpheres[sample_id].position.x,percents[0]),
+			operation(plotSpheres[sample_id].position.y,percents[1]),
+			operation(plotSpheres[sample_id].position.z,percents[2]));
+	}
+
+	// ellipses won't always be available hence the two separate loops
+	for (sample_id in plotEllipses){
+		// scale the dimensions of the positions of each ellipse
+		plotEllipses[sample_id].position.set(
+			operation(plotEllipses[sample_id].position.x, percents[0]),
+			operation(plotEllipses[sample_id].position.y, percents[1]),
+			operation(plotEllipses[sample_id].position.z, percents[2]));
+
+		// scale the dimensions of the ellipse
+		plotEllipses[sample_id].scale.set(
+			operation(plotEllipses[sample_id].scale.x, percents[0]),
+			operation(plotEllipses[sample_id].scale.y, percents[1]),
+			operation(plotEllipses[sample_id].scale.z, percents[2]));
+	}
+
 }
 
 /* generates a list of colors that corresponds to a list of values
@@ -543,18 +618,13 @@ function lopacitychange(ui) {
 /* handle events from the sphere radius slider */
 function sradiuschange(ui) {
 	document.getElementById('sphereradius').innerHTML = ui.value/5;
-	var scale = ui.value/5.0;
-	sphereScale = new THREE.Vector3(scale,scale,scale)
-	
-	for(var sid in plotSpheres)
-		plotSpheres[sid].scale = sphereScale;
-	
-	for(var sid in plotEllipses)
-	{
-		plotEllipses[sid].scale.x = scale*ellipses[sid]['width']/radius;
-	    plotEllipses[sid].scale.y = scale*ellipses[sid]['height']/radius;
-	    plotEllipses[sid].scale.z = scale*ellipses[sid]['length']/radius;
+	var scale = (ui.value/5.0)*sphere_scaler;
+
+	// set the value to all the spheres
+	for(var sample_id in plotSpheres){
+		plotSpheres[sample_id].scale.set(scale, scale, scale);
 	}
+
 }
 
 // function animSpeedChange(ui) {
@@ -775,6 +845,29 @@ function SVGSaved(response){
     console.log(fileName)
 }
 
+var debugaxis = function(axisLength, xstart, ystart, zstart){
+    //Shorten the vertex function
+    function v(x,y,z){ 
+            return new THREE.Vertex(new THREE.Vector3(x,y,z)); 
+    }
+
+    //Create axis (point1, point2, colour)
+    function createAxis(p1, p2, color){
+            var line, lineGeometry = new THREE.Geometry(),
+            lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 1});
+            lineMat.matrixAutoUpdate = true;
+            lineGeometry.vertices.push(p1, p2);
+            line = new THREE.Line(lineGeometry, lineMat);
+            scene.add(line);
+
+            return line;
+    }
+
+    x_axis_line = createAxis(v(xstart, ystart, zstart), v(axisLength, ystart, zstart), 0xFF0000);
+    y_axis_line = createAxis(v(xstart, ystart, zstart), v(xstart, axisLength, zstart), 0x00FF00);
+    z_axis_line = createAxis(v(xstart, ystart, zstart), v(xstart, ystart, axisLength), 0x0000FF);    
+};
+
 /* update point count label */
 function changePointCount() {
     document.getElementById('pointCount').innerHTML = visiblePoints+'/'+plotIds.length+' points'
@@ -790,7 +883,7 @@ $(document).ready(function() {
    var renderer, particles, geometry, parameters, i, h, color;
    var mouseX = 0, mouseY = 0;
    
-   var winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight), view_angle = 35, view_near = 1, view_far = 10000;
+   var winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight), view_angle = 35, view_near = 0.1, view_far = 10000;
    var winAspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
    
    $(window).resize(function() {
@@ -799,7 +892,7 @@ $(document).ready(function() {
 	  camera.aspect = winAspect;
 	  camera.updateProjectionMatrix();
    });
-   
+
    init();
    animate();
    
@@ -869,27 +962,6 @@ $(document).ready(function() {
 	       
            var rv = colorByMenuChanged();
            showByMenuChanged();
-
-	var debugaxis = function(axisLength, xstart, ystart, zstart){
-	    //Shorten the vertex function
-	    function v(x,y,z){ 
-	            return new THREE.Vertex(new THREE.Vector3(x,y,z)); 
-	    }
-    
-	    //Create axis (point1, point2, colour)
-	    function createAxis(p1, p2, color){
-	            var line, lineGeometry = new THREE.Geometry(),
-	            lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 1});
-	            lineGeometry.vertices.push(p1, p2);
-	            line = new THREE.Line(lineGeometry, lineMat);
-	            scene.add(line);
-	    }
-    
-	    createAxis(v(xstart, ystart, zstart), v(axisLength, ystart, zstart), 0xFF0000);
-	    createAxis(v(xstart, ystart, zstart), v(xstart, axisLength, zstart), 0x00FF00);
-	    createAxis(v(xstart, ystart, zstart), v(xstart, ystart, axisLength), 0x0000FF);
-	    
-	};
 		
 	  var axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));	  
 	  debugaxis(axesLen, min_x, min_y, min_z);
