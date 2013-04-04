@@ -94,21 +94,21 @@ points['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': 0.281535, 'y': 0.071066,
 points['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': -0.192383, 'y': 0.014783, 'z': -0.014787 };
 points['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': -0.293353, 'y': 0.018396, 'z': 0.032988 };
 points['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': -0.183191, 'y': 34912.621000, 'z': 0.008695 };
-var segments = 16, rings = 16, radius = 0.011498;
-var xaxislength = 0.574888;
-var yaxislength = 34912.787234;
-var zaxislength = 0.276989;
-var max_x = 0.281535;
-var max_y = 34912.621000;
-var max_z = 0.135272;
-var min_x = -0.293353;
-var min_y = -0.166234;
-var min_z = -0.141717;
+var g_segments = 16, g_rings = 16, g_radius = 0.011498;
+var g_xAxisLength = 0.574888;
+var g_yAxisLength = 34912.787234;
+var g_zAxisLength = 0.276989;
+var g_xMaximumValue = 0.281535;
+var g_yMaximumValue = 34912.621000;
+var g_zMaximumValue = 0.135272;
+var g_xMinimumValue = -0.293353;
+var g_yMinimumValue = -0.166234;
+var g_zMinimumValue = -0.141717;
 var max = 34912.621000;
-pc1 = "PC1 (27 %)";
-pc2 = "PC2 (16 %)";
-pc3 = "PC3 (14 %)";
-var percents = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
+g_pc1Label = "PC1 (27 %)";
+g_pc2Label = "PC2 (16 %)";
+g_pc3Label = "PC3 (14 %)";
+var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
 """
 
 PCOA_JS_CUSTOM_AXES = """
@@ -122,21 +122,21 @@ points[\'PC.636\'] = { \'name\': \'PC.636\', \'color\': 0, \'x\': 0.281535, \'y\
 points[\'PC.481\'] = { \'name\': \'PC.481\', \'color\': 0, \'x\': -0.192383, \'y\': 0.014783, \'z\': -0.014787 };
 points[\'PC.354\'] = { \'name\': \'PC.354\', \'color\': 0, \'x\': -0.293353, \'y\': 0.018396, \'z\': 0.032988 };
 points[\'PC.356\'] = { \'name\': \'PC.356\', \'color\': 0, \'x\': -0.183191, \'y\': 34912.621000, \'z\': 0.008695 };
-var segments = 16, rings = 16, radius = 0.011498;
-var xaxislength = 0.574888;
-var yaxislength = 34912.787234;
-var zaxislength = 0.276989;
-var max_x = 0.281535;
-var max_y = 34912.621000;
-var max_z = 0.135272;
-var min_x = -0.293353;
-var min_y = -0.166234;
-var min_z = -0.141717;
+var g_segments = 16, g_rings = 16, g_radius = 0.011498;
+var g_xAxisLength = 0.574888;
+var g_yAxisLength = 34912.787234;
+var g_zAxisLength = 0.276989;
+var g_xMaximumValue = 0.281535;
+var g_yMaximumValue = 34912.621000;
+var g_zMaximumValue = 0.135272;
+var g_xMinimumValue = -0.293353;
+var g_yMinimumValue = -0.166234;
+var g_zMinimumValue = -0.141717;
 var max = 34912.621000;
-pc1 = "Instant";
-pc2 = "PC1 (27 %)";
-pc3 = "PC2 (16 %)";
-var percents = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
+g_pc1Label = "Instant";
+g_pc2Label = "PC1 (27 %)";
+g_pc3Label = "PC2 (16 %)";
+var g_fractionExplained = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
 """
 
 PCOA_JS_JACKKNIFED = """
@@ -146,26 +146,26 @@ points[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 1.100000, \'y\
 points[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000 };
 points[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000 };
 
-var ellipses = new Array();
-ellipses[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'width\': 0.400000, \'height\': 0.500000, \'length\': 0.800000 , \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000 }
-ellipses[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'width\': 0.100000, \'height\': 2.000000, \'length\': 0.000000 , \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000 }
-ellipses[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'width\': 0.300000, \'height\': 0.600000, \'length\': 4.000000 , \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000 }
-ellipses[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'width\': 0.010780, \'height\': 1.000000, \'length\': 0.023000 , \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000 }
-var segments = 16, rings = 16, radius = 0.020000;
-var xaxislength = 1.200000;
-var yaxislength = 3.800000;
-var zaxislength = 5.600000;
-var max_x = 1.100000;
-var max_y = 3.300000;
-var max_z = 5.500000;
-var min_x = 0.100000;
-var min_y = 0.500000;
-var min_z = 0.100000;
+var g_ellipsesDimensions = new Array();
+g_ellipsesDimensions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'width\': 0.400000, \'height\': 0.500000, \'length\': 0.800000 , \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000 }
+g_ellipsesDimensions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'width\': 0.100000, \'height\': 2.000000, \'length\': 0.000000 , \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000 }
+g_ellipsesDimensions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'width\': 0.300000, \'height\': 0.600000, \'length\': 4.000000 , \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000 }
+g_ellipsesDimensions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'width\': 0.010780, \'height\': 1.000000, \'length\': 0.023000 , \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000 }
+var g_segments = 16, g_rings = 16, g_radius = 0.020000;
+var g_xAxisLength = 1.200000;
+var g_yAxisLength = 3.800000;
+var g_zAxisLength = 5.600000;
+var g_xMaximumValue = 1.100000;
+var g_yMaximumValue = 3.300000;
+var g_zMaximumValue = 5.500000;
+var g_xMinimumValue = 0.100000;
+var g_yMinimumValue = 0.500000;
+var g_zMinimumValue = 0.100000;
 var max = 5.500000;
-pc1 = "PC1 (44 %)";
-pc2 = "PC2 (40 %)";
-pc3 = "PC3 (15 %)";
-var percents = [0.440000, 0.400000, 0.150000, 0.010000];
+g_pc1Label = "PC1 (44 %)";
+g_pc2Label = "PC2 (40 %)";
+g_pc3Label = "PC3 (15 %)";
+var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
 """
 
 MAPPING_FILE_DATA = [\
@@ -179,8 +179,8 @@ MAPPING_FILE_DATA = [\
     ['PC.635','ACCGCAGAGTCA','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._635'],
     ['PC.636','ACGGTGAGTGTC','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._636']]
 
-MAPPING_FILE_JS = """var headers = ['BarcodeSequence','LinkerPrimerSequence','Treatment','DOB','Description'];
-var mapping = { 'PC.481': ['ACCAGCGACTAG','YATGCTGCCTCCCGTAGGAGT','Control','20070314','Control_mouse_I.D._481'],'PC.607': ['AACTGTGCGTAC','YATGCTGCCTCCCGTAGGAGT','Fast','20071112','Fasting_mouse_I.D._607'],'PC.634': ['ACAGAGTCGGCT','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._634'],'PC.635': ['ACCGCAGAGTCA','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._635'],'PC.593': ['AGCAGCACTTGT','YATGCTGCCTCCCGTAGGAGT','Control','20071210','Control_mouse_I.D._593'],'PC.636': ['ACGGTGAGTGTC','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._636'],'PC.355': ['AACTCGTCGATG','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._355'],'PC.354': ['AGCACGAGCCTA','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._354'],'PC.356': ['ACAGACCACTCA','YATGCTGCCTCCCGTAGGAGT','Control','20061126','Control_mouse_I.D._356'] };
+MAPPING_FILE_JS = """var g_mappingFileHeaders = ['BarcodeSequence','LinkerPrimerSequence','Treatment','DOB','Description'];
+var g_mappingFileData = { 'PC.481': ['ACCAGCGACTAG','YATGCTGCCTCCCGTAGGAGT','Control','20070314','Control_mouse_I.D._481'],'PC.607': ['AACTGTGCGTAC','YATGCTGCCTCCCGTAGGAGT','Fast','20071112','Fasting_mouse_I.D._607'],'PC.634': ['ACAGAGTCGGCT','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._634'],'PC.635': ['ACCGCAGAGTCA','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._635'],'PC.593': ['AGCAGCACTTGT','YATGCTGCCTCCCGTAGGAGT','Control','20071210','Control_mouse_I.D._593'],'PC.636': ['ACGGTGAGTGTC','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._636'],'PC.355': ['AACTCGTCGATG','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._355'],'PC.354': ['AGCACGAGCCTA','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._354'],'PC.356': ['ACAGACCACTCA','YATGCTGCCTCCCGTAGGAGT','Control','20061126','Control_mouse_I.D._356'] };
 """
 
 if __name__ == "__main__":
