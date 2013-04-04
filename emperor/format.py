@@ -51,10 +51,11 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     pcoalabels = pct_var[:3]
 
     # write the values for all the spheres
-    js_pcoa_string += '\nvar points = new Array();\n'
+    js_pcoa_string += '\nvar g_spherePositions = new Array();\n'
     for point, coord in zip(header, coords):
-        js_pcoa_string += ("points['%s'] = { 'name': '%s', 'color': 0, 'x': %f,"
-            " 'y': %f, 'z': %f };\n" % (point,point,coord[0],coord[1],coord[2]))
+        js_pcoa_string += ("g_spherePositions['%s'] = { 'name': '%s', 'color': "
+            "0, 'x': %f, 'y': %f, 'z': %f };\n" % (point, point, coord[0],
+            coord[1],coord[2]))
 
     # write the values for all the ellipses
     if coords_low != None and coords_high != None:
@@ -78,7 +79,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     js_pcoa_string += 'var g_xMinimumValue = %f;\n' % min_x
     js_pcoa_string += 'var g_yMinimumValue = %f;\n' % min_y
     js_pcoa_string += 'var g_zMinimumValue = %f;\n' % min_z
-    js_pcoa_string += 'var max = %f;\n' % maximum
+    js_pcoa_string += 'var g_maximum = %f;\n' % maximum
 
     offset = 0
     # create three vars, pc1, pc2 and pc3 if no custom_axes are passed, then use

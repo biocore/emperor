@@ -46,7 +46,7 @@ var g_keyBuilt = false;
 actually resets to the original position */
 function resetCamera() {
 	g_sceneCamera.aspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
-	g_sceneCamera.position.set( 0, 0, max*4);
+	g_sceneCamera.position.set( 0, 0, g_maximum*4);
 	g_sceneCamera.rotation.set( 0, 0, 0);
 	g_sceneCamera.updateProjectionMatrix();
 }
@@ -98,7 +98,7 @@ function toggle_scale_coordinates(element){
 	g_xMinimumValue = operation(g_xMinimumValue,g_fractionExplained[0]);
 	g_yMinimumValue = operation(g_yMinimumValue,g_fractionExplained[1]);
 	g_zMinimumValue = operation(g_zMinimumValue,g_fractionExplained[2]);
-	max = operation(max, g_fractionExplained[0])
+	g_maximum = operation(g_maximum, g_fractionExplained[0])
 
 	// scale the position of the camera according to pc1
 	g_sceneCamera.position.set(
@@ -742,13 +742,13 @@ function setEllipses() {
 }
 
 function setPoints() {
-	for(var sid in points){
+	for(var sid in g_spherePositions){
 		//draw ball
 		var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshLambertMaterial() );
 		mesh.material.color = new THREE.Color()
 		mesh.material.transparent = false;
 		mesh.material.opacity = 1;
-		mesh.position.set(points[sid]['x'], points[sid]['y'], points[sid]['z']);
+		mesh.position.set(g_spherePositions[sid]['x'], g_spherePositions[sid]['y'], g_spherePositions[sid]['z']);
 		mesh.updateMatrix();
 		mesh.matrixAutoUpdate = true;
 		if(g_mappingFileData[sid] != undefined){
@@ -839,14 +839,14 @@ $(document).ready(function() {
 		g_genericSphere = new THREE.SphereGeometry(g_radius, g_segments, g_rings);
 
 		g_sceneCamera.position.x = g_sceneCamera.position.y = 0;
-		g_sceneCamera.position.z = max * 4;
+		g_sceneCamera.position.z = g_maximum * 4;
 		g_mainScene.add(g_sceneCamera);
 
 
 		g_elementsGroup = new THREE.Object3D();
 		g_mainScene.add(g_elementsGroup);
 		setEllipses()
-		len = points.length;
+		len = g_spherePositions.length;
 		setPoints()
 		g_plotIds = g_plotIds.sort();
 		g_visiblePoints = g_plotIds.length;
@@ -882,7 +882,7 @@ $(document).ready(function() {
 		var rv = colorByMenuChanged();
 		showByMenuChanged();
 
-		var axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),g_zMaximumValue+Math.abs(g_zMinimumValue));	  
+		var axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),g_zMaximumValue+Math.abs(g_zMinimumValue));
 		debugaxis(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
 		buildAxisLabels()
 

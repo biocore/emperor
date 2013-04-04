@@ -84,16 +84,16 @@ PCOA_DATA = array([[ -1.09166142e-01, 8.77774496e-02, 1.15866606e-02, -6.2686389
 [-1.83191151e-01, 34912621e-03, 8.69481594e-03, -2.73875510e-02, -5.28648893e-02, -2.50583131e-02, -5.21415245e-02, 3.82000689e-02, 1.29849404e-09]])
 
 PCOA_JS = """
-var points = new Array();
-points['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': -0.109166, 'y': 0.087777, 'z': 0.011587 };
-points['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': 0.068896, 'y': -0.166234, 'z': -0.099830 };
-points['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': 0.204685, 'y': 0.128911, 'z': -0.029361 };
-points['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': 0.126132, 'y': -0.002660, 'z': -0.141717 };
-points['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.096847, 'y': -0.159388, 'z': 0.135272 };
-points['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': 0.281535, 'y': 0.071066, 'z': 0.097154 };
-points['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': -0.192383, 'y': 0.014783, 'z': -0.014787 };
-points['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': -0.293353, 'y': 0.018396, 'z': 0.032988 };
-points['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': -0.183191, 'y': 34912.621000, 'z': 0.008695 };
+var g_spherePositions = new Array();
+g_spherePositions['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': -0.109166, 'y': 0.087777, 'z': 0.011587 };
+g_spherePositions['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': 0.068896, 'y': -0.166234, 'z': -0.099830 };
+g_spherePositions['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': 0.204685, 'y': 0.128911, 'z': -0.029361 };
+g_spherePositions['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': 0.126132, 'y': -0.002660, 'z': -0.141717 };
+g_spherePositions['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.096847, 'y': -0.159388, 'z': 0.135272 };
+g_spherePositions['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': 0.281535, 'y': 0.071066, 'z': 0.097154 };
+g_spherePositions['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': -0.192383, 'y': 0.014783, 'z': -0.014787 };
+g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': -0.293353, 'y': 0.018396, 'z': 0.032988 };
+g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': -0.183191, 'y': 34912.621000, 'z': 0.008695 };
 var g_segments = 16, g_rings = 16, g_radius = 0.011498;
 var g_xAxisLength = 0.574888;
 var g_yAxisLength = 34912.787234;
@@ -104,7 +104,7 @@ var g_zMaximumValue = 0.135272;
 var g_xMinimumValue = -0.293353;
 var g_yMinimumValue = -0.166234;
 var g_zMinimumValue = -0.141717;
-var max = 34912.621000;
+var g_maximum = 34912.621000;
 g_pc1Label = "PC1 (27 %)";
 g_pc2Label = "PC2 (16 %)";
 g_pc3Label = "PC3 (14 %)";
@@ -112,16 +112,16 @@ var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.0
 """
 
 PCOA_JS_CUSTOM_AXES = """
-var points = new Array();
-points[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': -0.109166, \'y\': 0.087777, \'z\': 0.011587 };
-points[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 0.068896, \'y\': -0.166234, \'z\': -0.099830 };
-points[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.204685, \'y\': 0.128911, \'z\': -0.029361 };
-points[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 0.126132, \'y\': -0.002660, \'z\': -0.141717 };
-points[\'PC.593\'] = { \'name\': \'PC.593\', \'color\': 0, \'x\': 0.096847, \'y\': -0.159388, \'z\': 0.135272 };
-points[\'PC.636\'] = { \'name\': \'PC.636\', \'color\': 0, \'x\': 0.281535, \'y\': 0.071066, \'z\': 0.097154 };
-points[\'PC.481\'] = { \'name\': \'PC.481\', \'color\': 0, \'x\': -0.192383, \'y\': 0.014783, \'z\': -0.014787 };
-points[\'PC.354\'] = { \'name\': \'PC.354\', \'color\': 0, \'x\': -0.293353, \'y\': 0.018396, \'z\': 0.032988 };
-points[\'PC.356\'] = { \'name\': \'PC.356\', \'color\': 0, \'x\': -0.183191, \'y\': 34912.621000, \'z\': 0.008695 };
+var g_spherePositions = new Array();
+g_spherePositions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': -0.109166, \'y\': 0.087777, \'z\': 0.011587 };
+g_spherePositions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 0.068896, \'y\': -0.166234, \'z\': -0.099830 };
+g_spherePositions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.204685, \'y\': 0.128911, \'z\': -0.029361 };
+g_spherePositions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 0.126132, \'y\': -0.002660, \'z\': -0.141717 };
+g_spherePositions[\'PC.593\'] = { \'name\': \'PC.593\', \'color\': 0, \'x\': 0.096847, \'y\': -0.159388, \'z\': 0.135272 };
+g_spherePositions[\'PC.636\'] = { \'name\': \'PC.636\', \'color\': 0, \'x\': 0.281535, \'y\': 0.071066, \'z\': 0.097154 };
+g_spherePositions[\'PC.481\'] = { \'name\': \'PC.481\', \'color\': 0, \'x\': -0.192383, \'y\': 0.014783, \'z\': -0.014787 };
+g_spherePositions[\'PC.354\'] = { \'name\': \'PC.354\', \'color\': 0, \'x\': -0.293353, \'y\': 0.018396, \'z\': 0.032988 };
+g_spherePositions[\'PC.356\'] = { \'name\': \'PC.356\', \'color\': 0, \'x\': -0.183191, \'y\': 34912.621000, \'z\': 0.008695 };
 var g_segments = 16, g_rings = 16, g_radius = 0.011498;
 var g_xAxisLength = 0.574888;
 var g_yAxisLength = 34912.787234;
@@ -132,7 +132,7 @@ var g_zMaximumValue = 0.135272;
 var g_xMinimumValue = -0.293353;
 var g_yMinimumValue = -0.166234;
 var g_zMinimumValue = -0.141717;
-var max = 34912.621000;
+var g_maximum = 34912.621000;
 g_pc1Label = "Instant";
 g_pc2Label = "PC1 (27 %)";
 g_pc3Label = "PC2 (16 %)";
@@ -140,11 +140,11 @@ var g_fractionExplained = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.1
 """
 
 PCOA_JS_JACKKNIFED = """
-var points = new Array();
-points[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000 };
-points[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000 };
-points[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000 };
-points[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000 };
+var g_spherePositions = new Array();
+g_spherePositions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000 };
+g_spherePositions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000 };
+g_spherePositions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000 };
+g_spherePositions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000 };
 
 var g_ellipsesDimensions = new Array();
 g_ellipsesDimensions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'width\': 0.400000, \'height\': 0.500000, \'length\': 0.800000 , \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000 }
@@ -161,7 +161,7 @@ var g_zMaximumValue = 5.500000;
 var g_xMinimumValue = 0.100000;
 var g_yMinimumValue = 0.500000;
 var g_zMinimumValue = 0.100000;
-var max = 5.500000;
+var g_maximum = 5.500000;
 g_pc1Label = "PC1 (44 %)";
 g_pc2Label = "PC2 (40 %)";
 g_pc3Label = "PC3 (15 %)";
