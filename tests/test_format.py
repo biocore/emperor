@@ -94,6 +94,8 @@ g_spherePositions['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': 0.281535, 'y'
 g_spherePositions['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': -0.192383, 'y': 0.014783, 'z': -0.014787 };
 g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': -0.293353, 'y': 0.018396, 'z': 0.032988 };
 g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': -0.183191, 'y': 34912.621000, 'z': 0.008695 };
+
+var g_ellipsesDimensions = new Array();
 var g_segments = 16, g_rings = 16, g_radius = 0.011498;
 var g_xAxisLength = 0.574888;
 var g_yAxisLength = 34912.787234;
@@ -122,6 +124,8 @@ g_spherePositions[\'PC.636\'] = { \'name\': \'PC.636\', \'color\': 0, \'x\': 0.2
 g_spherePositions[\'PC.481\'] = { \'name\': \'PC.481\', \'color\': 0, \'x\': -0.192383, \'y\': 0.014783, \'z\': -0.014787 };
 g_spherePositions[\'PC.354\'] = { \'name\': \'PC.354\', \'color\': 0, \'x\': -0.293353, \'y\': 0.018396, \'z\': 0.032988 };
 g_spherePositions[\'PC.356\'] = { \'name\': \'PC.356\', \'color\': 0, \'x\': -0.183191, \'y\': 34912.621000, \'z\': 0.008695 };
+
+var g_ellipsesDimensions = new Array();
 var g_segments = 16, g_rings = 16, g_radius = 0.011498;
 var g_xAxisLength = 0.574888;
 var g_yAxisLength = 34912.787234;
