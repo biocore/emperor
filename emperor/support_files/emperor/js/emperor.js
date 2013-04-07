@@ -16,11 +16,6 @@ var g_plotEllipses = {};
 // sample identifiers of all items that are plotted
 var g_plotIds = [];
 
-// labels for the axes: a percent expalined of the name of the custom axis
-var g_pc1Label;
-var g_pc2Label;
-var g_pc3Label;
-
 // line objects used to represent the axes
 var g_xAxisLine;
 var g_yAxisLine;
@@ -846,8 +841,9 @@ $(document).ready(function() {
 		g_elementsGroup = new THREE.Object3D();
 		g_mainScene.add(g_elementsGroup);
 		setEllipses()
-		len = g_spherePositions.length;
 		setPoints()
+
+		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
 		g_visiblePoints = g_plotIds.length;
 		changePointCount(g_visiblePoints)
@@ -865,13 +861,7 @@ $(document).ready(function() {
 				}
 				temp.push(g_mappingFileData[g_plotIds[j]][i])
 			}
-
 			temp = dedupe(temp);
-
-			// get rid of categories that have only one value
-			if(temp.length == 1){
-				continue;
-			}
 
 			line = "<option value=\""+g_mappingFileHeaders[i]+"\">"+g_mappingFileHeaders[i]+"</option>"
 			$("#colorbycombo").append(line);
