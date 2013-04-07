@@ -37,6 +37,43 @@ class TopLevelTests(TestCase):
 
         self.coords_header = ['PC.355', 'PC.635', 'PC.636', 'PC.354']
         self.coords_data = COORDS_DATA
+        self.coords_eigenvalues = array([1, 2, 3, 4])
+        self.coords_pct = array([40, 30, 20, 10])
+
+        # jackknifed test data
+        self.jk_mapping_file_headers = ['SampleID', 'C2', 'C3', 'C4']
+        self.jk_mapping_file_data = [['1', 'a', 'b', 'c'], ['2', 'd', 'e', 'f'],
+            ['3', 'g', 'h', 'i']]
+        self.jk_coords_header = [['1', '2', '3'], ['1', '2', '3'],
+            ['1', '2', '3'], ['1', '2', '3']]
+        self.jk_coords_data = [array([[1.2, 0.1, -1.2],[-2.5, -4.0, 4.5]]),
+            array([[-1.4, 0.05, 1.3],[2.6, 4.1, -4.7]]),
+            array([[-1.5, 0.05, 1.6],[2.4, 4.0, -4.8]]),
+            array([[-1.5, 0.05, 1.6],[2.4, 4.0, -4.8]])]
+        self.jk_coords_eigenvalues = [array([0.80, .11, 0.09]), array([0.76,
+            .20,0.04]), array([0.84, .14, 0.02]), array([0.84, .11, 0.05])]
+        self.jk_coords_pcts = [array([0.80, .10, 0.10]), array([0.76, .21,
+            0.03]), array([0.84, .11, 0.05]), array([0.84, .15, 0.01])]
+
+        self.jk_mapping_file_data_gradient = MAPPING_FILE_DATA_GRADIENT
+        self.jk_mapping_file_headers_gradient = ['SampleID', 'Treatment','Time',
+            'Weight', 'Description']
+        self.jk_coords_header_gradient = [['PC.354','PC.355','PC.635','PC.636'],
+            ['PC.354','PC.355','PC.635','PC.636'], ['PC.354','PC.355','PC.635',
+            'PC.636'], ['PC.354','PC.355','PC.635','PC.636']]
+        self.jk_coords_data_gradient = [array([[1.2, 0.1, -1.2, 1.1],[-2.5,
+            -4.0, 4.5, 0.3], [.5, -0.4, 3.5, 1.001], [0.67, 0.23, 1.01, 2.2]]),
+            array([[1.2, 1, -0.2, 0.1],[-2.5, -4.0, 4.5, 3.2], [.5, -0.4, 3.5,
+            1.00], [0.57, 0.27, 0.95, 2.1]]), array([[1.0, 1, -1.2, 1.1],[-2.1,
+            -2.0, 3.5, 0.3], [.5, 3, 3.5, 2], [0.60, 0.33, 1.3, 2.0]]), array([
+            [1.2, 0.1, -1.2, 1.1],[-2.5,-4.0, 4.5, 0.3], [.5, -0.4, 3.5, 1.001],
+            [0.69, 0.20, 1.01, 2.2]])]
+        self.jk_coords_eigenvalues_gradient = [array([0.80, .11, 0.09, 0.0]),
+            array([0.76, .20,0.04, 0.0]), array([0.84, .14, 0.02, 0.0]), array([
+            0.84, .11, 0.05, 0.0])]
+        self.jk_coords_pcts_gradient = [array([0.80, .10, 0.10, 0.0]), array(
+            [0.76, .21, 0.03, 0.0]), array([0.84, .11, 0.05, 0.0]), array([0.84,
+            .15, 0.01, 0])]
 
         self.broken_mapping_file_data = BROKEN_MAPPING_FILE
 
@@ -118,10 +155,11 @@ class TopLevelTests(TestCase):
         """Check correct processing is applied to the coords"""
 
         # case with custom axes
-        out_coords_header, out_coords_data = preprocess_coords_file(
-            self.coords_header, self.coords_data,
-            self.mapping_file_headers_gradient, self.mapping_file_data_gradient,
-            ['Time'])
+        out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
+            out_coords_low, out_coords_high = preprocess_coords_file(
+            self.coords_header, self.coords_data, self.coords_eigenvalues,
+            self.coords_pct, self.mapping_file_headers_gradient,
+            self.mapping_file_data_gradient, ['Time'])
 
         expected_coords_data = array([[ 0.03333333, -0.2, -0.1,0.06, -0.06],
            [0.03333333, -0.3, 0.04, -0.1,0.15],
@@ -129,6 +167,10 @@ class TopLevelTests(TestCase):
            [-0.3, 0.04, -0.01,  0.06, -0.34]])
 
         self.assertEquals(out_coords_header, self.coords_header)
+        self.assertEquals(out_coords_high, None)
+        self.assertEquals(out_coords_low, None)
+        self.assertEquals(self.coords_eigenvalues, array([1, 2, 3, 4]))
+        self.assertEquals(self.coords_pct, array([40, 30, 20, 10]))
 
         # check each individual value because currently cogent assertEquals
         # fails when comparing the whole matrix at once
@@ -136,6 +178,59 @@ class TopLevelTests(TestCase):
             for out_el_sub, exp_el_sub in zip(out_el, exp_el):
                 self.assertAlmostEquals(out_el_sub, exp_el_sub)        
 
+        # case for jackknifing, based on qiime/tests/test_util.summarize_pcoas
+        out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
+            out_coords_low, out_coords_high = preprocess_coords_file(
+            self.jk_coords_header, self.jk_coords_data,
+            self.jk_coords_eigenvalues, self.jk_coords_pcts,
+            self.jk_mapping_file_headers, self.jk_mapping_file_data,
+            jackknifing_method='sdev')
+
+        self.assertEquals(out_coords_header, ['1', '2', '3'])
+        self.assertFloatEqual(out_coords_data, array([[1.46666666667, -0.05,
+            -1.5], [-2.46666666667, -4.03333333333, 4.76666666667]]))
+        self.assertFloatEqual(out_eigenvals, array([0.813333333333, 0.15,
+            0.0366666666667]))
+        self.assertFloatEqual(out_pcts, array([0.8, 0.1, 0.1]))
+
+        # test the coords are working fine
+        self.assertFloatEqual(out_coords_low, array([[-0.0288675134595,
+            -4.24918736097e-18, -0.0866025403784], [-0.057735026919,
+            -0.0288675134595, -0.0288675134595]]))
+        self.assertFloatEqual(out_coords_high, array([[0.0288675134595,
+            4.24918736097e-18, 0.0866025403784], [0.057735026919,
+            0.0288675134595, 0.0288675134595]]))
+
+        # test custom axes and jackknifed plots
+        out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
+            out_coords_low, out_coords_high = preprocess_coords_file(
+            self.jk_coords_header_gradient, self.jk_coords_data_gradient,
+            self.jk_coords_eigenvalues_gradient, self.jk_coords_pcts_gradient,
+            self.jk_mapping_file_headers_gradient,
+            self.jk_mapping_file_data_gradient, custom_axes=['Time'],
+            jackknifing_method='sdev')
+
+
+        self.assertEquals(out_coords_header, ['PC.354', 'PC.355', 'PC.635',
+            'PC.636'])
+        self.assertFloatEqual(out_coords_data, array([[-2.36666667, 1.13333333,
+            0.7, -0.86666667, 0.76666667], [ 0.72222222, -2.36666667,
+            -3.33333333,  4.16666667,  1.26666667], [ 0.72222222, 0.5,
+            0.73333333, 3.5, 1.33366667], [ 2.26666667, 0.62, 0.26666667,
+            1.08666667, 2.1]]))
+        self.assertFloatEqual(out_eigenvals, array([ 0.81333333, 0.15,
+            0.03666667,0.]))
+        self.assertFloatEqual(out_pcts, array([ 0.8, 0.1, 0.1, 0.]))
+
+        # test the coords are working fine
+        self.assertFloatEqual(out_coords_low, array([[0,-0.25980762,-0.28867513,
+            -0.28867513], [0, -0.57735027, -0.28867513, -0.83715789], [0,
+            -0.98149546, 0, -0.28853091],[0.,-0.03253204,-0.09358597,-0.05]]))
+        self.assertFloatEqual(out_coords_high, array([[1.00000000e-05,
+            2.59807621e-01, 2.88675135e-01, 2.88675135e-01], [1.00000000e-05,
+            5.77350269e-01, 2.88675135e-01, 8.37157890e-01], [1.00000000e-05,
+            9.81495458e-01, 0.00000000e+00, 2.88530905e-01], [1.00000000e-05,
+            3.25320355e-02, 9.35859676e-02, 5.00000000e-02]]))
 
     def test_fill_mapping_field_from_mapping_file(self):
         """Check the values are being correctly filled in"""

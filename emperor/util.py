@@ -12,13 +12,16 @@ __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 
+from numpy import ndarray, array, ones, zeros
+
 from os.path import abspath, dirname, join, exists
 
 from copy import deepcopy
 from qiime.format import format_mapping_file
 from qiime.filter import filter_mapping_file
-from qiime.util import qiime_system_call, create_dir, MetadataMap
 from qiime.parse import mapping_file_to_dict, parse_metadata_state_descriptions
+from qiime.util import (qiime_system_call, create_dir, MetadataMap,
+    summarize_pcoas)
 from qiime.make_3d_plots import (get_custom_coords, remove_nans,
     scale_custom_coords)
 
@@ -171,36 +174,91 @@ def keep_columns_from_mapping_file(data, headers, columns, negate=False):
 
     return data, headers
 
-def preprocess_coords_file(coords_header, coords_data, mapping_header,
-                        mapping_data, custom_axes=None):
+def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
+                        coords_pct, mapping_header, mapping_data,
+                        custom_axes=None, jackknifing_method=None):
     """Process a PCoA data and handle customizations in the contents
 
     Inputs:
-    coords_header: list of sample identifiers in the PCoA file
-    coords_data: matrix of coordinates in the PCoA file
+    coords_header: list of sample identifiers in the PCoA file _or_ list of
+    lists with sample identifiers for each coordinate file (if jackknifing)
+    coords_data: matrix of coordinates in the PCoA file _or_ list of numpy
+    arrays with coordinates for each file (if jackknifing)
+    coords_eigenvals: numpy array with eigenvalues for the coordinates file _or_
+    list of numpy arrays with the eigenvalues (if jackknifing)
+    coords_pct: numpy array with a the percent explained by each principal
+    coordinates axis _or_ a list of lists with numpy arrays (if jackknifing)
     mapping_header: mapping file headers names
     mapping_data: mapping file data
-
     custom_axes: name of the mapping data fields to add to coords_data
+    jackknifing_method: one of 'sdev' or 'IRQ', defaults to None, for more info
+    see qiime.util.summarize_pcoas
 
     Outputs:
     coords_header: list of sample identifiers in the PCoA file
     coords_data: matrix of coordinates in the PCoA file with custom_axes if
     provided
+    coords_eigenvalues: either the eigenvalues of the input coordinates or the
+    average eigenvalues of the multiple coords that were passed in
+    coords_pct: list of percents explained by each axis as given by the master
+    coordinates i. e. the center around where the values revolve
+    coords_low: coordinates representing the lower edges of an ellipse; None if
+    no jackknifing is applied
+    coords_high: coordinates representing the highere edges of an ellipse; None
+    if no jackknifing is applied
 
     This controller function handles any customization that has to be done to
-    the PCoA data.
+    the PCoA data prior to the formatting. Note that the first element in each
+    list (coords, headers, eigenvalues & percents) will be considered the master
+    set of coordinates.
     """
     mapping_file = [mapping_header] + mapping_data
     coords_file = [coords_header, coords_data]
 
-    if custom_axes:
-        # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
-        get_custom_coords(custom_axes, mapping_file, coords_file)
-        remove_nans(coords_file)
-        scale_custom_coords(custom_axes, coords_file)
+    if custom_axes and type(coords_data) == ndarray:
+            # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
+            get_custom_coords(custom_axes, mapping_file, coords_file)
+            remove_nans(coords_file)
+            scale_custom_coords(custom_axes, coords_file)
+    if type(coords_data) == list:
+        # take the first pcoa file as the master set of coordinates
+        master_pcoa = [coords_header.pop(0), coords_data.pop(0),
+            coords_eigenvals.pop(0), coords_pct.pop(0)]
 
-    return coords_file[0], coords_file[1]
+        # support pcoas must be a list of lists where each list contain
+        # all the elements that compose a coordinates file
+        support_pcoas = [[h, d, e, p] for h, d, e, p in zip(coords_header,
+            coords_data, coords_eigenvals, coords_pct)]
+
+        # do not apply procrustes, at least not for now
+        coords_data, coords_low, coords_high, eigenvalues_average,\
+            identifiers = summarize_pcoas(master_pcoa, support_pcoas,
+                method=jackknifing_method, apply_procrustes=False)
+
+        # custom axes an jackknifing is a tricky thing to do, you only have to
+        # add the custom values to the master file which is represented as the
+        # coords_data return value. Since there is really no variation in that
+        # axis then you have to change the values of coords_high and of
+        # coords_low to something really small so the WebGL work properly
+        if custom_axes:
+            coords_file = [master_pcoa[0], coords_data]
+            get_custom_coords(custom_axes, mapping_file, coords_file)
+            remove_nans(coords_file)
+            scale_custom_coords(custom_axes, coords_file)
+
+            # this opens support for as many custom axes as needed
+            axes = len(custom_axes)
+            coords_low[:, 0:axes] = zeros([coords_low.shape[0], axes])
+            coords_high[:, 0:axes] = ones([coords_high.shape[0], axes])*0.00001
+            coords_data = coords_file[1]
+
+        # return a value containing coords_low and coords_high
+        return identifiers, coords_data, eigenvalues_average, master_pcoa[3],\
+            coords_low, coords_high,
+
+    # if no coords summary is applied, return None in the correspoinding values
+    return coords_file[0], coords_file[1], coords_eigenvals, coords_pct, None,\
+        None
 
 def _is_numeric(x):
     """Return true if x is a numeric value, return false else
@@ -250,7 +308,7 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
 
         # fill in the data
         for line in out_data:
-            if _is_numeric(line[header_index]) == False:
+            if criteria(line[header_index]) == False:
                 line[header_index] = value[0]
 
     return out_data

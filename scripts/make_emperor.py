@@ -11,7 +11,9 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
-from os.path import join, exists
+from os import listdir
+from os.path import join, exists, isdir
+
 from qiime.filter import filter_mapping_file
 from qiime.parse import parse_mapping_file, parse_coords, mapping_file_to_dict
 from qiime.util import (parse_command_line_parameters, make_option, create_dir,
@@ -43,7 +45,18 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     ("PCoA plot with an explicit axis", "Create a PCoA plot with an axis of "
     "the plot representing the 'DOB' of the samples. This option is useful when"
     " presenting a gradient from your metadata e. g. 'Time' or 'pH': ", "%prog "
-    "-i unweighted_unifrac_pc.txt -m Fasting_Map.txt -a DOB -o pcoa_dob")]
+    "-i unweighted_unifrac_pc.txt -m Fasting_Map.txt -a DOB -o pcoa_dob"),
+    ("Jackknifed principal coordinates analysis plot", "Create a jackknifed "
+    "PCoA plot (with confidence intervals for each sample) passing as the input"
+    " a directory of coordinates files (where each file corresponds to a "
+    "different OTU table) and use the standard deviation method to compute the "
+    "dimensions of the ellipsoids surrounding each sample: ", "%prog -i "
+    "unweighted_unifrac_pc -m Fasting_Map.txt -o jackknifed_pcoa -s sdev"),
+    ("Jackknifed PCoA plot with a master coordinates file", "Passing a master "
+    "coordinates file (--master_pcoa) will display the ellipsoids centered by "
+    "the samples in this file: ", "%prog -i unweighted_unifrac_pc -s "
+    "unweighted_unifrac_pc/unweighted_unifrac_pc_120_7.txt -m Fasting_Map.txt "
+    "-o jackknifed_with_master")]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'emperor.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening emperor.html with "+\
@@ -51,8 +64,10 @@ script_info['output_description']= "This script creates an output directory "+\
     "visualization of the processed PCoA data file and the corresponding "+\
     "metadata mapping file."
 script_info['required_options'] = [
-    make_option('-i','--pcoa_fp',type="existing_filepath",help='path to a PCoA'
-    ' file'),
+    make_option('-i','--input_coords',type="existing_path",help='Path to a '
+    'coordinates file to create a PCoA plot. Alternatively a path to a '
+    'directory containing only coordinates files to create a jackknifed PCoA '
+    'plot.'),
     make_option('-m','--map_fp',type="existing_filepath",help='path to a '
     'metadata mapping file')
 ]
@@ -76,11 +91,21 @@ script_info['optional_options'] = [
     'separating them without spaces. The user can also combine columns in'
     ' the mapping file by separating the categories by "&&" without spaces. '
     '[default=color by all categories]', default=''),
+    make_option('-e', '--ellipsoid_method', help='Used only when plotting '
+    'ellipsoids for jackknifed beta diversity (i.e. using a directory of coord '
+    'files instead of a single coord file). Valid values are "IQR" (for '
+    'inter-quartile ranges) and "sdev" (for standard deviation). '
+    '[default=%default]', default='IQR', type='choice', choices=['IQR','sdev']),
      make_option('--ignore_missing_samples', help='This will overpass the error'
     ' raised when the coordinates file contains samples that are not present in'
     ' the mapping file. Be aware that this is very misleading as the PCoA is '
     'accounting for all the samples and removing some samples could lead to '
     ' erroneous/skewed interpretations.', action='store_true', default=False),
+    make_option('-s', '--master_pcoa', help='Used only when plotting ellipsoids'
+    ' for jackknifed beta diversity (i.e. using a directory of coord files'
+    ' instead of a single coord file). The coordinates in this file will be the'
+    ' center of each ellipisoid. [default: arbitrarily selected file from the '
+    'input directory]', default=None, type='existing_filepath'),
     make_option('-x', '--missing_custom_axes_values', help='Option to override '
     'the error shown when the \'--custom_axes\' categories, have non-numeric '
     'values in the mapping file. For example, if you wanted to see all the '
@@ -95,7 +120,7 @@ script_info['version'] = __version__
 
 def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
-    pcoa_fp = opts.pcoa_fp
+    input_coords = opts.input_coords
     map_fp = opts.map_fp
     output_dir = opts.output_dir
     color_by_column_names = opts.color_by
@@ -103,20 +128,22 @@ def main():
     custom_axes = opts.custom_axes
     ignore_missing_samples = opts.ignore_missing_samples
     missing_custom_axes_values = opts.missing_custom_axes_values
+    jackknifing_method = opts.ellipsoid_method
+    master_pcoa = opts.master_pcoa
 
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
     offending_fields = []
     non_numeric_categories = []
 
+    # can't do averaged pcoa plots _and_ custom axes in the same plot
+    if custom_axes!=None and len(custom_axes.split(','))>1 and\
+        isdir(input_coords):
+        option_parser.error(('Jackknifed plots are limited to one custom axis, '
+            'currently trying to use: %s. Make sure you use only one.' %
+            custom_axes))
+
     # before creating any output, check correct parsing of the main input files
-    try:
-        coords_headers, coords_data, coords_eigenvalues, coords_pct =\
-            parse_coords(open(pcoa_fp,'U'))
-    except:
-        option_parser.error(('The PCoA file \'%s\' does not seem to be a '
-            'coordinates formatted file, verify by manuall inspecting '
-            'the contents.') % pcoa_fp)
     try:
         mapping_data, header, comments = parse_mapping_file(open(map_fp,'U'))
     except:
@@ -124,9 +151,79 @@ def main():
             'to be formatted correctly, verify the formatting is QIIME '
             'compliant by using check_id_map.py') % map_fp)
 
-    # number of samples ids that are shared between coords and mapping files
-    sids_intersection = list(set(zip(*mapping_data)[0]) & set(coords_headers))
-    number_intersected_sids = len(sids_intersection)
+    # dir means jackknifing type of processing
+    if isdir(input_coords):
+        offending_coords_fp = []
+        coords_headers, coords_data, coords_eigenvalues, coords_pct=[],[],[],[]
+
+        # iterate only over the non-hidden files
+        coord_fps = [join(input_coords, f) for f in listdir(input_coords)
+            if not f.startswith('.')]
+
+        if not coord_fps:
+            option_parser.error('The input path is empty; if passing a folder '
+                'as the input, please make sure it contains coordinates files.')
+
+        # the master pcoa must be the first in the list of coordinates
+        if master_pcoa:
+            if master_pcoa in coord_fps: # remove it if duplicated
+                coord_fps.remove(master_pcoa)
+            coord_fps = [master_pcoa] + coord_fps # prepend it to the list
+
+        for fp in coord_fps:
+            try:
+                _coords_headers, _coords_data, _coords_eigenvalues,_coords_pct=\
+                    parse_coords(open(fp,'U'))
+
+                # pack all the data correspondingly
+                coords_headers.append(_coords_headers)
+                coords_data.append(_coords_data)
+                coords_eigenvalues.append(_coords_eigenvalues)
+                coords_pct.append(_coords_pct)
+            except:
+                offending_coords_fp.append(fp)
+
+        # in case there were files that couldn't be parsed
+        if offending_coords_fp:
+            option_parser.error(('The following file(s): \'%s\' could not be '
+                'parsed properly. Make sure the input folder only contains '
+                'coordinates files.') % ', '.join(offending_coords_fp))
+
+        # check all files contain the same sample identifiers by flattening the
+        # list of available sample ids and returning the sample ids that are
+        # in one of the sets of sample ids but not in the globablly shared ids
+        non_shared_ids = set(sum([list(set(sum(coords_headers, []))^set(e))
+            for e in coords_headers],[]))
+        if non_shared_ids and len(coords_headers) > 1:
+            option_parser.error(('The following sample identifier(s): \'%s\''
+                'are not shared between all the files. The files used to '
+                'make a jackknifed PCoA plot must share all the same sample '
+                'identifiers') % ', '.join(list(non_shared_ids)))
+
+        # flatten the list of lists into a 1-d list
+        _coords_headers = list(set(sum(coords_headers, [])))
+
+        # number of samples ids that are shared between coords and mapping files
+        sids_intersection=list(set(zip(*mapping_data)[0])&set(_coords_headers))
+
+        # used to perform different validations in the script, very similar for
+        # the case where the input is not a directory
+        number_intersected_sids = len(sids_intersection)
+        required_number_of_sids = len(coords_headers[0])
+
+    else:
+        try:
+            coords_headers, coords_data, coords_eigenvalues, coords_pct =\
+                parse_coords(open(input_coords,'U'))
+        except:
+            option_parser.error(('The PCoA file \'%s\' does not seem to be a '
+                'coordinates formatted file, verify by manuall inspecting '
+                'the contents.') % input_coords)
+
+        # number of samples ids that are shared between coords and mapping files
+        sids_intersection = list(set(zip(*mapping_data)[0])&set(coords_headers))
+        number_intersected_sids = len(sids_intersection)
+        required_number_of_sids = len(coords_headers)
 
     # sample ids must be shared between files
     if number_intersected_sids <= 0:
@@ -138,12 +235,12 @@ def main():
     # the intersection of the sample ids in the coords and the sample ids in the
     # mapping file must at the very least include all ids in the coords file
     # Otherwise it isn't valid; unless --ignore_missing_samples is set True
-    if number_intersected_sids!=len(coords_headers) and\
+    if number_intersected_sids != required_number_of_sids and\
         not ignore_missing_samples:
         option_parser.error('The metadata mapping file has fewer sample '
             'identifiers than the coordinates file. Verify you are using a '
             'mapping file that contains at least all the samples contained in '
-            'the coordinates file. You can force the script to ignore these '
+            'the coordinates file(s). You can force the script to ignore these '
             ' samples by passing the \'--ignore_missing_samples\' flag.')
 
     # ignore samples that exist in the coords but not in the mapping file, note:
@@ -208,8 +305,10 @@ def main():
     mapping_data, header = preprocess_mapping_file(mapping_data, header,
         color_by_column_names, unique=not add_unique_columns)
 
-    coords_headers, coords_data = preprocess_coords_file(coords_headers,
-        coords_data, header, mapping_data, custom_axes)
+    coords_headers, coords_data, coords_eigenvalues, coords_pct, coords_low,\
+        coords_high = preprocess_coords_file(coords_headers, coords_data,
+        coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
+        jackknifing_method=jackknifing_method)
 
     # use the current working directory as default
     if opts.output_dir:
@@ -224,7 +323,7 @@ def main():
     # write the html file
     fp_out.write(format_mapping_file_to_js(mapping_data, header, header))
     fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
-        coords_eigenvalues, coords_pct, custom_axes))
+        coords_eigenvalues, coords_pct, custom_axes, coords_low, coords_high))
     fp_out.write(EMPEROR_FOOTER_HTML_STRING)
     copy_support_files(dir_path)
 
