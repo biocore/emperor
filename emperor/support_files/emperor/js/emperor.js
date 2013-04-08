@@ -37,8 +37,7 @@ var g_visiblePoints = 0;
 var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
 
-/* This function recenters the camera, needs to be fixed so that it
-actually resets to the original position */
+/*This function recenter the camera to the initial position it had*/
 function resetCamera() {
 	g_sceneCamera.aspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
 	g_sceneCamera.position.set( 0, 0, g_maximum*4);
@@ -46,7 +45,7 @@ function resetCamera() {
 	g_sceneCamera.updateProjectionMatrix();
 }
 
-/* Removes duplicates from a list */
+/*Removes duplicates from a list of samples*/
 function dedupe(list) {
 	var set = {};
 	for (var i = 0; i < list.length; i++){
@@ -59,7 +58,15 @@ function dedupe(list) {
 	return list;
 }
 
-/* call back to the scale coordinates UI element in the options tab */
+/*Toggle between the scaled and unscaled version of the plot
+
+  This function will change multiple elements in the plot, as described by the
+  percentage explained in each of the PC axes.
+
+  Note that this function will also change the position of the camera, light and
+  adds a scaling value to the sphere size slider to make the size consistent
+  between scaled and unscaled versions of the plot.
+*/
 function toggle_scale_coordinates(element){
 
 	var axesLen;
@@ -110,7 +117,7 @@ function toggle_scale_coordinates(element){
 	// scale the axis lines
 	axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),
 		g_zMaximumValue+Math.abs(g_zMinimumValue));
-	debugaxis(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
+	drawAxisLines(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
 
 	// set the new position of each of the sphere objects
 	for (sample_id in g_plotSpheres){
@@ -138,10 +145,13 @@ function toggle_scale_coordinates(element){
 
 }
 
-/* generates a list of colors that corresponds to a list of values
-if the values are continuous the colors correspond to their numeric
-value, if values are discreet it is just a gradient with an even
-step size in between each value */
+/*Generate a list of colors that corresponds to all the samples in the plot
+
+  This function will generate a list of colors that correspond to a list of
+  values. If the values are continuous the colors correspond to their numeric
+  value, if values are discrete it is just a gradient with an even step size in
+  between each value.
+*/
 function getColorList(vals) {
 	var colorVals = [];
 	var isNumeric = true;
@@ -200,20 +210,20 @@ function getColorList(vals) {
 	return colors;
 }
 
-/* timers for debugging */
+/*Start timer (for debugging)*/
 function startTimer() {
 	var d=new Date()
 	g_time = d.getTime();
 }
 
-/* timers for debugging */
+/*End timer (for debugging)*/
 function stopTimer(info) {
 	var d=new Date()
 	g_time = d.getTime() - g_time;
 	console.log("time to " +info +":"+g_time+"ms")
 }
 
-/* This function is called when a new value is selected in the colorBy menu */
+/*This function is called when a new value is selected in the colorBy menu */
 function colorByMenuChanged() {
 	// set the new current category and index
 	g_categoryName = document.getElementById('colorbycombo')[document.getElementById('colorbycombo').selectedIndex].value;
@@ -273,7 +283,7 @@ function colorByMenuChanged() {
 	setKey(vals, colors);
 }
 
-/* This function is called when a new value is selected in the showBy menu */
+/*This function is called when a new value is selected in the showBy menu*/
 function showByMenuChanged() {
 	g_categoryName = document.getElementById('showbycombo')[document.getElementById('showbycombo').selectedIndex].value;
 	var index = g_mappingFileHeaders.indexOf(g_categoryName);
@@ -319,7 +329,7 @@ function showByMenuChanged() {
 	document.getElementById("showbylist").innerHTML = lines;
 }
 
-/* Toggle plot items by category selected in showby menu */
+/*Toggle plot items by category selected in showby menu*/
 function toggleVisible(value) {
 
 	var hidden = !document.showbyform.elements[value+'_show'].checked;
@@ -360,7 +370,7 @@ function toggleVisible(value) {
 
 }
 
-/* build the plot legend in HTML*/
+/*Build the plot legend in HTML*/
 function setKey(values, colors) {
 	if(g_keyBuilt){
 		for(var i = 0; i < values.length; i++){
@@ -405,8 +415,7 @@ function setKey(values, colors) {
 	}
 }
 
-/*toggles the little arrow used to locate a point by double clicking
-its colorbox in the key */
+/*Toggle an arrow to locate a sample by double clicking the box @ the key menu*/
 function toggleFinder(div, divName) {
 	if(g_foundId != divName) {
 		$('.colorbox').css('border','1px solid black');
@@ -430,7 +439,7 @@ function toggleFinder(div, divName) {
 	}
 }
 
-/* colorChanged event called by the colorpicker */
+/*Callback for the colorChanged event as triggered by the color picker*/
 function colorChanged(catValue,color) {
 	for(var i in g_plotIds)
 	{
@@ -452,7 +461,7 @@ function colorChanged(catValue,color) {
 	}
 }
 
-/* This function is called when a new value is selected in the label menu */
+/*This function is called when a new value is selected in the label menu*/
 function labelMenuChanged() {
 	if(document.getElementById('labelcombo').selectedIndex == 0){
 		document.getElementById("labellist").innerHTML = "";
@@ -515,7 +524,7 @@ function labelMenuChanged() {
 	}
 }
 
-/* function called when a label color is changed */
+/*This function is called when a label color is changed*/
 function labelColorChanged(value, color) {
 	g_categoryName = document.getElementById('labelcombo')[document.getElementById('labelcombo').selectedIndex].value;
 	value = value.replace('_','');
@@ -529,7 +538,7 @@ function labelColorChanged(value, color) {
 	}
 }
 
-/* This function turns the labels on and off */
+/*This function turns the labels on and off*/
 function toggleLabels() {
 	if(document.plotoptions.elements[0].checked){
 		$('#labelForm').css('display','block');
@@ -566,9 +575,11 @@ function toggleLabels() {
 	}
 }
 
-/* This function finds the screen coordinates of any
- position in the current plot.
-Used for calculating label placement */
+/*This function finds the screen coordinates of any position in the current plot.
+
+  The main purpose of this function is to be used for calculating the placement
+  of the labels.
+*/
 function toScreenXY( position, camera, jqdiv ) {
 
 	var pos = position.clone();
@@ -580,7 +591,7 @@ function toScreenXY( position, camera, jqdiv ) {
 		y: ( - pos.y + 1 ) * jqdiv.height() / 2 + jqdiv.offset().top };
 }
 
-/* used to filter the key to a user's provided search string */
+/*This function is used to filter the key to a user's provided search string*/
 function filterKey() {
 	var searchVal = document.keyFilter.filterBox.value.toLowerCase();
 
@@ -597,8 +608,8 @@ function filterKey() {
 	}
 }
 
-/* handle events from the ellipse opacity slider */
-function eopacitychange(ui) {
+/*This function handles events from the ellipse opacity slider*/
+function ellipseOpacityChange(ui) {
 	document.getElementById('ellipseopacity').innerHTML = ui.value + "%";
 	ellipseOpacity = ui.value/100;
 
@@ -607,8 +618,8 @@ function eopacitychange(ui) {
 	}
 }
 
-/* handle events from the sphere opacity slider */
-function sopacitychange(ui) {
+/*This function handles events from the sphere opacity slider*/
+function sphereOpacityChange(ui) {
 	document.getElementById('sphereopacity').innerHTML = ui.value + "%";
 	sphereOpacity = ui.value/100;
 
@@ -617,16 +628,20 @@ function sopacitychange(ui) {
 	}
 }
 
-/* handle events from the label opacity slider */
-function lopacitychange(ui) {
+/*This function handles events from the label opacity slider*/
+function labelOpacityChange(ui) {
 	document.getElementById('labelopacity').innerHTML = ui.value + "%";
 	labelOpacity = ui.value/100;
 
 	$('#labels').css('opacity', labelOpacity);
 }
 
-/* handle events from the sphere radius slider */
-function sradiuschange(ui) {
+/*This function handles events from the sphere radius slider
+
+  Note that this function will get a scaling value added depending on whether or
+  not the plot being displayed is scaled by the percent explained in each axis.
+*/
+function sphereRadiusChange(ui) {
 	document.getElementById('sphereradius').innerHTML = ui.value/5;
 	var scale = (ui.value/5.0)*g_sphereScaler;
 
@@ -636,6 +651,7 @@ function sradiuschange(ui) {
 	}
 }
 
+/*Setup the interface elements required for the sidebar of the main interface*/
 function setJqueryUi() {
 	$("#menutabs").tabs();
 	$("#labelColor").css('backgroundColor', '#fff');
@@ -665,10 +681,10 @@ function setJqueryUi() {
 		max: 100,
 		value: 20,
 		slide: function( event, ui ) {
-			eopacitychange(ui);
+			ellipseOpacityChange(ui);
 		},
 		change: function( event, ui ) {
-			eopacitychange(ui);
+			ellipseOpacityChange(ui);
 		}
 	});
 	document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
@@ -679,10 +695,10 @@ function setJqueryUi() {
 		max: 100,
 		value: 100,
 		slide: function( event, ui ) {
-			sopacitychange(ui);
+			sphereOpacityChange(ui);
 		},
 		change: function( event, ui ) {
-			sopacitychange(ui);
+			sphereOpacityChange(ui);
 		}
 	});
 	document.getElementById('sphereopacity').innerHTML = $( "#sopacityslider" ).slider( "value")+"%";
@@ -693,10 +709,10 @@ function setJqueryUi() {
 		max: 20,
 		value: 5,
 		slide: function( event, ui ) {
-			sradiuschange(ui);
+			sphereRadiusChange(ui);
 		},
 		change: function( event, ui ) {
-			sradiuschange(ui);
+			sphereRadiusChange(ui);
 		}
 	});
 	document.getElementById('sphereradius').innerHTML = $( "#sradiusslider" ).slider( "value")/5;
@@ -707,16 +723,21 @@ function setJqueryUi() {
 		max: 100,
 		value: 100,
 		slide: function( event, ui ) {
-			lopacitychange(ui);
+			labelOpacityChange(ui);
 		},
 		change: function( event, ui ) {
-			lopacitychange(ui);
+			labelOpacityChange(ui);
 		}
 	});
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
 }
 
-function setEllipses() {
+/*Draw the ellipses in the plot as described by the g_ellipsesDimensions array
+
+  Note that this is a function that won't always get executed since this should
+  only happen when plotting a jaccknifed principal coordinates analysis
+*/
+function drawEllipses() {
 	for(var sid in g_ellipsesDimensions) {
 		//draw ellipsoid
 		var emesh = new THREE.Mesh( g_genericSphere,new THREE.MeshLambertMaterial() );
@@ -736,7 +757,8 @@ function setEllipses() {
 	}
 }
 
-function setPoints() {
+/*Draw the spheres in the plot as described by the g_spherePositions array*/
+function drawSpheres() {
 	for(var sid in g_spherePositions){
 		//draw ball
 		var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshLambertMaterial() );
@@ -757,7 +779,6 @@ function setPoints() {
 function saveSVG(){
 	open("data:image/svg+xml," + encodeURIComponent(document.getElementById('main_plot').innerHTML));
 }
-
 function SVGSaved(response){
 	var fileName = eval('('+response+')')
 	var dlwin = open('','Download SVG', 'width=400,height=50')
@@ -771,7 +792,12 @@ function SVGSaved(response){
 	console.log(fileName)
 }
 
-var debugaxis = function(axisLength, xstart, ystart, zstart){
+/*Draw each of the lines that represent the X, Y and Z axes in the plot
+
+  The length of each of these axes depend on the ranges that the data being
+  displayed uses.
+*/
+var drawAxisLines = function(axisLength, xstart, ystart, zstart){
 	//Shorten the vertex function
 	function v(x,y,z){
 			return new THREE.Vertex(new THREE.Vector3(x,y,z));
@@ -799,6 +825,12 @@ function changePointCount() {
 	document.getElementById('pointCount').innerHTML = g_visiblePoints+'/'+g_plotIds.length+' points'
 }
 
+/*Setup and initialization function for the whole system
+
+  This function will set all of the WebGL elements that are required to exist
+  for the plot to work properly. This in turn will draw the ellipses, spheres
+  and all the other elements that could be part of a plot.
+*/
 $(document).ready(function() {
 	setJqueryUi()
 
@@ -840,8 +872,8 @@ $(document).ready(function() {
 
 		g_elementsGroup = new THREE.Object3D();
 		g_mainScene.add(g_elementsGroup);
-		setEllipses()
-		setPoints()
+		drawEllipses()
+		drawSpheres()
 
 		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
@@ -873,7 +905,7 @@ $(document).ready(function() {
 		showByMenuChanged();
 
 		var axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),g_zMaximumValue+Math.abs(g_zMinimumValue));
-		debugaxis(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
+		drawAxisLines(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
 		buildAxisLabels()
 
 		// the light is attached to the camera to provide a 3d perspective
