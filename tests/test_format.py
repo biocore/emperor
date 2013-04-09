@@ -29,6 +29,17 @@ class TopLevelTests(TestCase):
             2.47449246e-01, 2.01496072e-01, 1.80076128e-01, 1.47806773e-01,
             1.35795927e-01, 1.12259696e-01, 2.10954117e-16])
 
+        # data specific for testing the jackknifing
+        self.pcoa_jk_headers = ['PC.355','PC.607','PC.634','PC.635']
+        self.pcoa_jk_coords = array([[0.3, 0.5, 0.1, 0.3],[1.1, 1.1, 1.0, 0.8],
+            [0.1, 3.3, 5.5, 0.1], [1.0, 2.0, 1.0, 1.0]])
+        self.pcoa_jk_eigen_values = array([0.45, 0.32, 0.21, 0.02])
+        self.pcoa_jk_pct_var = array([44, 40, 15, 1])
+        self.pcoa_jk_coords_low = array([[0.2, 0.3, 0.1, 0.3],[1.1, 0.1, 0.0, 0.3],
+            [0.6, 3.1, 1.5, 0.1], [0.023, 1.0, 0.01, 1.0]])
+        self.pcoa_jk_coords_high = array([[0.6, 0.8, 0.9, 0.31],[1, 2.1, 0.0, 0.8],
+            [0.9, 3.7, 5.5, 0.1111], [0.01222, 2.0, 0.033, 2.0]])
+
         self.mapping_file_data = MAPPING_FILE_DATA
         self.mapping_file_headers = ['SampleID', 'BarcodeSequence',
             'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description']
@@ -36,15 +47,23 @@ class TopLevelTests(TestCase):
 
     def test_format_pcoa_to_js(self):
         """Test correct formatting of the PCoA file"""
+        # test the case with only points and nothing else
         out_js_pcoa_string = format_pcoa_to_js(self.pcoa_headers,
             self.pcoa_coords, self.pcoa_eigen_values, self.pcoa_pct_var)
         self.assertEquals(out_js_pcoa_string, PCOA_JS)
 
         # test custom axes and the labels
         out_js_pcoa_string = format_pcoa_to_js(self.pcoa_headers,
-            self.pcoa_coords, self.pcoa_eigen_values, self.pcoa_pct_var,
-            ['Instant'])
+            self.pcoa_coords, self.pcoa_eigen_values,
+            self.pcoa_pct_var, custom_axes=['Instant'])
         self.assertEquals(out_js_pcoa_string, PCOA_JS_CUSTOM_AXES)
+
+        # test jackknifed pcoa plots
+        out_js_pcoa_string = format_pcoa_to_js(self.pcoa_jk_headers,
+            self.pcoa_jk_coords, self.pcoa_jk_eigen_values,
+            self.pcoa_jk_pct_var, coords_low=self.pcoa_jk_coords_low,
+            coords_high=self.pcoa_jk_coords_high)
+        self.assertEquals(out_js_pcoa_string, PCOA_JS_JACKKNIFED)
 
     def test_format_mapping_file_to_js(self):
         """Tests correct formatting of the metadata mapping file"""
@@ -65,7 +84,7 @@ PCOA_DATA = array([[ -1.09166142e-01, 8.77774496e-02, 1.15866606e-02, -6.2686389
 [-1.83191151e-01, 34912621e-03, 8.69481594e-03, -2.73875510e-02, -5.28648893e-02, -2.50583131e-02, -5.21415245e-02, 3.82000689e-02, 1.29849404e-09]])
 
 PCOA_JS = """
-var points = new Array()
+var points = new Array();
 points['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': -0.109166, 'y': 0.087777, 'z': 0.011587 };
 points['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': 0.068896, 'y': -0.166234, 'z': -0.099830 };
 points['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': 0.204685, 'y': 0.128911, 'z': -0.029361 };
@@ -93,7 +112,7 @@ var percents = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.07
 """
 
 PCOA_JS_CUSTOM_AXES = """
-var points = new Array()
+var points = new Array();
 points[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': -0.109166, \'y\': 0.087777, \'z\': 0.011587 };
 points[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 0.068896, \'y\': -0.166234, \'z\': -0.099830 };
 points[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.204685, \'y\': 0.128911, \'z\': -0.029361 };
@@ -118,6 +137,35 @@ pc1 = "Instant";
 pc2 = "PC1 (27 %)";
 pc3 = "PC2 (16 %)";
 var percents = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
+"""
+
+PCOA_JS_JACKKNIFED = """
+var points = new Array();
+points[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000 };
+points[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000 };
+points[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000 };
+points[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000 };
+
+var ellipses = new Array();
+ellipses[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'width\': 0.400000, \'height\': 0.500000, \'length\': 0.800000 , \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000 }
+ellipses[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'width\': 0.100000, \'height\': 2.000000, \'length\': 0.000000 , \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000 }
+ellipses[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'width\': 0.300000, \'height\': 0.600000, \'length\': 4.000000 , \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000 }
+ellipses[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'width\': 0.010780, \'height\': 1.000000, \'length\': 0.023000 , \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000 }
+var segments = 16, rings = 16, radius = 0.020000;
+var xaxislength = 1.200000;
+var yaxislength = 3.800000;
+var zaxislength = 5.600000;
+var max_x = 1.100000;
+var max_y = 3.300000;
+var max_z = 5.500000;
+var min_x = 0.100000;
+var min_y = 0.500000;
+var min_z = 0.100000;
+var max = 5.500000;
+pc1 = "PC1 (44 %)";
+pc2 = "PC2 (40 %)";
+pc3 = "PC3 (15 %)";
+var percents = [0.440000, 0.400000, 0.150000, 0.010000];
 """
 
 MAPPING_FILE_DATA = [\

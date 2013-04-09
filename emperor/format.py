@@ -16,7 +16,9 @@ from numpy import max, min, abs
 
 from qiime.parse import mapping_file_to_dict
 
-def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[]):
+
+def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
+                    coords_low=None, coords_high=None):
     """Write the javascript necessary to represent a pcoa file in emperor
 
     Inputs:
@@ -24,9 +26,14 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[]):
     coords: coordinates of the PCoA file, 2-D array
     eigvals: eigen-values of the PCoA file, 1-D array
     pct_var: percentage of variation of the PCoA file, 1-D array
+    custom_axes: list of category names for the custom axes
+    coords_low: coordinates representing the lower edges of an ellipse
+    coords_high: coordinates representing the highere edges of an ellipse
 
     Output:
-    string: javascript representation of the PCoA data inputed
+    string: javascript representation of the PCoA data inputed, contains a list
+    of spheres, list of ellipses (if coords_low and coords_high are present) and
+    several setup variables.
 
     Formats the output of qiime.parse.parse_coords_file into javascript variable
     declarations.
@@ -43,9 +50,22 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[]):
     maximum = max(abs(coords[:,:3]))
     pcoalabels = pct_var[:3]
 
-    js_pcoa_string += '\nvar points = new Array()\n'
+    # write the values for all the spheres
+    js_pcoa_string += '\nvar points = new Array();\n'
     for point, coord in zip(header, coords):
-        js_pcoa_string += "points['%s'] = { 'name': '%s', 'color': 0, 'x': %f, 'y': %f, 'z': %f };\n" % (point, point, coord[0], coord[1], coord[2])
+        js_pcoa_string += ("points['%s'] = { 'name': '%s', 'color': 0, 'x': %f,"
+            " 'y': %f, 'z': %f };\n" % (point,point,coord[0],coord[1],coord[2]))
+
+    # write the values for all the ellipses
+    if coords_low != None and coords_high != None:
+        js_pcoa_string += '\nvar ellipses = new Array();\n'
+        for s_header, s_coord, s_low, s_high in zip(header, coords, coords_low,
+            coords_high):
+            delta = abs(s_high-s_low)
+            js_pcoa_string += ("ellipses['%s'] = { 'name': '%s', 'color': 0, "
+                "'width': %f, 'height': %f, 'length': %f , 'x': %f, 'y': %f, "
+                "'z': %f }\n" % (s_header, s_header, delta[0], delta[1],
+                delta[2], s_coord[0], s_coord[1], s_coord[2]))
 
     js_pcoa_string += 'var segments = 16, rings = 16, radius = %f;\n' % ((max_x-min_x)*.02)
     js_pcoa_string += 'var xaxislength = %f;\n' % (abs(max_x)+abs(min_x))
