@@ -137,10 +137,11 @@ def main():
     non_numeric_categories = []
 
     # can't do averaged pcoa plots _and_ custom axes in the same plot
-    if custom_axes != None and isdir(input_coords):
-        option_parser.error('You cannot use the \'--custom_axes\' option with a'
-            ' jackknifed plot (the input as a directory); please use one or the'
-            ' other but not both')
+    if custom_axes!=None and len(custom_axes.split(','))>1 and\
+        isdir(input_coords):
+        option_parser.error(('Jackknifed plots are limited to one custom axis, '
+            'currently trying to use: %s. Make sure you use only one.' %
+            custom_axes))
 
     # before creating any output, check correct parsing of the main input files
     try:
