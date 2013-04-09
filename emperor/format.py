@@ -195,7 +195,6 @@ EMPEROR_FOOTER_HTML_STRING =\
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
             <li><a href="#labelby">Labels</a></li>
-            <!-- <li><a href="#animations">Animate</a></li> -->
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -238,32 +237,9 @@ EMPEROR_FOOTER_HTML_STRING =\
             <div class="list" id="labellist">
             </div>
         </div>
-<!--         <div id="animations">
-                <div id="animationsTop">
-                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor/img/reset.png" ></img></a>
-                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor/img/play.png"></img></a>
-                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor/img/pause.png"></img></a>
-                    <br>
-                    <br>
-                    <label for="animationspeed" class="text">Speed</label>
-                    <label id="animationspeed" class="slidervalue"></label>
-                    <div id="animspeedslider" class="slider-range-max"></div>
-                </div>
-                    <br>
-                    <label for="animationGradient" class="text">Animate Over (eg. time)</label><br>
-                    <select id="animationovercombo" onchange="animationOverMenuChanged()">
-                    </select>
-                    <br>
-                    <br>
-                    <label for="animation" class="text">Animate</label><br>
-                    <select id="animationcombo" onchange="animationMenuChanged()">
-                    </select>
-                    <div class="animationlist" id="animationlist">
-                    </div>
-                </div> -->
         <div id="settings">
             <form name="settingsoptions">
-            <input type="checkbox" onchange="toggle_scale_coordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
             </form>
             <br>
             <br>

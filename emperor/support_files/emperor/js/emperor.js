@@ -67,7 +67,7 @@ function dedupe(list) {
   adds a scaling value to the sphere size slider to make the size consistent
   between scaled and unscaled versions of the plot.
 */
-function toggle_scale_coordinates(element){
+function toggleScaleCoordinates(element){
 
 	var axesLen;
 	var operation;
