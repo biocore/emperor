@@ -317,7 +317,7 @@ def main():
     else:
         dir_path='./'
 
-    fp_out = open(join(dir_path, 'emperor.html'),'w')
+    fp_out = open(join(dir_path, 'index.html'),'w')
     fp_out.write(EMPEROR_HEADER_HTML_STRING)
 
     # write the html file
