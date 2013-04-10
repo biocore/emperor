@@ -299,16 +299,18 @@ def main():
             'Try the \'--missing_custom_axes_values\' option to fix these '
             'values.' % ', '.join(non_numeric_categories)))
 
+    # process the coordinates file first, preventing the case where the custom
+    # axes is not in the coloring categories i. e. in the --colory_by categories
+    coords_headers, coords_data, coords_eigenvalues, coords_pct, coords_low,\
+        coords_high = preprocess_coords_file(coords_headers, coords_data,
+        coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
+        jackknifing_method=jackknifing_method)
+
     # remove the columns in the mapping file that are not informative taking
     # into account the header names that were already authorized to be used
     # and take care of concatenating the fields for the && merged columns
     mapping_data, header = preprocess_mapping_file(mapping_data, header,
         color_by_column_names, unique=not add_unique_columns)
-
-    coords_headers, coords_data, coords_eigenvalues, coords_pct, coords_low,\
-        coords_high = preprocess_coords_file(coords_headers, coords_data,
-        coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
-        jackknifing_method=jackknifing_method)
 
     # use the current working directory as default
     if opts.output_dir:
