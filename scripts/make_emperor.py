@@ -41,7 +41,7 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "header names. Color by 'Treatment' and by the result of concatenating "
     "the 'DOB' category and the 'Treatment' category: ","%prog -i "
     "unweighted_unifrac_pc.txt -m Fasting_Map.txt -b 'Treatment&&DOB,Treatment'"
-    ),
+    " -o emperor_colored_by"),
     ("PCoA plot with an explicit axis", "Create a PCoA plot with an axis of "
     "the plot representing the 'DOB' of the samples. This option is useful when"
     " presenting a gradient from your metadata e. g. 'Time' or 'pH': ", "%prog "
@@ -51,12 +51,12 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     " a directory of coordinates files (where each file corresponds to a "
     "different OTU table) and use the standard deviation method to compute the "
     "dimensions of the ellipsoids surrounding each sample: ", "%prog -i "
-    "unweighted_unifrac_pc -m Fasting_Map.txt -o jackknifed_pcoa -s sdev"),
+    "unweighted_unifrac_pc -m Fasting_Map.txt -o jackknifed_pcoa -e sdev"),
     ("Jackknifed PCoA plot with a master coordinates file", "Passing a master "
     "coordinates file (--master_pcoa) will display the ellipsoids centered by "
     "the samples in this file: ", "%prog -i unweighted_unifrac_pc -s "
-    "unweighted_unifrac_pc/unweighted_unifrac_pc_120_7.txt -m Fasting_Map.txt "
-    "-o jackknifed_with_master")]
+    "unweighted_unifrac_pc/pcoa_unweighted_unifrac_rarefaction_110_5.txt -m "
+    "Fasting_Map.txt -o jackknifed_with_master")]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'emperor.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening emperor.html with "+\

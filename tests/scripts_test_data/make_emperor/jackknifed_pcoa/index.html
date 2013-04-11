@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Emperor</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/emperor/css/emperor.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
+    <script type="text/javascript" src="emperor_required_resources/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
+    <script src="emperor_required_resources/js/jquery.colorPicker.js"></script>
+    <script src="emperor_required_resources/js/spectrum.js"></script>
+
+    <script src="emperor_required_resources/js/Three.js"></script>
+    <script src="emperor_required_resources/js/js/Detector.js"></script>
+    <script src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
+    <script src="emperor_required_resources/emperor/js/emperor.js"></script>
+    <script type="text/javascript">
+var headers = ['SampleID','LinkerPrimerSequence','Treatment','DOB'];
+var mapping = { 'PC.481': ['PC.481','YATGCTGCCTCCCGTAGGAGT','Control','20070314'],'PC.607': ['PC.607','YATGCTGCCTCCCGTAGGAGT','Fast','20071112'],'PC.634': ['PC.634','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.635': ['PC.635','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.593': ['PC.593','YATGCTGCCTCCCGTAGGAGT','Control','20071210'],'PC.636': ['PC.636','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.355': ['PC.355','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.354': ['PC.354','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.356': ['PC.356','YATGCTGCCTCCCGTAGGAGT','Control','20061126'] };
+
+var points = new Array();
+points['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': 0.286534, 'y': 0.112205, 'z': 0.116322 };
+points['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': 0.244439, 'y': 0.017974, 'z': -0.152143 };
+points['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': -0.226799, 'y': 0.215042, 'z': -0.213692 };
+points['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': -0.068251, 'y': -0.004016, 'z': 0.073730 };
+points['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': -0.286883, 'y': -0.003938, 'z': 0.007567 };
+points['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': -0.223352, 'y': -0.238344, 'z': 0.257335 };
+points['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': -0.171050, 'y': 0.183770, 'z': 0.015615 };
+points['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': 0.105704, 'y': -0.356885, 'z': -0.240013 };
+points['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': 0.339658, 'y': 0.074193, 'z': 0.135278 };
+
+var ellipses = new Array();
+ellipses['PC.636'] = { 'name': 'PC.636', 'color': 0, 'width': 0.021457, 'height': 0.029067, 'length': 0.037878 , 'x': 0.286534, 'y': 0.112205, 'z': 0.116322 }
+ellipses['PC.635'] = { 'name': 'PC.635', 'color': 0, 'width': 0.029386, 'height': 0.042316, 'length': 0.058350 , 'x': 0.244439, 'y': 0.017974, 'z': -0.152143 }
+ellipses['PC.356'] = { 'name': 'PC.356', 'color': 0, 'width': 0.033128, 'height': 0.056974, 'length': 0.046180 , 'x': -0.226799, 'y': 0.215042, 'z': -0.213692 }
+ellipses['PC.481'] = { 'name': 'PC.481', 'color': 0, 'width': 0.032174, 'height': 0.051663, 'length': 0.073888 , 'x': -0.068251, 'y': -0.004016, 'z': 0.073730 }
+ellipses['PC.354'] = { 'name': 'PC.354', 'color': 0, 'width': 0.027373, 'height': 0.042086, 'length': 0.045204 , 'x': -0.286883, 'y': -0.003938, 'z': 0.007567 }
+ellipses['PC.593'] = { 'name': 'PC.593', 'color': 0, 'width': 0.025948, 'height': 0.052006, 'length': 0.055468 , 'x': -0.223352, 'y': -0.238344, 'z': 0.257335 }
+ellipses['PC.355'] = { 'name': 'PC.355', 'color': 0, 'width': 0.030298, 'height': 0.052891, 'length': 0.040842 , 'x': -0.171050, 'y': 0.183770, 'z': 0.015615 }
+ellipses['PC.607'] = { 'name': 'PC.607', 'color': 0, 'width': 0.051219, 'height': 0.059220, 'length': 0.080272 , 'x': 0.105704, 'y': -0.356885, 'z': -0.240013 }
+ellipses['PC.634'] = { 'name': 'PC.634', 'color': 0, 'width': 0.009290, 'height': 0.048004, 'length': 0.048976 , 'x': 0.339658, 'y': 0.074193, 'z': 0.135278 }
+var segments = 16, rings = 16, radius = 0.012531;
+var xaxislength = 0.626541;
+var yaxislength = 0.571927;
+var zaxislength = 0.497348;
+var max_x = 0.339658;
+var max_y = 0.215042;
+var max_z = 0.257335;
+var min_x = -0.286883;
+var min_y = -0.356885;
+var min_z = -0.240013;
+var max = 0.356885;
+pc1 = "PC1 (25 %)";
+pc2 = "PC2 (16 %)";
+pc3 = "PC3 (14 %)";
+var percents = [0.253494, 0.155259, 0.142649, 0.111263, 0.105809, 0.088100, 0.075837, 0.067588, 0.000000];
+ </script>
+</head>
+
+<body>
+
+<label id="pointCount" class="ontop">
+</label>
+
+<div id="finder" class="arrow-right">
+</div>
+
+<div id="labels" class="unselectable">
+</div>
+
+<div id="axislabels" class="axislabels">
+</div>
+
+<div id="main_plot">
+</div>
+
+<div id="menu">
+    <div id="menutabs">
+        <ul>
+            <li><a href="#keytab">Key</a></li>
+            <li><a href="#colorby">Colors</a></li>
+            <li><a href="#showby">Visibility</a></li>
+            <li><a href="#labelby">Labels</a></li>
+            <!-- <li><a href="#animations">Animate</a></li> -->
+            <li><a href="#settings">Options</a></li>
+        </ul>
+        <div id="keytab">
+            <form name="keyFilter">
+            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+            </form>
+            <div id="key">
+            </div>
+        </div>
+        <div id="colorby">
+            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            </select>
+            <div class="list" id="colorbylist">
+            </div>
+        </div>
+        <div id="showby">
+            <select id="showbycombo" onchange="showByMenuChanged()">
+            </select>
+            <div class="list" id="showbylist">
+            </div>
+        </div>
+        <div id="labelby">
+        <div id="labelsTop">
+            <form name="plotoptions">
+            <input type="checkbox" onClick="toggleLabels()">Master Label Visibility</input>
+            </form>
+            <br>
+            <label for="labelopacity" class="text">Label Opacity</label>
+            <label id="labelopacity" class="slidervalue"></label>
+            <div id="lopacityslider" class="slider-range-max"></div>
+            <div id="labelColorHolder clearfix">
+            <table><tr>
+            <td><div id="labelColor" class="colorbox">
+            </div></td><td><label>Master Label Color</label></td>
+            </tr></table></div>
+        </div>
+            <br>
+            <select id="labelcombo" onchange="labelMenuChanged()">
+            </select>
+            <div class="list" id="labellist">
+            </div>
+        </div>
+<!--         <div id="animations">
+                <div id="animationsTop">
+                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor/img/reset.png" ></img></a>
+                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor/img/play.png"></img></a>
+                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor/img/pause.png"></img></a>
+                    <br>
+                    <br>
+                    <label for="animationspeed" class="text">Speed</label>
+                    <label id="animationspeed" class="slidervalue"></label>
+                    <div id="animspeedslider" class="slider-range-max"></div>
+                </div>
+                    <br>
+                    <label for="animationGradient" class="text">Animate Over (eg. time)</label><br>
+                    <select id="animationovercombo" onchange="animationOverMenuChanged()">
+                    </select>
+                    <br>
+                    <br>
+                    <label for="animation" class="text">Animate</label><br>
+                    <select id="animationcombo" onchange="animationMenuChanged()">
+                    </select>
+                    <div class="animationlist" id="animationlist">
+                    </div>
+                </div> -->
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggle_scale_coordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+            <br>
+            <br>
+            <label for="ellipseopacity" class="text">Ellipse Opacity</label>
+            <label id="ellipseopacity" class="slidervalue"></label>
+            <div id="eopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereopacity" class="text">Sphere Opacity</label>
+            <label id="sphereopacity" class="slidervalue"></label>
+            <div id="sopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereradius" class="text">Sphere Scale</label>
+            <label id="sphereradius" class="slidervalue"></label>
+            <div id="sradiusslider" class="slider-range-max"></div>
+        </div>
+    </div>  
+</div>
+</body>
+
+</html>
