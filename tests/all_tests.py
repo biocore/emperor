@@ -44,8 +44,6 @@ script_info['optional_options'] = [
     'tests to execute [default: run all]', default=None),
     make_option('-p', '--temp_filepath', type='existing_path', help='temporary '
     'directory where the script usage tests will be executed', default='/tmp/'),
-    make_option('--emperor_test_data_dir', help='filepath where the test data'
-    'is stored', type='existing_path', default=None),
     make_option('--emperor_scripts_dir', help='filepath where the scripts are'
     ' stored', type='existing_path', default=None)
 ]
@@ -62,15 +60,13 @@ def main():
     suppress_unit_tests = opts.suppress_unit_tests
     suppress_script_usage_tests = opts.suppress_script_usage_tests
 
+    # since the test data is in the tests folder just add scripts_test_data
+    emperor_test_data_dir = join(abspath(dirname(__file__)),
+        'scripts_test_data/')
 
-    # offer the option for the user to pass the test and the scripts dir
-    # from the command line since the test data is not deployed with setup.py
-    # if not provided, the base structure of the repository will be assumed
-    if opts.emperor_test_data_dir == None:
-        emperor_test_data_dir = join(get_emperor_project_dir(), 'tests/'
-            'scripts_test_data/')
-    else:
-        emperor_test_data_dir = opts.emperor_test_data_dir
+    # offer the option for the user to pass the scripts dir from the command
+    # line since there is no other way to get the scripts dir if not provided
+    # the base structure of the repository will be assumed
     if opts.emperor_scripts_dir == None:
         emperor_scripts_dir = join(get_emperor_project_dir(), 'scripts/')
     else:
@@ -150,14 +146,13 @@ def main():
 
     if not suppress_script_usage_tests:
         if exists(emperor_test_data_dir) and exists(emperor_scripts_dir):
-            print "\nScript usage test result summary\n------------------------------------\n"
+            print "\nScript usage test result summary"+\
+                "\n------------------------------------\n"
             print script_usage_result_summary
         else:
-            print ("\nCould not run script usage tests.\nThe Emperor test data"
-                " directory and the Emperor scripts directory could not be "
-                " automatically located, try supplying them manually with the"
-                " --emperor_test_data_dir and with --emperor_scripts_dir "
-                "options.")
+            print ("\nCould not run script usage tests.\nThe Emperor scripts "
+                "directory could not be automatically located, try supplying "
+                " it manually using with the --emperor_scripts_dir option.")
 
     # In case there were no failures of any type, exit with a return code of 0
     return_code = 1
