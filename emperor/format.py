@@ -51,33 +51,35 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     pcoalabels = pct_var[:3]
 
     # write the values for all the spheres
-    js_pcoa_string += '\nvar points = new Array();\n'
+    js_pcoa_string += '\nvar g_spherePositions = new Array();\n'
     for point, coord in zip(header, coords):
-        js_pcoa_string += ("points['%s'] = { 'name': '%s', 'color': 0, 'x': %f,"
-            " 'y': %f, 'z': %f };\n" % (point,point,coord[0],coord[1],coord[2]))
+        js_pcoa_string += ("g_spherePositions['%s'] = { 'name': '%s', 'color': "
+            "0, 'x': %f, 'y': %f, 'z': %f };\n" % (point, point, coord[0],
+            coord[1],coord[2]))
 
     # write the values for all the ellipses
+    js_pcoa_string += '\nvar g_ellipsesDimensions = new Array();\n'
     if coords_low != None and coords_high != None:
-        js_pcoa_string += '\nvar ellipses = new Array();\n'
         for s_header, s_coord, s_low, s_high in zip(header, coords, coords_low,
             coords_high):
             delta = abs(s_high-s_low)
-            js_pcoa_string += ("ellipses['%s'] = { 'name': '%s', 'color': 0, "
-                "'width': %f, 'height': %f, 'length': %f , 'x': %f, 'y': %f, "
-                "'z': %f }\n" % (s_header, s_header, delta[0], delta[1],
+            js_pcoa_string += ("g_ellipsesDimensions['%s'] = { 'name': '%s', "
+                "'color': 0, 'width': %f, 'height': %f, 'length': %f , 'x': %f,"
+                " 'y': %f, 'z': %f }\n" %(s_header, s_header,delta[0], delta[1],
                 delta[2], s_coord[0], s_coord[1], s_coord[2]))
 
-    js_pcoa_string += 'var segments = 16, rings = 16, radius = %f;\n' % ((max_x-min_x)*.02)
-    js_pcoa_string += 'var xaxislength = %f;\n' % (abs(max_x)+abs(min_x))
-    js_pcoa_string += 'var yaxislength = %f;\n' % (abs(max_y)+abs(min_y))
-    js_pcoa_string += 'var zaxislength = %f;\n' % (abs(max_z)+abs(min_z))
-    js_pcoa_string += 'var max_x = %f;\n' % max_x
-    js_pcoa_string += 'var max_y = %f;\n' % max_y
-    js_pcoa_string += 'var max_z = %f;\n' % max_z
-    js_pcoa_string += 'var min_x = %f;\n' % min_x
-    js_pcoa_string += 'var min_y = %f;\n' % min_y
-    js_pcoa_string += 'var min_z = %f;\n' % min_z
-    js_pcoa_string += 'var max = %f;\n' % maximum
+    js_pcoa_string += 'var g_segments = 16, g_rings = 16, g_radius = %f;\n' %\
+        ((max_x-min_x)*.02)
+    js_pcoa_string += 'var g_xAxisLength = %f;\n' % (abs(max_x)+abs(min_x))
+    js_pcoa_string += 'var g_yAxisLength = %f;\n' % (abs(max_y)+abs(min_y))
+    js_pcoa_string += 'var g_zAxisLength = %f;\n' % (abs(max_z)+abs(min_z))
+    js_pcoa_string += 'var g_xMaximumValue = %f;\n' % max_x
+    js_pcoa_string += 'var g_yMaximumValue = %f;\n' % max_y
+    js_pcoa_string += 'var g_zMaximumValue = %f;\n' % max_z
+    js_pcoa_string += 'var g_xMinimumValue = %f;\n' % min_x
+    js_pcoa_string += 'var g_yMinimumValue = %f;\n' % min_y
+    js_pcoa_string += 'var g_zMinimumValue = %f;\n' % min_z
+    js_pcoa_string += 'var g_maximum = %f;\n' % maximum
 
     offset = 0
     # create three vars, pc1, pc2 and pc3 if no custom_axes are passed, then use
@@ -85,12 +87,12 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     # use as many as you can (since customs axes can be either [0, 1, 2, 3])
     for i in range(0, 3):
         try:
-            js_pcoa_string += 'pc%d = \"%s\";\n' % (i+1, custom_axes[i])
+            js_pcoa_string += 'g_pc%dLabel = \"%s\";\n' % (i+1, custom_axes[i])
             offset+=1 # offset will help us retrieve the correct pcoalabels val
         except:
             # if there are custom axes then subtract the number of custom axes
-            js_pcoa_string += 'pc%d = \"PC%d (%.0f %%)\";\n' % (i+1, i+1-offset,
-                pcoalabels[i-offset])
+            js_pcoa_string += 'g_pc%dLabel = \"PC%d (%.0f %%)\";\n' %\
+                (i+1, i+1-offset, pcoalabels[i-offset])
 
     js_pcts = []
     if custom_axes == None: custom_axes = []
@@ -99,8 +101,8 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
             # scale the percent so it's a number from 0 to 1
             js_pcts.append('%f' % (float(element)/100))
         except ValueError:
-            js_pcts.append('1.0')
-    js_pcoa_string += 'var percents = [%s];\n' % ', '.join(js_pcts)
+            js_pcts.append('%f' % (float(pct_var[0]/100)))
+    js_pcoa_string += 'var g_fractionExplained = [%s];\n' % ', '.join(js_pcts)
 
     return js_pcoa_string
 
@@ -133,9 +135,10 @@ def format_mapping_file_to_js(mapping_file_data, mapping_file_headers, columns):
         mapping_file_headers = mapping_file_headers[1:]
 
     # format the mapping file as javascript objects
-    js_mapping_file_string += 'var headers = [%s];\n' % ','.join(["'%s'" %\
-        col for col in mapping_file_headers])
-    js_mapping_file_string += 'var mapping = { %s };\n' % ','.join(map_values)
+    js_mapping_file_string += 'var g_mappingFileHeaders = [%s];\n' % ','.join(
+        ["'%s'" % col for col in mapping_file_headers])
+    js_mapping_file_string += 'var g_mappingFileData = { %s };\n' % ','.join(
+        map_values)
 
     return js_mapping_file_string
 
@@ -192,7 +195,6 @@ EMPEROR_FOOTER_HTML_STRING =\
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
             <li><a href="#labelby">Labels</a></li>
-            <!-- <li><a href="#animations">Animate</a></li> -->
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -235,32 +237,9 @@ EMPEROR_FOOTER_HTML_STRING =\
             <div class="list" id="labellist">
             </div>
         </div>
-<!--         <div id="animations">
-                <div id="animationsTop">
-                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor/img/reset.png" ></img></a>
-                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor/img/play.png"></img></a>
-                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor/img/pause.png"></img></a>
-                    <br>
-                    <br>
-                    <label for="animationspeed" class="text">Speed</label>
-                    <label id="animationspeed" class="slidervalue"></label>
-                    <div id="animspeedslider" class="slider-range-max"></div>
-                </div>
-                    <br>
-                    <label for="animationGradient" class="text">Animate Over (eg. time)</label><br>
-                    <select id="animationovercombo" onchange="animationOverMenuChanged()">
-                    </select>
-                    <br>
-                    <br>
-                    <label for="animation" class="text">Animate</label><br>
-                    <select id="animationcombo" onchange="animationMenuChanged()">
-                    </select>
-                    <div class="animationlist" id="animationlist">
-                    </div>
-                </div> -->
         <div id="settings">
             <form name="settingsoptions">
-            <input type="checkbox" onchange="toggle_scale_coordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
             </form>
             <br>
             <br>

@@ -12,7 +12,7 @@ __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 
-from numpy import ndarray, array
+from numpy import ndarray, array, ones, zeros
 
 from os.path import abspath, dirname, join, exists
 
@@ -215,25 +215,11 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
     mapping_file = [mapping_header] + mapping_data
     coords_file = [coords_header, coords_data]
 
-    if custom_axes:
-        if type(coords_data) == ndarray:
+    if custom_axes and type(coords_data) == ndarray:
             # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
             get_custom_coords(custom_axes, mapping_file, coords_file)
             remove_nans(coords_file)
             scale_custom_coords(custom_axes, coords_file)
-        elif type(coords_data) == list:
-            index = 0
-            for single_coords_data in coords_data:
-                coords_file = [coords_header, single_coords_data]
-
-                # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
-                get_custom_coords(custom_axes, mapping_file, coords_file)
-                remove_nans(coords_file)
-                scale_custom_coords(custom_axes, coords_file)
-
-                coords_data[index] = coords_file[1]
-                index += 1
-
     if type(coords_data) == list:
         # take the first pcoa file as the master set of coordinates
         master_pcoa = [coords_header.pop(0), coords_data.pop(0),
@@ -249,9 +235,26 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             identifiers = summarize_pcoas(master_pcoa, support_pcoas,
                 method=jackknifing_method, apply_procrustes=False)
 
+        # custom axes an jackknifing is a tricky thing to do, you only have to
+        # add the custom values to the master file which is represented as the
+        # coords_data return value. Since there is really no variation in that
+        # axis then you have to change the values of coords_high and of
+        # coords_low to something really small so the WebGL work properly
+        if custom_axes:
+            coords_file = [master_pcoa[0], coords_data]
+            get_custom_coords(custom_axes, mapping_file, coords_file)
+            remove_nans(coords_file)
+            scale_custom_coords(custom_axes, coords_file)
+
+            # this opens support for as many custom axes as needed
+            axes = len(custom_axes)
+            coords_low[:, 0:axes] = zeros([coords_low.shape[0], axes])
+            coords_high[:, 0:axes] = ones([coords_high.shape[0], axes])*0.00001
+            coords_data = coords_file[1]
+
         # return a value containing coords_low and coords_high
-        return identifiers, coords_data, eigenvalues_average,\
-            master_pcoa[3], coords_low, coords_high,
+        return identifiers, coords_data, eigenvalues_average, master_pcoa[3],\
+            coords_low, coords_high,
 
     # if no coords summary is applied, return None in the correspoinding values
     return coords_file[0], coords_file[1], coords_eigenvals, coords_pct, None,\

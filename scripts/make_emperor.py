@@ -41,7 +41,7 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "header names. Color by 'Treatment' and by the result of concatenating "
     "the 'DOB' category and the 'Treatment' category: ","%prog -i "
     "unweighted_unifrac_pc.txt -m Fasting_Map.txt -b 'Treatment&&DOB,Treatment'"
-    ),
+    " -o emperor_colored_by"),
     ("PCoA plot with an explicit axis", "Create a PCoA plot with an axis of "
     "the plot representing the 'DOB' of the samples. This option is useful when"
     " presenting a gradient from your metadata e. g. 'Time' or 'pH': ", "%prog "
@@ -51,12 +51,12 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     " a directory of coordinates files (where each file corresponds to a "
     "different OTU table) and use the standard deviation method to compute the "
     "dimensions of the ellipsoids surrounding each sample: ", "%prog -i "
-    "unweighted_unifrac_pc -m Fasting_Map.txt -o jackknifed_pcoa -s sdev"),
+    "unweighted_unifrac_pc -m Fasting_Map.txt -o jackknifed_pcoa -e sdev"),
     ("Jackknifed PCoA plot with a master coordinates file", "Passing a master "
     "coordinates file (--master_pcoa) will display the ellipsoids centered by "
     "the samples in this file: ", "%prog -i unweighted_unifrac_pc -s "
-    "unweighted_unifrac_pc/unweighted_unifrac_pc_120_7.txt -m Fasting_Map.txt "
-    "-o jackknifed_with_master")]
+    "unweighted_unifrac_pc/pcoa_unweighted_unifrac_rarefaction_110_5.txt -m "
+    "Fasting_Map.txt -o jackknifed_with_master")]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'emperor.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening emperor.html with "+\
@@ -146,6 +146,13 @@ def main():
     # according to different criteria to the following variables
     offending_fields = []
     non_numeric_categories = []
+
+    # can't do averaged pcoa plots _and_ custom axes in the same plot
+    if custom_axes!=None and len(custom_axes.split(','))>1 and\
+        isdir(input_coords):
+        option_parser.error(('Jackknifed plots are limited to one custom axis, '
+            'currently trying to use: %s. Make sure you use only one.' %
+            custom_axes))
 
     # before creating any output, check correct parsing of the main input files
     try:
@@ -303,16 +310,18 @@ def main():
             'Try the \'--missing_custom_axes_values\' option to fix these '
             'values.' % ', '.join(non_numeric_categories)))
 
+    # process the coordinates file first, preventing the case where the custom
+    # axes is not in the coloring categories i. e. in the --colory_by categories
+    coords_headers, coords_data, coords_eigenvalues, coords_pct, coords_low,\
+        coords_high = preprocess_coords_file(coords_headers, coords_data,
+        coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
+        jackknifing_method=jackknifing_method)
+
     # remove the columns in the mapping file that are not informative taking
     # into account the header names that were already authorized to be used
     # and take care of concatenating the fields for the && merged columns
     mapping_data, header = preprocess_mapping_file(mapping_data, header,
         color_by_column_names, unique=not add_unique_columns)
-
-    coords_headers, coords_data, coords_eigenvalues, coords_pct, coords_low,\
-        coords_high = preprocess_coords_file(coords_headers, coords_data,
-        coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
-        jackknifing_method=jackknifing_method)
 
     # use the current working directory as default
     if opts.output_dir:
@@ -321,7 +330,7 @@ def main():
     else:
         dir_path='./'
 
-    fp_out = open(join(dir_path, 'emperor.html'),'w')
+    fp_out = open(join(dir_path, 'index.html'),'w')
     fp_out.write(EMPEROR_HEADER_HTML_STRING)
 
     # write the html file
