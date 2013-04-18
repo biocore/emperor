@@ -14,11 +14,15 @@ __status__ = "Development"
 from os import listdir
 from os.path import join, exists, isdir
 
+from qiime.biplots import get_taxa, get_taxa_coords, get_taxa_prevalence
 from qiime.filter import filter_mapping_file
-from qiime.parse import parse_mapping_file, parse_coords, mapping_file_to_dict
+from qiime.parse import (parse_mapping_file, parse_coords, mapping_file_to_dict,
+    parse_otu_table)
 from qiime.util import (parse_command_line_parameters, make_option, create_dir,
     MetadataMap)
+from qiime.biplots import make_biplot_scores_output
 
+from emperor.biplots import preprocess_otu_table
 from emperor.util import (copy_support_files, preprocess_mapping_file,
     preprocess_coords_file, fill_mapping_field_from_mapping_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
@@ -91,9 +95,9 @@ script_info['optional_options'] = [
     'separating them without spaces. The user can also combine columns in'
     ' the mapping file by separating the categories by "&&" without spaces. '
     '[default=color by all categories]', default=''),
-    make_option('--biplot_output_file', help='Output filepath that will contain'
-    ' the coordinates when creating a BiPlot. [default: %default]',
-    default=None, type='new_filepath'),
+    make_option('--biplot_fp', help='Output filepath that will contain the '
+    'coordinates when creating a BiPlot. [default: %default]', default=None,
+    type='new_filepath'),
     make_option('-e', '--ellipsoid_method', help='Used only when plotting '
     'ellipsoids for jackknifed beta diversity (i.e. using a directory of coord '
     'files instead of a single coord file). Valid values are "IQR" (for '
@@ -105,7 +109,7 @@ script_info['optional_options'] = [
     'accounting for all the samples and removing some samples could lead to '
     ' erroneous/skewed interpretations.', action='store_true', default=False),
     make_option('--n_taxa_keep', help='Number of taxonomic groups from the '
-    '"--taxa_fname" file to display. Passing "-1" will cause to display all the'
+    '"--taxa_fp" file to display. Passing "-1" will cause to display all the'
     ' taxonomic groups This option is only used when creating BiPlots. '
     '[default=%default]', default=10, type='int'),
     make_option('-s', '--master_pcoa', help='Used only when plotting ellipsoids'
@@ -113,7 +117,7 @@ script_info['optional_options'] = [
     ' instead of a single coord file). The coordinates in this file will be the'
     ' center of each ellipisoid. [default: arbitrarily selected file from the '
     'input directory]', default=None, type='existing_filepath'),
-    make_option('-t', '--taxa_fname', help='Path to a summarized taxa file (i. '
+    make_option('-t', '--taxa_fp', help='Path to a summarized taxa file (i. '
     'e. the output of summarize_taxa.py). This option is only used when '
     'creating BiPlots. [default=%default]', default=None, type=
     'existing_filepath'),
@@ -141,6 +145,9 @@ def main():
     missing_custom_axes_values = opts.missing_custom_axes_values
     jackknifing_method = opts.ellipsoid_method
     master_pcoa = opts.master_pcoa
+    taxa_fp = opts.taxa_fp
+    n_taxa_keep = opts.n_taxa_keep
+    biplot_fp = opts.biplot_fp
 
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
@@ -235,6 +242,35 @@ def main():
         sids_intersection = list(set(zip(*mapping_data)[0])&set(coords_headers))
         number_intersected_sids = len(sids_intersection)
         required_number_of_sids = len(coords_headers)
+
+    if taxa_fp:
+        try:
+            # for summarized tables the "otu_ids" are really the "lineages"
+            otu_sample_ids, lineages, otu_table, _ = parse_otu_table(open(
+                taxa_fp, 'U'), count_map_f=float, remove_empty_rows=True)
+        except ValueError, e:
+            option_parser.error('There was a problem parsing the --taxa_fp: %s'%
+                e.message)
+
+        # filter out the sample ids found in the OTU table but that are not
+        # present in the coordinates file nor in the mapping file
+        keep_otu_sample_ids = list(set(sids_intersection)&set(otu_sample_ids))
+
+        if not keep_otu_sample_ids:
+            option_parser.error('The sample identifiers in the OTU table must '
+                'have at least one match with the data in the mapping file and '
+                'with the coordinates file. Verify you are using input files '
+                'that belong to the same dataset.')
+
+        otu_coords, otu_table, otu_lineages, otu_prevalence, lines =\
+            preprocess_otu_table(otu_sample_ids, otu_table, lineages,
+            coords_data, n_taxa_keep, keep_otu_sample_ids)
+
+        # write the bilot coords in the output file if a path is passed
+        if biplot_fp:
+            fd = open(biplot_fp, 'w')
+            fd.writelines(lines)
+            fd.close()
 
     # sample ids must be shared between files
     if number_intersected_sids <= 0:
