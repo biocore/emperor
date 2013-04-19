@@ -142,6 +142,44 @@ def format_mapping_file_to_js(mapping_file_data, mapping_file_headers, columns):
 
     return js_mapping_file_string
 
+def format_taxa_to_js(otu_coords, lineages, prevalence):
+    """Write javascript string representing the taxa in a PCoA plot
+    
+    Inputs:
+    otu_coords: numpy array where the taxa is positioned
+    lineages: label for each of these lineages
+    prevalence: score of prevalence for each of the taxa that is drawn
+
+    Outputs:
+    js_biplots_string: javascript string where the taxa information is written
+    to create the spheres representing each of these, will return only the
+    variable declaration if the inputs are empty.
+    """
+    js_biplots_string = []
+    js_biplots_string.append('\nvar g_taxaPositions = new Array();\n')
+
+    # if we have prevalence scores, calculate the taxa radii values
+    if len(prevalence):
+        taxa_radii = RADIUS*(MIN_TAXON_RADIUS+(MAX_TAXON_RADIUS-
+            MIN_TAXON_RADIUS)*prevalence)
+    else:
+        taxa_radii = []
+
+    index = 0
+
+    # write the data in the form of a dictionary
+    for taxa_label, taxa_coord, radius in zip(lineages, otu_coords, taxa_radii):
+        js_biplots_string.append(("g_taxaPositions['%d'] = { 'lineage': '%s', "
+            "'x': %f, 'y': %f, 'z': %f 'radius': %f};\n") % (index,
+            taxa_label, taxa_coord[0], taxa_coord[1], taxa_coord[2], radius))
+        index += 1
+
+    # join the array of strings as a single string
+    return ''.join(js_biplots_string)
+
+MIN_TAXON_RADIUS = 0.5
+MAX_TAXON_RADIUS = 5
+RADIUS = 1.0
 
 EMPEROR_HEADER_HTML_STRING =\
 """<!doctype html>

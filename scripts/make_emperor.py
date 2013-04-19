@@ -26,7 +26,7 @@ from emperor.biplots import preprocess_otu_table
 from emperor.util import (copy_support_files, preprocess_mapping_file,
     preprocess_coords_file, fill_mapping_field_from_mapping_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
-    EMPEROR_FOOTER_HTML_STRING, EMPEROR_HEADER_HTML_STRING)
+    format_taxa_to_js, EMPEROR_FOOTER_HTML_STRING, EMPEROR_HEADER_HTML_STRING)
 
 script_info = {}
 script_info['brief_description'] = "Create three dimensional PCoA plots"
@@ -271,6 +271,9 @@ def main():
             fd = open(biplot_fp, 'w')
             fd.writelines(lines)
             fd.close()
+    else:
+        # empty lists will cause the format function to write only the header
+        otu_coords, otu_lineages, otu_prevalence = [], [], []
 
     # sample ids must be shared between files
     if number_intersected_sids <= 0:
@@ -373,6 +376,7 @@ def main():
     fp_out.write(format_mapping_file_to_js(mapping_data, header, header))
     fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
         coords_eigenvalues, coords_pct, custom_axes, coords_low, coords_high))
+    fp_out.write(format_taxa_to_js(otu_coords, otu_lineages, otu_prevalence))
     fp_out.write(EMPEROR_FOOTER_HTML_STRING)
     copy_support_files(dir_path)
 
