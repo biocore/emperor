@@ -252,11 +252,8 @@ def main():
             option_parser.error('There was a problem parsing the --taxa_fp: %s'%
                 e.message)
 
-        # filter out the sample ids found in the OTU table but that are not
-        # present in the coordinates file nor in the mapping file
-        keep_otu_sample_ids = list(set(sids_intersection)&set(otu_sample_ids))
-
-        if not keep_otu_sample_ids:
+        # make sure there are matching sample ids with the otu table
+        if not len(list(set(sids_intersection)&set(otu_sample_ids))):
             option_parser.error('The sample identifiers in the OTU table must '
                 'have at least one match with the data in the mapping file and '
                 'with the coordinates file. Verify you are using input files '
@@ -264,7 +261,7 @@ def main():
 
         otu_coords, otu_table, otu_lineages, otu_prevalence, lines =\
             preprocess_otu_table(otu_sample_ids, otu_table, lineages,
-            coords_data, n_taxa_keep, keep_otu_sample_ids)
+            coords_data, coords_headers, n_taxa_keep)
 
         # write the bilot coords in the output file if a path is passed
         if biplot_fp:
