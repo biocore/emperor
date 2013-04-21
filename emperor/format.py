@@ -87,11 +87,12 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     # use as many as you can (since customs axes can be either [0, 1, 2, 3])
     for i in range(0, 3):
         try:
-            js_pcoa_string += 'g_pc%dLabel = \"%s\";\n' % (i+1, custom_axes[i])
+            js_pcoa_string += 'var g_pc%dLabel = \"%s\";\n' % (i+1,
+                custom_axes[i])
             offset+=1 # offset will help us retrieve the correct pcoalabels val
         except:
             # if there are custom axes then subtract the number of custom axes
-            js_pcoa_string += 'g_pc%dLabel = \"PC%d (%.0f %%)\";\n' %\
+            js_pcoa_string += 'var g_pc%dLabel = \"PC%d (%.0f %%)\";\n' %\
                 (i+1, i+1-offset, pcoalabels[i-offset])
 
     js_pcts = []
@@ -170,10 +171,10 @@ def format_taxa_to_js(otu_coords, lineages, prevalence):
     # write the data in the form of a dictionary
     for taxa_label, taxa_coord, radius in zip(lineages, otu_coords, taxa_radii):
         js_biplots_string.append(("g_taxaPositions['%d'] = { 'lineage': '%s', "
-            "'x': %f, 'y': %f, 'z': %f 'radius': %f};\n") % (index,
+            "'x': %f, 'y': %f, 'z': %f, 'radius': %f};\n") % (index,
             taxa_label, taxa_coord[0], taxa_coord[1], taxa_coord[2], radius))
         index += 1
-
+    js_biplots_string.append('\n')
     # join the array of strings as a single string
     return ''.join(js_biplots_string)
 

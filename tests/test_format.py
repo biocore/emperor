@@ -96,7 +96,7 @@ class TopLevelTests(TestCase):
         # case with empty data
         out_js_taxa_string = format_taxa_to_js([], [], [])
         self.assertEquals(out_js_taxa_string, "\nvar g_taxaPositions = "
-            "new Array();\n")
+            "new Array();\n\n")
 
 
 PCOA_DATA = array([[ -1.09166142e-01, 8.77774496e-02, 1.15866606e-02, -6.26863896e-02, 2.31533068e-02, 8.76934639e-02, 1.37400927e-03, -1.35496063e-05, 1.29849404e-09],
@@ -133,9 +133,9 @@ var g_xMinimumValue = -0.293353;
 var g_yMinimumValue = -0.166234;
 var g_zMinimumValue = -0.141717;
 var g_maximum = 34912.621000;
-g_pc1Label = "PC1 (27 %)";
-g_pc2Label = "PC2 (16 %)";
-g_pc3Label = "PC3 (14 %)";
+var g_pc1Label = "PC1 (27 %)";
+var g_pc2Label = "PC2 (16 %)";
+var g_pc3Label = "PC3 (14 %)";
 var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
 """
 
@@ -163,9 +163,9 @@ var g_xMinimumValue = -0.293353;
 var g_yMinimumValue = -0.166234;
 var g_zMinimumValue = -0.141717;
 var g_maximum = 34912.621000;
-g_pc1Label = "Instant";
-g_pc2Label = "PC1 (27 %)";
-g_pc3Label = "PC2 (16 %)";
+var g_pc1Label = "Instant";
+var g_pc2Label = "PC1 (27 %)";
+var g_pc3Label = "PC2 (16 %)";
 var g_fractionExplained = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
 """
 
@@ -192,9 +192,9 @@ var g_xMinimumValue = 0.100000;
 var g_yMinimumValue = 0.500000;
 var g_zMinimumValue = 0.100000;
 var g_maximum = 5.500000;
-g_pc1Label = "PC1 (44 %)";
-g_pc2Label = "PC2 (40 %)";
-g_pc3Label = "PC3 (15 %)";
+var g_pc1Label = "PC1 (44 %)";
+var g_pc2Label = "PC2 (40 %)";
+var g_pc3Label = "PC3 (15 %)";
 var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
 """
 
@@ -215,10 +215,11 @@ var g_mappingFileData = { 'PC.481': ['ACCAGCGACTAG','YATGCTGCCTCCCGTAGGAGT','Con
 
 TAXA_JS_STRING = """
 var g_taxaPositions = new Array();
-g_taxaPositions['Root;k__Bacteria;p__Firmicutes'] = { 'lineage': 'Root;k__Bacteria;p__Firmicutes', 'x': 0.280399, 'y': -0.006013, 'z': 0.023485 'radius': 5.000000};
-g_taxaPositions['Root;k__Bacteria;p__Bacteroidetes'] = { 'lineage': 'Root;k__Bacteria;p__Bacteroidetes', 'x': 0.228820, 'y': -0.130142, 'z': -0.287149 'radius': 3.491237};
-g_taxaPositions['Root;k__Bacteria;p__Tenericutes'] = { 'lineage': 'Root;k__Bacteria;p__Tenericutes', 'x': -0.091330, 'y': 0.424147, 'z': -0.135627 'radius': 0.868694};
-g_taxaPositions['Root;k__Bacteria;Other'] = { 'lineage': 'Root;k__Bacteria;Other', 'x': -0.276542, 'y': -0.144964, 'z': 0.066647 'radius': 0.696843};
+g_taxaPositions['0'] = { 'lineage': 'Root;k__Bacteria;p__Firmicutes', 'x': 0.280399, 'y': -0.006013, 'z': 0.023485, 'radius': 5.000000};
+g_taxaPositions['1'] = { 'lineage': 'Root;k__Bacteria;p__Bacteroidetes', 'x': 0.228820, 'y': -0.130142, 'z': -0.287149, 'radius': 3.491237};
+g_taxaPositions['2'] = { 'lineage': 'Root;k__Bacteria;p__Tenericutes', 'x': -0.091330, 'y': 0.424147, 'z': -0.135627, 'radius': 0.868694};
+g_taxaPositions['3'] = { 'lineage': 'Root;k__Bacteria;Other', 'x': -0.276542, 'y': -0.144964, 'z': 0.066647, 'radius': 0.696843};
+
 """
 
 if __name__ == "__main__":
