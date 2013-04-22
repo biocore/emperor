@@ -13,7 +13,7 @@ __status__ = "Development"
 
 
 from numpy import max, min, abs
-
+from cogent.util.misc import if_
 from qiime.parse import mapping_file_to_dict
 
 
@@ -178,6 +178,25 @@ def format_taxa_to_js(otu_coords, lineages, prevalence):
     # join the array of strings as a single string
     return ''.join(js_biplots_string)
 
+def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False):
+    """Create an HTML footer according to the things being presented in the plot
+
+    has_biplots: whether the plot has biplots or not
+    has_ellipses: whether the plot has ellipses or not
+
+    This function will remove unnecessary GUI elements from index.html to avoid
+    confusions i. e. showing an ellipse opacity slider when there are no
+    ellipses in the plot.
+    """
+    optional_strings = []
+
+    # the order of these statemenst matter, see _EMPEROR_FOOTER_HTML_STRING
+    optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
+    optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
+
+    return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
+
+
 MIN_TAXON_RADIUS = 0.5
 MAX_TAXON_RADIUS = 5
 RADIUS = 1.0
@@ -206,7 +225,18 @@ EMPEROR_HEADER_HTML_STRING =\
     <script type="text/javascript">
 """
 
-EMPEROR_FOOTER_HTML_STRING =\
+_ELLIPSE_OPACITY_SLIDER = """
+            <br>
+            <label for="ellipseopacity" class="text">Ellipse Opacity</label>
+            <label id="ellipseopacity" class="slidervalue"></label>
+            <div id="eopacityslider" class="slider-range-max"></div>"""
+
+_TAXA_LABELS_SELECTOR = """
+            <form name="biplotoptions">
+            <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
+            </form>"""
+
+_EMPEROR_FOOTER_HTML_STRING =\
 """ </script>
 </head>
 
@@ -259,7 +289,7 @@ EMPEROR_FOOTER_HTML_STRING =\
         <div id="labelsTop">
             <form name="plotoptions">
             <input type="checkbox" onClick="toggleLabels()">Master Label Visibility</input>
-            </form>
+            </form>%s
             <br>
             <label for="labelopacity" class="text">Label Opacity</label>
             <label id="labelopacity" class="slidervalue"></label>
@@ -284,11 +314,7 @@ EMPEROR_FOOTER_HTML_STRING =\
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>
-            <br>
-            <label for="ellipseopacity" class="text">Ellipse Opacity</label>
-            <label id="ellipseopacity" class="slidervalue"></label>
-            <div id="eopacityslider" class="slider-range-max"></div>
+            <br>%s
             <br>
             <label for="sphereopacity" class="text">Sphere Opacity</label>
             <label id="sphereopacity" class="slidervalue"></label>

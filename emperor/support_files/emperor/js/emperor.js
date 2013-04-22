@@ -675,19 +675,22 @@ function setJqueryUi() {
 			}
 	});
 
-	$("#eopacityslider").slider({
-		range: "max",
-		min: 0,
-		max: 100,
-		value: 20,
-		slide: function( event, ui ) {
-			ellipseOpacityChange(ui);
-		},
-		change: function( event, ui ) {
-			ellipseOpacityChange(ui);
-		}
-	});
-	document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
+	// check whether or not there is an ellipse opacity slider in the plot
+	if (document.getElementById('ellipseopacity')){
+		$("#eopacityslider").slider({
+			range: "max",
+			min: 0,
+			max: 100,
+			value: 20,
+			slide: function( event, ui ) {
+				ellipseOpacityChange(ui);
+			},
+			change: function( event, ui ) {
+				ellipseOpacityChange(ui);
+			}
+		});
+		document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
+	}
 
 	$("#sopacityslider").slider({
 		range: "max",
