@@ -252,6 +252,9 @@ EXPECTED_FOOTER_A =\
 <div id="labels" class="unselectable">
 </div>
 
+<div id="taxalabels" class="unselectable">
+</div>
+
 <div id="axislabels" class="axislabels">
 </div>
 
@@ -350,6 +353,9 @@ EXPECTED_FOOTER_B =\
 <div id="labels" class="unselectable">
 </div>
 
+<div id="taxalabels" class="unselectable">
+</div>
+
 <div id="axislabels" class="axislabels">
 </div>
 
@@ -446,6 +452,9 @@ EXPECTED_FOOTER_C =\
 </div>
 
 <div id="labels" class="unselectable">
+</div>
+
+<div id="taxalabels" class="unselectable">
 </div>
 
 <div id="axislabels" class="axislabels">

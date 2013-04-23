@@ -251,6 +251,9 @@ _EMPEROR_FOOTER_HTML_STRING =\
 <div id="labels" class="unselectable">
 </div>
 
+<div id="taxalabels" class="unselectable">
+</div>
+
 <div id="axislabels" class="axislabels">
 </div>
 
