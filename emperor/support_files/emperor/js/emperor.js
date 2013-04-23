@@ -12,6 +12,7 @@
 // spheres and ellipses that are being displayed on screen
 var g_plotSpheres = {};
 var g_plotEllipses = {};
+var g_plotTaxa = {};
 
 // sample identifiers of all items that are plotted
 var g_plotIds = [];
@@ -128,7 +129,7 @@ function toggleScaleCoordinates(element){
 			operation(g_plotSpheres[sample_id].position.z,g_fractionExplained[2]));
 	}
 
-	// ellipses won't always be available hence the two separate loops
+	// ellipses won't always be available hence the loop per type of data
 	for (sample_id in g_plotEllipses){
 		// scale the dimensions of the positions of each ellipse
 		g_plotEllipses[sample_id].position.set(
@@ -141,6 +142,20 @@ function toggleScaleCoordinates(element){
 			operation(g_plotEllipses[sample_id].scale.x, g_fractionExplained[0]),
 			operation(g_plotEllipses[sample_id].scale.y, g_fractionExplained[1]),
 			operation(g_plotEllipses[sample_id].scale.z, g_fractionExplained[2]));
+	}
+
+	for (index in g_plotTaxa){
+		//scale the dimensions of the positions of each taxa-sphere
+		g_plotTaxa[index].position.set(
+			operation(g_plotTaxa[index].position.x, g_fractionExplained[0]),
+			operation(g_plotTaxa[index].position.y, g_fractionExplained[1]),
+			operation(g_plotTaxa[index].position.z, g_fractionExplained[2]));
+
+		//scale the dimensions of each taxa-sphere
+		g_plotTaxa[index].scale.set(
+			operation(g_plotTaxa[index].scale.x, g_fractionExplained[0]),
+			operation(g_plotTaxa[index].scale.y, g_fractionExplained[0]),
+			operation(g_plotTaxa[index].scale.z, g_fractionExplained[0]));
 	}
 
 }
@@ -543,7 +558,6 @@ function toggleLabels() {
 	if(document.plotoptions.elements[0].checked){
 		$('#labelForm').css('display','block');
 		$('#labels').css('display','block');
-		$('#labels').css('display','block');
 		$("#lopacityslider").slider('enable');
 		$("#labelColor").spectrum('enable');
 		document.getElementById('labelcombo').disabled = false;
@@ -552,7 +566,10 @@ function toggleLabels() {
 			return;
 		}
 
+		// get the current category name to show the labels
 		g_categoryName = document.getElementById('labelcombo')[document.getElementById('labelcombo').selectedIndex].value;
+
+		// for each of the labels check if they are enabled or not
 		for(var i = 0; i < document.labels.elements.length; i++){
 			var hidden = !document.labels.elements[i].checked;
 			var value = document.labels.elements[i].name;
@@ -572,6 +589,23 @@ function toggleLabels() {
 	}
 	else{
 		$('#labels').css('display','none');
+	}
+}
+
+/*This function turns the labels with the lineages on and off*/
+function toggleTaxaLabels(){
+	// present labels if the visibility checkbox is marked
+	if(document.biplotoptions.elements[0].checked){
+		$('#taxalabels').css('display','block');
+
+		for(var key in g_taxaPositions){
+			var taxa_label = g_taxaPositions[key]['lineage'];
+			var divid = taxa_label.replace(/\./g,'');
+			$('#'+key+"_taxalabel").css('display', 'block');
+		}
+	}
+	else{
+		$('#taxalabels').css('display','none');
 	}
 }
 
@@ -779,6 +813,39 @@ function drawSpheres() {
 	}
 }
 
+/*Draw the taxa spheres in the plot as described by the g_taxaPositions array
+
+  Note that this is a function that won't always have an effect because the
+  g_taxaPositions array must have elements stored in it.
+*/
+function drawTaxa(){
+	for (var key in g_taxaPositions){
+		var mesh = new THREE.Mesh(g_genericSphere,
+			new THREE.MeshLambertMaterial());
+
+		// set the volume of the sphere
+		mesh.scale.x = g_taxaPositions[key]['radius'];
+		mesh.scale.y = g_taxaPositions[key]['radius'];
+		mesh.scale.z = g_taxaPositions[key]['radius'];
+
+		// set the position
+		mesh.position.set(g_taxaPositions[key]['x'],
+			g_taxaPositions[key]['y'],
+			g_taxaPositions[key]['z']);
+
+		// the legacy color of these spheres is white
+		mesh.material.color = new THREE.Color("0xFFFFFF");
+		mesh.material.transparent = true;
+		mesh.material.opacity = 0.5;
+		mesh.updateMatrix();
+		mesh.matrixAutoUpdate = true;
+
+		// add the element to the scene and to the g_plotTaxa dictionary
+		g_mainScene.add(mesh);
+		g_plotTaxa[key] = mesh;
+	}
+}
+
 function saveSVG(){
 	open("data:image/svg+xml," + encodeURIComponent(document.getElementById('main_plot').innerHTML));
 }
@@ -875,8 +942,9 @@ $(document).ready(function() {
 
 		g_elementsGroup = new THREE.Object3D();
 		g_mainScene.add(g_elementsGroup);
-		drawEllipses()
-		drawSpheres()
+		drawEllipses();
+		drawSpheres();
+		drawTaxa();
 
 		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
@@ -909,7 +977,6 @@ $(document).ready(function() {
 
 		var axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),g_zMaximumValue+Math.abs(g_zMinimumValue));
 		drawAxisLines(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
-		buildAxisLabels()
 
 		// the light is attached to the camera to provide a 3d perspective
 		g_sceneLight = new THREE.DirectionalLight(0x999999, 2);
@@ -946,6 +1013,20 @@ $(document).ready(function() {
 			labelshtml += "</label>";
 		}
 		document.getElementById("labels").innerHTML = labelshtml;
+
+		labelshtml = "";
+		// add the labels with the taxonomic lineages to the taxalabels div
+		for(var key in g_taxaPositions){
+
+			// get the coordinate of this taxa sphere
+			var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main_plot'));
+
+			// labels are identified by the key they have in g_taxaPositions
+			labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
+			labelshtml += g_taxaPositions[key]['lineage'];
+			labelshtml += "</label>";
+		}
+		document.getElementById("taxalabels").innerHTML = labelshtml
 	}
 
 	function buildAxisLabels() {
@@ -982,6 +1063,21 @@ $(document).ready(function() {
 				var divid = sid.replace(/\./g,'');
 				$('#'+divid+"_label").css('left',coords['x']);
 				$('#'+divid+"_label").css('top',coords['y']);
+			}
+		}
+		// check if you have to reposition the taxa labels for each frame
+		// this is something that will only happen when drawing biplots
+		if(document.biplotoptions){
+			if(document.biplotoptions.elements[0].checked){
+				for(var key in g_taxaPositions) {
+					// retrieve the position of the taxa on screen
+					var coords = toScreenXY(g_plotTaxa[key].position,
+						g_sceneCamera, $('#main_plot'));
+
+					// add the label at the appropriate position
+					$('#'+key+"_taxalabel").css('left',coords['x']);
+					$('#'+key+"_taxalabel").css('top',coords['y']);
+				}
 			}
 		}
 		if(g_foundId) {
