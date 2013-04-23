@@ -61,7 +61,17 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "coordinates file (--master_pcoa) will display the ellipsoids centered by "
     "the samples in this file: ", "%prog -i unweighted_unifrac_pc -s "
     "unweighted_unifrac_pc/pcoa_unweighted_unifrac_rarefaction_110_5.txt -m "
-    "Fasting_Map.txt -o jackknifed_with_master")]
+    "Fasting_Map.txt -o jackknifed_with_master"),
+    ("BiPlots","To see which taxa are the ten more prevalent in the different "
+    "areas of the PCoA plot, you need to pass a summarized taxa file i. e. the "
+    "output of summarize_taxa.py. Note that if the the '--taxa_fp' has fewer "
+    "than 10 taxa, the script will default to use all.","%prog -i unweighted_un"
+    "ifrac_pc.txt -m Fasting_Map.txt -t otu_table_L3.txt -o biplot"),
+    ("BiPlots with extra options","To see which are the three most prevalent "
+    "taxa and save the coordinates where these taxa are centered, you can use "
+    "the -n (number of taxa to keep) and the --biplot_fp (output biplot file "
+    "path) options.", "%prog -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -t"
+    " otu_table_L3.txt -o biplot_options -n 3 --biplot_fp biplot.txt")]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'emperor.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening emperor.html with "+\
@@ -97,8 +107,8 @@ script_info['optional_options'] = [
     ' the mapping file by separating the categories by "&&" without spaces. '
     '[default=color by all categories]', default=''),
     make_option('--biplot_fp', help='Output filepath that will contain the '
-    'coordinates when creating a BiPlot. [default: %default]', default=None,
-    type='new_filepath'),
+    'coordinates where each taxonomic sphere is centered. [default: %default]',
+    default=None, type='new_filepath'),
     make_option('-e', '--ellipsoid_method', help='Used only when plotting '
     'ellipsoids for jackknifed beta diversity (i.e. using a directory of coord '
     'files instead of a single coord file). Valid values are "IQR" (for '
@@ -109,9 +119,9 @@ script_info['optional_options'] = [
     ' the mapping file. Be aware that this is very misleading as the PCoA is '
     'accounting for all the samples and removing some samples could lead to '
     ' erroneous/skewed interpretations.', action='store_true', default=False),
-    make_option('--n_taxa_keep', help='Number of taxonomic groups from the '
-    '"--taxa_fp" file to display. Passing "-1" will cause to display all the'
-    ' taxonomic groups This option is only used when creating BiPlots. '
+    make_option('-n', '--n_taxa_to_keep', help='Number of taxonomic groups from'
+    ' the "--taxa_fp" file to display. Passing "-1" will cause to display all '
+    'the taxonomic groups, this option is only used when creating BiPlots. '
     '[default=%default]', default=10, type='int'),
     make_option('-s', '--master_pcoa', help='Used only when plotting ellipsoids'
     ' for jackknifed beta diversity (i.e. using a directory of coord files'
@@ -147,7 +157,7 @@ def main():
     jackknifing_method = opts.ellipsoid_method
     master_pcoa = opts.master_pcoa
     taxa_fp = opts.taxa_fp
-    n_taxa_keep = opts.n_taxa_keep
+    n_taxa_to_keep = opts.n_taxa_to_keep
     biplot_fp = opts.biplot_fp
 
     # append headernames that the script didn't find in the mapping file
@@ -262,11 +272,16 @@ def main():
 
         otu_coords, otu_table, otu_lineages, otu_prevalence, lines =\
             preprocess_otu_table(otu_sample_ids, otu_table, lineages,
-            coords_data, coords_headers, n_taxa_keep)
+            coords_data, coords_headers, n_taxa_to_keep)
 
         # write the bilot coords in the output file if a path is passed
         if biplot_fp:
-            fd = open(biplot_fp, 'w')
+            # make sure this file can be created
+            try:
+                fd = open(biplot_fp, 'w')
+            except IOError, e:
+                option_parser.error('There was a problem creating the file with'
+                    ' the coordinates for the biplots (%s).' % biplot_fp)
             fd.writelines(lines)
             fd.close()
     else:

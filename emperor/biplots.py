@@ -76,6 +76,12 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
     biplot
     """
 
+    # if this element is a list take the first headers and coordinates
+    # both of these will be the master coordinates, i. e. where data is centered
+    if type(coords_data) == list and type(coords_headers) == list:
+        coords_data = coords_data[0]
+        coords_headers = coords_headers[0]
+
     # re-arrange the otu table so it matches the order of the samples in the
     # coordinates data & remove any sample that is not in the coordinates header
     otu_sample_ids, otu_table = sort_taxa_table_by_pcoa_coords(coords_headers,
