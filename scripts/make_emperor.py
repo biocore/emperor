@@ -20,8 +20,7 @@ from qiime.util import (parse_command_line_parameters, make_option, create_dir,
     MetadataMap)
 
 from emperor.util import (copy_support_files, preprocess_mapping_file,
-    preprocess_coords_file, fill_mapping_field_from_mapping_file,
-    sanitize_mapping_file)
+    preprocess_coords_file, fill_mapping_field_from_mapping_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     EMPEROR_FOOTER_HTML_STRING, EMPEROR_HEADER_HTML_STRING)
 
@@ -147,7 +146,6 @@ def main():
     # before creating any output, check correct parsing of the main input files
     try:
         mapping_data, header, comments = parse_mapping_file(open(map_fp,'U'))
-        mapping_data, header = sanitize_mapping_file(mapping_data, header)
     except:
         option_parser.error(('The metadata mapping file \'%s\' does not seem '
             'to be formatted correctly, verify the formatting is QIIME '

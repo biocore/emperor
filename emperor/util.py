@@ -129,6 +129,9 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False):
     # remove anything not specified in the input
     data, headers = keep_columns_from_mapping_file(data, headers, columns)
 
+    # sanitize the mapping file data and headers
+    data, headers = sanitize_mapping_file(data, headers)
+
     return data, headers
 
 
