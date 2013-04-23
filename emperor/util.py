@@ -312,3 +312,27 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                 line[header_index] = value[0]
 
     return out_data
+
+def sanitize_mapping_file(data, headers):
+    """Clean the strings in the mapping file for use with javascript
+
+    Inputs:
+    data: list of lists with the mapping file data
+    headers: list of strings with the mapping file headers
+
+    Outputs:
+    s_data: sanitized version of the input mapping file data
+    s_headers: sanitized version of the input mapping file headers
+
+    This function will replace all the ocurrences of characters like ' or " with
+    \' or \".
+    """
+    all_lines = [headers] + data
+    out_lines = []
+
+    # replace single and double quotes with escaped versions of them
+    for line in all_lines:
+        out_lines.append([element.replace("'","\\'").replace('"','\\"')
+            for element in line])
+
+    return out_lines[1::], out_lines[0]
