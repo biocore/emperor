@@ -174,6 +174,15 @@ class TopLevelTests(TestCase):
             0.04374296]))
         self.assertEquals(lines, LINES)
 
+        # tests for correct outputs of empty inputs
+        o_otu_coords, o_otu_table, o_otu_lineages, o_prevalence, lines =\
+            preprocess_otu_table([],[], [], self.coords, self.coords_header, 4)
+        self.assertFloatEqual(o_otu_coords, [])
+        self.assertFloatEqual(o_otu_table, [])
+        self.assertFloatEqual(o_otu_lineages, [])
+        self.assertFloatEqual(o_prevalence, [])
+        self.assertFloatEqual(lines, '')
+
 
 OTU_TABLE = """Taxon\tPC.636\tPC.635\tPC.356\tPC.481\tPC.354\tPC.593\tPC.355\tPC.607\tPC.634
 Root;k__Bacteria;Other\t0.0202702702703\t0.0469798657718\t0.0266666666667\t0.027397260274\t0.0134228187919\t0.0134228187919\t0.0136054421769\t0.0469798657718\t0.02

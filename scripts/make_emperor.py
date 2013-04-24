@@ -269,24 +269,9 @@ def main():
                 'have at least one match with the data in the mapping file and '
                 'with the coordinates file. Verify you are using input files '
                 'that belong to the same dataset.')
-
-        otu_coords, otu_table, otu_lineages, otu_prevalence, lines =\
-            preprocess_otu_table(otu_sample_ids, otu_table, lineages,
-            coords_data, coords_headers, n_taxa_to_keep)
-
-        # write the bilot coords in the output file if a path is passed
-        if biplot_fp:
-            # make sure this file can be created
-            try:
-                fd = open(biplot_fp, 'w')
-            except IOError, e:
-                option_parser.error('There was a problem creating the file with'
-                    ' the coordinates for the biplots (%s).' % biplot_fp)
-            fd.writelines(lines)
-            fd.close()
     else:
-        # empty lists will cause the format function to write only the header
-        otu_coords, otu_lineages, otu_prevalence = [], [], []
+        # empty lists indicate that there was no taxa file passed in
+        otu_sample_ids, lineages, otu_table = [], [], []
 
     # sample ids must be shared between files
     if number_intersected_sids <= 0:
@@ -369,6 +354,12 @@ def main():
         coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
         jackknifing_method=jackknifing_method)
 
+    # process the otu table after processing the coordinates to get custom axes
+    # (when available) or any other change that occurred to the coordinates
+    otu_coords, otu_table, otu_lineages, otu_prevalence, lines =\
+        preprocess_otu_table(otu_sample_ids, otu_table, lineages,
+        coords_data, coords_headers, n_taxa_to_keep)
+
     # remove the columns in the mapping file that are not informative taking
     # into account the header names that were already authorized to be used
     # and take care of concatenating the fields for the && merged columns
@@ -393,6 +384,17 @@ def main():
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
         isdir(input_coords)))
     copy_support_files(dir_path)
+
+    # write the bilot coords in the output file if a path is passed
+    if biplot_fp:
+        # make sure this file can be created
+        try:
+            fd = open(biplot_fp, 'w')
+        except IOError:
+            option_parser.error('There was a problem creating the file with'
+                ' the coordinates for the biplots (%s).' % biplot_fp)
+        fd.writelines(lines)
+        fd.close()
 
 if __name__ == "__main__":
     main()

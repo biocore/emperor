@@ -76,6 +76,10 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
     biplot
     """
 
+    # return empty values if any of the taxa data is empty
+    if (otu_sample_ids or otu_table or lineages) == []:
+        return [], [], [], [], ''
+
     # if this element is a list take the first headers and coordinates
     # both of these will be the master coordinates, i. e. where data is centered
     if type(coords_data) == list and type(coords_headers) == list:
