@@ -19,7 +19,7 @@ from cogent.util.unit_test import TestCase, main
 from qiime.util import get_qiime_temp_dir, get_tmp_filename
 from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
     preprocess_mapping_file, preprocess_coords_file,
-    fill_mapping_field_from_mapping_file)
+    fill_mapping_field_from_mapping_file, sanitize_mapping_file)
 
 class TopLevelTests(TestCase):
 
@@ -255,6 +255,23 @@ class TopLevelTests(TestCase):
             self.broken_mapping_file_data, self.mapping_file_headers_gradient,
             'Spam:Foo')
 
+    def test_sanitize_mapping_file(self):
+        """Check the mapping file strings are sanitized for it's use in JS"""
+
+        o_sanitized_headers, o_sanitized_data = sanitize_mapping_file(
+            UNSANITZIED_MAPPING_DATA, ['SampleID', 'BarcodeSequence',
+            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Descr"""""iption'])
+
+        self.assertEquals(o_sanitized_data, ['SampleID', 'BarcodeSequence',
+            'LinkerPrimerSequence', 'Treatment', 'DOB','Description'])
+        self.assertEquals(o_sanitized_headers, [
+['PC.354', "Dr. Bronners", 'Control', '20061218', 'Control_mouse_I.D._354'],
+['PC.355', 'AACTCGTCGATG', "Control", '20061218', 'Control_mouse_I.D._355'],
+["PC356", 'ACAGACCACTCA', 'Control', '20061126', 'Control_mouse_I.D._356'],
+['PC.481', 'ACAGCACTAG', 'Control', '20070314', 'Control_mouse_I.D._481'],
+['PC.593', 'AGCAGCACTTGT', 'Control', '20071210', 'Control_mouse_I.D._593']])
+
+
 MAPPING_FILE_DATA = [
     ['PC.354','AGCACGAGCCTA','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._354'],
     ['PC.355','AACTCGTCGATG','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._355'],
@@ -355,6 +372,12 @@ BROKEN_MAPPING_FILE = [
     ['PC.635', 'Fast','9', 'x', 'Fast20080116'],
     ['PC.636', 'Fast','12', '37.22', 'Fast20080116']]
 
+UNSANITZIED_MAPPING_DATA = [
+['PC.354', "Dr. Bronner's", 'Cont"rol', '20061218', 'Control_mouse_I.D._354'],
+['PC.355', 'AACTCGTCGATG', "Con''trol", '20061218', 'Control_mouse_I.D._355'],
+["PC'356", 'ACAGACCACTCA', 'Control', '20061126', 'Control_mouse_I.D._"356'],
+['PC.481', 'AC"AGC"ACTAG', 'Control', '20070314', 'Control_mouse_I.D._481'],
+['PC.593', 'AGCAGCACTTGT', 'Control', '20071210', 'Control_mouse_I.D._593']]
 
 if __name__ == "__main__":
     main()
