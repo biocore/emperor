@@ -191,6 +191,8 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False):
     optional_strings = []
 
     # the order of these statemenst matter, see _EMPEROR_FOOTER_HTML_STRING
+    optional_strings.append(if_(has_biplots, _BIPLOT_SPHERES_COLOR_SELECTOR,''))
+    optional_strings.append(if_(has_biplots, _BIPLOT_VISIBILITY_SELECTOR, ''))
     optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
     optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
 
@@ -236,6 +238,20 @@ _TAXA_LABELS_SELECTOR = """
             <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
             </form>"""
 
+_BIPLOT_VISIBILITY_SELECTOR = """
+            <br>
+            <form name="biplotsvisibility">
+            <input type="checkbox" onClick="toggleBiplotVisibility()">Biplots Visibility</input>
+            </form>
+            <br>"""
+
+_BIPLOT_SPHERES_COLOR_SELECTOR ="""
+            <br>
+            <table>
+                <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
+            </table>
+            <br>"""
+
 _EMPEROR_FOOTER_HTML_STRING =\
 """ </script>
 </head>
@@ -276,13 +292,13 @@ _EMPEROR_FOOTER_HTML_STRING =\
             <div id="key">
             </div>
         </div>
-        <div id="colorby">
+        <div id="colorby">%s
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby">
+        <div id="showby">%s
             <select id="showbycombo" onchange="showByMenuChanged()">
             </select>
             <div class="list" id="showbylist">
@@ -291,7 +307,7 @@ _EMPEROR_FOOTER_HTML_STRING =\
         <div id="labelby">
         <div id="labelsTop">
             <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Master Label Visibility</input>
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
             </form>%s
             <br>
             <label for="labelopacity" class="text">Label Opacity</label>

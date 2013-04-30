@@ -476,6 +476,13 @@ function colorChanged(catValue,color) {
 	}
 }
 
+/* This function is called when q new color is selected for #taxaspherescolor */
+function colorChangedForTaxaSpheres(color){
+	for (index in g_plotTaxa){
+		g_plotTaxa[index].material.color.setHex(color.replace('#', '0x'))
+	}
+}
+
 /*This function is called when a new value is selected in the label menu*/
 function labelMenuChanged() {
 	if(document.getElementById('labelcombo').selectedIndex == 0){
@@ -609,6 +616,22 @@ function toggleTaxaLabels(){
 	}
 }
 
+/* Turn on and off the spheres representing the biplots on screen */
+function toggleBiplotVisibility(){
+	// reduce the opacity to zero if the element should be off or to 0.5
+	// if the element is supposed to be present; 0.5 is the default value
+	if(document.biplotsvisibility.elements[0].checked){
+		for (index in g_plotTaxa){
+			g_plotTaxa[index].material.opacity = 0;
+		}
+	}
+	else{
+		for (index in g_plotTaxa){
+			g_plotTaxa[index].material.opacity = 0.5;
+		}
+	}
+}
+
 /*This function finds the screen coordinates of any position in the current plot.
 
   The main purpose of this function is to be used for calculating the placement
@@ -724,6 +747,27 @@ function setJqueryUi() {
 			}
 		});
 		document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
+	}
+
+	// check if we are presenting biplots, to decide whether or not we should
+	// show the color picker for the biplot spheres, white is the default color
+	if(document.getElementById('taxaspherescolor')){
+		$('#taxaspherescolor').css('backgroundColor',"#FFFFFF");
+		$("#taxaspherescolor").spectrum({
+			localStorageKey: 'key',
+			color: "#FFFFFF",
+			showInitial: true,
+			showInput: true,
+			change:
+				function(color) {
+					$(this).css('backgroundColor', color.toHexString());
+					var c = color.toHexString();
+					if(c.length == 4){
+						c = "#"+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2)+c.charAt(3)+c.charAt(3);
+					}
+					colorChangedForTaxaSpheres(c);
+				}
+		});
 	}
 
 	$("#sopacityslider").slider({

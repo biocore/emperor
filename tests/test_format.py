@@ -292,7 +292,7 @@ EXPECTED_FOOTER_A =\
         <div id="labelby">
         <div id="labelsTop">
             <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Master Label Visibility</input>
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
             </form>
             <br>
             <label for="labelopacity" class="text">Label Opacity</label>
@@ -379,12 +379,22 @@ EXPECTED_FOOTER_B =\
             </div>
         </div>
         <div id="colorby">
+            <br>
+            <table>
+                <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
+            </table>
+            <br>
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
             </div>
         </div>
         <div id="showby">
+            <br>
+            <form name="biplotsvisibility">
+            <input type="checkbox" onClick="toggleBiplotVisibility()">Biplots Visibility</input>
+            </form>
+            <br>
             <select id="showbycombo" onchange="showByMenuChanged()">
             </select>
             <div class="list" id="showbylist">
@@ -393,7 +403,7 @@ EXPECTED_FOOTER_B =\
         <div id="labelby">
         <div id="labelsTop">
             <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Master Label Visibility</input>
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
             </form>
             <form name="biplotoptions">
             <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
@@ -494,7 +504,7 @@ EXPECTED_FOOTER_C =\
         <div id="labelby">
         <div id="labelsTop">
             <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Master Label Visibility</input>
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
             </form>
             <br>
             <label for="labelopacity" class="text">Label Opacity</label>
