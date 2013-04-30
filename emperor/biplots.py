@@ -11,7 +11,7 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
-from numpy import argsort
+from numpy import argsort, array
 
 from emperor.sort import sort_taxa_table_by_pcoa_coords
 from qiime.biplots import (get_taxa_prevalence, get_taxa_coords,
@@ -77,7 +77,7 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
     """
 
     # return empty values if any of the taxa data is empty
-    if (otu_sample_ids or otu_table or lineages) == []:
+    if (otu_sample_ids == []) or (otu_table == array([])) or (lineages == []):
         return [], [], [], [], ''
 
     # if this element is a list take the first headers and coordinates
