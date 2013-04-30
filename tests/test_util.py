@@ -263,12 +263,12 @@ class TopLevelTests(TestCase):
             'LinkerPrimerSequence', 'Treatment', 'DOB', 'Descr"""""iption'])
 
         self.assertEquals(o_sanitized_data, ['SampleID', 'BarcodeSequence',
-            'LinkerPrimerSequence', 'Treatment', 'DOB','Descr\\"\\"\\"\\"\\"iption'])
+            'LinkerPrimerSequence', 'Treatment', 'DOB','Description'])
         self.assertEquals(o_sanitized_headers, [
-['PC.354', "Dr. Bronner\\'s", 'Cont\\"rol', '20061218', 'Control_mouse_I.D._354'],
-['PC.355', 'AACTCGTCGATG', "Con\\'\\'trol", '20061218', 'Control_mouse_I.D._355'],
-["PC\\'356", 'ACAGACCACTCA', 'Control', '20061126', 'Control_mouse_I.D._\\"356'],
-['PC.481', 'AC\\"AGC\\"ACTAG', 'Control', '20070314', 'Control_mouse_I.D._481'],
+['PC.354', "Dr. Bronners", 'Control', '20061218', 'Control_mouse_I.D._354'],
+['PC.355', 'AACTCGTCGATG', "Control", '20061218', 'Control_mouse_I.D._355'],
+["PC356", 'ACAGACCACTCA', 'Control', '20061126', 'Control_mouse_I.D._356'],
+['PC.481', 'ACAGCACTAG', 'Control', '20070314', 'Control_mouse_I.D._481'],
 ['PC.593', 'AGCAGCACTTGT', 'Control', '20071210', 'Control_mouse_I.D._593']])
 
 

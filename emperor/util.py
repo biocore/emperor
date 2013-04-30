@@ -327,15 +327,14 @@ def sanitize_mapping_file(data, headers):
     s_data: sanitized version of the input mapping file data
     s_headers: sanitized version of the input mapping file headers
 
-    This function will replace all the ocurrences of characters like ' or " with
-    \' or \".
+    This function will remove all the ocurrences of characters like ' or ".
     """
     all_lines = [headers] + data
     out_lines = []
 
     # replace single and double quotes with escaped versions of them
     for line in all_lines:
-        out_lines.append([element.replace("'","\\'").replace('"','\\"')
+        out_lines.append([element.replace("'","").replace('"','')
             for element in line])
 
     return out_lines[1::], out_lines[0]
