@@ -13,7 +13,7 @@ __status__ = "Development"
 
 
 from numpy import max, min, abs
-
+from cogent.util.misc import if_
 from qiime.parse import mapping_file_to_dict
 
 
@@ -50,6 +50,8 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     maximum = max(abs(coords[:,:3]))
     pcoalabels = pct_var[:3]
 
+    radius = (max_x-min_x)*.02
+
     # write the values for all the spheres
     js_pcoa_string += '\nvar g_spherePositions = new Array();\n'
     for point, coord in zip(header, coords):
@@ -69,16 +71,20 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
                 delta[2], s_coord[0], s_coord[1], s_coord[2]))
 
     js_pcoa_string += 'var g_segments = 16, g_rings = 16, g_radius = %f;\n' %\
-        ((max_x-min_x)*.02)
+        (radius)
     js_pcoa_string += 'var g_xAxisLength = %f;\n' % (abs(max_x)+abs(min_x))
     js_pcoa_string += 'var g_yAxisLength = %f;\n' % (abs(max_y)+abs(min_y))
     js_pcoa_string += 'var g_zAxisLength = %f;\n' % (abs(max_z)+abs(min_z))
-    js_pcoa_string += 'var g_xMaximumValue = %f;\n' % max_x
-    js_pcoa_string += 'var g_yMaximumValue = %f;\n' % max_y
-    js_pcoa_string += 'var g_zMaximumValue = %f;\n' % max_z
-    js_pcoa_string += 'var g_xMinimumValue = %f;\n' % min_x
-    js_pcoa_string += 'var g_yMinimumValue = %f;\n' % min_y
-    js_pcoa_string += 'var g_zMinimumValue = %f;\n' % min_z
+
+    # use this to determine if the padding value should be positive or negative
+    # radius*6 is a padding to the axes so axes don't look _small_
+    padding = lambda _x: if_(_x>=0, 6*radius, -6*radius)
+    js_pcoa_string += 'var g_xMaximumValue = %f;\n' % (max_x+padding(max_x))
+    js_pcoa_string += 'var g_yMaximumValue = %f;\n' % (max_y+padding(max_y))
+    js_pcoa_string += 'var g_zMaximumValue = %f;\n' % (max_z+padding(max_z))
+    js_pcoa_string += 'var g_xMinimumValue = %f;\n' % (min_x+padding(min_x))
+    js_pcoa_string += 'var g_yMinimumValue = %f;\n' % (min_y+padding(min_y))
+    js_pcoa_string += 'var g_zMinimumValue = %f;\n' % (min_z+padding(min_z))
     js_pcoa_string += 'var g_maximum = %f;\n' % maximum
 
     offset = 0
