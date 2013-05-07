@@ -12,6 +12,7 @@
 // spheres and ellipses that are being displayed on screen
 var g_plotSpheres = {};
 var g_plotEllipses = {};
+var g_plotTaxa = {};
 
 // sample identifiers of all items that are plotted
 var g_plotIds = [];
@@ -156,7 +157,7 @@ function toggleScaleCoordinates(element){
 			operation(g_plotSpheres[sample_id].position.z,g_fractionExplained[2]));
 	}
 
-	// ellipses won't always be available hence the two separate loops
+	// ellipses won't always be available hence the loop per type of data
 	for (sample_id in g_plotEllipses){
 		// scale the dimensions of the positions of each ellipse
 		g_plotEllipses[sample_id].position.set(
@@ -169,6 +170,20 @@ function toggleScaleCoordinates(element){
 			operation(g_plotEllipses[sample_id].scale.x, g_fractionExplained[0]),
 			operation(g_plotEllipses[sample_id].scale.y, g_fractionExplained[1]),
 			operation(g_plotEllipses[sample_id].scale.z, g_fractionExplained[2]));
+	}
+
+	for (index in g_plotTaxa){
+		//scale the dimensions of the positions of each taxa-sphere
+		g_plotTaxa[index].position.set(
+			operation(g_plotTaxa[index].position.x, g_fractionExplained[0]),
+			operation(g_plotTaxa[index].position.y, g_fractionExplained[1]),
+			operation(g_plotTaxa[index].position.z, g_fractionExplained[2]));
+
+		//scale the dimensions of each taxa-sphere
+		g_plotTaxa[index].scale.set(
+			operation(g_plotTaxa[index].scale.x, g_fractionExplained[0]),
+			operation(g_plotTaxa[index].scale.y, g_fractionExplained[0]),
+			operation(g_plotTaxa[index].scale.z, g_fractionExplained[0]));
 	}
 
 }
@@ -484,6 +499,13 @@ function colorChanged(catValue,color) {
 	}
 }
 
+/* This function is called when q new color is selected for #taxaspherescolor */
+function colorChangedForTaxaSpheres(color){
+	for (index in g_plotTaxa){
+		g_plotTaxa[index].material.color.setHex(color.replace('#', '0x'))
+	}
+}
+
 /*This function is called when a new value is selected in the label menu*/
 function labelMenuChanged() {
 	if(document.getElementById('labelcombo').selectedIndex == 0){
@@ -566,7 +588,6 @@ function toggleLabels() {
 	if(document.plotoptions.elements[0].checked){
 		$('#labelForm').css('display','block');
 		$('#labels').css('display','block');
-		$('#labels').css('display','block');
 		$("#lopacityslider").slider('enable');
 		$("#labelColor").spectrum('enable');
 		document.getElementById('labelcombo').disabled = false;
@@ -575,7 +596,10 @@ function toggleLabels() {
 			return;
 		}
 
+		// get the current category name to show the labels
 		g_categoryName = document.getElementById('labelcombo')[document.getElementById('labelcombo').selectedIndex].value;
+
+		// for each of the labels check if they are enabled or not
 		for(var i = 0; i < document.labels.elements.length; i++){
 			var hidden = !document.labels.elements[i].checked;
 			var value = document.labels.elements[i].name;
@@ -595,6 +619,39 @@ function toggleLabels() {
 	}
 	else{
 		$('#labels').css('display','none');
+	}
+}
+
+/*This function turns the labels with the lineages on and off*/
+function toggleTaxaLabels(){
+	// present labels if the visibility checkbox is marked
+	if(document.biplotoptions.elements[0].checked){
+		$('#taxalabels').css('display','block');
+
+		for(var key in g_taxaPositions){
+			var taxa_label = g_taxaPositions[key]['lineage'];
+			var divid = taxa_label.replace(/\./g,'');
+			$('#'+key+"_taxalabel").css('display', 'block');
+		}
+	}
+	else{
+		$('#taxalabels').css('display','none');
+	}
+}
+
+/* Turn on and off the spheres representing the biplots on screen */
+function toggleBiplotVisibility(){
+	// reduce the opacity to zero if the element should be off or to 0.5
+	// if the element is supposed to be present; 0.5 is the default value
+	if(document.biplotsvisibility.elements[0].checked){
+		for (index in g_plotTaxa){
+			g_plotTaxa[index].material.opacity = 0;
+		}
+	}
+	else{
+		for (index in g_plotTaxa){
+			g_plotTaxa[index].material.opacity = 0.5;
+		}
 	}
 }
 
@@ -698,19 +755,43 @@ function setJqueryUi() {
 			}
 	});
 
-	$("#eopacityslider").slider({
-		range: "max",
-		min: 0,
-		max: 100,
-		value: 20,
-		slide: function( event, ui ) {
-			ellipseOpacityChange(ui);
-		},
-		change: function( event, ui ) {
-			ellipseOpacityChange(ui);
-		}
-	});
-	document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
+	// check whether or not there is an ellipse opacity slider in the plot
+	if (document.getElementById('ellipseopacity')){
+		$("#eopacityslider").slider({
+			range: "max",
+			min: 0,
+			max: 100,
+			value: 20,
+			slide: function( event, ui ) {
+				ellipseOpacityChange(ui);
+			},
+			change: function( event, ui ) {
+				ellipseOpacityChange(ui);
+			}
+		});
+		document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
+	}
+
+	// check if we are presenting biplots, to decide whether or not we should
+	// show the color picker for the biplot spheres, white is the default color
+	if(document.getElementById('taxaspherescolor')){
+		$('#taxaspherescolor').css('backgroundColor',"#FFFFFF");
+		$("#taxaspherescolor").spectrum({
+			localStorageKey: 'key',
+			color: "#FFFFFF",
+			showInitial: true,
+			showInput: true,
+			change:
+				function(color) {
+					$(this).css('backgroundColor', color.toHexString());
+					var c = color.toHexString();
+					if(c.length == 4){
+						c = "#"+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2)+c.charAt(3)+c.charAt(3);
+					}
+					colorChangedForTaxaSpheres(c);
+				}
+		});
+	}
 
 	$("#sopacityslider").slider({
 		range: "max",
@@ -796,6 +877,39 @@ function drawSpheres() {
 			g_plotSpheres[sid] = mesh;
 			g_plotIds.push(sid);
 		}
+	}
+}
+
+/*Draw the taxa spheres in the plot as described by the g_taxaPositions array
+
+  Note that this is a function that won't always have an effect because the
+  g_taxaPositions array must have elements stored in it.
+*/
+function drawTaxa(){
+	for (var key in g_taxaPositions){
+		var mesh = new THREE.Mesh(g_genericSphere,
+			new THREE.MeshLambertMaterial());
+
+		// set the volume of the sphere
+		mesh.scale.x = g_taxaPositions[key]['radius'];
+		mesh.scale.y = g_taxaPositions[key]['radius'];
+		mesh.scale.z = g_taxaPositions[key]['radius'];
+
+		// set the position
+		mesh.position.set(g_taxaPositions[key]['x'],
+			g_taxaPositions[key]['y'],
+			g_taxaPositions[key]['z']);
+
+		// the legacy color of these spheres is white
+		mesh.material.color = new THREE.Color("0xFFFFFF");
+		mesh.material.transparent = true;
+		mesh.material.opacity = 0.5;
+		mesh.updateMatrix();
+		mesh.matrixAutoUpdate = true;
+
+		// add the element to the scene and to the g_plotTaxa dictionary
+		g_mainScene.add(mesh);
+		g_plotTaxa[key] = mesh;
 	}
 }
 
@@ -895,8 +1009,9 @@ $(document).ready(function() {
 
 		g_elementsGroup = new THREE.Object3D();
 		g_mainScene.add(g_elementsGroup);
-		drawEllipses()
-		drawSpheres()
+		drawEllipses();
+		drawSpheres();
+		drawTaxa();
 
 		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
@@ -929,7 +1044,6 @@ $(document).ready(function() {
 
 		var axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),g_zMaximumValue+Math.abs(g_zMinimumValue));
 		drawAxisLines(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
-		buildAxisLabels()
 
 		// the light is attached to the camera to provide a 3d perspective
 		g_sceneLight = new THREE.DirectionalLight(0x999999, 2);
@@ -966,6 +1080,20 @@ $(document).ready(function() {
 			labelshtml += "</label>";
 		}
 		document.getElementById("labels").innerHTML = labelshtml;
+
+		labelshtml = "";
+		// add the labels with the taxonomic lineages to the taxalabels div
+		for(var key in g_taxaPositions){
+
+			// get the coordinate of this taxa sphere
+			var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main_plot'));
+
+			// labels are identified by the key they have in g_taxaPositions
+			labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
+			labelshtml += g_taxaPositions[key]['lineage'];
+			labelshtml += "</label>";
+		}
+		document.getElementById("taxalabels").innerHTML = labelshtml
 	}
 
 	function buildAxisLabels() {
@@ -1002,6 +1130,21 @@ $(document).ready(function() {
 				var divid = sid.replace(/\./g,'');
 				$('#'+divid+"_label").css('left',coords['x']);
 				$('#'+divid+"_label").css('top',coords['y']);
+			}
+		}
+		// check if you have to reposition the taxa labels for each frame
+		// this is something that will only happen when drawing biplots
+		if(document.biplotoptions){
+			if(document.biplotoptions.elements[0].checked){
+				for(var key in g_taxaPositions) {
+					// retrieve the position of the taxa on screen
+					var coords = toScreenXY(g_plotTaxa[key].position,
+						g_sceneCamera, $('#main_plot'));
+
+					// add the label at the appropriate position
+					$('#'+key+"_taxalabel").css('left',coords['x']);
+					$('#'+key+"_taxalabel").css('top',coords['y']);
+				}
 			}
 		}
 		if(g_foundId) {
