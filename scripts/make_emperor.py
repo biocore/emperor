@@ -46,6 +46,13 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "the plot representing the 'DOB' of the samples. This option is useful when"
     " presenting a gradient from your metadata e. g. 'Time' or 'pH': ", "%prog "
     "-i unweighted_unifrac_pc.txt -m Fasting_Map.txt -a DOB -o pcoa_dob"),
+    ("PCoA plot with an explicit axis and using --missing_custom_axes_values", "Create "
+    "a PCoA plot with an axis of the plot representing the 'DOB' of the samples and "
+    "define the position over the gradient of those samples missing a numeric value; "
+    "in this case we are going to plot the samples in the value 20060000. You can select "
+    "for each explicit axis which value you want to use for the missing values: ", "%prog "
+    "-i unweighted_unifrac_pc.txt -m Fasting_Map_modified.txt -a DOB -o "
+    "pcoa_dob_with_missing_custom_axes_values -x 'DOB:20060000'"),
     ("Jackknifed principal coordinates analysis plot", "Create a jackknifed "
     "PCoA plot (with confidence intervals for each sample) passing as the input"
     " a directory of coordinates files (where each file corresponds to a "
@@ -56,7 +63,8 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "coordinates file (--master_pcoa) will display the ellipsoids centered by "
     "the samples in this file: ", "%prog -i unweighted_unifrac_pc -s "
     "unweighted_unifrac_pc/pcoa_unweighted_unifrac_rarefaction_110_5.txt -m "
-    "Fasting_Map.txt -o jackknifed_with_master")]
+    "Fasting_Map.txt -o jackknifed_with_master"),
+    ]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'emperor.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening emperor.html with "+\
@@ -107,11 +115,11 @@ script_info['optional_options'] = [
     ' center of each ellipisoid. [default: arbitrarily selected file from the '
     'input directory]', default=None, type='existing_filepath'),
     make_option('-x', '--missing_custom_axes_values', help='Option to override '
-    'the error shown when the \'--custom_axes\' categories, have non-numeric '
-    'values in the mapping file. For example, if you wanted to see all the '
+    'the error shown when the \'--custom_axes\' categories, when the metadata column has '
+    'non-numeric values in the mapping file. For example, if you wanted to see all the '
     'control samples that do not have a time gradient value in the mapping '
-    'file at the time-point zero and the missing pH values at 7, you would have'
-    ' to pass  \'-x Time:0 -x pH:7\'.', action='append', default=None),
+    'file at the time-point zero, you would pass  \'-x Time:0\'. This option could be '
+    'used in all explicit axes.', action='append', default=None),
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
     'output directory that will contain the PCoA plot.')
 ]
