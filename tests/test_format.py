@@ -278,6 +278,7 @@ EXPECTED_FOOTER_A =\
             </div>
         </div>
         <div id="colorby">
+            <br>
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
@@ -313,6 +314,10 @@ EXPECTED_FOOTER_A =\
         <div id="settings">
             <form name="settingsoptions">
             <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
             </form>
             <br>
             <br>
@@ -380,6 +385,7 @@ EXPECTED_FOOTER_B =\
         </div>
         <div id="colorby">
             <br>
+            <br>
             <table>
                 <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
             </table>
@@ -427,6 +433,10 @@ EXPECTED_FOOTER_B =\
         <div id="settings">
             <form name="settingsoptions">
             <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
             </form>
             <br>
             <br>
@@ -490,6 +500,7 @@ EXPECTED_FOOTER_C =\
             </div>
         </div>
         <div id="colorby">
+            <br>
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
@@ -525,6 +536,10 @@ EXPECTED_FOOTER_C =\
         <div id="settings">
             <form name="settingsoptions">
             <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
             </form>
             <br>
             <br>

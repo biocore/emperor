@@ -37,6 +37,34 @@ var g_time;
 var g_visiblePoints = 0;
 var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
+var g_useDiscreteColors = false;
+
+// taken from the qiime/colors.py module; a total of 29 colors
+k_QIIME_COLORS = [
+"0xFF0000", // red1
+"0x0000FF", // blue1
+"0xF27304", // orange1
+"0x008000", // green
+"0x91278D", // purple1
+"0xFFFF00", // yellow1
+"0x7CECF4", // cyan1
+"0xF49AC2", // pink1
+"0x5DA09E", // teal1
+"0x6B440B", // brown1
+"0x808080", // gray1
+"0xF79679", // red2
+"0x7DA9D8", // blue2
+"0xFCC688", // orange2
+"0x80C99B", // green2
+"0xA287BF", // purple2
+"0xFFF899", // yellow2
+"0xC49C6B", // brown2
+"0xC0C0C0", // gray2
+"0xED008A", // red3
+"0x00B6FF", // blue3
+"0xA54700", // orange3
+"0x808000", // green3
+"0x008080"] // teal3
 
 /*This function recenter the camera to the initial position it had*/
 function resetCamera() {
@@ -160,33 +188,25 @@ function toggleScaleCoordinates(element){
 
 }
 
+/* Toggle between discrete and continuous coloring for samples and labels */
+function toggleContinuousAndDiscreteColors(element){
+	g_useDiscreteColors = element.checked;
+
+	// re-coloring the samples and labels now will use the appropriate coloring
+	colorByMenuChanged();
+	labelMenuChanged();
+}
+
 /*Generate a list of colors that corresponds to all the samples in the plot
 
-  This function will generate a list of colors that correspond to a list of
-  values. If the values are continuous the colors correspond to their numeric
-  value, if values are discrete it is just a gradient with an even step size in
-  between each value.
+  This function will generate a list of coloring values depending on the
+  coloring scheme that the system is currently using (discrete or continuous).
 */
 function getColorList(vals) {
-	var colorVals = [];
-	var isNumeric = true;
-
-	//figure out if the values are continuous or not
-	for(var i = 0; i < vals.length; i++){
-		if(isNaN(parseFloat(vals[i]))){
-			isNumeric = false;
-		}
-		else{
-			colorVals[i] = parseFloat(vals[i]);
-		}
-	}
-
-	// figure out start and max values, list is sorted
-	var start = colorVals[0];
-	var max = colorVals[colorVals.length-1]-colorVals[0];
 	var colors = [];
 
-	// set the colors for each category value
+	// cases with one or two categories are basically the same no matter if the
+	// coloring scheme is continuous or discrete; choose red or red and blue
 	if(vals.length == 1){
 		colors[0] = new THREE.Color();
 		colors[0].setHex("0xff0000");
@@ -197,32 +217,35 @@ function getColorList(vals) {
 		colors[1] = new THREE.Color();
 		colors[1].setHex("0x0000ff");
 	}
-	else if (vals.length == 3 && !isNumeric) {
-		for(var i in vals){
-			colors[i] = new THREE.Color();
-			colors[i].setHSV(i/vals.length,1,1);
-		}
-	}
 	else {
-		if(isNumeric) {
-			for(var i in vals){
-				colors[i] = new THREE.Color();
-				// i*.66 makes it so the gradient goes red->green->blue instead of
-				// back around to red
-				colors[i].setHSV((colorVals[i]-start)*.66/max,1,1);
+		for(var index in vals){
+			colors[index] = new THREE.Color();
+			if(g_useDiscreteColors){
+				// get the next available color
+				colors[index].setHex(getDiscreteColor(index)*1);
+			}
+			else{
+				// multiplying the value by 0.66 makes the colormap go R->G->B
+				colors[index].setHSV(index*.66/vals.length,1,1);
 			}
 		}
-		else {
-			for(var i in vals){
-				colors[i] = new THREE.Color();
-				// i*.66 makes it so the gradient goes red->green->blue instead of
-				// back around to red
-				colors[i].setHSV(i*.66/vals.length,1,1);
-			}
-		}
-
 	}
 	return colors;
+}
+
+/* Retrieve one of the discrete colors from the list
+
+  This function will return the color at the requested index, if this value
+  value is greater than the number of colors available, the function will just
+  rollover and retrieve the next available color.
+*/
+function getDiscreteColor(index){
+	var size = k_QIIME_COLORS.length;
+	if(index >= size){
+		index = index - (Math.floor(index/size)*size)
+	}
+
+	return k_QIIME_COLORS[index]
 }
 
 /*Start timer (for debugging)*/

@@ -292,7 +292,8 @@ _EMPEROR_FOOTER_HTML_STRING =\
             <div id="key">
             </div>
         </div>
-        <div id="colorby">%s
+        <div id="colorby">
+            <br>%s
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
@@ -328,6 +329,10 @@ _EMPEROR_FOOTER_HTML_STRING =\
         <div id="settings">
             <form name="settingsoptions">
             <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
             </form>
             <br>
             <br>

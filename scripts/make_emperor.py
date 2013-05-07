@@ -139,7 +139,8 @@ script_info['optional_options'] = [
     'file at the time-point zero and the missing pH values at 7, you would have'
     ' to pass  \'-x Time:0 -x pH:7\'.', action='append', default=None),
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
-    'output directory that will contain the PCoA plot.')
+    'output directory that will contain the PCoA plot. [default: %default]',
+    default='emperor')
 ]
 script_info['version'] = __version__
 
@@ -366,14 +367,10 @@ def main():
     mapping_data, header = preprocess_mapping_file(mapping_data, header,
         color_by_column_names, unique=not add_unique_columns)
 
-    # use the current working directory as default
-    if opts.output_dir:
-        create_dir(opts.output_dir,False)
-        dir_path=opts.output_dir
-    else:
-        dir_path='./'
+    # create the output directory before creating any other output
+    create_dir(opts.output_dir,False)
 
-    fp_out = open(join(dir_path, 'index.html'),'w')
+    fp_out = open(join(output_dir, 'index.html'),'w')
     fp_out.write(EMPEROR_HEADER_HTML_STRING)
 
     # write the html file
@@ -383,7 +380,8 @@ def main():
     fp_out.write(format_taxa_to_js(otu_coords, otu_lineages, otu_prevalence))
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
         isdir(input_coords)))
-    copy_support_files(dir_path)
+    fp_out.close()
+    copy_support_files(output_dir)
 
     # write the bilot coords in the output file if a path is passed
     if biplot_fp:

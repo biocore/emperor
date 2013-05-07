@@ -40,8 +40,8 @@ script_info['optional_options'] = [
     'suppress Emperor\'s script usage tests [default: %default]',default=False),
     make_option('--unittest_glob', help='wildcard pattern to match the unit '
     'tests to execute [default: %default]', default=None),
-    make_option('--scripts_to_test', help='comma-separated list of the script '
-    'tests to execute [default: run all]', default=None),
+    make_option('--script_usage_tests', help='comma-separated list of the '
+    'script usage tests to execute [default: run all]', default=None),
     make_option('-p', '--temp_filepath', type='existing_path', help='temporary '
     'directory where the script usage tests will be executed', default='/tmp/'),
     make_option('--emperor_scripts_dir', help='filepath where the scripts are'
@@ -56,7 +56,7 @@ def main():
 
     unittest_glob = opts.unittest_glob
     temp_filepath = opts.temp_filepath
-    scripts_to_test = opts.scripts_to_test
+    script_usage_tests = opts.script_usage_tests
     suppress_unit_tests = opts.suppress_unit_tests
     suppress_script_usage_tests = opts.suppress_script_usage_tests
 
@@ -65,12 +65,14 @@ def main():
         'scripts_test_data/')
 
     # offer the option for the user to pass the scripts dir from the command
-    # line since there is no other way to get the scripts dir if not provided
-    # the base structure of the repository will be assumed
+    # line since there is no other way to get the scripts dir. If not provided
+    # the base structure of the repository will be assumed. Note that for both
+    # cases we are using absolute paths, to avoid unwanted failures.
     if opts.emperor_scripts_dir == None:
-        emperor_scripts_dir = join(get_emperor_project_dir(), 'scripts/')
+        emperor_scripts_dir = abspath(join(get_emperor_project_dir(),
+            'scripts/'))
     else:
-        emperor_scripts_dir = opts.emperor_scripts_dir
+        emperor_scripts_dir = abspath(opts.emperor_scripts_dir)
 
     # make a sanity check
     if (suppress_unit_tests and suppress_script_usage_tests):
@@ -117,8 +119,8 @@ def main():
     # choose to run some of the script usage tests or all the available ones
     if not suppress_script_usage_tests and exists(emperor_test_data_dir) and\
         exists(emperor_scripts_dir):
-        if scripts_to_test != None:
-            script_tests = scripts_to_test.split(',')
+        if script_usage_tests != None:
+            script_tests = script_usage_tests.split(',')
         else:
             script_tests = None
         # Run the script usage testing functionality
@@ -152,7 +154,7 @@ def main():
         else:
             print ("\nCould not run script usage tests.\nThe Emperor scripts "
                 "directory could not be automatically located, try supplying "
-                " it manually using with the --emperor_scripts_dir option.")
+                " it manually using the --emperor_scripts_dir option.")
 
     # In case there were no failures of any type, exit with a return code of 0
     return_code = 1
