@@ -14,7 +14,7 @@ __status__ = "Development"
 
 from numpy import array
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
-    format_taxa_to_js, format_emperor_html_footer_string)
+    format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string)
 from cogent.util.unit_test import TestCase, main
 
 class TopLevelTests(TestCase):
@@ -97,6 +97,29 @@ class TopLevelTests(TestCase):
         out_js_taxa_string = format_taxa_to_js([], [], [])
         self.assertEquals(out_js_taxa_string, "\nvar g_taxaPositions = "
             "new Array();\n\n")
+
+    def test_format_vectors_to_js(self):
+        """Tests correct formatting of the vectors from the coords"""
+
+        # test that only the variable declaration gets returned
+        out_js_vector_string = format_vectors_to_js(self.mapping_file_data,
+            self.mapping_file_headers, self.pcoa_coords, self.pcoa_headers,
+            None, None)
+        self.assertEquals(out_js_vector_string, '\nvar g_vectorPositions = new '
+            'Array();\n')
+
+        # vector string without sorting for the coordinates
+        out_js_vector_string = format_vectors_to_js(self.mapping_file_data,
+            self.mapping_file_headers, self.pcoa_coords, self.pcoa_headers,
+            'Treatment', None)
+        self.assertEquals(out_js_vector_string, VECTOR_JS_STRING_NO_SORTING)
+
+        # vector string sorting by the DOB category
+        out_js_vector_string = format_vectors_to_js(self.mapping_file_data,
+            self.mapping_file_headers, self.pcoa_coords, self.pcoa_headers,
+            'Treatment', 'DOB')
+        self.assertEquals(out_js_vector_string, VECTOR_JS_STRING_SORTING)
+
 
     def test_format_emperor_html_footer_string(self):
         """Test correct formatting of the footer string"""
@@ -235,6 +258,36 @@ g_taxaPositions['1'] = { 'lineage': 'Root;k__Bacteria;p__Bacteroidetes', 'x': 0.
 g_taxaPositions['2'] = { 'lineage': 'Root;k__Bacteria;p__Tenericutes', 'x': -0.091330, 'y': 0.424147, 'z': -0.135627, 'radius': 0.868694};
 g_taxaPositions['3'] = { 'lineage': 'Root;k__Bacteria;Other', 'x': -0.276542, 'y': -0.144964, 'z': 0.066647, 'radius': 0.696843};
 
+"""
+
+VECTOR_JS_STRING_NO_SORTING = """
+var g_vectorPositions = new Array();
+g_vectorPositions['Control'] = new Array();
+g_vectorPositions['Control']['PC.354'] = [-0.293353176, 0.0183956004, 0.0329884266];
+g_vectorPositions['Control']['PC.355'] = [-0.109166142, 0.0877774496, 0.0115866606];
+g_vectorPositions['Control']['PC.356'] = [-0.183191151, 34912.621, 0.00869481594];
+g_vectorPositions['Control']['PC.481'] = [-0.192382819, 0.0147832029, -0.0147871039];
+g_vectorPositions['Control']['PC.593'] = [0.0968466168, -0.159388265, 0.135271607];
+g_vectorPositions['Fast'] = new Array();
+g_vectorPositions['Fast']['PC.607'] = [0.0688959784, -0.166234067, -0.0998300962];
+g_vectorPositions['Fast']['PC.634'] = [0.20468454, 0.128911236, -0.0293614192];
+g_vectorPositions['Fast']['PC.635'] = [0.12613151, -0.00266030272, -0.141717093];
+g_vectorPositions['Fast']['PC.636'] = [0.281534642, 0.0710660196, 0.097154202];
+"""
+
+VECTOR_JS_STRING_SORTING = """
+var g_vectorPositions = new Array();
+g_vectorPositions['Control'] = new Array();
+g_vectorPositions['Control']['PC.356'] = [-0.183191151, 34912.621, 0.00869481594];
+g_vectorPositions['Control']['PC.354'] = [-0.293353176, 0.0183956004, 0.0329884266];
+g_vectorPositions['Control']['PC.355'] = [-0.109166142, 0.0877774496, 0.0115866606];
+g_vectorPositions['Control']['PC.481'] = [-0.192382819, 0.0147832029, -0.0147871039];
+g_vectorPositions['Control']['PC.593'] = [0.0968466168, -0.159388265, 0.135271607];
+g_vectorPositions['Fast'] = new Array();
+g_vectorPositions['Fast']['PC.607'] = [0.0688959784, -0.166234067, -0.0998300962];
+g_vectorPositions['Fast']['PC.634'] = [0.20468454, 0.128911236, -0.0293614192];
+g_vectorPositions['Fast']['PC.635'] = [0.12613151, -0.00266030272, -0.141717093];
+g_vectorPositions['Fast']['PC.636'] = [0.281534642, 0.0710660196, 0.097154202];
 """
 
 EXPECTED_FOOTER_A =\
