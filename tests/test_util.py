@@ -29,6 +29,8 @@ class TopLevelTests(TestCase):
             'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description']
         self.valid_columns = ['Treatment', 'DOB']
         self.support_files_filename = get_qiime_temp_dir()
+        self.support_files_filename_spaces = join(get_qiime_temp_dir(),
+            'Directory With Spaces/AndNoSpaces')
 
         # data for the custom axes, contains columns that are gradients
         self.mapping_file_data_gradient = MAPPING_FILE_DATA_GRADIENT
@@ -81,6 +83,12 @@ class TopLevelTests(TestCase):
         """Test the support files are correctly copied to a file path"""
         copy_support_files(self.support_files_filename)
         self.assertTrue(exists(join(self.support_files_filename,
+            'emperor_required_resources/')))
+
+        # related to https://github.com/qiime/emperor/issues/66
+        # the target path has spaces, the support files function will work fine
+        copy_support_files(self.support_files_filename_spaces)
+        self.assertTrue(exists(join(self.support_files_filename_spaces,
             'emperor_required_resources/')))
 
     def test_preprocess_mapping_file(self):

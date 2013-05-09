@@ -14,6 +14,7 @@ Emperor 0.8
 * Change the opacity of spheres/ellipses from the graphical user interface.
 * Change the size of a sphere from the graphical user interface.
 * Biplots can be created with a custom axis.
+* The color of the biplot spheres can now be changed from the user interface.
 * Extensive script usage testing
 * Addition of contextualized error messages.
 * Reduced output size for datasets with rich mapping files.

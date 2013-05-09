@@ -59,13 +59,15 @@ def copy_support_files(file_path):
         create_dir(file_path, False)
 
     # shutil.copytree does not provide an easy way to copy the contents of a
-    # directory into another existing directory, hence the system call
-    cmd = 'cp -R %s/* %s' % (get_emperor_support_files_dir(), abspath(file_path))
+    # directory into another existing directory, hence the system call.
+    # use double quotes for the paths to escape any invalid chracter(s)/spaces
+    cmd = 'cp -R "%s/"* "%s"' % (get_emperor_support_files_dir(),
+        abspath(file_path))
     cmd_o, cmd_e, cmd_r = qiime_system_call(cmd)
 
     if cmd_e:
         raise EmperorSupportFilesError, "Error found whilst trying to copy " +\
-            "the support files:\n%s\n Could not execute: %s" % cmd_e, cmd
+            "the support files:\n%s\n Could not execute: %s" % (cmd_e, cmd)
 
     return
 
@@ -306,7 +308,7 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
         try:
             header_index = headers.index(key)
         except ValueError:
-            raise ValueError, ("The header %s does not exist in the mapping file"
+            raise ValueError,("The header %s does not exist in the mapping file"
                 % key)
 
         # fill in the data
