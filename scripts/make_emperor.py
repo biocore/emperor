@@ -99,6 +99,12 @@ script_info['optional_options'] = [
     'different. Note: if the result of one of the concatenated fields in '
     '--color_by is a column where all values are unique, the resulting column '
     'will get removed as well [default: %default]', default=False),
+    make_option('--add_vectors', type='string', dest='add_vectors',
+    default=None, help='Comma-sparated category(ies) used to add connecting '
+    'lines (vectors) between samples. The first category specifies the samples '
+    'that will be connected by the vectors, whilst the second category '
+    '(optionally) determines the order in which the samples will be connected. '
+    '[default: %default]'),
     make_option('-b', '--color_by', dest='color_by', type='string', help=
     'Comma-separated list of metadata categories (column headers) to color by'
     ' in the plots. The categories must match the name of a column header in '
@@ -160,6 +166,7 @@ def main():
     taxa_fp = opts.taxa_fp
     n_taxa_to_keep = opts.n_taxa_to_keep
     biplot_fp = opts.biplot_fp
+    add_vectors = opts.add_vectors
 
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
@@ -322,8 +329,13 @@ def main():
             # append the field to the error queue that it belongs to
             if axis not in header:
                 offending_fields.append(axis)
-            if map_object.isNumericCategory(axis) == False:
-                non_numeric_categories.append(axis)
+                break
+        # perform only if the for loop does not call break
+        else:
+            # make sure all these axes are numeric
+            for axis in custom_axes:
+                if map_object.isNumericCategory(axis) == False:
+                    non_numeric_categories.append(axis)
 
     # check that all the required columns exist in the metadata mapping file
     if color_by_column_names:
@@ -337,16 +349,40 @@ def main():
         # if the user didn't specify the header names display everything
         color_by_column_names = header[:]
 
+    # make multiple checks for the add_vectors option
+    if add_vectors:
+        add_vectors = add_vectors.split(',')
+        # check there are at the most two categories specified for this option
+        if len(add_vectors) > 2:
+            option_parser.error("The '--add_vectors' option can accept up to "
+                "two different fields from the mapping file; currently trying "
+                "to use %d (%s)." % (len(add_vectors), ', '.join(add_vectors)))
+        # make sure the field(s) exist
+        for col in add_vectors:
+            if col not in header:
+                offending_fields.append(col)
+                break
+        # perform only if the for loop does not call break
+        else:
+            # check that the second category is all with numeric values
+            if len(add_vectors) == 2:
+                map_object = MetadataMap(mapping_file_to_dict(mapping_data,
+                    header), [])
+                # if it has non-numeric values add it to the list of offenders
+                if map_object.isNumericCategory(add_vectors[1]) == False:
+                    non_numeric_categories.append(add_vectors[1]+' (used in '
+                        '--add_vectors)')
+
     # terminate the program for the cases where a mapping field was not found
     # or when a mapping field didn't meet the criteria of being numeric
     if offending_fields:
         option_parser.error("Invalid field(s) '%s'; the valid field(s) are:"
             " '%s'" % (', '.join(offending_fields), ', '.join(header)))
     if non_numeric_categories:
-        option_parser.error(('The following field(s): \'%s\' contains values '
-            'that are not numeric, hence not suitable for \'--custom_axes\'. '
-            'Try the \'--missing_custom_axes_values\' option to fix these '
-            'values.' % ', '.join(non_numeric_categories)))
+        option_parser.error(('The following field(s): \'%s\' contain values '
+            'that are not numeric, hence not suitable for \'--custom_axes\' nor'
+            ' for \'--add_vectors\'. Try the \'--missing_custom_axes_values\' '
+            'option to fix these values.' % ', '.join(non_numeric_categories)))
 
     # process the coordinates file first, preventing the case where the custom
     # axes is not in the coloring categories i. e. in the --colory_by categories
