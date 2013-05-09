@@ -261,6 +261,32 @@ function stopTimer(info) {
 	console.log("time to " +info +":"+g_time+"ms")
 }
 
+/* Sorting function that deals with alpha and numeric elements
+
+  This function takes a list of strings, divides it into two new lists, one
+  that's alpha-only and one that's numeric only. The resulting list will have
+  sorted all alpha elements at the beginning & all numeric elements at the end.
+ */
+function _splitAndSortNumericAndAlpha(list){
+    var numericPart = [], alphaPart = [], result = [];
+
+    // separate the numeric and the alpha elements of the array
+    for(var index = 0; index < list.length; index++){
+        if(isNaN(parseFloat(list[index]))){
+            alphaPart.push(list[index])
+        }
+        else{
+            numericPart.push(list[index])
+        }
+    }
+
+    // sort each of the two parts, numeric part is ascending order
+    alphaPart.sort();
+    numericPart.sort(function(a,b){return parseFloat(a)-parseFloat(b)})
+
+    return result.concat(alphaPart, numericPart);
+}
+
 /*This function is called when a new value is selected in the colorBy menu */
 function colorByMenuChanged() {
 	// set the new current category and index
@@ -273,7 +299,7 @@ function colorByMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
 	}
 
-	vals = dedupe(vals).sort();
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 	colors = getColorList(vals);
 
 	// build the colorby table in HTML
@@ -347,7 +373,7 @@ function showByMenuChanged() {
 	g_visiblePoints = g_plotIds.length
 	changePointCount()
 
-	vals = dedupe(vals).sort();
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
 	// build the showby checkbox table in HTML
 	var lines = "<form name=\"showbyform\"><table>"
@@ -523,7 +549,7 @@ function labelMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][labelCatIndex]);
 	}
 
-	vals = dedupe(vals).sort();
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 	colors = getColorList(vals);
 
 	// build the label table in HTML
