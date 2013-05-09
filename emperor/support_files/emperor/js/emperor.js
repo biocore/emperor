@@ -12,6 +12,7 @@
 // spheres and ellipses that are being displayed on screen
 var g_plotSpheres = {};
 var g_plotEllipses = {};
+var g_plotTaxa = {};
 
 // sample identifiers of all items that are plotted
 var g_plotIds = [];
@@ -36,6 +37,34 @@ var g_time;
 var g_visiblePoints = 0;
 var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
+var g_useDiscreteColors = false;
+
+// taken from the qiime/colors.py module; a total of 29 colors
+k_QIIME_COLORS = [
+"0xFF0000", // red1
+"0x0000FF", // blue1
+"0xF27304", // orange1
+"0x008000", // green
+"0x91278D", // purple1
+"0xFFFF00", // yellow1
+"0x7CECF4", // cyan1
+"0xF49AC2", // pink1
+"0x5DA09E", // teal1
+"0x6B440B", // brown1
+"0x808080", // gray1
+"0xF79679", // red2
+"0x7DA9D8", // blue2
+"0xFCC688", // orange2
+"0x80C99B", // green2
+"0xA287BF", // purple2
+"0xFFF899", // yellow2
+"0xC49C6B", // brown2
+"0xC0C0C0", // gray2
+"0xED008A", // red3
+"0x00B6FF", // blue3
+"0xA54700", // orange3
+"0x808000", // green3
+"0x008080"] // teal3
 
 /*This function recenter the camera to the initial position it had*/
 function resetCamera() {
@@ -141,35 +170,41 @@ function toggleScaleCoordinates(element){
 			operation(g_plotEllipses[sample_id].scale.z, g_fractionExplained[2]));
 	}
 
+	for (index in g_plotTaxa){
+		//scale the dimensions of the positions of each taxa-sphere
+		g_plotTaxa[index].position.set(
+			operation(g_plotTaxa[index].position.x, g_fractionExplained[0]),
+			operation(g_plotTaxa[index].position.y, g_fractionExplained[1]),
+			operation(g_plotTaxa[index].position.z, g_fractionExplained[2]));
+
+		//scale the dimensions of each taxa-sphere
+		g_plotTaxa[index].scale.set(
+			operation(g_plotTaxa[index].scale.x, g_fractionExplained[0]),
+			operation(g_plotTaxa[index].scale.y, g_fractionExplained[0]),
+			operation(g_plotTaxa[index].scale.z, g_fractionExplained[0]));
+	}
+
+}
+
+/* Toggle between discrete and continuous coloring for samples and labels */
+function toggleContinuousAndDiscreteColors(element){
+	g_useDiscreteColors = element.checked;
+
+	// re-coloring the samples and labels now will use the appropriate coloring
+	colorByMenuChanged();
+	labelMenuChanged();
 }
 
 /*Generate a list of colors that corresponds to all the samples in the plot
 
-  This function will generate a list of colors that correspond to a list of
-  values. If the values are continuous the colors correspond to their numeric
-  value, if values are discrete it is just a gradient with an even step size in
-  between each value.
+  This function will generate a list of coloring values depending on the
+  coloring scheme that the system is currently using (discrete or continuous).
 */
 function getColorList(vals) {
-	var colorVals = [];
-	var isNumeric = true;
-
-	//figure out if the values are continuous or not
-	for(var i = 0; i < vals.length; i++){
-		if(isNaN(parseFloat(vals[i]))){
-			isNumeric = false;
-		}
-		else{
-			colorVals[i] = parseFloat(vals[i]);
-		}
-	}
-
-	// figure out start and max values, list is sorted
-	var start = colorVals[0];
-	var max = colorVals[colorVals.length-1]-colorVals[0];
 	var colors = [];
 
-	// set the colors for each category value
+	// cases with one or two categories are basically the same no matter if the
+	// coloring scheme is continuous or discrete; choose red or red and blue
 	if(vals.length == 1){
 		colors[0] = new THREE.Color();
 		colors[0].setHex("0xff0000");
@@ -180,32 +215,35 @@ function getColorList(vals) {
 		colors[1] = new THREE.Color();
 		colors[1].setHex("0x0000ff");
 	}
-	else if (vals.length == 3 && !isNumeric) {
-		for(var i in vals){
-			colors[i] = new THREE.Color();
-			colors[i].setHSV(i/vals.length,1,1);
-		}
-	}
 	else {
-		if(isNumeric) {
-			for(var i in vals){
-				colors[i] = new THREE.Color();
-				// i*.66 makes it so the gradient goes red->green->blue instead of
-				// back around to red
-				colors[i].setHSV((colorVals[i]-start)*.66/max,1,1);
+		for(var index in vals){
+			colors[index] = new THREE.Color();
+			if(g_useDiscreteColors){
+				// get the next available color
+				colors[index].setHex(getDiscreteColor(index)*1);
+			}
+			else{
+				// multiplying the value by 0.66 makes the colormap go R->G->B
+				colors[index].setHSV(index*.66/vals.length,1,1);
 			}
 		}
-		else {
-			for(var i in vals){
-				colors[i] = new THREE.Color();
-				// i*.66 makes it so the gradient goes red->green->blue instead of
-				// back around to red
-				colors[i].setHSV(i*.66/vals.length,1,1);
-			}
-		}
-
 	}
 	return colors;
+}
+
+/* Retrieve one of the discrete colors from the list
+
+  This function will return the color at the requested index, if this value
+  value is greater than the number of colors available, the function will just
+  rollover and retrieve the next available color.
+*/
+function getDiscreteColor(index){
+	var size = k_QIIME_COLORS.length;
+	if(index >= size){
+		index = index - (Math.floor(index/size)*size)
+	}
+
+	return k_QIIME_COLORS[index]
 }
 
 /*Start timer (for debugging)*/
@@ -221,6 +259,32 @@ function stopTimer(info) {
 	console.log("time to " +info +":"+g_time+"ms")
 }
 
+/* Sorting function that deals with alpha and numeric elements
+
+  This function takes a list of strings, divides it into two new lists, one
+  that's alpha-only and one that's numeric only. The resulting list will have
+  sorted all alpha elements at the beginning & all numeric elements at the end.
+ */
+function _splitAndSortNumericAndAlpha(list){
+    var numericPart = [], alphaPart = [], result = [];
+
+    // separate the numeric and the alpha elements of the array
+    for(var index = 0; index < list.length; index++){
+        if(isNaN(parseFloat(list[index]))){
+            alphaPart.push(list[index])
+        }
+        else{
+            numericPart.push(list[index])
+        }
+    }
+
+    // sort each of the two parts, numeric part is ascending order
+    alphaPart.sort();
+    numericPart.sort(function(a,b){return parseFloat(a)-parseFloat(b)})
+
+    return result.concat(alphaPart, numericPart);
+}
+
 /*This function is called when a new value is selected in the colorBy menu */
 function colorByMenuChanged() {
 	// set the new current category and index
@@ -233,7 +297,7 @@ function colorByMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
 	}
 
-	vals = dedupe(vals).sort();
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 	colors = getColorList(vals);
 
 	// build the colorby table in HTML
@@ -307,7 +371,7 @@ function showByMenuChanged() {
 	g_visiblePoints = g_plotIds.length
 	changePointCount()
 
-	vals = dedupe(vals).sort();
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
 	// build the showby checkbox table in HTML
 	var lines = "<form name=\"showbyform\"><table>"
@@ -459,6 +523,13 @@ function colorChanged(catValue,color) {
 	}
 }
 
+/* This function is called when q new color is selected for #taxaspherescolor */
+function colorChangedForTaxaSpheres(color){
+	for (index in g_plotTaxa){
+		g_plotTaxa[index].material.color.setHex(color.replace('#', '0x'))
+	}
+}
+
 /*This function is called when a new value is selected in the label menu*/
 function labelMenuChanged() {
 	if(document.getElementById('labelcombo').selectedIndex == 0){
@@ -476,7 +547,7 @@ function labelMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][labelCatIndex]);
 	}
 
-	vals = dedupe(vals).sort();
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 	colors = getColorList(vals);
 
 	// build the label table in HTML
@@ -541,7 +612,6 @@ function toggleLabels() {
 	if(document.plotoptions.elements[0].checked){
 		$('#labelForm').css('display','block');
 		$('#labels').css('display','block');
-		$('#labels').css('display','block');
 		$("#lopacityslider").slider('enable');
 		$("#labelColor").spectrum('enable');
 		document.getElementById('labelcombo').disabled = false;
@@ -550,7 +620,10 @@ function toggleLabels() {
 			return;
 		}
 
+		// get the current category name to show the labels
 		g_categoryName = document.getElementById('labelcombo')[document.getElementById('labelcombo').selectedIndex].value;
+
+		// for each of the labels check if they are enabled or not
 		for(var i = 0; i < document.labels.elements.length; i++){
 			var hidden = !document.labels.elements[i].checked;
 			var value = document.labels.elements[i].name;
@@ -570,6 +643,39 @@ function toggleLabels() {
 	}
 	else{
 		$('#labels').css('display','none');
+	}
+}
+
+/*This function turns the labels with the lineages on and off*/
+function toggleTaxaLabels(){
+	// present labels if the visibility checkbox is marked
+	if(document.biplotoptions.elements[0].checked){
+		$('#taxalabels').css('display','block');
+
+		for(var key in g_taxaPositions){
+			var taxa_label = g_taxaPositions[key]['lineage'];
+			var divid = taxa_label.replace(/\./g,'');
+			$('#'+key+"_taxalabel").css('display', 'block');
+		}
+	}
+	else{
+		$('#taxalabels').css('display','none');
+	}
+}
+
+/* Turn on and off the spheres representing the biplots on screen */
+function toggleBiplotVisibility(){
+	// reduce the opacity to zero if the element should be off or to 0.5
+	// if the element is supposed to be present; 0.5 is the default value
+	if(document.biplotsvisibility.elements[0].checked){
+		for (index in g_plotTaxa){
+			g_plotTaxa[index].material.opacity = 0;
+		}
+	}
+	else{
+		for (index in g_plotTaxa){
+			g_plotTaxa[index].material.opacity = 0.5;
+		}
 	}
 }
 
@@ -673,19 +779,43 @@ function setJqueryUi() {
 			}
 	});
 
-	$("#eopacityslider").slider({
-		range: "max",
-		min: 0,
-		max: 100,
-		value: 20,
-		slide: function( event, ui ) {
-			ellipseOpacityChange(ui);
-		},
-		change: function( event, ui ) {
-			ellipseOpacityChange(ui);
-		}
-	});
-	document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
+	// check whether or not there is an ellipse opacity slider in the plot
+	if (document.getElementById('ellipseopacity')){
+		$("#eopacityslider").slider({
+			range: "max",
+			min: 0,
+			max: 100,
+			value: 20,
+			slide: function( event, ui ) {
+				ellipseOpacityChange(ui);
+			},
+			change: function( event, ui ) {
+				ellipseOpacityChange(ui);
+			}
+		});
+		document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
+	}
+
+	// check if we are presenting biplots, to decide whether or not we should
+	// show the color picker for the biplot spheres, white is the default color
+	if(document.getElementById('taxaspherescolor')){
+		$('#taxaspherescolor').css('backgroundColor',"#FFFFFF");
+		$("#taxaspherescolor").spectrum({
+			localStorageKey: 'key',
+			color: "#FFFFFF",
+			showInitial: true,
+			showInput: true,
+			change:
+				function(color) {
+					$(this).css('backgroundColor', color.toHexString());
+					var c = color.toHexString();
+					if(c.length == 4){
+						c = "#"+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2)+c.charAt(3)+c.charAt(3);
+					}
+					colorChangedForTaxaSpheres(c);
+				}
+		});
+	}
 
 	$("#sopacityslider").slider({
 		range: "max",
@@ -771,6 +901,39 @@ function drawSpheres() {
 			g_plotSpheres[sid] = mesh;
 			g_plotIds.push(sid);
 		}
+	}
+}
+
+/*Draw the taxa spheres in the plot as described by the g_taxaPositions array
+
+  Note that this is a function that won't always have an effect because the
+  g_taxaPositions array must have elements stored in it.
+*/
+function drawTaxa(){
+	for (var key in g_taxaPositions){
+		var mesh = new THREE.Mesh(g_genericSphere,
+			new THREE.MeshLambertMaterial());
+
+		// set the volume of the sphere
+		mesh.scale.x = g_taxaPositions[key]['radius'];
+		mesh.scale.y = g_taxaPositions[key]['radius'];
+		mesh.scale.z = g_taxaPositions[key]['radius'];
+
+		// set the position
+		mesh.position.set(g_taxaPositions[key]['x'],
+			g_taxaPositions[key]['y'],
+			g_taxaPositions[key]['z']);
+
+		// the legacy color of these spheres is white
+		mesh.material.color = new THREE.Color("0xFFFFFF");
+		mesh.material.transparent = true;
+		mesh.material.opacity = 0.5;
+		mesh.updateMatrix();
+		mesh.matrixAutoUpdate = true;
+
+		// add the element to the scene and to the g_plotTaxa dictionary
+		g_mainScene.add(mesh);
+		g_plotTaxa[key] = mesh;
 	}
 }
 
@@ -871,8 +1034,9 @@ $(document).ready(function() {
 
 		g_elementsGroup = new THREE.Object3D();
 		g_mainScene.add(g_elementsGroup);
-		drawEllipses()
-		drawSpheres()
+		drawEllipses();
+		drawSpheres();
+		drawTaxa();
 
 		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
@@ -941,6 +1105,20 @@ $(document).ready(function() {
 			labelshtml += "</label>";
 		}
 		document.getElementById("labels").innerHTML = labelshtml;
+
+		labelshtml = "";
+		// add the labels with the taxonomic lineages to the taxalabels div
+		for(var key in g_taxaPositions){
+
+			// get the coordinate of this taxa sphere
+			var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main_plot'));
+
+			// labels are identified by the key they have in g_taxaPositions
+			labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
+			labelshtml += g_taxaPositions[key]['lineage'];
+			labelshtml += "</label>";
+		}
+		document.getElementById("taxalabels").innerHTML = labelshtml
 	}
 
 	function buildAxisLabels() {
@@ -976,6 +1154,21 @@ $(document).ready(function() {
 				var divid = sid.replace(/\./g,'');
 				$('#'+divid+"_label").css('left',coords['x']);
 				$('#'+divid+"_label").css('top',coords['y']);
+			}
+		}
+		// check if you have to reposition the taxa labels for each frame
+		// this is something that will only happen when drawing biplots
+		if(document.biplotoptions){
+			if(document.biplotoptions.elements[0].checked){
+				for(var key in g_taxaPositions) {
+					// retrieve the position of the taxa on screen
+					var coords = toScreenXY(g_plotTaxa[key].position,
+						g_sceneCamera, $('#main_plot'));
+
+					// add the label at the appropriate position
+					$('#'+key+"_taxalabel").css('left',coords['x']);
+					$('#'+key+"_taxalabel").css('top',coords['y']);
+				}
 			}
 		}
 		if(g_foundId) {

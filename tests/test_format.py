@@ -13,7 +13,8 @@ __status__ = "Development"
 
 
 from numpy import array
-from emperor.format import format_pcoa_to_js, format_mapping_file_to_js
+from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
+    format_taxa_to_js, format_emperor_html_footer_string)
 from cogent.util.unit_test import TestCase, main
 
 class TopLevelTests(TestCase):
@@ -45,6 +46,21 @@ class TopLevelTests(TestCase):
             'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description']
         self.good_columns = ['Treatment', 'LinkerPrimerSequence']
 
+        self.otu_coords = array([[2.80399118e-01, -6.01282860e-03,
+            2.34854344e-02, -4.68109475e-02, -1.46624450e-01, 5.66979125e-03,
+            -3.54299634e-02, -2.55785794e-01, -4.84141987e-09], [2.28820400e-01,
+            -1.30142097e-01, -2.87149448e-01, 8.64498846e-02, 4.42951919e-02,
+            2.06042607e-01, 3.10003571e-02, 7.19920437e-02, -4.84141987e-09],
+            [-9.13299284e-02, 4.24147148e-01, -1.35627421e-01, -5.75194809e-02,
+            1.51363491e-01, -2.53935676e-02, 5.17306152e-02, -3.87382176e-02,
+            -4.84141987e-09], [-2.76542164e-01, -1.44964375e-01, 6.66467344e-02,
+            -6.77109454e-02, 1.76070270e-01, 7.29693901e-02, -2.29889464e-01,
+            -4.65989417e-02,-4.84141987e-09]])
+        self.lineages = ['Root;k__Bacteria;p__Firmicutes',
+            'Root;k__Bacteria;p__Bacteroidetes',
+            'Root;k__Bacteria;p__Tenericutes', 'Root;k__Bacteria;Other']
+        self.prevalence = array([ 1., 0.66471926, 0.08193196, 0.04374296])
+
     def test_format_pcoa_to_js(self):
         """Test correct formatting of the PCoA file"""
         # test the case with only points and nothing else
@@ -71,6 +87,31 @@ class TopLevelTests(TestCase):
             self.mapping_file_data, self.mapping_file_headers, self.good_columns)
         self.assertEquals(out_js_mapping_file_string, MAPPING_FILE_JS)
 
+    def test_format_taxa_to_js(self):
+        """Tests correct formatting of the taxa"""
+        out_js_taxa_string = format_taxa_to_js(self.otu_coords, self.lineages,
+            self.prevalence)
+        self.assertEquals(out_js_taxa_string, TAXA_JS_STRING)
+
+        # case with empty data
+        out_js_taxa_string = format_taxa_to_js([], [], [])
+        self.assertEquals(out_js_taxa_string, "\nvar g_taxaPositions = "
+            "new Array();\n\n")
+
+    def test_format_emperor_html_footer_string(self):
+        """Test correct formatting of the footer string"""
+
+        # footer for a jackknifed pcoa plot without biplots
+        out_string = format_emperor_html_footer_string(False, True)
+        self.assertEqual(out_string, EXPECTED_FOOTER_A)
+
+        # footer for biplots without jackknifing
+        out_string = format_emperor_html_footer_string(True, False)
+        self.assertEqual(out_string, EXPECTED_FOOTER_B)
+
+        # no biplots nor jackknifing
+        out_string = format_emperor_html_footer_string(False, False)
+        self.assertEqual(out_string, EXPECTED_FOOTER_C)
 
 
 PCOA_DATA = array([[ -1.09166142e-01, 8.77774496e-02, 1.15866606e-02, -6.26863896e-02, 2.31533068e-02, 8.76934639e-02, 1.37400927e-03, -1.35496063e-05, 1.29849404e-09],
@@ -107,9 +148,9 @@ var g_xMinimumValue = -0.362340;
 var g_yMinimumValue = -0.235221;
 var g_zMinimumValue = -0.210704;
 var g_maximum = 34912.621000;
-g_pc1Label = "PC1 (27 %)";
-g_pc2Label = "PC2 (16 %)";
-g_pc3Label = "PC3 (14 %)";
+var g_pc1Label = "PC1 (27 %)";
+var g_pc2Label = "PC2 (16 %)";
+var g_pc3Label = "PC3 (14 %)";
 var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
 """
 
@@ -137,9 +178,9 @@ var g_xMinimumValue = -0.362340;
 var g_yMinimumValue = -0.235221;
 var g_zMinimumValue = -0.210704;
 var g_maximum = 34912.621000;
-g_pc1Label = "Instant";
-g_pc2Label = "PC1 (27 %)";
-g_pc3Label = "PC2 (16 %)";
+var g_pc1Label = "Instant";
+var g_pc2Label = "PC1 (27 %)";
+var g_pc3Label = "PC2 (16 %)";
 var g_fractionExplained = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
 """
 
@@ -166,9 +207,9 @@ var g_xMinimumValue = 0.220000;
 var g_yMinimumValue = 0.620000;
 var g_zMinimumValue = 0.220000;
 var g_maximum = 5.500000;
-g_pc1Label = "PC1 (44 %)";
-g_pc2Label = "PC2 (40 %)";
-g_pc3Label = "PC3 (15 %)";
+var g_pc1Label = "PC1 (44 %)";
+var g_pc2Label = "PC2 (40 %)";
+var g_pc3Label = "PC3 (15 %)";
 var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
 """
 
@@ -186,6 +227,342 @@ MAPPING_FILE_DATA = [\
 MAPPING_FILE_JS = """var g_mappingFileHeaders = ['BarcodeSequence','LinkerPrimerSequence','Treatment','DOB','Description'];
 var g_mappingFileData = { 'PC.481': ['ACCAGCGACTAG','YATGCTGCCTCCCGTAGGAGT','Control','20070314','Control_mouse_I.D._481'],'PC.607': ['AACTGTGCGTAC','YATGCTGCCTCCCGTAGGAGT','Fast','20071112','Fasting_mouse_I.D._607'],'PC.634': ['ACAGAGTCGGCT','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._634'],'PC.635': ['ACCGCAGAGTCA','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._635'],'PC.593': ['AGCAGCACTTGT','YATGCTGCCTCCCGTAGGAGT','Control','20071210','Control_mouse_I.D._593'],'PC.636': ['ACGGTGAGTGTC','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._636'],'PC.355': ['AACTCGTCGATG','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._355'],'PC.354': ['AGCACGAGCCTA','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._354'],'PC.356': ['ACAGACCACTCA','YATGCTGCCTCCCGTAGGAGT','Control','20061126','Control_mouse_I.D._356'] };
 """
+
+TAXA_JS_STRING = """
+var g_taxaPositions = new Array();
+g_taxaPositions['0'] = { 'lineage': 'Root;k__Bacteria;p__Firmicutes', 'x': 0.280399, 'y': -0.006013, 'z': 0.023485, 'radius': 5.000000};
+g_taxaPositions['1'] = { 'lineage': 'Root;k__Bacteria;p__Bacteroidetes', 'x': 0.228820, 'y': -0.130142, 'z': -0.287149, 'radius': 3.491237};
+g_taxaPositions['2'] = { 'lineage': 'Root;k__Bacteria;p__Tenericutes', 'x': -0.091330, 'y': 0.424147, 'z': -0.135627, 'radius': 0.868694};
+g_taxaPositions['3'] = { 'lineage': 'Root;k__Bacteria;Other', 'x': -0.276542, 'y': -0.144964, 'z': 0.066647, 'radius': 0.696843};
+
+"""
+
+EXPECTED_FOOTER_A =\
+""" </script>
+</head>
+
+<body>
+
+<label id="pointCount" class="ontop">
+</label>
+
+<div id="finder" class="arrow-right">
+</div>
+
+<div id="labels" class="unselectable">
+</div>
+
+<div id="taxalabels" class="unselectable">
+</div>
+
+<div id="axislabels" class="axislabels">
+</div>
+
+<div id="main_plot">
+</div>
+
+<div id="menu">
+    <div id="menutabs">
+        <ul>
+            <li><a href="#keytab">Key</a></li>
+            <li><a href="#colorby">Colors</a></li>
+            <li><a href="#showby">Visibility</a></li>
+            <li><a href="#labelby">Labels</a></li>
+            <li><a href="#settings">Options</a></li>
+        </ul>
+        <div id="keytab">
+            <form name="keyFilter">
+            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+            </form>
+            <div id="key">
+            </div>
+        </div>
+        <div id="colorby">
+            <br>
+            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            </select>
+            <div class="list" id="colorbylist">
+            </div>
+        </div>
+        <div id="showby">
+            <select id="showbycombo" onchange="showByMenuChanged()">
+            </select>
+            <div class="list" id="showbylist">
+            </div>
+        </div>
+        <div id="labelby">
+        <div id="labelsTop">
+            <form name="plotoptions">
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+            </form>
+            <br>
+            <label for="labelopacity" class="text">Label Opacity</label>
+            <label id="labelopacity" class="slidervalue"></label>
+            <div id="lopacityslider" class="slider-range-max"></div>
+            <div id="labelColorHolder clearfix">
+            <table><tr>
+            <td><div id="labelColor" class="colorbox">
+            </div></td><td><label>Master Label Color</label></td>
+            </tr></table></div>
+        </div>
+            <br>
+            <select id="labelcombo" onchange="labelMenuChanged()">
+            </select>
+            <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+            <br>
+            <br>
+            <label for="ellipseopacity" class="text">Ellipse Opacity</label>
+            <label id="ellipseopacity" class="slidervalue"></label>
+            <div id="eopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereopacity" class="text">Sphere Opacity</label>
+            <label id="sphereopacity" class="slidervalue"></label>
+            <div id="sopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereradius" class="text">Sphere Scale</label>
+            <label id="sphereradius" class="slidervalue"></label>
+            <div id="sradiusslider" class="slider-range-max"></div>
+        </div>
+    </div>  
+</div>
+</body>
+
+</html>
+"""
+EXPECTED_FOOTER_B =\
+""" </script>
+</head>
+
+<body>
+
+<label id="pointCount" class="ontop">
+</label>
+
+<div id="finder" class="arrow-right">
+</div>
+
+<div id="labels" class="unselectable">
+</div>
+
+<div id="taxalabels" class="unselectable">
+</div>
+
+<div id="axislabels" class="axislabels">
+</div>
+
+<div id="main_plot">
+</div>
+
+<div id="menu">
+    <div id="menutabs">
+        <ul>
+            <li><a href="#keytab">Key</a></li>
+            <li><a href="#colorby">Colors</a></li>
+            <li><a href="#showby">Visibility</a></li>
+            <li><a href="#labelby">Labels</a></li>
+            <li><a href="#settings">Options</a></li>
+        </ul>
+        <div id="keytab">
+            <form name="keyFilter">
+            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+            </form>
+            <div id="key">
+            </div>
+        </div>
+        <div id="colorby">
+            <br>
+            <br>
+            <table>
+                <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
+            </table>
+            <br>
+            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            </select>
+            <div class="list" id="colorbylist">
+            </div>
+        </div>
+        <div id="showby">
+            <br>
+            <form name="biplotsvisibility">
+            <input type="checkbox" onClick="toggleBiplotVisibility()">Biplots Visibility</input>
+            </form>
+            <br>
+            <select id="showbycombo" onchange="showByMenuChanged()">
+            </select>
+            <div class="list" id="showbylist">
+            </div>
+        </div>
+        <div id="labelby">
+        <div id="labelsTop">
+            <form name="plotoptions">
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+            </form>
+            <form name="biplotoptions">
+            <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
+            </form>
+            <br>
+            <label for="labelopacity" class="text">Label Opacity</label>
+            <label id="labelopacity" class="slidervalue"></label>
+            <div id="lopacityslider" class="slider-range-max"></div>
+            <div id="labelColorHolder clearfix">
+            <table><tr>
+            <td><div id="labelColor" class="colorbox">
+            </div></td><td><label>Master Label Color</label></td>
+            </tr></table></div>
+        </div>
+            <br>
+            <select id="labelcombo" onchange="labelMenuChanged()">
+            </select>
+            <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+            <br>
+            <br>
+            <label for="sphereopacity" class="text">Sphere Opacity</label>
+            <label id="sphereopacity" class="slidervalue"></label>
+            <div id="sopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereradius" class="text">Sphere Scale</label>
+            <label id="sphereradius" class="slidervalue"></label>
+            <div id="sradiusslider" class="slider-range-max"></div>
+        </div>
+    </div>  
+</div>
+</body>
+
+</html>
+"""
+
+EXPECTED_FOOTER_C =\
+""" </script>
+</head>
+
+<body>
+
+<label id="pointCount" class="ontop">
+</label>
+
+<div id="finder" class="arrow-right">
+</div>
+
+<div id="labels" class="unselectable">
+</div>
+
+<div id="taxalabels" class="unselectable">
+</div>
+
+<div id="axislabels" class="axislabels">
+</div>
+
+<div id="main_plot">
+</div>
+
+<div id="menu">
+    <div id="menutabs">
+        <ul>
+            <li><a href="#keytab">Key</a></li>
+            <li><a href="#colorby">Colors</a></li>
+            <li><a href="#showby">Visibility</a></li>
+            <li><a href="#labelby">Labels</a></li>
+            <li><a href="#settings">Options</a></li>
+        </ul>
+        <div id="keytab">
+            <form name="keyFilter">
+            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+            </form>
+            <div id="key">
+            </div>
+        </div>
+        <div id="colorby">
+            <br>
+            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            </select>
+            <div class="list" id="colorbylist">
+            </div>
+        </div>
+        <div id="showby">
+            <select id="showbycombo" onchange="showByMenuChanged()">
+            </select>
+            <div class="list" id="showbylist">
+            </div>
+        </div>
+        <div id="labelby">
+        <div id="labelsTop">
+            <form name="plotoptions">
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+            </form>
+            <br>
+            <label for="labelopacity" class="text">Label Opacity</label>
+            <label id="labelopacity" class="slidervalue"></label>
+            <div id="lopacityslider" class="slider-range-max"></div>
+            <div id="labelColorHolder clearfix">
+            <table><tr>
+            <td><div id="labelColor" class="colorbox">
+            </div></td><td><label>Master Label Color</label></td>
+            </tr></table></div>
+        </div>
+            <br>
+            <select id="labelcombo" onchange="labelMenuChanged()">
+            </select>
+            <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+            <br>
+            <br>
+            <label for="sphereopacity" class="text">Sphere Opacity</label>
+            <label id="sphereopacity" class="slidervalue"></label>
+            <div id="sopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereradius" class="text">Sphere Scale</label>
+            <label id="sphereradius" class="slidervalue"></label>
+            <div id="sradiusslider" class="slider-range-max"></div>
+        </div>
+    </div>  
+</div>
+</body>
+
+</html>
+"""
+
+
 
 if __name__ == "__main__":
     main()

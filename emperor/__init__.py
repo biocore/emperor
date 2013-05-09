@@ -10,4 +10,4 @@ __maintainer__ = "Antonio Gonzalez Pena"
 __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
-__all__ = ['format', 'util']
+__all__ = ['biplots', 'format', 'sort', 'util']
