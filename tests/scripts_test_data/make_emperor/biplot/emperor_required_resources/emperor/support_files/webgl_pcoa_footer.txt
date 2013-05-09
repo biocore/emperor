@@ -1,0 +1,253 @@
+	
+ var sphere = new THREE.SphereGeometry(radius, segments, rings);
+	
+	 camera.position.x = camera.position.y = 0;
+     camera.position.z = max * 4;
+
+
+      //var len=ellipses.length;
+      for(var sid in ellipses) {
+		 //draw ellipsoid
+	  	 var emesh = new THREE.Mesh( sphere, new THREE.MeshLambertMaterial() );
+         emesh.scale.x = ellipses[sid]['width']/radius;
+	     emesh.scale.y = ellipses[sid]['height']/radius;
+	     emesh.scale.z = ellipses[sid]['length']/radius;
+		 emesh.position.set(ellipses[sid]['x'],ellipses[sid]['y'] ,ellipses[sid]['z'] );
+		 emesh.material.color = materials[ellipses[sid]['color']].color.clone();
+	     emesh.material.transparent = true;
+	     emesh.material.opacity = 0.2;
+	     emesh.updateMatrix();
+         emesh.matrixAutoUpdate = true;
+	     scene.add( emesh );
+		 plotEllipses[sid] = emesh;
+	  	}
+	 
+	len = points.length;
+	
+	for(var sid in points)
+	{
+		 //draw ball
+		 var mesh = new THREE.Mesh( sphere, new THREE.MeshLambertMaterial() );
+		 mesh.material.color = materials[points[sid]['color']].color.clone();
+		 mesh.material.transparent = false;
+		 mesh.material.opacity = 1;
+         mesh.position.set(points[sid]['x'], points[sid]['y'], points[sid]['z']);
+         mesh.updateMatrix();
+         mesh.matrixAutoUpdate = true;
+         scene.add( mesh );
+		 plotSpheres[sid] = mesh;
+		 plotIds.push(sid);		
+    }
+	
+	plotIds = plotIds.sort();
+
+	// build the colorby and showby menus
+	var line = "";
+	$("#labelcombo").append("<option>Select A Category...</option>");
+	for(var i in headers){
+		//console.log(headers[i]);
+		var temp = [];
+		for(var j in plotIds) 
+			temp.push(mapping[plotIds[j]][i]);
+		
+		temp = dedupe(temp);
+		
+		// get rid of categories that have only one value
+		if(temp.length == 1)
+			continue;
+		
+		line = "<option value=\""+headers[i]+"\">"+headers[i]+"</option>"
+		$("#colorbycombo").append(line);
+		$("#showbycombo").append(line);
+		$("#labelcombo").append(line);
+	}
+	
+	var rv = colorByMenuChanged();
+	showByMenuChanged();
+
+	var debugaxis = function(axisLength, xstart, ystart, zstart){
+	    //Shorten the vertex function
+	    function v(x,y,z){ 
+	            return new THREE.Vertex(new THREE.Vector3(x,y,z)); 
+	    }
+    
+	    //Create axis (point1, point2, colour)
+	    function createAxis(p1, p2, color){
+	            var line, lineGeometry = new THREE.Geometry(),
+	            lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 1});
+	            lineGeometry.vertices.push(p1, p2);
+	            line = new THREE.Line(lineGeometry, lineMat);
+	            scene.add(line);
+	    }
+    
+	    createAxis(v(xstart, ystart, zstart), v(axisLength, ystart, zstart), 0xFF0000);
+	    createAxis(v(xstart, ystart, zstart), v(xstart, axisLength, zstart), 0x00FF00);
+	    createAxis(v(xstart, ystart, zstart), v(xstart, ystart, axisLength), 0x0000FF);
+	};
+		
+	  var axesLen = Math.max(max_x+Math.abs(min_x),max_y+Math.abs(min_y),max_z+Math.abs(min_z));	  
+	  debugaxis(axesLen, min_x, min_y, min_z);
+	  //debugaxis(axesLen, 0, 0, 0);
+	
+      // lights
+      light1 = new THREE.DirectionalLight( 0xffffff );
+      light1.position.set( max, 0, 0 );
+      scene.add( light1 );
+      light2 = new THREE.DirectionalLight( 0xffffff );
+      light2.position.set( -max, 0, 0 );
+      scene.add( light2 );
+      
+      light3 = new THREE.DirectionalLight( 0xffffff );
+      light3.position.set( 0, max, 0 );
+      scene.add( light3 );
+      light4 = new THREE.DirectionalLight( 0xffffff );
+      light4.position.set( 0, -max, 0 );
+      scene.add( light4 );
+      
+      light5 = new THREE.DirectionalLight( 0xffffff );
+      light5.position.set( 0, 0, max );
+      scene.add( light5 );
+      light6 = new THREE.DirectionalLight( 0xffffff );
+      light6.position.set( 0, 0, -max );
+      scene.add( light6 );
+      
+      // Adding camera
+	  scene.add( camera );
+	  
+      light = new THREE.DirectionalLight( 0xffffff );
+	  controls = new THREE.TrackballControls(camera, document.getElementById('main_plot'));
+      controls.rotateSpeed = 1.0;
+      controls.zoomSpeed = 1.2;
+      controls.panSpeed = 0.8;
+      controls.noZoom = false;
+      controls.noPan = false;
+      controls.staticMoving = true;
+      controls.dynamicDampingFactor = 0.3;
+      controls.keys = [ 65, 83, 68 ]; 	  
+      
+      // renderer
+      renderer = new THREE.WebGLRenderer({ antialias: false });
+      renderer.setClearColorHex( 0x333333, 1 );
+      renderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
+      main_plot.append( renderer.domElement );
+	
+	// build divs to hold labels and position them
+	var labelshtml = "";
+	for(var i in plotIds) {
+		var sid = plotIds[i];
+		var divid = sid.replace(/\./g,'');
+		mesh = plotSpheres[sid];
+		var coords = toScreenXY(mesh.position,camera,$('#main_plot'));
+		labelshtml += "<label id=\""+divid+"_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
+		labelshtml += sid;
+		labelshtml += "</label>";
+	}
+	document.getElementById("labels").innerHTML = labelshtml;
+   }
+   
+
+   function animate() {
+    requestAnimationFrame( animate );
+    render();
+	// move labels when the plot is moved
+	for(var i in plotIds) {
+		var sid = plotIds[i];
+		mesh = plotSpheres[sid];
+		var coords = toScreenXY(mesh.position, camera, $('#main_plot'));
+		var divid = sid.replace(/\./g,'');
+		$('#'+divid+"_label").css('left',coords['x']);
+		$('#'+divid+"_label").css('top',coords['y']);
+	}
+	if(foundId) {
+	var coords = toScreenXY(plotSpheres[foundId].position, camera, $('#main_plot'));
+	$('#finder').css('left',coords['x']-15);
+	$('#finder').css('top',coords['y']-5);
+	}
+   }
+   
+   function render() {
+      controls.update();
+      renderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
+      renderer.render( scene, camera );
+   }
+});
+</script>
+</head>
+
+<body>
+
+<div id="finder" class="arrow-right">
+</div>
+
+<div id="labels" class="unselectable">
+</div>
+
+<div id="main_plot">
+</div>
+
+<div id="menu">
+	<div id="menutabs">
+		<ul>
+			<li><a href="#keytab">Key</a></li>
+            <li><a href="#colorby">Colors</a></li>
+			<li><a href="#showby">Visibility</a></li>
+			<li><a href="#labelby">Labels</a></li>
+			<li><a href="#settings">Options</a></li>
+        </ul>
+		<div id="keytab">
+			<form name="keyFilter">
+			<label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+			</form>
+			<div id="key">
+			</div>
+		</div>
+		<div id="colorby">
+			<select id="colorbycombo" onchange="colorByMenuChanged()">
+			</select>
+			<div class="list" id="colorbylist">
+			</div>
+		</div>
+		<div id="showby">
+			<select id="showbycombo" onchange="showByMenuChanged()">
+			</select>
+			<div class="list" id="showbylist">
+			</div>
+		</div>
+		<div id="labelby">
+		<div id="labelsTop">
+			<form name="plotoptions">
+			<input type="checkbox" onClick="toggleLabels()">Master Label Visibility</input>
+			</form>
+			<br>
+			<label for="labelopacity" class="lopacitylabel">Label Opacity</label>
+			<label id="lopacity" class="opacityvalue"></label>
+			<div id="lopacityslider" class="slider-range-max"></div>
+			<div id="labelColorHolder clearfix">
+			<table><tr>
+			<td><div id="labelColor" class="colorbox">
+			</div></td><td><label>Master Label Color</label></td>
+			</tr></table></div>
+		</div>
+			<br>
+			<select id="labelcombo" onchange="labelMenuChanged()">
+			</select>
+			<div class="list" id="labellist">
+			</div>
+		</div>
+		<div id="settings">
+			<input id="reset" class="reset" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+			<br>
+			<br>
+			<label for="ellipseopacity" class="eopacitylabel">Ellipse Opacity</label>
+			<label id="eopacity" class="opacityvalue"></label>
+			<div id="eopacityslider" class="slider-range-max"></div>
+			<br>
+			<label for="sphereopacity" class="sopacitylabel">Sphere Opacity</label>
+			<label id="sopacity" class="opacityvalue"></label>
+			<div id="sopacityslider" class="slider-range-max"></div>
+		</div>
+	</div>	
+</div>
+</body>
+
+</html>

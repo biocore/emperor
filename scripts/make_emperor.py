@@ -14,15 +14,20 @@ __status__ = "Development"
 from os import listdir
 from os.path import join, exists, isdir
 
+from qiime.biplots import get_taxa, get_taxa_coords, get_taxa_prevalence
 from qiime.filter import filter_mapping_file
-from qiime.parse import parse_mapping_file, parse_coords, mapping_file_to_dict
+from qiime.parse import (parse_mapping_file, parse_coords, mapping_file_to_dict,
+    parse_otu_table)
 from qiime.util import (parse_command_line_parameters, make_option, create_dir,
     MetadataMap)
+from qiime.biplots import make_biplot_scores_output
 
+from emperor.biplots import preprocess_otu_table
 from emperor.util import (copy_support_files, preprocess_mapping_file,
     preprocess_coords_file, fill_mapping_field_from_mapping_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
-    EMPEROR_FOOTER_HTML_STRING, EMPEROR_HEADER_HTML_STRING)
+    format_taxa_to_js, format_emperor_html_footer_string,
+    EMPEROR_HEADER_HTML_STRING)
 
 script_info = {}
 script_info['brief_description'] = "Create three dimensional PCoA plots"
@@ -56,7 +61,17 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "coordinates file (--master_pcoa) will display the ellipsoids centered by "
     "the samples in this file: ", "%prog -i unweighted_unifrac_pc -s "
     "unweighted_unifrac_pc/pcoa_unweighted_unifrac_rarefaction_110_5.txt -m "
-    "Fasting_Map.txt -o jackknifed_with_master")]
+    "Fasting_Map.txt -o jackknifed_with_master"),
+    ("BiPlots","To see which taxa are the ten more prevalent in the different "
+    "areas of the PCoA plot, you need to pass a summarized taxa file i. e. the "
+    "output of summarize_taxa.py. Note that if the the '--taxa_fp' has fewer "
+    "than 10 taxa, the script will default to use all.","%prog -i unweighted_un"
+    "ifrac_pc.txt -m Fasting_Map.txt -t otu_table_L3.txt -o biplot"),
+    ("BiPlots with extra options","To see which are the three most prevalent "
+    "taxa and save the coordinates where these taxa are centered, you can use "
+    "the -n (number of taxa to keep) and the --biplot_fp (output biplot file "
+    "path) options.", "%prog -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -t"
+    " otu_table_L3.txt -o biplot_options -n 3 --biplot_fp biplot.txt")]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'emperor.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening emperor.html with "+\
@@ -91,6 +106,9 @@ script_info['optional_options'] = [
     'separating them without spaces. The user can also combine columns in'
     ' the mapping file by separating the categories by "&&" without spaces. '
     '[default=color by all categories]', default=''),
+    make_option('--biplot_fp', help='Output filepath that will contain the '
+    'coordinates where each taxonomic sphere is centered. [default: %default]',
+    default=None, type='new_filepath'),
     make_option('-e', '--ellipsoid_method', help='Used only when plotting '
     'ellipsoids for jackknifed beta diversity (i.e. using a directory of coord '
     'files instead of a single coord file). Valid values are "IQR" (for '
@@ -101,11 +119,19 @@ script_info['optional_options'] = [
     ' the mapping file. Be aware that this is very misleading as the PCoA is '
     'accounting for all the samples and removing some samples could lead to '
     ' erroneous/skewed interpretations.', action='store_true', default=False),
+    make_option('-n', '--n_taxa_to_keep', help='Number of taxonomic groups from'
+    ' the "--taxa_fp" file to display. Passing "-1" will cause to display all '
+    'the taxonomic groups, this option is only used when creating BiPlots. '
+    '[default=%default]', default=10, type='int'),
     make_option('-s', '--master_pcoa', help='Used only when plotting ellipsoids'
     ' for jackknifed beta diversity (i.e. using a directory of coord files'
     ' instead of a single coord file). The coordinates in this file will be the'
     ' center of each ellipisoid. [default: arbitrarily selected file from the '
     'input directory]', default=None, type='existing_filepath'),
+    make_option('-t', '--taxa_fp', help='Path to a summarized taxa file (i. '
+    'e. the output of summarize_taxa.py). This option is only used when '
+    'creating BiPlots. [default=%default]', default=None, type=
+    'existing_filepath'),
     make_option('-x', '--missing_custom_axes_values', help='Option to override '
     'the error shown when the \'--custom_axes\' categories, have non-numeric '
     'values in the mapping file. For example, if you wanted to see all the '
@@ -131,6 +157,9 @@ def main():
     missing_custom_axes_values = opts.missing_custom_axes_values
     jackknifing_method = opts.ellipsoid_method
     master_pcoa = opts.master_pcoa
+    taxa_fp = opts.taxa_fp
+    n_taxa_to_keep = opts.n_taxa_to_keep
+    biplot_fp = opts.biplot_fp
 
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
@@ -226,6 +255,25 @@ def main():
         number_intersected_sids = len(sids_intersection)
         required_number_of_sids = len(coords_headers)
 
+    if taxa_fp:
+        try:
+            # for summarized tables the "otu_ids" are really the "lineages"
+            otu_sample_ids, lineages, otu_table, _ = parse_otu_table(open(
+                taxa_fp, 'U'), count_map_f=float)
+        except ValueError, e:
+            option_parser.error('There was a problem parsing the --taxa_fp: %s'%
+                e.message)
+
+        # make sure there are matching sample ids with the otu table
+        if not len(list(set(sids_intersection)&set(otu_sample_ids))):
+            option_parser.error('The sample identifiers in the OTU table must '
+                'have at least one match with the data in the mapping file and '
+                'with the coordinates file. Verify you are using input files '
+                'that belong to the same dataset.')
+    else:
+        # empty lists indicate that there was no taxa file passed in
+        otu_sample_ids, lineages, otu_table = [], [], []
+
     # sample ids must be shared between files
     if number_intersected_sids <= 0:
         option_parser.error('The sample identifiers in the coordinates file '
@@ -307,6 +355,12 @@ def main():
         coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
         jackknifing_method=jackknifing_method)
 
+    # process the otu table after processing the coordinates to get custom axes
+    # (when available) or any other change that occurred to the coordinates
+    otu_coords, otu_table, otu_lineages, otu_prevalence, lines =\
+        preprocess_otu_table(otu_sample_ids, otu_table, lineages,
+        coords_data, coords_headers, n_taxa_to_keep)
+
     # remove the columns in the mapping file that are not informative taking
     # into account the header names that were already authorized to be used
     # and take care of concatenating the fields for the && merged columns
@@ -323,8 +377,22 @@ def main():
     fp_out.write(format_mapping_file_to_js(mapping_data, header, header))
     fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
         coords_eigenvalues, coords_pct, custom_axes, coords_low, coords_high))
-    fp_out.write(EMPEROR_FOOTER_HTML_STRING)
+    fp_out.write(format_taxa_to_js(otu_coords, otu_lineages, otu_prevalence))
+    fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
+        isdir(input_coords)))
+    fp_out.close()
     copy_support_files(output_dir)
+
+    # write the bilot coords in the output file if a path is passed
+    if biplot_fp:
+        # make sure this file can be created
+        try:
+            fd = open(biplot_fp, 'w')
+        except IOError:
+            option_parser.error('There was a problem creating the file with'
+                ' the coordinates for the biplots (%s).' % biplot_fp)
+        fd.writelines(lines)
+        fd.close()
 
 if __name__ == "__main__":
     main()

@@ -13,7 +13,7 @@ __status__ = "Development"
 
 
 from numpy import max, min, abs
-
+from cogent.util.misc import if_
 from qiime.parse import mapping_file_to_dict
 
 
@@ -87,11 +87,12 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     # use as many as you can (since customs axes can be either [0, 1, 2, 3])
     for i in range(0, 3):
         try:
-            js_pcoa_string += 'g_pc%dLabel = \"%s\";\n' % (i+1, custom_axes[i])
+            js_pcoa_string += 'var g_pc%dLabel = \"%s\";\n' % (i+1,
+                custom_axes[i])
             offset+=1 # offset will help us retrieve the correct pcoalabels val
         except:
             # if there are custom axes then subtract the number of custom axes
-            js_pcoa_string += 'g_pc%dLabel = \"PC%d (%.0f %%)\";\n' %\
+            js_pcoa_string += 'var g_pc%dLabel = \"PC%d (%.0f %%)\";\n' %\
                 (i+1, i+1-offset, pcoalabels[i-offset])
 
     js_pcts = []
@@ -142,6 +143,65 @@ def format_mapping_file_to_js(mapping_file_data, mapping_file_headers, columns):
 
     return js_mapping_file_string
 
+def format_taxa_to_js(otu_coords, lineages, prevalence):
+    """Write javascript string representing the taxa in a PCoA plot
+    
+    Inputs:
+    otu_coords: numpy array where the taxa is positioned
+    lineages: label for each of these lineages
+    prevalence: score of prevalence for each of the taxa that is drawn
+
+    Outputs:
+    js_biplots_string: javascript string where the taxa information is written
+    to create the spheres representing each of these, will return only the
+    variable declaration if the inputs are empty.
+    """
+    js_biplots_string = []
+    js_biplots_string.append('\nvar g_taxaPositions = new Array();\n')
+
+    # if we have prevalence scores, calculate the taxa radii values
+    if len(prevalence):
+        taxa_radii = RADIUS*(MIN_TAXON_RADIUS+(MAX_TAXON_RADIUS-
+            MIN_TAXON_RADIUS)*prevalence)
+    else:
+        taxa_radii = []
+
+    index = 0
+
+    # write the data in the form of a dictionary
+    for taxa_label, taxa_coord, radius in zip(lineages, otu_coords, taxa_radii):
+        js_biplots_string.append(("g_taxaPositions['%d'] = { 'lineage': '%s', "
+            "'x': %f, 'y': %f, 'z': %f, 'radius': %f};\n") % (index,
+            taxa_label, taxa_coord[0], taxa_coord[1], taxa_coord[2], radius))
+        index += 1
+    js_biplots_string.append('\n')
+    # join the array of strings as a single string
+    return ''.join(js_biplots_string)
+
+def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False):
+    """Create an HTML footer according to the things being presented in the plot
+
+    has_biplots: whether the plot has biplots or not
+    has_ellipses: whether the plot has ellipses or not
+
+    This function will remove unnecessary GUI elements from index.html to avoid
+    confusions i. e. showing an ellipse opacity slider when there are no
+    ellipses in the plot.
+    """
+    optional_strings = []
+
+    # the order of these statemenst matter, see _EMPEROR_FOOTER_HTML_STRING
+    optional_strings.append(if_(has_biplots, _BIPLOT_SPHERES_COLOR_SELECTOR,''))
+    optional_strings.append(if_(has_biplots, _BIPLOT_VISIBILITY_SELECTOR, ''))
+    optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
+    optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
+
+    return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
+
+
+MIN_TAXON_RADIUS = 0.5
+MAX_TAXON_RADIUS = 5
+RADIUS = 1.0
 
 EMPEROR_HEADER_HTML_STRING =\
 """<!doctype html>
@@ -167,7 +227,32 @@ EMPEROR_HEADER_HTML_STRING =\
     <script type="text/javascript">
 """
 
-EMPEROR_FOOTER_HTML_STRING =\
+_ELLIPSE_OPACITY_SLIDER = """
+            <br>
+            <label for="ellipseopacity" class="text">Ellipse Opacity</label>
+            <label id="ellipseopacity" class="slidervalue"></label>
+            <div id="eopacityslider" class="slider-range-max"></div>"""
+
+_TAXA_LABELS_SELECTOR = """
+            <form name="biplotoptions">
+            <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
+            </form>"""
+
+_BIPLOT_VISIBILITY_SELECTOR = """
+            <br>
+            <form name="biplotsvisibility">
+            <input type="checkbox" onClick="toggleBiplotVisibility()">Biplots Visibility</input>
+            </form>
+            <br>"""
+
+_BIPLOT_SPHERES_COLOR_SELECTOR ="""
+            <br>
+            <table>
+                <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
+            </table>
+            <br>"""
+
+_EMPEROR_FOOTER_HTML_STRING =\
 """ </script>
 </head>
 
@@ -180,6 +265,9 @@ EMPEROR_FOOTER_HTML_STRING =\
 </div>
 
 <div id="labels" class="unselectable">
+</div>
+
+<div id="taxalabels" class="unselectable">
 </div>
 
 <div id="axislabels" class="axislabels">
@@ -205,13 +293,13 @@ EMPEROR_FOOTER_HTML_STRING =\
             </div>
         </div>
         <div id="colorby">
-            <br>
+            <br>%s
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby">
+        <div id="showby">%s
             <select id="showbycombo" onchange="showByMenuChanged()">
             </select>
             <div class="list" id="showbylist">
@@ -220,8 +308,8 @@ EMPEROR_FOOTER_HTML_STRING =\
         <div id="labelby">
         <div id="labelsTop">
             <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Master Label Visibility</input>
-            </form>
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+            </form>%s
             <br>
             <label for="labelopacity" class="text">Label Opacity</label>
             <label id="labelopacity" class="slidervalue"></label>
@@ -250,11 +338,7 @@ EMPEROR_FOOTER_HTML_STRING =\
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>
-            <br>
-            <label for="ellipseopacity" class="text">Ellipse Opacity</label>
-            <label id="ellipseopacity" class="slidervalue"></label>
-            <div id="eopacityslider" class="slider-range-max"></div>
+            <br>%s
             <br>
             <label for="sphereopacity" class="text">Sphere Opacity</label>
             <label id="sphereopacity" class="slidervalue"></label>
