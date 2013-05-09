@@ -26,6 +26,7 @@ var g_zAxisLine;
 var g_mainScene;
 var g_sceneCamera;
 var g_sceneLight;
+var g_mainRenderer;
 
 // general multipurpose variables
 var g_elementsGroup; // group that holds the plotted shapes
@@ -528,7 +529,7 @@ function colorChanged(catValue,color) {
 /* This function is called when q new color is selected for #taxaspherescolor */
 function colorChangedForTaxaSpheres(color){
 	for (index in g_plotTaxa){
-		g_plotTaxa[index].material.color.setHex(color.replace('#', '0x'))
+		g_plotTaxa[index].material.color.setHex(color)
 	}
 }
 
@@ -805,16 +806,15 @@ function setJqueryUi() {
 		$("#taxaspherescolor").spectrum({
 			localStorageKey: 'key',
 			color: "#FFFFFF",
+			preferredFormat: "hex6",
 			showInitial: true,
 			showInput: true,
 			change:
 				function(color) {
-					$(this).css('backgroundColor', color.toHexString());
-					var c = color.toHexString();
-					if(c.length == 4){
-						c = "#"+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2)+c.charAt(3)+c.charAt(3);
-					}
-					colorChangedForTaxaSpheres(c);
+					// pass a boolean flag to convert to hex6 string
+					var c = color.toHexString(true);
+					$(this).css('backgroundColor', c);
+					colorChangedForTaxaSpheres(c.replace('#', '0x'));
 				}
 		});
 	}
@@ -860,6 +860,26 @@ function setJqueryUi() {
 		}
 	});
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
+
+	// the default color palette for the background is black and white
+	$('#rendererbackgroundcolor').css('backgroundColor',"#000000");
+	$("#rendererbackgroundcolor").spectrum({
+		localStorageKey: 'key',
+		color: "#000000",
+		showInitial: true,
+		showInput: true,
+		showPalette: true,
+		preferredFormat: "hex6",
+		palette: [['white', 'black']],
+		change:
+			function(color) {
+				// pass a boolean flag to convert to hex6 string
+				var c = color.toHexString(true);
+				// set the color for the box and for the renderer
+				$(this).css('backgroundColor', c);
+				g_mainRenderer.setClearColorHex(c.replace('#','0x'), 1);
+			}
+	});
 }
 
 /*Draw the ellipses in the plot as described by the g_ellipsesDimensions array
@@ -1001,7 +1021,7 @@ $(document).ready(function() {
 	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 	var main_plot = $('#main_plot');
-	var renderer, particles, geometry, parameters, i, h, color;
+	var particles, geometry, parameters, i, h, color;
 	var mouseX = 0, mouseY = 0;
 
 	var winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight), view_angle = 35, view_near = 0.1, view_far = 10000;
@@ -1087,12 +1107,12 @@ $(document).ready(function() {
 		controls.dynamicDampingFactor = 0.3;
 		controls.keys = [ 65, 83, 68 ];
 
-		// renderer
-		renderer = new THREE.WebGLRenderer({ antialias: true });
-		renderer.setClearColorHex( 0x333333, 1 );
-		renderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
-		renderer.sortObjects = false;
-		main_plot.append( renderer.domElement );
+		// renderer, the default background color is black
+		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true });
+		g_mainRenderer.setClearColorHex(0x000000, 1);
+		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
+		g_mainRenderer.sortObjects = false;
+		main_plot.append(g_mainRenderer.domElement);
 
 		// build divs to hold point labels and position them
 		var labelshtml = "";
@@ -1182,7 +1202,7 @@ $(document).ready(function() {
    
 	function render() {
 		controls.update();
-		renderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
-		renderer.render( g_mainScene, g_sceneCamera);
+		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
+		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 	}
 });

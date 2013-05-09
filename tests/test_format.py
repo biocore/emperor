@@ -336,6 +336,10 @@ EXPECTED_FOOTER_A =\
             <label for="sphereradius" class="text">Sphere Scale</label>
             <label id="sphereradius" class="slidervalue"></label>
             <div id="sradiusslider" class="slider-range-max"></div>
+            <br>
+            <table>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
         </div>
     </div>  
 </div>
@@ -451,6 +455,10 @@ EXPECTED_FOOTER_B =\
             <label for="sphereradius" class="text">Sphere Scale</label>
             <label id="sphereradius" class="slidervalue"></label>
             <div id="sradiusslider" class="slider-range-max"></div>
+            <br>
+            <table>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
         </div>
     </div>  
 </div>
@@ -554,6 +562,10 @@ EXPECTED_FOOTER_C =\
             <label for="sphereradius" class="text">Sphere Scale</label>
             <label id="sphereradius" class="slidervalue"></label>
             <div id="sradiusslider" class="slider-range-max"></div>
+            <br>
+            <table>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
         </div>
     </div>  
 </div>

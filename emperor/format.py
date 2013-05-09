@@ -347,6 +347,10 @@ _EMPEROR_FOOTER_HTML_STRING =\
             <label for="sphereradius" class="text">Sphere Scale</label>
             <label id="sphereradius" class="slidervalue"></label>
             <div id="sradiusslider" class="slider-range-max"></div>
+            <br>
+            <table>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
         </div>
     </div>  
 </div>
