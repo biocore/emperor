@@ -529,7 +529,7 @@ function colorChanged(catValue,color) {
 /* This function is called when q new color is selected for #taxaspherescolor */
 function colorChangedForTaxaSpheres(color){
 	for (index in g_plotTaxa){
-		g_plotTaxa[index].material.color.setHex(color.replace('#', '0x'))
+		g_plotTaxa[index].material.color.setHex(color)
 	}
 }
 
@@ -806,16 +806,15 @@ function setJqueryUi() {
 		$("#taxaspherescolor").spectrum({
 			localStorageKey: 'key',
 			color: "#FFFFFF",
+			preferredFormat: "hex6",
 			showInitial: true,
 			showInput: true,
 			change:
 				function(color) {
-					$(this).css('backgroundColor', color.toHexString());
-					var c = color.toHexString();
-					if(c.length == 4){
-						c = "#"+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2)+c.charAt(3)+c.charAt(3);
-					}
-					colorChangedForTaxaSpheres(c);
+					// pass a boolean flag to convert to hex6 string
+					var c = color.toHexString(true);
+					$(this).css('backgroundColor', c);
+					colorChangedForTaxaSpheres(c.replace('#', '0x'));
 				}
 		});
 	}
@@ -874,8 +873,8 @@ function setJqueryUi() {
 		palette: [['white', 'black']],
 		change:
 			function(color) {
-				var c = color.toHexString();
-
+				// pass a boolean flag to convert to hex6 string
+				var c = color.toHexString(true);
 				// set the color for the box and for the renderer
 				$(this).css('backgroundColor', c);
 				g_mainRenderer.setClearColorHex(c.replace('#','0x'), 1);
