@@ -13,6 +13,7 @@
 var g_plotSpheres = {};
 var g_plotEllipses = {};
 var g_plotTaxa = {};
+var g_plotVectors = {};
 
 // sample identifiers of all items that are plotted
 var g_plotIds = [];
@@ -102,6 +103,9 @@ function toggleScaleCoordinates(element){
 	var axesLen;
 	var operation;
 
+	// used only for the vector re-drawing
+	var currentPosition = [], currentColor;
+
 	// modifying the properties basically requires to create the elemnts
 	// again from scratch, so just remove them from scene and re-build them
 	// the lines are all global variables hence just a call to remove them
@@ -183,6 +187,38 @@ function toggleScaleCoordinates(element){
 			operation(g_plotTaxa[index].scale.x, g_fractionExplained[0]),
 			operation(g_plotTaxa[index].scale.y, g_fractionExplained[0]),
 			operation(g_plotTaxa[index].scale.z, g_fractionExplained[0]));
+	}
+
+	// each line is indexed by a sample, creating in turn TOTAL_SAMPLES-1 lines
+	for (sample_id in g_plotVectors){
+
+		// the color has to be formatted as an hex number for makeLine to work
+		currentColor = "0x"+g_plotVectors[sample_id].material.color.getHex();
+
+		// updating the position of a vertex in a line is a really expensive
+		// operation, hence we just remove it from the group and create it again
+		g_elementsGroup.remove(g_plotVectors[sample_id]);
+
+		for (vertex in g_plotVectors[sample_id].geometry.vertices){
+			currentPosition[vertex] = g_plotVectors[sample_id].geometry.vertices[vertex].position;
+
+			// scale the position of each of the vertices
+			currentPosition[vertex].x = operation(currentPosition[vertex].x,
+				g_fractionExplained[0])
+			currentPosition[vertex].y = operation(currentPosition[vertex].y,
+				g_fractionExplained[1])
+			currentPosition[vertex].z = operation(currentPosition[vertex].z,
+				g_fractionExplained[2])
+
+			// create an array we can pass to makeLine
+			currentPosition[vertex] = [currentPosition[vertex].x,
+				currentPosition[vertex].y, currentPosition[vertex].z]
+		}
+
+		// add the element to the main vector array and to the group
+		g_plotVectors[sample_id] = makeLine(currentPosition[0],
+			currentPosition[1], currentColor, 2);
+		g_elementsGroup.add(g_plotVectors[sample_id]);
 	}
 
 }
@@ -366,11 +402,15 @@ function showByMenuChanged() {
 			g_elementsGroup.add(g_plotSpheres[sid])
 		}
 		catch(TypeError){}
+		try {
+			g_elementsGroup.add(g_plotVectors[sid])
+		}
+		catch(TypeError){}
 		$('#'+divid+"_label").css('display','block');
 	}
 
-	g_visiblePoints = g_plotIds.length
-	changePointCount()
+	g_visiblePoints = g_plotIds.length;
+	changePointCount();
 
 	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
@@ -405,12 +445,16 @@ function toggleVisible(value) {
 	var mappingVal = g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)]
 		if(mappingVal == value && hidden){
 			try{
-				g_elementsGroup.remove(g_plotEllipses[sid])
+				g_elementsGroup.remove(g_plotEllipses[sid]);
 			}
 			catch(TypeError){}
 			try{
-				g_elementsGroup.remove(g_plotSpheres[sid])
+				g_elementsGroup.remove(g_plotSpheres[sid]);
 				g_visiblePoints--
+			}
+			catch(TypeError){}
+			try{
+				g_elementsGroup.remove(g_plotVectors[sid]);
 			}
 			catch(TypeError){}
 			$('#'+divid+"_label").css('display','none');
@@ -418,12 +462,16 @@ function toggleVisible(value) {
 		else if(mappingVal == value && !hidden)
 		{
 			try {
-				g_elementsGroup.add(g_plotEllipses[sid])
+				g_elementsGroup.add(g_plotEllipses[sid]);
 			}
 			catch(TypeError){}
 			try {
-				g_elementsGroup.add(g_plotSpheres[sid])
-				g_visiblePoints++
+				g_elementsGroup.add(g_plotSpheres[sid]);
+				g_visiblePoints++;
+			}
+			catch(TypeError){}
+			try{
+				g_elementsGroup.add(g_plotVectors[sid]);
 			}
 			catch(TypeError){}
 			$('#'+divid+"_label").css('display','block');
@@ -460,6 +508,10 @@ function setKey(values, colors) {
 			catch(TypeError){}
 			try {
 				g_plotSpheres[g_plotIds[i]].material.color.setHex("0x"+catColor.getHex());
+			}
+			catch(TypeError){}
+			try {
+				g_plotVectors[g_plotIds[i]].material.color.setHex("0x"+catColor.getHex());
 			}
 			catch(TypeError){}
 		}
@@ -518,6 +570,10 @@ function colorChanged(catValue,color) {
 			catch(TypeError){}
 			try {
 				g_plotSpheres[sid].material.color.setHex(color.replace('#','0x'));
+			}
+			catch(TypeError){}
+			try{
+				g_plotVectors[sid].material.color.setHex(color.replace('#','0x'));
 			}
 			catch(TypeError){}
 		}
@@ -957,6 +1013,44 @@ function drawTaxa(){
 	}
 }
 
+/*Draw the lines for the plot as described in the g_vectorPositions array
+
+  Note that this will draw a single line between each of the samples, hence
+  resulting in N-1 lines being drawn where N is the total number of samples,
+  similarly to spheres or ellipsoids these elements are added to the
+  g_elementsGroup variable.
+*/
+function drawVectors(){
+	var current_vector, previous = null;
+
+	// There are as many vectors as categories were specified
+	for (var categoryKey in g_vectorPositions){
+		for (var sampleKey in g_vectorPositions[categoryKey]){
+
+			// retrieve the initial position on the first loop
+			if (previous == null){
+				previous = g_vectorPositions[categoryKey][sampleKey];
+			}
+			// if we already have the initial position, draw the line with
+			// the current position and the value of previous (initial position)
+			else{
+				current = g_vectorPositions[categoryKey][sampleKey];
+				current_vector = makeLine(previous, current, 0xFFFFFF, 2)
+				previous = current;
+				g_plotVectors[sampleKey] = current_vector;
+
+				if(g_mappingFileData[sampleKey] != undefined){
+					g_elementsGroup.add(current_vector);
+					g_plotVectors[sampleKey] = current_vector;
+				}
+			}
+		}
+
+		// reset previous so the algorithms work on the next category
+		previous = null;
+	}
+}
+
 function saveSVG(){
 	open("data:image/svg+xml," + encodeURIComponent(document.getElementById('main_plot').innerHTML));
 }
@@ -973,33 +1067,46 @@ function SVGSaved(response){
 	console.log(fileName)
 }
 
+/*Utility function to draw two vertices lines at a time
+
+  This function allows you to create a line with only two vertices i. e. the
+  start point and the end point, plus the color and width of the line. The
+  start and end point must be 3 elements array. The color must be a hex-string
+  or a hex number.
+*/
+function makeLine(coords_a, coords_b, color, width){
+	var line, material, geometry = new THREE.Geometry();
+	var vertex_a = new THREE.Vertex(new THREE.Vector3(coords_a[0], coords_a[1],
+		coords_a[2]));
+	var vertex_b = new THREE.Vertex(new THREE.Vector3(coords_b[0], coords_b[1],
+		coords_b[2]));
+
+	material = new THREE.LineBasicMaterial({color: color, linewidth: width});
+	material.matrixAutoUpdate = true;
+	geometry.vertices.push(vertex_a, vertex_b);
+	geometry.matrixAutoUpdate = true;
+	line = new THREE.Line(geometry, material);
+
+	return line;
+}
+
 /*Draw each of the lines that represent the X, Y and Z axes in the plot
 
   The length of each of these axes depend on the ranges that the data being
   displayed uses.
 */
 var drawAxisLines = function(){
-	//Shorten the vertex function
-	function v(x,y,z){
-			return new THREE.Vertex(new THREE.Vector3(x,y,z));
-	}
+	// one line for each of the axes
+	g_xAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
+		[g_xMaximumValue, g_yMinimumValue, g_zMinimumValue], 0xFFFFFF, 3);
+	g_yAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
+		[g_xMinimumValue, g_yMaximumValue, g_zMinimumValue], 0xFFFFFF, 3);
+	g_zAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
+		[g_xMinimumValue, g_yMinimumValue, g_zMaximumValue], 0xFFFFFF, 3);
 
-	//Create axis (point1, point2, colour)
-	function createAxis(p1, p2, color){
-			var line, lineGeometry = new THREE.Geometry(),
-			lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 1});
-			lineMat.matrixAutoUpdate = true;
-			lineGeometry.vertices.push(p1, p2);
-			line = new THREE.Line(lineGeometry, lineMat);
-			g_mainScene.add(line);
-
-			return line;
-	}
-
-	// draw the axes only for the range they exist in
-	g_xAxisLine = createAxis(v(g_xMinimumValue, g_yMinimumValue, g_zMinimumValue), v(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue), 0xFFFFFF);
-	g_yAxisLine = createAxis(v(g_xMinimumValue, g_yMinimumValue, g_zMinimumValue), v(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue), 0xFFFFFF);
-	g_zAxisLine = createAxis(v(g_xMinimumValue, g_yMinimumValue, g_zMinimumValue), v(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue), 0xFFFFFF);
+	g_mainScene.add(g_xAxisLine)
+	g_mainScene.add(g_yAxisLine)
+	g_mainScene.add(g_zAxisLine)
 };
 
 /* update point count label */
@@ -1057,6 +1164,7 @@ $(document).ready(function() {
 		drawEllipses();
 		drawSpheres();
 		drawTaxa();
+		drawVectors();
 
 		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
@@ -1084,7 +1192,7 @@ $(document).ready(function() {
 			$("#labelcombo").append(line);
 		}
 
-		var rv = colorByMenuChanged();
+		colorByMenuChanged();
 		showByMenuChanged();
 
 		drawAxisLines();
