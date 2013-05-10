@@ -268,23 +268,23 @@ function stopTimer(info) {
   sorted all alpha elements at the beginning & all numeric elements at the end.
  */
 function _splitAndSortNumericAndAlpha(list){
-    var numericPart = [], alphaPart = [], result = [];
+	var numericPart = [], alphaPart = [], result = [];
 
-    // separate the numeric and the alpha elements of the array
-    for(var index = 0; index < list.length; index++){
-        if(isNaN(parseFloat(list[index]))){
-            alphaPart.push(list[index])
-        }
-        else{
-            numericPart.push(list[index])
-        }
-    }
+	// separate the numeric and the alpha elements of the array
+	for(var index = 0; index < list.length; index++){
+		if(isNaN(parseFloat(list[index]))){
+			alphaPart.push(list[index])
+		}
+		else{
+			numericPart.push(list[index])
+		}
+	}
 
-    // sort each of the two parts, numeric part is ascending order
-    alphaPart.sort();
-    numericPart.sort(function(a,b){return parseFloat(a)-parseFloat(b)})
+	// sort each of the two parts, numeric part is ascending order
+	alphaPart.sort();
+	numericPart.sort(function(a,b){return parseFloat(a)-parseFloat(b)})
 
-    return result.concat(alphaPart, numericPart);
+	return result.concat(alphaPart, numericPart);
 }
 
 /*This function is called when a new value is selected in the colorBy menu */
