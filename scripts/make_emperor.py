@@ -26,10 +26,11 @@ from emperor.biplots import preprocess_otu_table
 from emperor.util import (copy_support_files, preprocess_mapping_file,
     preprocess_coords_file, fill_mapping_field_from_mapping_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
-    format_taxa_to_js, format_emperor_html_footer_string,
+    format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
     EMPEROR_HEADER_HTML_STRING)
 
 script_info = {}
+
 script_info['brief_description'] = "Create three dimensional PCoA plots"
 script_info['script_description'] = "This script automates the creation  of "+\
     "three-dimensional PCoA plots to be visualized with Emperor using Google "+\
@@ -372,6 +373,10 @@ def main():
                 if map_object.isNumericCategory(add_vectors[1]) == False:
                     non_numeric_categories.append(add_vectors[1]+' (used in '
                         '--add_vectors)')
+            else:
+                add_vectors.append(None)
+    else:
+        add_vectors = [None, None]
 
     # terminate the program for the cases where a mapping field was not found
     # or when a mapping field didn't meet the criteria of being numeric
@@ -414,6 +419,8 @@ def main():
     fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
         coords_eigenvalues, coords_pct, custom_axes, coords_low, coords_high))
     fp_out.write(format_taxa_to_js(otu_coords, otu_lineages, otu_prevalence))
+    fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
+        coords_headers, add_vectors[0], add_vectors[1]))
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
         isdir(input_coords)))
     fp_out.close()
