@@ -232,7 +232,7 @@ def format_vectors_to_js(mapping_file_data, mapping_file_headers, coords_data,
             keep_columns_from_mapping_file(mapping_file_data,
             mapping_file_headers, columns_to_keep)
 
-        # format the mapping file to use this withe the filtering function
+        # format the mapping file to use this with the filtering function
         mf_string = format_mapping_file(mapping_file_headers, mapping_file_data)
 
         index = mapping_file_headers.index(connected_by_header)
@@ -246,11 +246,13 @@ def format_vectors_to_js(mapping_file_data, mapping_file_headers, coords_data,
 
             # if there is a sorting header, sort the coords using these values
             if sorted_by_header:
-                to_sort = [line for line in mapping_file_data if\
-                    line[0] in sample_ids]
+                sorting_index = mapping_file_headers.index(sorted_by_header)
+                to_sort = [line for line in mapping_file_data if line[0] in\
+                    sample_ids]
 
-                # get the sorted sample ids from the sorted mapping file
-                sample_ids = zip(*sorted(to_sort,key=lambda x: float(x[2])))[0]
+                # get the sorted sample ids from the sorted-reduced mapping file
+                sample_ids = zip(*sorted(to_sort,
+                    key=lambda x: float(x[sorting_index])))[0]
 
             # each category value is a new vector
             js_vectors_string.append("g_vectorPositions['%s'] = new Array();\n"
