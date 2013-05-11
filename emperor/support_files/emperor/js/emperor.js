@@ -789,6 +789,16 @@ function sphereOpacityChange(ui) {
 	}
 }
 
+/*This function handles events from the vectors opacity slider*/
+function vectorsOpacityChange(ui) {
+	document.getElementById('vectorsopacity').innerHTML = ui.value + "%";
+	var vectorsOpacity = ui.value/100;
+
+	for(var sample_id in g_plotVectors){
+		g_plotVectors[sample_id].material.opacity = vectorsOpacity;
+	}
+}
+
 /*This function handles events from the label opacity slider*/
 function labelOpacityChange(ui) {
 	document.getElementById('labelopacity').innerHTML = ui.value + "%";
@@ -851,6 +861,23 @@ function setJqueryUi() {
 			}
 		});
 		document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
+	}
+
+	// check whether or not there is a vectors opacity slider in the plot
+	if (document.getElementById('vectorsopacity')){
+		$("#vopacityslider").slider({
+			range: "max",
+			min: 0,
+			max: 100,
+			value: 100,
+			slide: function( event, ui ) {
+				vectorsOpacityChange(ui);
+			},
+			change: function( event, ui ) {
+				vectorsOpacityChange(ui);
+			}
+		});
+		document.getElementById('vectorsopacity').innerHTML = $( "#vopacityslider" ).slider( "value")+"%";
 	}
 
 	// check if we are presenting biplots, to decide whether or not we should
@@ -1083,6 +1110,9 @@ function makeLine(coords_a, coords_b, color, width){
 
 	material = new THREE.LineBasicMaterial({color: color, linewidth: width});
 	material.matrixAutoUpdate = true;
+	material.transparent = true;
+	material.opacity = 1.0;
+
 	geometry.vertices.push(vertex_a, vertex_b);
 	geometry.matrixAutoUpdate = true;
 	line = new THREE.Line(geometry, material);
