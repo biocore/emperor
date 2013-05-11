@@ -145,9 +145,7 @@ function toggleScaleCoordinates(element){
 		operation(g_sceneLight.position.z, g_fractionExplained[0]));
 
 	// scale the axis lines
-	axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),
-		g_zMaximumValue+Math.abs(g_zMinimumValue));
-	drawAxisLines(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
+	drawAxisLines();
 
 	// set the new position of each of the sphere objects
 	for (sample_id in g_plotSpheres){
@@ -158,7 +156,7 @@ function toggleScaleCoordinates(element){
 			operation(g_plotSpheres[sample_id].position.z,g_fractionExplained[2]));
 	}
 
-	// ellipses won't always be available hence the loop per type of data
+	// ellipses won't always be available hence the two separate loops
 	for (sample_id in g_plotEllipses){
 		// scale the dimensions of the positions of each ellipse
 		g_plotEllipses[sample_id].position.set(
@@ -980,7 +978,7 @@ function SVGSaved(response){
   The length of each of these axes depend on the ranges that the data being
   displayed uses.
 */
-var drawAxisLines = function(axisLength, xstart, ystart, zstart){
+var drawAxisLines = function(){
 	//Shorten the vertex function
 	function v(x,y,z){
 			return new THREE.Vertex(new THREE.Vector3(x,y,z));
@@ -998,9 +996,10 @@ var drawAxisLines = function(axisLength, xstart, ystart, zstart){
 			return line;
 	}
 
-	g_xAxisLine = createAxis(v(xstart, ystart, zstart), v(axisLength, ystart, zstart), 0xFF0000);
-	g_yAxisLine = createAxis(v(xstart, ystart, zstart), v(xstart, axisLength, zstart), 0x00FF00);
-	g_zAxisLine = createAxis(v(xstart, ystart, zstart), v(xstart, ystart, axisLength), 0x0000FF);
+	// draw the axes only for the range they exist in
+	g_xAxisLine = createAxis(v(g_xMinimumValue, g_yMinimumValue, g_zMinimumValue), v(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue), 0xFFFFFF);
+	g_yAxisLine = createAxis(v(g_xMinimumValue, g_yMinimumValue, g_zMinimumValue), v(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue), 0xFFFFFF);
+	g_zAxisLine = createAxis(v(g_xMinimumValue, g_yMinimumValue, g_zMinimumValue), v(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue), 0xFFFFFF);
 };
 
 /* update point count label */
@@ -1088,8 +1087,8 @@ $(document).ready(function() {
 		var rv = colorByMenuChanged();
 		showByMenuChanged();
 
-		var axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),g_zMaximumValue+Math.abs(g_zMinimumValue));
-		drawAxisLines(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
+		drawAxisLines();
+		buildAxisLabels();
 
 		// the light is attached to the camera to provide a 3d perspective
 		g_sceneLight = new THREE.DirectionalLight(0x999999, 2);
@@ -1144,18 +1143,17 @@ $(document).ready(function() {
 
 	function buildAxisLabels() {
 		//build axis labels
-		var axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),g_zMaximumValue+Math.abs(g_zMinimumValue));
 		var axislabelhtml = "";
 
-		var xcoords = toScreenXY(new THREE.Vector3(axesLen, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
+		var xcoords = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
 		axislabelhtml += "<label id=\"pc1_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(xcoords['x'])+"px; top:"+parseInt(xcoords['y'])+"px;\">";
 		axislabelhtml += g_pc1Label;
 		axislabelhtml += "</label>";
-		var ycoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, axesLen, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
+		var ycoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
 		axislabelhtml += "<label id=\"pc2_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(ycoords['x'])+"px; top:"+parseInt(ycoords['y'])+"px;\">";
 		axislabelhtml += g_pc2Label;
 		axislabelhtml += "</label>";
-		var zcoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, axesLen),g_sceneCamera,$('#main_plot'));
+		var zcoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue),g_sceneCamera,$('#main_plot'));
 		axislabelhtml += "<label id=\"pc3_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(zcoords['x'])+"px; top:"+parseInt(zcoords['y'])+"px;\">";
 		axislabelhtml += g_pc3Label;
 		axislabelhtml += "</label>";
