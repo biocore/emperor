@@ -273,7 +273,8 @@ def format_vectors_to_js(mapping_file_data, mapping_file_headers, coords_data,
 
     return ''.join(js_vectors_string)
 
-def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False):
+def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
+                                    has_vectors=False):
     """Create an HTML footer according to the things being presented in the plot
 
     has_biplots: whether the plot has biplots or not
@@ -290,6 +291,7 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False):
     optional_strings.append(if_(has_biplots, _BIPLOT_VISIBILITY_SELECTOR, ''))
     optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
     optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
+    optional_strings.append(if_(has_vectors, _VECTORS_OPACITY_SLIDER, ''))
 
     return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
 
@@ -327,6 +329,12 @@ _ELLIPSE_OPACITY_SLIDER = """
             <label for="ellipseopacity" class="text">Ellipse Opacity</label>
             <label id="ellipseopacity" class="slidervalue"></label>
             <div id="eopacityslider" class="slider-range-max"></div>"""
+
+_VECTORS_OPACITY_SLIDER = """
+            <br>
+            <label for="vectorsopacity" class="text">Vectors Opacity</label>
+            <label id="vectorsopacity" class="slidervalue"></label>
+            <div id="vopacityslider" class="slider-range-max"></div>"""
 
 _TAXA_LABELS_SELECTOR = """
             <form name="biplotoptions">
@@ -433,7 +441,7 @@ _EMPEROR_FOOTER_HTML_STRING =\
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>%s
+            <br>%s%s
             <br>
             <label for="sphereopacity" class="text">Sphere Opacity</label>
             <label id="sphereopacity" class="slidervalue"></label>
