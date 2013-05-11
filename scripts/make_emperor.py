@@ -52,13 +52,14 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "the plot representing the 'DOB' of the samples. This option is useful when"
     " presenting a gradient from your metadata e. g. 'Time' or 'pH': ", "%prog "
     "-i unweighted_unifrac_pc.txt -m Fasting_Map.txt -a DOB -o pcoa_dob"),
-    ("PCoA plot with an explicit axis and using --missing_custom_axes_values", "Create "
-    "a PCoA plot with an axis of the plot representing the 'DOB' of the samples and "
-    "define the position over the gradient of those samples missing a numeric value; "
-    "in this case we are going to plot the samples in the value 20060000. You can select "
-    "for each explicit axis which value you want to use for the missing values: ", "%prog "
-    "-i unweighted_unifrac_pc.txt -m Fasting_Map_modified.txt -a DOB -o "
-    "pcoa_dob_with_missing_custom_axes_values -x 'DOB:20060000'"),
+    ("PCoA plot with an explicit axis and using --missing_custom_axes_values",
+    "Create a PCoA plot with an axis of the plot representing the 'DOB' of the "
+    "samples and define the position over the gradient of those samples missing"
+    " a numeric value; in this case we are going to plot the samples in the "
+    "value 20060000. You can select for each explicit axis which value you want"
+    " to use for the missing values: ", "%prog -i unweighted_unifrac_pc.txt -m "
+    "Fasting_Map_modified.txt -a DOB -o pcoa_dob_with_missing_custom_axes_value"
+    "s -x 'DOB:20060000'"),
     ("Jackknifed principal coordinates analysis plot", "Create a jackknifed "
     "PCoA plot (with confidence intervals for each sample) passing as the input"
     " a directory of coordinates files (where each file corresponds to a "
@@ -79,7 +80,17 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "taxa and save the coordinates where these taxa are centered, you can use "
     "the -n (number of taxa to keep) and the --biplot_fp (output biplot file "
     "path) options.", "%prog -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -t"
-    " otu_table_L3.txt -o biplot_options -n 3 --biplot_fp biplot.txt")]
+    " otu_table_L3.txt -o biplot_options -n 3 --biplot_fp biplot.txt"),
+    ("Drawing connecting lines between samples", "To draw lines betwen samples"
+    " within a category use the '--add_vectors' option. For example to connect "
+    "the lines by the 'Treatment' category.", "%prog -i unweighted_unifrac_pc."
+    "txt -m Fasting_Map.txt -o vectors --add_vectors Treatment"),
+    ("Drawing connecting lines between samples with an explicit axis", "To draw"
+    " lines between samples within a category of the mapping file and have them"
+    " sorted by a category that's explicitly represented in the 3D plot use the"
+    " '--add_vectors' and the '-a' option.", "%prog -i unweighted_unifrac_pc."
+    "txt -m Fasting_Map.txt --add_vectors Treatment,DOB -a DOB -o "
+    "sorted_by_DOB")]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'emperor.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening emperor.html with "+\
@@ -429,7 +440,7 @@ def main():
     fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
         coords_headers, add_vectors[0], add_vectors[1]))
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
-        isdir(input_coords)))
+        isdir(input_coords), add_vectors))
     fp_out.close()
     copy_support_files(output_dir)
 

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Emperor</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/emperor/css/emperor.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
+    <script type="text/javascript" src="emperor_required_resources/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
+    <script src="emperor_required_resources/js/jquery.colorPicker.js"></script>
+    <script src="emperor_required_resources/js/spectrum.js"></script>
+
+    <script src="emperor_required_resources/js/Three.js"></script>
+    <script src="emperor_required_resources/js/js/Detector.js"></script>
+    <script src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
+    <script src="emperor_required_resources/emperor/js/emperor.js"></script>
+    <script type="text/javascript">
+var g_mappingFileHeaders = ['SampleID','LinkerPrimerSequence','Treatment','DOB'];
+var g_mappingFileData = { 'PC.481': ['PC.481','YATGCTGCCTCCCGTAGGAGT','Control','20070314'],'PC.607': ['PC.607','YATGCTGCCTCCCGTAGGAGT','Fast','20071112'],'PC.634': ['PC.634','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.635': ['PC.635','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.593': ['PC.593','YATGCTGCCTCCCGTAGGAGT','Control','20071210'],'PC.636': ['PC.636','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.355': ['PC.355','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.354': ['PC.354','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.356': ['PC.356','YATGCTGCCTCCCGTAGGAGT','Control','20061126'] };
+
+var g_spherePositions = new Array();
+g_spherePositions['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647 };
+g_spherePositions['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136 };
+g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': 0.228820, 'y': -0.130142, 'z': -0.287149 };
+g_spherePositions['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': 0.042263, 'y': -0.013968, 'z': 0.063531 };
+g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': 0.280399, 'y': -0.006013, 'z': 0.023485 };
+g_spherePositions['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.232873, 'y': 0.139788, 'z': 0.322871 };
+g_spherePositions['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': 0.170518, 'y': -0.194113, 'z': -0.030897 };
+g_spherePositions['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': -0.091330, 'y': 0.424147, 'z': -0.135627 };
+g_spherePositions['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': -0.349339, 'y': -0.120788, 'z': 0.115275 };
+
+var g_ellipsesDimensions = new Array();
+var g_segments = 16, g_rings = 16, g_radius = 0.012595;
+var g_xAxisLength = 0.629738;
+var g_yAxisLength = 0.618260;
+var g_zAxisLength = 0.610021;
+var g_xMaximumValue = 0.355968;
+var g_yMaximumValue = 0.499716;
+var g_zMaximumValue = 0.398440;
+var g_xMinimumValue = -0.424908;
+var g_yMinimumValue = -0.269682;
+var g_zMinimumValue = -0.362718;
+var g_maximum = 0.424147;
+var g_pc1Label = "PC1 (27 %)";
+var g_pc2Label = "PC2 (16 %)";
+var g_pc3Label = "PC3 (14 %)";
+var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
+
+var g_taxaPositions = new Array();
+
+
+var g_vectorPositions = new Array();
+g_vectorPositions['Control'] = new Array();
+g_vectorPositions['Control']['PC.354'] = [0.280399117569, -0.0060128286014, 0.0234854344148];
+g_vectorPositions['Control']['PC.355'] = [0.170517581885, -0.194113268955, -0.0308965283066];
+g_vectorPositions['Control']['PC.356'] = [0.228820399536, -0.130142097093, -0.287149447883];
+g_vectorPositions['Control']['PC.481'] = [0.0422628480532, -0.0139681511889, 0.0635314615517];
+g_vectorPositions['Control']['PC.593'] = [0.232872767451, 0.139788385269, 0.322871079774];
+g_vectorPositions['Fast'] = new Array();
+g_vectorPositions['Fast']['PC.607'] = [-0.0913299284215, 0.424147148265, -0.135627421345];
+g_vectorPositions['Fast']['PC.634'] = [-0.349339228244, -0.120787589539, 0.115274502117];
+g_vectorPositions['Fast']['PC.635'] = [-0.237661393984, 0.0460527772512, -0.138135814766];
+g_vectorPositions['Fast']['PC.636'] = [-0.276542163845, -0.144964375408, 0.0666467344429];
+ </script>
+</head>
+
+<body>
+
+<label id="pointCount" class="ontop">
+</label>
+
+<div id="finder" class="arrow-right">
+</div>
+
+<div id="labels" class="unselectable">
+</div>
+
+<div id="taxalabels" class="unselectable">
+</div>
+
+<div id="axislabels" class="axislabels">
+</div>
+
+<div id="main_plot">
+</div>
+
+<div id="menu">
+    <div id="menutabs">
+        <ul>
+            <li><a href="#keytab">Key</a></li>
+            <li><a href="#colorby">Colors</a></li>
+            <li><a href="#showby">Visibility</a></li>
+            <li><a href="#labelby">Labels</a></li>
+            <li><a href="#settings">Options</a></li>
+        </ul>
+        <div id="keytab">
+            <form name="keyFilter">
+            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+            </form>
+            <div id="key">
+            </div>
+        </div>
+        <div id="colorby">
+            <br>
+            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            </select>
+            <div class="list" id="colorbylist">
+            </div>
+        </div>
+        <div id="showby">
+            <select id="showbycombo" onchange="showByMenuChanged()">
+            </select>
+            <div class="list" id="showbylist">
+            </div>
+        </div>
+        <div id="labelby">
+        <div id="labelsTop">
+            <form name="plotoptions">
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+            </form>
+            <br>
+            <label for="labelopacity" class="text">Label Opacity</label>
+            <label id="labelopacity" class="slidervalue"></label>
+            <div id="lopacityslider" class="slider-range-max"></div>
+            <div id="labelColorHolder clearfix">
+            <table><tr>
+            <td><div id="labelColor" class="colorbox">
+            </div></td><td><label>Master Label Color</label></td>
+            </tr></table></div>
+        </div>
+            <br>
+            <select id="labelcombo" onchange="labelMenuChanged()">
+            </select>
+            <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+            <br>
+            <br>
+            <label for="vectorsopacity" class="text">Vectors Opacity</label>
+            <label id="vectorsopacity" class="slidervalue"></label>
+            <div id="vopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereopacity" class="text">Sphere Opacity</label>
+            <label id="sphereopacity" class="slidervalue"></label>
+            <div id="sopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereradius" class="text">Sphere Scale</label>
+            <label id="sphereradius" class="slidervalue"></label>
+            <div id="sradiusslider" class="slider-range-max"></div>
+            <br>
+            <table>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
+        </div>
+    </div>  
+</div>
+</body>
+
+</html>
