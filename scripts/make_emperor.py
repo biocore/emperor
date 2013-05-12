@@ -3,7 +3,7 @@
 from __future__ import division
 
 __author__ = "Antonio Gonzalez Pena"
-__copyright__ = "Copyright 2011, The Emperor Project"
+__copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Antonio Gonzalez Pena", "Yoshiki Vazquez Baeza"]
 __license__ = "GPL"
 __version__ = "0.0.0-dev"
@@ -23,6 +23,7 @@ from qiime.util import (parse_command_line_parameters, make_option, create_dir,
 from qiime.biplots import make_biplot_scores_output
 
 from emperor.biplots import preprocess_otu_table
+from emperor.filter import keep_samples_from_pcoa_data
 from emperor.util import (copy_support_files, preprocess_mapping_file,
     preprocess_coords_file, fill_mapping_field_from_mapping_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
@@ -119,11 +120,11 @@ script_info['optional_options'] = [
     '--color_by is a column where all values are unique, the resulting column '
     'will get removed as well [default: %default]', default=False),
     make_option('--add_vectors', type='string', dest='add_vectors',
-    default=None, help='Comma-sparated category(ies) used to add connecting '
-    'lines (vectors) between samples. The first category specifies the samples '
-    'that will be connected by the vectors, whilst the second category '
-    '(optionally) determines the order in which the samples will be connected. '
-    '[default: %default]'),
+    help='Comma-sparated category(ies) used to add connecting lines (vectors) '
+    'between samples. The first category specifies the samples that will be '
+    'connected by the vectors, whilst the second category (optionally) '
+    'determines the order in which the samples will be connected. [default: '
+    '%default]', default=[None, None]),
     make_option('-b', '--color_by', dest='color_by', type='string', help=
     'Comma-separated list of metadata categories (column headers) to color by'
     ' in the plots. The categories must match the name of a column header in '
@@ -317,6 +318,11 @@ def main():
             'mapping file that contains at least all the samples contained in '
             'the coordinates file(s). You can force the script to ignore these '
             ' samples by passing the \'--ignore_missing_samples\' flag.')
+    if number_intersected_sids != required_number_of_sids and\
+        ignore_missing_samples:
+        # keep only the samples that are mapped in the mapping file
+        coords_headers, coords_data = keep_samples_from_pcoa_data(
+            coords_headers, coords_data, sids_intersection)
 
     # ignore samples that exist in the coords but not in the mapping file, note:
     # we're using sids_intersection so if --ignore_missing_samples is enabled we
@@ -369,7 +375,7 @@ def main():
         color_by_column_names = header[:]
 
     # make multiple checks for the add_vectors option
-    if add_vectors:
+    if add_vectors != [None, None]:
         add_vectors = add_vectors.split(',')
         # check there are at the most two categories specified for this option
         if len(add_vectors) > 2:
@@ -393,8 +399,6 @@ def main():
                         '--add_vectors)')
             else:
                 add_vectors.append(None)
-    else:
-        add_vectors = [None, None]
 
     # terminate the program for the cases where a mapping field was not found
     # or when a mapping field didn't meet the criteria of being numeric
@@ -440,7 +444,7 @@ def main():
     fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
         coords_headers, add_vectors[0], add_vectors[1]))
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
-        isdir(input_coords), add_vectors))
+        isdir(input_coords), add_vectors != [None, None]))
     fp_out.close()
     copy_support_files(output_dir)
 
