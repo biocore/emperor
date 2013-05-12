@@ -216,6 +216,7 @@ EMPEROR_HEADER_HTML_STRING =\
 <head>
     <title>Emperor</title>
     <meta charset="utf-8">
+    <link rel="shortcut icon" href="emperor_required_resources/img/favicon.ico" />
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/emperor/css/emperor.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
