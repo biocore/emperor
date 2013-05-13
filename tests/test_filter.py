@@ -25,7 +25,7 @@ class TopLevelTests(TestCase):
             [0.11, 5.33,-0.23]]),array([[-1.4, 0.05, 1.3],[2.6, 4.1, -4.7],
             [0.14, 2.00, -1.11]]),array([[-1.5, 0.05, 1.6],[2.4, 4.0, -4.8],
             [1.0, -0.8, 0.01]]),array([[-1.5, 0.05, 1.6],[2.4, 4.0, -4.8],
-            [2, 0, 1.11111, 0.111]])]
+            [2, 0, 1.11111]])]
 
         self.coords_header = ['PC.355', 'PC.635', 'PC.636', 'PC.354']
         self.coords_data = COORDS_DATA
@@ -67,7 +67,7 @@ class TopLevelTests(TestCase):
         self.assertFloatEqual(out_coords,[array([[1.2, 0.1, -1.2],
             [0.11, 5.33,-0.23]]),array([[-1.4, 0.05, 1.3],[0.14, 2.00, -1.11]]),
             array([[-1.5, 0.05, 1.6],[1.0, -0.8, 0.01]]),array([
-            [-1.5, 0.05, 1.6],[2, 0, 1.11111, 0.111]])])
+            [-1.5, 0.05, 1.6],[2, 0, 1.11111]])])
 
         # flip the order of the samples to keep
         out_headers, out_coords = keep_samples_from_pcoa_data(
@@ -77,7 +77,7 @@ class TopLevelTests(TestCase):
         self.assertFloatEqual(out_coords,[array([[1.2, 0.1, -1.2],
             [0.11, 5.33,-0.23]]),array([[-1.4, 0.05, 1.3],[0.14, 2.00, -1.11]]),
             array([[-1.5, 0.05, 1.6],[1.0, -0.8, 0.01]]),array([
-            [-1.5, 0.05, 1.6],[2, 0, 1.11111, 0.111]])])
+            [-1.5, 0.05, 1.6],[2, 0, 1.11111]])])
 
 
 COORDS_DATA = array([
