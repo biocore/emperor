@@ -17,11 +17,11 @@ from qiime.util import (parse_command_line_parameters, qiime_system_call,
     make_option)
 
 __author__ = "Rob Knight"
-__copyright__ = "Copyright 2013, Emperor" #consider project name
+__copyright__ = "Copyright 2013, The Emperor Project" #consider project name
 __credits__ = ["Rob Knight","Greg Caporaso", "Jai Ram Rideout",
     "Yoshiki Vazquez-Baeza"] #remember to add yourself if you make changes
 __license__ = "GPL"
-__version__ = "0.0-dev"
+__version__ = "0.0.0-dev"
 __maintainer__ = "Yoshiki Vazquez-Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
