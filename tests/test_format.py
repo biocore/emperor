@@ -640,7 +640,10 @@ document.getElementById("logotable").style.display = 'none';
 </html>
 """
 
-EXPECTED_FOOTER_D = """ </script>
+EXPECTED_FOOTER_D = """document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
