@@ -3,7 +3,7 @@
 from __future__ import division
 
 __author__ = "Antonio Gonzalez Pena"
-__copyright__ = "Copyright 2011, The Emperor Project"
+__copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Antonio Gonzalez Pena", "Yoshiki Vazquez Baeza"]
 __license__ = "GPL"
 __version__ = "0.0.0-dev"
@@ -23,13 +23,15 @@ from qiime.util import (parse_command_line_parameters, make_option, create_dir,
 from qiime.biplots import make_biplot_scores_output
 
 from emperor.biplots import preprocess_otu_table
+from emperor.filter import keep_samples_from_pcoa_data
 from emperor.util import (copy_support_files, preprocess_mapping_file,
     preprocess_coords_file, fill_mapping_field_from_mapping_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
-    format_taxa_to_js, format_emperor_html_footer_string,
+    format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
     EMPEROR_HEADER_HTML_STRING)
 
 script_info = {}
+
 script_info['brief_description'] = "Create three dimensional PCoA plots"
 script_info['script_description'] = "This script automates the creation  of "+\
     "three-dimensional PCoA plots to be visualized with Emperor using Google "+\
@@ -51,6 +53,14 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "the plot representing the 'DOB' of the samples. This option is useful when"
     " presenting a gradient from your metadata e. g. 'Time' or 'pH': ", "%prog "
     "-i unweighted_unifrac_pc.txt -m Fasting_Map.txt -a DOB -o pcoa_dob"),
+    ("PCoA plot with an explicit axis and using --missing_custom_axes_values",
+    "Create a PCoA plot with an axis of the plot representing the 'DOB' of the "
+    "samples and define the position over the gradient of those samples missing"
+    " a numeric value; in this case we are going to plot the samples in the "
+    "value 20060000. You can select for each explicit axis which value you want"
+    " to use for the missing values: ", "%prog -i unweighted_unifrac_pc.txt -m "
+    "Fasting_Map_modified.txt -a DOB -o pcoa_dob_with_missing_custom_axes_value"
+    "s -x 'DOB:20060000'"),
     ("Jackknifed principal coordinates analysis plot", "Create a jackknifed "
     "PCoA plot (with confidence intervals for each sample) passing as the input"
     " a directory of coordinates files (where each file corresponds to a "
@@ -71,7 +81,17 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "taxa and save the coordinates where these taxa are centered, you can use "
     "the -n (number of taxa to keep) and the --biplot_fp (output biplot file "
     "path) options.", "%prog -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -t"
-    " otu_table_L3.txt -o biplot_options -n 3 --biplot_fp biplot.txt")]
+    " otu_table_L3.txt -o biplot_options -n 3 --biplot_fp biplot.txt"),
+    ("Drawing connecting lines between samples", "To draw lines betwen samples"
+    " within a category use the '--add_vectors' option. For example to connect "
+    "the lines by the 'Treatment' category.", "%prog -i unweighted_unifrac_pc."
+    "txt -m Fasting_Map.txt -o vectors --add_vectors Treatment"),
+    ("Drawing connecting lines between samples with an explicit axis", "To draw"
+    " lines between samples within a category of the mapping file and have them"
+    " sorted by a category that's explicitly represented in the 3D plot use the"
+    " '--add_vectors' and the '-a' option.", "%prog -i unweighted_unifrac_pc."
+    "txt -m Fasting_Map.txt --add_vectors Treatment,DOB -a DOB -o "
+    "sorted_by_DOB")]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'emperor.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening emperor.html with "+\
@@ -99,6 +119,12 @@ script_info['optional_options'] = [
     'different. Note: if the result of one of the concatenated fields in '
     '--color_by is a column where all values are unique, the resulting column '
     'will get removed as well [default: %default]', default=False),
+    make_option('--add_vectors', type='string', dest='add_vectors',
+    help='Comma-sparated category(ies) used to add connecting lines (vectors) '
+    'between samples. The first category specifies the samples that will be '
+    'connected by the vectors, whilst the second category (optionally) '
+    'determines the order in which the samples will be connected. [default: '
+    '%default]', default=[None, None]),
     make_option('-b', '--color_by', dest='color_by', type='string', help=
     'Comma-separated list of metadata categories (column headers) to color by'
     ' in the plots. The categories must match the name of a column header in '
@@ -133,11 +159,11 @@ script_info['optional_options'] = [
     'creating BiPlots. [default=%default]', default=None, type=
     'existing_filepath'),
     make_option('-x', '--missing_custom_axes_values', help='Option to override '
-    'the error shown when the \'--custom_axes\' categories, have non-numeric '
-    'values in the mapping file. For example, if you wanted to see all the '
+    'the error shown when the \'--custom_axes\' categories, when the metadata column has '
+    'non-numeric values in the mapping file. For example, if you wanted to see all the '
     'control samples that do not have a time gradient value in the mapping '
-    'file at the time-point zero and the missing pH values at 7, you would have'
-    ' to pass  \'-x Time:0 -x pH:7\'.', action='append', default=None),
+    'file at the time-point zero, you would pass  \'-x Time:0\'. This option could be '
+    'used in all explicit axes.', action='append', default=None),
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
     'output directory that will contain the PCoA plot. [default: %default]',
     default='emperor')
@@ -160,6 +186,7 @@ def main():
     taxa_fp = opts.taxa_fp
     n_taxa_to_keep = opts.n_taxa_to_keep
     biplot_fp = opts.biplot_fp
+    add_vectors = opts.add_vectors
 
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
@@ -291,6 +318,11 @@ def main():
             'mapping file that contains at least all the samples contained in '
             'the coordinates file(s). You can force the script to ignore these '
             ' samples by passing the \'--ignore_missing_samples\' flag.')
+    if number_intersected_sids != required_number_of_sids and\
+        ignore_missing_samples:
+        # keep only the samples that are mapped in the mapping file
+        coords_headers, coords_data = keep_samples_from_pcoa_data(
+            coords_headers, coords_data, sids_intersection)
 
     # ignore samples that exist in the coords but not in the mapping file, note:
     # we're using sids_intersection so if --ignore_missing_samples is enabled we
@@ -312,6 +344,23 @@ def main():
         except ValueError, e:
             option_parser.error(e.message)
 
+    # check that all the required columns exist in the metadata mapping file
+    if color_by_column_names:
+        color_by_column_names = color_by_column_names.split(',')
+
+        # check for all the mapping fields
+        for col in color_by_column_names:
+            # for concatenated columns check each individual field
+            if '&&' in col:
+                for _col in col.split('&&'):
+                    if _col not in header:
+                        offending_fields.append(col)
+            elif col not in header:
+                offending_fields.append(col)
+    else:
+        # if the user didn't specify the header names display everything
+        color_by_column_names = header[:]
+
     # extract a list of the custom axes provided and each element is numeric
     if custom_axes:
         custom_axes = custom_axes.strip().strip("'").strip('"').split(',')
@@ -322,20 +371,59 @@ def main():
             # append the field to the error queue that it belongs to
             if axis not in header:
                 offending_fields.append(axis)
-            if map_object.isNumericCategory(axis) == False:
-                non_numeric_categories.append(axis)
+                break
+            # make sure this value is in the mapping file
+            elif axis not in color_by_column_names:
+                color_by_column_names.append(axis)
+        # perform only if the for loop does not call break
+        else:
+            # make sure all these axes are numeric
+            for axis in custom_axes:
+                if map_object.isNumericCategory(axis) == False:
+                    non_numeric_categories.append(axis)
 
-    # check that all the required columns exist in the metadata mapping file
-    if color_by_column_names:
-        color_by_column_names = color_by_column_names.split(',')
-
-        # check for all the mapping fields
-        for col in color_by_column_names:
-            if col not in header and '&&' not in col:
+    # make multiple checks for the add_vectors option
+    if add_vectors != [None, None]:
+        add_vectors = add_vectors.split(',')
+        # check there are at the most two categories specified for this option
+        if len(add_vectors) > 2:
+            option_parser.error("The '--add_vectors' option can accept up to "
+                "two different fields from the mapping file; currently trying "
+                "to use %d (%s)." % (len(add_vectors), ', '.join(add_vectors)))
+        # make sure the field(s) exist
+        for col in add_vectors:
+            # concatenated fields are allowed now so check for each field
+            if '&&' in col:
+                for _col in col.split('&&'):
+                    if _col not in header:
+                        offending_fields.append(col)
+                        break
+                # only execute this block of code if all checked fields exist
+                else:
+                    # make sure that if it's going to be used for vector
+                    # creation it gets used for coloring and map postprocessing
+                    if col not in color_by_column_names:
+                        color_by_column_names.append(col)
+            # if it's a column without concatenations
+            elif col not in header:
                 offending_fields.append(col)
-    else:
-        # if the user didn't specify the header names display everything
-        color_by_column_names = header[:]
+                break
+            else:
+                # check this vector value is in the color by category
+                if col not in color_by_column_names:
+                    color_by_column_names.append(col)
+        # perform only if the for loop does not call break
+        else:
+            # check that the second category is all with numeric values
+            if len(add_vectors) == 2:
+                map_object = MetadataMap(mapping_file_to_dict(mapping_data,
+                    header), [])
+                # if it has non-numeric values add it to the list of offenders
+                if map_object.isNumericCategory(add_vectors[1]) == False:
+                    non_numeric_categories.append(add_vectors[1]+' (used in '
+                        '--add_vectors)')
+            else:
+                add_vectors.append(None)
 
     # terminate the program for the cases where a mapping field was not found
     # or when a mapping field didn't meet the criteria of being numeric
@@ -343,10 +431,10 @@ def main():
         option_parser.error("Invalid field(s) '%s'; the valid field(s) are:"
             " '%s'" % (', '.join(offending_fields), ', '.join(header)))
     if non_numeric_categories:
-        option_parser.error(('The following field(s): \'%s\' contains values '
-            'that are not numeric, hence not suitable for \'--custom_axes\'. '
-            'Try the \'--missing_custom_axes_values\' option to fix these '
-            'values.' % ', '.join(non_numeric_categories)))
+        option_parser.error(('The following field(s): \'%s\' contain values '
+            'that are not numeric, hence not suitable for \'--custom_axes\' nor'
+            ' for \'--add_vectors\'. Try the \'--missing_custom_axes_values\' '
+            'option to fix these values.' % ', '.join(non_numeric_categories)))
 
     # process the coordinates file first, preventing the case where the custom
     # axes is not in the coloring categories i. e. in the --colory_by categories
@@ -378,13 +466,15 @@ def main():
     fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
         coords_eigenvalues, coords_pct, custom_axes, coords_low, coords_high))
     fp_out.write(format_taxa_to_js(otu_coords, otu_lineages, otu_prevalence))
+    fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
+        coords_headers, add_vectors[0], add_vectors[1]))
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
-        isdir(input_coords)))
+        isdir(input_coords), add_vectors != [None, None]))
     fp_out.close()
     copy_support_files(output_dir)
 
     # write the bilot coords in the output file if a path is passed
-    if biplot_fp:
+    if biplot_fp and taxa_fp:
         # make sure this file can be created
         try:
             fd = open(biplot_fp, 'w')

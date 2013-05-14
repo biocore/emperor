@@ -3,7 +3,7 @@
 from __future__ import division
 
 __author__ = "Antonio Gonzalez Pena"
-__copyright__ = "Copyright 2011, The Emperor Project"
+__copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Meg Pirrung", "Antonio Gonzalez Pena", "Yoshiki Vazquez Baeza"]
 __license__ = "GPL"
 __version__ = "0.0.0-dev"
@@ -12,10 +12,18 @@ __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 
+from copy import deepcopy
+from StringIO import StringIO
+
 from numpy import max, min, abs
 from cogent.util.misc import if_
-from qiime.parse import mapping_file_to_dict
 
+from emperor.util import keep_columns_from_mapping_file
+
+from qiime.format import format_mapping_file
+from qiime.parse import mapping_file_to_dict, parse_mapping_file
+from qiime.filter import (filter_mapping_file_by_metadata_states,
+    sample_ids_from_metadata_description)
 
 def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
                     coords_low=None, coords_high=None):
@@ -150,7 +158,7 @@ def format_mapping_file_to_js(mapping_file_data, mapping_file_headers, columns):
     return js_mapping_file_string
 
 def format_taxa_to_js(otu_coords, lineages, prevalence):
-    """Write javascript string representing the taxa in a PCoA plot
+    """Write a string representing the taxa in a PCoA plot as javascript
     
     Inputs:
     otu_coords: numpy array where the taxa is positioned
@@ -184,7 +192,89 @@ def format_taxa_to_js(otu_coords, lineages, prevalence):
     # join the array of strings as a single string
     return ''.join(js_biplots_string)
 
-def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False):
+def format_vectors_to_js(mapping_file_data, mapping_file_headers, coords_data,
+                        coords_headers, connected_by_header,
+                        sorted_by_header=None):
+    """Write a string representing the vectors in a PCoA plot as javascript
+
+    Inputs:
+    mapping_file_data: contents of the mapping file
+    mapping_file_headers: headers of the mapping file
+    coords_data: coordinates of the PCoA plot in a numpy 2-D array or a list of
+    numpy 2-D arrays for jackknifed input
+    coords_headers: headers of the coords in the PCoA plot or a list of lists
+    with the headers for jackknifed input
+    connected_by_header: header of the mapping file that represents how the
+    lines will be connected
+    sorted_by_header: numeric-only header name to sort the samples in the
+    vectors
+
+    Output:
+    js_vectors_string: string that represents the vectors in the shape of a
+    javascript object
+
+    Notes:
+    If using jackknifed input, the coordinates and headers that will be used are
+    the ones belonging to the master coords i. e. the first element.
+    """
+
+    js_vectors_string = []
+    js_vectors_string.append('\nvar g_vectorPositions = new Array();\n')
+
+    if connected_by_header != None:
+        # check if we are processing jackknifed input, if so just get the master
+        if type(coords_data) == list:
+            coords_data = coords_data[0]
+            coords_headers = coords_headers[0]
+
+        columns_to_keep = ['SampleID', connected_by_header]
+
+        # do not ad None if sorted_by_header is None or empty
+        if sorted_by_header:
+            columns_to_keep.append(sorted_by_header)
+
+        # reduce the amount of data by keeping the required fields only
+        mapping_file_data, mapping_file_headers =\
+            keep_columns_from_mapping_file(mapping_file_data,
+            mapping_file_headers, columns_to_keep)
+
+        # format the mapping file to use this with the filtering function
+        mf_string = format_mapping_file(mapping_file_headers, mapping_file_data)
+
+        index = mapping_file_headers.index(connected_by_header)
+        connected_by = list(set([line[index] for line in mapping_file_data]))
+
+        for category in connected_by:
+            # convert to StringIO to for each iteration; else the object
+            # won't be usable after the first iteration & you'll get an error
+            sample_ids = sample_ids_from_metadata_description(
+                StringIO(mf_string),'%s:%s' % (connected_by_header,category))
+
+            # if there is a sorting header, sort the coords using these values
+            if sorted_by_header:
+                sorting_index = mapping_file_headers.index(sorted_by_header)
+                to_sort = [line for line in mapping_file_data if line[0] in\
+                    sample_ids]
+
+                # get the sorted sample ids from the sorted-reduced mapping file
+                sample_ids = zip(*sorted(to_sort,
+                    key=lambda x: float(x[sorting_index])))[0]
+
+            # each category value is a new vector
+            js_vectors_string.append("g_vectorPositions['%s'] = new Array();\n"
+                % (category))
+
+            for s in sample_ids:
+                index = coords_headers.index(s)
+
+                # print the first three elements of each coord for each sample
+                js_vectors_string.append("g_vectorPositions['%s']['%s'] = %s;\n"
+                    % (category, s, coords_data[index, :3].tolist()))
+
+    return ''.join(js_vectors_string)
+
+def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
+                                    has_vectors=False):
     """Create an HTML footer according to the things being presented in the plot
 
     has_biplots: whether the plot has biplots or not
@@ -201,6 +291,7 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False):
     optional_strings.append(if_(has_biplots, _BIPLOT_VISIBILITY_SELECTOR, ''))
     optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
     optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
+    optional_strings.append(if_(has_vectors, _VECTORS_OPACITY_SLIDER, ''))
 
     return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
 
@@ -216,11 +307,16 @@ EMPEROR_HEADER_HTML_STRING =\
 <head>
     <title>Emperor</title>
     <meta charset="utf-8">
+    <link rel="shortcut icon" href="emperor_required_resources/img/favicon.ico" />
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/emperor/css/emperor.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
+    <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
+        <tr><td><img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="logo"/></td></tr>
+    </table>
+
     <script type="text/javascript" src="emperor_required_resources/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
     <script src="emperor_required_resources/js/jquery.colorPicker.js"></script>
@@ -238,6 +334,12 @@ _ELLIPSE_OPACITY_SLIDER = """
             <label for="ellipseopacity" class="text">Ellipse Opacity</label>
             <label id="ellipseopacity" class="slidervalue"></label>
             <div id="eopacityslider" class="slider-range-max"></div>"""
+
+_VECTORS_OPACITY_SLIDER = """
+            <br>
+            <label for="vectorsopacity" class="text">Vectors Opacity</label>
+            <label id="vectorsopacity" class="slidervalue"></label>
+            <div id="vopacityslider" class="slider-range-max"></div>"""
 
 _TAXA_LABELS_SELECTOR = """
             <form name="biplotoptions">
@@ -258,8 +360,10 @@ _BIPLOT_SPHERES_COLOR_SELECTOR ="""
             </table>
             <br>"""
 
-_EMPEROR_FOOTER_HTML_STRING =\
-""" </script>
+_EMPEROR_FOOTER_HTML_STRING ="""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
@@ -344,7 +448,7 @@ _EMPEROR_FOOTER_HTML_STRING =\
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>%s
+            <br>%s%s
             <br>
             <label for="sphereopacity" class="text">Sphere Opacity</label>
             <label id="sphereopacity" class="slidervalue"></label>

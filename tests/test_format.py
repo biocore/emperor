@@ -14,7 +14,7 @@ __status__ = "Development"
 
 from numpy import array
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
-    format_taxa_to_js, format_emperor_html_footer_string)
+    format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string)
 from cogent.util.unit_test import TestCase, main
 
 class TopLevelTests(TestCase):
@@ -98,6 +98,29 @@ class TopLevelTests(TestCase):
         self.assertEquals(out_js_taxa_string, "\nvar g_taxaPositions = "
             "new Array();\n\n")
 
+    def test_format_vectors_to_js(self):
+        """Tests correct formatting of the vectors from the coords"""
+
+        # test that only the variable declaration gets returned
+        out_js_vector_string = format_vectors_to_js(self.mapping_file_data,
+            self.mapping_file_headers, self.pcoa_coords, self.pcoa_headers,
+            None, None)
+        self.assertEquals(out_js_vector_string, '\nvar g_vectorPositions = new '
+            'Array();\n')
+
+        # vector string without sorting for the coordinates
+        out_js_vector_string = format_vectors_to_js(self.mapping_file_data,
+            self.mapping_file_headers, self.pcoa_coords, self.pcoa_headers,
+            'Treatment', None)
+        self.assertEquals(out_js_vector_string, VECTOR_JS_STRING_NO_SORTING)
+
+        # vector string sorting by the DOB category
+        out_js_vector_string = format_vectors_to_js(self.mapping_file_data,
+            self.mapping_file_headers, self.pcoa_coords, self.pcoa_headers,
+            'Treatment', 'DOB')
+        self.assertEquals(out_js_vector_string, VECTOR_JS_STRING_SORTING)
+
+
     def test_format_emperor_html_footer_string(self):
         """Test correct formatting of the footer string"""
 
@@ -112,6 +135,10 @@ class TopLevelTests(TestCase):
         # no biplots nor jackknifing
         out_string = format_emperor_html_footer_string(False, False)
         self.assertEqual(out_string, EXPECTED_FOOTER_C)
+
+        #  no biplots no jackknifing but with vectors
+        out_string = format_emperor_html_footer_string(False, False, True)
+        self.assertEqual(out_string, EXPECTED_FOOTER_D)
 
 
 PCOA_DATA = array([[ -1.09166142e-01, 8.77774496e-02, 1.15866606e-02, -6.26863896e-02, 2.31533068e-02, 8.76934639e-02, 1.37400927e-03, -1.35496063e-05, 1.29849404e-09],
@@ -237,8 +264,41 @@ g_taxaPositions['3'] = { 'lineage': 'Root;k__Bacteria;Other', 'x': -0.276542, 'y
 
 """
 
+VECTOR_JS_STRING_NO_SORTING = """
+var g_vectorPositions = new Array();
+g_vectorPositions['Control'] = new Array();
+g_vectorPositions['Control']['PC.354'] = [-0.293353176, 0.0183956004, 0.0329884266];
+g_vectorPositions['Control']['PC.355'] = [-0.109166142, 0.0877774496, 0.0115866606];
+g_vectorPositions['Control']['PC.356'] = [-0.183191151, 34912.621, 0.00869481594];
+g_vectorPositions['Control']['PC.481'] = [-0.192382819, 0.0147832029, -0.0147871039];
+g_vectorPositions['Control']['PC.593'] = [0.0968466168, -0.159388265, 0.135271607];
+g_vectorPositions['Fast'] = new Array();
+g_vectorPositions['Fast']['PC.607'] = [0.0688959784, -0.166234067, -0.0998300962];
+g_vectorPositions['Fast']['PC.634'] = [0.20468454, 0.128911236, -0.0293614192];
+g_vectorPositions['Fast']['PC.635'] = [0.12613151, -0.00266030272, -0.141717093];
+g_vectorPositions['Fast']['PC.636'] = [0.281534642, 0.0710660196, 0.097154202];
+"""
+
+VECTOR_JS_STRING_SORTING = """
+var g_vectorPositions = new Array();
+g_vectorPositions['Control'] = new Array();
+g_vectorPositions['Control']['PC.356'] = [-0.183191151, 34912.621, 0.00869481594];
+g_vectorPositions['Control']['PC.354'] = [-0.293353176, 0.0183956004, 0.0329884266];
+g_vectorPositions['Control']['PC.355'] = [-0.109166142, 0.0877774496, 0.0115866606];
+g_vectorPositions['Control']['PC.481'] = [-0.192382819, 0.0147832029, -0.0147871039];
+g_vectorPositions['Control']['PC.593'] = [0.0968466168, -0.159388265, 0.135271607];
+g_vectorPositions['Fast'] = new Array();
+g_vectorPositions['Fast']['PC.607'] = [0.0688959784, -0.166234067, -0.0998300962];
+g_vectorPositions['Fast']['PC.634'] = [0.20468454, 0.128911236, -0.0293614192];
+g_vectorPositions['Fast']['PC.635'] = [0.12613151, -0.00266030272, -0.141717093];
+g_vectorPositions['Fast']['PC.636'] = [0.281534642, 0.0710660196, 0.097154202];
+"""
+
 EXPECTED_FOOTER_A =\
-""" </script>
+"""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
@@ -348,7 +408,10 @@ EXPECTED_FOOTER_A =\
 </html>
 """
 EXPECTED_FOOTER_B =\
-""" </script>
+"""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
@@ -468,7 +531,10 @@ EXPECTED_FOOTER_B =\
 """
 
 EXPECTED_FOOTER_C =\
-""" </script>
+"""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
@@ -574,6 +640,118 @@ EXPECTED_FOOTER_C =\
 </html>
 """
 
+EXPECTED_FOOTER_D = """document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
+</head>
+
+<body>
+
+<label id="pointCount" class="ontop">
+</label>
+
+<div id="finder" class="arrow-right">
+</div>
+
+<div id="labels" class="unselectable">
+</div>
+
+<div id="taxalabels" class="unselectable">
+</div>
+
+<div id="axislabels" class="axislabels">
+</div>
+
+<div id="main_plot">
+</div>
+
+<div id="menu">
+    <div id="menutabs">
+        <ul>
+            <li><a href="#keytab">Key</a></li>
+            <li><a href="#colorby">Colors</a></li>
+            <li><a href="#showby">Visibility</a></li>
+            <li><a href="#labelby">Labels</a></li>
+            <li><a href="#settings">Options</a></li>
+        </ul>
+        <div id="keytab">
+            <form name="keyFilter">
+            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+            </form>
+            <div id="key">
+            </div>
+        </div>
+        <div id="colorby">
+            <br>
+            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            </select>
+            <div class="list" id="colorbylist">
+            </div>
+        </div>
+        <div id="showby">
+            <select id="showbycombo" onchange="showByMenuChanged()">
+            </select>
+            <div class="list" id="showbylist">
+            </div>
+        </div>
+        <div id="labelby">
+        <div id="labelsTop">
+            <form name="plotoptions">
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+            </form>
+            <br>
+            <label for="labelopacity" class="text">Label Opacity</label>
+            <label id="labelopacity" class="slidervalue"></label>
+            <div id="lopacityslider" class="slider-range-max"></div>
+            <div id="labelColorHolder clearfix">
+            <table><tr>
+            <td><div id="labelColor" class="colorbox">
+            </div></td><td><label>Master Label Color</label></td>
+            </tr></table></div>
+        </div>
+            <br>
+            <select id="labelcombo" onchange="labelMenuChanged()">
+            </select>
+            <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+            <br>
+            <br>
+            <label for="vectorsopacity" class="text">Vectors Opacity</label>
+            <label id="vectorsopacity" class="slidervalue"></label>
+            <div id="vopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereopacity" class="text">Sphere Opacity</label>
+            <label id="sphereopacity" class="slidervalue"></label>
+            <div id="sopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereradius" class="text">Sphere Scale</label>
+            <label id="sphereradius" class="slidervalue"></label>
+            <div id="sradiusslider" class="slider-range-max"></div>
+            <br>
+            <table>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
+        </div>
+    </div>  
+</div>
+</body>
+
+</html>
+"""
 
 
 if __name__ == "__main__":

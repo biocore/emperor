@@ -3,7 +3,7 @@
 from __future__ import division
 
 __author__ = "Yoshiki Vazquez Baeza"
-__copyright__ = "Copyright 2011, The Emperor Project"
+__copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Yoshiki Vazquez Baeza"]
 __license__ = "GPL"
 __version__ = "0.0.0-dev"
