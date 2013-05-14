@@ -145,6 +145,16 @@
 	z-index: 1;
 	}
 	
+	div#taxalabels {
+	display: none;
+	font-family: courier;
+	color: #fff;
+	height: 0px;
+	float: left;
+	position: absolute;
+	z-index: 1;
+	}
+	
 	.axislabels {
 	    color: #fff;
 	}

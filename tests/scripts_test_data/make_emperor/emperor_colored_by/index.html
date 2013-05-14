@@ -4,11 +4,16 @@
 <head>
     <title>Emperor</title>
     <meta charset="utf-8">
+    <link rel="shortcut icon" href="emperor_required_resources/img/favicon.ico" />
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/emperor/css/emperor.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
+    <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
+        <tr><td><img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="logo"/></td></tr>
+    </table>
+
     <script type="text/javascript" src="emperor_required_resources/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
     <script src="emperor_required_resources/js/jquery.colorPicker.js"></script>
@@ -19,34 +24,44 @@
     <script src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
     <script src="emperor_required_resources/emperor/js/emperor.js"></script>
     <script type="text/javascript">
-var headers = ['SampleID','Treatment','Treatment&&DOB'];
-var mapping = { 'PC.481': ['PC.481','Control','Control20070314'],'PC.607': ['PC.607','Fast','Fast20071112'],'PC.634': ['PC.634','Fast','Fast20080116'],'PC.635': ['PC.635','Fast','Fast20080116'],'PC.593': ['PC.593','Control','Control20071210'],'PC.636': ['PC.636','Fast','Fast20080116'],'PC.355': ['PC.355','Control','Control20061218'],'PC.354': ['PC.354','Control','Control20061218'],'PC.356': ['PC.356','Control','Control20061126'] };
+var g_mappingFileHeaders = ['SampleID','Treatment','Treatment&&DOB'];
+var g_mappingFileData = { 'PC.481': ['PC.481','Control','Control20070314'],'PC.607': ['PC.607','Fast','Fast20071112'],'PC.634': ['PC.634','Fast','Fast20080116'],'PC.635': ['PC.635','Fast','Fast20080116'],'PC.593': ['PC.593','Control','Control20071210'],'PC.636': ['PC.636','Fast','Fast20080116'],'PC.355': ['PC.355','Control','Control20061218'],'PC.354': ['PC.354','Control','Control20061218'],'PC.356': ['PC.356','Control','Control20061126'] };
 
-var points = new Array();
-points['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647 };
-points['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136 };
-points['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': 0.228820, 'y': -0.130142, 'z': -0.287149 };
-points['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': 0.042263, 'y': -0.013968, 'z': 0.063531 };
-points['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': 0.280399, 'y': -0.006013, 'z': 0.023485 };
-points['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.232873, 'y': 0.139788, 'z': 0.322871 };
-points['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': 0.170518, 'y': -0.194113, 'z': -0.030897 };
-points['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': -0.091330, 'y': 0.424147, 'z': -0.135627 };
-points['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': -0.349339, 'y': -0.120788, 'z': 0.115275 };
-var segments = 16, rings = 16, radius = 0.012595;
-var xaxislength = 0.629738;
-var yaxislength = 0.618260;
-var zaxislength = 0.610021;
-var max_x = 0.280399;
-var max_y = 0.424147;
-var max_z = 0.322871;
-var min_x = -0.349339;
-var min_y = -0.194113;
-var min_z = -0.287149;
-var max = 0.424147;
-pc1 = "PC1 (27 %)";
-pc2 = "PC2 (16 %)";
-pc3 = "PC3 (14 %)";
-var percents = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
+var g_spherePositions = new Array();
+g_spherePositions['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647 };
+g_spherePositions['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136 };
+g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': 0.228820, 'y': -0.130142, 'z': -0.287149 };
+g_spherePositions['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': 0.042263, 'y': -0.013968, 'z': 0.063531 };
+g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': 0.280399, 'y': -0.006013, 'z': 0.023485 };
+g_spherePositions['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.232873, 'y': 0.139788, 'z': 0.322871 };
+g_spherePositions['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': 0.170518, 'y': -0.194113, 'z': -0.030897 };
+g_spherePositions['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': -0.091330, 'y': 0.424147, 'z': -0.135627 };
+g_spherePositions['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': -0.349339, 'y': -0.120788, 'z': 0.115275 };
+
+var g_ellipsesDimensions = new Array();
+var g_segments = 16, g_rings = 16, g_radius = 0.012595;
+var g_xAxisLength = 0.629738;
+var g_yAxisLength = 0.618260;
+var g_zAxisLength = 0.610021;
+var g_xMaximumValue = 0.355968;
+var g_yMaximumValue = 0.499716;
+var g_zMaximumValue = 0.398440;
+var g_xMinimumValue = -0.424908;
+var g_yMinimumValue = -0.269682;
+var g_zMinimumValue = -0.362718;
+var g_maximum = 0.424147;
+var g_pc1Label = "PC1 (27 %)";
+var g_pc2Label = "PC2 (16 %)";
+var g_pc3Label = "PC3 (14 %)";
+var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
+
+var g_taxaPositions = new Array();
+
+
+var g_vectorPositions = new Array();
+document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
  </script>
 </head>
 
@@ -59,6 +74,9 @@ var percents = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.07
 </div>
 
 <div id="labels" class="unselectable">
+</div>
+
+<div id="taxalabels" class="unselectable">
 </div>
 
 <div id="axislabels" class="axislabels">
@@ -74,7 +92,6 @@ var percents = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.07
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
             <li><a href="#labelby">Labels</a></li>
-            <!-- <li><a href="#animations">Animate</a></li> -->
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -85,6 +102,7 @@ var percents = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.07
             </div>
         </div>
         <div id="colorby">
+            <br>
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
@@ -99,7 +117,7 @@ var percents = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.07
         <div id="labelby">
         <div id="labelsTop">
             <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Master Label Visibility</input>
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
             </form>
             <br>
             <label for="labelopacity" class="text">Label Opacity</label>
@@ -117,42 +135,19 @@ var percents = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.07
             <div class="list" id="labellist">
             </div>
         </div>
-<!--         <div id="animations">
-                <div id="animationsTop">
-                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor/img/reset.png" ></img></a>
-                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor/img/play.png"></img></a>
-                    <a class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor/img/pause.png"></img></a>
-                    <br>
-                    <br>
-                    <label for="animationspeed" class="text">Speed</label>
-                    <label id="animationspeed" class="slidervalue"></label>
-                    <div id="animspeedslider" class="slider-range-max"></div>
-                </div>
-                    <br>
-                    <label for="animationGradient" class="text">Animate Over (eg. time)</label><br>
-                    <select id="animationovercombo" onchange="animationOverMenuChanged()">
-                    </select>
-                    <br>
-                    <br>
-                    <label for="animation" class="text">Animate</label><br>
-                    <select id="animationcombo" onchange="animationMenuChanged()">
-                    </select>
-                    <div class="animationlist" id="animationlist">
-                    </div>
-                </div> -->
         <div id="settings">
             <form name="settingsoptions">
-            <input type="checkbox" onchange="toggle_scale_coordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
             </form>
             <br>
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
             <br>
-            <br>
-            <label for="ellipseopacity" class="text">Ellipse Opacity</label>
-            <label id="ellipseopacity" class="slidervalue"></label>
-            <div id="eopacityslider" class="slider-range-max"></div>
             <br>
             <label for="sphereopacity" class="text">Sphere Opacity</label>
             <label id="sphereopacity" class="slidervalue"></label>
@@ -161,6 +156,10 @@ var percents = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.07
             <label for="sphereradius" class="text">Sphere Scale</label>
             <label id="sphereradius" class="slidervalue"></label>
             <div id="sradiusslider" class="slider-range-max"></div>
+            <br>
+            <table>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
         </div>
     </div>  
 </div>

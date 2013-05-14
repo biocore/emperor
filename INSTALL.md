@@ -3,6 +3,10 @@ Emperor Installation Notes
 
 Emperor is a python package that relies in [QIIME](http://www.qiime.org), [NumPy](http://www.numpy.org) and [PyCogent](http://www.pycogent.org). These packages must be installed prior running the `setup.py` script.
 
+To download Emperor, use [this link](https://github.com/qiime/emperor/archive/master.zip) or use git to get the latest version of the repository:
+
+    git clone git://github.com/qiime/emperor.git
+
 Installation
 ============
 
