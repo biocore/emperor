@@ -25,7 +25,7 @@ Similarly if you have a study expressed over a gradient, for example a study whe
 make_emperor.py -i unweighted_unifrac_pc_time.txt -m mapping_with_time.txt -a TIMEPOINT
 ```
 
-To see a live example, open [this link](http://htmlpreview.github.io/?https://github.com/qiime/emperor/blob/master/tests/scripts_test_data/make_emperor/jackknifed_with_master/index.html) using Google Chrome.
+Some build examples are bundled with every Emperor repository, you can begin exploring some sample data using Google Chrome:
 
 - To see an example of a simple PCoA plot, see this [link](http://htmlpreview.github.io/?https://github.com/qiime/emperor/blob/master/tests/scripts_test_data/make_emperor/emperor_output/index.html).
 - To see an example of a Jackknifed plot, see this [link](http://htmlpreview.github.io/?https://github.com/qiime/emperor/blob/master/tests/scripts_test_data/make_emperor/jackknifed_pcoa/index.html).
