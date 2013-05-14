@@ -13,6 +13,7 @@
 var g_plotSpheres = {};
 var g_plotEllipses = {};
 var g_plotTaxa = {};
+var g_plotVectors = {};
 
 // sample identifiers of all items that are plotted
 var g_plotIds = [];
@@ -26,6 +27,7 @@ var g_zAxisLine;
 var g_mainScene;
 var g_sceneCamera;
 var g_sceneLight;
+var g_mainRenderer;
 
 // general multipurpose variables
 var g_elementsGroup; // group that holds the plotted shapes
@@ -37,6 +39,34 @@ var g_time;
 var g_visiblePoints = 0;
 var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
+var g_useDiscreteColors = false;
+
+// taken from the qiime/colors.py module; a total of 29 colors
+k_QIIME_COLORS = [
+"0xFF0000", // red1
+"0x0000FF", // blue1
+"0xF27304", // orange1
+"0x008000", // green
+"0x91278D", // purple1
+"0xFFFF00", // yellow1
+"0x7CECF4", // cyan1
+"0xF49AC2", // pink1
+"0x5DA09E", // teal1
+"0x6B440B", // brown1
+"0x808080", // gray1
+"0xF79679", // red2
+"0x7DA9D8", // blue2
+"0xFCC688", // orange2
+"0x80C99B", // green2
+"0xA287BF", // purple2
+"0xFFF899", // yellow2
+"0xC49C6B", // brown2
+"0xC0C0C0", // gray2
+"0xED008A", // red3
+"0x00B6FF", // blue3
+"0xA54700", // orange3
+"0x808000", // green3
+"0x008080"] // teal3
 
 /*This function recenter the camera to the initial position it had*/
 function resetCamera() {
@@ -72,6 +102,9 @@ function toggleScaleCoordinates(element){
 
 	var axesLen;
 	var operation;
+
+	// used only for the vector re-drawing
+	var currentPosition = [], currentColor;
 
 	// modifying the properties basically requires to create the elemnts
 	// again from scratch, so just remove them from scene and re-build them
@@ -116,9 +149,7 @@ function toggleScaleCoordinates(element){
 		operation(g_sceneLight.position.z, g_fractionExplained[0]));
 
 	// scale the axis lines
-	axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),
-		g_zMaximumValue+Math.abs(g_zMinimumValue));
-	drawAxisLines(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
+	drawAxisLines();
 
 	// set the new position of each of the sphere objects
 	for (sample_id in g_plotSpheres){
@@ -129,7 +160,7 @@ function toggleScaleCoordinates(element){
 			operation(g_plotSpheres[sample_id].position.z,g_fractionExplained[2]));
 	}
 
-	// ellipses won't always be available hence the loop per type of data
+	// ellipses won't always be available hence the two separate loops
 	for (sample_id in g_plotEllipses){
 		// scale the dimensions of the positions of each ellipse
 		g_plotEllipses[sample_id].position.set(
@@ -158,35 +189,59 @@ function toggleScaleCoordinates(element){
 			operation(g_plotTaxa[index].scale.z, g_fractionExplained[0]));
 	}
 
+	// each line is indexed by a sample, creating in turn TOTAL_SAMPLES-1 lines
+	for (sample_id in g_plotVectors){
+
+		// the color has to be formatted as an hex number for makeLine to work
+		currentColor = "0x"+g_plotVectors[sample_id].material.color.getHex();
+
+		// updating the position of a vertex in a line is a really expensive
+		// operation, hence we just remove it from the group and create it again
+		g_elementsGroup.remove(g_plotVectors[sample_id]);
+
+		for (vertex in g_plotVectors[sample_id].geometry.vertices){
+			currentPosition[vertex] = g_plotVectors[sample_id].geometry.vertices[vertex].position;
+
+			// scale the position of each of the vertices
+			currentPosition[vertex].x = operation(currentPosition[vertex].x,
+				g_fractionExplained[0])
+			currentPosition[vertex].y = operation(currentPosition[vertex].y,
+				g_fractionExplained[1])
+			currentPosition[vertex].z = operation(currentPosition[vertex].z,
+				g_fractionExplained[2])
+
+			// create an array we can pass to makeLine
+			currentPosition[vertex] = [currentPosition[vertex].x,
+				currentPosition[vertex].y, currentPosition[vertex].z]
+		}
+
+		// add the element to the main vector array and to the group
+		g_plotVectors[sample_id] = makeLine(currentPosition[0],
+			currentPosition[1], currentColor, 2);
+		g_elementsGroup.add(g_plotVectors[sample_id]);
+	}
+
+}
+
+/* Toggle between discrete and continuous coloring for samples and labels */
+function toggleContinuousAndDiscreteColors(element){
+	g_useDiscreteColors = element.checked;
+
+	// re-coloring the samples and labels now will use the appropriate coloring
+	colorByMenuChanged();
+	labelMenuChanged();
 }
 
 /*Generate a list of colors that corresponds to all the samples in the plot
 
-  This function will generate a list of colors that correspond to a list of
-  values. If the values are continuous the colors correspond to their numeric
-  value, if values are discrete it is just a gradient with an even step size in
-  between each value.
+  This function will generate a list of coloring values depending on the
+  coloring scheme that the system is currently using (discrete or continuous).
 */
 function getColorList(vals) {
-	var colorVals = [];
-	var isNumeric = true;
-
-	//figure out if the values are continuous or not
-	for(var i = 0; i < vals.length; i++){
-		if(isNaN(parseFloat(vals[i]))){
-			isNumeric = false;
-		}
-		else{
-			colorVals[i] = parseFloat(vals[i]);
-		}
-	}
-
-	// figure out start and max values, list is sorted
-	var start = colorVals[0];
-	var max = colorVals[colorVals.length-1]-colorVals[0];
 	var colors = [];
 
-	// set the colors for each category value
+	// cases with one or two categories are basically the same no matter if the
+	// coloring scheme is continuous or discrete; choose red or red and blue
 	if(vals.length == 1){
 		colors[0] = new THREE.Color();
 		colors[0].setHex("0xff0000");
@@ -197,32 +252,35 @@ function getColorList(vals) {
 		colors[1] = new THREE.Color();
 		colors[1].setHex("0x0000ff");
 	}
-	else if (vals.length == 3 && !isNumeric) {
-		for(var i in vals){
-			colors[i] = new THREE.Color();
-			colors[i].setHSV(i/vals.length,1,1);
-		}
-	}
 	else {
-		if(isNumeric) {
-			for(var i in vals){
-				colors[i] = new THREE.Color();
-				// i*.66 makes it so the gradient goes red->green->blue instead of
-				// back around to red
-				colors[i].setHSV((colorVals[i]-start)*.66/max,1,1);
+		for(var index in vals){
+			colors[index] = new THREE.Color();
+			if(g_useDiscreteColors){
+				// get the next available color
+				colors[index].setHex(getDiscreteColor(index)*1);
+			}
+			else{
+				// multiplying the value by 0.66 makes the colormap go R->G->B
+				colors[index].setHSV(index*.66/vals.length,1,1);
 			}
 		}
-		else {
-			for(var i in vals){
-				colors[i] = new THREE.Color();
-				// i*.66 makes it so the gradient goes red->green->blue instead of
-				// back around to red
-				colors[i].setHSV(i*.66/vals.length,1,1);
-			}
-		}
-
 	}
 	return colors;
+}
+
+/* Retrieve one of the discrete colors from the list
+
+  This function will return the color at the requested index, if this value
+  value is greater than the number of colors available, the function will just
+  rollover and retrieve the next available color.
+*/
+function getDiscreteColor(index){
+	var size = k_QIIME_COLORS.length;
+	if(index >= size){
+		index = index - (Math.floor(index/size)*size)
+	}
+
+	return k_QIIME_COLORS[index]
 }
 
 /*Start timer (for debugging)*/
@@ -238,6 +296,32 @@ function stopTimer(info) {
 	console.log("time to " +info +":"+g_time+"ms")
 }
 
+/* Sorting function that deals with alpha and numeric elements
+
+  This function takes a list of strings, divides it into two new lists, one
+  that's alpha-only and one that's numeric only. The resulting list will have
+  sorted all alpha elements at the beginning & all numeric elements at the end.
+ */
+function _splitAndSortNumericAndAlpha(list){
+	var numericPart = [], alphaPart = [], result = [];
+
+	// separate the numeric and the alpha elements of the array
+	for(var index = 0; index < list.length; index++){
+		if(isNaN(parseFloat(list[index]))){
+			alphaPart.push(list[index])
+		}
+		else{
+			numericPart.push(list[index])
+		}
+	}
+
+	// sort each of the two parts, numeric part is ascending order
+	alphaPart.sort();
+	numericPart.sort(function(a,b){return parseFloat(a)-parseFloat(b)})
+
+	return result.concat(alphaPart, numericPart);
+}
+
 /*This function is called when a new value is selected in the colorBy menu */
 function colorByMenuChanged() {
 	// set the new current category and index
@@ -250,7 +334,7 @@ function colorByMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
 	}
 
-	vals = dedupe(vals).sort();
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 	colors = getColorList(vals);
 
 	// build the colorby table in HTML
@@ -318,13 +402,17 @@ function showByMenuChanged() {
 			g_elementsGroup.add(g_plotSpheres[sid])
 		}
 		catch(TypeError){}
+		try {
+			g_elementsGroup.add(g_plotVectors[sid])
+		}
+		catch(TypeError){}
 		$('#'+divid+"_label").css('display','block');
 	}
 
-	g_visiblePoints = g_plotIds.length
-	changePointCount()
+	g_visiblePoints = g_plotIds.length;
+	changePointCount();
 
-	vals = dedupe(vals).sort();
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
 	// build the showby checkbox table in HTML
 	var lines = "<form name=\"showbyform\"><table>"
@@ -357,12 +445,16 @@ function toggleVisible(value) {
 	var mappingVal = g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)]
 		if(mappingVal == value && hidden){
 			try{
-				g_elementsGroup.remove(g_plotEllipses[sid])
+				g_elementsGroup.remove(g_plotEllipses[sid]);
 			}
 			catch(TypeError){}
 			try{
-				g_elementsGroup.remove(g_plotSpheres[sid])
+				g_elementsGroup.remove(g_plotSpheres[sid]);
 				g_visiblePoints--
+			}
+			catch(TypeError){}
+			try{
+				g_elementsGroup.remove(g_plotVectors[sid]);
 			}
 			catch(TypeError){}
 			$('#'+divid+"_label").css('display','none');
@@ -370,12 +462,16 @@ function toggleVisible(value) {
 		else if(mappingVal == value && !hidden)
 		{
 			try {
-				g_elementsGroup.add(g_plotEllipses[sid])
+				g_elementsGroup.add(g_plotEllipses[sid]);
 			}
 			catch(TypeError){}
 			try {
-				g_elementsGroup.add(g_plotSpheres[sid])
-				g_visiblePoints++
+				g_elementsGroup.add(g_plotSpheres[sid]);
+				g_visiblePoints++;
+			}
+			catch(TypeError){}
+			try{
+				g_elementsGroup.add(g_plotVectors[sid]);
 			}
 			catch(TypeError){}
 			$('#'+divid+"_label").css('display','block');
@@ -412,6 +508,10 @@ function setKey(values, colors) {
 			catch(TypeError){}
 			try {
 				g_plotSpheres[g_plotIds[i]].material.color.setHex("0x"+catColor.getHex());
+			}
+			catch(TypeError){}
+			try {
+				g_plotVectors[g_plotIds[i]].material.color.setHex("0x"+catColor.getHex());
 			}
 			catch(TypeError){}
 		}
@@ -472,7 +572,18 @@ function colorChanged(catValue,color) {
 				g_plotSpheres[sid].material.color.setHex(color.replace('#','0x'));
 			}
 			catch(TypeError){}
+			try{
+				g_plotVectors[sid].material.color.setHex(color.replace('#','0x'));
+			}
+			catch(TypeError){}
 		}
+	}
+}
+
+/* This function is called when q new color is selected for #taxaspherescolor */
+function colorChangedForTaxaSpheres(color){
+	for (index in g_plotTaxa){
+		g_plotTaxa[index].material.color.setHex(color)
 	}
 }
 
@@ -493,7 +604,7 @@ function labelMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][labelCatIndex]);
 	}
 
-	vals = dedupe(vals).sort();
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 	colors = getColorList(vals);
 
 	// build the label table in HTML
@@ -609,6 +720,22 @@ function toggleTaxaLabels(){
 	}
 }
 
+/* Turn on and off the spheres representing the biplots on screen */
+function toggleBiplotVisibility(){
+	// reduce the opacity to zero if the element should be off or to 0.5
+	// if the element is supposed to be present; 0.5 is the default value
+	if(document.biplotsvisibility.elements[0].checked){
+		for (index in g_plotTaxa){
+			g_plotTaxa[index].material.opacity = 0;
+		}
+	}
+	else{
+		for (index in g_plotTaxa){
+			g_plotTaxa[index].material.opacity = 0.5;
+		}
+	}
+}
+
 /*This function finds the screen coordinates of any position in the current plot.
 
   The main purpose of this function is to be used for calculating the placement
@@ -659,6 +786,16 @@ function sphereOpacityChange(ui) {
 
 	for(var sid in g_plotSpheres){
 		g_plotSpheres[sid].material.opacity = sphereOpacity;
+	}
+}
+
+/*This function handles events from the vectors opacity slider*/
+function vectorsOpacityChange(ui) {
+	document.getElementById('vectorsopacity').innerHTML = ui.value + "%";
+	var vectorsOpacity = ui.value/100;
+
+	for(var sample_id in g_plotVectors){
+		g_plotVectors[sample_id].material.opacity = vectorsOpacity;
 	}
 }
 
@@ -726,6 +863,43 @@ function setJqueryUi() {
 		document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
 	}
 
+	// check whether or not there is a vectors opacity slider in the plot
+	if (document.getElementById('vectorsopacity')){
+		$("#vopacityslider").slider({
+			range: "max",
+			min: 0,
+			max: 100,
+			value: 100,
+			slide: function( event, ui ) {
+				vectorsOpacityChange(ui);
+			},
+			change: function( event, ui ) {
+				vectorsOpacityChange(ui);
+			}
+		});
+		document.getElementById('vectorsopacity').innerHTML = $( "#vopacityslider" ).slider( "value")+"%";
+	}
+
+	// check if we are presenting biplots, to decide whether or not we should
+	// show the color picker for the biplot spheres, white is the default color
+	if(document.getElementById('taxaspherescolor')){
+		$('#taxaspherescolor').css('backgroundColor',"#FFFFFF");
+		$("#taxaspherescolor").spectrum({
+			localStorageKey: 'key',
+			color: "#FFFFFF",
+			preferredFormat: "hex6",
+			showInitial: true,
+			showInput: true,
+			change:
+				function(color) {
+					// pass a boolean flag to convert to hex6 string
+					var c = color.toHexString(true);
+					$(this).css('backgroundColor', c);
+					colorChangedForTaxaSpheres(c.replace('#', '0x'));
+				}
+		});
+	}
+
 	$("#sopacityslider").slider({
 		range: "max",
 		min: 0,
@@ -767,6 +941,26 @@ function setJqueryUi() {
 		}
 	});
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
+
+	// the default color palette for the background is black and white
+	$('#rendererbackgroundcolor').css('backgroundColor',"#000000");
+	$("#rendererbackgroundcolor").spectrum({
+		localStorageKey: 'key',
+		color: "#000000",
+		showInitial: true,
+		showInput: true,
+		showPalette: true,
+		preferredFormat: "hex6",
+		palette: [['white', 'black']],
+		change:
+			function(color) {
+				// pass a boolean flag to convert to hex6 string
+				var c = color.toHexString(true);
+				// set the color for the box and for the renderer
+				$(this).css('backgroundColor', c);
+				g_mainRenderer.setClearColorHex(c.replace('#','0x'), 1);
+			}
+	});
 }
 
 /*Draw the ellipses in the plot as described by the g_ellipsesDimensions array
@@ -846,6 +1040,44 @@ function drawTaxa(){
 	}
 }
 
+/*Draw the lines for the plot as described in the g_vectorPositions array
+
+  Note that this will draw a single line between each of the samples, hence
+  resulting in N-1 lines being drawn where N is the total number of samples,
+  similarly to spheres or ellipsoids these elements are added to the
+  g_elementsGroup variable.
+*/
+function drawVectors(){
+	var current_vector, previous = null;
+
+	// There are as many vectors as categories were specified
+	for (var categoryKey in g_vectorPositions){
+		for (var sampleKey in g_vectorPositions[categoryKey]){
+
+			// retrieve the initial position on the first loop
+			if (previous == null){
+				previous = g_vectorPositions[categoryKey][sampleKey];
+			}
+			// if we already have the initial position, draw the line with
+			// the current position and the value of previous (initial position)
+			else{
+				current = g_vectorPositions[categoryKey][sampleKey];
+				current_vector = makeLine(previous, current, 0xFFFFFF, 2)
+				previous = current;
+				g_plotVectors[sampleKey] = current_vector;
+
+				if(g_mappingFileData[sampleKey] != undefined){
+					g_elementsGroup.add(current_vector);
+					g_plotVectors[sampleKey] = current_vector;
+				}
+			}
+		}
+
+		// reset previous so the algorithms work on the next category
+		previous = null;
+	}
+}
+
 function saveSVG(){
 	open("data:image/svg+xml," + encodeURIComponent(document.getElementById('main_plot').innerHTML));
 }
@@ -862,32 +1094,49 @@ function SVGSaved(response){
 	console.log(fileName)
 }
 
+/*Utility function to draw two vertices lines at a time
+
+  This function allows you to create a line with only two vertices i. e. the
+  start point and the end point, plus the color and width of the line. The
+  start and end point must be 3 elements array. The color must be a hex-string
+  or a hex number.
+*/
+function makeLine(coords_a, coords_b, color, width){
+	var line, material, geometry = new THREE.Geometry();
+	var vertex_a = new THREE.Vertex(new THREE.Vector3(coords_a[0], coords_a[1],
+		coords_a[2]));
+	var vertex_b = new THREE.Vertex(new THREE.Vector3(coords_b[0], coords_b[1],
+		coords_b[2]));
+
+	material = new THREE.LineBasicMaterial({color: color, linewidth: width});
+	material.matrixAutoUpdate = true;
+	material.transparent = true;
+	material.opacity = 1.0;
+
+	geometry.vertices.push(vertex_a, vertex_b);
+	geometry.matrixAutoUpdate = true;
+	line = new THREE.Line(geometry, material);
+
+	return line;
+}
+
 /*Draw each of the lines that represent the X, Y and Z axes in the plot
 
   The length of each of these axes depend on the ranges that the data being
   displayed uses.
 */
-var drawAxisLines = function(axisLength, xstart, ystart, zstart){
-	//Shorten the vertex function
-	function v(x,y,z){
-			return new THREE.Vertex(new THREE.Vector3(x,y,z));
-	}
+var drawAxisLines = function(){
+	// one line for each of the axes
+	g_xAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
+		[g_xMaximumValue, g_yMinimumValue, g_zMinimumValue], 0xFFFFFF, 3);
+	g_yAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
+		[g_xMinimumValue, g_yMaximumValue, g_zMinimumValue], 0xFFFFFF, 3);
+	g_zAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
+		[g_xMinimumValue, g_yMinimumValue, g_zMaximumValue], 0xFFFFFF, 3);
 
-	//Create axis (point1, point2, colour)
-	function createAxis(p1, p2, color){
-			var line, lineGeometry = new THREE.Geometry(),
-			lineMat = new THREE.LineBasicMaterial({color: color, lineWidth: 1});
-			lineMat.matrixAutoUpdate = true;
-			lineGeometry.vertices.push(p1, p2);
-			line = new THREE.Line(lineGeometry, lineMat);
-			g_mainScene.add(line);
-
-			return line;
-	}
-
-	g_xAxisLine = createAxis(v(xstart, ystart, zstart), v(axisLength, ystart, zstart), 0xFF0000);
-	g_yAxisLine = createAxis(v(xstart, ystart, zstart), v(xstart, axisLength, zstart), 0x00FF00);
-	g_zAxisLine = createAxis(v(xstart, ystart, zstart), v(xstart, ystart, axisLength), 0x0000FF);
+	g_mainScene.add(g_xAxisLine)
+	g_mainScene.add(g_yAxisLine)
+	g_mainScene.add(g_zAxisLine)
 };
 
 /* update point count label */
@@ -908,7 +1157,7 @@ $(document).ready(function() {
 	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 	var main_plot = $('#main_plot');
-	var renderer, particles, geometry, parameters, i, h, color;
+	var particles, geometry, parameters, i, h, color;
 	var mouseX = 0, mouseY = 0;
 
 	var winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight), view_angle = 35, view_near = 0.1, view_far = 10000;
@@ -945,6 +1194,7 @@ $(document).ready(function() {
 		drawEllipses();
 		drawSpheres();
 		drawTaxa();
+		drawVectors();
 
 		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
@@ -972,11 +1222,11 @@ $(document).ready(function() {
 			$("#labelcombo").append(line);
 		}
 
-		var rv = colorByMenuChanged();
+		colorByMenuChanged();
 		showByMenuChanged();
 
-		var axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),g_zMaximumValue+Math.abs(g_zMinimumValue));
-		drawAxisLines(axesLen, g_xMinimumValue, g_yMinimumValue, g_zMinimumValue);
+		drawAxisLines();
+		buildAxisLabels();
 
 		// the light is attached to the camera to provide a 3d perspective
 		g_sceneLight = new THREE.DirectionalLight(0x999999, 2);
@@ -994,12 +1244,12 @@ $(document).ready(function() {
 		controls.dynamicDampingFactor = 0.3;
 		controls.keys = [ 65, 83, 68 ];
 
-		// renderer
-		renderer = new THREE.WebGLRenderer({ antialias: true });
-		renderer.setClearColorHex( 0x333333, 1 );
-		renderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
-		renderer.sortObjects = false;
-		main_plot.append( renderer.domElement );
+		// renderer, the default background color is black
+		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true });
+		g_mainRenderer.setClearColorHex(0x000000, 1);
+		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
+		g_mainRenderer.sortObjects = false;
+		main_plot.append(g_mainRenderer.domElement);
 
 		// build divs to hold point labels and position them
 		var labelshtml = "";
@@ -1031,18 +1281,17 @@ $(document).ready(function() {
 
 	function buildAxisLabels() {
 		//build axis labels
-		var axesLen = Math.max(g_xMaximumValue+Math.abs(g_xMinimumValue),g_yMaximumValue+Math.abs(g_yMinimumValue),g_zMaximumValue+Math.abs(g_zMinimumValue));
 		var axislabelhtml = "";
 
-		var xcoords = toScreenXY(new THREE.Vector3(axesLen, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
+		var xcoords = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
 		axislabelhtml += "<label id=\"pc1_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(xcoords['x'])+"px; top:"+parseInt(xcoords['y'])+"px;\">";
 		axislabelhtml += g_pc1Label;
 		axislabelhtml += "</label>";
-		var ycoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, axesLen, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
+		var ycoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
 		axislabelhtml += "<label id=\"pc2_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(ycoords['x'])+"px; top:"+parseInt(ycoords['y'])+"px;\">";
 		axislabelhtml += g_pc2Label;
 		axislabelhtml += "</label>";
-		var zcoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, axesLen),g_sceneCamera,$('#main_plot'));
+		var zcoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue),g_sceneCamera,$('#main_plot'));
 		axislabelhtml += "<label id=\"pc3_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(zcoords['x'])+"px; top:"+parseInt(zcoords['y'])+"px;\">";
 		axislabelhtml += g_pc3Label;
 		axislabelhtml += "</label>";
@@ -1089,7 +1338,7 @@ $(document).ready(function() {
    
 	function render() {
 		controls.update();
-		renderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
-		renderer.render( g_mainScene, g_sceneCamera);
+		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
+		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 	}
 });

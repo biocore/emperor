@@ -789,6 +789,7 @@ function sphereOpacityChange(ui) {
 	}
 }
 
+/*This function handles events from the vectors opacity slider*/
 function vectorsOpacityChange(ui) {
 	document.getElementById('vectorsopacity').innerHTML = ui.value + "%";
 	var vectorsOpacity = ui.value/100;
@@ -862,7 +863,7 @@ function setJqueryUi() {
 		document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
 	}
 
-	// check whether or not there is an ellipse opacity slider in the plot
+	// check whether or not there is a vectors opacity slider in the plot
 	if (document.getElementById('vectorsopacity')){
 		$("#vopacityslider").slider({
 			range: "max",
