@@ -295,7 +295,10 @@ g_vectorPositions['Fast']['PC.636'] = [0.281534642, 0.0710660196, 0.097154202];
 """
 
 EXPECTED_FOOTER_A =\
-""" </script>
+"""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
@@ -405,7 +408,10 @@ EXPECTED_FOOTER_A =\
 </html>
 """
 EXPECTED_FOOTER_B =\
-""" </script>
+"""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
@@ -525,7 +531,10 @@ EXPECTED_FOOTER_B =\
 """
 
 EXPECTED_FOOTER_C =\
-""" </script>
+"""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
