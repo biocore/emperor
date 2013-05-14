@@ -344,6 +344,23 @@ def main():
         except ValueError, e:
             option_parser.error(e.message)
 
+    # check that all the required columns exist in the metadata mapping file
+    if color_by_column_names:
+        color_by_column_names = color_by_column_names.split(',')
+
+        # check for all the mapping fields
+        for col in color_by_column_names:
+            # for concatenated columns check each individual field
+            if '&&' in col:
+                for _col in col.split('&&'):
+                    if _col not in header:
+                        offending_fields.append(col)
+            elif col not in header:
+                offending_fields.append(col)
+    else:
+        # if the user didn't specify the header names display everything
+        color_by_column_names = header[:]
+
     # extract a list of the custom axes provided and each element is numeric
     if custom_axes:
         custom_axes = custom_axes.strip().strip("'").strip('"').split(',')
@@ -355,24 +372,15 @@ def main():
             if axis not in header:
                 offending_fields.append(axis)
                 break
+            # make sure this value is in the mapping file
+            elif axis not in color_by_column_names:
+                color_by_column_names.append(axis)
         # perform only if the for loop does not call break
         else:
             # make sure all these axes are numeric
             for axis in custom_axes:
                 if map_object.isNumericCategory(axis) == False:
                     non_numeric_categories.append(axis)
-
-    # check that all the required columns exist in the metadata mapping file
-    if color_by_column_names:
-        color_by_column_names = color_by_column_names.split(',')
-
-        # check for all the mapping fields
-        for col in color_by_column_names:
-            if col not in header and '&&' not in col:
-                offending_fields.append(col)
-    else:
-        # if the user didn't specify the header names display everything
-        color_by_column_names = header[:]
 
     # make multiple checks for the add_vectors option
     if add_vectors != [None, None]:
@@ -384,9 +392,26 @@ def main():
                 "to use %d (%s)." % (len(add_vectors), ', '.join(add_vectors)))
         # make sure the field(s) exist
         for col in add_vectors:
-            if col not in header:
+            # concatenated fields are allowed now so check for each field
+            if '&&' in col:
+                for _col in col.split('&&'):
+                    if _col not in header:
+                        offending_fields.append(col)
+                        break
+                # only execute this block of code if all checked fields exist
+                else:
+                    # make sure that if it's going to be used for vector
+                    # creation it gets used for coloring and map postprocessing
+                    if col not in color_by_column_names:
+                        color_by_column_names.append(col)
+            # if it's a column without concatenations
+            elif col not in header:
                 offending_fields.append(col)
                 break
+            else:
+                # check this vector value is in the color by category
+                if col not in color_by_column_names:
+                    color_by_column_names.append(col)
         # perform only if the for loop does not call break
         else:
             # check that the second category is all with numeric values
@@ -449,7 +474,7 @@ def main():
     copy_support_files(output_dir)
 
     # write the bilot coords in the output file if a path is passed
-    if biplot_fp:
+    if biplot_fp and taxa_fp:
         # make sure this file can be created
         try:
             fd = open(biplot_fp, 'w')
