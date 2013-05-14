@@ -216,11 +216,16 @@ EMPEROR_HEADER_HTML_STRING =\
 <head>
     <title>Emperor</title>
     <meta charset="utf-8">
+    <link rel="shortcut icon" href="emperor_required_resources/img/favicon.ico" />
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/emperor/css/emperor.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
+    <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
+        <tr><td><img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="logo"/></td></tr>
+    </table>
+
     <script type="text/javascript" src="emperor_required_resources/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
     <script src="emperor_required_resources/js/jquery.colorPicker.js"></script>
@@ -258,8 +263,10 @@ _BIPLOT_SPHERES_COLOR_SELECTOR ="""
             </table>
             <br>"""
 
-_EMPEROR_FOOTER_HTML_STRING =\
-""" </script>
+_EMPEROR_FOOTER_HTML_STRING ="""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>

@@ -238,7 +238,10 @@ g_taxaPositions['3'] = { 'lineage': 'Root;k__Bacteria;Other', 'x': -0.276542, 'y
 """
 
 EXPECTED_FOOTER_A =\
-""" </script>
+"""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
@@ -348,7 +351,10 @@ EXPECTED_FOOTER_A =\
 </html>
 """
 EXPECTED_FOOTER_B =\
-""" </script>
+"""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
@@ -468,7 +474,10 @@ EXPECTED_FOOTER_B =\
 """
 
 EXPECTED_FOOTER_C =\
-""" </script>
+"""document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
 </head>
 
 <body>
