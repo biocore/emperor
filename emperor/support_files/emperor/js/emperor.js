@@ -3,10 +3,10 @@
  * __copyright__ = "Copyright 2013, Emperor"
  * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza"]
  * __license__ = "GPL"
- * __version__ = "0.0.0-dev"
+ * __version__ = "0.9.0"
  * __maintainer__ = "Meg Pirrung"
  * __email__ = "meganap@gmail.com"
- * __status__ = "Development"
+ * __status__ = "Release"
  */
 
 // spheres and ellipses that are being displayed on screen
