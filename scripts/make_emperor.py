@@ -187,6 +187,7 @@ def main():
     n_taxa_to_keep = opts.n_taxa_to_keep
     biplot_fp = opts.biplot_fp
     add_vectors = opts.add_vectors
+    verbose_output = opts.verbose
 
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
@@ -263,6 +264,9 @@ def main():
         # number of samples ids that are shared between coords and mapping files
         sids_intersection=list(set(zip(*mapping_data)[0])&set(_coords_headers))
 
+        # sample ids that are not mapped but are in the coords
+        sids_difference=list(set(_coords_headers)-set(zip(*mapping_data)[0]))
+
         # used to perform different validations in the script, very similar for
         # the case where the input is not a directory
         number_intersected_sids = len(sids_intersection)
@@ -279,6 +283,8 @@ def main():
 
         # number of samples ids that are shared between coords and mapping files
         sids_intersection = list(set(zip(*mapping_data)[0])&set(coords_headers))
+        # sample ids that are not mapped but are in the coords
+        sids_difference = list(set(coords_headers)-set(zip(*mapping_data)[0]))
         number_intersected_sids = len(sids_intersection)
         required_number_of_sids = len(coords_headers)
 
@@ -313,11 +319,19 @@ def main():
     # Otherwise it isn't valid; unless --ignore_missing_samples is set True
     if number_intersected_sids != required_number_of_sids and\
         not ignore_missing_samples:
-        option_parser.error('The metadata mapping file has fewer sample '
-            'identifiers than the coordinates file. Verify you are using a '
-            'mapping file that contains at least all the samples contained in '
-            'the coordinates file(s). You can force the script to ignore these '
-            ' samples by passing the \'--ignore_missing_samples\' flag.')
+        message = 'The metadata mapping file has fewer sample identifiers '+\
+            'than the coordinates file. Verify you are using a mapping file '+\
+            'that contains at least all the samples contained in the '+\
+            'coordinates file(s). You can force the script to ignore these '+\
+            'samples by passing the \'--ignore_missing_samples\' flag.'
+
+        if verbose_output:
+            message += ' Offending sample identifier(s): %s.' %\
+                ', '.join(sids_difference)
+            print sids_difference
+
+        option_parser.error(message)
+
     if number_intersected_sids != required_number_of_sids and\
         ignore_missing_samples:
         # keep only the samples that are mapped in the mapping file
