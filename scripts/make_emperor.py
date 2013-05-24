@@ -292,7 +292,7 @@ def main():
         try:
             # for summarized tables the "otu_ids" are really the "lineages"
             otu_sample_ids, lineages, otu_table, _ = parse_otu_table(open(
-                taxa_fp, 'U'), count_map_f=float)
+                taxa_fp, 'U'), count_map_f=float, remove_empty_rows=True)
         except ValueError, e:
             option_parser.error('There was a problem parsing the --taxa_fp: %s'%
                 e.message)
