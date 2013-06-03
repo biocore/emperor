@@ -1205,7 +1205,10 @@ $(document).ready(function() {
 		var line = "";
 		$("#labelcombo").append("<option>Select A Category...</option>");
 
-		for(var i in g_mappingFileHeaders){
+		// this sorted list of headers is only used in the following loop
+		// to create the 'color by', 'show by' and 'label by' drop-down menus
+		sortedMappingFileHeaders = _splitAndSortNumericAndAlpha(g_mappingFileHeaders)
+		for(var i in sortedMappingFileHeaders){
 			var temp = [];
 			for(var j in g_plotIds) {
 				if(g_mappingFileData[g_plotIds[j]] == undefined){
@@ -1216,7 +1219,7 @@ $(document).ready(function() {
 			}
 			temp = dedupe(temp);
 
-			line = "<option value=\""+g_mappingFileHeaders[i]+"\">"+g_mappingFileHeaders[i]+"</option>"
+			line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
 			$("#colorbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
