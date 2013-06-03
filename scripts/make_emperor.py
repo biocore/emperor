@@ -159,11 +159,12 @@ script_info['optional_options'] = [
     'creating BiPlots. [default=%default]', default=None, type=
     'existing_filepath'),
     make_option('-x', '--missing_custom_axes_values', help='Option to override '
-    'the error shown when the \'--custom_axes\' categories, when the metadata column has '
-    'non-numeric values in the mapping file. For example, if you wanted to see all the '
-    'control samples that do not have a time gradient value in the mapping '
-    'file at the time-point zero, you would pass  \'-x Time:0\'. This option could be '
-    'used in all explicit axes.', action='append', default=None),
+    'the error shown when the \'--custom_axes\' categories, when the metadata '
+    'column has non-numeric values in the mapping file. For example, if you '
+    'wanted to see all the control samples that do not have a time gradient '
+    'value in the mapping file at the time-point zero, you would pass  \'-x '
+    'Time:0\'. This option could be used in all explicit axes.',action='append',
+    default=None),
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
     'output directory that will contain the PCoA plot. [default: %default]',
     default='emperor')
@@ -204,6 +205,9 @@ def main():
     # before creating any output, check correct parsing of the main input files
     try:
         mapping_data, header, comments = parse_mapping_file(open(map_fp,'U'))
+
+        # use this set variable to make presence/absensce checks faster
+        lookup_header = set(header)
     except:
         option_parser.error(('The metadata mapping file \'%s\' does not seem '
             'to be formatted correctly, verify the formatting is QIIME '
@@ -238,7 +242,7 @@ def main():
                 coords_data.append(_coords_data)
                 coords_eigenvalues.append(_coords_eigenvalues)
                 coords_pct.append(_coords_pct)
-            except:
+            except ValueError:
                 offending_coords_fp.append(fp)
 
         # in case there were files that couldn't be parsed
@@ -276,7 +280,9 @@ def main():
         try:
             coords_headers, coords_data, coords_eigenvalues, coords_pct =\
                 parse_coords(open(input_coords,'U'))
-        except:
+        # this exception was noticed when there were letters in the coords file
+        # other exeptions should be catched here; code will be updated then
+        except ValueError:
             option_parser.error(('The PCoA file \'%s\' does not seem to be a '
                 'coordinates formatted file, verify by manuall inspecting '
                 'the contents.') % input_coords)
@@ -367,9 +373,9 @@ def main():
             # for concatenated columns check each individual field
             if '&&' in col:
                 for _col in col.split('&&'):
-                    if _col not in header:
+                    if _col not in lookup_header:
                         offending_fields.append(col)
-            elif col not in header:
+            elif col not in lookup_header:
                 offending_fields.append(col)
     else:
         # if the user didn't specify the header names display everything
@@ -383,7 +389,7 @@ def main():
         map_object = MetadataMap(mapping_file_to_dict(mapping_data, header), [])
         for axis in custom_axes:
             # append the field to the error queue that it belongs to
-            if axis not in header:
+            if axis not in lookup_header:
                 offending_fields.append(axis)
                 break
             # make sure this value is in the mapping file
@@ -409,7 +415,7 @@ def main():
             # concatenated fields are allowed now so check for each field
             if '&&' in col:
                 for _col in col.split('&&'):
-                    if _col not in header:
+                    if _col not in lookup_header:
                         offending_fields.append(col)
                         break
                 # only execute this block of code if all checked fields exist
@@ -419,7 +425,7 @@ def main():
                     if col not in color_by_column_names:
                         color_by_column_names.append(col)
             # if it's a column without concatenations
-            elif col not in header:
+            elif col not in lookup_header:
                 offending_fields.append(col)
                 break
             else:
