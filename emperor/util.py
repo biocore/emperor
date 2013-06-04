@@ -104,8 +104,7 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False):
 
         # join all the fields of the metadata that are listed in indices
         for line in data:
-            line.append(''.join([element for i, element in enumerate(line)
-                if i in indices]))
+            line.append(''.join([line[index] for index in indices]))
         headers.append(new_column)
 
     # remove all unique or singled valued columns

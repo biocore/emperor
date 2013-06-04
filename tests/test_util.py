@@ -101,11 +101,19 @@ class TopLevelTests(TestCase):
             'Treatment&&DOB'])
         self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_A)
 
+        # test it has a different order in the concatenated columns i. e. the
+        # value of DOB comes before the value of Treatment in the result
+        out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
+            self.mapping_file_headers, ['Treatment', 'DOB', 'DOB&&Treatment'])
+        self.assertEquals(out_headers, ['SampleID', 'Treatment', 'DOB',
+            'DOB&&Treatment'])
+        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_B)
+
         # test it filter columns properly
         out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
             self.mapping_file_headers, ['Treatment'])
         self.assertEquals(out_headers, ['SampleID', 'Treatment'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_B)
+        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_C)
 
         # check it removes columns with unique values
         out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
@@ -114,7 +122,7 @@ class TopLevelTests(TestCase):
             unique=True)
         self.assertEquals(out_headers, ['SampleID', 'LinkerPrimerSequence',
             'Treatment', 'DOB'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_C)
+        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_D)
 
         # check it removes columns where there is only one value
         out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
@@ -123,7 +131,7 @@ class TopLevelTests(TestCase):
             single=True)
         self.assertEquals(out_headers,['SampleID', 'BarcodeSequence',
             'Treatment', 'DOB', 'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_D)
+        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_E)
 
         # keep only treatment concat treatment and DOB and remove all
         # categories with only one value and all with unique values for field
@@ -132,7 +140,7 @@ class TopLevelTests(TestCase):
             unique=True, single=True)
         self.assertEquals(out_headers, ['SampleID', 'Treatment',
             'Treatment&&DOB'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_E)
+        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_F)
 
     def test_keep_columns_from_mapping_file(self):
         """Check correct selection of metadata is being done"""
@@ -324,12 +332,23 @@ MAPPING_FILE_DATA_CAT_A = [
     ['PC.635', 'Fast','20080116', 'Fast20080116'],
     ['PC.636', 'Fast','20080116', 'Fast20080116']]
 
-MAPPING_FILE_DATA_CAT_B = [['PC.354', 'Control'], ['PC.355', 'Control'],
+MAPPING_FILE_DATA_CAT_B = [
+    ['PC.354', 'Control','20061218', '20061218Control'],
+    ['PC.355', 'Control','20061218', '20061218Control'],
+    ['PC.356', 'Control','20061126', '20061126Control'],
+    ['PC.481', 'Control','20070314', '20070314Control'],
+    ['PC.593', 'Control','20071210', '20071210Control'],
+    ['PC.607', 'Fast','20071112', '20071112Fast'],
+    ['PC.634', 'Fast','20080116', '20080116Fast'],
+    ['PC.635', 'Fast','20080116', '20080116Fast'],
+    ['PC.636', 'Fast','20080116', '20080116Fast']]
+
+MAPPING_FILE_DATA_CAT_C = [['PC.354', 'Control'], ['PC.355', 'Control'],
     ['PC.356', 'Control'], ['PC.481', 'Control'], ['PC.593', 'Control'],
     ['PC.607', 'Fast'], ['PC.634', 'Fast'], ['PC.635', 'Fast'],
     ['PC.636', 'Fast']]
 
-MAPPING_FILE_DATA_CAT_C = [
+MAPPING_FILE_DATA_CAT_D = [
     ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
     ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
     ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126'],
@@ -340,7 +359,7 @@ MAPPING_FILE_DATA_CAT_C = [
     ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
     ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116']]
 
-MAPPING_FILE_DATA_CAT_D = [
+MAPPING_FILE_DATA_CAT_E = [
     ['PC.354', 'AGCACGAGCCTA', 'Control', '20061218', 'Control_mouse_I.D._354'],
     ['PC.355', 'AACTCGTCGATG', 'Control', '20061218', 'Control_mouse_I.D._355'],
     ['PC.356', 'ACAGACCACTCA', 'Control', '20061126', 'Control_mouse_I.D._356'],
@@ -351,7 +370,7 @@ MAPPING_FILE_DATA_CAT_D = [
     ['PC.635', 'ACCGCAGAGTCA', 'Fast', '20080116', 'Fasting_mouse_I.D._635'],
     ['PC.636', 'ACGGTGAGTGTC', 'Fast', '20080116', 'Fasting_mouse_I.D._636']]
 
-MAPPING_FILE_DATA_CAT_E = [
+MAPPING_FILE_DATA_CAT_F = [
     ['PC.354', 'Control', 'Control20061218'],
     ['PC.355', 'Control', 'Control20061218'],
     ['PC.356', 'Control', 'Control20061126'],
