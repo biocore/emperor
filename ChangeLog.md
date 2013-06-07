@@ -1,7 +1,16 @@
 Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 ===================================================
 
+*New features*
 
+* Scientific notation is now taken into account in the GUI for scientific coloring.
+* GUI is usable in mobile devices that support WebGL.
+
+*Bug Fixes*
+
+* Fixes recenter camera not working.
+* Category names are sorted alphabetically.
+* Category names with non-alphanumeric characters are colored correctly now.
 
 Emperor 0.9.0 (14 May 2013)
 ===========================
