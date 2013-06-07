@@ -5,7 +5,7 @@ Emperor makes usage of all of the following copyrighted packages; their licenses
 
 --------------------------------------------------------------------------------
 
-### THREE.js is released under the MIT License
+### THREE.js ([r58](https://github.com/mrdoob/three.js/tree/r58)) is released under the MIT License
 
 The MIT License
 
@@ -31,7 +31,7 @@ THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### jQUERY is released under the MIT License
+### jQuery ([1.8](https://github.com/jquery/jquery/tree/1.8.0), [1.7.1](https://github.com/jquery/jquery/tree/1.7.1) & [1.6.2](https://github.com/jquery/jquery/tree/1.6.2)) is released under the MIT License
 
 Copyright 2013 jQuery Foundation and other contributors
 http://jquery.com/
@@ -57,7 +57,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### Spectrum is released under the MIT License
+### Spectrum ([1.0.2](https://github.com/bgrins/spectrum/tree/1.0.2)) is released under the MIT License
 
 Copyright (c) 2013, Brian Grinstead, http://briangrinstead.com
 
@@ -82,7 +82,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### ColorPicker is released under the MIT License
+### [ColorPicker](https://github.com/laktek/really-simple-color-picker/) is released under the MIT License
 
 Copyright (c) 2012 Lakshan Perera
 
