@@ -1031,6 +1031,10 @@ function drawSpheres() {
   g_taxaPositions array must have elements stored in it.
 */
 function drawTaxa(){
+	// All taxa spheres are white by default
+	var whiteColor = new THREE.Color();
+	whiteColor.setHex("0xFFFFFF");
+
 	for (var key in g_taxaPositions){
 		var mesh = new THREE.Mesh(g_genericSphere,
 			new THREE.MeshLambertMaterial());
@@ -1046,7 +1050,7 @@ function drawTaxa(){
 			g_taxaPositions[key]['z']);
 
 		// the legacy color of these spheres is white
-		mesh.material.color = new THREE.Color("0xFFFFFF");
+		mesh.material.color = whiteColor;
 		mesh.material.transparent = true;
 		mesh.material.opacity = 0.5;
 		mesh.updateMatrix();
