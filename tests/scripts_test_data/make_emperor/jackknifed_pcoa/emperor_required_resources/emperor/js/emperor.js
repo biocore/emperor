@@ -3,7 +3,7 @@
  * __copyright__ = "Copyright 2013, Emperor"
  * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza"]
  * __license__ = "GPL"
- * __version__ = "0.0.0-dev"
+ * __version__ = "0.9.0-dev"
  * __maintainer__ = "Meg Pirrung"
  * __email__ = "meganap@gmail.com"
  * __status__ = "Development"
@@ -193,7 +193,7 @@ function toggleScaleCoordinates(element){
 	for (sample_id in g_plotVectors){
 
 		// the color has to be formatted as an hex number for makeLine to work
-		currentColor = "0x"+g_plotVectors[sample_id].material.color.getHex();
+		currentColor = "0x"+g_plotVectors[sample_id].material.color.getHexString();
 
 		// updating the position of a vertex in a line is a really expensive
 		// operation, hence we just remove it from the group and create it again
@@ -261,7 +261,7 @@ function getColorList(vals) {
 			}
 			else{
 				// multiplying the value by 0.66 makes the colormap go R->G->B
-				colors[index].setHSV(index*.66/vals.length,1,1);
+				THREE.ColorConverter.setHSV(colors[index], index*.66/vals.length, 1, 1)
 			}
 		}
 	}
@@ -340,11 +340,13 @@ function colorByMenuChanged() {
 	// build the colorby table in HTML
 	var lines = "<table>";
 	for(var i in vals){
-		// html classes have a special meaning for '.' and spaces, must remove them
-		// as well as special chars
-		var validVal = vals[i].replace(/[\. :!@#$%^&*()]/g,'');
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping file
+		// if this is done otherwise, weird characters have to be extemped etc.
+		var idString = "r"+i+"c"+g_categoryIndex;
+
 		// set the div id so that we can reference this div later
-		lines += "<tr><td><div id=\""+validVal+"\"class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
+		lines += "<tr><td><div id=\""+idString+"\"class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
 
 		if(vals[i].length > 25){
 			lines+= vals[i].substring(0,25) + "..."
@@ -359,12 +361,15 @@ function colorByMenuChanged() {
 	document.getElementById("colorbylist").innerHTML = lines;
 
 	for(var i in vals){
-		var validVal = vals[i].replace(/[\. :!@#$%^&*()]/g,'');
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping
+		var idString = "r"+i+"c"+g_categoryIndex;
+
 		// get the div built earlier and turn it into a color picker
-		$('#'+validVal).css('backgroundColor',"#"+colors[i].getHex());
-		$("#"+validVal).spectrum({
+		$('#'+idString).css('backgroundColor',"#"+colors[i].getHexString());
+		$("#"+idString).spectrum({
 			localStorageKey: 'key',
-			color: colors[i].getHex(),
+			color: colors[i].getHexString(),
 			showInitial: true,
 			showInput: true,
 			change:
@@ -485,7 +490,7 @@ function toggleVisible(value) {
 function setKey(values, colors) {
 	if(g_keyBuilt){
 		for(var i = 0; i < values.length; i++){
-			colorChanged(values[i], '#'+colors[i].getHex());
+			colorChanged(values[i], '#'+colors[i].getHexString());
 		}
 	}
 	else {
@@ -496,22 +501,22 @@ function setKey(values, colors) {
 			var catValue = g_mappingFileData[sid][g_categoryIndex];
 			var catColor = colors[values.indexOf(catValue)];
 			keyHTML += "<tr id=\""+divid+"row\"><td><div id=\""+divid+"\" name=\""+sid+"\" class=\"colorbox\" style=\"background-color:#";
-			keyHTML += catColor.getHex();
+			keyHTML += catColor.getHexString();
 			keyHTML += ";\"></div>";
 			keyHTML +="</td><td>";
 			keyHTML += sid;
 			keyHTML += "</td></tr>";
 
 			try {
-				g_plotEllipses[g_plotIds[i]].material.color.setHex("0x"+catColor.getHex());
+				g_plotEllipses[g_plotIds[i]].material.color.setHex("0x"+catColor.getHexString());
 			}
 			catch(TypeError){}
 			try {
-				g_plotSpheres[g_plotIds[i]].material.color.setHex("0x"+catColor.getHex());
+				g_plotSpheres[g_plotIds[i]].material.color.setHex("0x"+catColor.getHexString());
 			}
 			catch(TypeError){}
 			try {
-				g_plotVectors[g_plotIds[i]].material.color.setHex("0x"+catColor.getHex());
+				g_plotVectors[g_plotIds[i]].material.color.setHex("0x"+catColor.getHexString());
 			}
 			catch(TypeError){}
 		}
@@ -610,12 +615,13 @@ function labelMenuChanged() {
 	// build the label table in HTML
 	var lines = "<form name=\"labels\" id=\"labelForm\"><table>";
 	for(var i in vals){
-		// html classes have a special meaning for '.' and spaces, must remove them
-		// as well as special chars
-		var validVal = vals[i].replace(/[\. :!@#$%^&*()]/g,'');
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping file
+		// if this is done otherwise, weird characters have to be extemped etc.
+		var idString = "r"+i+"c"+g_categoryIndex;
 
 		// set the div id, checkbox name so that we can reference this later
-		lines += "<tr><td><input name=\""+vals[i]+"\" type=\"checkbox\" checked=\"true\" onClick=\"toggleLabels()\" ></input></td><td><div id=\""+validVal+"Label\" class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
+		lines += "<tr><td><input name=\""+vals[i]+"\" type=\"checkbox\" checked=\"true\" onClick=\"toggleLabels()\" ></input></td><td><div id=\""+idString+"Label\" class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
 
 		if(vals[i].length > 25){
 			lines+= vals[i].substring(0,25) + "..."
@@ -631,13 +637,17 @@ function labelMenuChanged() {
 	document.getElementById("labellist").innerHTML = lines;
 
 	for(var i in vals){
-		var validVal = vals[i].replace(/[\. :!@#$%^&*()]/g,'');
-		// get the div built earlier and turn it into a color picker
-		$('#'+validVal+'Label').css('backgroundColor',"#"+colors[i].getHex());
-		labelColorChanged(vals[i], "#"+colors[i].getHex());
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping file
+		// if this is done otherwise, weird characters have to be extemped etc.
+		var idString = "r"+i+"c"+g_categoryIndex;
 
-		$("#"+validVal+'Label').spectrum({
-			color: colors[i].getHex(),
+		// get the div built earlier and turn it into a color picker
+		$('#'+idString+'Label').css('backgroundColor',"#"+colors[i].getHexString());
+		labelColorChanged(vals[i], "#"+colors[i].getHexString());
+
+		$("#"+idString+'Label').spectrum({
+			color: colors[i].getHexString(),
 			showInitial: true,
 			showPalette: true,
 			palette: [['red', 'green', 'blue']],
@@ -743,13 +753,16 @@ function toggleBiplotVisibility(){
 */
 function toScreenXY( position, camera, jqdiv ) {
 
-	var pos = position.clone();
-	projScreenMat = new THREE.Matrix4();
-	projScreenMat.multiply( camera.projectionMatrix, camera.matrixWorldInverse );
-	projScreenMat.multiplyVector3( pos );
+	var screenPosition = position.clone();
+	var screenProjectionMatrix = new THREE.Matrix4();
 
-	return { x: ( pos.x + 1 ) * jqdiv.width() / 2 + jqdiv.offset().left,
-		y: ( - pos.y + 1 ) * jqdiv.height() / 2 + jqdiv.offset().top };
+	// multiply the matrices and aply the vector to the projection matrix
+	screenProjectionMatrix.multiplyMatrices( camera.projectionMatrix,
+		camera.matrixWorldInverse);
+	screenPosition.applyProjection(screenProjectionMatrix);
+
+	return { x: (screenPosition.x + 1)*jqdiv.width()/2 + jqdiv.offset().left,
+		y: (-screenPosition.y+1)*jqdiv.height()/2 + jqdiv.offset().top};
 }
 
 /*This function is used to filter the key to a user's provided search string*/
@@ -956,9 +969,14 @@ function setJqueryUi() {
 			function(color) {
 				// pass a boolean flag to convert to hex6 string
 				var c = color.toHexString(true);
+
+				// create a new three.color from the string
+				var rendererBackgroundColor = new THREE.Color();
+				rendererBackgroundColor.setHex(c.replace('#','0x'));
+
 				// set the color for the box and for the renderer
 				$(this).css('backgroundColor', c);
-				g_mainRenderer.setClearColorHex(c.replace('#','0x'), 1);
+				g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
 			}
 	});
 }
@@ -1013,6 +1031,10 @@ function drawSpheres() {
   g_taxaPositions array must have elements stored in it.
 */
 function drawTaxa(){
+	// All taxa spheres are white by default
+	var whiteColor = new THREE.Color();
+	whiteColor.setHex("0xFFFFFF");
+
 	for (var key in g_taxaPositions){
 		var mesh = new THREE.Mesh(g_genericSphere,
 			new THREE.MeshLambertMaterial());
@@ -1028,7 +1050,7 @@ function drawTaxa(){
 			g_taxaPositions[key]['z']);
 
 		// the legacy color of these spheres is white
-		mesh.material.color = new THREE.Color("0xFFFFFF");
+		mesh.material.color = whiteColor;
 		mesh.material.transparent = true;
 		mesh.material.opacity = 0.5;
 		mesh.updateMatrix();
@@ -1091,7 +1113,6 @@ function SVGSaved(response){
 	dlwin.document.write('<a href=\''+fileName+'\'>'+fileName+'</a>')
 	dlwin.document.write('</BODY></HTML>');
 	dlwin.document.close();
-	console.log(fileName)
 }
 
 /*Utility function to draw two vertices lines at a time
@@ -1102,19 +1123,22 @@ function SVGSaved(response){
   or a hex number.
 */
 function makeLine(coords_a, coords_b, color, width){
-	var line, material, geometry = new THREE.Geometry();
-	var vertex_a = new THREE.Vertex(new THREE.Vector3(coords_a[0], coords_a[1],
-		coords_a[2]));
-	var vertex_b = new THREE.Vertex(new THREE.Vector3(coords_b[0], coords_b[1],
-		coords_b[2]));
+	// based on the example described in:
+	// https://github.com/mrdoob/three.js/wiki/Drawing-lines
+	var material, geometry, line;
 
-	material = new THREE.LineBasicMaterial({color: color, linewidth: width});
+	// make the material transparent and with full opacity
+	material = new THREE.LineBasicMaterial({color:color, linewidth:width});
 	material.matrixAutoUpdate = true;
 	material.transparent = true;
 	material.opacity = 1.0;
 
-	geometry.vertices.push(vertex_a, vertex_b);
-	geometry.matrixAutoUpdate = true;
+	// add the two vertices to the geometry
+	geometry = new THREE.Geometry();
+	geometry.vertices.push(new THREE.Vector3(coords_a[0], coords_a[1], coords_a[2]));
+	geometry.vertices.push(new THREE.Vector3(coords_b[0], coords_b[1], coords_b[2]));
+
+	// the line will contain the two vertices and the describecd material
 	line = new THREE.Line(geometry, material);
 
 	return line;
@@ -1205,7 +1229,10 @@ $(document).ready(function() {
 		var line = "";
 		$("#labelcombo").append("<option>Select A Category...</option>");
 
-		for(var i in g_mappingFileHeaders){
+		// this sorted list of headers is only used in the following loop
+		// to create the 'color by', 'show by' and 'label by' drop-down menus
+		sortedMappingFileHeaders = _splitAndSortNumericAndAlpha(g_mappingFileHeaders)
+		for(var i in sortedMappingFileHeaders){
 			var temp = [];
 			for(var j in g_plotIds) {
 				if(g_mappingFileData[g_plotIds[j]] == undefined){
@@ -1216,7 +1243,7 @@ $(document).ready(function() {
 			}
 			temp = dedupe(temp);
 
-			line = "<option value=\""+g_mappingFileHeaders[i]+"\">"+g_mappingFileHeaders[i]+"</option>"
+			line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
 			$("#colorbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
@@ -1244,9 +1271,13 @@ $(document).ready(function() {
 		controls.dynamicDampingFactor = 0.3;
 		controls.keys = [ 65, 83, 68 ];
 
+		// black is the default background color for the scene
+		var rendererBackgroundColor = new THREE.Color();
+		rendererBackgroundColor.setHex("0x000000");
+
 		// renderer, the default background color is black
 		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true });
-		g_mainRenderer.setClearColorHex(0x000000, 1);
+		g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
 		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
 		g_mainRenderer.sortObjects = false;
 		main_plot.append(g_mainRenderer.domElement);
