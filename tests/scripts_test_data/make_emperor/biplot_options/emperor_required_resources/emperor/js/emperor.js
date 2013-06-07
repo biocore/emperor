@@ -28,6 +28,7 @@ var g_mainScene;
 var g_sceneCamera;
 var g_sceneLight;
 var g_mainRenderer;
+var g_sceneControl;
 
 // general multipurpose variables
 var g_elementsGroup; // group that holds the plotted shapes
@@ -74,6 +75,9 @@ function resetCamera() {
 	g_sceneCamera.position.set( 0, 0, g_maximum*4);
 	g_sceneCamera.rotation.set( 0, 0, 0);
 	g_sceneCamera.updateProjectionMatrix();
+
+	// reset the controls of the scene to the start point
+	g_sceneControl.reset()
 }
 
 /*Removes duplicates from a list of samples*/
@@ -1261,15 +1265,15 @@ $(document).ready(function() {
 		g_sceneCamera.add(g_sceneLight);
 
 		// Adding camera
-		controls = new THREE.TrackballControls(g_sceneCamera, document.getElementById('main_plot'));
-		controls.rotateSpeed = 1.0;
-		controls.zoomSpeed = 1.2;
-		controls.panSpeed = 0.8;
-		controls.noZoom = false;
-		controls.noPan = false;
-		controls.staticMoving = true;
-		controls.dynamicDampingFactor = 0.3;
-		controls.keys = [ 65, 83, 68 ];
+		g_sceneControl = new THREE.TrackballControls(g_sceneCamera, document.getElementById('main_plot'));
+		g_sceneControl.rotateSpeed = 1.0;
+		g_sceneControl.zoomSpeed = 1.2;
+		g_sceneControl.panSpeed = 0.8;
+		g_sceneControl.noZoom = false;
+		g_sceneControl.noPan = false;
+		g_sceneControl.staticMoving = true;
+		g_sceneControl.dynamicDampingFactor = 0.3;
+		g_sceneControl.keys = [ 65, 83, 68 ];
 
 		// black is the default background color for the scene
 		var rendererBackgroundColor = new THREE.Color();
@@ -1368,7 +1372,7 @@ $(document).ready(function() {
 	}
    
 	function render() {
-		controls.update();
+		g_sceneControl.update();
 		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 	}
