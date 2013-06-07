@@ -340,11 +340,13 @@ function colorByMenuChanged() {
 	// build the colorby table in HTML
 	var lines = "<table>";
 	for(var i in vals){
-		// html classes have a special meaning for '.' and spaces, must remove them
-		// as well as special chars
-		var validVal = vals[i].replace(/[\. :!@#$%^&*()]/g,'');
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping file
+		// if this is done otherwise, weird characters have to be extemped etc.
+		var idString = "r"+i+"c"+g_categoryIndex;
+
 		// set the div id so that we can reference this div later
-		lines += "<tr><td><div id=\""+validVal+"\"class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
+		lines += "<tr><td><div id=\""+idString+"\"class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
 
 		if(vals[i].length > 25){
 			lines+= vals[i].substring(0,25) + "..."
@@ -359,10 +361,13 @@ function colorByMenuChanged() {
 	document.getElementById("colorbylist").innerHTML = lines;
 
 	for(var i in vals){
-		var validVal = vals[i].replace(/[\. :!@#$%^&*()]/g,'');
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping
+		var idString = "r"+i+"c"+g_categoryIndex;
+
 		// get the div built earlier and turn it into a color picker
-		$('#'+validVal).css('backgroundColor',"#"+colors[i].getHex());
-		$("#"+validVal).spectrum({
+		$('#'+idString).css('backgroundColor',"#"+colors[i].getHex());
+		$("#"+idString).spectrum({
 			localStorageKey: 'key',
 			color: colors[i].getHex(),
 			showInitial: true,
@@ -610,12 +615,13 @@ function labelMenuChanged() {
 	// build the label table in HTML
 	var lines = "<form name=\"labels\" id=\"labelForm\"><table>";
 	for(var i in vals){
-		// html classes have a special meaning for '.' and spaces, must remove them
-		// as well as special chars
-		var validVal = vals[i].replace(/[\. :!@#$%^&*()]/g,'');
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping file
+		// if this is done otherwise, weird characters have to be extemped etc.
+		var idString = "r"+i+"c"+g_categoryIndex;
 
 		// set the div id, checkbox name so that we can reference this later
-		lines += "<tr><td><input name=\""+vals[i]+"\" type=\"checkbox\" checked=\"true\" onClick=\"toggleLabels()\" ></input></td><td><div id=\""+validVal+"Label\" class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
+		lines += "<tr><td><input name=\""+vals[i]+"\" type=\"checkbox\" checked=\"true\" onClick=\"toggleLabels()\" ></input></td><td><div id=\""+idString+"Label\" class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
 
 		if(vals[i].length > 25){
 			lines+= vals[i].substring(0,25) + "..."
@@ -631,12 +637,16 @@ function labelMenuChanged() {
 	document.getElementById("labellist").innerHTML = lines;
 
 	for(var i in vals){
-		var validVal = vals[i].replace(/[\. :!@#$%^&*()]/g,'');
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping file
+		// if this is done otherwise, weird characters have to be extemped etc.
+		var idString = "r"+i+"c"+g_categoryIndex;
+
 		// get the div built earlier and turn it into a color picker
-		$('#'+validVal+'Label').css('backgroundColor',"#"+colors[i].getHex());
+		$('#'+idString+'Label').css('backgroundColor',"#"+colors[i].getHex());
 		labelColorChanged(vals[i], "#"+colors[i].getHex());
 
-		$("#"+validVal+'Label').spectrum({
+		$("#"+idString+'Label').spectrum({
 			color: colors[i].getHex(),
 			showInitial: true,
 			showPalette: true,
@@ -1091,7 +1101,6 @@ function SVGSaved(response){
 	dlwin.document.write('<a href=\''+fileName+'\'>'+fileName+'</a>')
 	dlwin.document.write('</BODY></HTML>');
 	dlwin.document.close();
-	console.log(fileName)
 }
 
 /*Utility function to draw two vertices lines at a time
