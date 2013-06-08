@@ -391,6 +391,45 @@ function colorByMenuChanged() {
 	setKey(vals, colors);
 }
 
+/*This function is called when a new value is selected in the colorBy menu */
+function opacityByMenuChanged() {
+	// set the new current category and index
+	g_categoryName = document.getElementById('opacitybycombo')[document.getElementById('opacitybycombo').selectedIndex].value;
+	g_categoryIndex = g_mappingFileHeaders.indexOf(g_categoryName);
+
+	// get all values of this category from the mapping
+	var vals = [];
+	for(var i in g_plotIds){
+		vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
+	}
+
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+
+	// build the colorby table in HTML
+	var lines = "<table>";
+	for(var i in vals){
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping file
+		// if this is done otherwise, weird characters have to be extemped etc.
+		var idString = "r"+i+"c"+g_categoryIndex;
+
+		// set the div id so that we can reference this div later
+		lines += "<tr><td><div id=\""+idString+"\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
+
+		if(vals[i].length > 25){
+			lines+= vals[i].substring(0,25) + "..."
+		}
+		else{
+			lines += vals[i];
+		}
+
+		lines+= "</td></tr>";
+	}
+	lines += "</table>";
+	document.getElementById("opacitybylist").innerHTML = lines;
+}
+
+
 /*This function is called when a new value is selected in the showBy menu*/
 function showByMenuChanged() {
 	g_categoryName = document.getElementById('showbycombo')[document.getElementById('showbycombo').selectedIndex].value;
@@ -424,9 +463,11 @@ function showByMenuChanged() {
 	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
 	// build the showby checkbox table in HTML
-	var lines = "<form name=\"showbyform\"><table>"
+	var lines = "<form name=\"showbyform\"><table border=\"1\" width=\"70%\">"
 	for(var i in vals){
-		lines += "<tr><td>";
+		var idString = "r"+i+"c"+g_categoryIndex;
+
+		lines += "<tr><td width=\"10px\">";
 		lines +="<input name=\""+vals[i]+"_show\" value=\""+vals[i]+"\" type=\"checkbox\" checked=\"yes\" onClick=\"toggleVisible(\'"+vals[i]+"\')\">";
 		lines +="</input></td><td title=\""+vals[i]+"\">";
 		if(vals[i].length > 25){
@@ -436,9 +477,31 @@ function showByMenuChanged() {
 			lines += vals[i];
 		}
 		lines +="</td></tr>";
+		lines += "<tr><td></td><td>";
+		lines += "<label id=\""+idString+"opacityvalue\" name=\""+vals[i]+"\" class=\"slidervalue\">XX</label>"
+		lines += "<div id=\""+idString+"opacityslider\" name=\""+vals[i]+"\" class=\"slider-range-max\"></div>"
+		lines +="</td></tr>";
 	}
 	lines += "</table></form>";
 	document.getElementById("showbylist").innerHTML = lines;
+
+	for(var i in vals){
+		var idString = "r"+i+"c"+g_categoryIndex;
+		$("#"+idString+"opacityslider").slider({
+			range: "max",
+			min: 0,
+			max: 100,
+			value: 100,
+			slide: function( event, ui ) {
+				sphereOpacityChange(ui, $(this).attr('name'));
+			},
+			change: function( event, ui ) {
+				sphereOpacityChange(ui, $(this).attr('name'));
+			}
+		});
+		document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%"+idString;
+	}
+
 }
 
 /*Toggle plot items by category selected in showby menu*/
@@ -806,6 +869,52 @@ function sphereOpacityChange(ui) {
 	}
 }
 
+
+/*This function handles events from the sphere opacity slider*/
+function sphereOpacityChangeBlah(ui, sample_id) {
+	sphereOpacity = ui.value/100;
+
+	if (sample_id == null){
+		document.getElementById('sphereopacity').innerHTML = ui.value + "%";
+
+		for(var sid in g_plotSpheres){
+			console.log(sphereOpacity)
+			g_plotSpheres[sid].material.opacity = sphereOpacity;
+		}
+	}
+	else{
+		// console.log(ui);
+		g_categoryName = document.getElementById('colorbycombo')[document.getElementById('colorbycombo').selectedIndex].value;
+		g_categoryIndex = g_mappingFileHeaders.indexOf(g_categoryName);
+
+		// get all values of this category from the mapping
+		var vals = [];
+		for(var i in g_plotIds){
+			vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
+		}
+
+		vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping file
+		// if this is done otherwise, weird characters have to be extemped etc.
+		var idString = "r"+vals.indexOf(sample_id)+"c"+g_categoryIndex;
+		console.log("The idstring %s", idString)
+
+
+
+		console.log('responding for %s', sample_id);
+
+		for(var sid in g_plotSpheres){
+			if (g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)] == sample_id){
+				g_plotSpheres[sid].material.opacity = sphereOpacity;
+			}
+		}
+		// idString="r0c3";
+		document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%"+idString;
+
+	}
+}
+
 /*This function handles events from the vectors opacity slider*/
 function vectorsOpacityChange(ui) {
 	document.getElementById('vectorsopacity').innerHTML = ui.value + "%";
@@ -923,10 +1032,10 @@ function setJqueryUi() {
 		max: 100,
 		value: 100,
 		slide: function( event, ui ) {
-			sphereOpacityChange(ui);
+			sphereOpacityChange(ui, null);
 		},
 		change: function( event, ui ) {
-			sphereOpacityChange(ui);
+			sphereOpacityChange(ui, null);
 		}
 	});
 	document.getElementById('sphereopacity').innerHTML = $( "#sopacityslider" ).slider( "value")+"%";
@@ -1229,7 +1338,7 @@ $(document).ready(function() {
 		g_visiblePoints = g_plotIds.length;
 		changePointCount(g_visiblePoints)
 
-		// build the colorby and showby menus
+		// given that labels are turned off by default, leave a place holder
 		var line = "";
 		$("#labelcombo").append("<option>Select A Category...</option>");
 
@@ -1240,15 +1349,19 @@ $(document).ready(function() {
 			var temp = [];
 			for(var j in g_plotIds) {
 				if(g_mappingFileData[g_plotIds[j]] == undefined){
-					console.log(g_plotIds[j] +" not in mapping")
+					console.warning(g_plotIds[j] +" not in mapping")
 					continue
 				}
 				temp.push(g_mappingFileData[g_plotIds[j]][i])
 			}
 			temp = dedupe(temp);
 
+			// note that each category is added to all the dropdown menus in the
+			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
 			line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
 			$("#colorbycombo").append(line);
+			$("#opacitybycombo").append(line);
+			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
 		}
@@ -1337,38 +1450,38 @@ $(document).ready(function() {
 		requestAnimationFrame( animate );
 
 		render();
-		buildAxisLabels();
+		// buildAxisLabels();
 		// move labels when the plot is moved
-		if(document.plotoptions.elements[0].checked){
-			for(var i in g_plotIds) {
-				var sid = g_plotIds[i];
-				mesh = g_plotSpheres[sid];
-				var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main_plot'));
-				var divid = sid.replace(/\./g,'');
-				$('#'+divid+"_label").css('left',coords['x']);
-				$('#'+divid+"_label").css('top',coords['y']);
-			}
-		}
-		// check if you have to reposition the taxa labels for each frame
-		// this is something that will only happen when drawing biplots
-		if(document.biplotoptions){
-			if(document.biplotoptions.elements[0].checked){
-				for(var key in g_taxaPositions) {
-					// retrieve the position of the taxa on screen
-					var coords = toScreenXY(g_plotTaxa[key].position,
-						g_sceneCamera, $('#main_plot'));
+		// if(document.plotoptions.elements[0].checked){
+		// 	for(var i in g_plotIds) {
+		// 		var sid = g_plotIds[i];
+		// 		mesh = g_plotSpheres[sid];
+		// 		var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main_plot'));
+		// 		var divid = sid.replace(/\./g,'');
+		// 		$('#'+divid+"_label").css('left',coords['x']);
+		// 		$('#'+divid+"_label").css('top',coords['y']);
+		// 	}
+		// }
+		// // check if you have to reposition the taxa labels for each frame
+		// // this is something that will only happen when drawing biplots
+		// if(document.biplotoptions){
+		// 	if(document.biplotoptions.elements[0].checked){
+		// 		for(var key in g_taxaPositions) {
+		// 			// retrieve the position of the taxa on screen
+		// 			var coords = toScreenXY(g_plotTaxa[key].position,
+		// 				g_sceneCamera, $('#main_plot'));
 
-					// add the label at the appropriate position
-					$('#'+key+"_taxalabel").css('left',coords['x']);
-					$('#'+key+"_taxalabel").css('top',coords['y']);
-				}
-			}
-		}
-		if(g_foundId) {
-			var coords = toScreenXY(g_plotSpheres[g_foundId].position, g_sceneCamera, $('#main_plot'));
-			$('#finder').css('left',coords['x']-15);
-			$('#finder').css('top',coords['y']-5);
-		}
+		// 			// add the label at the appropriate position
+		// 			$('#'+key+"_taxalabel").css('left',coords['x']);
+		// 			$('#'+key+"_taxalabel").css('top',coords['y']);
+		// 		}
+		// 	}
+		// }
+		// if(g_foundId) {
+		// 	var coords = toScreenXY(g_plotSpheres[g_foundId].position, g_sceneCamera, $('#main_plot'));
+		// 	$('#finder').css('left',coords['x']-15);
+		// 	$('#finder').css('top',coords['y']-5);
+		// }
 	}
    
 	function render() {
