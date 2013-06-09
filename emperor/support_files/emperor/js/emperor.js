@@ -860,13 +860,28 @@ function ellipseOpacityChange(ui) {
 }
 
 /*This function handles events from the sphere opacity slider*/
-function sphereOpacityChange(ui) {
-	document.getElementById('sphereopacity').innerHTML = ui.value + "%";
+function sphereOpacityChange(ui, category) {
 	sphereOpacity = ui.value/100;
 
-	for(var sid in g_plotSpheres){
-		g_plotSpheres[sid].material.opacity = sphereOpacity;
+
+	if (category == null) {
+		for(var sid in g_plotSpheres){
+			g_plotSpheres[sid].material.opacity = sphereOpacity;
+
+			document.getElementById('sphereopacity').innerHTML = ui.value + "%";
+		}
 	}
+	else{
+		for(var i in g_plotIds){
+			var sid = g_plotIds[i]
+			if(g_mappingFileData[g_plotIds[i]][g_categoryIndex] == category){
+				g_plotSpheres[g_plotIds[i]].material.opacity = sphereOpacity;
+			}
+		}
+
+	}
+
+
 }
 
 
