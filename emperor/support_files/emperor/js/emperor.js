@@ -433,14 +433,14 @@ function opacityByMenuChanged() {
 /*This function is called when a new value is selected in the showBy menu*/
 function showByMenuChanged() {
 	g_categoryName = document.getElementById('showbycombo')[document.getElementById('showbycombo').selectedIndex].value;
-	var index = g_mappingFileHeaders.indexOf(g_categoryName);
+	var showByMenuIndex = g_mappingFileHeaders.indexOf(g_categoryName);
 	var vals = [];
 
 	for(var i in g_plotIds){
 		var sid = g_plotIds[i];
 		var divid = sid.replace(/\./g,'');
 		// get all of the values for the selected category
-		vals.push(g_mappingFileData[sid][index]);
+		vals.push(g_mappingFileData[sid][showByMenuIndex]);
 		// set everything to visible
 		try {
 			g_elementsGroup.add(g_plotEllipses[sid])
@@ -463,10 +463,12 @@ function showByMenuChanged() {
 	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
 	// build the showby checkbox table in HTML
-	var lines = "<form name=\"showbyform\"><table border=\"1\" width=\"70%\">"
+	var lines = "<form name=\"showbyform\"><table width=\"90%\">"
 	for(var i in vals){
-		var idString = "r"+i+"c"+g_categoryIndex;
+		// tag each slider & percent label with the idString to avoid conflicts
+		var idString = "r"+i+"c"+showByMenuIndex;
 
+		// make the size of the checkmark fixed so proportions don't look weird
 		lines += "<tr><td width=\"10px\">";
 		lines +="<input name=\""+vals[i]+"_show\" value=\""+vals[i]+"\" type=\"checkbox\" checked=\"yes\" onClick=\"toggleVisible(\'"+vals[i]+"\')\">";
 		lines +="</input></td><td title=\""+vals[i]+"\">";
@@ -476,17 +478,21 @@ function showByMenuChanged() {
 		else{
 			lines += vals[i];
 		}
+
+		// add a slider and a current-value-label to the table
 		lines +="</td></tr>";
 		lines += "<tr><td></td><td>";
-		lines += "<label id=\""+idString+"opacityvalue\" name=\""+vals[i]+"\" class=\"slidervalue\">XX</label>"
+		lines += "<label id=\""+idString+"opacityvalue\" name=\""+vals[i]+"\" class=\"slidervalue\"></label>"
 		lines += "<div id=\""+idString+"opacityslider\" name=\""+vals[i]+"\" class=\"slider-range-max\"></div>"
 		lines +="</td></tr>";
 	}
 	lines += "</table></form>";
 	document.getElementById("showbylist").innerHTML = lines;
 
+	// set all the sliders to 100 % and to respond to the sphereOpacityChange
+	// with the name of the category they have in the mapping file
 	for(var i in vals){
-		var idString = "r"+i+"c"+g_categoryIndex;
+		var idString = "r"+i+"c"+showByMenuIndex;
 		$("#"+idString+"opacityslider").slider({
 			range: "max",
 			min: 0,
@@ -499,9 +505,14 @@ function showByMenuChanged() {
 				sphereOpacityChange(ui, $(this).attr('name'));
 			}
 		});
-		document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%"+idString;
+		document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%";
 	}
 
+	// change the value of the general opacity for all the spheres, this action
+	// has to take place after the creation of the sliders for all categories;
+	// that is the for loop right befor this statement, as this will produce
+	// a callback that will require to change all the sliders in available
+	$("#sopacityslider").slider("value", 100)
 }
 
 /*Toggle plot items by category selected in showby menu*/
@@ -859,74 +870,50 @@ function ellipseOpacityChange(ui) {
 	}
 }
 
-/*This function handles events from the sphere opacity slider*/
+/*This function handles events from the sphere opacity sliders
+
+  Note that there are two type of sliders, the master opacity slider in the
+  options tab and the 'per-category' slider in the visibility tab. The later
+  one controls the opacity only for the spheres belonging to a specific category
+  in the mapping file.
+
+  As for the parameters 'ui' is the jQuery slider element and category the
+  string with the value of that category of the mapping file or null when the
+  callback is originated from the master opacity slider.
+*/
 function sphereOpacityChange(ui, category) {
-	sphereOpacity = ui.value/100;
+	var sphereOpacity = ui.value/100;
+	var showByCategoryName = document.getElementById('showbycombo')[document.getElementById('showbycombo').selectedIndex].value;
+	var showByCategoryIndex = g_mappingFileHeaders.indexOf(showByCategoryName);
+	var vals = [], idString, newValue;
 
+	// get all values of this category from the mapping
+	for(var i in g_plotIds){
+		vals.push(g_mappingFileData[g_plotIds[i]][showByCategoryIndex]);
+	}
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
+	// category as null means that it's the general opacity slider (the on in the options tab)
 	if (category == null) {
-		for(var sid in g_plotSpheres){
-			g_plotSpheres[sid].material.opacity = sphereOpacity;
-
-			document.getElementById('sphereopacity').innerHTML = ui.value + "%";
+		for (index in vals){
+			idString = "r"+index+"c"+showByCategoryIndex;
+			$("#"+idString+"opacityslider").slider("value", ui.value);
+			document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%";
 		}
-	}
-	else{
-		for(var i in g_plotIds){
-			var sid = g_plotIds[i]
-			if(g_mappingFileData[g_plotIds[i]][g_categoryIndex] == category){
-				g_plotSpheres[g_plotIds[i]].material.opacity = sphereOpacity;
-			}
-		}
-
-	}
-
-
-}
-
-
-/*This function handles events from the sphere opacity slider*/
-function sphereOpacityChangeBlah(ui, sample_id) {
-	sphereOpacity = ui.value/100;
-
-	if (sample_id == null){
 		document.getElementById('sphereopacity').innerHTML = ui.value + "%";
-
-		for(var sid in g_plotSpheres){
-			console.log(sphereOpacity)
-			g_plotSpheres[sid].material.opacity = sphereOpacity;
-		}
 	}
 	else{
-		// console.log(ui);
-		g_categoryName = document.getElementById('colorbycombo')[document.getElementById('colorbycombo').selectedIndex].value;
-		g_categoryIndex = g_mappingFileHeaders.indexOf(g_categoryName);
-
-		// get all values of this category from the mapping
-		var vals = [];
-		for(var i in g_plotIds){
-			vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
-		}
-
-		vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 		// each field is identified by the value it has in the deduplicated
 		// list of values and by the number of the column in the mapping file
 		// if this is done otherwise, weird characters have to be extemped etc.
-		var idString = "r"+vals.indexOf(sample_id)+"c"+g_categoryIndex;
-		console.log("The idstring %s", idString)
+		idString = "r"+vals.indexOf(category)+"c"+showByCategoryIndex;
 
-
-
-		console.log('responding for %s', sample_id);
-
-		for(var sid in g_plotSpheres){
-			if (g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)] == sample_id){
-				g_plotSpheres[sid].material.opacity = sphereOpacity;
+		for(var i in g_plotIds){
+			if(g_mappingFileData[g_plotIds[i]][showByCategoryIndex] == category){
+				g_plotSpheres[g_plotIds[i]].material.opacity = sphereOpacity;
 			}
+			document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%";
 		}
-		// idString="r0c3";
-		document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%"+idString;
-
 	}
 }
 
@@ -1468,38 +1455,38 @@ $(document).ready(function() {
 		requestAnimationFrame( animate );
 
 		render();
-		// buildAxisLabels();
+		buildAxisLabels();
 		// move labels when the plot is moved
-		// if(document.plotoptions.elements[0].checked){
-		// 	for(var i in g_plotIds) {
-		// 		var sid = g_plotIds[i];
-		// 		mesh = g_plotSpheres[sid];
-		// 		var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main_plot'));
-		// 		var divid = sid.replace(/\./g,'');
-		// 		$('#'+divid+"_label").css('left',coords['x']);
-		// 		$('#'+divid+"_label").css('top',coords['y']);
-		// 	}
-		// }
-		// // check if you have to reposition the taxa labels for each frame
-		// // this is something that will only happen when drawing biplots
-		// if(document.biplotoptions){
-		// 	if(document.biplotoptions.elements[0].checked){
-		// 		for(var key in g_taxaPositions) {
-		// 			// retrieve the position of the taxa on screen
-		// 			var coords = toScreenXY(g_plotTaxa[key].position,
-		// 				g_sceneCamera, $('#main_plot'));
+		if(document.plotoptions.elements[0].checked){
+			for(var i in g_plotIds) {
+				var sid = g_plotIds[i];
+				mesh = g_plotSpheres[sid];
+				var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main_plot'));
+				var divid = sid.replace(/\./g,'');
+				$('#'+divid+"_label").css('left',coords['x']);
+				$('#'+divid+"_label").css('top',coords['y']);
+			}
+		}
+		// check if you have to reposition the taxa labels for each frame
+		// this is something that will only happen when drawing biplots
+		if(document.biplotoptions){
+			if(document.biplotoptions.elements[0].checked){
+				for(var key in g_taxaPositions) {
+					// retrieve the position of the taxa on screen
+					var coords = toScreenXY(g_plotTaxa[key].position,
+						g_sceneCamera, $('#main_plot'));
 
-		// 			// add the label at the appropriate position
-		// 			$('#'+key+"_taxalabel").css('left',coords['x']);
-		// 			$('#'+key+"_taxalabel").css('top',coords['y']);
-		// 		}
-		// 	}
-		// }
-		// if(g_foundId) {
-		// 	var coords = toScreenXY(g_plotSpheres[g_foundId].position, g_sceneCamera, $('#main_plot'));
-		// 	$('#finder').css('left',coords['x']-15);
-		// 	$('#finder').css('top',coords['y']-5);
-		// }
+					// add the label at the appropriate position
+					$('#'+key+"_taxalabel").css('left',coords['x']);
+					$('#'+key+"_taxalabel").css('top',coords['y']);
+				}
+			}
+		}
+		if(g_foundId) {
+			var coords = toScreenXY(g_plotSpheres[g_foundId].position, g_sceneCamera, $('#main_plot'));
+			$('#finder').css('left',coords['x']-15);
+			$('#finder').css('top',coords['y']-5);
+		}
 	}
    
 	function render() {
