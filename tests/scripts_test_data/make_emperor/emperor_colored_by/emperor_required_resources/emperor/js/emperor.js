@@ -997,9 +997,10 @@ function drawEllipses() {
 		emesh.scale.x = g_ellipsesDimensions[sid]['width']/g_radius;
 		emesh.scale.y = g_ellipsesDimensions[sid]['height']/g_radius;
 		emesh.scale.z = g_ellipsesDimensions[sid]['length']/g_radius;
-		emesh.position.set(g_ellipsesDimensions[sid]['x'],g_ellipsesDimensions[sid]['y'] ,g_ellipsesDimensions[sid]['z'] );
+		emesh.position.set(g_ellipsesDimensions[sid]['x'],g_ellipsesDimensions[sid]['y'],g_ellipsesDimensions[sid]['z']);
 		emesh.material.color = new THREE.Color()
 		emesh.material.transparent = true;
+		emesh.material.depthWrite = false;
 		emesh.material.opacity = 0.2;
 		emesh.updateMatrix();
 		emesh.matrixAutoUpdate = true;
@@ -1016,7 +1017,8 @@ function drawSpheres() {
 		//draw ball
 		var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshLambertMaterial() );
 		mesh.material.color = new THREE.Color()
-		mesh.material.transparent = false;
+		mesh.material.transparent = true;
+		mesh.material.depthWrite = false;
 		mesh.material.opacity = 1;
 		mesh.position.set(g_spherePositions[sid]['x'], g_spherePositions[sid]['y'], g_spherePositions[sid]['z']);
 		mesh.updateMatrix();
@@ -1219,8 +1221,9 @@ $(document).ready(function() {
 
 		g_elementsGroup = new THREE.Object3D();
 		g_mainScene.add(g_elementsGroup);
-		drawEllipses();
+
 		drawSpheres();
+		drawEllipses();
 		drawTaxa();
 		drawVectors();
 
@@ -1283,7 +1286,7 @@ $(document).ready(function() {
 		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true });
 		g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
 		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
-		g_mainRenderer.sortObjects = false;
+		g_mainRenderer.sortObjects = true;
 		main_plot.append(g_mainRenderer.domElement);
 
 		// build divs to hold point labels and position them
