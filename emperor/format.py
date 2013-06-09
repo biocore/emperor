@@ -26,7 +26,7 @@ from qiime.filter import (filter_mapping_file_by_metadata_states,
     sample_ids_from_metadata_description)
 
 def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
-                    coords_low=None, coords_high=None):
+                    coords_low=None, coords_high=None, number_of_axes=10):
     """Write the javascript necessary to represent a pcoa file in emperor
 
     Inputs:
@@ -47,6 +47,10 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     declarations.
     """
     js_pcoa_string = ''
+    
+    # validating that the number of coords in coords
+    if number_of_axes>len(coords[0]):
+        number_of_axes = len(coords[0])
 
     # ranges for the PCoA space
     max_x = max(coords[:,0:1])
@@ -55,17 +59,18 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     min_x = min(coords[:,0:1])
     min_y = min(coords[:,1:2])
     min_z = min(coords[:,2:3])
-    maximum = max(abs(coords[:,:3]))
-    pcoalabels = pct_var[:3]
-
-    radius = (max_x-min_x)*.02
+    maximum = max(abs(coords[:,:number_of_axes]))
+    pcoalabels = pct_var[:number_of_axes]
+    
+    radius = (max_x-min_x)*.015
 
     # write the values for all the spheres
     js_pcoa_string += '\nvar g_spherePositions = new Array();\n'
     for point, coord in zip(header, coords):
+        all_coords = ', '.join(["'P%d': %f" % (i+1,coord[i]) for i in range(number_of_axes)])
         js_pcoa_string += ("g_spherePositions['%s'] = { 'name': '%s', 'color': "
-            "0, 'x': %f, 'y': %f, 'z': %f };\n" % (point, point, coord[0],
-            coord[1],coord[2]))
+            "0, 'x': %f, 'y': %f, 'z': %f, %s };\n" % (point, point, coord[0],
+            coord[1],coord[2], all_coords))
 
     # write the values for all the ellipses
     js_pcoa_string += '\nvar g_ellipsesDimensions = new Array();\n'
@@ -73,13 +78,13 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
         for s_header, s_coord, s_low, s_high in zip(header, coords, coords_low,
             coords_high):
             delta = abs(s_high-s_low)
+            all_coords = ', '.join(["'P%d': %f" % (i+1,s_coord[i]) for i in range(number_of_axes)])
             js_pcoa_string += ("g_ellipsesDimensions['%s'] = { 'name': '%s', "
                 "'color': 0, 'width': %f, 'height': %f, 'length': %f , 'x': %f,"
-                " 'y': %f, 'z': %f }\n" %(s_header, s_header,delta[0], delta[1],
-                delta[2], s_coord[0], s_coord[1], s_coord[2]))
+                " 'y': %f, 'z': %f %s, %s }\n" % (s_header, s_header,delta[0], delta[1],
+                delta[2], s_coord[0], s_coord[1], s_coord[2], all_axes, all_coords))
 
-    js_pcoa_string += 'var g_segments = 16, g_rings = 16, g_radius = %f;\n' %\
-        (radius)
+    js_pcoa_string += 'var g_segments = 16, g_rings = 16, g_radius = %f;\n' % (radius)
     js_pcoa_string += 'var g_xAxisLength = %f;\n' % (abs(max_x)+abs(min_x))
     js_pcoa_string += 'var g_yAxisLength = %f;\n' % (abs(max_y)+abs(min_y))
     js_pcoa_string += 'var g_zAxisLength = %f;\n' % (abs(max_z)+abs(min_z))
@@ -108,17 +113,22 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
             # if there are custom axes then subtract the number of custom axes
             js_pcoa_string += 'var g_pc%dLabel = \"PC%d (%.0f %%)\";\n' %\
                 (i+1, i+1-offset, pcoalabels[i-offset])
-
+    js_pcoa_string += 'var g_number_of_custom_axes = %d;\n' % offset
+    
     js_pcts = []
+    js_pcts_round = []
     if custom_axes == None: custom_axes = []
-    for element in custom_axes + list(pct_var):
+    for element in custom_axes + list(pct_var[:number_of_axes]):
         try:
             # scale the percent so it's a number from 0 to 1
             js_pcts.append('%f' % (float(element)/100))
+            js_pcts_round.append('%d' % (round(element)))
         except ValueError:
             js_pcts.append('%f' % (float(pct_var[0]/100)))
+            js_pcts_round.append('%d' % (round(pct_var[0])))
     js_pcoa_string += 'var g_fractionExplained = [%s];\n' % ', '.join(js_pcts)
-
+    js_pcoa_string += 'var g_fractionExplainedRounded = [%s];\n' % ', '.join(js_pcts_round)
+    
     return js_pcoa_string
 
 def format_mapping_file_to_js(mapping_file_data, mapping_file_headers, columns):
@@ -397,6 +407,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
             <li><a href="#labelby">Labels</a></li>
+            <li><a href="#axes">Axes</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -439,6 +450,16 @@ document.getElementById("logotable").style.display = 'none';
             </select>
             <div class="list" id="labellist">
             </div>
+        </div>
+        <div id="axes">
+            <div class="list" id="axeslist">
+            </div>
+            <table width="100%%">
+               <tr>
+                  <td width="20px"><input type="button" value="Refresh" onclick="refresh_axes();"></td>
+                  <td id="refresh_axes_label"></td>
+               </tr>
+            </table>
         </div>
         <div id="settings">
             <form name="settingsoptions">

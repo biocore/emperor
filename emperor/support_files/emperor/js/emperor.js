@@ -22,6 +22,7 @@ var g_plotIds = [];
 var g_xAxisLine;
 var g_yAxisLine;
 var g_zAxisLine;
+var g_viewingAxes = [0, 1, 2];
 
 // scene elements for the webgl plot
 var g_mainScene;
@@ -121,7 +122,7 @@ function toggleScaleCoordinates(element){
 	// to perform over various properties, either a multiplication or a division
 	if(element.checked == true){
 		operation = function(a, b){return a*b};
-		g_sphereScaler = g_fractionExplained[0];
+		g_sphereScaler = g_fractionExplained[g_viewingAxes[0]];
 	}
 	else{
 		operation = function(a, b){return a/b};
@@ -132,25 +133,25 @@ function toggleScaleCoordinates(element){
 	$("#sradiusslider").slider("value",$("#sradiusslider").slider("value"));
 
 	// scale other properties
-	g_xMaximumValue = operation(g_xMaximumValue,g_fractionExplained[0]);
-	g_yMaximumValue = operation(g_yMaximumValue,g_fractionExplained[1]);
-	g_zMaximumValue = operation(g_zMaximumValue,g_fractionExplained[2]);
-	g_xMinimumValue = operation(g_xMinimumValue,g_fractionExplained[0]);
-	g_yMinimumValue = operation(g_yMinimumValue,g_fractionExplained[1]);
-	g_zMinimumValue = operation(g_zMinimumValue,g_fractionExplained[2]);
-	g_maximum = operation(g_maximum, g_fractionExplained[0])
+	g_xMaximumValue = operation(g_xMaximumValue,g_fractionExplained[g_viewingAxes[0]]);
+	g_yMaximumValue = operation(g_yMaximumValue,g_fractionExplained[g_viewingAxes[1]]);
+	g_zMaximumValue = operation(g_zMaximumValue,g_fractionExplained[g_viewingAxes[2]]);
+	g_xMinimumValue = operation(g_xMinimumValue,g_fractionExplained[g_viewingAxes[0]]);
+	g_yMinimumValue = operation(g_yMinimumValue,g_fractionExplained[g_viewingAxes[1]]);
+	g_zMinimumValue = operation(g_zMinimumValue,g_fractionExplained[g_viewingAxes[2]]);
+	g_maximum = operation(g_maximum, g_fractionExplained[g_viewingAxes[0]])
 
 	// scale the position of the camera according to pc1
 	g_sceneCamera.position.set(
-		operation(g_sceneCamera.position.x, g_fractionExplained[0]),
-		operation(g_sceneCamera.position.y, g_fractionExplained[0]),
-		operation(g_sceneCamera.position.z, g_fractionExplained[0]))
+		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]),
+		operation(g_sceneCamera.position.y, g_fractionExplained[g_viewingAxes[0]]),
+		operation(g_sceneCamera.position.z, g_fractionExplained[g_viewingAxes[0]]))
 
 	// scale the position of the light
 	g_sceneLight.position.set(
-		operation(g_sceneLight.position.x, g_fractionExplained[0]),
-		operation(g_sceneLight.position.y, g_fractionExplained[0]),
-		operation(g_sceneLight.position.z, g_fractionExplained[0]));
+		operation(g_sceneLight.position.x, g_fractionExplained[g_viewingAxes[0]]),
+		operation(g_sceneLight.position.y, g_fractionExplained[g_viewingAxes[0]]),
+		operation(g_sceneLight.position.z, g_fractionExplained[g_viewingAxes[0]]));
 
 	// scale the axis lines
 	drawAxisLines();
@@ -159,38 +160,38 @@ function toggleScaleCoordinates(element){
 	for (sample_id in g_plotSpheres){
 		// scale the position of the spheres
 		g_plotSpheres[sample_id].position.set(
-			operation(g_plotSpheres[sample_id].position.x,g_fractionExplained[0]),
-			operation(g_plotSpheres[sample_id].position.y,g_fractionExplained[1]),
-			operation(g_plotSpheres[sample_id].position.z,g_fractionExplained[2]));
+			operation(g_plotSpheres[sample_id].position.x,g_fractionExplained[g_viewingAxes[0]]),
+			operation(g_plotSpheres[sample_id].position.y,g_fractionExplained[g_viewingAxes[1]]),
+			operation(g_plotSpheres[sample_id].position.z,g_fractionExplained[g_viewingAxes[2]]));
 	}
 
 	// ellipses won't always be available hence the two separate loops
 	for (sample_id in g_plotEllipses){
 		// scale the dimensions of the positions of each ellipse
 		g_plotEllipses[sample_id].position.set(
-			operation(g_plotEllipses[sample_id].position.x, g_fractionExplained[0]),
-			operation(g_plotEllipses[sample_id].position.y, g_fractionExplained[1]),
-			operation(g_plotEllipses[sample_id].position.z, g_fractionExplained[2]));
+			operation(g_plotEllipses[sample_id].position.x, g_fractionExplained[g_viewingAxes[0]]),
+			operation(g_plotEllipses[sample_id].position.y, g_fractionExplained[g_viewingAxes[1]]),
+			operation(g_plotEllipses[sample_id].position.z, g_fractionExplained[g_viewingAxes[2]]));
 
 		// scale the dimensions of the ellipse
 		g_plotEllipses[sample_id].scale.set(
-			operation(g_plotEllipses[sample_id].scale.x, g_fractionExplained[0]),
-			operation(g_plotEllipses[sample_id].scale.y, g_fractionExplained[1]),
-			operation(g_plotEllipses[sample_id].scale.z, g_fractionExplained[2]));
+			operation(g_plotEllipses[sample_id].scale.x, g_fractionExplained[g_viewingAxes[0]]),
+			operation(g_plotEllipses[sample_id].scale.y, g_fractionExplained[g_viewingAxes[1]]),
+			operation(g_plotEllipses[sample_id].scale.z, g_fractionExplained[g_viewingAxes[2]]));
 	}
 
 	for (index in g_plotTaxa){
 		//scale the dimensions of the positions of each taxa-sphere
 		g_plotTaxa[index].position.set(
-			operation(g_plotTaxa[index].position.x, g_fractionExplained[0]),
-			operation(g_plotTaxa[index].position.y, g_fractionExplained[1]),
-			operation(g_plotTaxa[index].position.z, g_fractionExplained[2]));
+			operation(g_plotTaxa[index].position.x, g_fractionExplained[g_viewingAxes[0]]),
+			operation(g_plotTaxa[index].position.y, g_fractionExplained[g_viewingAxes[1]]),
+			operation(g_plotTaxa[index].position.z, g_fractionExplained[g_viewingAxes[2]]));
 
 		//scale the dimensions of each taxa-sphere
 		g_plotTaxa[index].scale.set(
-			operation(g_plotTaxa[index].scale.x, g_fractionExplained[0]),
-			operation(g_plotTaxa[index].scale.y, g_fractionExplained[0]),
-			operation(g_plotTaxa[index].scale.z, g_fractionExplained[0]));
+			operation(g_plotTaxa[index].scale.x, g_fractionExplained[g_viewingAxes[0]]),
+			operation(g_plotTaxa[index].scale.y, g_fractionExplained[g_viewingAxes[0]]),
+			operation(g_plotTaxa[index].scale.z, g_fractionExplained[g_viewingAxes[0]]));
 	}
 
 	// each line is indexed by a sample, creating in turn TOTAL_SAMPLES-1 lines
@@ -208,11 +209,11 @@ function toggleScaleCoordinates(element){
 
 			// scale the position of each of the vertices
 			currentPosition[vertex].x = operation(currentPosition[vertex].x,
-				g_fractionExplained[0])
+				g_fractionExplained[g_viewingAxes[0]])
 			currentPosition[vertex].y = operation(currentPosition[vertex].y,
-				g_fractionExplained[1])
+				g_fractionExplained[g_viewingAxes[1]])
 			currentPosition[vertex].z = operation(currentPosition[vertex].z,
-				g_fractionExplained[2])
+				g_fractionExplained[g_viewingAxes[2]])
 
 			// create an array we can pass to makeLine
 			currentPosition[vertex] = [currentPosition[vertex].x,
@@ -1107,6 +1108,7 @@ function drawVectors(){
 function saveSVG(){
 	open("data:image/svg+xml," + encodeURIComponent(document.getElementById('main_plot').innerHTML));
 }
+
 function SVGSaved(response){
 	var fileName = eval('('+response+')')
 	var dlwin = open('','Download SVG', 'width=400,height=50')
@@ -1170,6 +1172,45 @@ var drawAxisLines = function(){
 /* update point count label */
 function changePointCount() {
 	document.getElementById('pointCount').innerHTML = g_visiblePoints+'/'+g_plotIds.length+' points'
+}
+
+/* Validating and modifying the view axes */	
+function refresh_axes() {
+    pc1_axis_new = $("#pc1_axis").val();
+    pc2_axis_new = $("#pc2_axis").val();
+    pc3_axis_new = $("#pc3_axis").val();
+    
+    //g_fractionExplained
+    if (pc1_axis_new==pc2_axis_new || pc1_axis_new==pc3_axis_new || pc2_axis_new==pc3_axis_new) {
+        $("#refresh_axes_label").html('<font color="red">Not valid values, try again.</font>');
+        return;
+    }
+        
+    // Setting up new possitions
+    for (var sid in g_spherePositions) {
+		g_spherePositions[sid]['x'] = g_spherePositions[sid][pc1_axis_new];
+		g_spherePositions[sid]['y'] = g_spherePositions[sid][pc2_axis_new];
+		g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis_new];
+	}
+	for (var sample_id in g_plotSpheres){
+		g_plotSpheres[sample_id].position.set(g_spherePositions[sample_id][pc1_axis_new],
+			g_spherePositions[sample_id][pc2_axis_new], g_spherePositions[sample_id][pc3_axis_new]);
+	}
+	
+	// Setting up new axes for axes by coords explained
+	g_viewingAxes = [parseInt(pc1_axis_new.substring(1)),
+	                 parseInt(pc2_axis_new.substring(1)),
+	                 parseInt(pc3_axis_new.substring(1))]
+	
+	g_pc1Label = "PC" + g_viewingAxes[0] + " (" + g_fractionExplainedRounded[g_viewingAxes[0]-1] + " %)";
+	g_pc2Label = "PC" + g_viewingAxes[1] + " (" + g_fractionExplainedRounded[g_viewingAxes[1]-1] + " %)";
+	g_pc3Label = "PC" + g_viewingAxes[2] + " (" + g_fractionExplainedRounded[g_viewingAxes[2]-1] + " %)";
+	
+	// alert(g_number_of_custom_axes + g_pc1Label)
+}
+
+function clean_label_refresh_axes() {
+    $("#refresh_axes_label").html("");
 }
 
 /*Setup and initialization function for the whole system
@@ -1257,8 +1298,7 @@ $(document).ready(function() {
 		showByMenuChanged();
 
 		drawAxisLines();
-		buildAxisLabels();
-
+		
 		// the light is attached to the camera to provide a 3d perspective
 		g_sceneLight = new THREE.DirectionalLight(0x999999, 2);
 		g_sceneLight.position.set(1,1,1).normalize();
@@ -1312,6 +1352,56 @@ $(document).ready(function() {
 			labelshtml += "</label>";
 		}
 		document.getElementById("taxalabels").innerHTML = labelshtml
+		
+		// adding values for axes to display
+		setting_up_axes();
+	}
+	
+	function setting_up_axes() {
+	    text = '<table border="0" width="80%">';
+	    
+	    // Adding 1st axis
+	    text += '<tr>'
+	    text += '<td width="40px" class="unselectable lables">Axis 1:</td>'
+	    text += '<td><select id="pc1_axis" onchange="clean_label_refresh_axes();">';
+	    
+	    for (var i=1; i < g_fractionExplainedRounded.length + 1; i++) {
+	        if (i==1) {
+	            text += '<option selected value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+	        } else {
+	            text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+	        }
+	    }
+	    text += '</select></td></tr>'
+	    
+	    // Adding 2nd axis
+	    text += '<tr>'
+	    text += '<td width="40px" class="unselectable lables">Axis 2:</td>'
+	    text += '<td><select id="pc2_axis" onchange="clean_label_refresh_axes();">';
+	    for (var i=1; i < g_fractionExplained.length + 1; i++) {
+	        if (i==2) {
+	            text += '<option selected value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+	        } else {
+	            text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+	        }
+	    }
+	    text += '</select></td></tr>'
+	    
+	    // Adding 3rd axis
+	    text += '<tr>'
+	    text += '<td width="40px" class="unselectable lables">Axis 3:</td>'
+	    text += '<td><select id="pc3_axis" onchange="clean_label_refresh_axes();">';
+	    for (var i=1; i < g_fractionExplained.length + 1; i++) {
+	        if (i==3) {
+	            text += '<option selected value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+	        } else {
+	            text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+	        }
+	    }
+	    text += '</select></td></tr>';
+	    
+	    text += '</table>';
+	    document.getElementById("axeslist").innerHTML = text;
 	}
 
 	function buildAxisLabels() {

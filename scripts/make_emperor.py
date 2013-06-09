@@ -107,6 +107,9 @@ script_info['required_options'] = [
     'metadata mapping file')
 ]
 script_info['optional_options'] = [
+    make_option('--number_of_axes', type=int, help='Number of axes to be incorporated in '
+    'the plot. Only 3 will be displayed at any given time but this option gives adds how '
+    'many you can use for your visualization [default: %default]', default=10),
     make_option('-a', '--custom_axes', type='string', help='Comma-separated '
     'list of metadata categories to use as custom axes in the plot. For '
     'instance, if there is a time category and you would like to see the '
@@ -189,7 +192,12 @@ def main():
     biplot_fp = opts.biplot_fp
     add_vectors = opts.add_vectors
     verbose_output = opts.verbose
-
+    number_of_axes = opts.number_of_axes
+    
+    # verifying that the number of axes requested is greater than 3
+    if number_of_axes<3:
+        option_parser.error(('You need to plot at least 3 axes.'))
+    
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
     offending_fields = []
@@ -484,7 +492,8 @@ def main():
     # write the html file
     fp_out.write(format_mapping_file_to_js(mapping_data, header, header))
     fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
-        coords_eigenvalues, coords_pct, custom_axes, coords_low, coords_high))
+        coords_eigenvalues, coords_pct, custom_axes, coords_low, coords_high,
+        number_of_axes=number_of_axes))
     fp_out.write(format_taxa_to_js(otu_coords, otu_lineages, otu_prevalence))
     fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
         coords_headers, add_vectors[0], add_vectors[1]))
