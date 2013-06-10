@@ -70,15 +70,21 @@ k_QIIME_COLORS = [
 "0x808000", // green3
 "0x008080"] // teal3
 
+
+// Taken from http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
 /*This function recenter the camera to the initial position it had*/
 function resetCamera() {
 	g_sceneCamera.aspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
-	g_sceneCamera.position.set( 0, 0, g_maximum*4);
 	g_sceneCamera.rotation.set( 0, 0, 0);
 	g_sceneCamera.updateProjectionMatrix();
-
-	// reset the controls of the scene to the start point
-	g_sceneControl.reset()
+		
+	if (g_sceneCamera.position.x==0 && g_sceneCamera.position.y==0 && g_sceneCamera.position.z==0) {
+		g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius*2);
+	}
 }
 
 /*Removes duplicates from a list of samples*/
@@ -103,20 +109,23 @@ function dedupe(list) {
   adds a scaling value to the sphere size slider to make the size consistent
   between scaled and unscaled versions of the plot.
 */
-function toggleScaleCoordinates(element){
-
+function toggleScaleCoordinates(element) {
 	var axesLen;
 	var operation;
-
+	
+	if (!isNumeric(g_fractionExplained[g_viewingAxes[0]])) {
+	    alert("PC" + g_viewingAxes[0] + " is too small for this feature, change your selection.");
+	    return;
+	} else if (!isNumeric(g_fractionExplained[g_viewingAxes[1]])) {
+	    alert("PC" + g_viewingAxes[1] + " is too small for this feature, change your selection.");
+	    return;
+	} else if (!isNumeric(g_fractionExplained[g_viewingAxes[2]])) {
+	    alert("PC" + g_viewingAxes[2] + " is too small for this feature, change your selection.");
+	    return;
+	}
+	
 	// used only for the vector re-drawing
 	var currentPosition = [], currentColor;
-
-	// modifying the properties basically requires to create the elemnts
-	// again from scratch, so just remove them from scene and re-build them
-	// the lines are all global variables hence just a call to remove them
-	g_mainScene.remove(g_xAxisLine);
-	g_mainScene.remove(g_yAxisLine);
-	g_mainScene.remove(g_zAxisLine);
 
 	// XOR operation for the checkbox widget, this will select an operation
 	// to perform over various properties, either a multiplication or a division
@@ -140,19 +149,13 @@ function toggleScaleCoordinates(element){
 	g_yMinimumValue = operation(g_yMinimumValue,g_fractionExplained[g_viewingAxes[1]]);
 	g_zMinimumValue = operation(g_zMinimumValue,g_fractionExplained[g_viewingAxes[2]]);
 	g_maximum = operation(g_maximum, g_fractionExplained[g_viewingAxes[0]])
-
+	
 	// scale the position of the camera according to pc1
+	// g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius*2);
 	g_sceneCamera.position.set(
-		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneCamera.position.y, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneCamera.position.z, g_fractionExplained[g_viewingAxes[0]]))
-
-	// scale the position of the light
-	g_sceneLight.position.set(
-		operation(g_sceneLight.position.x, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneLight.position.y, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneLight.position.z, g_fractionExplained[g_viewingAxes[0]]));
-
+		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]*1.7),
+		operation(g_sceneCamera.position.y, g_fractionExplained[g_viewingAxes[1]]*1.7),
+		operation(g_sceneCamera.position.z, g_fractionExplained[g_viewingAxes[2]]*1.7))
 	// scale the axis lines
 	drawAxisLines();
 
@@ -225,7 +228,6 @@ function toggleScaleCoordinates(element){
 			currentPosition[1], currentColor, 2);
 		g_elementsGroup.add(g_plotVectors[sample_id]);
 	}
-
 }
 
 /* Toggle between discrete and continuous coloring for samples and labels */
@@ -1157,7 +1159,12 @@ function makeLine(coords_a, coords_b, color, width){
   The length of each of these axes depend on the ranges that the data being
   displayed uses.
 */
-var drawAxisLines = function(){
+function drawAxisLines() {
+    // removing axes, if they do not exist the scene doesn't complain 
+	g_mainScene.remove(g_xAxisLine);
+	g_mainScene.remove(g_yAxisLine);
+	g_mainScene.remove(g_zAxisLine);
+	
 	// one line for each of the axes
 	g_xAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
 		[g_xMaximumValue, g_yMinimumValue, g_zMinimumValue], 0xFFFFFF, 3);
@@ -1178,37 +1185,58 @@ function changePointCount() {
 
 /* Validating and modifying the view axes */	
 function refresh_axes() {
-    pc1_axis_new = $("#pc1_axis").val();
-    pc2_axis_new = $("#pc2_axis").val();
-    pc3_axis_new = $("#pc3_axis").val();
+    var pc1_axis = $("#pc1_axis").val(), pc2_axis = $("#pc2_axis").val(), 
+        pc3_axis = $("#pc3_axis").val();
+    var pc1_value = parseInt(pc1_axis.substring(1)), 
+        pc2_value = parseInt(pc2_axis.substring(1)),
+        pc3_value = parseInt(pc3_axis.substring(1));
     
     //g_fractionExplained
-    if (pc1_axis_new==pc2_axis_new || pc1_axis_new==pc3_axis_new || pc2_axis_new==pc3_axis_new) {
+    if (pc1_axis==pc2_axis || pc1_axis==pc3_axis || pc2_axis==pc3_axis) {
         $("#refresh_axes_label").html('<font color="red">Not valid values, try again.</font>');
         return;
     }
-        
+    if (pc1_value>pc2_value || pc1_value>pc3_value || pc2_value>pc3_value) {
+        $("#refresh_axes_label").html('<font color="red">PC3 should be > than P2, and P2 than PC1.</font>');
+        return;
+    }
+    
     // Setting up new possitions
+    var max_x = Number.NEGATIVE_INFINITY, max_y = Number.NEGATIVE_INFINITY,
+        max_z = Number.NEGATIVE_INFINITY, min_x = Number.POSITIVE_INFINITY,
+        min_y = Number.POSITIVE_INFINITY, min_z = Number.POSITIVE_INFINITY;
     for (var sid in g_spherePositions) {
-		g_spherePositions[sid]['x'] = g_spherePositions[sid][pc1_axis_new];
-		g_spherePositions[sid]['y'] = g_spherePositions[sid][pc2_axis_new];
-		g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis_new];
+		g_spherePositions[sid]['x'] = g_spherePositions[sid][pc1_axis];
+		g_spherePositions[sid]['y'] = g_spherePositions[sid][pc2_axis];
+		g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis];
+		
+		if (g_spherePositions[sid][pc1_axis]>max_x)
+		    max_x=g_spherePositions[sid][pc1_axis];
+		if (g_spherePositions[sid][pc2_axis]>max_y)
+		    max_y=g_spherePositions[sid][pc2_axis];
+		if (g_spherePositions[sid][pc3_axis]>max_z)
+		    max_z=g_spherePositions[sid][pc3_axis];
+		if (g_spherePositions[sid][pc1_axis]<min_x)
+		    min_x=g_spherePositions[sid][pc1_axis];
+		if (g_spherePositions[sid][pc2_axis]<min_y)
+		    min_y=g_spherePositions[sid][pc2_axis];
+		if (g_spherePositions[sid][pc3_axis]<min_z)
+		    min_z=g_spherePositions[sid][pc3_axis];
 	}
 	for (var sample_id in g_plotSpheres){
-		g_plotSpheres[sample_id].position.set(g_spherePositions[sample_id][pc1_axis_new],
-			g_spherePositions[sample_id][pc2_axis_new], g_spherePositions[sample_id][pc3_axis_new]);
+		g_plotSpheres[sample_id].position.set(g_spherePositions[sample_id][pc1_axis],
+			g_spherePositions[sample_id][pc2_axis], g_spherePositions[sample_id][pc3_axis]);
 	}
 	
 	// Setting up new axes for axes by coords explained
-	g_viewingAxes = [parseInt(pc1_axis_new.substring(1)),
-	                 parseInt(pc2_axis_new.substring(1)),
-	                 parseInt(pc3_axis_new.substring(1))]
-	
+	g_viewingAxes = [pc1_value, pc2_value, pc3_value]
 	g_pc1Label = "PC" + g_viewingAxes[0] + " (" + g_fractionExplainedRounded[g_viewingAxes[0]-1] + " %)";
 	g_pc2Label = "PC" + g_viewingAxes[1] + " (" + g_fractionExplainedRounded[g_viewingAxes[1]-1] + " %)";
 	g_pc3Label = "PC" + g_viewingAxes[2] + " (" + g_fractionExplainedRounded[g_viewingAxes[2]-1] + " %)";
-	
-	// alert(g_number_of_custom_axes + g_pc1Label)
+	g_xMaximumValue = max_x, g_yMaximumValue = max_y, g_zMaximumValue = max_z;
+	g_xMinimumValue = min_x, g_yMinimumValue = min_y, g_zMinimumValue = min_z;
+	resetCamera();
+	drawAxisLines();
 }
 
 function clean_label_refresh_axes() {
@@ -1252,14 +1280,9 @@ $(document).ready(function() {
 
 		g_mainScene = new THREE.Scene();
 		g_mainScene.fog = new THREE.FogExp2( 0x000000, 0.0009);
-
-		g_genericSphere = new THREE.SphereGeometry(g_radius, g_segments, g_rings);
-
-		g_sceneCamera.position.x = g_sceneCamera.position.y = 0;
-		g_sceneCamera.position.z = g_maximum * 4;
 		g_mainScene.add(g_sceneCamera);
 
-
+		g_genericSphere = new THREE.SphereGeometry(g_radius, g_segments, g_rings);
 		g_elementsGroup = new THREE.Object3D();
 		g_mainScene.add(g_elementsGroup);
 
@@ -1267,6 +1290,7 @@ $(document).ready(function() {
 		drawEllipses();
 		drawTaxa();
 		drawVectors();
+		resetCamera();
 
 		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
@@ -1299,7 +1323,6 @@ $(document).ready(function() {
 
 		colorByMenuChanged();
 		showByMenuChanged();
-
 		drawAxisLines();
 		
 		// the light is attached to the camera to provide a 3d perspective
