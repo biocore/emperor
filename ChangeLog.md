@@ -5,6 +5,7 @@ Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 
 * Scientific notation is now taken into account in the GUI for scientific coloring.
 * GUI is usable in mobile devices that support WebGL.
+* The user can select the number of axes to be considered in the GUI and re-plot using lower axes; this is, for example: PC3 vs PC4 vs PC10
 
 *Bug Fixes*
 
