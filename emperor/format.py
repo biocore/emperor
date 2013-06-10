@@ -51,6 +51,10 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     # validating that the number of coords in coords
     if number_of_axes>len(coords[0]):
         number_of_axes = len(coords[0])
+    # validating that all the axes are above 3%
+    valid_pcoalabels = len([i for i in pct_var if i>3.0])
+    if number_of_axes>valid_pcoalabels:
+        number_of_axes = valid_pcoalabels
 
     # ranges for the PCoA space
     max_x = max(coords[:,0:1])
@@ -73,8 +77,8 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
             coord[1],coord[2], all_coords))
 
     # write the values for all the ellipses
+    js_pcoa_string += '\nvar g_ellipsesDimensions = new Array();\n'
     if coords_low != None and coords_high != None:
-        js_pcoa_string += '\nvar g_ellipsesDimensions = new Array();\n'
         for s_header, s_coord, s_low, s_high in zip(header, coords, coords_low,
             coords_high):
             delta = abs(s_high-s_low)

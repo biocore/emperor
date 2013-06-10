@@ -109,7 +109,8 @@ script_info['required_options'] = [
 script_info['optional_options'] = [
     make_option('--number_of_axes', type=int, help='Number of axes to be incorporated in '
     'the plot. Only 3 will be displayed at any given time but this option gives adds how '
-    'many you can use for your visualization [default: %default]', default=10),
+    'many you can use for your visualization. Note that Emperor will only use the axes '
+    'that explain more than 3% of the variability [default: %default]', default=10),
     make_option('-a', '--custom_axes', type='string', help='Comma-separated '
     'list of metadata categories to use as custom axes in the plot. For '
     'instance, if there is a time category and you would like to see the '

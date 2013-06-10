@@ -83,7 +83,7 @@ function resetCamera() {
 	g_sceneCamera.updateProjectionMatrix();
 		
 	if (g_sceneCamera.position.x==0 && g_sceneCamera.position.y==0 && g_sceneCamera.position.z==0) {
-		g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius*2);
+		g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius*5);
 	}
 }
 
@@ -112,15 +112,15 @@ function dedupe(list) {
 function toggleScaleCoordinates(element) {
 	var axesLen;
 	var operation;
-	
+
 	if (!isNumeric(g_fractionExplained[g_viewingAxes[0]])) {
-	    alert("PC" + g_viewingAxes[0] + " is too small for this feature, change your selection.");
+	    alert("PC" + (g_viewingAxes[0]+1) + " is too small for this feature, change your selection.");
 	    return;
 	} else if (!isNumeric(g_fractionExplained[g_viewingAxes[1]])) {
-	    alert("PC" + g_viewingAxes[1] + " is too small for this feature, change your selection.");
+	    alert("PC" + (g_viewingAxes[1]+1) + " is too small for this feature, change your selection.");
 	    return;
 	} else if (!isNumeric(g_fractionExplained[g_viewingAxes[2]])) {
-	    alert("PC" + g_viewingAxes[2] + " is too small for this feature, change your selection.");
+	    alert("PC" + (g_viewingAxes[2]+1) + " is too small for this feature, change your selection.");
 	    return;
 	}
 	
@@ -151,7 +151,6 @@ function toggleScaleCoordinates(element) {
 	g_maximum = operation(g_maximum, g_fractionExplained[g_viewingAxes[0]])
 	
 	// scale the position of the camera according to pc1
-	// g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius*2);
 	g_sceneCamera.position.set(
 		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]*1.7),
 		operation(g_sceneCamera.position.y, g_fractionExplained[g_viewingAxes[1]]*1.7),
@@ -1066,7 +1065,6 @@ function setJqueryUi() {
   only happen when plotting a jaccknifed principal coordinates analysis
 */
 function drawEllipses() {
-    if (typeof(g_ellipsesDimensions) != "undefined")
 	for(var sid in g_ellipsesDimensions) {
 		//draw ellipsoid
 		var emesh = new THREE.Mesh( g_genericSphere,new THREE.MeshLambertMaterial() );
@@ -1089,7 +1087,6 @@ function drawEllipses() {
 
 /*Draw the spheres in the plot as described by the g_spherePositions array*/
 function drawSpheres() {
-    if (typeof(g_spherePositions) != "undefined")
 	for(var sid in g_spherePositions){
 		//draw ball
 		var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshLambertMaterial() );
@@ -1259,11 +1256,14 @@ function changePointCount() {
 
 /* Validating and modifying the view axes */	
 function refresh_axes() {
+    // HACK: this is a work around for cases when the scale is on
+    if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': false});
+    
     var pc1_axis = $("#pc1_axis").val(), pc2_axis = $("#pc2_axis").val(), 
         pc3_axis = $("#pc3_axis").val();
-    var pc1_value = parseInt(pc1_axis.substring(1)), 
-        pc2_value = parseInt(pc2_axis.substring(1)),
-        pc3_value = parseInt(pc3_axis.substring(1));
+    var pc1_value = parseInt(pc1_axis.substring(1))-1, 
+        pc2_value = parseInt(pc2_axis.substring(1))-1,
+        pc3_value = parseInt(pc3_axis.substring(1))-1;
     
     //g_fractionExplained
     if (pc1_axis==pc2_axis || pc1_axis==pc3_axis || pc2_axis==pc3_axis) {
@@ -1304,13 +1304,16 @@ function refresh_axes() {
 	
 	// Setting up new axes for axes by coords explained
 	g_viewingAxes = [pc1_value, pc2_value, pc3_value]
-	g_pc1Label = "PC" + g_viewingAxes[0] + " (" + g_fractionExplainedRounded[g_viewingAxes[0]-1] + " %)";
-	g_pc2Label = "PC" + g_viewingAxes[1] + " (" + g_fractionExplainedRounded[g_viewingAxes[1]-1] + " %)";
-	g_pc3Label = "PC" + g_viewingAxes[2] + " (" + g_fractionExplainedRounded[g_viewingAxes[2]-1] + " %)";
+	g_pc1Label = "PC" + (g_viewingAxes[0]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[0]] + " %)";
+	g_pc2Label = "PC" + (g_viewingAxes[1]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[1]] + " %)";
+	g_pc3Label = "PC" + (g_viewingAxes[2]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[2]] + " %)";
 	g_xMaximumValue = max_x, g_yMaximumValue = max_y, g_zMaximumValue = max_z;
 	g_xMinimumValue = min_x, g_yMinimumValue = min_y, g_zMinimumValue = min_z;
 	resetCamera();
 	drawAxisLines();
+	
+    // HACK: this is a work around for cases when the scale is on 
+    if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': true});
 }
 
 function clean_label_refresh_axes() {
@@ -1333,7 +1336,7 @@ $(document).ready(function() {
 	var particles, geometry, parameters, i, h, color;
 	var mouseX = 0, mouseY = 0;
 
-	var winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight), view_angle = 35, view_near = 0.1, view_far = 10000;
+	var winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight), view_angle = 35, view_near = 0.0000001, view_far = 10000;
 	var winAspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
 
 	$(window).resize(function() {
@@ -1462,8 +1465,8 @@ $(document).ready(function() {
 	}
 	
 	function setting_up_axes() {
-	    if (typeof(g_vectorPositions) !== "undefined" && typeof(g_taxaPositions) !== "undefined" && 
-	        typeof(g_ellipsesDimensions) !== "undefined" && typeof(g_number_of_custom_axes) !== "undefined") {
+	    if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) || 
+	        !jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
 	        text = '<table width="100%%">';
 	        text += '<tr><td><font color="red">This is disabled for biplots, vectors, and jackknifed</font></td></tr>';
 	        text += '</table>';
