@@ -1066,6 +1066,7 @@ function setJqueryUi() {
   only happen when plotting a jaccknifed principal coordinates analysis
 */
 function drawEllipses() {
+    if (typeof(g_ellipsesDimensions) != "undefined")
 	for(var sid in g_ellipsesDimensions) {
 		//draw ellipsoid
 		var emesh = new THREE.Mesh( g_genericSphere,new THREE.MeshLambertMaterial() );
@@ -1088,6 +1089,7 @@ function drawEllipses() {
 
 /*Draw the spheres in the plot as described by the g_spherePositions array*/
 function drawSpheres() {
+    if (typeof(g_spherePositions) != "undefined")
 	for(var sid in g_spherePositions){
 		//draw ball
 		var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshLambertMaterial() );
@@ -1460,6 +1462,15 @@ $(document).ready(function() {
 	}
 	
 	function setting_up_axes() {
+	    if (typeof(g_vectorPositions) !== "undefined" && typeof(g_taxaPositions) !== "undefined" && 
+	        typeof(g_ellipsesDimensions) !== "undefined" && typeof(g_number_of_custom_axes) !== "undefined") {
+	        text = '<table width="100%%">';
+	        text += '<tr><td><font color="red">This is disabled for biplots, vectors, and jackknifed</font></td></tr>';
+	        text += '</table>';
+	        document.getElementById("axeslist").innerHTML = text;
+	        return;
+	    }
+	    
 	    text = '<table border="0" width="80%">';
 	    
 	    // Adding 1st axis
@@ -1502,6 +1513,12 @@ $(document).ready(function() {
 	    }
 	    text += '</select></td></tr>';
 	    
+	    text += '</table>';
+	    
+	    // Adding button
+	    text += '<table width="100%%"><tr>';
+	    text += '<td width="20px"><input type="button" value="Refresh" onclick="refresh_axes();"></td>';
+	    text += '<td id="refresh_axes_label"></td></tr>';
 	    text += '</table>';
 	    document.getElementById("axeslist").innerHTML = text;
 	}
