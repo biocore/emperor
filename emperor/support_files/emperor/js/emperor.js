@@ -397,14 +397,14 @@ function colorByMenuChanged() {
 /*This function is called when a new value is selected in the showBy menu*/
 function showByMenuChanged() {
 	g_categoryName = document.getElementById('showbycombo')[document.getElementById('showbycombo').selectedIndex].value;
-	var index = g_mappingFileHeaders.indexOf(g_categoryName);
+	var showByMenuIndex = g_mappingFileHeaders.indexOf(g_categoryName);
 	var vals = [];
 
 	for(var i in g_plotIds){
 		var sid = g_plotIds[i];
 		var divid = sid.replace(/\./g,'');
 		// get all of the values for the selected category
-		vals.push(g_mappingFileData[sid][index]);
+		vals.push(g_mappingFileData[sid][showByMenuIndex]);
 		// set everything to visible
 		try {
 			g_elementsGroup.add(g_plotEllipses[sid])
@@ -427,9 +427,13 @@ function showByMenuChanged() {
 	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
 	// build the showby checkbox table in HTML
-	var lines = "<form name=\"showbyform\"><table>"
+	var lines = "<form name=\"showbyform\"><table width=\"90%\">"
 	for(var i in vals){
-		lines += "<tr><td>";
+		// tag each slider & percent label with the idString to avoid conflicts
+		var idString = "r"+i+"c"+showByMenuIndex;
+
+		// make the size of the checkmark fixed so proportions don't look weird
+		lines += "<tr><td width=\"10px\">";
 		lines +="<input name=\""+vals[i]+"_show\" value=\""+vals[i]+"\" type=\"checkbox\" checked=\"yes\" onClick=\"toggleVisible(\'"+vals[i]+"\')\">";
 		lines +="</input></td><td title=\""+vals[i]+"\">";
 		if(vals[i].length > 25){
@@ -438,10 +442,41 @@ function showByMenuChanged() {
 		else{
 			lines += vals[i];
 		}
+
+		// add a slider and a current-value-label to the table
+		lines +="</td></tr>";
+		lines += "<tr><td></td><td>";
+		lines += "<label id=\""+idString+"opacityvalue\" name=\""+vals[i]+"\" class=\"slidervalue\"></label>"
+		lines += "<div id=\""+idString+"opacityslider\" name=\""+vals[i]+"\" class=\"slider-range-max\"></div>"
 		lines +="</td></tr>";
 	}
 	lines += "</table></form>";
 	document.getElementById("showbylist").innerHTML = lines;
+
+	// set all the sliders to 100 % and to respond to the sphereOpacityChange
+	// with the name of the category they have in the mapping file
+	for(var i in vals){
+		var idString = "r"+i+"c"+showByMenuIndex;
+		$("#"+idString+"opacityslider").slider({
+			range: "max",
+			min: 0,
+			max: 100,
+			value: 100,
+			slide: function( event, ui ) {
+				sphereOpacityChange(ui, $(this).attr('name'));
+			},
+			change: function( event, ui ) {
+				sphereOpacityChange(ui, $(this).attr('name'));
+			}
+		});
+		document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%";
+	}
+
+	// change the value of the general opacity for all the spheres, this action
+	// has to take place after the creation of the sliders for all categories;
+	// that is the for loop right befor this statement, as this will produce
+	// a callback that will require to change all the sliders in available
+	$("#sopacityslider").slider("value", 100)
 }
 
 /*Toggle plot items by category selected in showby menu*/
@@ -799,13 +834,50 @@ function ellipseOpacityChange(ui) {
 	}
 }
 
-/*This function handles events from the sphere opacity slider*/
-function sphereOpacityChange(ui) {
-	document.getElementById('sphereopacity').innerHTML = ui.value + "%";
-	sphereOpacity = ui.value/100;
+/*This function handles events from the sphere opacity sliders
 
-	for(var sid in g_plotSpheres){
-		g_plotSpheres[sid].material.opacity = sphereOpacity;
+  Note that there are two type of sliders, the master opacity slider in the
+  options tab and the 'per-category' slider in the visibility tab. The later
+  one controls the opacity only for the spheres belonging to a specific category
+  in the mapping file.
+
+  As for the parameters 'ui' is the jQuery slider element and category the
+  string with the value of that category of the mapping file or null when the
+  callback is originated from the master opacity slider.
+*/
+function sphereOpacityChange(ui, category) {
+	var sphereOpacity = ui.value/100;
+	var showByCategoryName = document.getElementById('showbycombo')[document.getElementById('showbycombo').selectedIndex].value;
+	var showByCategoryIndex = g_mappingFileHeaders.indexOf(showByCategoryName);
+	var vals = [], idString, newValue;
+
+	// get all values of this category from the mapping
+	for(var i in g_plotIds){
+		vals.push(g_mappingFileData[g_plotIds[i]][showByCategoryIndex]);
+	}
+	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+
+	// category as null means that it's the general opacity slider (the on in the options tab)
+	if (category == null) {
+		for (index in vals){
+			idString = "r"+index+"c"+showByCategoryIndex;
+			$("#"+idString+"opacityslider").slider("value", ui.value);
+			document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%";
+		}
+		document.getElementById('sphereopacity').innerHTML = ui.value + "%";
+	}
+	else{
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping file
+		// if this is done otherwise, weird characters have to be extemped etc.
+		idString = "r"+vals.indexOf(category)+"c"+showByCategoryIndex;
+
+		for(var i in g_plotIds){
+			if(g_mappingFileData[g_plotIds[i]][showByCategoryIndex] == category){
+				g_plotSpheres[g_plotIds[i]].material.opacity = sphereOpacity;
+			}
+			document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%";
+		}
 	}
 }
 
@@ -926,10 +998,10 @@ function setJqueryUi() {
 		max: 100,
 		value: 100,
 		slide: function( event, ui ) {
-			sphereOpacityChange(ui);
+			sphereOpacityChange(ui, null);
 		},
 		change: function( event, ui ) {
-			sphereOpacityChange(ui);
+			sphereOpacityChange(ui, null);
 		}
 	});
 	document.getElementById('sphereopacity').innerHTML = $( "#sopacityslider" ).slider( "value")+"%";
@@ -1297,7 +1369,7 @@ $(document).ready(function() {
 		g_visiblePoints = g_plotIds.length;
 		changePointCount(g_visiblePoints)
 
-		// build the colorby and showby menus
+		// given that labels are turned off by default, leave a place holder
 		var line = "";
 		$("#labelcombo").append("<option>Select A Category...</option>");
 
@@ -1308,15 +1380,19 @@ $(document).ready(function() {
 			var temp = [];
 			for(var j in g_plotIds) {
 				if(g_mappingFileData[g_plotIds[j]] == undefined){
-					console.log(g_plotIds[j] +" not in mapping")
+					console.warning(g_plotIds[j] +" not in mapping")
 					continue
 				}
 				temp.push(g_mappingFileData[g_plotIds[j]][i])
 			}
 			temp = dedupe(temp);
 
+			// note that each category is added to all the dropdown menus in the
+			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
 			line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
 			$("#colorbycombo").append(line);
+			$("#opacitybycombo").append(line);
+			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
 		}
