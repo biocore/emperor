@@ -391,6 +391,66 @@ function colorByMenuChanged() {
 	setKey(vals, colors);
 }
 
+/*Callback when the scaling by drop-down menu changes
+
+  This function will create one slider and a label for each category.
+*/
+function scalingByMenuChanged(){
+	var scalingByCategoryName = document.getElementById('scalingbycombo')[document.getElementById('scalingbycombo').selectedIndex].value;
+	var scalingByCategoryIndex = g_mappingFileHeaders.indexOf(scalingByCategoryName);
+	var values = [], lines, idString;
+
+	// get all values of this category from the mapping
+	for(var i in g_plotIds){
+		values.push(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex]);
+	}
+	values = _splitAndSortNumericAndAlpha(dedupe(values));
+
+	lines = "<table width=\"90%\">"
+	for(var i in values){
+		// construct a sanitized category name for all HTML elements
+		idString = "r"+i+"c"+scalingByCategoryIndex;
+
+		lines += "<tr><td>";
+		// add a label with the name of the category
+		lines +=" <label for=\""+values[i]+"\" class=\"text\">"
+		// do not make the category name too long
+		if(values[i].length > 25){
+			lines+= values[i].substring(0,25) + "..."
+		}
+		else{
+			lines += values[i];
+		}
+		lines +="</label>"
+
+		// // add a slider and a current-value-label to the table
+		lines += "<label id=\""+idString+"scalingvalue\" name=\""+values[i]+"\" class=\"slidervalue\"></label>"
+		lines += "<div id=\""+idString+"scalingslider\" name=\""+values[i]+"\" class=\"slider-range-max\"></div>"
+		lines +="</td></tr>";
+	}
+	lines += "</table>";
+	document.getElementById("scalingbylist").innerHTML = lines;
+
+	// set all sliders to the default value of 5, that's reflected as no scaling
+	for(var i in values){
+		var idString = "r"+i+"c"+scalingByCategoryIndex;
+		$("#"+idString+"scalingslider").slider({
+			range: "max",
+			min: 1,
+			max: 20,
+			value: 5,
+			slide: function( event, ui ) {
+				sphereRadiusChange(ui, $(this).attr('name'));
+			},
+			change: function( event, ui ) {
+				sphereRadiusChange(ui, $(this).attr('name'));
+			}
+		});
+		document.getElementById(idString+"scalingvalue").innerHTML = $("#"+idString+"scalingslider").slider("value")/5;
+	}
+}
+
+
 /*This function is called when a new value is selected in the showBy menu*/
 function showByMenuChanged() {
 	g_categoryName = document.getElementById('showbycombo')[document.getElementById('showbycombo').selectedIndex].value;
@@ -900,14 +960,44 @@ function labelOpacityChange(ui) {
 
   Note that this function will get a scaling value added depending on whether or
   not the plot being displayed is scaled by the percent explained in each axis.
-*/
-function sphereRadiusChange(ui) {
-	document.getElementById('sphereradius').innerHTML = ui.value/5;
-	var scale = (ui.value/5.0)*g_sphereScaler;
 
-	// set the value to all the spheres
-	for(var sample_id in g_plotSpheres){
-		g_plotSpheres[sample_id].scale.set(scale, scale, scale);
+  When the category argument is null, the callback comes from the master radius
+  slider in any other case it refers to a specific category.
+*/
+function sphereRadiusChange(ui, category) {
+	var scale = (ui.value/5.0)*g_sphereScaler;
+	var scalingByCategoryName = document.getElementById('scalingbycombo')[document.getElementById('scalingbycombo').selectedIndex].value;
+	var scalingByCategoryIndex = g_mappingFileHeaders.indexOf(scalingByCategoryName);
+	var values = [], idString;
+
+	// get all values of this category from the mapping
+	for(var i in g_plotIds){
+		values.push(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex]);
+	}
+	values = _splitAndSortNumericAndAlpha(dedupe(values));
+
+	if (category == null){
+		for (index in values){
+			idString = "r"+index+"c"+scalingByCategoryIndex;
+			$("#"+idString+"scalingslider").slider("value", ui.value);
+			document.getElementById(idString+"scalingvalue").innerHTML = $("#"+idString+"scalingslider").slider("value")/5;
+		}
+
+		// set the value for the master scaling slider
+		document.getElementById('sphereradius').innerHTML = ui.value/5;
+	}
+	else{
+		// each field is identified by the value it has in the deduplicated
+		// list of values and by the number of the column in the mapping file
+		// if this is done otherwise, weird characters have to be extemped etc.
+		idString = "r"+values.indexOf(category)+"c"+scalingByCategoryIndex;
+
+		for(var i in g_plotIds){
+			if(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex] == category){
+				g_plotSpheres[g_plotIds[i]].scale.set(scale, scale, scale);
+			}
+			document.getElementById(idString+"scalingvalue").innerHTML = $("#"+idString+"scalingslider").slider("value")/5;
+		}
 	}
 }
 
@@ -1009,10 +1099,10 @@ function setJqueryUi() {
 		max: 20,
 		value: 5,
 		slide: function( event, ui ) {
-			sphereRadiusChange(ui);
+			sphereRadiusChange(ui, null);
 		},
 		change: function( event, ui ) {
-			sphereRadiusChange(ui);
+			sphereRadiusChange(ui, null);
 		}
 	});
 	document.getElementById('sphereradius').innerHTML = $( "#sradiusslider" ).slider( "value")/5;
@@ -1326,7 +1416,6 @@ $(document).ready(function() {
 			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
 			line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
 			$("#colorbycombo").append(line);
-			$("#opacitybycombo").append(line);
 			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
@@ -1334,6 +1423,7 @@ $(document).ready(function() {
 
 		colorByMenuChanged();
 		showByMenuChanged();
+		scalingByMenuChanged();
 
 		drawAxisLines();
 		buildAxisLabels();
