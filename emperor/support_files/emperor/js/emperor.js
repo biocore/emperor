@@ -391,45 +391,6 @@ function colorByMenuChanged() {
 	setKey(vals, colors);
 }
 
-/*This function is called when a new value is selected in the colorBy menu */
-function opacityByMenuChanged() {
-	// set the new current category and index
-	g_categoryName = document.getElementById('opacitybycombo')[document.getElementById('opacitybycombo').selectedIndex].value;
-	g_categoryIndex = g_mappingFileHeaders.indexOf(g_categoryName);
-
-	// get all values of this category from the mapping
-	var vals = [];
-	for(var i in g_plotIds){
-		vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
-	}
-
-	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
-
-	// build the colorby table in HTML
-	var lines = "<table>";
-	for(var i in vals){
-		// each field is identified by the value it has in the deduplicated
-		// list of values and by the number of the column in the mapping file
-		// if this is done otherwise, weird characters have to be extemped etc.
-		var idString = "r"+i+"c"+g_categoryIndex;
-
-		// set the div id so that we can reference this div later
-		lines += "<tr><td><div id=\""+idString+"\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
-
-		if(vals[i].length > 25){
-			lines+= vals[i].substring(0,25) + "..."
-		}
-		else{
-			lines += vals[i];
-		}
-
-		lines+= "</td></tr>";
-	}
-	lines += "</table>";
-	document.getElementById("opacitybylist").innerHTML = lines;
-}
-
-
 /*This function is called when a new value is selected in the showBy menu*/
 function showByMenuChanged() {
 	g_categoryName = document.getElementById('showbycombo')[document.getElementById('showbycombo').selectedIndex].value;
