@@ -396,6 +396,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
+            <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
@@ -417,6 +418,12 @@ document.getElementById("logotable").style.display = 'none';
             <select id="showbycombo" onchange="showByMenuChanged()">
             </select>
             <div class="list" id="showbylist">
+            </div>
+        </div>
+        <div id="scalingby">
+            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+            </select>
+            <div class="list" id="scalingbylist">
             </div>
         </div>
         <div id="labelby">
