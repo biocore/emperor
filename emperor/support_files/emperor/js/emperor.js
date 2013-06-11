@@ -81,10 +81,9 @@ function resetCamera() {
 	g_sceneCamera.aspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
 	g_sceneCamera.rotation.set( 0, 0, 0);
 	g_sceneCamera.updateProjectionMatrix();
-		
-	if (g_sceneCamera.position.x==0 && g_sceneCamera.position.y==0 && g_sceneCamera.position.z==0) {
-		g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius*5);
-	}
+
+	g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius*5);
+	g_sceneControl.reset()
 }
 
 /*Removes duplicates from a list of samples*/
@@ -1440,7 +1439,10 @@ $(document).ready(function() {
 	animate();
 
 	function init() {
+		// assign a position to the camera befor associating it with other
+		// objects, else the original position will be lost and not make sense
 		g_sceneCamera = new THREE.PerspectiveCamera(view_angle, winAspect, view_near, view_far);
+		g_sceneCamera.position.set(0, 0, (g_maximum*4.2) + g_radius*5);
 
 		$('#main_plot canvas').attr('width',document.getElementById('main_plot').offsetWidth);
 		$('#main_plot canvas').attr('height',document.getElementById('main_plot').offsetHeight);
@@ -1457,7 +1459,6 @@ $(document).ready(function() {
 		drawEllipses();
 		drawTaxa();
 		drawVectors();
-		resetCamera();
 
 		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
