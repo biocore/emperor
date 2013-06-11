@@ -162,9 +162,9 @@ function toggleScaleCoordinates(element) {
 
 	// scale the position of the camera according to pc1
 	g_sceneCamera.position.set(
-		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]*1.7),
-		operation(g_sceneCamera.position.y, g_fractionExplained[g_viewingAxes[1]]*1.7),
-		operation(g_sceneCamera.position.z, g_fractionExplained[g_viewingAxes[2]]*1.7))
+		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]),
+		operation(g_sceneCamera.position.y, g_fractionExplained[g_viewingAxes[0]]),
+		operation(g_sceneCamera.position.z, g_fractionExplained[g_viewingAxes[0]]))
 	// scale the axis lines
 	drawAxisLines();
 
