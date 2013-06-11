@@ -79,7 +79,6 @@ class TopLevelTests(TestCase):
             self.pcoa_jk_coords, self.pcoa_jk_eigen_values,
             self.pcoa_jk_pct_var, coords_low=self.pcoa_jk_coords_low,
             coords_high=self.pcoa_jk_coords_high)
-        print out_js_pcoa_string
         self.assertEquals(out_js_pcoa_string, PCOA_JS_JACKKNIFED)
 
     def test_format_mapping_file_to_js(self):

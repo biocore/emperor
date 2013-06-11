@@ -78,12 +78,17 @@ function isNumeric(n) {
 
 /*This function recenter the camera to the initial position it had*/
 function resetCamera() {
+	// We need to reset the camera controls first before modifying the values of the camera (this is the reset view!)
+	g_sceneControl.reset();
+	
 	g_sceneCamera.aspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
 	g_sceneCamera.rotation.set( 0, 0, 0);
 	g_sceneCamera.updateProjectionMatrix();
-
-	g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius*5);
-	g_sceneControl.reset()
+	
+	if ($('#scale_checkbox').is(':checked'))
+		g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius);
+	else
+		g_sceneCamera.position.set(0 , 0, (g_maximum*4.8) + g_radius);	
 }
 
 /*Removes duplicates from a list of samples*/
@@ -1330,7 +1335,7 @@ function drawAxisLines() {
 	g_mainScene.remove(g_xAxisLine);
 	g_mainScene.remove(g_yAxisLine);
 	g_mainScene.remove(g_zAxisLine);
-
+	
 	// one line for each of the axes
 	g_xAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
 		[g_xMaximumValue, g_yMinimumValue, g_zMinimumValue], 0xFFFFFF, 3);
@@ -1350,7 +1355,7 @@ function changePointCount() {
 }
 
 /* Validating and modifying the view axes */	
-function refresh_axes() {
+function changeAxesDisplayed() {
 	// HACK: this is a work around for cases when the scale is on
 	if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': false});
 
@@ -1402,13 +1407,19 @@ function refresh_axes() {
 	g_pc1Label = "PC" + (g_viewingAxes[0]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[0]] + " %)";
 	g_pc2Label = "PC" + (g_viewingAxes[1]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[1]] + " %)";
 	g_pc3Label = "PC" + (g_viewingAxes[2]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[2]] + " %)";
-	g_xMaximumValue = max_x, g_yMaximumValue = max_y, g_zMaximumValue = max_z;
-	g_xMinimumValue = min_x, g_yMinimumValue = min_y, g_zMinimumValue = min_z;
-	resetCamera();
+		
+	g_xMaximumValue = max_x + (max_x>=0 ? 6*g_radius : -6*g_radius);
+	g_yMaximumValue = max_y + (max_y>=0 ? 6*g_radius : -6*g_radius);
+	g_zMaximumValue = max_z + (max_z>=0 ? 6*g_radius : -6*g_radius);
+	g_xMinimumValue = min_x + (min_x>=0 ? 6*g_radius : -6*g_radius);
+	g_yMinimumValue = min_y + (min_y>=0 ? 6*g_radius : -6*g_radius);
+	g_zMinimumValue = min_z + (min_z>=0 ? 6*g_radius : -6*g_radius);
 	drawAxisLines();
 
 	// HACK: this is a work around for cases when the scale is on
 	if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': true});
+	
+	resetCamera();
 }
 
 function clean_label_refresh_axes() {
@@ -1448,7 +1459,7 @@ $(document).ready(function() {
 		// assign a position to the camera befor associating it with other
 		// objects, else the original position will be lost and not make sense
 		g_sceneCamera = new THREE.PerspectiveCamera(view_angle, winAspect, view_near, view_far);
-		g_sceneCamera.position.set(0, 0, (g_maximum*4.2) + g_radius*5);
+		g_sceneCamera.position.set(0, 0, 0);
 
 		$('#main_plot canvas').attr('width',document.getElementById('main_plot').offsetWidth);
 		$('#main_plot canvas').attr('height',document.getElementById('main_plot').offsetHeight);
@@ -1501,8 +1512,6 @@ $(document).ready(function() {
 		colorByMenuChanged();
 		showByMenuChanged();
 		scalingByMenuChanged();
-
-		drawAxisLines();
 
 		// the light is attached to the camera to provide a 3d perspective
 		g_sceneLight = new THREE.DirectionalLight(0x999999, 2);
@@ -1559,10 +1568,12 @@ $(document).ready(function() {
 		document.getElementById("taxalabels").innerHTML = labelshtml
 		
 		// adding values for axes to display
-		setting_up_axes();
+		drawMenuAxesDisplayed();
+		changeAxesDisplayed();
+		drawAxisLines();
 	}
 
-	function setting_up_axes() {
+	function drawMenuAxesDisplayed() {
 		if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
 			!jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
 			text = '<table width="100%%">';
@@ -1618,7 +1629,7 @@ $(document).ready(function() {
 
 		// Adding button
 		text += '<table width="100%%"><tr>';
-		text += '<td width="20px"><input type="button" value="Refresh" onclick="refresh_axes();"></td>';
+		text += '<td width="20px"><input type="button" value="Refresh" onclick="changeAxesDisplayed();"></td>';
 		text += '<td id="refresh_axes_label"></td></tr>';
 		text += '</table>';
 		document.getElementById("axeslist").innerHTML = text;
