@@ -14,7 +14,8 @@ __status__ = "Development"
 
 from numpy import array
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
-    format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string)
+    format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
+    EmperorLogicError)
 from cogent.util.unit_test import TestCase, main
 
 class TopLevelTests(TestCase):
@@ -23,6 +24,8 @@ class TopLevelTests(TestCase):
         self.pcoa_pct_var = array([2.66887049e+01, 1.62563704e+01,
             1.37754129e+01, 1.12172158e+01, 1.00247750e+01, 8.22835130e+00,
             7.55971174e+00, 6.24945796e+00, 1.17437419e-14])
+        self.pcoa_pct_var_really_low = array([2.66887049e+01, 1.62563704e+01,
+            0.1, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15])
         self.pcoa_headers = ['PC.355','PC.607','PC.634','PC.635','PC.593',
             'PC.636','PC.481','PC.354','PC.356']
         self.pcoa_coords = PCOA_DATA
@@ -81,6 +84,12 @@ class TopLevelTests(TestCase):
             coords_high=self.pcoa_jk_coords_high)
         self.assertEquals(out_js_pcoa_string, PCOA_JS_JACKKNIFED)
 
+        # check it raises an exception when the variation explained on the
+        # axes is not greater than 0.51 for at least three of them
+        self.assertRaises(EmperorLogicError, format_pcoa_to_js,
+            self.pcoa_headers, self.pcoa_coords, self.pcoa_eigen_values,
+            self.pcoa_pct_var_really_low)
+
     def test_format_mapping_file_to_js(self):
         """Tests correct formatting of the metadata mapping file"""
         out_js_mapping_file_string = format_mapping_file_to_js(
@@ -123,7 +132,6 @@ class TopLevelTests(TestCase):
 
     def test_format_emperor_html_footer_string(self):
         """Test correct formatting of the footer string"""
-
         # footer for a jackknifed pcoa plot without biplots
         out_string = format_emperor_html_footer_string(False, True)
         self.assertEqual(out_string, EXPECTED_FOOTER_A)
@@ -153,91 +161,97 @@ PCOA_DATA = array([[ -1.09166142e-01, 8.77774496e-02, 1.15866606e-02, -6.2686389
 
 PCOA_JS = """
 var g_spherePositions = new Array();
-g_spherePositions['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': -0.109166, 'y': 0.087777, 'z': 0.011587 };
-g_spherePositions['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': 0.068896, 'y': -0.166234, 'z': -0.099830 };
-g_spherePositions['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': 0.204685, 'y': 0.128911, 'z': -0.029361 };
-g_spherePositions['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': 0.126132, 'y': -0.002660, 'z': -0.141717 };
-g_spherePositions['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.096847, 'y': -0.159388, 'z': 0.135272 };
-g_spherePositions['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': 0.281535, 'y': 0.071066, 'z': 0.097154 };
-g_spherePositions['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': -0.192383, 'y': 0.014783, 'z': -0.014787 };
-g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': -0.293353, 'y': 0.018396, 'z': 0.032988 };
-g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': -0.183191, 'y': 34912.621000, 'z': 0.008695 };
+g_spherePositions['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': -0.109166, 'y': 0.087777, 'z': 0.011587, 'P1': -0.109166, 'P2': 0.087777, 'P3': 0.011587, 'P4': -0.062686, 'P5': 0.023153, 'P6': 0.087693, 'P7': 0.001374, 'P8': -0.000014 };
+g_spherePositions['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': 0.068896, 'y': -0.166234, 'z': -0.099830, 'P1': 0.068896, 'P2': -0.166234, 'P3': -0.099830, 'P4': -0.029052, 'P5': 0.050557, 'P6': -0.002952, 'P7': -0.032586, 'P8': -0.021722 };
+g_spherePositions['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': 0.204685, 'y': 0.128911, 'z': -0.029361, 'P1': 0.204685, 'P2': 0.128911, 'P3': -0.029361, 'P4': 0.107658, 'P5': 0.017848, 'P6': 0.007978, 'P7': -0.029200, 'P8': -0.001235 };
+g_spherePositions['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': 0.126132, 'y': -0.002660, 'z': -0.141717, 'P1': 0.126132, 'P2': -0.002660, 'P3': -0.141717, 'P4': -0.009711, 'P5': -0.069427, 'P6': 0.003672, 'P7': 0.042987, 'P8': 0.006443 };
+g_spherePositions['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.096847, 'y': -0.159388, 'z': 0.135272, 'P1': 0.096847, 'P2': -0.159388, 'P3': 0.135272, 'P4': 0.051202, 'P5': -0.020255, 'P6': 0.030703, 'P7': 0.015516, 'P8': 0.014243 };
+g_spherePositions['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': 0.281535, 'y': 0.071066, 'z': 0.097154, 'P1': 0.281535, 'P2': 0.071066, 'P3': 0.097154, 'P4': -0.080647, 'P5': 0.007042, 'P6': -0.045313, 'P7': 0.006558, 'P8': -0.012641 };
+g_spherePositions['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': -0.192383, 'y': 0.014783, 'z': -0.014787, 'P1': -0.192383, 'P2': 0.014783, 'P3': -0.014787, 'P4': 0.019089, 'P5': 0.072641, 'P6': -0.037301, 'P7': 0.039430, 'P8': 0.032535 };
+g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': -0.293353, 'y': 0.018396, 'z': 0.032988, 'P1': -0.293353, 'P2': 0.018396, 'P3': 0.032988, 'P4': 0.031536, 'P5': -0.028694, 'P6': -0.019423, 'P7': 0.008063, 'P8': -0.055809 };
+g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': -0.183191, 'y': 34912.621000, 'z': 0.008695, 'P1': -0.183191, 'P2': 34912.621000, 'P3': 0.008695, 'P4': -0.027388, 'P5': -0.052865, 'P6': -0.025058, 'P7': -0.052142, 'P8': 0.038200 };
 
 var g_ellipsesDimensions = new Array();
-var g_segments = 16, g_rings = 16, g_radius = 0.011498;
+var g_segments = 16, g_rings = 16, g_radius = 0.006899;
 var g_xAxisLength = 0.574888;
 var g_yAxisLength = 34912.787234;
 var g_zAxisLength = 0.276989;
-var g_xMaximumValue = 0.350521;
-var g_yMaximumValue = 34912.689987;
-var g_zMaximumValue = 0.204258;
-var g_xMinimumValue = -0.362340;
-var g_yMinimumValue = -0.235221;
-var g_zMinimumValue = -0.210704;
+var g_xMaximumValue = 0.281535;
+var g_yMaximumValue = 34912.621000;
+var g_zMaximumValue = 0.135272;
+var g_xMinimumValue = -0.293353;
+var g_yMinimumValue = -0.166234;
+var g_zMinimumValue = -0.141717;
 var g_maximum = 34912.621000;
 var g_pc1Label = "PC1 (27 %)";
 var g_pc2Label = "PC2 (16 %)";
 var g_pc3Label = "PC3 (14 %)";
-var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
+var g_number_of_custom_axes = 0;
+var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495];
+var g_fractionExplainedRounded = [27, 16, 14, 11, 10, 8, 8, 6];
 """
 
 PCOA_JS_CUSTOM_AXES = """
 var g_spherePositions = new Array();
-g_spherePositions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': -0.109166, \'y\': 0.087777, \'z\': 0.011587 };
-g_spherePositions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 0.068896, \'y\': -0.166234, \'z\': -0.099830 };
-g_spherePositions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.204685, \'y\': 0.128911, \'z\': -0.029361 };
-g_spherePositions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 0.126132, \'y\': -0.002660, \'z\': -0.141717 };
-g_spherePositions[\'PC.593\'] = { \'name\': \'PC.593\', \'color\': 0, \'x\': 0.096847, \'y\': -0.159388, \'z\': 0.135272 };
-g_spherePositions[\'PC.636\'] = { \'name\': \'PC.636\', \'color\': 0, \'x\': 0.281535, \'y\': 0.071066, \'z\': 0.097154 };
-g_spherePositions[\'PC.481\'] = { \'name\': \'PC.481\', \'color\': 0, \'x\': -0.192383, \'y\': 0.014783, \'z\': -0.014787 };
-g_spherePositions[\'PC.354\'] = { \'name\': \'PC.354\', \'color\': 0, \'x\': -0.293353, \'y\': 0.018396, \'z\': 0.032988 };
-g_spherePositions[\'PC.356\'] = { \'name\': \'PC.356\', \'color\': 0, \'x\': -0.183191, \'y\': 34912.621000, \'z\': 0.008695 };
+g_spherePositions['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': -0.109166, 'y': 0.087777, 'z': 0.011587, 'P1': -0.109166, 'P2': 0.087777, 'P3': 0.011587, 'P4': -0.062686, 'P5': 0.023153, 'P6': 0.087693, 'P7': 0.001374, 'P8': -0.000014 };
+g_spherePositions['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': 0.068896, 'y': -0.166234, 'z': -0.099830, 'P1': 0.068896, 'P2': -0.166234, 'P3': -0.099830, 'P4': -0.029052, 'P5': 0.050557, 'P6': -0.002952, 'P7': -0.032586, 'P8': -0.021722 };
+g_spherePositions['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': 0.204685, 'y': 0.128911, 'z': -0.029361, 'P1': 0.204685, 'P2': 0.128911, 'P3': -0.029361, 'P4': 0.107658, 'P5': 0.017848, 'P6': 0.007978, 'P7': -0.029200, 'P8': -0.001235 };
+g_spherePositions['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': 0.126132, 'y': -0.002660, 'z': -0.141717, 'P1': 0.126132, 'P2': -0.002660, 'P3': -0.141717, 'P4': -0.009711, 'P5': -0.069427, 'P6': 0.003672, 'P7': 0.042987, 'P8': 0.006443 };
+g_spherePositions['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.096847, 'y': -0.159388, 'z': 0.135272, 'P1': 0.096847, 'P2': -0.159388, 'P3': 0.135272, 'P4': 0.051202, 'P5': -0.020255, 'P6': 0.030703, 'P7': 0.015516, 'P8': 0.014243 };
+g_spherePositions['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': 0.281535, 'y': 0.071066, 'z': 0.097154, 'P1': 0.281535, 'P2': 0.071066, 'P3': 0.097154, 'P4': -0.080647, 'P5': 0.007042, 'P6': -0.045313, 'P7': 0.006558, 'P8': -0.012641 };
+g_spherePositions['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': -0.192383, 'y': 0.014783, 'z': -0.014787, 'P1': -0.192383, 'P2': 0.014783, 'P3': -0.014787, 'P4': 0.019089, 'P5': 0.072641, 'P6': -0.037301, 'P7': 0.039430, 'P8': 0.032535 };
+g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': -0.293353, 'y': 0.018396, 'z': 0.032988, 'P1': -0.293353, 'P2': 0.018396, 'P3': 0.032988, 'P4': 0.031536, 'P5': -0.028694, 'P6': -0.019423, 'P7': 0.008063, 'P8': -0.055809 };
+g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': -0.183191, 'y': 34912.621000, 'z': 0.008695, 'P1': -0.183191, 'P2': 34912.621000, 'P3': 0.008695, 'P4': -0.027388, 'P5': -0.052865, 'P6': -0.025058, 'P7': -0.052142, 'P8': 0.038200 };
 
 var g_ellipsesDimensions = new Array();
-var g_segments = 16, g_rings = 16, g_radius = 0.011498;
+var g_segments = 16, g_rings = 16, g_radius = 0.006899;
 var g_xAxisLength = 0.574888;
 var g_yAxisLength = 34912.787234;
 var g_zAxisLength = 0.276989;
-var g_xMaximumValue = 0.350521;
-var g_yMaximumValue = 34912.689987;
-var g_zMaximumValue = 0.204258;
-var g_xMinimumValue = -0.362340;
-var g_yMinimumValue = -0.235221;
-var g_zMinimumValue = -0.210704;
+var g_xMaximumValue = 0.281535;
+var g_yMaximumValue = 34912.621000;
+var g_zMaximumValue = 0.135272;
+var g_xMinimumValue = -0.293353;
+var g_yMinimumValue = -0.166234;
+var g_zMinimumValue = -0.141717;
 var g_maximum = 34912.621000;
 var g_pc1Label = "Instant";
 var g_pc2Label = "PC1 (27 %)";
 var g_pc3Label = "PC2 (16 %)";
-var g_fractionExplained = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
+var g_number_of_custom_axes = 1;
+var g_fractionExplained = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495];
+var g_fractionExplainedRounded = [27, 27, 16, 14, 11, 10, 8, 8, 6];
 """
 
 PCOA_JS_JACKKNIFED = """
 var g_spherePositions = new Array();
-g_spherePositions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000 };
-g_spherePositions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000 };
-g_spherePositions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000 };
-g_spherePositions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000 };
+g_spherePositions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000, \'P1\': 0.300000, \'P2\': 0.500000, \'P3\': 0.100000, \'P4\': 0.300000 };
+g_spherePositions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000, \'P1\': 1.100000, \'P2\': 1.100000, \'P3\': 1.000000, \'P4\': 0.800000 };
+g_spherePositions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000, \'P1\': 0.100000, \'P2\': 3.300000, \'P3\': 5.500000, \'P4\': 0.100000 };
+g_spherePositions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000, \'P1\': 1.000000, \'P2\': 2.000000, \'P3\': 1.000000, \'P4\': 1.000000 };
 
 var g_ellipsesDimensions = new Array();
-g_ellipsesDimensions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'width\': 0.400000, \'height\': 0.500000, \'length\': 0.800000 , \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000 }
-g_ellipsesDimensions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'width\': 0.100000, \'height\': 2.000000, \'length\': 0.000000 , \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000 }
-g_ellipsesDimensions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'width\': 0.300000, \'height\': 0.600000, \'length\': 4.000000 , \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000 }
-g_ellipsesDimensions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'width\': 0.010780, \'height\': 1.000000, \'length\': 0.023000 , \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000 }
-var g_segments = 16, g_rings = 16, g_radius = 0.020000;
+g_ellipsesDimensions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'width\': 0.400000, \'height\': 0.500000, \'length\': 0.800000 , \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000, \'P1\': 0.300000, \'P2\': 0.500000, \'P3\': 0.100000, \'P4\': 0.300000 }
+g_ellipsesDimensions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'width\': 0.100000, \'height\': 2.000000, \'length\': 0.000000 , \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000, \'P1\': 1.100000, \'P2\': 1.100000, \'P3\': 1.000000, \'P4\': 0.800000 }
+g_ellipsesDimensions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'width\': 0.300000, \'height\': 0.600000, \'length\': 4.000000 , \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000, \'P1\': 0.100000, \'P2\': 3.300000, \'P3\': 5.500000, \'P4\': 0.100000 }
+g_ellipsesDimensions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'width\': 0.010780, \'height\': 1.000000, \'length\': 0.023000 , \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000, \'P1\': 1.000000, \'P2\': 2.000000, \'P3\': 1.000000, \'P4\': 1.000000 }
+var g_segments = 16, g_rings = 16, g_radius = 0.012000;
 var g_xAxisLength = 1.200000;
 var g_yAxisLength = 3.800000;
 var g_zAxisLength = 5.600000;
-var g_xMaximumValue = 1.220000;
-var g_yMaximumValue = 3.420000;
-var g_zMaximumValue = 5.620000;
-var g_xMinimumValue = 0.220000;
-var g_yMinimumValue = 0.620000;
-var g_zMinimumValue = 0.220000;
+var g_xMaximumValue = 1.100000;
+var g_yMaximumValue = 3.300000;
+var g_zMaximumValue = 5.500000;
+var g_xMinimumValue = 0.100000;
+var g_yMinimumValue = 0.500000;
+var g_zMinimumValue = 0.100000;
 var g_maximum = 5.500000;
 var g_pc1Label = "PC1 (44 %)";
 var g_pc2Label = "PC2 (40 %)";
 var g_pc3Label = "PC3 (15 %)";
+var g_number_of_custom_axes = 0;
 var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
+var g_fractionExplainedRounded = [44, 40, 15, 1];
 """
 
 MAPPING_FILE_DATA = [\
@@ -329,6 +343,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#showby">Visibility</a></li>
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
+            <li><a href="#axes">Axes</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -376,6 +391,10 @@ document.getElementById("logotable").style.display = 'none';
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
             <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="axes">
+            <div class="list" id="axeslist">
             </div>
         </div>
         <div id="settings">
@@ -449,6 +468,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#showby">Visibility</a></li>
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
+            <li><a href="#axes">Axes</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -509,6 +529,10 @@ document.getElementById("logotable").style.display = 'none';
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
             <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="axes">
+            <div class="list" id="axeslist">
             </div>
         </div>
         <div id="settings">
@@ -579,6 +603,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#showby">Visibility</a></li>
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
+            <li><a href="#axes">Axes</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -626,6 +651,10 @@ document.getElementById("logotable").style.display = 'none';
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
             <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="axes">
+            <div class="list" id="axeslist">
             </div>
         </div>
         <div id="settings">
@@ -695,6 +724,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#showby">Visibility</a></li>
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
+            <li><a href="#axes">Axes</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -742,6 +772,10 @@ document.getElementById("logotable").style.display = 'none';
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
             <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="axes">
+            <div class="list" id="axeslist">
             </div>
         </div>
         <div id="settings">

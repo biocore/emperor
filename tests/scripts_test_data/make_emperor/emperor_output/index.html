@@ -28,32 +28,34 @@ var g_mappingFileHeaders = ['SampleID','LinkerPrimerSequence','Treatment','DOB']
 var g_mappingFileData = { 'PC.481': ['PC.481','YATGCTGCCTCCCGTAGGAGT','Control','20070314'],'PC.607': ['PC.607','YATGCTGCCTCCCGTAGGAGT','Fast','20071112'],'PC.634': ['PC.634','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.635': ['PC.635','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.593': ['PC.593','YATGCTGCCTCCCGTAGGAGT','Control','20071210'],'PC.636': ['PC.636','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.355': ['PC.355','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.354': ['PC.354','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.356': ['PC.356','YATGCTGCCTCCCGTAGGAGT','Control','20061126'] };
 
 var g_spherePositions = new Array();
-g_spherePositions['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647 };
-g_spherePositions['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136 };
-g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': 0.228820, 'y': -0.130142, 'z': -0.287149 };
-g_spherePositions['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': 0.042263, 'y': -0.013968, 'z': 0.063531 };
-g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': 0.280399, 'y': -0.006013, 'z': 0.023485 };
-g_spherePositions['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.232873, 'y': 0.139788, 'z': 0.322871 };
-g_spherePositions['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': 0.170518, 'y': -0.194113, 'z': -0.030897 };
-g_spherePositions['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': -0.091330, 'y': 0.424147, 'z': -0.135627 };
-g_spherePositions['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': -0.349339, 'y': -0.120788, 'z': 0.115275 };
+g_spherePositions['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647, 'P1': -0.276542, 'P2': -0.144964, 'P3': 0.066647, 'P4': -0.067711, 'P5': 0.176070, 'P6': 0.072969, 'P7': -0.229889, 'P8': -0.046599 };
+g_spherePositions['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136, 'P1': -0.237661, 'P2': 0.046053, 'P3': -0.138136, 'P4': 0.159061, 'P5': -0.247485, 'P6': -0.115211, 'P7': -0.112864, 'P8': 0.064794 };
+g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': 0.228820, 'y': -0.130142, 'z': -0.287149, 'P1': 0.228820, 'P2': -0.130142, 'P3': -0.287149, 'P4': 0.086450, 'P5': 0.044295, 'P6': 0.206043, 'P7': 0.031000, 'P8': 0.071992 };
+g_spherePositions['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': 0.042263, 'y': -0.013968, 'z': 0.063531, 'P1': 0.042263, 'P2': -0.013968, 'P3': 0.063531, 'P4': -0.346121, 'P5': -0.127814, 'P6': 0.013935, 'P7': 0.030021, 'P8': 0.140148 };
+g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': 0.280399, 'y': -0.006013, 'z': 0.023485, 'P1': 0.280399, 'P2': -0.006013, 'P3': 0.023485, 'P4': -0.046811, 'P5': -0.146624, 'P6': 0.005670, 'P7': -0.035430, 'P8': -0.255786 };
+g_spherePositions['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.232873, 'y': 0.139788, 'z': 0.322871, 'P1': 0.232873, 'P2': 0.139788, 'P3': 0.322871, 'P4': 0.183347, 'P5': 0.020466, 'P6': 0.054059, 'P7': -0.036625, 'P8': 0.099824 };
+g_spherePositions['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': 0.170518, 'y': -0.194113, 'z': -0.030897, 'P1': 0.170518, 'P2': -0.194113, 'P3': -0.030897, 'P4': 0.019809, 'P5': 0.155100, 'P6': -0.279924, 'P7': 0.057609, 'P8': 0.024248 };
+g_spherePositions['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': -0.091330, 'y': 0.424147, 'z': -0.135627, 'P1': -0.091330, 'P2': 0.424147, 'P3': -0.135627, 'P4': -0.057519, 'P5': 0.151363, 'P6': -0.025394, 'P7': 0.051731, 'P8': -0.038738 };
+g_spherePositions['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': -0.349339, 'y': -0.120788, 'z': 0.115275, 'P1': -0.349339, 'P2': -0.120788, 'P3': 0.115275, 'P4': 0.069495, 'P5': -0.025372, 'P6': 0.067853, 'P7': 0.244448, 'P8': -0.059883 };
 
 var g_ellipsesDimensions = new Array();
-var g_segments = 16, g_rings = 16, g_radius = 0.012595;
+var g_segments = 16, g_rings = 16, g_radius = 0.007557;
 var g_xAxisLength = 0.629738;
 var g_yAxisLength = 0.618260;
 var g_zAxisLength = 0.610021;
-var g_xMaximumValue = 0.355968;
-var g_yMaximumValue = 0.499716;
-var g_zMaximumValue = 0.398440;
-var g_xMinimumValue = -0.424908;
-var g_yMinimumValue = -0.269682;
-var g_zMinimumValue = -0.362718;
+var g_xMaximumValue = 0.280399;
+var g_yMaximumValue = 0.424147;
+var g_zMaximumValue = 0.322871;
+var g_xMinimumValue = -0.349339;
+var g_yMinimumValue = -0.194113;
+var g_zMinimumValue = -0.287149;
 var g_maximum = 0.424147;
 var g_pc1Label = "PC1 (27 %)";
 var g_pc2Label = "PC2 (16 %)";
 var g_pc3Label = "PC3 (14 %)";
-var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495, 0.000000];
+var g_number_of_custom_axes = 0;
+var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495];
+var g_fractionExplainedRounded = [27, 16, 14, 11, 10, 8, 8, 6];
 
 var g_taxaPositions = new Array();
 
@@ -91,7 +93,9 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
+            <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
+            <li><a href="#axes">Axes</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -114,6 +118,12 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="showbylist">
             </div>
         </div>
+        <div id="scalingby">
+            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+            </select>
+            <div class="list" id="scalingbylist">
+            </div>
+        </div>
         <div id="labelby">
         <div id="labelsTop">
             <form name="plotoptions">
@@ -133,6 +143,10 @@ document.getElementById("logotable").style.display = 'none';
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
             <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="axes">
+            <div class="list" id="axeslist">
             </div>
         </div>
         <div id="settings">
