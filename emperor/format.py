@@ -342,7 +342,8 @@ EMPEROR_HEADER_HTML_STRING =\
     <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
         <tr><td><img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="logo"/></td></tr>
     </table>
-
+    <script type="text/javascript" src="emperor_required_resources/js/d3.v3.min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/d3.parcoords.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
     <script src="emperor_required_resources/js/jquery.colorPicker.js"></script>
