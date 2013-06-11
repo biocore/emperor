@@ -148,7 +148,13 @@ function toggleScaleCoordinates(element) {
 	g_yMinimumValue = operation(g_yMinimumValue,g_fractionExplained[g_viewingAxes[1]]);
 	g_zMinimumValue = operation(g_zMinimumValue,g_fractionExplained[g_viewingAxes[2]]);
 	g_maximum = operation(g_maximum, g_fractionExplained[g_viewingAxes[0]])
-	
+
+	// scale the position of the light
+	g_sceneLight.position.set(
+		operation(g_sceneLight.position.x, g_fractionExplained[g_viewingAxes[0]]),
+		operation(g_sceneLight.position.y, g_fractionExplained[g_viewingAxes[0]]),
+		operation(g_sceneLight.position.z, g_fractionExplained[g_viewingAxes[0]]));
+
 	// scale the position of the camera according to pc1
 	g_sceneCamera.position.set(
 		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]*1.7),
