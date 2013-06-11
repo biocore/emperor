@@ -28,7 +28,7 @@ from emperor.util import (copy_support_files, preprocess_mapping_file,
     preprocess_coords_file, fill_mapping_field_from_mapping_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
-    EMPEROR_HEADER_HTML_STRING)
+    EMPEROR_HEADER_HTML_STRING, EmperorLogicError)
 
 script_info = {}
 
@@ -107,10 +107,12 @@ script_info['required_options'] = [
     'metadata mapping file')
 ]
 script_info['optional_options'] = [
-    make_option('--number_of_axes', type=int, help='Number of axes to be incorporated in '
-    'the plot. Only 3 will be displayed at any given time but this option gives adds how '
-    'many you can use for your visualization. Note that Emperor will only use the axes '
-    'that explain more than 3% of the variability [default: %default]', default=10),
+    make_option('--number_of_axes', type=int, help='Number of axes to be '
+    'incorporated in the plot. Only 3 will be displayed at any given time but '
+    'this option modifies how many axes you can use for your visualization. '
+    'Note that Emperor will only use the axes that explain more than 0.5% (this'
+    ' will be shown as 1% in the GUI)of the variability [default: %default]',
+    default=10),
     make_option('-a', '--custom_axes', type='string', help='Comma-separated '
     'list of metadata categories to use as custom axes in the plot. For '
     'instance, if there is a time category and you would like to see the '
@@ -492,9 +494,15 @@ def main():
 
     # write the html file
     fp_out.write(format_mapping_file_to_js(mapping_data, header, header))
-    fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
-        coords_eigenvalues, coords_pct, custom_axes, coords_low, coords_high,
-        number_of_axes=number_of_axes))
+
+    # certain percents being explained cannot be displayed in the GUI
+    try:
+        fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
+            coords_eigenvalues, coords_pct, custom_axes, coords_low,
+            coords_high, number_of_axes=number_of_axes))
+    except EmperorLogicError, e:
+        option_parser.error(e.message)
+
     fp_out.write(format_taxa_to_js(otu_coords, otu_lineages, otu_prevalence))
     fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
         coords_headers, add_vectors[0], add_vectors[1]))
