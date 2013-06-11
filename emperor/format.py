@@ -25,6 +25,10 @@ from qiime.parse import mapping_file_to_dict, parse_mapping_file
 from qiime.filter import (filter_mapping_file_by_metadata_states,
     sample_ids_from_metadata_description)
 
+class EmperorLogicError(ValueError):
+    """Exception raised when a requirement for the Emperor GUI is not met"""
+    pass
+
 def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
                     coords_low=None, coords_high=None, number_of_axes=10):
     """Write the javascript necessary to represent a pcoa file in emperor
@@ -51,10 +55,17 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     # validating that the number of coords in coords
     if number_of_axes>len(coords[0]):
         number_of_axes = len(coords[0])
-    # validating that all the axes are above 3%
-    valid_pcoalabels = len([i for i in pct_var if i>3.0])
+    # validating that all the axes are above 0.51%, this accounts for really
+    # small variations explained in some axes that end up being not practical
+    # the GUI has some problems when presenting those values on screen
+    valid_pcoalabels = len([i for i in pct_var if i>0.51])
     if number_of_axes>valid_pcoalabels:
         number_of_axes = valid_pcoalabels
+    if number_of_axes<3:
+        raise EmperorLogicError, "Due to the variation explained, Emperor "+\
+            "could not plot at least 3 axes, check the input files to ensure"+\
+            " that the percent explained is greater than 0.5 in at least "+\
+            "three axes."
 
     # ranges for the PCoA space
     max_x = max(coords[:,0:1])
@@ -101,6 +112,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     js_pcoa_string += 'var g_maximum = %f;\n' % maximum
 
     offset = 0
+
     # create three vars, pc1, pc2 and pc3 if no custom_axes are passed, then use
     # the values of the percent explained by the PCoA; if custom_axes are passed
     # use as many as you can (since customs axes can be either [0, 1, 2, 3])

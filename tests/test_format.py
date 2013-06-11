@@ -14,7 +14,8 @@ __status__ = "Development"
 
 from numpy import array
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
-    format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string)
+    format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
+    EmperorLogicError)
 from cogent.util.unit_test import TestCase, main
 
 class TopLevelTests(TestCase):
@@ -23,6 +24,8 @@ class TopLevelTests(TestCase):
         self.pcoa_pct_var = array([2.66887049e+01, 1.62563704e+01,
             1.37754129e+01, 1.12172158e+01, 1.00247750e+01, 8.22835130e+00,
             7.55971174e+00, 6.24945796e+00, 1.17437419e-14])
+        self.pcoa_pct_var_really_low = array([2.66887049e+01, 1.62563704e+01,
+            0.1, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15])
         self.pcoa_headers = ['PC.355','PC.607','PC.634','PC.635','PC.593',
             'PC.636','PC.481','PC.354','PC.356']
         self.pcoa_coords = PCOA_DATA
@@ -80,6 +83,12 @@ class TopLevelTests(TestCase):
             self.pcoa_jk_pct_var, coords_low=self.pcoa_jk_coords_low,
             coords_high=self.pcoa_jk_coords_high)
         self.assertEquals(out_js_pcoa_string, PCOA_JS_JACKKNIFED)
+
+        # check it raises an exception when the variation explained on the
+        # axes is not greater than 0.51 for at least three of them
+        self.assertRaises(EmperorLogicError, format_pcoa_to_js,
+            self.pcoa_headers, self.pcoa_coords, self.pcoa_eigen_values,
+            self.pcoa_pct_var_really_low)
 
     def test_format_mapping_file_to_js(self):
         """Tests correct formatting of the metadata mapping file"""
@@ -216,16 +225,16 @@ var g_fractionExplainedRounded = [27, 27, 16, 14, 11, 10, 8, 8, 6];
 
 PCOA_JS_JACKKNIFED = """
 var g_spherePositions = new Array();
-g_spherePositions['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': 0.300000, 'y': 0.500000, 'z': 0.100000, 'P1': 0.300000, 'P2': 0.500000, 'P3': 0.100000 };
-g_spherePositions['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': 1.100000, 'y': 1.100000, 'z': 1.000000, 'P1': 1.100000, 'P2': 1.100000, 'P3': 1.000000 };
-g_spherePositions['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': 0.100000, 'y': 3.300000, 'z': 5.500000, 'P1': 0.100000, 'P2': 3.300000, 'P3': 5.500000 };
-g_spherePositions['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': 1.000000, 'y': 2.000000, 'z': 1.000000, 'P1': 1.000000, 'P2': 2.000000, 'P3': 1.000000 };
+g_spherePositions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000, \'P1\': 0.300000, \'P2\': 0.500000, \'P3\': 0.100000, \'P4\': 0.300000 };
+g_spherePositions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000, \'P1\': 1.100000, \'P2\': 1.100000, \'P3\': 1.000000, \'P4\': 0.800000 };
+g_spherePositions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000, \'P1\': 0.100000, \'P2\': 3.300000, \'P3\': 5.500000, \'P4\': 0.100000 };
+g_spherePositions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000, \'P1\': 1.000000, \'P2\': 2.000000, \'P3\': 1.000000, \'P4\': 1.000000 };
 
 var g_ellipsesDimensions = new Array();
-g_ellipsesDimensions['PC.355'] = { 'name': 'PC.355', 'color': 0, 'width': 0.400000, 'height': 0.500000, 'length': 0.800000 , 'x': 0.300000, 'y': 0.500000, 'z': 0.100000, 'P1': 0.300000, 'P2': 0.500000, 'P3': 0.100000 }
-g_ellipsesDimensions['PC.607'] = { 'name': 'PC.607', 'color': 0, 'width': 0.100000, 'height': 2.000000, 'length': 0.000000 , 'x': 1.100000, 'y': 1.100000, 'z': 1.000000, 'P1': 1.100000, 'P2': 1.100000, 'P3': 1.000000 }
-g_ellipsesDimensions['PC.634'] = { 'name': 'PC.634', 'color': 0, 'width': 0.300000, 'height': 0.600000, 'length': 4.000000 , 'x': 0.100000, 'y': 3.300000, 'z': 5.500000, 'P1': 0.100000, 'P2': 3.300000, 'P3': 5.500000 }
-g_ellipsesDimensions['PC.635'] = { 'name': 'PC.635', 'color': 0, 'width': 0.010780, 'height': 1.000000, 'length': 0.023000 , 'x': 1.000000, 'y': 2.000000, 'z': 1.000000, 'P1': 1.000000, 'P2': 2.000000, 'P3': 1.000000 }
+g_ellipsesDimensions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'width\': 0.400000, \'height\': 0.500000, \'length\': 0.800000 , \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000, \'P1\': 0.300000, \'P2\': 0.500000, \'P3\': 0.100000, \'P4\': 0.300000 }
+g_ellipsesDimensions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'width\': 0.100000, \'height\': 2.000000, \'length\': 0.000000 , \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000, \'P1\': 1.100000, \'P2\': 1.100000, \'P3\': 1.000000, \'P4\': 0.800000 }
+g_ellipsesDimensions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'width\': 0.300000, \'height\': 0.600000, \'length\': 4.000000 , \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000, \'P1\': 0.100000, \'P2\': 3.300000, \'P3\': 5.500000, \'P4\': 0.100000 }
+g_ellipsesDimensions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'width\': 0.010780, \'height\': 1.000000, \'length\': 0.023000 , \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000, \'P1\': 1.000000, \'P2\': 2.000000, \'P3\': 1.000000, \'P4\': 1.000000 }
 var g_segments = 16, g_rings = 16, g_radius = 0.012000;
 var g_xAxisLength = 1.200000;
 var g_yAxisLength = 3.800000;
@@ -241,8 +250,8 @@ var g_pc1Label = "PC1 (44 %)";
 var g_pc2Label = "PC2 (40 %)";
 var g_pc3Label = "PC3 (15 %)";
 var g_number_of_custom_axes = 0;
-var g_fractionExplained = [0.440000, 0.400000, 0.150000];
-var g_fractionExplainedRounded = [44, 40, 15];
+var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
+var g_fractionExplainedRounded = [44, 40, 15, 1];
 """
 
 MAPPING_FILE_DATA = [\
