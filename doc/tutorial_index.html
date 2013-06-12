@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Emperor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 60px;
+      }
+
+      /* Custom container */
+      .container {
+        margin: 0 auto;
+        max-width: 1000px;
+      }
+      .container > hr {
+        margin: 60px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 80px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 100px;
+        line-height: 1;
+      }
+      .jumbotron .lead {
+        font-size: 24px;
+        line-height: 1.25;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+      /* Supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+      }
+
+
+      /* Customize the navbar links to be fill the entire space of the .navbar */
+      .navbar .navbar-inner {
+        padding: 0;
+      }
+      .navbar .nav {
+        margin: 0;
+        display: table;
+        width: 100%;
+      }
+      .navbar .nav li {
+        display: table-cell;
+        width: 1%;
+        float: none;
+      }
+      .navbar .nav li a {
+        font-weight: bold;
+        text-align: center;
+        border-left: 1px solid rgba(255,255,255,.75);
+        border-right: 1px solid rgba(0,0,0,.1);
+      }
+      .navbar .nav li:first-child a {
+        border-left: 0;
+        border-radius: 3px 0 0 3px;
+      }
+      .navbar .nav li:last-child a {
+        border-right: 0;
+        border-radius: 0 3px 3px 0;
+      }
+    </style>
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="bootstrap/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="img/favicon.ico">
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <div class="masthead">
+        <a href="index.html"><p align="center"><img src="img/emperor_heading.png" alt="Emperor Logo"></p></a>
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="container">
+              <ul class="nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="description_index.html">Description</a></li>
+                <li class="active"><a href="tutorial_index.html">Tutorial</a></li>
+                <li><a href="installation_index.html">Installation</a></li>
+                <li><a href="https://github.com/qiime/emperor/issues">Support</a></li>
+              </ul>
+            </div>
+          </div>
+        </div><!-- /.navbar -->
+      </div>
+        <h2>Tutorial</h2>
+        <h3 class="muted">Introduction</h3>
+          <p class="lead" align="justify">
+            This tutorial attempts to cover some of the most common use cases that Emperor covers. Although most of the functionality in this tutorial will be covered, it is important to note that not all of them will be covered through this document.
+            <br>
+            The dataset that we will use to exemplify Emperor’s functionality, comes from the <a href="http://www.pnas.org/content/107/14/6477.long">Fierer et. al. 2010</a> article, where multiple individuals and their keyboards were sampled to interindividual variability in the composition of these communities.
+            <br>
+            To get started, first download and unzip these <a href="files/files.zip">files</a>, there you will find a principal coordinates file, a mapping file. These input files adhere to the standard formats used in <a href="http://www.qiime.org">QIIME</a>. Before continuing with the tutorial make sure you have the latest version of <a href=" https://www.google.com/intl/es/chrome/browser/">Google Chrome</a> installed in your computer.
+            <br>
+          </p>
+        <hr>
+        <h3 class="muted">Command Line Interface</h3>
+          <p class="lead" align="justify">
+            Emperor offers a convenient command line interface script, from where the main interface (in the form of an HTML file) is generated, the name of this utility is called <code>make_emperor.py</code>, see the installation notes for further details. The minimum inputs that this interface requires are a coordinates file and a mapping file, it’s worth noting that the script interface offers many options that allow the user to refine the amount of data to visualize or even to change the way it will be presented, calling <code>make_emperor.py -h</code> from a terminal window, will display the available options and a concise description for each of these.
+            <br>
+            Besides the coordinates and mapping file options, we will also use the <code>-b</code> option and the <code>-o</code> option. The <code>-b</code> option allows us to specify the categories that we want displayed in the GUI, it also allows us to combine columns from the mapping file into a single column. The <code>-o</code> option allows us to specify the name of the output directory.
+          </p>
+          <pre><code>make_emperor.py -i unweighted_unifrac_pc.txt -m mapping_file.txt -b "AGE,HAND,HAND_KEY,BODY_SITE,HOST_SUBJECT_ID,HAND,HAND&&HOST_SUBJECT_ID" -o keyboard</code></pre>
+          <br>
+          <p class="lead" align="justify">
+            Note that the categories in the mapping file that we will be taking a look are the ones listed after the <code>-b</code> option plus the combination of the values in <code>HAND</code> and the values in <code>HOST_SUBJECT_ID</code>.
+            <br>
+            A new folder named keyboard should have been created, here you will find two files, these two files will be named the same for all datasets:
+            <ul>
+              <li><code>index.html</code></li>
+              <li><code>emperor_required_resources/</code></li>
+            </ul>
+            <br>
+            Opening <code>index.html</code> with Google Chrome will present the main GUI, to do so you can right click this file and make sure you open it with Google Chrome. If you are using OS X you can use the following command:
+          </p>
+          <pre><code>open -a /Applications/Google\ Chrome.app keyboard/index.html</code></pre>
+        <hr>
+        <h3 class="muted">Graphical User Interface</h3>
+          <p class="lead" align="justify">
+            Once you open the <code>index.html</code> file that was just generated, you should see something similar to the following figure:
+          </p>
+          <p align="center"><img src="img/tutorial/1.png" alt="GUI 1"></p>
+          <p class="lead" align="justify">
+            For a detailed explanation of the options available from the main interface refer to the <a href="description_index.html">description section</a>.
+            <br>
+            The first thing that we will do is change the coloring in the user interface, by default it should be colored using the <code>AGE</code> category, to change this navigate to the colors tab and select <code>HOST_SUBJECT_ID</code> in the dropdown menu that currently should read <code>AGE</code>. Now that the samples are colored by subject, you should only see three different colors on screen, that should correspond to the ones represented under the list that now reads <code>HOST_SUBJECT_ID</code>.
+          </p>
+          <p align="center"><img src="img/tutorial/2.png" alt="HOST_SUBJECT_ID Coloring"></p>
+          <p class="lead" align="justify">
+            To change the color of the samples categorized as <code>232:M9</code>, click on the green square by the left side of this label, a color palette should appear on screen, select a new color like yellow and once you are happy with the selection click the button choose (see the following figure).
+          </p>
+          <p align="center"><img src="img/tutorial/capture_2.png" alt="Three panels"></p>
+          <p class="lead" align="justify">
+            Now, from the samples that are currently being presented, let’s reduce the opacity in the samples belonging to a key, so let’s navigate to the visibility tab and with the slider under the label that reads <code>NA</code>, move it until you reach almost half the opacity. This will allow you to easily see what are those samples without losing the coloring by <code>HOST_SUBJECT_ID</code>.
+          </p>
+          <p align="center"><img src="img/tutorial/6.png" alt="Opacity reduction"></p>
+          <p class="lead" align="justify">
+            Now let’s go back to the coloring and select a coloring by the category that we created by combining <code>HAND</code> and <code>HOST_SUBJECT_ID</code>, should be named <code>HAND&&HOST_SUBJECT_ID</code>. A nice gradient will be shown in the per-category coloring, which although useful for continuous data in a mapping file, is not convenient in this case, so go to the options menu and click the “use discrete colors” checkbox. This will change the color mapping from a continuous gradient to discrete and dissimilar colors that can be differentiated at a first glance.
+          </p>
+          <p align="center"><img src="img/tutorial/treta.png" alt="To Discrete"></p>
+          <p class="lead" align="justify">
+            Now, let’s assume that we want to keep track of only one sample and want to continue interacting with the data, this sample being for this example <code>M9Indr217.140998</code>. To look for this sample you can use the textbox in the Key tab and search for it. Once you’ve found it click in the colored square and a white triangle will appear on the plot pointing at the place where the sample is currently located.
+          </p>
+          <p align="center"><img src="img/tutorial/10.png" alt="Filter"></p>
+          <p class="lead" align="justify">
+            An approach that’s often times used to analyze this data, is to scale the coordinates by the percents explained in each axis, to do this go to the options tab and check the “scale coords by percent explained”. What this will functionally do is multiply the values of the data for all the samples by the percent that’s explained from the PCoA analysis. In this case PC1 will be scaled by 0.25, PC2 by 0.08 and PC3 by 0.05. 
+          </p>
+          <p align="center"><img src="img/tutorial/exes.png" alt="Filter"></p>
+          <p class="lead" align="justify">
+            Dragging the plot with the left button of the mouse, will let you rotate the plot in the direction that the mouse is being moved. If the right click is pressed instead, the plot will be dragged with all it’s elements. To zoom-in or zoom-out in the plot use the scroll wheel. And note that at any time you can go back to the options tab and click recenter camera to go back to the original position.
+          </p>
+          <p align="center"><img src="img/tutorial/rotating_1.png" alt="Filter"></p>
+          <p align="center"><img src="img/tutorial/rotating_2.png" alt="Filter"></p>
+      <hr>
+      <div class="footer">
+        <a href="https://github.com/qiime/emperor/network/members">
+          <p align="center">&copy; The Emperor Development Team</p>
+        </a>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="bootstrap/js/jquery.js"></script>
+    <script src="bootstrap/js/bootstrap-transition.js"></script>
+    <script src="bootstrap/js/bootstrap-alert.js"></script>
+    <script src="bootstrap/js/bootstrap-modal.js"></script>
+    <script src="bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="bootstrap/js/bootstrap-scrollspy.js"></script>
+    <script src="bootstrap/js/bootstrap-tab.js"></script>
+    <script src="bootstrap/js/bootstrap-tooltip.js"></script>
+    <script src="bootstrap/js/bootstrap-popover.js"></script>
+    <script src="bootstrap/js/bootstrap-button.js"></script>
+    <script src="bootstrap/js/bootstrap-collapse.js"></script>
+    <script src="bootstrap/js/bootstrap-carousel.js"></script>
+    <script src="bootstrap/js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>
