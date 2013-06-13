@@ -339,6 +339,7 @@ EMPEROR_HEADER_HTML_STRING =\
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/d3.parcoords.css">
     <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
         <tr><td><img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="logo"/></td></tr>
     </table>
@@ -393,24 +394,37 @@ document.getElementById("logotable").style.display = 'none';
  </script>
 </head>
 
-<body>
+<body>    
 
-<label id="pointCount" class="ontop">
-</label>
+<div id="plotToggle">
+    <form>
+      <div id="plottype">
+        <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
+        <input id="parallel" type="radio" id="parallel" name="plottype" /><label for="parallel">Parallel</label>
+      </div>
+    </form>
+</div>
+<div id="pcoaPlotWrapper" class="plotWrapper">
+    <label id="pointCount" class="ontop">
+    </label>
 
-<div id="finder" class="arrow-right">
+    <div id="finder" class="arrow-right">
+    </div>
+
+    <div id="labels" class="unselectable">
+    </div>
+
+    <div id="taxalabels" class="unselectable">
+    </div>
+
+    <div id="axislabels" class="axislabels">
+    </div>
+
+    <div id="main_plot">
+    </div>
 </div>
 
-<div id="labels" class="unselectable">
-</div>
-
-<div id="taxalabels" class="unselectable">
-</div>
-
-<div id="axislabels" class="axislabels">
-</div>
-
-<div id="main_plot">
+<div id="parallelPlotWrapper" class="plotWrapper">
 </div>
 
 <div id="menu">

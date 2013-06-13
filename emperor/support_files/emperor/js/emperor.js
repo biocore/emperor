@@ -14,6 +14,7 @@ var g_plotSpheres = {};
 var g_plotEllipses = {};
 var g_plotTaxa = {};
 var g_plotVectors = {};
+var g_g_parallelPlots = []
 
 // sample identifiers of all items that are plotted
 var g_plotIds = [];
@@ -81,7 +82,7 @@ function resetCamera() {
 	// We need to reset the camera controls first before modifying the values of the camera (this is the reset view!)
 	g_sceneControl.reset();
 	
-	g_sceneCamera.aspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
+	g_sceneCamera.aspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 	g_sceneCamera.rotation.set( 0, 0, 0);
 	g_sceneCamera.updateProjectionMatrix();
 	
@@ -352,7 +353,7 @@ function colorByMenuChanged() {
 
 	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 	colors = getColorList(vals);
-
+	// console.log(vals)
 	// build the colorby table in HTML
 	var lines = "<table>";
 	for(var i in vals){
@@ -396,11 +397,42 @@ function colorByMenuChanged() {
 						c = "#"+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2)+c.charAt(3)+c.charAt(3);
 					}
 					colorChanged($(this).attr('name'), c);
+					colors[i] = c;
+					colorParallelPlots(vals, colors);
 				}
 		});
 	}
 
+	colorParallelPlots(vals, colors);
 	setKey(vals, colors);
+}
+
+function colorParallelPlots(vals,colors) {
+	pwidth = document.getElementById('parallelPlotWrapper').offsetWidth
+	pheight = document.getElementById('parallelPlotWrapper').offsetHeight - 30
+
+	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
+	
+	var color = function(d) { 
+		var sid = d[0];
+		var divid = sid.replace(/\./g,'')+"_key";
+		var catValue = g_mappingFileData[sid][g_categoryIndex];
+		var catColor = colors[vals.indexOf(catValue)];
+		// console.log(catColor)
+		try {
+			var hex = '#'+catColor.getHexString();
+		}catch(TypeError) {
+			var hex = catColor;
+		}
+		return hex;
+	}
+	
+	var pc = d3.parcoords()("#parallelPlot")
+	  .data(g_parallelPlots)
+	  .color(color)
+	  .render()
+	  .ticks(10)
+	  .createAxes();
 }
 
 /*Callback when the scaling by drop-down menu changes
@@ -1016,6 +1048,9 @@ function sphereRadiusChange(ui, category) {
 /*Setup the interface elements required for the sidebar of the main interface*/
 function setJqueryUi() {
 	$("#menutabs").tabs();
+	$("#plottype").buttonset();
+	$("input[name='plottype']").change(togglePlots);
+	
 	$("#labelColor").css('backgroundColor', '#fff');
 
 	$("#labelColor").spectrum({
@@ -1135,6 +1170,7 @@ function setJqueryUi() {
 
 	// the default color palette for the background is black and white
 	$('#rendererbackgroundcolor').css('backgroundColor',"#000000");
+	$('#parallelPlotWrapper').css('backgroundColor',"#000000");
 	$("#rendererbackgroundcolor").spectrum({
 		localStorageKey: 'key',
 		color: "#000000",
@@ -1155,6 +1191,8 @@ function setJqueryUi() {
 				// set the color for the box and for the renderer
 				$(this).css('backgroundColor', c);
 				g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
+				
+				$('#parallelPlotWrapper').css('backgroundColor', c);
 			}
 	});
 }
@@ -1432,6 +1470,43 @@ function clean_label_refresh_axes() {
 	$("#refresh_axes_label").html("");
 }
 
+function togglePlots() {
+	if(document.getElementById('pcoa').checked)
+	{
+		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace
+      (/(?:^|\s)invisible(?!\S)/ , '');
+	  document.getElementById('parallelPlotWrapper').className += ' invisible'
+	}
+	else
+	{
+		document.getElementById('parallelPlotWrapper').className = document.getElementById('parallelPlotWrapper').className.replace
+      (/(?:^|\s)invisible(?!\S)/ , '');
+	  document.getElementById('pcoaPlotWrapper').className += ' invisible'
+	}
+}
+
+function setParallelPlots() {	
+	g_parallelPlots = []
+	var num_axes = g_fractionExplained.length
+
+	for(p in g_spherePositions)
+	{
+		var dataline = []
+		
+		dataline.push(g_spherePositions[p].name)
+		for(var i = 1; i < num_axes+1; i++)
+		{
+			dataline.push(g_spherePositions[p]['P'+i])
+		}
+		g_parallelPlots.push(dataline)
+	}
+	
+	pwidth = document.getElementById('pcoaPlotWrapper').offsetWidth
+	pheight = document.getElementById('pcoaPlotWrapper').offsetHeight - 30
+
+	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
+}
+
 /*Setup and initialization function for the whole system
 
   This function will set all of the WebGL elements that are required to exist
@@ -1440,7 +1515,7 @@ function clean_label_refresh_axes() {
 */
 $(document).ready(function() {
 	setJqueryUi()
-
+	
 	// Detecting that webgl is activated
 	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
@@ -1448,12 +1523,12 @@ $(document).ready(function() {
 	var particles, geometry, parameters, i, h, color;
 	var mouseX = 0, mouseY = 0;
 
-	var winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight), view_angle = 35, view_near = 0.0000001, view_far = 10000;
-	var winAspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
+	var winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight), view_angle = 35, view_near = 0.0000001, view_far = 10000;
+	var winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 
 	$(window).resize(function() {
-		winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight);
-		winAspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
+		winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight);
+		winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 		g_sceneCamera.aspect = winAspect;
 		g_sceneCamera.updateProjectionMatrix();
 	});
@@ -1467,8 +1542,8 @@ $(document).ready(function() {
 		g_sceneCamera = new THREE.PerspectiveCamera(view_angle, winAspect, view_near, view_far);
 		g_sceneCamera.position.set(0, 0, 0);
 
-		$('#main_plot canvas').attr('width',document.getElementById('main_plot').offsetWidth);
-		$('#main_plot canvas').attr('height',document.getElementById('main_plot').offsetHeight);
+		$('#main_plot canvas').attr('width',document.getElementById('pcoaPlotWrapper').offsetWidth);
+		$('#main_plot canvas').attr('height',document.getElementById('pcoaPlotWrapper').offsetHeight);
 
 		g_mainScene = new THREE.Scene();
 		g_mainScene.fog = new THREE.FogExp2( 0x000000, 0.0009);
@@ -1514,10 +1589,14 @@ $(document).ready(function() {
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
 		}
-
+		
+		setParallelPlots();
+		
 		colorByMenuChanged();
 		showByMenuChanged();
 		scalingByMenuChanged();
+		
+		togglePlots();
 
 		// the light is attached to the camera to provide a 3d perspective
 		g_sceneLight = new THREE.DirectionalLight(0x999999, 2);
@@ -1542,7 +1621,8 @@ $(document).ready(function() {
 		// renderer, the default background color is black
 		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true });
 		g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
-		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
+		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
+		// g_mainRenderer.setSize( document.getElementById('vizualizations').offsetWidth , document.getElementById('vizualizations').offsetHeight );
 		g_mainRenderer.sortObjects = true;
 		main_plot.append(g_mainRenderer.domElement);
 
@@ -1700,7 +1780,8 @@ $(document).ready(function() {
    
 	function render() {
 		g_sceneControl.update();
-		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
+		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
+		// console.log(document.getElementById('main_plot').offsetHeight)
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 	}
 });
