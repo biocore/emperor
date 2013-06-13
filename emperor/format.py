@@ -358,7 +358,7 @@ def format_comparison_bars_to_js(coords_data, coords_headers, clones):
 
 
 def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
-                                    has_vectors=False):
+                                    has_vectors=False, has_edges=False):
     """Create an HTML footer according to the things being presented in the plot
 
     has_biplots: whether the plot has biplots or not
@@ -376,6 +376,7 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
     optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
     optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
     optional_strings.append(if_(has_vectors, _VECTORS_OPACITY_SLIDER, ''))
+    optional_strings.append(if_(has_edges, _EDGES_VISIBILITY_SELECTOR, ''))
 
     return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
 
@@ -438,6 +439,13 @@ _BIPLOT_SPHERES_COLOR_SELECTOR ="""
             <table>
                 <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
             </table>
+            <br>"""
+
+_EDGES_VISIBILITY_SELECTOR = """
+            <br>
+            <form name="edgesvisibility">
+            <input type="checkbox" onClick="toggleEdgesVisibility()">Edges Visibility</input>
+            </form>
             <br>"""
 
 _EMPEROR_FOOTER_HTML_STRING ="""document.getElementById("logo").style.display = 'none';
@@ -540,7 +548,7 @@ document.getElementById("logotable").style.display = 'none';
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>%s%s
+            <br>%s%s%s
             <br>
             <label for="sphereopacity" class="text">Sphere Opacity</label>
             <label id="sphereopacity" class="slidervalue"></label>
