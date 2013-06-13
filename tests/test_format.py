@@ -344,6 +344,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -354,7 +355,6 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby">
-            <br>
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
@@ -397,23 +397,9 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="axeslist">
             </div>
         </div>
-        <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+        <div id="view">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
             <br>
-            <br>
-            <label for="ellipseopacity" class="text">Ellipse Opacity</label>
-            <label id="ellipseopacity" class="slidervalue"></label>
-            <div id="eopacityslider" class="slider-range-max"></div>
             <br>
             <label for="sphereopacity" class="text">Sphere Opacity</label>
             <label id="sphereopacity" class="slidervalue"></label>
@@ -426,6 +412,26 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <label for="ellipseopacity" class="text">Ellipse Opacity</label>
+            <label id="ellipseopacity" class="slidervalue"></label>
+            <div id="eopacityslider" class="slider-range-max"></div>
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
         </div>
     </div>  
 </div>
@@ -433,6 +439,7 @@ document.getElementById("logotable").style.display = 'none';
 
 </html>
 """
+
 EXPECTED_FOOTER_B =\
 """document.getElementById("logo").style.display = 'none';
 document.getElementById("logotable").style.display = 'none';
@@ -469,6 +476,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -479,23 +487,12 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby">
-            <br>
-            <br>
-            <table>
-                <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
-            </table>
-            <br>
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
             </div>
         </div>
         <div id="showby">
-            <br>
-            <form name="biplotsvisibility">
-            <input type="checkbox" onClick="toggleBiplotVisibility()">Biplots Visibility</input>
-            </form>
-            <br>
             <select id="showbycombo" onchange="showByMenuChanged()">
             </select>
             <div class="list" id="showbylist">
@@ -511,9 +508,6 @@ document.getElementById("logotable").style.display = 'none';
         <div id="labelsTop">
             <form name="plotoptions">
             <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
-            </form>
-            <form name="biplotoptions">
-            <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
             </form>
             <br>
             <label for="labelopacity" class="text">Label Opacity</label>
@@ -535,17 +529,7 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="axeslist">
             </div>
         </div>
-        <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+        <div id="view">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
             <br>
             <br>
@@ -560,6 +544,35 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>
+            <br>
+            <table>
+                <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
+            </table>
+            <br>
+            <br>
+            <br>
+            <form name="biplotsvisibility">
+            <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
+            </form>
+            <br>
+            <br>
+            <form name="biplotoptions">
+            <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
+            </form>
+            <br>
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
         </div>
     </div>  
 </div>
@@ -604,6 +617,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -614,7 +628,6 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby">
-            <br>
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
@@ -657,17 +670,7 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="axeslist">
             </div>
         </div>
-        <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+        <div id="view">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
             <br>
             <br>
@@ -682,6 +685,22 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
         </div>
     </div>  
 </div>
@@ -725,6 +744,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -735,7 +755,6 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby">
-            <br>
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
@@ -778,23 +797,9 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="axeslist">
             </div>
         </div>
-        <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+        <div id="view">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
             <br>
-            <br>
-            <label for="vectorsopacity" class="text">Vectors Opacity</label>
-            <label id="vectorsopacity" class="slidervalue"></label>
-            <div id="vopacityslider" class="slider-range-max"></div>
             <br>
             <label for="sphereopacity" class="text">Sphere Opacity</label>
             <label id="sphereopacity" class="slidervalue"></label>
@@ -807,6 +812,26 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <label for="vectorsopacity" class="text">Vectors Opacity</label>
+            <label id="vectorsopacity" class="slidervalue"></label>
+            <div id="vopacityslider" class="slider-range-max"></div>
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
         </div>
     </div>  
 </div>

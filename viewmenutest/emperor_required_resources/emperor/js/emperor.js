@@ -845,7 +845,7 @@ function toggleTaxaLabels(){
 function toggleBiplotVisibility(){
 	// reduce the opacity to zero if the element should be off or to 0.5
 	// if the element is supposed to be present; 0.5 is the default value
-	if(!document.biplotsvisibility.elements[0].checked){
+	if(document.biplotsvisibility.elements[0].checked){
 		for (index in g_plotTaxa){
 			g_plotTaxa[index].material.opacity = 0;
 		}
@@ -1356,12 +1356,6 @@ function changePointCount() {
 
 /* Validating and modifying the view axes */	
 function changeAxesDisplayed() {
-	if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
-			!jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
-			resetCamera();
-			return;
-	}
-	
 	// HACK: this is a work around for cases when the scale is on
 	if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': false});
 
