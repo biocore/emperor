@@ -14,6 +14,7 @@ var g_plotSpheres = {};
 var g_plotEllipses = {};
 var g_plotTaxa = {};
 var g_plotVectors = {};
+var g_plotEdges = {};
 
 // sample identifiers of all items that are plotted
 var g_plotIds = [];
@@ -857,6 +858,25 @@ function toggleBiplotVisibility(){
 	}
 }
 
+/* Turn on and off the lines connecting the samples being compared */
+function toggleEdgesVisibility(){
+
+	// each edge is really composed of two lines and those elements are stored
+	// in each of the keys that are stored for each sample comparison
+	if(document.edgesvisibility.elements[0].checked){
+		for (index in g_plotEdges){
+			g_plotEdges[index][0].material.opacity = 0;
+			g_plotEdges[index][1].material.opacity = 0;
+		}
+	}
+	else{
+		for (index in g_plotEdges){
+			g_plotEdges[index][0].material.opacity = 1;
+			g_plotEdges[index][1].material.opacity = 1;
+		}
+	}
+}
+
 /*This function finds the screen coordinates of any position in the current plot.
 
   The main purpose of this function is to be used for calculating the placement
@@ -1280,6 +1300,57 @@ function drawVectors(){
 	}
 }
 
+
+/*Draw the lines that connect samples being compared (see g_comparePositiosn)
+
+  This will draw two lines between each compared sample, one with color red and
+  the other one with color white, the that must be noted here is that, these two
+  lines visually compose a single line and are both stored in the g_plotEdges
+  array in arrays of two elements where the first element is the red line and
+  the second element is the white line.
+*/
+function drawEdges(){
+	var current_vector, previous = null, middle_point, index=0, line_a, line_b;
+
+	for (var sampleKey in g_comparisonPositions){
+		for (var edgePosition in g_comparisonPositions[sampleKey]){
+			console.log(g_comparisonPositions[sampleKey][edgePosition]);
+
+			// if we don't have a start point store it and move along
+			if (previous == null) {
+				previous = g_comparisonPositions[sampleKey][edgePosition];
+			}
+			// if we already have a start point then draw the edge
+			else{
+				current = g_comparisonPositions[sampleKey][edgePosition];
+
+				// the edge is composed by two lines so calculate the middle
+				// point between these two lines and end the first line in this
+				// point and start the second line in this point
+				middle_point = [(previous[0]+current[0])/2,
+					(previous[1]+current[1])/2, (previous[2]+current[2])/2]
+
+				line_a = makeLine(previous, middle_point, 0xFF0000, 2)
+				line_b = makeLine(middle_point, current, 0xFFFFFF, 2)
+
+				// index the two lines by the name of the sample plus a suffix
+				g_plotEdges[sampleKey+'_'+toString(index)] = [line_a, line_b]
+
+				g_elementsGroup.add(line_a)
+				g_elementsGroup.add(line_b)
+
+				// the current line becomes the previous line for the next
+				// iteration as all samples must be conected
+				previous = g_comparisonPositions[sampleKey][edgePosition];
+			}
+			index = index+1;
+		}
+
+		// if we've finished with the connecting lines let a new line start
+		previous = null;
+	}
+}
+
 function saveSVG(){
 	open("data:image/svg+xml," + encodeURIComponent(document.getElementById('main_plot').innerHTML));
 }
@@ -1482,6 +1553,7 @@ $(document).ready(function() {
 		drawEllipses();
 		drawTaxa();
 		drawVectors();
+		drawEdges();
 
 		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
