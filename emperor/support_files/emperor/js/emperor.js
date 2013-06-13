@@ -845,7 +845,7 @@ function toggleTaxaLabels(){
 function toggleBiplotVisibility(){
 	// reduce the opacity to zero if the element should be off or to 0.5
 	// if the element is supposed to be present; 0.5 is the default value
-	if(document.biplotsvisibility.elements[0].checked){
+	if(!document.biplotsvisibility.elements[0].checked){
 		for (index in g_plotTaxa){
 			g_plotTaxa[index].material.opacity = 0;
 		}

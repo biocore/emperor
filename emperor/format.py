@@ -375,7 +375,7 @@ _TAXA_LABELS_SELECTOR = """
 _BIPLOT_VISIBILITY_SELECTOR = """
             <br>
             <form name="biplotsvisibility">
-            <input type="checkbox" onClick="toggleBiplotVisibility()">Biplots Visibility</input>
+            <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
             </form>
             <br>"""
 
@@ -421,6 +421,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -431,13 +432,12 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby">
-            <br>%s
             <select id="colorbycombo" onchange="colorByMenuChanged()">
             </select>
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby">%s
+        <div id="showby">
             <select id="showbycombo" onchange="showByMenuChanged()">
             </select>
             <div class="list" id="showbylist">
@@ -453,7 +453,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="labelsTop">
             <form name="plotoptions">
             <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
-            </form>%s
+            </form>
             <br>
             <label for="labelopacity" class="text">Label Opacity</label>
             <label id="labelopacity" class="slidervalue"></label>
@@ -474,19 +474,9 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="axeslist">
             </div>
         </div>
-        <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+        <div id="view">
             <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>%s%s
+            <br>
             <br>
             <label for="sphereopacity" class="text">Sphere Opacity</label>
             <label id="sphereopacity" class="slidervalue"></label>
@@ -499,6 +489,22 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>%s
+            <br>%s
+            <br>%s
+            <br>%s%s
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
         </div>
     </div>  
 </div>
