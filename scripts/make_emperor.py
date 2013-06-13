@@ -523,7 +523,7 @@ def main():
     fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
         coords_headers, add_vectors[0], add_vectors[1]))
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
-        isdir(input_coords), add_vectors != [None, None]))
+        isdir(input_coords) and not compare_plots, add_vectors != [None, None]))
     fp_out.close()
     copy_support_files(output_dir)
 
