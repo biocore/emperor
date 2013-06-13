@@ -28,7 +28,7 @@ from emperor.util import (copy_support_files, preprocess_mapping_file,
     preprocess_coords_file, fill_mapping_field_from_mapping_file)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
-    EMPEROR_HEADER_HTML_STRING, EmperorLogicError)
+    format_comparison_bars_to_js, EMPEROR_HEADER_HTML_STRING, EmperorLogicError)
 
 script_info = {}
 
@@ -91,7 +91,11 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     " sorted by a category that's explicitly represented in the 3D plot use the"
     " '--add_vectors' and the '-a' option.", "%prog -i unweighted_unifrac_pc."
     "txt -m Fasting_Map.txt --add_vectors Treatment,DOB -a DOB -o "
-    "sorted_by_DOB")]
+    "sorted_by_DOB"),
+    ("Compare two coordinate files", "To draw replicates of the same samples "
+    "like for a procustres plot.", "%prog -i compare -m Fasting_Map.txt "
+    "--compare_plots -o comparison")
+    ]
 script_info['output_description']= "This script creates an output directory "+\
     "with an HTML formated file named 'index.html' and a complementary "+\
     "folder named 'emperor_required_resources'. Opening index.html with "+\
@@ -522,8 +526,11 @@ def main():
     fp_out.write(format_taxa_to_js(otu_coords, otu_lineages, otu_prevalence))
     fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
         coords_headers, add_vectors[0], add_vectors[1]))
+    fp_out.write(format_comparison_bars_to_js(coords_data, coords_headers,
+        clones))
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
-        isdir(input_coords) and not compare_plots, add_vectors != [None, None]))
+        isdir(input_coords) and not compare_plots, add_vectors != [None, None],
+        clones>0))
     fp_out.close()
     copy_support_files(output_dir)
 
