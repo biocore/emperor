@@ -351,7 +351,7 @@ def format_comparison_bars_to_js(coords_data, coords_headers, clones):
 
             # convert all elements in the numpy array into a string before
             # formatting the elements into the javascript dictionary object
-            js_comparison_string.append('g_comparisonPositions[%s] = [%s];\n' %
+            js_comparison_string.append("g_comparisonPositions['%s'] = [%s];\n"%
                 (sample_id, str(', '.join(map(str,
                 coords_data[index:(index+clones), 0:3].tolist())))))
     return ''.join(js_comparison_string)
