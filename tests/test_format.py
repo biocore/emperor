@@ -15,7 +15,7 @@ __status__ = "Development"
 from numpy import array
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
-    EmperorLogicError)
+    EmperorLogicError, format_comparison_bars_to_js)
 from cogent.util.unit_test import TestCase, main
 
 class TopLevelTests(TestCase):
@@ -63,6 +63,26 @@ class TopLevelTests(TestCase):
             'Root;k__Bacteria;p__Bacteroidetes',
             'Root;k__Bacteria;p__Tenericutes', 'Root;k__Bacteria;Other']
         self.prevalence = array([ 1., 0.66471926, 0.08193196, 0.04374296])
+
+        # comparison test
+        self.comparison_coords_data = array([[-0.0677, -2.036, 0.2726, 1.051,
+            -0.180, -0.698], [-1.782, -0.972, 0.1582, -1.091, 0.531, 0.292],
+            [-0.659, -0.2566, 0.514, -2.698, -0.393, 0.420], [-1.179, -0.968,
+            2.525, 0.53, -0.529, 0.632],[-0.896, -1.765, 0.274, -0.3235, 0.4009,
+            -0.03497], [-0.0923, 1.414, -0.622, 0.298, 0.5, -0.4580], [-0.972,
+            0.551, 1.144, 0.3147, -0.476, -0.4279], [1.438, -2.603, -1.39,
+            1.300, -0.1606, 1.260], [-0.356, 0.0875, 0.772, 0.539, -0.586,
+            -1.431], [1.512, -1.239, -0.0365, -0.682, -0.971, 0.356],
+            [1.17, 1.31, -1.407, 1.6, 0.60, 2.26], [2.618, 0.739, -0.01295,
+            -0.937, 3.079, -2.534], [0.2339, -0.880, -1.753, 0.177, 0.3517,
+            -0.743], [0.436, 2.12, -0.935, -0.476, -0.805, 0.4164], [-0.880,
+            1.069, 1.069, -0.596, -0.199, 0.306], [0.294, 0.2988, 0.04670,
+            -0.3865, 0.460, -0.431], [1.640, 0.2485, -0.354, 1.43, 1.226,
+            1.095], [0.821, -1.13, -1.794, -1.171, -1.27, -0.842]])
+        self.comparison_coords_headers = ['sampa_0', 'sampb_0', 'sampc_0',
+            'sampd_0', 'sampe_0', 'sampf_0', 'sampa_1', 'sampb_1', 'sampc_1',
+            'sampd_1', 'sampe_1', 'sampf_1', 'sampa_2', 'sampb_2', 'sampc_2',
+            'sampd_2', 'sampe_2', 'sampf_2']
 
     def test_format_pcoa_to_js(self):
         """Test correct formatting of the PCoA file"""
@@ -129,6 +149,33 @@ class TopLevelTests(TestCase):
             'Treatment', 'DOB')
         self.assertEquals(out_js_vector_string, VECTOR_JS_STRING_SORTING)
 
+    def test_format_comparison_bars_to_js(self):
+        """Check the correct strings are created for the two types of inputs"""
+
+        # empty string generation for comparison i. e. no clones
+        out_js_comparison_string = format_comparison_bars_to_js(
+            self.comparison_coords_data, self.comparison_coords_headers, 0)
+        self.assertEquals(out_js_comparison_string, '\nvar '
+            'g_comparisonPositions = new Array();\n')
+
+        out_js_comparison_string = format_comparison_bars_to_js(
+            self.comparison_coords_data, self.comparison_coords_headers, 3)
+        self.assertEquals(out_js_comparison_string, COMPARISON_JS_STRING)
+
+    def test_format_comparison_bars_to_js_exceptions(self):
+        """Check the correct exceptions are raised for incorrect inputs"""
+
+        # assertion for wrong length in headers
+        self.assertRaises(AssertionError, format_comparison_bars_to_js, [],
+            self.comparison_coords_data, 3)
+
+        # assertion for wrong length in coords data
+        self.assertRaises(AssertionError, format_comparison_bars_to_js,
+            self.comparison_coords_headers, self.comparison_coords_data[1::], 3)
+
+        # assertion for wrong number of clones and elements
+        self.assertRaises(AssertionError, format_comparison_bars_to_js,
+            self.comparison_coords_headers, self.comparison_coords_data, 11)
 
     def test_format_emperor_html_footer_string(self):
         """Test correct formatting of the footer string"""
@@ -306,6 +353,16 @@ g_vectorPositions['Fast']['PC.607'] = [0.0688959784, -0.166234067, -0.0998300962
 g_vectorPositions['Fast']['PC.634'] = [0.20468454, 0.128911236, -0.0293614192];
 g_vectorPositions['Fast']['PC.635'] = [0.12613151, -0.00266030272, -0.141717093];
 g_vectorPositions['Fast']['PC.636'] = [0.281534642, 0.0710660196, 0.097154202];
+"""
+
+COMPARISON_JS_STRING = """
+var g_comparisonPositions = new Array();
+g_comparisonPositions[sampa] = [[-0.0677, -2.036, 0.2726], [-0.972, 0.551, 1.144], [0.2339, -0.88, -1.753]];
+g_comparisonPositions[sampb] = [[-1.782, -0.972, 0.1582], [1.438, -2.603, -1.39], [0.436, 2.12, -0.935]];
+g_comparisonPositions[sampc] = [[-0.659, -0.2566, 0.514], [-0.356, 0.0875, 0.772], [-0.88, 1.069, 1.069]];
+g_comparisonPositions[sampd] = [[-1.179, -0.968, 2.525], [1.512, -1.239, -0.0365], [0.294, 0.2988, 0.0467]];
+g_comparisonPositions[sampe] = [[-0.896, -1.765, 0.274], [1.17, 1.31, -1.407], [1.64, 0.2485, -0.354]];
+g_comparisonPositions[sampf] = [[-0.0923, 1.414, -0.622], [2.618, 0.739, -0.01295], [0.821, -1.13, -1.794]];
 """
 
 EXPECTED_FOOTER_A =\
