@@ -1356,6 +1356,12 @@ function changePointCount() {
 
 /* Validating and modifying the view axes */	
 function changeAxesDisplayed() {
+	if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
+			!jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
+			resetCamera();
+			return;
+	}
+	
 	// HACK: this is a work around for cases when the scale is on
 	if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': false});
 
