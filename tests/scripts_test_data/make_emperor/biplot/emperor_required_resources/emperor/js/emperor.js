@@ -14,7 +14,7 @@ var g_plotSpheres = {};
 var g_plotEllipses = {};
 var g_plotTaxa = {};
 var g_plotVectors = {};
-var g_g_parallelPlots = []
+var g_parallelPlots = []
 
 // sample identifiers of all items that are plotted
 var g_plotIds = [];
@@ -254,37 +254,6 @@ function toggleContinuousAndDiscreteColors(element){
   This function will generate a list of coloring values depending on the
   coloring scheme that the system is currently using (discrete or continuous).
 */
-// function getColorList(vals) {
-// 	var colors = [];
-// 
-// 	// cases with one or two categories are basically the same no matter if the
-// 	// coloring scheme is continuous or discrete; choose red or red and blue
-// 	if(vals.length == 1){
-// 		colors[0] = new THREE.Color();
-// 		colors[0].setHex("0xff0000");
-// 	}
-// 	else if (vals.length == 2) {
-// 		colors[0] = new THREE.Color();
-// 		colors[0].setHex("0xff0000");
-// 		colors[1] = new THREE.Color();
-// 		colors[1].setHex("0x0000ff");
-// 	}
-// 	else {
-// 		for(var index in vals){
-// 			colors[index] = new THREE.Color();
-// 			if(g_useDiscreteColors){
-// 				// get the next available color
-// 				colors[index].setHex(getDiscreteColor(index)*1);
-// 			}
-// 			else{
-// 				// multiplying the value by 0.66 makes the colormap go R->G->B
-// 				THREE.ColorConverter.setHSV(colors[index], index*.66/vals.length, 1, 1)
-// 			}
-// 		}
-// 	}
-// 	return colors;
-// }
-
 function getColorList(vals) {
 	var colors = {};
 
