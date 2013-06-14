@@ -353,7 +353,7 @@ function colorByMenuChanged() {
 
 	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 	colors = getColorList(vals);
-	// console.log(vals)
+	
 	// build the colorby table in HTML
 	var lines = "<table>";
 	for(var i in vals){
@@ -407,13 +407,14 @@ function colorByMenuChanged() {
 	setKey(vals, colors);
 }
 
-function colorParallelPlots(vals,colors) {
+function colorParallelPlots(vals,colors) 
+{
 	pwidth = document.getElementById('parallelPlotWrapper').offsetWidth
 	pheight = document.getElementById('parallelPlotWrapper').offsetHeight
-
+	
 	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
 	
-	var color = function(d) { 
+	var color = function(d) {
 		var sid = d[0];
 		var divid = sid.replace(/\./g,'')+"_key";
 		var catValue = g_mappingFileData[sid][g_categoryIndex];
@@ -1527,31 +1528,26 @@ function clean_label_refresh_axes() {
 function togglePlots() {
 	if(document.getElementById('pcoa').checked)
 	{
-		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace
-      (/(?:^|\s)invisible(?!\S)/ , '');
-	document.getElementById('pcoaoptions').className = document.getElementById('pcoaoptions').className.replace
-    (/(?:^|\s)invisible(?!\S)/ , '');
-	document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace
-    (/(?:^|\s)invisible(?!\S)/ , '');
-	  document.getElementById('parallelPlotWrapper').className += ' invisible'
-	  document.getElementById('paralleloptions').className += ' invisible'
-	  document.getElementById('parallelaxes').className += ' invisible'
-	  $("#menutabs").tabs('select',0);
-	  $("#menutabs").tabs({disabled: []});
+		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('pcoaoptions').className = document.getElementById('pcoaoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+	  	document.getElementById('parallelPlotWrapper').className += ' invisible'
+	  	document.getElementById('paralleloptions').className += ' invisible'
+	  	document.getElementById('parallelaxes').className += ' invisible'
+	  	$("#menutabs").tabs('select',0);
+	  	$("#menutabs").tabs({disabled: []});
 	}
 	else
 	{
-		document.getElementById('parallelPlotWrapper').className = document.getElementById('parallelPlotWrapper').className.replace
-      (/(?:^|\s)invisible(?!\S)/ , '');
-	document.getElementById('paralleloptions').className = document.getElementById('paralleloptions').className.replace
-    (/(?:^|\s)invisible(?!\S)/ , '');
-	document.getElementById('parallelaxes').className = document.getElementById('parallelaxes').className.replace
-    (/(?:^|\s)invisible(?!\S)/ , '');
-	  document.getElementById('pcoaPlotWrapper').className += ' invisible'
-	  document.getElementById('pcoaoptions').className += ' invisible'
-	  document.getElementById('pcoaaxes').className += ' invisible'
-	  $("#menutabs").tabs('select',0);
-	  $("#menutabs").tabs({disabled: [2,3,4]});
+		document.getElementById('parallelPlotWrapper').className = document.getElementById('parallelPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('paralleloptions').className = document.getElementById('paralleloptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('parallelaxes').className = document.getElementById('parallelaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+	  	document.getElementById('pcoaPlotWrapper').className += ' invisible'
+	  	document.getElementById('pcoaoptions').className += ' invisible'
+	  	document.getElementById('pcoaaxes').className += ' invisible'
+	  	$("#menutabs").tabs('select',0);
+	  	$("#menutabs").tabs({disabled: [2,3,4]});
+	  	colorByMenuChanged();
 	}
 }
 
@@ -1851,7 +1847,6 @@ $(document).ready(function() {
 	function render() {
 		g_sceneControl.update();
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
-		// console.log(document.getElementById('main_plot').offsetHeight)
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 	}
 });
