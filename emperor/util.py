@@ -13,6 +13,7 @@ __status__ = "Development"
 
 
 from numpy import ndarray, array, ones, zeros
+from string import strip
 
 from os.path import abspath, dirname, join, exists
 
@@ -26,6 +27,10 @@ from qiime.make_3d_plots import (get_custom_coords, remove_nans,
     scale_custom_coords)
 
 class EmperorSupportFilesError(IOError):
+    """Exception for missing support files"""
+    pass
+    
+class EmperorInputFilesError(IOError):
     """Exception for missing support files"""
     pass
 
@@ -293,28 +298,64 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     """
     out_data = deepcopy(data)
 
-    # since this is a hack, assert the lengths are made of only one element
-    values_dict = parse_metadata_state_descriptions(values)
-
-    for key, value in values_dict.items():
-        value = list(value)
-
-        # this function can parse more than one value, but make sure it's only 1
-        assert len(value) == 1, ("Missing values cannot be padded with more "
-            "than one value. Verify '%s' has a single value." % key)
-
-        # in case the mapping file header is not in the headers
-        try:
-            header_index = headers.index(key)
-        except ValueError:
-            raise ValueError,("The header %s does not exist in the mapping file"
-                % key)
-
-        # fill in the data
-        for line in out_data:
-            if criteria(line[header_index]) == False:
-                line[header_index] = value[0]
-
+    # parsing the input values
+    values = map(strip, values.split(';'))
+    values_dict = {}
+    for v in values:
+        colname, vals = map(strip, v.split(':', 1))
+        vals = map(strip, vals.split(','))
+        if len(vals)!=1:
+            raise AssertionError, "You can only pass 1 replacement value: %s" % vals
+        if colname not in values_dict:
+            values_dict[colname] = []
+        values_dict[colname].extend(vals)
+    
+    for key, v in values_dict.items():
+        for value in v:
+            # variable that is going to contain the name of the column for multiple 
+            # subtitutions 
+            column = None
+            # variable to control if the values with in a column exist
+            used_column_index = False
+            
+            try:
+                header_index = headers.index(key)
+            except ValueError:
+                raise EmperorInputFilesError, ("The header %s does not exist in the "
+                    "mapping file" % key)
+            
+            # for the special case of multiple entries 
+            if '==' in value and '=' in value:
+                arrow_index = value.index('==')
+                equal_index = value.rindex('=')
+                if arrow_index==equal_index or (arrow_index+2)==equal_index:
+                    raise AssertionError, "Not properly formatted: %s" % value
+                
+                column = value[:arrow_index]
+                column_value = value[arrow_index+2:equal_index]
+                new_value = value[equal_index+1:]
+                
+                try:
+                    column_index = headers.index(column)
+                except ValueError:
+                    raise EmperorInputFilesError, ("The header %s does not exist in the "
+                        "mapping file" % column)
+            
+            # fill in the data
+            for line in out_data:
+                if criteria(line[header_index]) == False:
+                    if not column:
+                        line[header_index] = value
+                        used_column_index = True
+                    else:
+                        if line[column_index] == column_value:     
+                            line[header_index] = new_value
+                            used_column_index = True
+            
+            if not used_column_index:
+                raise EmperorInputFilesError, ("This value '%s' doesn't exist in '%s' or "
+                "it wasn't used in for processing" % (column_value, column))
+            
     return out_data
 
 def sanitize_mapping_file(data, headers):
