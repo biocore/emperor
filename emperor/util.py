@@ -290,7 +290,7 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     values: string with the format a format of
             Category:ValueToFill;Category:ValueToFill ...
             or
-            Category:ColumnToSearch=>ValueWithinTheColumnToSearch:ValueToFill
+            Category:ColumnToSearch==ValueWithinTheColumnToSearch=ValueToFill
     criteria: function that takes a value and returns true or false, default is
     to check if the inputed value is numeric or not.
 
