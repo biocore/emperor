@@ -288,7 +288,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     data: mapping file data
     headers: mapping file headers
     values: string with the format a format of
-    Category:ValueToFill;Category:ValueToFill ...
+            Category:ValueToFill;Category:ValueToFill ...
+            or
+            Category:ColumnToSearch=>ValueWithinTheColumnToSearch:ValueToFill
     criteria: function that takes a value and returns true or false, default is
     to check if the inputed value is numeric or not.
 
@@ -304,8 +306,7 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     for v in values:
         colname, vals = map(strip, v.split(':', 1))
         vals = map(strip, vals.split(','))
-        if len(vals)!=1:
-            raise AssertionError, "You can only pass 1 replacement value: %s" % vals
+        assert len(vals)==1,  "You can only pass 1 replacement value: %s" % vals
         if colname not in values_dict:
             values_dict[colname] = []
         values_dict[colname].extend(vals)
@@ -328,8 +329,8 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
             if '==' in value and '=' in value:
                 arrow_index = value.index('==')
                 equal_index = value.rindex('=')
-                if arrow_index==equal_index or (arrow_index+2)==equal_index:
-                    raise AssertionError, "Not properly formatted: %s" % value
+                assert ((arrow_index+2)!=equal_index and (arrow_index+1)!=equal_index), \
+                    "Not properly formatted: %s" % value
                 
                 column = value[:arrow_index]
                 column_value = value[arrow_index+2:equal_index]

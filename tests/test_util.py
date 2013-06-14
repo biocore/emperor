@@ -283,15 +283,19 @@ class TopLevelTests(TestCase):
             ['PC.636', 'Fast', '12', '37.22', 'Fast20080116']])
         
         # testing multiple values: blank column name
-        self.assertRaises(EmperorInputFilesError, fill_mapping_field_from_mapping_file,
+        self.assertRaises(AssertionError, fill_mapping_field_from_mapping_file,
             self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
-            'DOB:Treatment=>=200600020')
+            'Time:Treatment===200600020')
         
         # testing multiple values: wrong order
-        self.assertRaises(EmperorInputFilesError, fill_mapping_field_from_mapping_file,
+        self.assertRaises(AssertionError, fill_mapping_field_from_mapping_file,
             self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
-            'DOB:Treatment=Control=>200600020')
-
+            'Time:Treatment=Control==200600020')
+        
+        # testing multiple values: error when more than 1 value is passed
+        self.assertRaises(AssertionError, fill_mapping_field_from_mapping_file,
+            self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
+            'Time:Treatment=Control==200600020,435')
  
     def test_sanitize_mapping_file(self):
         """Check the mapping file strings are sanitized for it's use in JS"""

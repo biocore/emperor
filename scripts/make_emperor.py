@@ -384,7 +384,8 @@ def main():
             # script-interface-documented '-x Category:7 -x PH:12' option
             for val in missing_custom_axes_values:
                 if ':' not in val:
-                    raise ValueError, "Not valid missing value for custom axes: %s" % val
+                    option_parser.error("Not valid missing value for custom axes: %s"
+                        % val)
             mapping_data = fill_mapping_field_from_mapping_file(mapping_data,
                 header, ';'.join(missing_custom_axes_values))
             
