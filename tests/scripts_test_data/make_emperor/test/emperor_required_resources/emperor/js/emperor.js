@@ -409,7 +409,7 @@ function colorByMenuChanged() {
 
 function colorParallelPlots(vals,colors) {
 	pwidth = document.getElementById('parallelPlotWrapper').offsetWidth
-	pheight = document.getElementById('parallelPlotWrapper').offsetHeight - 30
+	pheight = document.getElementById('parallelPlotWrapper').offsetHeight
 
 	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
 	
@@ -430,9 +430,10 @@ function colorParallelPlots(vals,colors) {
 	var pc = d3.parcoords()("#parallelPlot")
 	  .data(g_parallelPlots)
 	  .color(color)
+	  .margin({ top: 40, left: 50, bottom: 40, right: 0 })
 	  .mode("queue")
 	  .render()
-	  .brushable()
+	  .brushable();
 }
 
 /*Callback when the scaling by drop-down menu changes
@@ -1571,7 +1572,7 @@ function setParallelPlots() {
 	}
 	
 	pwidth = document.getElementById('pcoaPlotWrapper').offsetWidth
-	pheight = document.getElementById('pcoaPlotWrapper').offsetHeight - 30
+	pheight = document.getElementById('pcoaPlotWrapper').offsetHeight
 
 	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
 }
