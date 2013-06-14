@@ -486,34 +486,51 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="axes">
-            <div class="list" id="axeslist">
+            <div id="pcoaaxes">
+                <div class="list" id="axeslist">
+                </div>
+            </div>
+            <div id="parallelaxes">
+                <table>
+                    <tr><td><div id="parallelaxescolor" class="colorbox" name="parallelaxescolor"></div></td><td title="Parallel Plots Axes Color">Axes Color</td></tr>
+                </table>
+                <table>
+                    <tr><td><div id="parallelaxeslabelcolor" class="colorbox" name="parallelaxeslabelcolor"></div></td><td title="Parallel Plots Axes Label Color">Axes Label Color</td></tr>
+                </table>
             </div>
         </div>
         <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
-            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>%s%s
-            <br>
-            <label for="sphereopacity" class="text">Sphere Opacity</label>
-            <label id="sphereopacity" class="slidervalue"></label>
-            <div id="sopacityslider" class="slider-range-max"></div>
-            <br>
-            <label for="sphereradius" class="text">Sphere Scale</label>
-            <label id="sphereradius" class="slidervalue"></label>
-            <div id="sradiusslider" class="slider-range-max"></div>
-            <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+                </form>
+                <br>
+                <br>
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+                <br>
+                <br>
+            <div id="pcoaoptions" class="">
+                <form name="settingsoptions">
+                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                </form>
+                <br>
+                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br>%s%s
+                <br>
+                <label for="sphereopacity" class="text">Sphere Opacity</label>
+                <label id="sphereopacity" class="slidervalue"></label>
+                <div id="sopacityslider" class="slider-range-max"></div>
+                <br>
+                <label for="sphereradius" class="text">Sphere Scale</label>
+                <label id="sphereradius" class="slidervalue"></label>
+                <div id="sradiusslider" class="slider-range-max"></div>
+                <br>
+            </div>
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>
+            <div id="paralleloptions" class="">
+            </div>
         </div>
     </div>  
 </div>

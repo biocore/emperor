@@ -254,31 +254,62 @@ function toggleContinuousAndDiscreteColors(element){
   This function will generate a list of coloring values depending on the
   coloring scheme that the system is currently using (discrete or continuous).
 */
+// function getColorList(vals) {
+// 	var colors = [];
+// 
+// 	// cases with one or two categories are basically the same no matter if the
+// 	// coloring scheme is continuous or discrete; choose red or red and blue
+// 	if(vals.length == 1){
+// 		colors[0] = new THREE.Color();
+// 		colors[0].setHex("0xff0000");
+// 	}
+// 	else if (vals.length == 2) {
+// 		colors[0] = new THREE.Color();
+// 		colors[0].setHex("0xff0000");
+// 		colors[1] = new THREE.Color();
+// 		colors[1].setHex("0x0000ff");
+// 	}
+// 	else {
+// 		for(var index in vals){
+// 			colors[index] = new THREE.Color();
+// 			if(g_useDiscreteColors){
+// 				// get the next available color
+// 				colors[index].setHex(getDiscreteColor(index)*1);
+// 			}
+// 			else{
+// 				// multiplying the value by 0.66 makes the colormap go R->G->B
+// 				THREE.ColorConverter.setHSV(colors[index], index*.66/vals.length, 1, 1)
+// 			}
+// 		}
+// 	}
+// 	return colors;
+// }
+
 function getColorList(vals) {
-	var colors = [];
+	var colors = {};
 
 	// cases with one or two categories are basically the same no matter if the
 	// coloring scheme is continuous or discrete; choose red or red and blue
 	if(vals.length == 1){
-		colors[0] = new THREE.Color();
-		colors[0].setHex("0xff0000");
+		colors[vals[0]] = new THREE.Color();
+		colors[vals[0]].setHex("0xff0000");
 	}
 	else if (vals.length == 2) {
-		colors[0] = new THREE.Color();
-		colors[0].setHex("0xff0000");
-		colors[1] = new THREE.Color();
-		colors[1].setHex("0x0000ff");
+		colors[vals[0]] = new THREE.Color();
+		colors[vals[0]].setHex("0xff0000");
+		colors[vals[1]] = new THREE.Color();
+		colors[vals[1]].setHex("0x0000ff");
 	}
 	else {
 		for(var index in vals){
-			colors[index] = new THREE.Color();
+			colors[vals[index]] = new THREE.Color();
 			if(g_useDiscreteColors){
 				// get the next available color
-				colors[index].setHex(getDiscreteColor(index)*1);
+				colors[vals[index]].setHex(getDiscreteColor(index)*1);
 			}
 			else{
 				// multiplying the value by 0.66 makes the colormap go R->G->B
-				THREE.ColorConverter.setHSV(colors[index], index*.66/vals.length, 1, 1)
+				THREE.ColorConverter.setHSV(colors[vals[index]], index*.66/vals.length, 1, 1)
 			}
 		}
 	}
@@ -383,10 +414,10 @@ function colorByMenuChanged() {
 		var idString = "r"+i+"c"+g_categoryIndex;
 
 		// get the div built earlier and turn it into a color picker
-		$('#'+idString).css('backgroundColor',"#"+colors[i].getHexString());
+		$('#'+idString).css('backgroundColor',"#"+colors[vals[i]].getHexString());
 		$("#"+idString).spectrum({
 			localStorageKey: 'key',
-			color: colors[i].getHexString(),
+			color: colors[vals[i]].getHexString(),
 			showInitial: true,
 			showInput: true,
 			change:
@@ -397,7 +428,7 @@ function colorByMenuChanged() {
 						c = "#"+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2)+c.charAt(3)+c.charAt(3);
 					}
 					colorChanged($(this).attr('name'), c);
-					colors[i] = c;
+					colors[$(this).attr('name')] = c;
 					colorParallelPlots(vals, colors);
 				}
 		});
@@ -417,8 +448,8 @@ function colorParallelPlots(vals,colors) {
 		var sid = d[0];
 		var divid = sid.replace(/\./g,'')+"_key";
 		var catValue = g_mappingFileData[sid][g_categoryIndex];
-		var catColor = colors[vals.indexOf(catValue)];
-		// console.log(catColor)
+		var catColor = colors[catValue];
+
 		try {
 			var hex = '#'+catColor.getHexString();
 		}catch(TypeError) {
@@ -633,7 +664,7 @@ function toggleVisible(value) {
 function setKey(values, colors) {
 	if(g_keyBuilt){
 		for(var i = 0; i < values.length; i++){
-			colorChanged(values[i], '#'+colors[i].getHexString());
+			colorChanged(values[i], '#'+colors[values[i]].getHexString());
 		}
 	}
 	else {
@@ -642,7 +673,7 @@ function setKey(values, colors) {
 			var sid = g_plotIds[i];
 			var divid = sid.replace(/\./g,'')+"_key";
 			var catValue = g_mappingFileData[sid][g_categoryIndex];
-			var catColor = colors[values.indexOf(catValue)];
+			var catColor = colors[catValue];
 			keyHTML += "<tr id=\""+divid+"row\"><td><div id=\""+divid+"\" name=\""+sid+"\" class=\"colorbox\" style=\"background-color:#";
 			keyHTML += catColor.getHexString();
 			keyHTML += ";\"></div>";
@@ -786,11 +817,11 @@ function labelMenuChanged() {
 		var idString = "r"+i+"c"+g_categoryIndex;
 
 		// get the div built earlier and turn it into a color picker
-		$('#'+idString+'Label').css('backgroundColor',"#"+colors[i].getHexString());
-		labelColorChanged(vals[i], "#"+colors[i].getHexString());
+		$('#'+idString+'Label').css('backgroundColor',"#"+colors[vals[i]].getHexString());
+		labelColorChanged(vals[i], "#"+colors[vals[i]].getHexString());
 
 		$("#"+idString+'Label').spectrum({
-			color: colors[i].getHexString(),
+			color: colors[vals[i]].getHexString(),
 			showInitial: true,
 			showPalette: true,
 			palette: [['red', 'green', 'blue']],
@@ -1168,6 +1199,59 @@ function setJqueryUi() {
 	});
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
 
+	
+	//default color for parallel plots axes label is white
+	$('#parallelaxeslabelcolor').css('backgroundColor',"#ffffff");
+	$("#parallelaxeslabelcolor").spectrum({
+		localStorageKey: 'key',
+		color: "#ffffff",
+		showInitial: true,
+		showInput: true,
+		showPalette: true,
+		preferredFormat: "hex6",
+		palette: [['white', 'black']],
+		change:
+			function(color) {
+				// pass a boolean flag to convert to hex6 string
+				var c = color.toHexString(true);
+
+				// create a new three.color from the string
+				var parallelAxesLabelColor = new THREE.Color();
+				parallelAxesLabelColor.setHex(c.replace('#','0x'));
+
+				// set the color for the box and for the renderer
+				$(this).css('backgroundColor', c);
+				//set css for the lines...
+				$('.parcoords text').css('stroke', c);
+			}
+	});
+
+	//default color for parallel plots axes is white
+	$('#parallelaxescolor').css('backgroundColor',"#ffffff");
+	$("#parallelaxescolor").spectrum({
+		localStorageKey: 'key',
+		color: "#ffffff",
+		showInitial: true,
+		showInput: true,
+		showPalette: true,
+		preferredFormat: "hex6",
+		palette: [['white', 'black']],
+		change:
+			function(color) {
+				// pass a boolean flag to convert to hex6 string
+				var c = color.toHexString(true);
+
+				// create a new three.color from the string
+				var parallelAxesColor = new THREE.Color();
+				parallelAxesColor.setHex(c.replace('#','0x'));
+
+				// set the color for the box and for the renderer
+				$(this).css('backgroundColor', c);
+				//set css for the lines...
+				$('.parcoords .axis line, .parcoords .axis path').css('stroke', c);
+			}
+	});
+
 	// the default color palette for the background is black and white
 	$('#rendererbackgroundcolor').css('backgroundColor',"#000000");
 	$('#parallelPlotWrapper').css('backgroundColor',"#000000");
@@ -1475,13 +1559,29 @@ function togglePlots() {
 	{
 		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace
       (/(?:^|\s)invisible(?!\S)/ , '');
+	document.getElementById('pcoaoptions').className = document.getElementById('pcoaoptions').className.replace
+    (/(?:^|\s)invisible(?!\S)/ , '');
+	document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace
+    (/(?:^|\s)invisible(?!\S)/ , '');
 	  document.getElementById('parallelPlotWrapper').className += ' invisible'
+	  document.getElementById('paralleloptions').className += ' invisible'
+	  document.getElementById('parallelaxes').className += ' invisible'
+	  $("#menutabs").tabs('select',0);
+	  $("#menutabs").tabs({disabled: []});
 	}
 	else
 	{
 		document.getElementById('parallelPlotWrapper').className = document.getElementById('parallelPlotWrapper').className.replace
       (/(?:^|\s)invisible(?!\S)/ , '');
+	document.getElementById('paralleloptions').className = document.getElementById('paralleloptions').className.replace
+    (/(?:^|\s)invisible(?!\S)/ , '');
+	document.getElementById('parallelaxes').className = document.getElementById('parallelaxes').className.replace
+    (/(?:^|\s)invisible(?!\S)/ , '');
 	  document.getElementById('pcoaPlotWrapper').className += ' invisible'
+	  document.getElementById('pcoaoptions').className += ' invisible'
+	  document.getElementById('pcoaaxes').className += ' invisible'
+	  $("#menutabs").tabs('select',0);
+	  $("#menutabs").tabs({disabled: [2,3,4]});
 	}
 }
 
