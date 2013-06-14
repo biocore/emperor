@@ -4,13 +4,23 @@
 		 width: 100%;
 		 margin: 0px;
 		 overflow: hidden;
+		 position: relative;
 	  }
-
-	div#main_plot {
-	overflow:hidden;
-	height: 100%;
-	width: 75%;
-	float: left;
+	  
+	  div.plotWrapper {
+	  	position: relative;
+	  	overflow:hidden;
+	  	height: 100%;
+	  	width: 75%;
+	  	float: left;
+		background-color: #eee;
+	  }
+	  
+	  #plotToggle {
+		  z-index: 5;
+		  width: 75%;
+		  bottom: 0;
+		  position: absolute;
 	  }
 
 	div#menu {
@@ -227,4 +237,8 @@
   width: 10px;
   height: 10px; 
   /* width and height can be anything, as long as they're equal */
+}
+
+.invisible {
+	display: none;
 }
