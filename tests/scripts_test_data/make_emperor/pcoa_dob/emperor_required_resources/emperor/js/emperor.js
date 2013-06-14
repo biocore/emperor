@@ -435,6 +435,9 @@ function colorParallelPlots(vals,colors)
 	  .mode("queue")
 	  .render()
 	  .brushable();
+	  
+	$('.parcoords text').css('stroke', $('#parallelaxeslabelcolor').css('backgroundColor'));
+	$('.parcoords .axis line, .parcoords .axis path').css('stroke', $('#parallelaxescolor').css('backgroundColor'));
 }
 
 /*Callback when the scaling by drop-down menu changes
