@@ -430,9 +430,9 @@ function colorParallelPlots(vals,colors) {
 	var pc = d3.parcoords()("#parallelPlot")
 	  .data(g_parallelPlots)
 	  .color(color)
+	  .mode("queue")
 	  .render()
-	  .ticks(10)
-	  .createAxes();
+	  .brushable();
 }
 
 /*Callback when the scaling by drop-down menu changes
