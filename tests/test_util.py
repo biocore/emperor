@@ -210,20 +210,17 @@ class TopLevelTests(TestCase):
             jackknifing_method='sdev')
 
         self.assertEquals(out_coords_header, ['1', '2', '3'])
-        self.assertFloatEqual(out_coords_data, array([[1.46666666667, -0.05,
-            -1.5], [-2.46666666667, -4.03333333333, 4.76666666667]]))
-        self.assertFloatEqual(out_eigenvals, array([0.813333333333, 0.15,
-            0.0366666666667]))
+        self.assertFloatEqual(out_coords_data, array([[ 1.4, -0.0125, -1.425],
+            [-2.475, -4.025, 4.7]]))
+        self.assertFloatEqual(out_eigenvals, array([ 0.81, 0.14, 0.05]))
         self.assertFloatEqual(out_pcts, array([0.8, 0.1, 0.1]))
         self.assertEquals(o_clones, 0)
 
         # test the coords are working fine
-        self.assertFloatEqual(out_coords_low, array([[-0.0288675134595,
-            -4.24918736097e-18, -0.0866025403784], [-0.057735026919,
-            -0.0288675134595, -0.0288675134595]]))
-        self.assertFloatEqual(out_coords_high, array([[0.0288675134595,
-            4.24918736097e-18, 0.0866025403784], [0.057735026919,
-            0.0288675134595, 0.0288675134595]]))
+        self.assertFloatEqual(out_coords_low, array([[-0.07071068, -0.0375,
+            -0.10307764], [-0.04787136, -0.025, -0.07071068]]))
+        self.assertFloatEqual(out_coords_high, array([[ 0.07071068, 0.0375, 
+            0.10307764], [0.04787136, 0.025, 0.07071068]]))
 
         # test custom axes and jackknifed plots
         out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
@@ -236,24 +233,21 @@ class TopLevelTests(TestCase):
 
         self.assertEquals(out_coords_header, ['PC.354', 'PC.355', 'PC.635',
             'PC.636'])
-        self.assertFloatEqual(out_coords_data, array([[-2.36666667, 1.13333333,
-            0.7, -0.86666667, 0.76666667], [ 0.72222222, -2.36666667,
-            -3.33333333,  4.16666667,  1.26666667], [ 0.72222222, 0.5,
-            0.73333333, 3.5, 1.33366667], [ 2.26666667, 0.62, 0.26666667,
-            1.08666667, 2.1]]))
-        self.assertFloatEqual(out_eigenvals, array([ 0.81333333, 0.15,
-            0.03666667,0.]))
-        self.assertFloatEqual(out_pcts, array([ 0.8, 0.1, 0.1, 0.]))
+        self.assertFloatEqual(out_coords_data, array([[-2.4, 1.15, 0.55, -0.95,
+            0.85], [0.73333333, -2.4, -3.5, 4.25, 1.025], [0.73333333, 0.5,
+            0.45, 3.5, 1.2505], [2.3, 0.6325, 0.2575, 1.0675, 2.125]]))
+        self.assertFloatEqual(out_eigenvals, array([ 0.81, 0.14, 0.05, 0.]))
+        self.assertFloatEqual(out_pcts, array([ 0.8,  0.1,  0.1,  0. ]))
 
         # test the coords are working fine
-        self.assertFloatEqual(out_coords_low, array([[0,-0.25980762,-0.28867513,
-            -0.28867513], [0, -0.57735027, -0.28867513, -0.83715789], [0,
-            -0.98149546, 0, -0.28853091],[0.,-0.03253204,-0.09358597,-0.05]]))
-        self.assertFloatEqual(out_coords_high, array([[1.00000000e-05,
-            2.59807621e-01, 2.88675135e-01, 2.88675135e-01], [1.00000000e-05,
-            5.77350269e-01, 2.88675135e-01, 8.37157890e-01], [1.00000000e-05,
-            9.81495458e-01, 0.00000000e+00, 2.88530905e-01], [1.00000000e-05,
-            3.25320355e-02, 9.35859676e-02, 5.00000000e-02]]))
+        self.assertFloatEqual(out_coords_low, array([[ 0., -0.25980762, -0.25,
+            -0.25], [ 0., -0.5, -0.25, -0.725], [ 0., -0.85, -0., -0.24983344],
+            [ 0., -0.02809953, -0.07877976, -0.04787136]]))
+        self.assertFloatEqual(out_coords_high, array([[1.00000000e-05, 
+            2.59807621e-01, 2.50000000e-01, 2.50000000e-01], [1.00000000e-05,
+            5.00000000e-01, 2.50000000e-01, 7.25000000e-01], [1.00000000e-05,
+            8.50000000e-01, 0.00000000e+00, 2.49833445e-01], [1.00000000e-05,
+            2.80995255e-02, 7.87797563e-02, 4.78713554e-02]]))
         self.assertEquals(o_clones, 0)
 
     def test_preprocess_coords_file_comparison(self):

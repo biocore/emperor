@@ -255,8 +255,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             scale_custom_coords(custom_axes, coords_file)
     elif type(coords_data) == list and is_comparison == False:
         # take the first pcoa file as the master set of coordinates
-        master_pcoa = [coords_header.pop(0), coords_data.pop(0),
-            coords_eigenvals.pop(0), coords_pct.pop(0)]
+        master_pcoa = [coords_header[0], coords_data[0],
+            coords_eigenvals[0], coords_pct[0]]
 
         # support pcoas must be a list of lists where each list contain
         # all the elements that compose a coordinates file
