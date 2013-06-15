@@ -1410,7 +1410,6 @@ function drawEdges(){
 
 	for (var sampleKey in g_comparisonPositions){
 		for (var edgePosition in g_comparisonPositions[sampleKey]){
-			console.log(g_comparisonPositions[sampleKey][edgePosition]);
 
 			// if we don't have a start point store it and move along
 			if (previous == null) {
