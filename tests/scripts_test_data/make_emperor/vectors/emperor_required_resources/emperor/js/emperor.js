@@ -14,6 +14,7 @@ var g_plotSpheres = {};
 var g_plotEllipses = {};
 var g_plotTaxa = {};
 var g_plotVectors = {};
+var g_parallelPlots = []
 
 // sample identifiers of all items that are plotted
 var g_plotIds = [];
@@ -78,12 +79,17 @@ function isNumeric(n) {
 
 /*This function recenter the camera to the initial position it had*/
 function resetCamera() {
-	g_sceneCamera.aspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
+	// We need to reset the camera controls first before modifying the values of the camera (this is the reset view!)
+	g_sceneControl.reset();
+	
+	g_sceneCamera.aspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 	g_sceneCamera.rotation.set( 0, 0, 0);
 	g_sceneCamera.updateProjectionMatrix();
-
-	g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius*5);
-	g_sceneControl.reset()
+	
+	if ($('#scale_checkbox').is(':checked'))
+		g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius);
+	else
+		g_sceneCamera.position.set(0 , 0, (g_maximum*4.8) + g_radius);	
 }
 
 /*Removes duplicates from a list of samples*/
@@ -157,9 +163,9 @@ function toggleScaleCoordinates(element) {
 
 	// scale the position of the camera according to pc1
 	g_sceneCamera.position.set(
-		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]*1.7),
-		operation(g_sceneCamera.position.y, g_fractionExplained[g_viewingAxes[1]]*1.7),
-		operation(g_sceneCamera.position.z, g_fractionExplained[g_viewingAxes[2]]*1.7))
+		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]),
+		operation(g_sceneCamera.position.y, g_fractionExplained[g_viewingAxes[0]]),
+		operation(g_sceneCamera.position.z, g_fractionExplained[g_viewingAxes[0]]))
 	// scale the axis lines
 	drawAxisLines();
 
@@ -249,30 +255,30 @@ function toggleContinuousAndDiscreteColors(element){
   coloring scheme that the system is currently using (discrete or continuous).
 */
 function getColorList(vals) {
-	var colors = [];
+	var colors = {};
 
 	// cases with one or two categories are basically the same no matter if the
 	// coloring scheme is continuous or discrete; choose red or red and blue
 	if(vals.length == 1){
-		colors[0] = new THREE.Color();
-		colors[0].setHex("0xff0000");
+		colors[vals[0]] = new THREE.Color();
+		colors[vals[0]].setHex("0xff0000");
 	}
 	else if (vals.length == 2) {
-		colors[0] = new THREE.Color();
-		colors[0].setHex("0xff0000");
-		colors[1] = new THREE.Color();
-		colors[1].setHex("0x0000ff");
+		colors[vals[0]] = new THREE.Color();
+		colors[vals[0]].setHex("0xff0000");
+		colors[vals[1]] = new THREE.Color();
+		colors[vals[1]].setHex("0x0000ff");
 	}
 	else {
 		for(var index in vals){
-			colors[index] = new THREE.Color();
+			colors[vals[index]] = new THREE.Color();
 			if(g_useDiscreteColors){
 				// get the next available color
-				colors[index].setHex(getDiscreteColor(index)*1);
+				colors[vals[index]].setHex(getDiscreteColor(index)*1);
 			}
 			else{
 				// multiplying the value by 0.66 makes the colormap go R->G->B
-				THREE.ColorConverter.setHSV(colors[index], index*.66/vals.length, 1, 1)
+				THREE.ColorConverter.setHSV(colors[vals[index]], index*.66/vals.length, 1, 1)
 			}
 		}
 	}
@@ -347,7 +353,7 @@ function colorByMenuChanged() {
 
 	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 	colors = getColorList(vals);
-
+	
 	// build the colorby table in HTML
 	var lines = "<table>";
 	for(var i in vals){
@@ -377,10 +383,10 @@ function colorByMenuChanged() {
 		var idString = "r"+i+"c"+g_categoryIndex;
 
 		// get the div built earlier and turn it into a color picker
-		$('#'+idString).css('backgroundColor',"#"+colors[i].getHexString());
+		$('#'+idString).css('backgroundColor',"#"+colors[vals[i]].getHexString());
 		$("#"+idString).spectrum({
 			localStorageKey: 'key',
-			color: colors[i].getHexString(),
+			color: colors[vals[i]].getHexString(),
 			showInitial: true,
 			showInput: true,
 			change:
@@ -391,11 +397,47 @@ function colorByMenuChanged() {
 						c = "#"+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2)+c.charAt(3)+c.charAt(3);
 					}
 					colorChanged($(this).attr('name'), c);
+					colors[$(this).attr('name')] = c;
+					colorParallelPlots(vals, colors);
 				}
 		});
 	}
 
+	colorParallelPlots(vals, colors);
 	setKey(vals, colors);
+}
+
+function colorParallelPlots(vals,colors) 
+{
+	pwidth = document.getElementById('parallelPlotWrapper').offsetWidth
+	pheight = document.getElementById('parallelPlotWrapper').offsetHeight
+	
+	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
+	
+	var color = function(d) {
+		var sid = d[0];
+		var divid = sid.replace(/\./g,'')+"_key";
+		var catValue = g_mappingFileData[sid][g_categoryIndex];
+		var catColor = colors[catValue];
+
+		try {
+			var hex = '#'+catColor.getHexString();
+		}catch(TypeError) {
+			var hex = catColor;
+		}
+		return hex;
+	}
+	
+	var pc = d3.parcoords()("#parallelPlot")
+	  .data(g_parallelPlots)
+	  .color(color)
+	  .margin({ top: 40, left: 50, bottom: 40, right: 0 })
+	  .mode("queue")
+	  .render()
+	  .brushable();
+	  
+	$('.parcoords text').css('stroke', $('#parallelaxeslabelcolor').css('backgroundColor'));
+	$('.parcoords .axis line, .parcoords .axis path').css('stroke', $('#parallelaxescolor').css('backgroundColor'));
 }
 
 /*Callback when the scaling by drop-down menu changes
@@ -596,7 +638,7 @@ function toggleVisible(value) {
 function setKey(values, colors) {
 	if(g_keyBuilt){
 		for(var i = 0; i < values.length; i++){
-			colorChanged(values[i], '#'+colors[i].getHexString());
+			colorChanged(values[i], '#'+colors[values[i]].getHexString());
 		}
 	}
 	else {
@@ -605,7 +647,7 @@ function setKey(values, colors) {
 			var sid = g_plotIds[i];
 			var divid = sid.replace(/\./g,'')+"_key";
 			var catValue = g_mappingFileData[sid][g_categoryIndex];
-			var catColor = colors[values.indexOf(catValue)];
+			var catColor = colors[catValue];
 			keyHTML += "<tr id=\""+divid+"row\"><td><div id=\""+divid+"\" name=\""+sid+"\" class=\"colorbox\" style=\"background-color:#";
 			keyHTML += catColor.getHexString();
 			keyHTML += ";\"></div>";
@@ -749,11 +791,11 @@ function labelMenuChanged() {
 		var idString = "r"+i+"c"+g_categoryIndex;
 
 		// get the div built earlier and turn it into a color picker
-		$('#'+idString+'Label').css('backgroundColor',"#"+colors[i].getHexString());
-		labelColorChanged(vals[i], "#"+colors[i].getHexString());
+		$('#'+idString+'Label').css('backgroundColor',"#"+colors[vals[i]].getHexString());
+		labelColorChanged(vals[i], "#"+colors[vals[i]].getHexString());
 
 		$("#"+idString+'Label').spectrum({
-			color: colors[i].getHexString(),
+			color: colors[vals[i]].getHexString(),
 			showInitial: true,
 			showPalette: true,
 			palette: [['red', 'green', 'blue']],
@@ -1011,6 +1053,9 @@ function sphereRadiusChange(ui, category) {
 /*Setup the interface elements required for the sidebar of the main interface*/
 function setJqueryUi() {
 	$("#menutabs").tabs();
+	$("#plottype").buttonset();
+	$("input[name='plottype']").change(togglePlots);
+	
 	$("#labelColor").css('backgroundColor', '#fff');
 
 	$("#labelColor").spectrum({
@@ -1128,8 +1173,62 @@ function setJqueryUi() {
 	});
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
 
+	
+	//default color for parallel plots axes label is white
+	$('#parallelaxeslabelcolor').css('backgroundColor',"#ffffff");
+	$("#parallelaxeslabelcolor").spectrum({
+		localStorageKey: 'key',
+		color: "#ffffff",
+		showInitial: true,
+		showInput: true,
+		showPalette: true,
+		preferredFormat: "hex6",
+		palette: [['white', 'black']],
+		change:
+			function(color) {
+				// pass a boolean flag to convert to hex6 string
+				var c = color.toHexString(true);
+
+				// create a new three.color from the string
+				var parallelAxesLabelColor = new THREE.Color();
+				parallelAxesLabelColor.setHex(c.replace('#','0x'));
+
+				// set the color for the box and for the renderer
+				$(this).css('backgroundColor', c);
+				//set css for the lines...
+				$('.parcoords text').css('stroke', c);
+			}
+	});
+
+	//default color for parallel plots axes is white
+	$('#parallelaxescolor').css('backgroundColor',"#ffffff");
+	$("#parallelaxescolor").spectrum({
+		localStorageKey: 'key',
+		color: "#ffffff",
+		showInitial: true,
+		showInput: true,
+		showPalette: true,
+		preferredFormat: "hex6",
+		palette: [['white', 'black']],
+		change:
+			function(color) {
+				// pass a boolean flag to convert to hex6 string
+				var c = color.toHexString(true);
+
+				// create a new three.color from the string
+				var parallelAxesColor = new THREE.Color();
+				parallelAxesColor.setHex(c.replace('#','0x'));
+
+				// set the color for the box and for the renderer
+				$(this).css('backgroundColor', c);
+				//set css for the lines...
+				$('.parcoords .axis line, .parcoords .axis path').css('stroke', c);
+			}
+	});
+
 	// the default color palette for the background is black and white
 	$('#rendererbackgroundcolor').css('backgroundColor',"#000000");
+	$('#parallelPlotWrapper').css('backgroundColor',"#000000");
 	$("#rendererbackgroundcolor").spectrum({
 		localStorageKey: 'key',
 		color: "#000000",
@@ -1150,6 +1249,8 @@ function setJqueryUi() {
 				// set the color for the box and for the renderer
 				$(this).css('backgroundColor', c);
 				g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
+				
+				$('#parallelPlotWrapper').css('backgroundColor', c);
 			}
 	});
 }
@@ -1330,7 +1431,7 @@ function drawAxisLines() {
 	g_mainScene.remove(g_xAxisLine);
 	g_mainScene.remove(g_yAxisLine);
 	g_mainScene.remove(g_zAxisLine);
-
+	
 	// one line for each of the axes
 	g_xAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
 		[g_xMaximumValue, g_yMinimumValue, g_zMinimumValue], 0xFFFFFF, 3);
@@ -1350,7 +1451,13 @@ function changePointCount() {
 }
 
 /* Validating and modifying the view axes */	
-function refresh_axes() {
+function changeAxesDisplayed() {
+	if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
+			!jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
+			resetCamera();
+			return;
+	}
+	
 	// HACK: this is a work around for cases when the scale is on
 	if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': false});
 
@@ -1402,17 +1509,71 @@ function refresh_axes() {
 	g_pc1Label = "PC" + (g_viewingAxes[0]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[0]] + " %)";
 	g_pc2Label = "PC" + (g_viewingAxes[1]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[1]] + " %)";
 	g_pc3Label = "PC" + (g_viewingAxes[2]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[2]] + " %)";
-	g_xMaximumValue = max_x, g_yMaximumValue = max_y, g_zMaximumValue = max_z;
-	g_xMinimumValue = min_x, g_yMinimumValue = min_y, g_zMinimumValue = min_z;
-	resetCamera();
+		
+	g_xMaximumValue = max_x + (max_x>=0 ? 6*g_radius : -6*g_radius);
+	g_yMaximumValue = max_y + (max_y>=0 ? 6*g_radius : -6*g_radius);
+	g_zMaximumValue = max_z + (max_z>=0 ? 6*g_radius : -6*g_radius);
+	g_xMinimumValue = min_x + (min_x>=0 ? 6*g_radius : -6*g_radius);
+	g_yMinimumValue = min_y + (min_y>=0 ? 6*g_radius : -6*g_radius);
+	g_zMinimumValue = min_z + (min_z>=0 ? 6*g_radius : -6*g_radius);
 	drawAxisLines();
 
 	// HACK: this is a work around for cases when the scale is on
 	if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': true});
+	
+	resetCamera();
 }
 
 function clean_label_refresh_axes() {
 	$("#refresh_axes_label").html("");
+}
+
+function togglePlots() {
+	if(document.getElementById('pcoa').checked)
+	{
+		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('pcoaoptions').className = document.getElementById('pcoaoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+	  	document.getElementById('parallelPlotWrapper').className += ' invisible'
+	  	document.getElementById('paralleloptions').className += ' invisible'
+	  	document.getElementById('parallelaxes').className += ' invisible'
+	  	$("#menutabs").tabs('select',0);
+	  	$("#menutabs").tabs({disabled: []});
+	}
+	else
+	{
+		document.getElementById('parallelPlotWrapper').className = document.getElementById('parallelPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('paralleloptions').className = document.getElementById('paralleloptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('parallelaxes').className = document.getElementById('parallelaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+	  	document.getElementById('pcoaPlotWrapper').className += ' invisible'
+	  	document.getElementById('pcoaoptions').className += ' invisible'
+	  	document.getElementById('pcoaaxes').className += ' invisible'
+	  	$("#menutabs").tabs('select',0);
+	  	$("#menutabs").tabs({disabled: [2,3,4]});
+	  	colorByMenuChanged();
+	}
+}
+
+function setParallelPlots() {	
+	g_parallelPlots = []
+	var num_axes = g_fractionExplained.length
+
+	for(p in g_spherePositions)
+	{
+		var dataline = []
+		
+		dataline.push(g_spherePositions[p].name)
+		for(var i = 1; i < num_axes+1; i++)
+		{
+			dataline.push(g_spherePositions[p]['P'+i])
+		}
+		g_parallelPlots.push(dataline)
+	}
+	
+	pwidth = document.getElementById('pcoaPlotWrapper').offsetWidth
+	pheight = document.getElementById('pcoaPlotWrapper').offsetHeight
+
+	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
 }
 
 /*Setup and initialization function for the whole system
@@ -1423,7 +1584,7 @@ function clean_label_refresh_axes() {
 */
 $(document).ready(function() {
 	setJqueryUi()
-
+	
 	// Detecting that webgl is activated
 	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
@@ -1431,12 +1592,12 @@ $(document).ready(function() {
 	var particles, geometry, parameters, i, h, color;
 	var mouseX = 0, mouseY = 0;
 
-	var winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight), view_angle = 35, view_near = 0.0000001, view_far = 10000;
-	var winAspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
+	var winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight), view_angle = 35, view_near = 0.0000001, view_far = 10000;
+	var winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 
 	$(window).resize(function() {
-		winWidth = Math.min(document.getElementById('main_plot').offsetWidth,document.getElementById('main_plot').offsetHeight);
-		winAspect = document.getElementById('main_plot').offsetWidth/document.getElementById('main_plot').offsetHeight;
+		winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight);
+		winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 		g_sceneCamera.aspect = winAspect;
 		g_sceneCamera.updateProjectionMatrix();
 	});
@@ -1448,10 +1609,10 @@ $(document).ready(function() {
 		// assign a position to the camera befor associating it with other
 		// objects, else the original position will be lost and not make sense
 		g_sceneCamera = new THREE.PerspectiveCamera(view_angle, winAspect, view_near, view_far);
-		g_sceneCamera.position.set(0, 0, (g_maximum*4.2) + g_radius*5);
+		g_sceneCamera.position.set(0, 0, 0);
 
-		$('#main_plot canvas').attr('width',document.getElementById('main_plot').offsetWidth);
-		$('#main_plot canvas').attr('height',document.getElementById('main_plot').offsetHeight);
+		$('#main_plot canvas').attr('width',document.getElementById('pcoaPlotWrapper').offsetWidth);
+		$('#main_plot canvas').attr('height',document.getElementById('pcoaPlotWrapper').offsetHeight);
 
 		g_mainScene = new THREE.Scene();
 		g_mainScene.fog = new THREE.FogExp2( 0x000000, 0.0009);
@@ -1497,12 +1658,14 @@ $(document).ready(function() {
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
 		}
-
+		
+		setParallelPlots();
+		
 		colorByMenuChanged();
 		showByMenuChanged();
 		scalingByMenuChanged();
-
-		drawAxisLines();
+		
+		togglePlots();
 
 		// the light is attached to the camera to provide a 3d perspective
 		g_sceneLight = new THREE.DirectionalLight(0x999999, 2);
@@ -1527,7 +1690,8 @@ $(document).ready(function() {
 		// renderer, the default background color is black
 		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true });
 		g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
-		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
+		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
+		// g_mainRenderer.setSize( document.getElementById('vizualizations').offsetWidth , document.getElementById('vizualizations').offsetHeight );
 		g_mainRenderer.sortObjects = true;
 		main_plot.append(g_mainRenderer.domElement);
 
@@ -1559,10 +1723,12 @@ $(document).ready(function() {
 		document.getElementById("taxalabels").innerHTML = labelshtml
 		
 		// adding values for axes to display
-		setting_up_axes();
+		drawMenuAxesDisplayed();
+		changeAxesDisplayed();
+		drawAxisLines();
 	}
 
-	function setting_up_axes() {
+	function drawMenuAxesDisplayed() {
 		if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
 			!jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
 			text = '<table width="100%%">';
@@ -1618,7 +1784,7 @@ $(document).ready(function() {
 
 		// Adding button
 		text += '<table width="100%%"><tr>';
-		text += '<td width="20px"><input type="button" value="Refresh" onclick="refresh_axes();"></td>';
+		text += '<td width="20px"><input type="button" value="Refresh" onclick="changeAxesDisplayed();"></td>';
 		text += '<td id="refresh_axes_label"></td></tr>';
 		text += '</table>';
 		document.getElementById("axeslist").innerHTML = text;
@@ -1683,7 +1849,7 @@ $(document).ready(function() {
    
 	function render() {
 		g_sceneControl.update();
-		g_mainRenderer.setSize( document.getElementById('main_plot').offsetWidth, document.getElementById('main_plot').offsetHeight );
+		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 	}
 });

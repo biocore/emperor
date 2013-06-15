@@ -375,24 +375,37 @@ document.getElementById("logotable").style.display = 'none';
  </script>
 </head>
 
-<body>
+<body>    
 
-<label id="pointCount" class="ontop">
-</label>
+<div id="plotToggle">
+    <form>
+      <div id="plottype">
+        <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
+        <input id="parallel" type="radio" id="parallel" name="plottype" /><label for="parallel">Parallel</label>
+      </div>
+    </form>
+</div>
+<div id="pcoaPlotWrapper" class="plotWrapper">
+    <label id="pointCount" class="ontop">
+    </label>
 
-<div id="finder" class="arrow-right">
+    <div id="finder" class="arrow-right">
+    </div>
+
+    <div id="labels" class="unselectable">
+    </div>
+
+    <div id="taxalabels" class="unselectable">
+    </div>
+
+    <div id="axislabels" class="axislabels">
+    </div>
+
+    <div id="main_plot">
+    </div>
 </div>
 
-<div id="labels" class="unselectable">
-</div>
-
-<div id="taxalabels" class="unselectable">
-</div>
-
-<div id="axislabels" class="axislabels">
-</div>
-
-<div id="main_plot">
+<div id="parallelPlotWrapper" class="plotWrapper">
 </div>
 
 <div id="menu">
@@ -454,38 +467,55 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="axes">
-            <div class="list" id="axeslist">
+            <div id="pcoaaxes">
+                <div class="list" id="axeslist">
+                </div>
+            </div>
+            <div id="parallelaxes">
+                <table>
+                    <tr><td><div id="parallelaxescolor" class="colorbox" name="parallelaxescolor"></div></td><td title="Parallel Plots Axes Color">Axes Color</td></tr>
+                </table>
+                <table>
+                    <tr><td><div id="parallelaxeslabelcolor" class="colorbox" name="parallelaxeslabelcolor"></div></td><td title="Parallel Plots Axes Label Color">Axes Label Color</td></tr>
+                </table>
             </div>
         </div>
         <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
-            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+                </form>
+                <br>
+                <br>
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+                <br>
+                <br>
+            <div id="pcoaoptions" class="">
+                <form name="settingsoptions">
+                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                </form>
+                <br>
+                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br>
             <br>
             <label for="ellipseopacity" class="text">Ellipse Opacity</label>
             <label id="ellipseopacity" class="slidervalue"></label>
             <div id="eopacityslider" class="slider-range-max"></div>
-            <br>
-            <label for="sphereopacity" class="text">Sphere Opacity</label>
-            <label id="sphereopacity" class="slidervalue"></label>
-            <div id="sopacityslider" class="slider-range-max"></div>
-            <br>
-            <label for="sphereradius" class="text">Sphere Scale</label>
-            <label id="sphereradius" class="slidervalue"></label>
-            <div id="sradiusslider" class="slider-range-max"></div>
-            <br>
+                <br>
+                <label for="sphereopacity" class="text">Sphere Opacity</label>
+                <label id="sphereopacity" class="slidervalue"></label>
+                <div id="sopacityslider" class="slider-range-max"></div>
+                <br>
+                <label for="sphereradius" class="text">Sphere Scale</label>
+                <label id="sphereradius" class="slidervalue"></label>
+                <div id="sradiusslider" class="slider-range-max"></div>
+                <br>
+            </div>
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>
+            <div id="paralleloptions" class="">
+            </div>
         </div>
     </div>  
 </div>
@@ -493,6 +523,7 @@ document.getElementById("logotable").style.display = 'none';
 
 </html>
 """
+
 EXPECTED_FOOTER_B =\
 """document.getElementById("logo").style.display = 'none';
 document.getElementById("logotable").style.display = 'none';
@@ -500,24 +531,37 @@ document.getElementById("logotable").style.display = 'none';
  </script>
 </head>
 
-<body>
+<body>    
 
-<label id="pointCount" class="ontop">
-</label>
+<div id="plotToggle">
+    <form>
+      <div id="plottype">
+        <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
+        <input id="parallel" type="radio" id="parallel" name="plottype" /><label for="parallel">Parallel</label>
+      </div>
+    </form>
+</div>
+<div id="pcoaPlotWrapper" class="plotWrapper">
+    <label id="pointCount" class="ontop">
+    </label>
 
-<div id="finder" class="arrow-right">
+    <div id="finder" class="arrow-right">
+    </div>
+
+    <div id="labels" class="unselectable">
+    </div>
+
+    <div id="taxalabels" class="unselectable">
+    </div>
+
+    <div id="axislabels" class="axislabels">
+    </div>
+
+    <div id="main_plot">
+    </div>
 </div>
 
-<div id="labels" class="unselectable">
-</div>
-
-<div id="taxalabels" class="unselectable">
-</div>
-
-<div id="axislabels" class="axislabels">
-</div>
-
-<div id="main_plot">
+<div id="parallelPlotWrapper" class="plotWrapper">
 </div>
 
 <div id="menu">
@@ -592,34 +636,51 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="axes">
-            <div class="list" id="axeslist">
+            <div id="pcoaaxes">
+                <div class="list" id="axeslist">
+                </div>
+            </div>
+            <div id="parallelaxes">
+                <table>
+                    <tr><td><div id="parallelaxescolor" class="colorbox" name="parallelaxescolor"></div></td><td title="Parallel Plots Axes Color">Axes Color</td></tr>
+                </table>
+                <table>
+                    <tr><td><div id="parallelaxeslabelcolor" class="colorbox" name="parallelaxeslabelcolor"></div></td><td title="Parallel Plots Axes Label Color">Axes Label Color</td></tr>
+                </table>
             </div>
         </div>
         <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
-            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>
-            <br>
-            <label for="sphereopacity" class="text">Sphere Opacity</label>
-            <label id="sphereopacity" class="slidervalue"></label>
-            <div id="sopacityslider" class="slider-range-max"></div>
-            <br>
-            <label for="sphereradius" class="text">Sphere Scale</label>
-            <label id="sphereradius" class="slidervalue"></label>
-            <div id="sradiusslider" class="slider-range-max"></div>
-            <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+                </form>
+                <br>
+                <br>
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+                <br>
+                <br>
+            <div id="pcoaoptions" class="">
+                <form name="settingsoptions">
+                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                </form>
+                <br>
+                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br>
+                <br>
+                <label for="sphereopacity" class="text">Sphere Opacity</label>
+                <label id="sphereopacity" class="slidervalue"></label>
+                <div id="sopacityslider" class="slider-range-max"></div>
+                <br>
+                <label for="sphereradius" class="text">Sphere Scale</label>
+                <label id="sphereradius" class="slidervalue"></label>
+                <div id="sradiusslider" class="slider-range-max"></div>
+                <br>
+            </div>
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>
+            <div id="paralleloptions" class="">
+            </div>
         </div>
     </div>  
 </div>
@@ -635,24 +696,37 @@ document.getElementById("logotable").style.display = 'none';
  </script>
 </head>
 
-<body>
+<body>    
 
-<label id="pointCount" class="ontop">
-</label>
+<div id="plotToggle">
+    <form>
+      <div id="plottype">
+        <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
+        <input id="parallel" type="radio" id="parallel" name="plottype" /><label for="parallel">Parallel</label>
+      </div>
+    </form>
+</div>
+<div id="pcoaPlotWrapper" class="plotWrapper">
+    <label id="pointCount" class="ontop">
+    </label>
 
-<div id="finder" class="arrow-right">
+    <div id="finder" class="arrow-right">
+    </div>
+
+    <div id="labels" class="unselectable">
+    </div>
+
+    <div id="taxalabels" class="unselectable">
+    </div>
+
+    <div id="axislabels" class="axislabels">
+    </div>
+
+    <div id="main_plot">
+    </div>
 </div>
 
-<div id="labels" class="unselectable">
-</div>
-
-<div id="taxalabels" class="unselectable">
-</div>
-
-<div id="axislabels" class="axislabels">
-</div>
-
-<div id="main_plot">
+<div id="parallelPlotWrapper" class="plotWrapper">
 </div>
 
 <div id="menu">
@@ -714,34 +788,51 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="axes">
-            <div class="list" id="axeslist">
+            <div id="pcoaaxes">
+                <div class="list" id="axeslist">
+                </div>
+            </div>
+            <div id="parallelaxes">
+                <table>
+                    <tr><td><div id="parallelaxescolor" class="colorbox" name="parallelaxescolor"></div></td><td title="Parallel Plots Axes Color">Axes Color</td></tr>
+                </table>
+                <table>
+                    <tr><td><div id="parallelaxeslabelcolor" class="colorbox" name="parallelaxeslabelcolor"></div></td><td title="Parallel Plots Axes Label Color">Axes Label Color</td></tr>
+                </table>
             </div>
         </div>
         <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
-            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>
-            <br>
-            <label for="sphereopacity" class="text">Sphere Opacity</label>
-            <label id="sphereopacity" class="slidervalue"></label>
-            <div id="sopacityslider" class="slider-range-max"></div>
-            <br>
-            <label for="sphereradius" class="text">Sphere Scale</label>
-            <label id="sphereradius" class="slidervalue"></label>
-            <div id="sradiusslider" class="slider-range-max"></div>
-            <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+                </form>
+                <br>
+                <br>
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+                <br>
+                <br>
+            <div id="pcoaoptions" class="">
+                <form name="settingsoptions">
+                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                </form>
+                <br>
+                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br>
+                <br>
+                <label for="sphereopacity" class="text">Sphere Opacity</label>
+                <label id="sphereopacity" class="slidervalue"></label>
+                <div id="sopacityslider" class="slider-range-max"></div>
+                <br>
+                <label for="sphereradius" class="text">Sphere Scale</label>
+                <label id="sphereradius" class="slidervalue"></label>
+                <div id="sradiusslider" class="slider-range-max"></div>
+                <br>
+            </div>
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>
+            <div id="paralleloptions" class="">
+            </div>
         </div>
     </div>  
 </div>
@@ -756,24 +847,37 @@ document.getElementById("logotable").style.display = 'none';
  </script>
 </head>
 
-<body>
+<body>    
 
-<label id="pointCount" class="ontop">
-</label>
+<div id="plotToggle">
+    <form>
+      <div id="plottype">
+        <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
+        <input id="parallel" type="radio" id="parallel" name="plottype" /><label for="parallel">Parallel</label>
+      </div>
+    </form>
+</div>
+<div id="pcoaPlotWrapper" class="plotWrapper">
+    <label id="pointCount" class="ontop">
+    </label>
 
-<div id="finder" class="arrow-right">
+    <div id="finder" class="arrow-right">
+    </div>
+
+    <div id="labels" class="unselectable">
+    </div>
+
+    <div id="taxalabels" class="unselectable">
+    </div>
+
+    <div id="axislabels" class="axislabels">
+    </div>
+
+    <div id="main_plot">
+    </div>
 </div>
 
-<div id="labels" class="unselectable">
-</div>
-
-<div id="taxalabels" class="unselectable">
-</div>
-
-<div id="axislabels" class="axislabels">
-</div>
-
-<div id="main_plot">
+<div id="parallelPlotWrapper" class="plotWrapper">
 </div>
 
 <div id="menu">
@@ -835,38 +939,55 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="axes">
-            <div class="list" id="axeslist">
+            <div id="pcoaaxes">
+                <div class="list" id="axeslist">
+                </div>
+            </div>
+            <div id="parallelaxes">
+                <table>
+                    <tr><td><div id="parallelaxescolor" class="colorbox" name="parallelaxescolor"></div></td><td title="Parallel Plots Axes Color">Axes Color</td></tr>
+                </table>
+                <table>
+                    <tr><td><div id="parallelaxeslabelcolor" class="colorbox" name="parallelaxeslabelcolor"></div></td><td title="Parallel Plots Axes Label Color">Axes Label Color</td></tr>
+                </table>
             </div>
         </div>
         <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
-            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+                </form>
+                <br>
+                <br>
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+                <br>
+                <br>
+            <div id="pcoaoptions" class="">
+                <form name="settingsoptions">
+                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                </form>
+                <br>
+                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br>
             <br>
             <label for="vectorsopacity" class="text">Vectors Opacity</label>
             <label id="vectorsopacity" class="slidervalue"></label>
             <div id="vopacityslider" class="slider-range-max"></div>
-            <br>
-            <label for="sphereopacity" class="text">Sphere Opacity</label>
-            <label id="sphereopacity" class="slidervalue"></label>
-            <div id="sopacityslider" class="slider-range-max"></div>
-            <br>
-            <label for="sphereradius" class="text">Sphere Scale</label>
-            <label id="sphereradius" class="slidervalue"></label>
-            <div id="sradiusslider" class="slider-range-max"></div>
-            <br>
+                <br>
+                <label for="sphereopacity" class="text">Sphere Opacity</label>
+                <label id="sphereopacity" class="slidervalue"></label>
+                <div id="sopacityslider" class="slider-range-max"></div>
+                <br>
+                <label for="sphereradius" class="text">Sphere Scale</label>
+                <label id="sphereradius" class="slidervalue"></label>
+                <div id="sradiusslider" class="slider-range-max"></div>
+                <br>
+            </div>
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>
+            <div id="paralleloptions" class="">
+            </div>
         </div>
     </div>  
 </div>
@@ -875,7 +996,161 @@ document.getElementById("logotable").style.display = 'none';
 </html>
 """
 
-EXPECTED_FOOTER_E = 'document.getElementById("logo").style.display = \'none\';\ndocument.getElementById("logotable").style.display = \'none\';\n\n </script>\n</head>\n\n<body>\n\n<label id="pointCount" class="ontop">\n</label>\n\n<div id="finder" class="arrow-right">\n</div>\n\n<div id="labels" class="unselectable">\n</div>\n\n<div id="taxalabels" class="unselectable">\n</div>\n\n<div id="axislabels" class="axislabels">\n</div>\n\n<div id="main_plot">\n</div>\n\n<div id="menu">\n    <div id="menutabs">\n        <ul>\n            <li><a href="#keytab">Key</a></li>\n            <li><a href="#colorby">Colors</a></li>\n            <li><a href="#showby">Visibility</a></li>\n            <li><a href="#scalingby">Scaling</a></li>\n            <li><a href="#labelby">Labels</a></li>\n            <li><a href="#axes">Axes</a></li>\n            <li><a href="#settings">Options</a></li>\n        </ul>\n        <div id="keytab">\n            <form name="keyFilter">\n            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>\n            </form>\n            <div id="key">\n            </div>\n        </div>\n        <div id="colorby">\n            <br>\n            <select id="colorbycombo" onchange="colorByMenuChanged()">\n            </select>\n            <div class="list" id="colorbylist">\n            </div>\n        </div>\n        <div id="showby">\n            <select id="showbycombo" onchange="showByMenuChanged()">\n            </select>\n            <div class="list" id="showbylist">\n            </div>\n        </div>\n        <div id="scalingby">\n            <select id="scalingbycombo" onchange="scalingByMenuChanged()">\n            </select>\n            <div class="list" id="scalingbylist">\n            </div>\n        </div>\n        <div id="labelby">\n        <div id="labelsTop">\n            <form name="plotoptions">\n            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>\n            </form>\n            <br>\n            <label for="labelopacity" class="text">Label Opacity</label>\n            <label id="labelopacity" class="slidervalue"></label>\n            <div id="lopacityslider" class="slider-range-max"></div>\n            <div id="labelColorHolder clearfix">\n            <table><tr>\n            <td><div id="labelColor" class="colorbox">\n            </div></td><td><label>Master Label Color</label></td>\n            </tr></table></div>\n        </div>\n            <br>\n            <select id="labelcombo" onchange="labelMenuChanged()">\n            </select>\n            <div class="list" id="labellist">\n            </div>\n        </div>\n        <div id="axes">\n            <div class="list" id="axeslist">\n            </div>\n        </div>\n        <div id="settings">\n            <form name="settingsoptions">\n            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>\n            </form>\n            <br>\n            <form name="settingsoptionscolor">\n            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>\n            </form>\n            <br>\n            <br>\n            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">\n            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">\n            <br>\n            <br>\n            <form name="edgesvisibility">\n            <input type="checkbox" onClick="toggleEdgesVisibility()">Edges Visibility</input>\n            </form>\n            <br>\n            <br>\n            <label for="sphereopacity" class="text">Sphere Opacity</label>\n            <label id="sphereopacity" class="slidervalue"></label>\n            <div id="sopacityslider" class="slider-range-max"></div>\n            <br>\n            <label for="sphereradius" class="text">Sphere Scale</label>\n            <label id="sphereradius" class="slidervalue"></label>\n            <div id="sradiusslider" class="slider-range-max"></div>\n            <br>\n            <table>\n                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>\n            </table>\n        </div>\n    </div>  \n</div>\n</body>\n\n</html>\n'
+EXPECTED_FOOTER_E = """document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
+</head>
+
+<body>    
+
+<div id="plotToggle">
+    <form>
+      <div id="plottype">
+        <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
+        <input id="parallel" type="radio" id="parallel" name="plottype" /><label for="parallel">Parallel</label>
+      </div>
+    </form>
+</div>
+<div id="pcoaPlotWrapper" class="plotWrapper">
+    <label id="pointCount" class="ontop">
+    </label>
+
+    <div id="finder" class="arrow-right">
+    </div>
+
+    <div id="labels" class="unselectable">
+    </div>
+
+    <div id="taxalabels" class="unselectable">
+    </div>
+
+    <div id="axislabels" class="axislabels">
+    </div>
+
+    <div id="main_plot">
+    </div>
+</div>
+
+<div id="parallelPlotWrapper" class="plotWrapper">
+</div>
+
+<div id="menu">
+    <div id="menutabs">
+        <ul>
+            <li><a href="#keytab">Key</a></li>
+            <li><a href="#colorby">Colors</a></li>
+            <li><a href="#showby">Visibility</a></li>
+            <li><a href="#scalingby">Scaling</a></li>
+            <li><a href="#labelby">Labels</a></li>
+            <li><a href="#axes">Axes</a></li>
+            <li><a href="#settings">Options</a></li>
+        </ul>
+        <div id="keytab">
+            <form name="keyFilter">
+            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+            </form>
+            <div id="key">
+            </div>
+        </div>
+        <div id="colorby">
+            <br>
+            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            </select>
+            <div class="list" id="colorbylist">
+            </div>
+        </div>
+        <div id="showby">
+            <select id="showbycombo" onchange="showByMenuChanged()">
+            </select>
+            <div class="list" id="showbylist">
+            </div>
+        </div>
+        <div id="scalingby">
+            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+            </select>
+            <div class="list" id="scalingbylist">
+            </div>
+        </div>
+        <div id="labelby">
+        <div id="labelsTop">
+            <form name="plotoptions">
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+            </form>
+            <br>
+            <label for="labelopacity" class="text">Label Opacity</label>
+            <label id="labelopacity" class="slidervalue"></label>
+            <div id="lopacityslider" class="slider-range-max"></div>
+            <div id="labelColorHolder clearfix">
+            <table><tr>
+            <td><div id="labelColor" class="colorbox">
+            </div></td><td><label>Master Label Color</label></td>
+            </tr></table></div>
+        </div>
+            <br>
+            <select id="labelcombo" onchange="labelMenuChanged()">
+            </select>
+            <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="axes">
+            <div id="pcoaaxes">
+                <div class="list" id="axeslist">
+                </div>
+            </div>
+            <div id="parallelaxes">
+                <table>
+                    <tr><td><div id="parallelaxescolor" class="colorbox" name="parallelaxescolor"></div></td><td title="Parallel Plots Axes Color">Axes Color</td></tr>
+                </table>
+                <table>
+                    <tr><td><div id="parallelaxeslabelcolor" class="colorbox" name="parallelaxeslabelcolor"></div></td><td title="Parallel Plots Axes Label Color">Axes Label Color</td></tr>
+                </table>
+            </div>
+        </div>
+        <div id="settings">
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+                </form>
+                <br>
+                <br>
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+                <br>
+                <br>
+            <div id="pcoaoptions" class="">
+                <form name="settingsoptions">
+                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                </form>
+                <br>
+                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br>
+            <br>
+            <form name="edgesvisibility">
+            <input type="checkbox" onClick="toggleEdgesVisibility()">Edges Visibility</input>
+            </form>
+            <br>
+                <br>
+                <label for="sphereopacity" class="text">Sphere Opacity</label>
+                <label id="sphereopacity" class="slidervalue"></label>
+                <div id="sopacityslider" class="slider-range-max"></div>
+                <br>
+                <label for="sphereradius" class="text">Sphere Scale</label>
+                <label id="sphereradius" class="slidervalue"></label>
+                <div id="sradiusslider" class="slider-range-max"></div>
+                <br>
+            </div>
+            <table>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
+            <br>
+            <div id="paralleloptions" class="">
+            </div>
+        </div>
+    </div>  
+</div>
+</body>
+
+</html>
+"""
 
 
 if __name__ == "__main__":
