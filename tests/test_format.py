@@ -15,7 +15,7 @@ __status__ = "Development"
 from numpy import array
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
-    EmperorLogicError)
+    EmperorLogicError, format_comparison_bars_to_js)
 from cogent.util.unit_test import TestCase, main
 
 class TopLevelTests(TestCase):
@@ -63,6 +63,26 @@ class TopLevelTests(TestCase):
             'Root;k__Bacteria;p__Bacteroidetes',
             'Root;k__Bacteria;p__Tenericutes', 'Root;k__Bacteria;Other']
         self.prevalence = array([ 1., 0.66471926, 0.08193196, 0.04374296])
+
+        # comparison test
+        self.comparison_coords_data = array([[-0.0677, -2.036, 0.2726, 1.051,
+            -0.180, -0.698], [-1.782, -0.972, 0.1582, -1.091, 0.531, 0.292],
+            [-0.659, -0.2566, 0.514, -2.698, -0.393, 0.420], [-1.179, -0.968,
+            2.525, 0.53, -0.529, 0.632],[-0.896, -1.765, 0.274, -0.3235, 0.4009,
+            -0.03497], [-0.0923, 1.414, -0.622, 0.298, 0.5, -0.4580], [-0.972,
+            0.551, 1.144, 0.3147, -0.476, -0.4279], [1.438, -2.603, -1.39,
+            1.300, -0.1606, 1.260], [-0.356, 0.0875, 0.772, 0.539, -0.586,
+            -1.431], [1.512, -1.239, -0.0365, -0.682, -0.971, 0.356],
+            [1.17, 1.31, -1.407, 1.6, 0.60, 2.26], [2.618, 0.739, -0.01295,
+            -0.937, 3.079, -2.534], [0.2339, -0.880, -1.753, 0.177, 0.3517,
+            -0.743], [0.436, 2.12, -0.935, -0.476, -0.805, 0.4164], [-0.880,
+            1.069, 1.069, -0.596, -0.199, 0.306], [0.294, 0.2988, 0.04670,
+            -0.3865, 0.460, -0.431], [1.640, 0.2485, -0.354, 1.43, 1.226,
+            1.095], [0.821, -1.13, -1.794, -1.171, -1.27, -0.842]])
+        self.comparison_coords_headers = ['sampa_0', 'sampb_0', 'sampc_0',
+            'sampd_0', 'sampe_0', 'sampf_0', 'sampa_1', 'sampb_1', 'sampc_1',
+            'sampd_1', 'sampe_1', 'sampf_1', 'sampa_2', 'sampb_2', 'sampc_2',
+            'sampd_2', 'sampe_2', 'sampf_2']
 
     def test_format_pcoa_to_js(self):
         """Test correct formatting of the PCoA file"""
@@ -129,6 +149,33 @@ class TopLevelTests(TestCase):
             'Treatment', 'DOB')
         self.assertEquals(out_js_vector_string, VECTOR_JS_STRING_SORTING)
 
+    def test_format_comparison_bars_to_js(self):
+        """Check the correct strings are created for the two types of inputs"""
+
+        # empty string generation for comparison i. e. no clones
+        out_js_comparison_string = format_comparison_bars_to_js(
+            self.comparison_coords_data, self.comparison_coords_headers, 0)
+        self.assertEquals(out_js_comparison_string, '\nvar '
+            'g_comparisonPositions = new Array();\n')
+
+        out_js_comparison_string = format_comparison_bars_to_js(
+            self.comparison_coords_data, self.comparison_coords_headers, 3)
+        self.assertEquals(out_js_comparison_string, COMPARISON_JS_STRING)
+
+    def test_format_comparison_bars_to_js_exceptions(self):
+        """Check the correct exceptions are raised for incorrect inputs"""
+
+        # assertion for wrong length in headers
+        self.assertRaises(AssertionError, format_comparison_bars_to_js, [],
+            self.comparison_coords_data, 3)
+
+        # assertion for wrong length in coords data
+        self.assertRaises(AssertionError, format_comparison_bars_to_js,
+            self.comparison_coords_headers, self.comparison_coords_data[1::], 3)
+
+        # assertion for wrong number of clones and elements
+        self.assertRaises(AssertionError, format_comparison_bars_to_js,
+            self.comparison_coords_headers, self.comparison_coords_data, 11)
 
     def test_format_emperor_html_footer_string(self):
         """Test correct formatting of the footer string"""
@@ -147,6 +194,9 @@ class TopLevelTests(TestCase):
         #  no biplots no jackknifing but with vectors
         out_string = format_emperor_html_footer_string(False, False, True)
         self.assertEqual(out_string, EXPECTED_FOOTER_D)
+
+        out_string = format_emperor_html_footer_string(False, False, False,True)
+        self.assertEqual(out_string, EXPECTED_FOOTER_E)
 
 
 PCOA_DATA = array([[ -1.09166142e-01, 8.77774496e-02, 1.15866606e-02, -6.26863896e-02, 2.31533068e-02, 8.76934639e-02, 1.37400927e-03, -1.35496063e-05, 1.29849404e-09],
@@ -306,6 +356,16 @@ g_vectorPositions['Fast']['PC.607'] = [0.0688959784, -0.166234067, -0.0998300962
 g_vectorPositions['Fast']['PC.634'] = [0.20468454, 0.128911236, -0.0293614192];
 g_vectorPositions['Fast']['PC.635'] = [0.12613151, -0.00266030272, -0.141717093];
 g_vectorPositions['Fast']['PC.636'] = [0.281534642, 0.0710660196, 0.097154202];
+"""
+
+COMPARISON_JS_STRING = """
+var g_comparisonPositions = new Array();
+g_comparisonPositions['sampa'] = [[-0.0677, -2.036, 0.2726], [-0.972, 0.551, 1.144], [0.2339, -0.88, -1.753]];
+g_comparisonPositions['sampb'] = [[-1.782, -0.972, 0.1582], [1.438, -2.603, -1.39], [0.436, 2.12, -0.935]];
+g_comparisonPositions['sampc'] = [[-0.659, -0.2566, 0.514], [-0.356, 0.0875, 0.772], [-0.88, 1.069, 1.069]];
+g_comparisonPositions['sampd'] = [[-1.179, -0.968, 2.525], [1.512, -1.239, -0.0365], [0.294, 0.2988, 0.0467]];
+g_comparisonPositions['sampe'] = [[-0.896, -1.765, 0.274], [1.17, 1.31, -1.407], [1.64, 0.2485, -0.354]];
+g_comparisonPositions['sampf'] = [[-0.0923, 1.414, -0.622], [2.618, 0.739, -0.01295], [0.821, -1.13, -1.794]];
 """
 
 EXPECTED_FOOTER_A =\
@@ -912,6 +972,162 @@ document.getElementById("logotable").style.display = 'none';
             <label for="vectorsopacity" class="text">Vectors Opacity</label>
             <label id="vectorsopacity" class="slidervalue"></label>
             <div id="vopacityslider" class="slider-range-max"></div>
+                <br>
+                <label for="sphereopacity" class="text">Sphere Opacity</label>
+                <label id="sphereopacity" class="slidervalue"></label>
+                <div id="sopacityslider" class="slider-range-max"></div>
+                <br>
+                <label for="sphereradius" class="text">Sphere Scale</label>
+                <label id="sphereradius" class="slidervalue"></label>
+                <div id="sradiusslider" class="slider-range-max"></div>
+                <br>
+            </div>
+            <table>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
+            <br>
+            <div id="paralleloptions" class="">
+            </div>
+        </div>
+    </div>  
+</div>
+</body>
+
+</html>
+"""
+
+EXPECTED_FOOTER_E = """document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
+</head>
+
+<body>    
+
+<div id="plotToggle">
+    <form>
+      <div id="plottype">
+        <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
+        <input id="parallel" type="radio" id="parallel" name="plottype" /><label for="parallel">Parallel</label>
+      </div>
+    </form>
+</div>
+<div id="pcoaPlotWrapper" class="plotWrapper">
+    <label id="pointCount" class="ontop">
+    </label>
+
+    <div id="finder" class="arrow-right">
+    </div>
+
+    <div id="labels" class="unselectable">
+    </div>
+
+    <div id="taxalabels" class="unselectable">
+    </div>
+
+    <div id="axislabels" class="axislabels">
+    </div>
+
+    <div id="main_plot">
+    </div>
+</div>
+
+<div id="parallelPlotWrapper" class="plotWrapper">
+</div>
+
+<div id="menu">
+    <div id="menutabs">
+        <ul>
+            <li><a href="#keytab">Key</a></li>
+            <li><a href="#colorby">Colors</a></li>
+            <li><a href="#showby">Visibility</a></li>
+            <li><a href="#scalingby">Scaling</a></li>
+            <li><a href="#labelby">Labels</a></li>
+            <li><a href="#axes">Axes</a></li>
+            <li><a href="#settings">Options</a></li>
+        </ul>
+        <div id="keytab">
+            <form name="keyFilter">
+            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+            </form>
+            <div id="key">
+            </div>
+        </div>
+        <div id="colorby">
+            <br>
+            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            </select>
+            <div class="list" id="colorbylist">
+            </div>
+        </div>
+        <div id="showby">
+            <select id="showbycombo" onchange="showByMenuChanged()">
+            </select>
+            <div class="list" id="showbylist">
+            </div>
+        </div>
+        <div id="scalingby">
+            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+            </select>
+            <div class="list" id="scalingbylist">
+            </div>
+        </div>
+        <div id="labelby">
+        <div id="labelsTop">
+            <form name="plotoptions">
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+            </form>
+            <br>
+            <label for="labelopacity" class="text">Label Opacity</label>
+            <label id="labelopacity" class="slidervalue"></label>
+            <div id="lopacityslider" class="slider-range-max"></div>
+            <div id="labelColorHolder clearfix">
+            <table><tr>
+            <td><div id="labelColor" class="colorbox">
+            </div></td><td><label>Master Label Color</label></td>
+            </tr></table></div>
+        </div>
+            <br>
+            <select id="labelcombo" onchange="labelMenuChanged()">
+            </select>
+            <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="axes">
+            <div id="pcoaaxes">
+                <div class="list" id="axeslist">
+                </div>
+            </div>
+            <div id="parallelaxes">
+                <table>
+                    <tr><td><div id="parallelaxescolor" class="colorbox" name="parallelaxescolor"></div></td><td title="Parallel Plots Axes Color">Axes Color</td></tr>
+                </table>
+                <table>
+                    <tr><td><div id="parallelaxeslabelcolor" class="colorbox" name="parallelaxeslabelcolor"></div></td><td title="Parallel Plots Axes Label Color">Axes Label Color</td></tr>
+                </table>
+            </div>
+        </div>
+        <div id="settings">
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+                </form>
+                <br>
+                <br>
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+                <br>
+                <br>
+            <div id="pcoaoptions" class="">
+                <form name="settingsoptions">
+                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                </form>
+                <br>
+                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br>
+            <br>
+            <form name="edgesvisibility">
+            <input type="checkbox" onClick="toggleEdgesVisibility()">Edges Visibility</input>
+            </form>
+            <br>
                 <br>
                 <label for="sphereopacity" class="text">Sphere Opacity</label>
                 <label id="sphereopacity" class="slidervalue"></label>

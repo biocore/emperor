@@ -12,7 +12,7 @@ __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
 from os import listdir
-from os.path import join, exists, isdir
+from os.path import join, exists, isdir, abspath
 
 from qiime.biplots import get_taxa, get_taxa_coords, get_taxa_prevalence
 from qiime.filter import filter_mapping_file
@@ -29,7 +29,7 @@ from emperor.util import (copy_support_files, preprocess_mapping_file,
     EmperorInputFilesError)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
-    EMPEROR_HEADER_HTML_STRING, EmperorLogicError)
+    format_comparison_bars_to_js, EMPEROR_HEADER_HTML_STRING, EmperorLogicError)
 
 script_info = {}
 
@@ -101,18 +101,26 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     " sorted by a category that's explicitly represented in the 3D plot use the"
     " '--add_vectors' and the '-a' option.", "%prog -i unweighted_unifrac_pc."
     "txt -m Fasting_Map.txt --add_vectors Treatment,DOB -a DOB -o "
-    "sorted_by_DOB")]
+    "sorted_by_DOB"),
+    ("Compare two coordinate files", "To draw replicates of the same samples "
+    "like for a procustes plot.", "%prog -i compare -m Fasting_Map.txt "
+    "--compare_plots -o comparison")
+    ]
 script_info['output_description']= "This script creates an output directory "+\
-    "with an HTML formated file named 'emperor.html' and a complementary "+\
-    "folder named 'emperor_required_resources'. Opening emperor.html with "+\
+    "with an HTML formated file named 'index.html' and a complementary "+\
+    "folder named 'emperor_required_resources'. Opening index.html with "+\
     "Google's Chrome web browser will display a three dimensional "+\
     "visualization of the processed PCoA data file and the corresponding "+\
     "metadata mapping file."
 script_info['required_options'] = [
-    make_option('-i','--input_coords',type="existing_path",help='Path to a '
-    'coordinates file to create a PCoA plot. Alternatively a path to a '
-    'directory containing only coordinates files to create a jackknifed PCoA '
-    'plot.'),
+    make_option('-i','--input_coords',type="existing_path",help='Depending on '
+    'the plot to be generated, can be one of the following: (1) Filepath of '
+    'a coordinates file to create a PCoA plot. (2) Directory path to a folder '
+    'containing coordinates files to create a jackknifed PCoA plot. (3) '
+    'Directory path to a folder containing coordinates files to compare the '
+    'coordinates there contained when --compare_plots is enabled (useful '
+    'for procustes analysis plots). For directories: hidden files, sub-'
+    'directories and files suffixed as \'_procrustes_results.txt\''),
     make_option('-m','--map_fp',type="existing_filepath",help='path to a '
     'metadata mapping file')
 ]
@@ -151,6 +159,11 @@ script_info['optional_options'] = [
     make_option('--biplot_fp', help='Output filepath that will contain the '
     'coordinates where each taxonomic sphere is centered. [default: %default]',
     default=None, type='new_filepath'),
+    make_option('-c', '--compare_plots', dest='compare_plots',
+    action='store_true', default=False, help='Passing a directory with the -i '
+    '(--input_coords) option in combination with this flag results in a set of'
+    ' bars connecting the replicated samples across all the input files. '
+    '[default=%default]'),
     make_option('-e', '--ellipsoid_method', help='Used only when plotting '
     'ellipsoids for jackknifed beta diversity (i.e. using a directory of coord '
     'files instead of a single coord file). Valid values are "IQR" (for '
@@ -209,6 +222,7 @@ def main():
     add_vectors = opts.add_vectors
     verbose_output = opts.verbose
     number_of_axes = opts.number_of_axes
+    compare_plots = opts.compare_plots
     
     # verifying that the number of axes requested is greater than 3
     if number_of_axes<3:
@@ -226,6 +240,11 @@ def main():
             'currently trying to use: %s. Make sure you use only one.' %
             custom_axes))
 
+    # make sure the flag is not misunderstood from the command line interface
+    if isdir(input_coords) == False and compare_plots:
+        option_parser.error('Cannot use the \'--compare_plots\' flag unless the'
+            ' input input path is a directory.')
+
     # before creating any output, check correct parsing of the main input files
     try:
         mapping_data, header, comments = parse_mapping_file(open(map_fp,'U'))
@@ -237,21 +256,26 @@ def main():
             'to be formatted correctly, verify the formatting is QIIME '
             'compliant by using check_id_map.py') % map_fp)
 
-    # dir means jackknifing type of processing
+    # dir means jackknifing or coordinate comparison type of processing
     if isdir(input_coords):
         offending_coords_fp = []
         coords_headers, coords_data, coords_eigenvalues, coords_pct=[],[],[],[]
 
-        # iterate only over the non-hidden files
-        coord_fps = [join(input_coords, f) for f in listdir(input_coords)
-            if not f.startswith('.')]
+        # iterate only over the non-hidden files and not folders and if anything
+        # ignore the procrustes results file that is generated by
+        # transform_coordinate_matrices.py suffixed in _procrustes_results.txt
+        coord_fps = [join(input_coords, f) for f in listdir(input_coords) if
+            not f.startswith('.') and not isdir(join(abspath(input_coords),f))
+            and not f.endswith('_procrustes_results.txt')]
 
-        if not coord_fps:
-            option_parser.error('The input path is empty; if passing a folder '
-                'as the input, please make sure it contains coordinates files.')
+        # this could happen and we rather avoid this problem
+        if len(coord_fps) == 0:
+            option_parser.error('Could not use any of the files in the input '
+                'directory.')
 
-        # the master pcoa must be the first in the list of coordinates
-        if master_pcoa:
+        # the master pcoa must be the first in the list of coordinates; however
+        # if the visualization is not a jackknifed plot this gets ignored
+        if master_pcoa and compare_plots == False:
             if master_pcoa in coord_fps: # remove it if duplicated
                 coord_fps.remove(master_pcoa)
             coord_fps = [master_pcoa] + coord_fps # prepend it to the list
@@ -283,8 +307,9 @@ def main():
         if non_shared_ids and len(coords_headers) > 1:
             option_parser.error(('The following sample identifier(s): \'%s\''
                 'are not shared between all the files. The files used to '
-                'make a jackknifed PCoA plot must share all the same sample '
-                'identifiers') % ', '.join(list(non_shared_ids)))
+                'make a jackknifed PCoA plot or coordinate comparison plot ('
+                'procustes plot) must share all the same sample identifiers'
+                'between each other.')%', '.join(list(non_shared_ids)))
 
         # flatten the list of lists into a 1-d list
         _coords_headers = list(set(sum(coords_headers, [])))
@@ -489,9 +514,9 @@ def main():
     # process the coordinates file first, preventing the case where the custom
     # axes is not in the coloring categories i. e. in the --colory_by categories
     coords_headers, coords_data, coords_eigenvalues, coords_pct, coords_low,\
-        coords_high = preprocess_coords_file(coords_headers, coords_data,
+        coords_high, clones = preprocess_coords_file(coords_headers,coords_data,
         coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
-        jackknifing_method=jackknifing_method)
+        jackknifing_method=jackknifing_method, is_comparison=compare_plots)
 
     # process the otu table after processing the coordinates to get custom axes
     # (when available) or any other change that occurred to the coordinates
@@ -503,7 +528,7 @@ def main():
     # into account the header names that were already authorized to be used
     # and take care of concatenating the fields for the && merged columns
     mapping_data, header = preprocess_mapping_file(mapping_data, header,
-        color_by_column_names, unique=not add_unique_columns)
+        color_by_column_names, unique=not add_unique_columns, clones=clones)
 
     # create the output directory before creating any other output
     create_dir(opts.output_dir,False)
@@ -525,8 +550,11 @@ def main():
     fp_out.write(format_taxa_to_js(otu_coords, otu_lineages, otu_prevalence))
     fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
         coords_headers, add_vectors[0], add_vectors[1]))
+    fp_out.write(format_comparison_bars_to_js(coords_data, coords_headers,
+        clones))
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
-        isdir(input_coords), add_vectors != [None, None]))
+        isdir(input_coords) and not compare_plots, add_vectors != [None, None],
+        clones>0))
     fp_out.close()
     copy_support_files(output_dir)
 

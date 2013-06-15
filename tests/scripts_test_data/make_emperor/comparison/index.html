@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Emperor</title>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="emperor_required_resources/img/favicon.ico" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/emperor/css/emperor.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
+    <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
+        <tr><td><img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="logo"/></td></tr>
+    </table>
+
+    <script type="text/javascript" src="emperor_required_resources/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
+    <script src="emperor_required_resources/js/jquery.colorPicker.js"></script>
+    <script src="emperor_required_resources/js/spectrum.js"></script>
+
+    <script src="emperor_required_resources/js/Three.js"></script>
+    <script src="emperor_required_resources/js/js/Detector.js"></script>
+    <script src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
+    <script src="emperor_required_resources/emperor/js/emperor.js"></script>
+    <script type="text/javascript">
+var g_mappingFileHeaders = ['SampleID','LinkerPrimerSequence','Treatment','DOB'];
+var g_mappingFileData = { 'PC.635_0': ['PC.635_0','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.635_1': ['PC.635_1','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.607_1': ['PC.607_1','YATGCTGCCTCCCGTAGGAGT','Fast','20071112'],'PC.607_0': ['PC.607_0','YATGCTGCCTCCCGTAGGAGT','Fast','20071112'],'PC.356_0': ['PC.356_0','YATGCTGCCTCCCGTAGGAGT','Control','20061126'],'PC.356_1': ['PC.356_1','YATGCTGCCTCCCGTAGGAGT','Control','20061126'],'PC.636_1': ['PC.636_1','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.593_0': ['PC.593_0','YATGCTGCCTCCCGTAGGAGT','Control','20071210'],'PC.636_0': ['PC.636_0','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.593_1': ['PC.593_1','YATGCTGCCTCCCGTAGGAGT','Control','20071210'],'PC.355_1': ['PC.355_1','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.355_0': ['PC.355_0','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.481_1': ['PC.481_1','YATGCTGCCTCCCGTAGGAGT','Control','20070314'],'PC.634_1': ['PC.634_1','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.634_0': ['PC.634_0','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.354_0': ['PC.354_0','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.354_1': ['PC.354_1','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.481_0': ['PC.481_0','YATGCTGCCTCCCGTAGGAGT','Control','20070314'] };
+
+var g_spherePositions = new Array();
+g_spherePositions['PC.636_0'] = { 'name': 'PC.636_0', 'color': 0, 'x': 0.281858, 'y': 0.050727, 'z': 0.037472, 'P1': 0.281858, 'P2': 0.050727, 'P3': 0.037472, 'P4': -0.037007, 'P5': 0.157828, 'P6': 0.233595, 'P7': 0.174999, 'P8': 0.021954 };
+g_spherePositions['PC.635_0'] = { 'name': 'PC.635_0', 'color': 0, 'x': 0.182152, 'y': 0.132917, 'z': -0.100390, 'P1': 0.182152, 'P2': 0.132917, 'P3': -0.100390, 'P4': 0.190012, 'P5': -0.307284, 'P6': 0.004307, 'P7': 0.046958, 'P8': -0.061716 };
+g_spherePositions['PC.356_0'] = { 'name': 'PC.356_0', 'color': 0, 'x': -0.239606, 'y': 0.178116, 'z': -0.316300, 'P1': -0.239606, 'P2': 0.178116, 'P3': -0.316300, 'P4': -0.011634, 'P5': 0.114589, 'P6': 0.091540, 'P7': -0.137944, 'P8': -0.031156 };
+g_spherePositions['PC.481_0'] = { 'name': 'PC.481_0', 'color': 0, 'x': -0.001852, 'y': 0.000145, 'z': 0.193898, 'P1': -0.001852, 'P2': 0.000145, 'P3': 0.193898, 'P4': -0.287577, 'P5': -0.136511, 'P6': 0.066360, 'P7': -0.122470, 'P8': -0.112458 };
+g_spherePositions['PC.354_0'] = { 'name': 'PC.354_0', 'color': 0, 'x': -0.263742, 'y': -0.021030, 'z': 0.098826, 'P1': -0.263742, 'P2': -0.021030, 'P3': 0.098826, 'P4': 0.012114, 'P5': -0.103635, 'P6': 0.046005, 'P7': 0.007898, 'P8': 0.278123 };
+g_spherePositions['PC.593_0'] = { 'name': 'PC.593_0', 'color': 0, 'x': -0.230831, 'y': -0.223723, 'z': 0.170329, 'P1': -0.230831, 'P2': -0.223723, 'P3': 0.170329, 'P4': 0.238984, 'P5': 0.084924, 'P6': 0.047074, 'P7': -0.019644, 'P8': -0.135134 };
+g_spherePositions['PC.355_0'] = { 'name': 'PC.355_0', 'color': 0, 'x': -0.196196, 'y': 0.169658, 'z': 0.042403, 'P1': -0.196196, 'P2': 0.169658, 'P3': 0.042403, 'P4': -0.084825, 'P5': 0.067005, 'P6': -0.230905, 'P7': 0.195959, 'P8': -0.057770 };
+g_spherePositions['PC.607_0'] = { 'name': 'PC.607_0', 'color': 0, 'x': 0.133124, 'y': -0.378152, 'z': -0.239139, 'P1': 0.133124, 'P2': -0.378152, 'P3': -0.239139, 'P4': -0.103687, 'P5': -0.014177, 'P6': -0.096916, 'P7': 0.031293, 'P8': 0.023203 };
+g_spherePositions['PC.634_0'] = { 'name': 'PC.634_0', 'color': 0, 'x': 0.335093, 'y': 0.091342, 'z': 0.112901, 'P1': 0.335093, 'P2': 0.091342, 'P3': 0.112901, 'P4': 0.083620, 'P5': 0.137259, 'P6': -0.161059, 'P7': -0.177050, 'P8': 0.074955 };
+g_spherePositions['PC.636_1'] = { 'name': 'PC.636_1', 'color': 0, 'x': -0.288198, 'y': -0.039440, 'z': 0.155710, 'P1': -0.288198, 'P2': -0.039440, 'P3': 0.155710, 'P4': 0.110165, 'P5': -0.074622, 'P6': -0.050658, 'P7': -0.217630, 'P8': 0.138926 };
+g_spherePositions['PC.635_1'] = { 'name': 'PC.635_1', 'color': 0, 'x': -0.241287, 'y': -0.011309, 'z': -0.071043, 'P1': -0.241287, 'P2': -0.011309, 'P3': -0.071043, 'P4': -0.256797, 'P5': 0.221116, 'P6': 0.014841, 'P7': -0.086025, 'P8': -0.079499 };
+g_spherePositions['PC.356_1'] = { 'name': 'PC.356_1', 'color': 0, 'x': 0.192208, 'y': -0.321727, 'z': -0.128718, 'P1': 0.192208, 'P2': -0.321727, 'P3': -0.128718, 'P4': -0.012263, 'P5': -0.094498, 'P6': 0.230759, 'P7': -0.046976, 'P8': 0.001721 };
+g_spherePositions['PC.481_1'] = { 'name': 'PC.481_1', 'color': 0, 'x': 0.017661, 'y': 0.007357, 'z': -0.008758, 'P1': 0.017661, 'P2': 0.007357, 'P3': -0.008758, 'P4': 0.310873, 'P5': 0.232612, 'P6': 0.040470, 'P7': 0.062084, 'P8': -0.046743 };
+g_spherePositions['PC.354_1'] = { 'name': 'PC.354_1', 'color': 0, 'x': 0.309592, 'y': 0.053289, 'z': 0.060588, 'P1': 0.309592, 'P2': 0.053289, 'P3': 0.060588, 'P4': -0.116905, 'P5': 0.095288, 'P6': -0.050570, 'P7': 0.091676, 'P8': 0.229225 };
+g_spherePositions['PC.593_1'] = { 'name': 'PC.593_1', 'color': 0, 'x': 0.274193, 'y': 0.295804, 'z': 0.203717, 'P1': 0.274193, 'P2': 0.295804, 'P3': 0.203717, 'P4': -0.027951, 'P5': -0.078294, 'P6': 0.074943, 'P7': -0.091895, 'P8': -0.133359 };
+g_spherePositions['PC.355_1'] = { 'name': 'PC.355_1', 'color': 0, 'x': 0.133038, 'y': -0.233356, 'z': 0.032452, 'P1': 0.133038, 'P2': -0.233356, 'P3': 0.032452, 'P4': -0.004928, 'P5': -0.065396, 'P6': -0.281587, 'P7': 0.033670, 'P8': -0.119216 };
+g_spherePositions['PC.607_1'] = { 'name': 'PC.607_1', 'color': 0, 'x': -0.062283, 'y': 0.236858, 'z': -0.396154, 'P1': -0.062283, 'P2': 0.236858, 'P3': -0.396154, 'P4': 0.038263, 'P5': -0.119360, 'P6': -0.059480, 'P7': 0.008172, 'P8': 0.021302 };
+g_spherePositions['PC.634_1'] = { 'name': 'PC.634_1', 'color': 0, 'x': -0.334923, 'y': 0.012524, 'z': 0.152207, 'P1': -0.334923, 'P2': 0.012524, 'P3': 0.152207, 'P4': -0.040457, 'P5': -0.116846, 'P6': 0.081280, 'P7': 0.246923, 'P8': -0.012356 };
+
+var g_ellipsesDimensions = new Array();
+var g_segments = 16, g_rings = 16, g_radius = 0.008040;
+var g_xAxisLength = 0.670016;
+var g_yAxisLength = 0.673956;
+var g_zAxisLength = 0.599871;
+var g_xMaximumValue = 0.335093;
+var g_yMaximumValue = 0.295804;
+var g_zMaximumValue = 0.203717;
+var g_xMinimumValue = -0.334923;
+var g_yMinimumValue = -0.378152;
+var g_zMinimumValue = -0.396154;
+var g_maximum = 0.396154;
+var g_pc1Label = "PC1 (25 %)";
+var g_pc2Label = "PC2 (16 %)";
+var g_pc3Label = "PC3 (14 %)";
+var g_number_of_custom_axes = 0;
+var g_fractionExplained = [0.253494, 0.155259, 0.142649, 0.111263, 0.105809, 0.088100, 0.075837, 0.067588];
+var g_fractionExplainedRounded = [25, 16, 14, 11, 11, 9, 8, 7];
+
+var g_taxaPositions = new Array();
+
+
+var g_vectorPositions = new Array();
+
+var g_comparisonPositions = new Array();
+g_comparisonPositions['PC.354'] = [[-0.26374234825, -0.0210295238149, 0.0988255433483], [0.309591634418, 0.0532890136432, 0.0605879085161]];
+g_comparisonPositions['PC.355'] = [[-0.196195568243, 0.169658119414, 0.0424034255545], [0.133038027649, -0.233356301889, 0.0324518672876]];
+g_comparisonPositions['PC.356'] = [[-0.239606359013, 0.178116346653, -0.316300212034], [0.192207680814, -0.321726747298, -0.128718397379]];
+g_comparisonPositions['PC.481'] = [[-0.00185204749533, 0.000144820879621, 0.193898131008], [0.0176612523534, 0.00735659824953, -0.00875781460244]];
+g_comparisonPositions['PC.593'] = [[-0.230830555897, -0.223723283753, 0.170329067036], [0.274193203664, 0.295804203663, 0.203716993255]];
+g_comparisonPositions['PC.607'] = [[0.133124236385, -0.378152288866, -0.239139015591], [-0.0622832861598, 0.2368583004, -0.396154332152]];
+g_comparisonPositions['PC.634'] = [[0.335092748334, 0.0913419796777, 0.112900504808], [-0.334922829033, 0.0125244602096, 0.152206619253]];
+g_comparisonPositions['PC.635'] = [[0.18215230676, 0.132916775615, -0.100389688466], [-0.241287260869, -0.0113094708189, -0.0710427892223]];
+g_comparisonPositions['PC.636'] = [[0.281857587421, 0.0507270541945, 0.0374722443357], [-0.288198422836, -0.0394400561594, 0.155709945044]];
+document.getElementById("logo").style.display = 'none';
+document.getElementById("logotable").style.display = 'none';
+
+ </script>
+</head>
+
+<body>
+
+<label id="pointCount" class="ontop">
+</label>
+
+<div id="finder" class="arrow-right">
+</div>
+
+<div id="labels" class="unselectable">
+</div>
+
+<div id="taxalabels" class="unselectable">
+</div>
+
+<div id="axislabels" class="axislabels">
+</div>
+
+<div id="main_plot">
+</div>
+
+<div id="menu">
+    <div id="menutabs">
+        <ul>
+            <li><a href="#keytab">Key</a></li>
+            <li><a href="#colorby">Colors</a></li>
+            <li><a href="#showby">Visibility</a></li>
+            <li><a href="#scalingby">Scaling</a></li>
+            <li><a href="#labelby">Labels</a></li>
+            <li><a href="#axes">Axes</a></li>
+            <li><a href="#settings">Options</a></li>
+        </ul>
+        <div id="keytab">
+            <form name="keyFilter">
+            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+            </form>
+            <div id="key">
+            </div>
+        </div>
+        <div id="colorby">
+            <br>
+            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            </select>
+            <div class="list" id="colorbylist">
+            </div>
+        </div>
+        <div id="showby">
+            <select id="showbycombo" onchange="showByMenuChanged()">
+            </select>
+            <div class="list" id="showbylist">
+            </div>
+        </div>
+        <div id="scalingby">
+            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+            </select>
+            <div class="list" id="scalingbylist">
+            </div>
+        </div>
+        <div id="labelby">
+        <div id="labelsTop">
+            <form name="plotoptions">
+            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+            </form>
+            <br>
+            <label for="labelopacity" class="text">Label Opacity</label>
+            <label id="labelopacity" class="slidervalue"></label>
+            <div id="lopacityslider" class="slider-range-max"></div>
+            <div id="labelColorHolder clearfix">
+            <table><tr>
+            <td><div id="labelColor" class="colorbox">
+            </div></td><td><label>Master Label Color</label></td>
+            </tr></table></div>
+        </div>
+            <br>
+            <select id="labelcombo" onchange="labelMenuChanged()">
+            </select>
+            <div class="list" id="labellist">
+            </div>
+        </div>
+        <div id="axes">
+            <div class="list" id="axeslist">
+            </div>
+        </div>
+        <div id="settings">
+            <form name="settingsoptions">
+            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+            </form>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+            </form>
+            <br>
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+            <br>
+            <br>
+            <form name="edgesvisibility">
+            <input type="checkbox" onClick="toggleEdgesVisibility()">Edges Visibility</input>
+            </form>
+            <br>
+            <br>
+            <label for="sphereopacity" class="text">Sphere Opacity</label>
+            <label id="sphereopacity" class="slidervalue"></label>
+            <div id="sopacityslider" class="slider-range-max"></div>
+            <br>
+            <label for="sphereradius" class="text">Sphere Scale</label>
+            <label id="sphereradius" class="slidervalue"></label>
+            <div id="sradiusslider" class="slider-range-max"></div>
+            <br>
+            <table>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
+        </div>
+    </div>  
+</div>
+</body>
+
+</html>
