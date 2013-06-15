@@ -15,8 +15,8 @@ __status__ = "Development"
 from copy import deepcopy
 from StringIO import StringIO
 
-from numpy import max, min, abs
 from cogent.util.misc import if_
+from numpy import max, min, abs, argsort, array
 
 from emperor.util import keep_columns_from_mapping_file
 
@@ -303,8 +303,62 @@ def format_vectors_to_js(mapping_file_data, mapping_file_headers, coords_data,
 
     return ''.join(js_vectors_string)
 
+def format_comparison_bars_to_js(coords_data, coords_headers, clones):
+    """Format coordinates data to create a comparison plot
+
+    Inputs:
+    coords_data: numpy array with the replicated coordinates
+    cooreds_headers: list with the headers for each of replicated coordinates
+    clones: number of replicates in the coords_data and coords_headers
+
+    Outputs:
+    Javascript object that contains the data for the comparison plot
+
+    Raises:
+    AssertionError if the coords_data and coords_headers don't have the same
+    length.
+    AssertionError if the number of clones doesn't concord with the samples
+    being presented.
+    """
+
+    js_comparison_string = []
+    js_comparison_string.append('\nvar g_comparisonPositions = new Array();\n')
+
+    if clones:
+        headers_length = len(coords_headers)
+
+        # assert some sanity checks
+        assert headers_length == len(coords_data), "The coords data and"+\
+            "the coords headers must have the same length"
+        assert headers_length%clones == 0, "There has to be an exact "+\
+            "number of clones of the data"
+
+        # get the indices that the sample names get sorted by, this will group
+        # all the samples with the same prefix together, and since the suffixes
+        # are numeric, the samples will be one after the other i. e. sample_0,
+        # sample_1, sample_2 and other_0, other_1, other_2 and so on. With these
+        # indices sort the coordinates and then the headers themselves, though
+        # convert to a numpy array first & back to a list to avoid sorting again
+        indices = argsort(coords_headers)
+        coords_data = coords_data[indices, :]
+        coords_headers = array(coords_headers)[indices, :].tolist()
+
+        # in steps of the number of clones iterate through the headers and the
+        # coords to create the javascript object with the coordinates
+        for index in xrange(0, headers_length, clones):
+            # 1st object must have _0 as a suffix, trim it reveal the sample id
+            sample_id = coords_headers[index].rstrip('_0')
+
+            # convert all elements in the numpy array into a string before
+            # formatting the elements into the javascript dictionary object
+            js_comparison_string.append("g_comparisonPositions['%s'] = [%s];\n"%
+                (sample_id, str(', '.join(map(str,
+                coords_data[index:(index+clones), 0:3].tolist())))))
+    return ''.join(js_comparison_string)
+
+
 def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
-                                    has_vectors=False):
+                                    has_vectors=False, has_edges=False):
     """Create an HTML footer according to the things being presented in the plot
 
     has_biplots: whether the plot has biplots or not
@@ -316,12 +370,13 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
     """
     optional_strings = []
 
-    # the order of these statemenst matter, see _EMPEROR_FOOTER_HTML_STRING
+    # the order of these statements matter, see _EMPEROR_FOOTER_HTML_STRING
     optional_strings.append(if_(has_biplots, _BIPLOT_SPHERES_COLOR_SELECTOR,''))
     optional_strings.append(if_(has_biplots, _BIPLOT_VISIBILITY_SELECTOR, ''))
     optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
     optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
     optional_strings.append(if_(has_vectors, _VECTORS_OPACITY_SLIDER, ''))
+    optional_strings.append(if_(has_edges, _EDGES_VISIBILITY_SELECTOR, ''))
 
     return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
 
@@ -386,6 +441,13 @@ _BIPLOT_SPHERES_COLOR_SELECTOR ="""
             <table>
                 <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
             </table>
+            <br>"""
+
+_EDGES_VISIBILITY_SELECTOR = """
+            <br>
+            <form name="edgesvisibility">
+            <input type="checkbox" onClick="toggleEdgesVisibility()">Edges Visibility</input>
+            </form>
             <br>"""
 
 _EMPEROR_FOOTER_HTML_STRING ="""document.getElementById("logo").style.display = 'none';
@@ -514,7 +576,7 @@ document.getElementById("logotable").style.display = 'none';
                 </form>
                 <br>
                 <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br>%s%s
+                <br>%s%s%s
                 <br>
                 <label for="sphereopacity" class="text">Sphere Opacity</label>
                 <label id="sphereopacity" class="slidervalue"></label>
