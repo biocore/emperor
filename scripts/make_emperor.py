@@ -103,7 +103,7 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "txt -m Fasting_Map.txt --add_vectors Treatment,DOB -a DOB -o "
     "sorted_by_DOB"),
     ("Compare two coordinate files", "To draw replicates of the same samples "
-    "like for a procustres plot.", "%prog -i compare -m Fasting_Map.txt "
+    "like for a procustes plot.", "%prog -i compare -m Fasting_Map.txt "
     "--compare_plots -o comparison")
     ]
 script_info['output_description']= "This script creates an output directory "+\
@@ -119,7 +119,7 @@ script_info['required_options'] = [
     'containing coordinates files to create a jackknifed PCoA plot. (3) '
     'Directory path to a folder containing coordinates files to compare the '
     'coordinates there contained when --compare_plots is enabled (useful '
-    'for procustres analysis plots). For directories: hidden files, sub-'
+    'for procustes analysis plots). For directories: hidden files, sub-'
     'directories and files suffixed as \'_procrustes_results.txt\''),
     make_option('-m','--map_fp',type="existing_filepath",help='path to a '
     'metadata mapping file')
@@ -308,7 +308,7 @@ def main():
             option_parser.error(('The following sample identifier(s): \'%s\''
                 'are not shared between all the files. The files used to '
                 'make a jackknifed PCoA plot or coordinate comparison plot ('
-                'procustres plot) must share all the same sample identifiers'
+                'procustes plot) must share all the same sample identifiers'
                 'between each other.')%', '.join(list(non_shared_ids)))
 
         # flatten the list of lists into a 1-d list
