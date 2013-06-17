@@ -18,7 +18,7 @@ from os.path import exists, join
 from cogent.util.unit_test import TestCase, main
 from qiime.util import get_qiime_temp_dir, get_tmp_filename
 from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
-    preprocess_mapping_file, preprocess_coords_file,
+    preprocess_mapping_file, preprocess_coords_file, EmperorInputFilesError,
     fill_mapping_field_from_mapping_file, sanitize_mapping_file)
 
 class TopLevelTests(TestCase):
@@ -78,6 +78,7 @@ class TopLevelTests(TestCase):
             .15, 0.01, 0])]
 
         self.broken_mapping_file_data = BROKEN_MAPPING_FILE
+        self.broken_mapping_file_data_2_values = BROKEN_MAPPING_FILE_2_VALUES
 
     def test_copy_support_files(self):
         """Test the support files are correctly copied to a file path"""
@@ -142,6 +143,12 @@ class TopLevelTests(TestCase):
             'Treatment&&DOB'])
         self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_F)
 
+        out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
+            self.mapping_file_headers, ['Treatment', 'DOB'], clones=3)
+        self.assertEquals(out_data, MAPPING_FILE_DATA_DUPLICATED)
+        self.assertEquals(out_headers, ['SampleID', 'Treatment', 'DOB'])
+
+
     def test_keep_columns_from_mapping_file(self):
         """Check correct selection of metadata is being done"""
 
@@ -172,7 +179,7 @@ class TopLevelTests(TestCase):
 
         # case with custom axes
         out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
-            out_coords_low, out_coords_high = preprocess_coords_file(
+            out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
             self.coords_header, self.coords_data, self.coords_eigenvalues,
             self.coords_pct, self.mapping_file_headers_gradient,
             self.mapping_file_data_gradient, ['Time'])
@@ -187,6 +194,7 @@ class TopLevelTests(TestCase):
         self.assertEquals(out_coords_low, None)
         self.assertEquals(self.coords_eigenvalues, array([1, 2, 3, 4]))
         self.assertEquals(self.coords_pct, array([40, 30, 20, 10]))
+        self.assertEquals(o_clones, 0)
 
         # check each individual value because currently cogent assertEquals
         # fails when comparing the whole matrix at once
@@ -196,57 +204,78 @@ class TopLevelTests(TestCase):
 
         # case for jackknifing, based on qiime/tests/test_util.summarize_pcoas
         out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
-            out_coords_low, out_coords_high = preprocess_coords_file(
+            out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
             self.jk_coords_header, self.jk_coords_data,
             self.jk_coords_eigenvalues, self.jk_coords_pcts,
             self.jk_mapping_file_headers, self.jk_mapping_file_data,
             jackknifing_method='sdev')
 
         self.assertEquals(out_coords_header, ['1', '2', '3'])
-        self.assertFloatEqual(out_coords_data, array([[1.46666666667, -0.05,
-            -1.5], [-2.46666666667, -4.03333333333, 4.76666666667]]))
-        self.assertFloatEqual(out_eigenvals, array([0.813333333333, 0.15,
-            0.0366666666667]))
+        self.assertFloatEqual(out_coords_data, array([[ 1.4, -0.0125, -1.425],
+            [-2.475, -4.025, 4.7]]))
+        self.assertFloatEqual(out_eigenvals, array([ 0.81, 0.14, 0.05]))
         self.assertFloatEqual(out_pcts, array([0.8, 0.1, 0.1]))
+        self.assertEquals(o_clones, 0)
 
         # test the coords are working fine
-        self.assertFloatEqual(out_coords_low, array([[-0.0288675134595,
-            -4.24918736097e-18, -0.0866025403784], [-0.057735026919,
-            -0.0288675134595, -0.0288675134595]]))
-        self.assertFloatEqual(out_coords_high, array([[0.0288675134595,
-            4.24918736097e-18, 0.0866025403784], [0.057735026919,
-            0.0288675134595, 0.0288675134595]]))
+        self.assertFloatEqual(out_coords_low, array([[-0.07071068, -0.0375,
+            -0.10307764], [-0.04787136, -0.025, -0.07071068]]))
+        self.assertFloatEqual(out_coords_high, array([[ 0.07071068, 0.0375, 
+            0.10307764], [0.04787136, 0.025, 0.07071068]]))
 
         # test custom axes and jackknifed plots
         out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
-            out_coords_low, out_coords_high = preprocess_coords_file(
+            out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
             self.jk_coords_header_gradient, self.jk_coords_data_gradient,
             self.jk_coords_eigenvalues_gradient, self.jk_coords_pcts_gradient,
             self.jk_mapping_file_headers_gradient,
             self.jk_mapping_file_data_gradient, custom_axes=['Time'],
             jackknifing_method='sdev')
 
-
         self.assertEquals(out_coords_header, ['PC.354', 'PC.355', 'PC.635',
             'PC.636'])
-        self.assertFloatEqual(out_coords_data, array([[-2.36666667, 1.13333333,
-            0.7, -0.86666667, 0.76666667], [ 0.72222222, -2.36666667,
-            -3.33333333,  4.16666667,  1.26666667], [ 0.72222222, 0.5,
-            0.73333333, 3.5, 1.33366667], [ 2.26666667, 0.62, 0.26666667,
-            1.08666667, 2.1]]))
-        self.assertFloatEqual(out_eigenvals, array([ 0.81333333, 0.15,
-            0.03666667,0.]))
-        self.assertFloatEqual(out_pcts, array([ 0.8, 0.1, 0.1, 0.]))
+        self.assertFloatEqual(out_coords_data, array([[-2.4, 1.15, 0.55, -0.95,
+            0.85], [0.73333333, -2.4, -3.5, 4.25, 1.025], [0.73333333, 0.5,
+            0.45, 3.5, 1.2505], [2.3, 0.6325, 0.2575, 1.0675, 2.125]]))
+        self.assertFloatEqual(out_eigenvals, array([ 0.81, 0.14, 0.05, 0.]))
+        self.assertFloatEqual(out_pcts, array([ 0.8,  0.1,  0.1,  0. ]))
 
         # test the coords are working fine
-        self.assertFloatEqual(out_coords_low, array([[0,-0.25980762,-0.28867513,
-            -0.28867513], [0, -0.57735027, -0.28867513, -0.83715789], [0,
-            -0.98149546, 0, -0.28853091],[0.,-0.03253204,-0.09358597,-0.05]]))
-        self.assertFloatEqual(out_coords_high, array([[1.00000000e-05,
-            2.59807621e-01, 2.88675135e-01, 2.88675135e-01], [1.00000000e-05,
-            5.77350269e-01, 2.88675135e-01, 8.37157890e-01], [1.00000000e-05,
-            9.81495458e-01, 0.00000000e+00, 2.88530905e-01], [1.00000000e-05,
-            3.25320355e-02, 9.35859676e-02, 5.00000000e-02]]))
+        self.assertFloatEqual(out_coords_low, array([[ 0., -0.25980762, -0.25,
+            -0.25], [ 0., -0.5, -0.25, -0.725], [ 0., -0.85, -0., -0.24983344],
+            [ 0., -0.02809953, -0.07877976, -0.04787136]]))
+        self.assertFloatEqual(out_coords_high, array([[1.00000000e-05, 
+            2.59807621e-01, 2.50000000e-01, 2.50000000e-01], [1.00000000e-05,
+            5.00000000e-01, 2.50000000e-01, 7.25000000e-01], [1.00000000e-05,
+            8.50000000e-01, 0.00000000e+00, 2.49833445e-01], [1.00000000e-05,
+            2.80995255e-02, 7.87797563e-02, 4.78713554e-02]]))
+        self.assertEquals(o_clones, 0)
+
+    def test_preprocess_coords_file_comparison(self):
+        """Check the cases for comparisons plots and the special usages"""
+        # shouldn't allow a comparison computation with only one file
+        self.assertRaises(AssertionError, preprocess_coords_file,
+            self.coords_header, self.coords_data, self.coords_eigenvalues,
+            self.coords_pct, self.mapping_file_headers_gradient,
+            self.mapping_file_data_gradient, None, None, True)
+
+        out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
+            out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
+            self.jk_coords_header, self.jk_coords_data,
+            self.jk_coords_eigenvalues, self.jk_coords_pcts,
+            self.jk_mapping_file_headers, self.jk_mapping_file_data,
+            is_comparison=True)
+
+        self.assertEquals(out_coords_header, ['1_0', '2_0', '3_0', '1_1', '2_1',
+            '3_1', '1_2', '2_2', '3_2', '1_3', '2_3', '3_3'])
+        self.assertFloatEqual(out_coords_data, array([[ 1.2 , 0.1 , -1.2],[-2.5,
+            -4., 4.5], [-1.4, 0.05, 1.3], [ 2.6, 4.1, -4.7], [-1.5, 0.05, 1.6],
+            [ 2.4, 4., -4.8], [-1.5, 0.05, 1.6], [ 2.4, 4., -4.8]]))
+        self.assertEquals(out_eigenvals, self.jk_coords_eigenvalues[0])
+        self.assertEquals(out_pcts, self.jk_coords_pcts[0])
+        self.assertEquals(out_coords_low, None)
+        self.assertEquals(out_coords_high, None)
+        self.assertEquals(o_clones, 4)
 
     def test_fill_mapping_field_from_mapping_file(self):
         """Check the values are being correctly filled in"""
@@ -267,10 +296,35 @@ class TopLevelTests(TestCase):
             'Time:200,300;Weight:800')
 
         # non-existing header in mapping file
-        self.assertRaises(ValueError, fill_mapping_field_from_mapping_file,
+        self.assertRaises(EmperorInputFilesError, fill_mapping_field_from_mapping_file,
             self.broken_mapping_file_data, self.mapping_file_headers_gradient,
             'Spam:Foo')
-
+        
+        # testing multiple values
+        out_data = fill_mapping_field_from_mapping_file(
+            self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
+            'Time:Treatment==Control=444;Time:Treatment==Fast=888')
+        self.assertEquals(out_data, [
+            ['PC.354', 'Control', '3', '40', 'Control20061218'], 
+            ['PC.355', 'Control', '444', '44', 'Control20061218'], 
+            ['PC.635', 'Fast', '888', 'x', 'Fast20080116'], 
+            ['PC.636', 'Fast', '12', '37.22', 'Fast20080116']])
+        
+        # testing multiple values: blank column name
+        self.assertRaises(AssertionError, fill_mapping_field_from_mapping_file,
+            self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
+            'Time:Treatment===200600020')
+        
+        # testing multiple values: wrong order
+        self.assertRaises(AssertionError, fill_mapping_field_from_mapping_file,
+            self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
+            'Time:Treatment=Control==200600020')
+        
+        # testing multiple values: error when more than 1 value is passed
+        self.assertRaises(AssertionError, fill_mapping_field_from_mapping_file,
+            self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
+            'Time:Treatment=Control==200600020,435')
+ 
     def test_sanitize_mapping_file(self):
         """Check the mapping file strings are sanitized for it's use in JS"""
 
@@ -387,6 +441,34 @@ MAPPING_FILE_DATA_GRADIENT = [
     ['PC.635', 'Fast','9', '44', 'Fast20080116'],
     ['PC.636', 'Fast','12', '37.22', 'Fast20080116']]
 
+MAPPING_FILE_DATA_DUPLICATED = [['PC.354_0', 'Control', '20061218'],
+['PC.355_0', 'Control', '20061218'],
+['PC.356_0', 'Control', '20061126'],
+['PC.481_0', 'Control', '20070314'],
+['PC.593_0', 'Control', '20071210'],
+['PC.607_0', 'Fast', '20071112'],
+['PC.634_0', 'Fast', '20080116'],
+['PC.635_0', 'Fast', '20080116'],
+['PC.636_0', 'Fast', '20080116'],
+['PC.354_1', 'Control', '20061218'],
+['PC.355_1', 'Control', '20061218'],
+['PC.356_1', 'Control', '20061126'],
+['PC.481_1', 'Control', '20070314'],
+['PC.593_1', 'Control', '20071210'],
+['PC.607_1', 'Fast', '20071112'],
+['PC.634_1', 'Fast', '20080116'],
+['PC.635_1', 'Fast', '20080116'],
+['PC.636_1', 'Fast', '20080116'],
+['PC.354_2', 'Control', '20061218'],
+['PC.355_2', 'Control', '20061218'],
+['PC.356_2', 'Control', '20061126'],
+['PC.481_2', 'Control', '20070314'],
+['PC.593_2', 'Control', '20071210'],
+['PC.607_2', 'Fast', '20071112'],
+['PC.634_2', 'Fast', '20080116'],
+['PC.635_2', 'Fast', '20080116'],
+['PC.636_2', 'Fast', '20080116']]
+
 COORDS_DATA = array([
     [-0.2, -0.1, 0.06, -0.06],
     [-0.3, 0.04, -0.1, 0.15],
@@ -397,6 +479,12 @@ BROKEN_MAPPING_FILE = [
     ['PC.354', 'Control','3', '40', 'Control20061218'],
     ['PC.355', 'Control','y', '44', 'Control20061218'],
     ['PC.635', 'Fast','9', 'x', 'Fast20080116'],
+    ['PC.636', 'Fast','12', '37.22', 'Fast20080116']]
+    
+BROKEN_MAPPING_FILE_2_VALUES = [
+    ['PC.354', 'Control','3', '40', 'Control20061218'],
+    ['PC.355', 'Control','NA', '44', 'Control20061218'],
+    ['PC.635', 'Fast', 'NA', 'x', 'Fast20080116'],
     ['PC.636', 'Fast','12', '37.22', 'Fast20080116']]
 
 UNSANITZIED_MAPPING_DATA = [

@@ -12,7 +12,8 @@ __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 
-from numpy import ndarray, array, ones, zeros
+from numpy import ndarray, array, ones, zeros, vstack
+from string import strip
 
 from os.path import abspath, dirname, join, exists
 
@@ -26,6 +27,10 @@ from qiime.make_3d_plots import (get_custom_coords, remove_nans,
     scale_custom_coords)
 
 class EmperorSupportFilesError(IOError):
+    """Exception for missing support files"""
+    pass
+    
+class EmperorInputFilesError(IOError):
     """Exception for missing support files"""
     pass
 
@@ -71,7 +76,8 @@ def copy_support_files(file_path):
 
     return
 
-def preprocess_mapping_file(data, headers, columns, unique=False, single=False):
+def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
+                            clones=0):
     """Process a mapping file to expand the data or remove unuseful fields
 
     Inputs:
@@ -82,6 +88,7 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False):
     columns.
     unique: keep columns where all values are unique
     single: keep columns where all values are the same
+    clones: number of times to replicate the metadata
 
     Outputs:
     data: processed mapping file data
@@ -133,6 +140,14 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False):
     # sanitize the mapping file data and headers
     data, headers = sanitize_mapping_file(data, headers)
 
+    # clones mean: replicate the metadata retagging the sample ids with a suffix
+    if clones:
+        out_data = []
+        for index in range(0, clones):
+            out_data.extend([[element[0]+'_%d' % index]+element[1::]
+                for element in data])
+        data = out_data
+
     return data, headers
 
 
@@ -180,23 +195,29 @@ def keep_columns_from_mapping_file(data, headers, columns, negate=False):
 
 def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
                         coords_pct, mapping_header, mapping_data,
-                        custom_axes=None, jackknifing_method=None):
+                        custom_axes=None, jackknifing_method=None,
+                        is_comparison=False):
     """Process a PCoA data and handle customizations in the contents
 
     Inputs:
     coords_header: list of sample identifiers in the PCoA file _or_ list of
-    lists with sample identifiers for each coordinate file (if jackknifing)
+    lists with sample identifiers for each coordinate file (if jackknifing or
+    comparing plots)
     coords_data: matrix of coordinates in the PCoA file _or_ list of numpy
-    arrays with coordinates for each file (if jackknifing)
+    arrays with coordinates for each file (if jackknifing or comparing plots)
     coords_eigenvals: numpy array with eigenvalues for the coordinates file _or_
-    list of numpy arrays with the eigenvalues (if jackknifing)
+    list of numpy arrays with the eigenvalues (if jackknifing or comparing plots
+    )
     coords_pct: numpy array with a the percent explained by each principal
-    coordinates axis _or_ a list of lists with numpy arrays (if jackknifing)
+    coordinates axis _or_ a list of lists with numpy arrays (if jackknifing or
+    comparing plots)
     mapping_header: mapping file headers names
     mapping_data: mapping file data
     custom_axes: name of the mapping data fields to add to coords_data
     jackknifing_method: one of 'sdev' or 'IRQ', defaults to None, for more info
     see qiime.util.summarize_pcoas
+    is_comparison: whether or not the inputs should be considered as the ones
+    for a comparison plot
 
     Outputs:
     coords_header: list of sample identifiers in the PCoA file
@@ -210,24 +231,37 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
     no jackknifing is applied
     coords_high: coordinates representing the highere edges of an ellipse; None
     if no jackknifing is applied
+    clones: total number of input files
 
     This controller function handles any customization that has to be done to
     the PCoA data prior to the formatting. Note that the first element in each
     list (coords, headers, eigenvalues & percents) will be considered the master
     set of coordinates.
+
+    Raises: AssertionError if a comparison plot is requested but a list of data
+    is not passed as input
     """
+
+    # prevent obscure and obfuscated errors
+    if is_comparison:
+        assert type(coords_data) == list, "Cannot process a comparison with "+\
+            "the data from a single coordinates file"
+
     mapping_file = [mapping_header] + mapping_data
     coords_file = [coords_header, coords_data]
+
+    # number PCoA files; zero for any case except for comparison plots
+    clones = 0
 
     if custom_axes and type(coords_data) == ndarray:
             # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
             get_custom_coords(custom_axes, mapping_file, coords_file)
             remove_nans(coords_file)
             scale_custom_coords(custom_axes, coords_file)
-    if type(coords_data) == list:
+    elif type(coords_data) == list and is_comparison == False:
         # take the first pcoa file as the master set of coordinates
-        master_pcoa = [coords_header.pop(0), coords_data.pop(0),
-            coords_eigenvals.pop(0), coords_pct.pop(0)]
+        master_pcoa = [coords_header[0], coords_data[0],
+            coords_eigenvals[0], coords_pct[0]]
 
         # support pcoas must be a list of lists where each list contain
         # all the elements that compose a coordinates file
@@ -239,11 +273,11 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             identifiers = summarize_pcoas(master_pcoa, support_pcoas,
                 method=jackknifing_method, apply_procrustes=False)
 
-        # custom axes an jackknifing is a tricky thing to do, you only have to
+        # custom axes and jackknifing is a tricky thing to do, you only have to
         # add the custom values to the master file which is represented as the
         # coords_data return value. Since there is really no variation in that
         # axis then you have to change the values of coords_high and of
-        # coords_low to something really small so the WebGL work properly
+        # coords_low to something really small so that WebGL work properly
         if custom_axes:
             coords_file = [master_pcoa[0], coords_data]
             get_custom_coords(custom_axes, mapping_file, coords_file)
@@ -258,11 +292,45 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
 
         # return a value containing coords_low and coords_high
         return identifiers, coords_data, eigenvalues_average, master_pcoa[3],\
-            coords_low, coords_high,
+            coords_low, coords_high, clones
+    # comparison plots are processed almost individually
+    elif type(coords_data) == list and is_comparison:
+
+        # indicates the number of files that were totally processed so other
+        # functions/APIs are aware of how many times to replicate the metadata
+        clones = len(coords_data)
+        out_headers, out_coords = [], []
+
+        for index in range(0, clones):
+            headers_i = coords_header[index]
+            coords_i = coords_data[index]
+
+            # tag each header with the the number in which those coords came in
+            out_headers.extend([element+'_%d' % index for element in headers_i])
+
+            if index == 0:
+                # numpy can only stack things if they have the same shape
+                out_coords = coords_i
+
+                # the eigenvalues and percents explained are really the ones
+                # belonging to the the first set of coordinates that was passed
+                coords_eigenvals = coords_eigenvals[index]
+                coords_pct = coords_pct[index]
+            else:
+                out_coords = vstack((out_coords, coords_i))
+
+        coords_file = [out_headers, out_coords]
+
+        if custom_axes:
+            # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
+            get_custom_coords(custom_axes, mapping_file, coords_file)
+            remove_nans(coords_file)
+            scale_custom_coords(custom_axes, coords_file)
 
     # if no coords summary is applied, return None in the correspoinding values
+    # note that the value of clones will be != 0 for a comparison plot
     return coords_file[0], coords_file[1], coords_eigenvals, coords_pct, None,\
-        None
+        None, clones
 
 def _is_numeric(x):
     """Return true if x is a numeric value, return false else
@@ -283,7 +351,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     data: mapping file data
     headers: mapping file headers
     values: string with the format a format of
-    Category:ValueToFill;Category:ValueToFill ...
+            Category:ValueToFill;Category:ValueToFill ...
+            or
+            Category:ColumnToSearch==ValueWithinTheColumnToSearch=ValueToFill
     criteria: function that takes a value and returns true or false, default is
     to check if the inputed value is numeric or not.
 
@@ -293,28 +363,63 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     """
     out_data = deepcopy(data)
 
-    # since this is a hack, assert the lengths are made of only one element
-    values_dict = parse_metadata_state_descriptions(values)
-
-    for key, value in values_dict.items():
-        value = list(value)
-
-        # this function can parse more than one value, but make sure it's only 1
-        assert len(value) == 1, ("Missing values cannot be padded with more "
-            "than one value. Verify '%s' has a single value." % key)
-
-        # in case the mapping file header is not in the headers
-        try:
-            header_index = headers.index(key)
-        except ValueError:
-            raise ValueError,("The header %s does not exist in the mapping file"
-                % key)
-
-        # fill in the data
-        for line in out_data:
-            if criteria(line[header_index]) == False:
-                line[header_index] = value[0]
-
+    # parsing the input values
+    values = map(strip, values.split(';'))
+    values_dict = {}
+    for v in values:
+        colname, vals = map(strip, v.split(':', 1))
+        vals = map(strip, vals.split(','))
+        assert len(vals)==1,  "You can only pass 1 replacement value: %s" % vals
+        if colname not in values_dict:
+            values_dict[colname] = []
+        values_dict[colname].extend(vals)
+    
+    for key, v in values_dict.items():
+        for value in v:
+            # variable that is going to contain the name of the column for multiple 
+            # subtitutions 
+            column = None
+            # variable to control if the values with in a column exist
+            used_column_index = False
+            
+            try:
+                header_index = headers.index(key)
+            except ValueError:
+                raise EmperorInputFilesError, ("The header %s does not exist in the "
+                    "mapping file" % key)
+            
+            # for the special case of multiple entries 
+            if '==' in value and '=' in value:
+                arrow_index = value.index('==')
+                equal_index = value.rindex('=')
+                assert ((arrow_index+2)!=equal_index and (arrow_index+1)!=equal_index), \
+                    "Not properly formatted: %s" % value
+                
+                column = value[:arrow_index]
+                column_value = value[arrow_index+2:equal_index]
+                new_value = value[equal_index+1:]
+                
+                try:
+                    column_index = headers.index(column)
+                except ValueError:
+                    raise EmperorInputFilesError, ("The header %s does not exist in the "
+                        "mapping file" % column)
+            
+            # fill in the data
+            for line in out_data:
+                if criteria(line[header_index]) == False:
+                    if not column:
+                        line[header_index] = value
+                        used_column_index = True
+                    else:
+                        if line[column_index] == column_value:     
+                            line[header_index] = new_value
+                            used_column_index = True
+            
+            if not used_column_index:
+                raise EmperorInputFilesError, ("This value '%s' doesn't exist in '%s' or "
+                "it wasn't used in for processing" % (column_value, column))
+            
     return out_data
 
 def sanitize_mapping_file(data, headers):

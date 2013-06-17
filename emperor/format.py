@@ -15,8 +15,8 @@ __status__ = "Development"
 from copy import deepcopy
 from StringIO import StringIO
 
-from numpy import max, min, abs
 from cogent.util.misc import if_
+from numpy import max, min, abs, argsort, array
 
 from emperor.util import keep_columns_from_mapping_file
 
@@ -303,8 +303,62 @@ def format_vectors_to_js(mapping_file_data, mapping_file_headers, coords_data,
 
     return ''.join(js_vectors_string)
 
+def format_comparison_bars_to_js(coords_data, coords_headers, clones):
+    """Format coordinates data to create a comparison plot
+
+    Inputs:
+    coords_data: numpy array with the replicated coordinates
+    cooreds_headers: list with the headers for each of replicated coordinates
+    clones: number of replicates in the coords_data and coords_headers
+
+    Outputs:
+    Javascript object that contains the data for the comparison plot
+
+    Raises:
+    AssertionError if the coords_data and coords_headers don't have the same
+    length.
+    AssertionError if the number of clones doesn't concord with the samples
+    being presented.
+    """
+
+    js_comparison_string = []
+    js_comparison_string.append('\nvar g_comparisonPositions = new Array();\n')
+
+    if clones:
+        headers_length = len(coords_headers)
+
+        # assert some sanity checks
+        assert headers_length == len(coords_data), "The coords data and"+\
+            "the coords headers must have the same length"
+        assert headers_length%clones == 0, "There has to be an exact "+\
+            "number of clones of the data"
+
+        # get the indices that the sample names get sorted by, this will group
+        # all the samples with the same prefix together, and since the suffixes
+        # are numeric, the samples will be one after the other i. e. sample_0,
+        # sample_1, sample_2 and other_0, other_1, other_2 and so on. With these
+        # indices sort the coordinates and then the headers themselves, though
+        # convert to a numpy array first & back to a list to avoid sorting again
+        indices = argsort(coords_headers)
+        coords_data = coords_data[indices, :]
+        coords_headers = array(coords_headers)[indices, :].tolist()
+
+        # in steps of the number of clones iterate through the headers and the
+        # coords to create the javascript object with the coordinates
+        for index in xrange(0, headers_length, clones):
+            # 1st object must have _0 as a suffix, trim it reveal the sample id
+            sample_id = coords_headers[index].rstrip('_0')
+
+            # convert all elements in the numpy array into a string before
+            # formatting the elements into the javascript dictionary object
+            js_comparison_string.append("g_comparisonPositions['%s'] = [%s];\n"%
+                (sample_id, str(', '.join(map(str,
+                coords_data[index:(index+clones), 0:3].tolist())))))
+    return ''.join(js_comparison_string)
+
+
 def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
-                                    has_vectors=False):
+                                    has_vectors=False, has_edges=False):
     """Create an HTML footer according to the things being presented in the plot
 
     has_biplots: whether the plot has biplots or not
@@ -316,12 +370,13 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
     """
     optional_strings = []
 
-    # the order of these statemenst matter, see _EMPEROR_FOOTER_HTML_STRING
+    # the order of these statements matter, see _EMPEROR_FOOTER_HTML_STRING
     optional_strings.append(if_(has_biplots, _BIPLOT_SPHERES_COLOR_SELECTOR,''))
     optional_strings.append(if_(has_biplots, _BIPLOT_VISIBILITY_SELECTOR, ''))
     optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
     optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
     optional_strings.append(if_(has_vectors, _VECTORS_OPACITY_SLIDER, ''))
+    optional_strings.append(if_(has_edges, _EDGES_VISIBILITY_SELECTOR, ''))
 
     return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
 
@@ -339,10 +394,12 @@ EMPEROR_HEADER_HTML_STRING =\
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/d3.parcoords.css">
     <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
         <tr><td><img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="logo"/></td></tr>
     </table>
-
+    <script type="text/javascript" src="emperor_required_resources/js/d3.v3.min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/d3.parcoords.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
     <script src="emperor_required_resources/js/jquery.colorPicker.js"></script>
@@ -386,30 +443,50 @@ _BIPLOT_SPHERES_COLOR_SELECTOR ="""
             </table>
             <br>"""
 
+_EDGES_VISIBILITY_SELECTOR = """
+            <br>
+            <form name="edgesvisibility">
+            <input type="checkbox" onClick="toggleEdgesVisibility()">Edges Visibility</input>
+            </form>
+            <br>"""
+
 _EMPEROR_FOOTER_HTML_STRING ="""document.getElementById("logo").style.display = 'none';
 document.getElementById("logotable").style.display = 'none';
 
  </script>
 </head>
 
-<body>
+<body>    
 
-<label id="pointCount" class="ontop">
-</label>
+<div id="plotToggle">
+    <form>
+      <div id="plottype">
+        <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
+        <input id="parallel" type="radio" id="parallel" name="plottype" /><label for="parallel">Parallel</label>
+      </div>
+    </form>
+</div>
+<div id="pcoaPlotWrapper" class="plotWrapper">
+    <label id="pointCount" class="ontop">
+    </label>
 
-<div id="finder" class="arrow-right">
+    <div id="finder" class="arrow-right">
+    </div>
+
+    <div id="labels" class="unselectable">
+    </div>
+
+    <div id="taxalabels" class="unselectable">
+    </div>
+
+    <div id="axislabels" class="axislabels">
+    </div>
+
+    <div id="main_plot">
+    </div>
 </div>
 
-<div id="labels" class="unselectable">
-</div>
-
-<div id="taxalabels" class="unselectable">
-</div>
-
-<div id="axislabels" class="axislabels">
-</div>
-
-<div id="main_plot">
+<div id="parallelPlotWrapper" class="plotWrapper">
 </div>
 
 <div id="menu">
@@ -471,34 +548,51 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="axes">
-            <div class="list" id="axeslist">
+            <div id="pcoaaxes">
+                <div class="list" id="axeslist">
+                </div>
+            </div>
+            <div id="parallelaxes">
+                <table>
+                    <tr><td><div id="parallelaxescolor" class="colorbox" name="parallelaxescolor"></div></td><td title="Parallel Plots Axes Color">Axes Color</td></tr>
+                </table>
+                <table>
+                    <tr><td><div id="parallelaxeslabelcolor" class="colorbox" name="parallelaxeslabelcolor"></div></td><td title="Parallel Plots Axes Label Color">Axes Label Color</td></tr>
+                </table>
             </div>
         </div>
         <div id="settings">
-            <form name="settingsoptions">
-            <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-            </form>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-            </form>
-            <br>
-            <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
-            <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-            <br>%s%s
-            <br>
-            <label for="sphereopacity" class="text">Sphere Opacity</label>
-            <label id="sphereopacity" class="slidervalue"></label>
-            <div id="sopacityslider" class="slider-range-max"></div>
-            <br>
-            <label for="sphereradius" class="text">Sphere Scale</label>
-            <label id="sphereradius" class="slidervalue"></label>
-            <div id="sradiusslider" class="slider-range-max"></div>
-            <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
+                </form>
+                <br>
+                <br>
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+                <br>
+                <br>
+            <div id="pcoaoptions" class="">
+                <form name="settingsoptions">
+                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                </form>
+                <br>
+                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br>%s%s%s
+                <br>
+                <label for="sphereopacity" class="text">Sphere Opacity</label>
+                <label id="sphereopacity" class="slidervalue"></label>
+                <div id="sopacityslider" class="slider-range-max"></div>
+                <br>
+                <label for="sphereradius" class="text">Sphere Scale</label>
+                <label id="sphereradius" class="slidervalue"></label>
+                <div id="sradiusslider" class="slider-range-max"></div>
+                <br>
+            </div>
             <table>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
+            <br>
+            <div id="paralleloptions" class="">
+            </div>
         </div>
     </div>  
 </div>
