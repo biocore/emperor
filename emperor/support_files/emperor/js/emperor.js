@@ -428,7 +428,7 @@ function colorParallelPlots(vals,colors)
 		}
 		return hex;
 	}
-	
+
 	var pc = d3.parcoords()("#parallelPlot")
 	  .data(g_parallelPlots)
 	  .color(color)
@@ -1220,7 +1220,7 @@ function setJqueryUi() {
 			}
 	});
 
-	//default color for parallel plots axes is white
+	//default color for parallel plots background is black
 	$('#parallelaxescolor').css('backgroundColor',"#ffffff");
 	$("#parallelaxescolor").spectrum({
 		localStorageKey: 'key',
@@ -1624,22 +1624,22 @@ function togglePlots() {
 	}
 }
 
-function setParallelPlots() {	
+function setParallelPlots() {
 	g_parallelPlots = []
-	var num_axes = g_fractionExplained.length
 
-	for(p in g_spherePositions)
-	{
+	// get the number of axes being presented on screen but remove the ones
+	// that are represented by all of the custom axes (if there are any)
+	var num_axes = g_fractionExplained.length-g_number_of_custom_axes;
+
+	for(p in g_spherePositions){
 		var dataline = []
-		
 		dataline.push(g_spherePositions[p].name)
-		for(var i = 1; i < num_axes+1; i++)
-		{
+		for(var i = 1; i < num_axes+1; i++){
 			dataline.push(g_spherePositions[p]['P'+i])
 		}
 		g_parallelPlots.push(dataline)
 	}
-	
+
 	pwidth = document.getElementById('pcoaPlotWrapper').offsetWidth
 	pheight = document.getElementById('pcoaPlotWrapper').offsetHeight
 
@@ -1729,13 +1729,13 @@ $(document).ready(function() {
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
 		}
-		
+
 		setParallelPlots();
-		
+
 		colorByMenuChanged();
 		showByMenuChanged();
 		scalingByMenuChanged();
-		
+
 		togglePlots();
 
 		// the light is attached to the camera to provide a 3d perspective
