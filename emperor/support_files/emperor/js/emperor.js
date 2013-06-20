@@ -1603,8 +1603,9 @@ function togglePlots() {
 	{
 		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('pcoaoptions').className = document.getElementById('pcoaoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-		document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-	  	document.getElementById('parallelPlotWrapper').className += ' invisible'
+		document.getElementById('pcoaviewoptions').className = document.getElementById('pcoaviewoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+	  	document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('parallelPlotWrapper').className += ' invisible'
 	  	document.getElementById('paralleloptions').className += ' invisible'
 	  	document.getElementById('parallelaxes').className += ' invisible'
 	  	$("#menutabs").tabs('select',0);
@@ -1617,6 +1618,7 @@ function togglePlots() {
 		document.getElementById('parallelaxes').className = document.getElementById('parallelaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 	  	document.getElementById('pcoaPlotWrapper').className += ' invisible'
 	  	document.getElementById('pcoaoptions').className += ' invisible'
+		document.getElementById('pcoaviewoptions').className += ' invisible'
 	  	document.getElementById('pcoaaxes').className += ' invisible'
 	  	$("#menutabs").tabs('select',0);
 	  	$("#menutabs").tabs({disabled: [2,3,4]});
