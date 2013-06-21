@@ -195,7 +195,7 @@ class TopLevelTests(TestCase):
         out_string = format_emperor_html_footer_string(False, False, True)
         self.assertEqual(out_string, EXPECTED_FOOTER_D)
 
-        #
+        # comparison plot
         out_string = format_emperor_html_footer_string(False, False, False,True)
         self.assertEqual(out_string, EXPECTED_FOOTER_E)
 
@@ -605,7 +605,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="showby">
             <br>
             <form name="biplotsvisibility">
-            <input type="checkbox" onClick="toggleBiplotVisibility()">Biplots Visibility</input>
+            <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
             </form>
             <br>
             <select id="showbycombo" onchange="showByMenuChanged()">
