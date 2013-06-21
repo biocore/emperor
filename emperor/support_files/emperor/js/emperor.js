@@ -883,7 +883,7 @@ function toggleTaxaLabels(){
 function toggleBiplotVisibility(){
 	// reduce the opacity to zero if the element should be off or to 0.5
 	// if the element is supposed to be present; 0.5 is the default value
-	if(document.biplotsvisibility.elements[0].checked){
+	if(!document.biplotsvisibility.elements[0].checked){
 		for (index in g_plotTaxa){
 			g_plotTaxa[index].material.opacity = 0;
 		}
@@ -1603,24 +1603,26 @@ function togglePlots() {
 	{
 		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('pcoaoptions').className = document.getElementById('pcoaoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('pcoaviewoptions').className = document.getElementById('pcoaviewoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-	  	document.getElementById('parallelPlotWrapper').className += ' invisible'
-	  	document.getElementById('paralleloptions').className += ' invisible'
-	  	document.getElementById('parallelaxes').className += ' invisible'
-	  	$("#menutabs").tabs('select',0);
-	  	$("#menutabs").tabs({disabled: []});
+		document.getElementById('parallelPlotWrapper').className += ' invisible'
+		document.getElementById('paralleloptions').className += ' invisible'
+		document.getElementById('parallelaxes').className += ' invisible'
+		$("#menutabs").tabs('select',0);
+		$("#menutabs").tabs({disabled: []});
 	}
 	else
 	{
 		document.getElementById('parallelPlotWrapper').className = document.getElementById('parallelPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('paralleloptions').className = document.getElementById('paralleloptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('parallelaxes').className = document.getElementById('parallelaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-	  	document.getElementById('pcoaPlotWrapper').className += ' invisible'
-	  	document.getElementById('pcoaoptions').className += ' invisible'
-	  	document.getElementById('pcoaaxes').className += ' invisible'
-	  	$("#menutabs").tabs('select',0);
-	  	$("#menutabs").tabs({disabled: [2,3,4]});
-	  	colorByMenuChanged();
+		document.getElementById('pcoaPlotWrapper').className += ' invisible'
+		document.getElementById('pcoaoptions').className += ' invisible'
+		document.getElementById('pcoaviewoptions').className += ' invisible'
+		document.getElementById('pcoaaxes').className += ' invisible'
+		$("#menutabs").tabs('select',0);
+		$("#menutabs").tabs({disabled: [2,3,4]});
+		colorByMenuChanged();
 	}
 }
 
