@@ -122,11 +122,11 @@
           <br><br>
           This document tries to go through an overview of the controls that can be found in the graphical user interface as well as some of the common use cases that Emperor allows you to work with.
           <br><br>
-          The graphical user interface is mainly composed by two areas, sample counter (a) the visualization canvas (b) and the tools and settings area (c), see Figure 1.  In the visualization canvas, you’ll find the current plot that you are interacting, by default presenting the first three dimensions of the input data. Modifying the appearance of this plot, can be done using any of the tabs contained in (c).
+          The graphical user interface is mainly composed by two areas, the visualization canvas (b) and the tools and settings area (c), see Figure 1.  In the visualization canvas, you’ll find the current plot that you are interacting, by default presenting the first three dimensions of the input data. Modifying the appearance of this plot, can be done using any of the tabs contained in (c).
         </p>
         <img src="img/description_1.png" alt="Emperor Figure Description">
         <p class="strong" align="justify">
-          Figure 1. Emperor’s graphical user interface. (a) sample counter; shows the total number of samples in the dataset and the number of samples that are currently visible. (b) canvas; main plot scene where the data is displayed. © tools; controls that allow you to modify and interact with your data.
+          Figure 1. Emperor’s graphical user interface. (a) sample counter; shows the total number of samples in the dataset and the number of samples that are currently visible. (b) canvas; main plot scene where the data is displayed. (c) tools; controls that allow you to modify and interact with your data (d) visualization selector; switch between parallel and 3D plots.
         </p>
         <hr>
         <h2>Description</h2>
@@ -163,9 +163,14 @@
             Although Emperor is only capable of displaying three dimensions at a time, the dimensions that are being displayed, can be selected from this menu. To update the plot to reflect the latest changes, you’ll have to click the refresh button.
           </p>
           <p align="center"><img src="img/axes_menu.png" alt="Axes Menu Example"></p>
+        <h3 class="muted">View</h3>
+          <p class="lead" align="justify">
+            General features of a plot as presented by Emperor, are modified from this menu; by default Emperor will try to color samples along a continuous color gradient, to turn this option off, select “Use discrete colors”. The sphere opacity and sphere scale controls override the options in Scaling and Visibility tabs.
+          </p>
+          <p align="center"><img src="img/view_menu.png" alt="Options Menu Example"></p>
         <h3 class="muted">Options</h3>
           <p class="lead" align="justify">
-            The different options that will affect the overall plot as it is are listed under this tab. Scaling the coordinates by the percent explained, will re-scale the data by multiplying all the values in that dimension by the ratio explained. By default Emperor will try to color samples along a continuous color gradient, to turn this option off, select “Use discrete colors”. The sphere opacity and sphere scale controls override the options in Scaling and Visibility tabs. The last control under this list is the background color of the plot, similarly to changing the color the samples clicking in the box will present a color palette to select a new color.
+            The different options that will affect the overall plot as it is are listed under this tab. Scaling the coordinates by the percent explained, will re-scale the data by multiplying all the values in that dimension by the ratio explained.
           </p>
           <p align="center"><img src="img/options_menu.png" alt="Options Menu Example"></p>
       <hr>
