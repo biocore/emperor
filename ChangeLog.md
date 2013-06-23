@@ -10,12 +10,14 @@ Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 * The user can select the number of axes to be considered in the GUI and re-plot using lower axes; this is, for example: PC3 vs PC4 vs PC10.
 * In `missing_custom_axes_values` you can reference other column within the mapping file to place the samples without numeric values at different points in the gradient.
 * Parallel plots functionality.
+* Separated out some options to the View menu
 
 *Bug Fixes*
 
 * Fixes recenter camera not working.
 * Category names are sorted alphabetically.
 * Category names with non-alphanumeric characters are colored correctly now.
+* Biplots checkbox now accurately reflects status of biplot visiblity rather than opposite.
 
 Emperor 0.9.0 (14 May 2013)
 ===========================
