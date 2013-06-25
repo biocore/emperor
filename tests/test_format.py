@@ -488,7 +488,7 @@ document.getElementById("logotable").style.display = 'none';
             </table>
             <br>
             <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use discrete colors</input>
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             </form>
             <div id="pcoaviewoptions" class="">
                 <br>
@@ -663,7 +663,7 @@ document.getElementById("logotable").style.display = 'none';
             </table>
             <br>
             <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use discrete colors</input>
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             </form>
             <div id="pcoaviewoptions" class="">
                 <br>
@@ -821,7 +821,7 @@ document.getElementById("logotable").style.display = 'none';
             </table>
             <br>
             <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use discrete colors</input>
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             </form>
             <div id="pcoaviewoptions" class="">
                 <br>
@@ -978,7 +978,7 @@ document.getElementById("logotable").style.display = 'none';
             </table>
             <br>
             <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use discrete colors</input>
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             </form>
             <div id="pcoaviewoptions" class="">
                 <br>
@@ -1139,7 +1139,7 @@ document.getElementById("logotable").style.display = 'none';
             </table>
             <br>
             <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use discrete colors</input>
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             </form>
             <div id="pcoaviewoptions" class="">
                 <br>
