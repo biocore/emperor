@@ -390,6 +390,7 @@ function colorByMenuChanged() {
 			color: colors[vals[i]].getHexString(),
 			showInitial: true,
 			showInput: true,
+			preferredFormat: "hex6",
 			change:
 				function(color) {
 					$(this).css('backgroundColor', color.toHexString());
@@ -799,6 +800,7 @@ function labelMenuChanged() {
 			color: colors[vals[i]].getHexString(),
 			showInitial: true,
 			showPalette: true,
+			preferredFormat: "hex6",
 			palette: [['red', 'green', 'blue']],
 			change:
 				function(color) {
@@ -1076,12 +1078,13 @@ function setJqueryUi() {
 	$("#plottype").buttonset();
 	$("input[name='plottype']").change(togglePlots);
 	
-	$("#labelColor").css('backgroundColor', '#fff');
+	$("#labelColor").css('backgroundColor', '#ffffff');
 
 	$("#labelColor").spectrum({
-		color: '#fff',
+		color: '#fffffff',
 		showInitial: true,
 		showPalette: true,
+		preferredFormat: "hex6",
 		palette: [['black', 'red', 'green', 'blue']],
 		change:
 			function(color) {
@@ -1195,10 +1198,10 @@ function setJqueryUi() {
 
 	
 	//default color for axes labels is white
-	$('#axeslabelscolor').css('backgroundColor',"#ffffff");
+	$('#axeslabelscolor').css('backgroundColor',"#FFFFFF");
 	$("#axeslabelscolor").spectrum({
 		localStorageKey: 'key',
-		color: "#ffffff",
+		color: "#FFFFFF",
 		showInitial: true,
 		showInput: true,
 		showPalette: true,
