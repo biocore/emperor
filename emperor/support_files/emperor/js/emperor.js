@@ -43,7 +43,7 @@ var g_time;
 var g_visiblePoints = 0;
 var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
-var g_useDiscreteColors = false;
+var g_useDiscreteColors = true;
 
 // taken from the qiime/colors.py module; a total of 29 colors
 k_QIIME_COLORS = [
@@ -243,7 +243,7 @@ function toggleScaleCoordinates(element) {
 
 /* Toggle between discrete and continuous coloring for samples and labels */
 function toggleContinuousAndDiscreteColors(element){
-	g_useDiscreteColors = element.checked;
+	g_useDiscreteColors = !element.checked;
 
 	// re-coloring the samples and labels now will use the appropriate coloring
 	colorByMenuChanged();
