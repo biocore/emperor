@@ -436,9 +436,9 @@ function colorParallelPlots(vals,colors)
 	  .mode("queue")
 	  .render()
 	  .brushable();
-	  
-	$('.parcoords text').css('stroke', $('#parallelaxeslabelcolor').css('backgroundColor'));
-	$('.parcoords .axis line, .parcoords .axis path').css('stroke', $('#parallelaxescolor').css('backgroundColor'));
+
+	$('.parcoords text').css('stroke', $('#axeslabelscolor').css('backgroundColor'));
+	$('.parcoords .axis line, .parcoords .axis path').css('stroke', $('#axescolor').css('backgroundColor'));
 }
 
 /*Callback when the scaling by drop-down menu changes
@@ -1194,9 +1194,9 @@ function setJqueryUi() {
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
 
 	
-	//default color for parallel plots axes label is white
-	$('#parallelaxeslabelcolor').css('backgroundColor',"#ffffff");
-	$("#parallelaxeslabelcolor").spectrum({
+	//default color for axes labels is white
+	$('#axeslabelscolor').css('backgroundColor',"#ffffff");
+	$("#axeslabelscolor").spectrum({
 		localStorageKey: 'key',
 		color: "#ffffff",
 		showInitial: true,
@@ -1209,20 +1209,23 @@ function setJqueryUi() {
 				// pass a boolean flag to convert to hex6 string
 				var c = color.toHexString(true);
 
-				// create a new three.color from the string
-				var parallelAxesLabelColor = new THREE.Color();
-				parallelAxesLabelColor.setHex(c.replace('#','0x'));
-
 				// set the color for the box and for the renderer
 				$(this).css('backgroundColor', c);
-				//set css for the lines...
+
+				//set css for the text in the parallel plot
 				$('.parcoords text').css('stroke', c);
+
+				// change the css color of the 3d plot labels
+				$("#pc1_label").css('color', c);
+				$("#pc2_label").css('color', c);
+				$("#pc3_label").css('color', c);
+
 			}
 	});
 
-	//default color for parallel plots background is black
-	$('#parallelaxescolor').css('backgroundColor',"#ffffff");
-	$("#parallelaxescolor").spectrum({
+	//default color for the axes is white
+	$('#axescolor').css('backgroundColor',"#ffffff");
+	$("#axescolor").spectrum({
 		localStorageKey: 'key',
 		color: "#ffffff",
 		showInitial: true,
@@ -1236,12 +1239,17 @@ function setJqueryUi() {
 				var c = color.toHexString(true);
 
 				// create a new three.color from the string
-				var parallelAxesColor = new THREE.Color();
-				parallelAxesColor.setHex(c.replace('#','0x'));
+				var axesColor = new THREE.Color();
+				axesColor.setHex(c.replace('#','0x'));
+				g_xAxisLine.material.color = axesColor;
+				g_yAxisLine.material.color = axesColor;
+				g_zAxisLine.material.color = axesColor;
+
 
 				// set the color for the box and for the renderer
 				$(this).css('backgroundColor', c);
-				//set css for the lines...
+
+				//set css for the lines of the parallel cords
 				$('.parcoords .axis line, .parcoords .axis path').css('stroke', c);
 			}
 	});
@@ -1599,6 +1607,8 @@ function clean_label_refresh_axes() {
 }
 
 function togglePlots() {
+
+	// set some interface changes for 3D visualizations
 	if(document.getElementById('pcoa').checked)
 	{
 		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
@@ -1607,21 +1617,28 @@ function togglePlots() {
 		document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('parallelPlotWrapper').className += ' invisible'
 		document.getElementById('paralleloptions').className += ' invisible'
-		document.getElementById('parallelaxes').className += ' invisible'
+
+		// key menu is the default
 		$("#menutabs").tabs('select',0);
+
+		// make all tabs usable
 		$("#menutabs").tabs({disabled: []});
 	}
-	else
-	{
+	// changes for parallel plots
+	else{
 		document.getElementById('parallelPlotWrapper').className = document.getElementById('parallelPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('paralleloptions').className = document.getElementById('paralleloptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-		document.getElementById('parallelaxes').className = document.getElementById('parallelaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('pcoaPlotWrapper').className += ' invisible'
 		document.getElementById('pcoaoptions').className += ' invisible'
 		document.getElementById('pcoaviewoptions').className += ' invisible'
 		document.getElementById('pcoaaxes').className += ' invisible'
+
+		// switch back to the key menu
 		$("#menutabs").tabs('select',0);
-		$("#menutabs").tabs({disabled: [2,3,4]});
+
+		// make the visibility, scaling, labels and axes tabs un-usable
+		// they have no contextualized meaning in when lookin at parallel plots
+		$("#menutabs").tabs({disabled: [2,3,4,5]});
 		colorByMenuChanged();
 	}
 }
@@ -1799,6 +1816,8 @@ $(document).ready(function() {
 		drawMenuAxesDisplayed();
 		changeAxesDisplayed();
 		drawAxisLines();
+
+		buildAxisLabels();
 	}
 
 	function drawMenuAxesDisplayed() {
@@ -1866,7 +1885,6 @@ $(document).ready(function() {
 	function buildAxisLabels() {
 		//build axis labels
 		var axislabelhtml = "";
-
 		var xcoords = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
 		axislabelhtml += "<label id=\"pc1_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(xcoords['x'])+"px; top:"+parseInt(xcoords['y'])+"px;\">";
 		axislabelhtml += g_pc1Label;
@@ -1886,7 +1904,21 @@ $(document).ready(function() {
 		requestAnimationFrame( animate );
 
 		render();
-		buildAxisLabels();
+
+		var labelCoordinates;
+
+		// reposistion the labels for the axes in the 3D plot
+		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue), g_sceneCamera,$('#main_plot'));
+		$("#pc1_label").css('left', labelCoordinates['x'])
+		$("#pc1_label").css('top', labelCoordinates['y'])
+		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue), g_sceneCamera,$('#main_plot'));
+		$("#pc2_label").css('left', labelCoordinates['x'])
+		$("#pc2_label").css('top', labelCoordinates['y'])
+		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue), g_sceneCamera,$('#main_plot'));
+		$("#pc3_label").css('left', labelCoordinates['x'])
+		$("#pc3_label").css('top', labelCoordinates['y'])
+
+
 		// move labels when the plot is moved
 		if(document.plotoptions.elements[0].checked){
 			for(var i in g_plotIds) {
