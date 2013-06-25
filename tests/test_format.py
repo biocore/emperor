@@ -430,7 +430,7 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby">
             <br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -597,7 +597,7 @@ document.getElementById("logotable").style.display = 'none';
                 <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
             </table>
             <br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -763,7 +763,7 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby">
             <br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -920,7 +920,7 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby">
             <br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -1081,7 +1081,7 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby">
             <br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
             <div class="list" id="colorbylist">
             </div>

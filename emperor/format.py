@@ -510,7 +510,7 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby">
             <br>%s
-            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
             <div class="list" id="colorbylist">
             </div>
