@@ -553,17 +553,11 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
-            <div id="parallelaxes">
-                <table>
-                    <tr><td><div id="parallelaxescolor" class="colorbox" name="parallelaxescolor"></div></td><td title="Parallel Plots Axes Color">Axes Color</td></tr>
-                </table>
-                <table>
-                    <tr><td><div id="parallelaxeslabelcolor" class="colorbox" name="parallelaxeslabelcolor"></div></td><td title="Parallel Plots Axes Label Color">Axes Label Color</td></tr>
-                </table>
-            </div>
         </div>
         <div id="view">
             <table>
+                <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
+                <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <br>
