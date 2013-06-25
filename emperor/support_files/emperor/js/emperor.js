@@ -1759,7 +1759,8 @@ $(document).ready(function() {
 		rendererBackgroundColor.setHex("0x000000");
 
 		// renderer, the default background color is black
-		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true });
+		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+        THREEx.Screenshot.bindKey(g_mainRenderer);
 		g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
 		// g_mainRenderer.setSize( document.getElementById('vizualizations').offsetWidth , document.getElementById('vizualizations').offsetHeight );
