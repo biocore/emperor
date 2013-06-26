@@ -114,34 +114,37 @@
         <h2>Tutorial</h2>
         <h3 class="muted">Introduction</h3>
           <p class="lead" align="justify">
-            This tutorial attempts to cover some of the most common use cases that Emperor covers. Although most of the functionality in this tutorial will be covered, it is important to note that not all of them will be covered through this document.
+            This tutorial attempts to cover most of the common use cases within Emperor.
             <br>
-            The dataset that we will use to exemplify Emperor’s functionality, comes from the <a href="http://www.pnas.org/content/107/14/6477.long">Fierer et. al. 2010</a> article, where multiple individuals and their keyboards were sampled to interindividual variability in the composition of these communities.
+            The dataset that we will use to exemplify Emperor’s functionality, comes from the <a href="http://www.pnas.org/content/107/14/6477.long">Fierer et. al. 2010</a> article, where three individuals and their keyboards were sampled, Figure 1.
             <br>
-            To get started, first download and unzip these <a href="files/files.zip">files</a>, there you will find a principal coordinates file, a mapping file. These input files adhere to the standard formats used in <a href="http://www.qiime.org">QIIME</a>. Before continuing with the tutorial make sure you have the latest version of <a href=" https://www.google.com/intl/es/chrome/browser/">Google Chrome</a> installed in your computer.
+            To get started, first download and unzip these <a href="files/files.zip">files</a>, here you will find a principal coordinates file, and a mapping file. These input files are in the standard format used in <a href="http://www.qiime.org">QIIME</a>. Before continuing with the tutorial make sure you have the latest version of <a href=" https://www.google.com/intl/es/chrome/browser/">Google Chrome</a> installed in your computer.
             <br>
           </p>
         <hr>
         <h3 class="muted">Command Line Interface</h3>
           <p class="lead" align="justify">
-            Emperor offers a convenient command line interface script, from where the main interface (in the form of an HTML file) is generated, the name of this utility is called <code>make_emperor.py</code>, see the installation notes for further details. The minimum inputs that this interface requires are a coordinates file and a mapping file, it’s worth noting that the script interface offers many options that allow the user to refine the amount of data to visualize or even to change the way it will be presented, calling <code>make_emperor.py -h</code> from a terminal window, will display the available options and a concise description for each of these.
+            Emperor offers a convenient command line interface script (<code>make_emperor.py</code>), see the <a href="installation_index.html">installation notes</a> for further details. The minimum inputs that this interface requires are a coordinates file and a mapping file, it’s worth noting that the script interface offers many options that allow the user to refine the amount of data to visualize or even to change the way it will be presented, calling <code>make_emperor.py -h</code> from a terminal window, will display the available options and a concise description for each of these.
             <br>
             Besides the coordinates and mapping file options, we will also use the <code>-b</code> option and the <code>-o</code> option. The <code>-b</code> option allows us to specify the categories that we want displayed in the GUI, it also allows us to combine columns from the mapping file into a single column. The <code>-o</code> option allows us to specify the name of the output directory.
           </p>
           <pre><code>make_emperor.py -i unweighted_unifrac_pc.txt -m mapping_file.txt -b "AGE,HAND,HAND_KEY,BODY_SITE,HOST_SUBJECT_ID,HAND,HAND&&HOST_SUBJECT_ID" -o keyboard</code></pre>
           <br>
           <p class="lead" align="justify">
-            Note that the categories in the mapping file that we will be taking a look are the ones listed after the <code>-b</code> option plus the combination of the values in <code>HAND</code> and the values in <code>HOST_SUBJECT_ID</code>.
+            Note: when using <code>&&</code> is used in option <code>-b</code>, this allows us to combine different categories from the mapping file, in this case the values in <code>HAND</code> and the values in <code>HOST_SUBJECT_ID</code>.
             <br>
-            A new folder named keyboard should have been created, here you will find two files, these two files will be named the same for all datasets:
+            A new folder named keyboard will be created, as this is the name we gave via <code>-o</code>, here you will find two files, these two files will be named the same for all datasets:
+          </p>
+          <p class="lead" align="justify">
             <ul>
               <li><code>index.html</code></li>
               <li><code>emperor_required_resources/</code></li>
             </ul>
-            <br>
-            Opening <code>index.html</code> with Google Chrome will present the main GUI, to do so you can right click this file and make sure you open it with Google Chrome. If you are using OS X you can use the following command:
           </p>
-          <pre><code>open -a /Applications/Google\ Chrome.app keyboard/index.html</code></pre>
+          <p class="lead" align="justify">
+            <br>
+            Opening <code>index.html</code> with Google Chrome will present the main GUI, to do so you can right click this file and make sure you open it with Google Chrome.
+          </p>
         <hr>
         <h3 class="muted">Graphical User Interface</h3>
           <p class="lead" align="justify">
@@ -151,27 +154,32 @@
           <p class="lead" align="justify">
             For a detailed explanation of the options available from the main interface refer to the <a href="description_index.html">description section</a>.
             <br>
-            The first thing that we will do is change the coloring in the user interface, by default it should be colored using the <code>AGE</code> category, to change this navigate to the colors tab and select <code>HOST_SUBJECT_ID</code> in the dropdown menu that currently should read <code>AGE</code>. Now that the samples are colored by subject, you should only see three different colors on screen, that should correspond to the ones represented under the list that now reads <code>HOST_SUBJECT_ID</code>.
+          </p>
+        <h3 class="muted">Changing the coloring</h3>
+          <p class="lead" align="justify">
+            Spheres drawn in the main canvas are colored by the selected column in the mapping file under the Colors tab, in this example <code>AGE</code>. The available metadata categories are sorted in alphabetical order hence <code>AGE</code> is the first in this list. To change the coloring scheme click the Colors tab, then in the dropdown menu shown at the top click to select <code>HOST_SUBJECT_ID</code>. Now that samples are colored by this grouping, spheres will be colored in three different tints, each corresponding to a different subject.
           </p>
           <p align="center"><img src="img/tutorial/2.png" alt="HOST_SUBJECT_ID Coloring"></p>
           <p class="lead" align="justify">
-            To change the color of the samples categorized as <code>232:M3</code>, click on the green square by the left side of this label, a color palette should appear on screen, select a new color like yellow and once you are happy with the selection click the button choose (see the following figure).
+            Modifying the colors used to distinguish between subjects is achieved by clicking the frame by the side of each subject name. For example to change the color of the samples belonging to <code>232:M9</code>, click on the green square by the left side of this label (1), a color picker will appear on screen (2), select a new color by pointing and clicking at it with the mouse; to confirm this selection use the <code>choose</code> button (3).
           </p>
           <p align="center"><img src="img/tutorial/capture_2.png" alt="Three panels"></p>
+        <h3 class="muted">Changing the opacity</h3>
           <p class="lead" align="justify">
-            Now, from the samples that are currently being presented, let’s reduce the opacity in the samples belonging to a key, so let’s navigate to the visibility tab and with the slider under the label that reads <code>NA</code>, move it until you reach almost half the opacity. This will allow you to easily see what are those samples without losing the coloring by <code>HOST_SUBJECT_ID</code>.
+            Similarly to the coloring of the samples, opacity is an attribute that can be determined on a per-category basis. To illustrate an example where this is useful, let’s reduce the opacity in the samples without an <code>AGE</code> value i. e. the keys of the subject’s keyboard. Begin by navigating to the visibility tab and with the slider under the label that reads <code>NA</code>, move it until you reach almost half the opacity. The end result will be similar to the next figure.
           </p>
           <p align="center"><img src="img/tutorial/6.png" alt="Opacity reduction"></p>
+        <h3 class="muted">Color schemes</h3>
           <p class="lead" align="justify">
-            Now let’s go back to the coloring and select a coloring by the category that we created by combining <code>HAND</code> and <code>HOST_SUBJECT_ID</code>, should be named <code>HAND&&HOST_SUBJECT_ID</code>. A nice gradient will be shown in the per-category coloring, which although useful for continuous data in a mapping file, is not convenient in this case, so go to the view menu and click the “use discrete colors” checkbox. This will change the color mapping from a continuous gradient to discrete and dissimilar colors that can be differentiated at a first glance.
+            Frequently you will find that metadata categories have multiple values that are easier to visualize with a color map, on the other side when the values have no sequential relationship, it’s better to use what’s called a discrete set of colors. In this dataset the <code>HAND&&HOST_SUBJECT_ID</code> category that we create with the <code>–b</code> option is a good example. Switch to the Colors tab and then in the dropdown menu to change the category from <code>HOST_SUBJECT_ID</code> to the combination of both the <code>HAND</code> and <code>HOST_SUBJECT_ID</code> values. Navigate to the View menu and click the “Use gradient colors” checkbox this will let immediately switch the colors used for each of the values under this mapping file header.
           </p>
           <p align="center"><img src="img/tutorial/treta.png" alt="To Discrete"></p>
           <p class="lead" align="justify">
-            Now, let’s assume that we want to keep track of only one sample and want to continue interacting with the data, this sample being for this example <code>M9Indr217.140998</code>. To look for this sample you can use the textbox in the Key tab and search for it. Once you’ve found it click in the colored square and a white triangle will appear on the plot pointing at the place where the sample is currently located.
+            Pointing out the location of a sample within the plot, can be achieved by using the Key menu for example let’s indicate where is sample <code>M9Indr217.140998</code>. In the Key tab and search for the name either using the text entry box or navigating through the list of values. Once you’ve found it click in the colored square by it’s side and a white arrow will appear on the plot pointing at the place where the sample is located.
           </p>
           <p align="center"><img src="img/tutorial/10.png" alt="Filter"></p>
           <p class="lead" align="justify">
-            Often times PCoA data will span over more than three dimensions, other dimensions can be visualized using the axes menu; select the three coordinate axes that you want your data to be shaped by and hit the refresh button.
+            Often times PCoA data will span over more than three dimensions, other dimensions can be visualized using the axes menu; just select the three coordinate axes that you want your data to be shaped by and hit the refresh button. In this instance let’s go to the Axes menu select P3 in the Axis 1 drop down menu, P4 in the Axis 2 drop down menu and P5 in the Axis 3 drop down menu, lastly click the refresh button this will redraw the visualization using the coordinate values in each of the selected axes.
           </p>
           <p align="center"><img src="img/tutorial/exes.png" alt="Filter"></p>
           <p class="lead" align="justify">
