@@ -1742,10 +1742,14 @@ $(document).ready(function() {
 				temp.push(g_mappingFileData[g_plotIds[j]][i])
 			}
 			temp = dedupe(temp);
-
+			
 			// note that each category is added to all the dropdown menus in the
 			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
-			line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+			if (i==0) {
+			    line = "<option selected value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+			} else {
+			    line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+			}
 			$("#colorbycombo").append(line);
 			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
