@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Emperor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 60px;
+      }
+
+      /* Custom container */
+      .container {
+        margin: 0 auto;
+        max-width: 1000px;
+      }
+      .container > hr {
+        margin: 60px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 80px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 100px;
+        line-height: 1;
+      }
+      .jumbotron .lead {
+        font-size: 24px;
+        line-height: 1.25;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+      /* Supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+      }
+
+
+      /* Customize the navbar links to be fill the entire space of the .navbar */
+      .navbar .navbar-inner {
+        padding: 0;
+      }
+      .navbar .nav {
+        margin: 0;
+        display: table;
+        width: 100%;
+      }
+      .navbar .nav li {
+        display: table-cell;
+        width: 1%;
+        float: none;
+      }
+      .navbar .nav li a {
+        font-weight: bold;
+        text-align: center;
+        border-left: 1px solid rgba(255,255,255,.75);
+        border-right: 1px solid rgba(0,0,0,.1);
+      }
+      .navbar .nav li:first-child a {
+        border-left: 0;
+        border-radius: 3px 0 0 3px;
+      }
+      .navbar .nav li:last-child a {
+        border-right: 0;
+        border-radius: 0 3px 3px 0;
+      }
+    </style>
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- GitHub ribbon -->
+    <a href="https://github.com/qiime/emperor"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="bootstrap/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="img/favicon.ico">
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <div class="masthead">
+        <a href="index.html"><p align="center"><img src="img/emperor_heading.png" alt="Emperor Logo"></p></a>
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="container">
+              <ul class="nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="description_index.html">Description</a></li>
+                <li><a href="tutorial_index.html">Tutorial</a></li>
+                <li><a href="installation_index.html">Installation</a></li>
+                <li><a href="https://github.com/qiime/emperor/issues">Support</a></li>
+              </ul>
+            </div>
+          </div>
+        </div><!-- /.navbar -->
+      </div>
+
+      <!-- Jumbotron -->
+      <div class="jumbotron">
+<!--         <img src="img/emperor_heading.png" alt="Emperor">
+        <br><br><br><br> -->
+        <p class="lead" align="justify">Emperor is an interactive next generation tool for the analysis, visualization and understanding of high throughput microbial ecology datasets.
+        </p>
+        <img src="img/sample_1.png" alt="Emperor">
+        <p class="lead" align="justify">
+          Due to it’s tailor-made graphical user interface, delving into a new dataset to elucidate the patterns hidden in the data, has never been easier. Emperor brings a rich set of customizations and modifications that can be integrated into any <a href="http://qiime.org">QIIME</a> compliant dataset; with lightweight data files and hardware accelerated graphics, constitutes itself as the state of the art for analyzing N-dimensional data using principal coordinates analysis.
+        </p>
+      </div>
+
+      <hr>
+
+      <!-- Example row of columns -->
+      <div class="row-fluid">
+        <div class="span4">
+          <h2>Biplots</h2>
+          <p>To visualize the taxa  driving the differences in a PCoA plot we can use biplots.</p>
+          <p><a class="btn" href="http://emperor.colorado.edu/master/biplot/index.html">Biplots Example &raquo;</a></p>
+        </div>
+        <div class="span4">
+          <h2>Jackknifing</h2>
+          <p>A jackknifed PCoA plot (with confidence intervals for each sample) helps to assure that our rarefaction selection is not the cause of the clustering patterns we are looking in beta diversity.</p>
+          <p><a class="btn" href="http://emperor.colorado.edu/master/jackknifed_pcoa/index.html">Jackknifing Example &raquo;</a></p>
+       </div>
+        <div class="span4">
+          <h2>Gradients</h2>
+          <p>Integrating gradient information to our coloring scheme, such as pH, time, or geographical location can be done in multiple ways with Emperor. One of them, is to add an explicit axis to the plot, from the mapping file.</p>
+          <p><a class="btn" href="http://emperor.colorado.edu/master/vectors/index.html">Gradient Example &raquo;</a></p>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="footer">
+        <a href="https://github.com/qiime/emperor/network/members">
+          <p align="center">&copy; The Emperor Development Team</p>
+        </a>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="bootstrap/js/jquery.js"></script>
+    <script src="bootstrap/js/bootstrap-transition.js"></script>
+    <script src="bootstrap/js/bootstrap-alert.js"></script>
+    <script src="bootstrap/js/bootstrap-modal.js"></script>
+    <script src="bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="bootstrap/js/bootstrap-scrollspy.js"></script>
+    <script src="bootstrap/js/bootstrap-tab.js"></script>
+    <script src="bootstrap/js/bootstrap-tooltip.js"></script>
+    <script src="bootstrap/js/bootstrap-popover.js"></script>
+    <script src="bootstrap/js/bootstrap-button.js"></script>
+    <script src="bootstrap/js/bootstrap-collapse.js"></script>
+    <script src="bootstrap/js/bootstrap-carousel.js"></script>
+    <script src="bootstrap/js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>
