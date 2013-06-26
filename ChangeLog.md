@@ -8,9 +8,11 @@ Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 * User documentation: tutorial, installation instructions, GUI description, etc.
 * Ability to make plot comparisons (very useful for procrustes analysis plots).
 * The user can select the number of axes to be considered in the GUI and re-plot using lower axes; this is, for example: PC3 vs PC4 vs PC10.
-* In `missing_custom_axes_values` you can reference other column within the mapping file to place the samples without numeric values at different points in the gradient.
+* In missing_custom_axes_values you can reference other column within the mapping file to place the samples without numeric values at different points in the gradient.
 * Parallel plots functionality.
-* Separated out some options to the View menu
+* Separated out some options to the View menu.
+* Default coloring scheme is discrete.
+* Add color pickers for the axes and axes labels.
 
 *Bug Fixes*
 
