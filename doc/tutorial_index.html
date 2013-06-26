@@ -131,7 +131,7 @@
           <pre><code>make_emperor.py -i unweighted_unifrac_pc.txt -m mapping_file.txt -b "AGE,HAND,HAND_KEY,BODY_SITE,HOST_SUBJECT_ID,HAND,HAND&&HOST_SUBJECT_ID" -o keyboard</code></pre>
           <br>
           <p class="lead" align="justify">
-            Note: when using <code>&&</code> is used in option <code>-b</code>, this allows us to combine different categories from the mapping file, in this case the values in <code>HAND</code> and the values in <code>HOST_SUBJECT_ID</code>.
+            Note: when <code>&&</code> is used with the <code>-b</code> option, two categories from the mapping file will be combined, in this case the values in <code>HAND</code> and the values in <code>HOST_SUBJECT_ID</code> will be concatenated.
             <br>
             A new folder named keyboard will be created, as this is the name we gave via <code>-o</code>, here you will find two files, these two files will be named the same for all datasets:
           </p>
