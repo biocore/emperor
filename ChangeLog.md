@@ -5,17 +5,24 @@ Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 
 * Scientific notation is now taken into account in the GUI for scientific coloring.
 * GUI is usable in mobile devices that support WebGL.
+* User documentation: tutorial, installation instructions, GUI description, etc.
 * Ability to make plot comparisons (very useful for procrustes analysis plots).
 * The user can select the number of axes to be considered in the GUI and re-plot using lower axes; this is, for example: PC3 vs PC4 vs PC10.
 * In missing_custom_axes_values you can reference other column within the mapping file to place the samples without numeric values at different points in the gradient.
 * Parallel plots functionality.
+* Separated out some options to the View menu.
+* The "Colors" tab now has a selector, which allows to use the arrows to move between categories.
+* Default coloring scheme is discrete.
+* Add color pickers for the axes and axes labels.
 * To take a screenshot of your current visualization you can press `p`.
+
 
 *Bug Fixes*
 
 * Fixes recenter camera not working.
 * Category names are sorted alphabetically.
 * Category names with non-alphanumeric characters are colored correctly now.
+* Biplots checkbox now accurately reflects status of biplot visiblity rather than opposite.
 
 Emperor 0.9.0 (14 May 2013)
 ===========================

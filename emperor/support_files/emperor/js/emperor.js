@@ -43,7 +43,7 @@ var g_time;
 var g_visiblePoints = 0;
 var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
-var g_useDiscreteColors = false;
+var g_useDiscreteColors = true;
 
 // taken from the qiime/colors.py module; a total of 29 colors
 k_QIIME_COLORS = [
@@ -243,7 +243,7 @@ function toggleScaleCoordinates(element) {
 
 /* Toggle between discrete and continuous coloring for samples and labels */
 function toggleContinuousAndDiscreteColors(element){
-	g_useDiscreteColors = element.checked;
+	g_useDiscreteColors = !element.checked;
 
 	// re-coloring the samples and labels now will use the appropriate coloring
 	colorByMenuChanged();
@@ -390,6 +390,7 @@ function colorByMenuChanged() {
 			color: colors[vals[i]].getHexString(),
 			showInitial: true,
 			showInput: true,
+			preferredFormat: "hex6",
 			change:
 				function(color) {
 					$(this).css('backgroundColor', color.toHexString());
@@ -436,9 +437,9 @@ function colorParallelPlots(vals,colors)
 	  .mode("queue")
 	  .render()
 	  .brushable();
-	  
-	$('.parcoords text').css('stroke', $('#parallelaxeslabelcolor').css('backgroundColor'));
-	$('.parcoords .axis line, .parcoords .axis path').css('stroke', $('#parallelaxescolor').css('backgroundColor'));
+
+	$('.parcoords text').css('stroke', $('#axeslabelscolor').css('backgroundColor'));
+	$('.parcoords .axis line, .parcoords .axis path').css('stroke', $('#axescolor').css('backgroundColor'));
 }
 
 /*Callback when the scaling by drop-down menu changes
@@ -799,6 +800,7 @@ function labelMenuChanged() {
 			color: colors[vals[i]].getHexString(),
 			showInitial: true,
 			showPalette: true,
+			preferredFormat: "hex6",
 			palette: [['red', 'green', 'blue']],
 			change:
 				function(color) {
@@ -883,7 +885,7 @@ function toggleTaxaLabels(){
 function toggleBiplotVisibility(){
 	// reduce the opacity to zero if the element should be off or to 0.5
 	// if the element is supposed to be present; 0.5 is the default value
-	if(document.biplotsvisibility.elements[0].checked){
+	if(!document.biplotsvisibility.elements[0].checked){
 		for (index in g_plotTaxa){
 			g_plotTaxa[index].material.opacity = 0;
 		}
@@ -1076,12 +1078,13 @@ function setJqueryUi() {
 	$("#plottype").buttonset();
 	$("input[name='plottype']").change(togglePlots);
 	
-	$("#labelColor").css('backgroundColor', '#fff');
+	$("#labelColor").css('backgroundColor', '#ffffff');
 
 	$("#labelColor").spectrum({
-		color: '#fff',
+		color: '#fffffff',
 		showInitial: true,
 		showPalette: true,
+		preferredFormat: "hex6",
 		palette: [['black', 'red', 'green', 'blue']],
 		change:
 			function(color) {
@@ -1194,11 +1197,11 @@ function setJqueryUi() {
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
 
 	
-	//default color for parallel plots axes label is white
-	$('#parallelaxeslabelcolor').css('backgroundColor',"#ffffff");
-	$("#parallelaxeslabelcolor").spectrum({
+	//default color for axes labels is white
+	$('#axeslabelscolor').css('backgroundColor',"#FFFFFF");
+	$("#axeslabelscolor").spectrum({
 		localStorageKey: 'key',
-		color: "#ffffff",
+		color: "#FFFFFF",
 		showInitial: true,
 		showInput: true,
 		showPalette: true,
@@ -1209,20 +1212,23 @@ function setJqueryUi() {
 				// pass a boolean flag to convert to hex6 string
 				var c = color.toHexString(true);
 
-				// create a new three.color from the string
-				var parallelAxesLabelColor = new THREE.Color();
-				parallelAxesLabelColor.setHex(c.replace('#','0x'));
-
 				// set the color for the box and for the renderer
 				$(this).css('backgroundColor', c);
-				//set css for the lines...
+
+				//set css for the text in the parallel plot
 				$('.parcoords text').css('stroke', c);
+
+				// change the css color of the 3d plot labels
+				$("#pc1_label").css('color', c);
+				$("#pc2_label").css('color', c);
+				$("#pc3_label").css('color', c);
+
 			}
 	});
 
-	//default color for parallel plots background is black
-	$('#parallelaxescolor').css('backgroundColor',"#ffffff");
-	$("#parallelaxescolor").spectrum({
+	//default color for the axes is white
+	$('#axescolor').css('backgroundColor',"#ffffff");
+	$("#axescolor").spectrum({
 		localStorageKey: 'key',
 		color: "#ffffff",
 		showInitial: true,
@@ -1236,12 +1242,17 @@ function setJqueryUi() {
 				var c = color.toHexString(true);
 
 				// create a new three.color from the string
-				var parallelAxesColor = new THREE.Color();
-				parallelAxesColor.setHex(c.replace('#','0x'));
+				var axesColor = new THREE.Color();
+				axesColor.setHex(c.replace('#','0x'));
+				g_xAxisLine.material.color = axesColor;
+				g_yAxisLine.material.color = axesColor;
+				g_zAxisLine.material.color = axesColor;
+
 
 				// set the color for the box and for the renderer
 				$(this).css('backgroundColor', c);
-				//set css for the lines...
+
+				//set css for the lines of the parallel cords
 				$('.parcoords .axis line, .parcoords .axis path').css('stroke', c);
 			}
 	});
@@ -1599,28 +1610,39 @@ function clean_label_refresh_axes() {
 }
 
 function togglePlots() {
+
+	// set some interface changes for 3D visualizations
 	if(document.getElementById('pcoa').checked)
 	{
 		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('pcoaoptions').className = document.getElementById('pcoaoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('pcoaviewoptions').className = document.getElementById('pcoaviewoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-	  	document.getElementById('parallelPlotWrapper').className += ' invisible'
-	  	document.getElementById('paralleloptions').className += ' invisible'
-	  	document.getElementById('parallelaxes').className += ' invisible'
-	  	$("#menutabs").tabs('select',0);
-	  	$("#menutabs").tabs({disabled: []});
+		document.getElementById('parallelPlotWrapper').className += ' invisible'
+		document.getElementById('paralleloptions').className += ' invisible'
+
+		// key menu is the default
+		$("#menutabs").tabs('select',0);
+
+		// make all tabs usable
+		$("#menutabs").tabs({disabled: []});
 	}
-	else
-	{
+	// changes for parallel plots
+	else{
 		document.getElementById('parallelPlotWrapper').className = document.getElementById('parallelPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
 		document.getElementById('paralleloptions').className = document.getElementById('paralleloptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-		document.getElementById('parallelaxes').className = document.getElementById('parallelaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-	  	document.getElementById('pcoaPlotWrapper').className += ' invisible'
-	  	document.getElementById('pcoaoptions').className += ' invisible'
-	  	document.getElementById('pcoaaxes').className += ' invisible'
-	  	$("#menutabs").tabs('select',0);
-	  	$("#menutabs").tabs({disabled: [2,3,4]});
-	  	colorByMenuChanged();
+		document.getElementById('pcoaPlotWrapper').className += ' invisible'
+		document.getElementById('pcoaoptions').className += ' invisible'
+		document.getElementById('pcoaviewoptions').className += ' invisible'
+		document.getElementById('pcoaaxes').className += ' invisible'
+
+		// switch back to the key menu
+		$("#menutabs").tabs('select',0);
+
+		// make the visibility, scaling, labels and axes tabs un-usable
+		// they have no contextualized meaning in when lookin at parallel plots
+		$("#menutabs").tabs({disabled: [2,3,4,5]});
+		colorByMenuChanged();
 	}
 }
 
@@ -1720,10 +1742,14 @@ $(document).ready(function() {
 				temp.push(g_mappingFileData[g_plotIds[j]][i])
 			}
 			temp = dedupe(temp);
-
+			
 			// note that each category is added to all the dropdown menus in the
 			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
-			line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+			if (i==0) {
+			    line = "<option selected value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+			} else {
+			    line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+			}
 			$("#colorbycombo").append(line);
 			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
@@ -1798,6 +1824,8 @@ $(document).ready(function() {
 		drawMenuAxesDisplayed();
 		changeAxesDisplayed();
 		drawAxisLines();
+
+		buildAxisLabels();
 	}
 
 	function drawMenuAxesDisplayed() {
@@ -1865,7 +1893,6 @@ $(document).ready(function() {
 	function buildAxisLabels() {
 		//build axis labels
 		var axislabelhtml = "";
-
 		var xcoords = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
 		axislabelhtml += "<label id=\"pc1_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(xcoords['x'])+"px; top:"+parseInt(xcoords['y'])+"px;\">";
 		axislabelhtml += g_pc1Label;
@@ -1885,7 +1912,21 @@ $(document).ready(function() {
 		requestAnimationFrame( animate );
 
 		render();
-		buildAxisLabels();
+
+		var labelCoordinates;
+
+		// reposistion the labels for the axes in the 3D plot
+		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue), g_sceneCamera,$('#main_plot'));
+		$("#pc1_label").css('left', labelCoordinates['x'])
+		$("#pc1_label").css('top', labelCoordinates['y'])
+		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue), g_sceneCamera,$('#main_plot'));
+		$("#pc2_label").css('left', labelCoordinates['x'])
+		$("#pc2_label").css('top', labelCoordinates['y'])
+		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue), g_sceneCamera,$('#main_plot'));
+		$("#pc3_label").css('left', labelCoordinates['x'])
+		$("#pc3_label").css('top', labelCoordinates['y'])
+
+
 		// move labels when the plot is moved
 		if(document.plotoptions.elements[0].checked){
 			for(var i in g_plotIds) {

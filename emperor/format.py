@@ -433,7 +433,7 @@ _TAXA_LABELS_SELECTOR = """
 _BIPLOT_VISIBILITY_SELECTOR = """
             <br>
             <form name="biplotsvisibility">
-            <input type="checkbox" onClick="toggleBiplotVisibility()">Biplots Visibility</input>
+            <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
             </form>
             <br>"""
 
@@ -499,6 +499,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
         <div id="keytab">
@@ -510,7 +511,7 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby">
             <br>%s
-            <select id="colorbycombo" onchange="colorByMenuChanged()">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -553,28 +554,18 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
-            <div id="parallelaxes">
-                <table>
-                    <tr><td><div id="parallelaxescolor" class="colorbox" name="parallelaxescolor"></div></td><td title="Parallel Plots Axes Color">Axes Color</td></tr>
-                </table>
-                <table>
-                    <tr><td><div id="parallelaxeslabelcolor" class="colorbox" name="parallelaxeslabelcolor"></div></td><td title="Parallel Plots Axes Label Color">Axes Label Color</td></tr>
-                </table>
-            </div>
         </div>
-        <div id="settings">
-                <form name="settingsoptionscolor">
-                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">Use discrete colors</input>
-                </form>
-                <br>
-                <br>
-                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
-                <br>
-                <br>
-            <div id="pcoaoptions" class="">
-                <form name="settingsoptions">
-                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-                </form>
+        <div id="view">
+            <table>
+                <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
+                <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            </table>
+            <br>
+            <form name="settingsoptionscolor">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+            </form>
+            <div id="pcoaviewoptions" class="">
                 <br>
                 <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
                 <br>%s%s%s
@@ -588,9 +579,18 @@ document.getElementById("logotable").style.display = 'none';
                 <div id="sradiusslider" class="slider-range-max"></div>
                 <br>
             </div>
-            <table>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
-            </table>
+            <br>
+        </div>
+        <div id="settings">
+            <br>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <br>
+            <br>
+            <div id="pcoaoptions" class="">
+                <form name="settingsoptions">
+                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                </form>
+            </div>
             <br>
             <div id="paralleloptions" class="">
             </div>
