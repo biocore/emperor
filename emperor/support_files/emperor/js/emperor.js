@@ -356,7 +356,7 @@ function colorByMenuChanged() {
 	colors = getColorList(vals);
 	
 	// build the colorby table in HTML
-	var lines = "<table>";
+	var lines = "<table id='colorbylist_table'>";
 	for(var i in vals){
 		// each field is identified by the value it has in the deduplicated
 		// list of values and by the number of the column in the mapping file
@@ -1457,20 +1457,72 @@ function drawEdges(){
 	}
 }
 
-function saveSVG(){
-	open("data:image/svg+xml," + encodeURIComponent(document.getElementById('main_plot').innerHTML));
-}
+function saveSVG(button){
+    if (g_visiblePoints>=3500) {
+        var res = confirm("With more than 3500 samples the current implementation will " +
+            "take a long time (~30secs) and with more than 5000 an extremely long time " +
+            "(~15min) and in some computers the browser will crash. The suggestion is to " +
+            "use the png implementation. Do you want to continue?");
+        if (res==false) return;
+    }
+    $('body').css('cursor','progress');
+    
+    var width = document.getElementById('pcoaPlotWrapper').offsetWidth;
+    var height = document.getElementById('pcoaPlotWrapper').offsetHeight;
+    
+    var color = $("#rendererbackgroundcolor").spectrum("get").toHexString(true);
+    var rendererBackgroundColor = new THREE.Color();
+    rendererBackgroundColor.setHex(color.replace('#','0x'));
 
-function SVGSaved(response){
-	var fileName = eval('('+response+')')
-	var dlwin = open('','Download SVG', 'width=400,height=50')
-
-	dlwin.document.open();
-	dlwin.document.write('<HTML><HEAD><meta name="content-disposition" content="inline; filename=\''+fileName+'\'">');
-	dlwin.document.write('</HEAD><BODY>');
-	dlwin.document.write('<a href=\''+fileName+'\'>'+fileName+'</a>')
-	dlwin.document.write('</BODY></HTML>');
-	dlwin.document.close();
+	var svgRenderer = new THREE.SVGRenderer({ antialias: true, preserveDrawingBuffer: true }); 
+	// this is the proper way to set the color of the background but it doesn't work   
+    svgRenderer.setClearColor(rendererBackgroundColor, 1);
+    svgRenderer.setSize(width, height);
+    svgRenderer.render(g_mainScene, g_sceneCamera);
+    svgRenderer.sortObjects = true;
+        
+    // converting svgRenderer to string: http://stackoverflow.com/questions/17398134/three-svgrenderer-save-text-of-image
+    var XMLS = new XMLSerializer(); 
+    var svgfile = XMLS.serializeToString(svgRenderer.domElement);
+    
+    // hacking the color to the svg
+    var index = svgfile.indexOf('viewBox="')+9;
+    var viewBox = svgfile.substring(index, svgfile.indexOf('"',index))
+    viewBox = viewBox.split(" ");
+    var background = '<rect id="background" height="' + viewBox[3] + '" width="' + viewBox[2] + '" y="' + 
+        viewBox[1] + '" x="' + viewBox[0] + '" stroke-width="0" stroke="#000000" fill="' + color + '"/>'
+    index = svgfile.indexOf('>',index)+1;
+    svgfile = svgfile.substr(0, index) + background + svgfile.substr(index);
+    
+    // adding xmlns header to open in the browser 
+    svgfile = svgfile.replace('viewBox=', 'xmlns="http://www.w3.org/2000/svg" viewBox=')
+    saveAs(new Blob([svgfile], {type: "text/plain;charset=utf-8"}), 
+        "emperor_screenshot.svg");
+    
+    if ($('#saveas_labels').is(':checked')) {
+        var labels_text = '', pos_y = 1, increment = 40, max_len = 0, font_size = 12;
+        $('#colorbylist_table tr div').each(function() {
+            if ($(this).attr('name').length > max_len) max_len = $(this).attr('name').length 
+            
+            // adding rectangle
+            labels_text += '<rect height="27" width="27" y="' + pos_y + 
+                '" x="1" stroke-width="1" ' + 'stroke="#FFFFFF" fill="' + 
+                $("#" + $(this).attr('id')).spectrum("get").toHexString(true) + '"/>';
+            // adding text
+            labels_text += '<text xml:space="preserve" y="' + (pos_y+20) + 
+                '" x="86" text-anchor="middle" ' + 'font-family="Monospace" font-size="' +
+                font_size + '" stroke-width="0" stroke="#000000" fill="#000000">' +
+                $(this).attr('name') + '</text>';
+            pos_y += increment;
+        });
+        labels_text = '<svg width="' + ((font_size*max_len) + 30) + '" height="' + 
+            (pos_y-10) + '" xmlns="http://www.w3.org/2000/svg"><g>' + labels_text + 
+            '</g></svg>';
+        saveAs(new Blob([labels_text], {type: "text/plain;charset=utf-8"}), 
+            "emperor_screenshot_labels.svg");
+    }
+    
+    $('body').css('cursor','default');
 }
 
 /*Utility function to draw two vertices lines at a time
@@ -1786,10 +1838,12 @@ $(document).ready(function() {
 
 		// renderer, the default background color is black
 		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+        
+        // adding 'p' to print screenshot
         THREEx.Screenshot.bindKey(g_mainRenderer);
+        
 		g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
-		// g_mainRenderer.setSize( document.getElementById('vizualizations').offsetWidth , document.getElementById('vizualizations').offsetHeight );
 		g_mainRenderer.sortObjects = true;
 		main_plot.append(g_mainRenderer.domElement);
 

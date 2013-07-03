@@ -478,7 +478,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <br>
             <form name="settingsoptionscolor">
@@ -507,6 +507,11 @@ document.getElementById("logotable").style.display = 'none';
         <div id="settings">
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <br>
+            Create labels? <input id="saveas_labels" class="checkbox" type="checkbox" style="">
+            <br>
+            <br>
+            For a PNG, simply press 'p'.
             <br>
             <br>
             <div id="pcoaoptions" class="">
@@ -647,7 +652,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <br>
             <form name="settingsoptionscolor">
@@ -672,6 +677,11 @@ document.getElementById("logotable").style.display = 'none';
         <div id="settings">
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <br>
+            Create labels? <input id="saveas_labels" class="checkbox" type="checkbox" style="">
+            <br>
+            <br>
+            For a PNG, simply press 'p'.
             <br>
             <br>
             <div id="pcoaoptions" class="">
@@ -799,7 +809,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <br>
             <form name="settingsoptionscolor">
@@ -824,6 +834,11 @@ document.getElementById("logotable").style.display = 'none';
         <div id="settings">
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <br>
+            Create labels? <input id="saveas_labels" class="checkbox" type="checkbox" style="">
+            <br>
+            <br>
+            For a PNG, simply press 'p'.
             <br>
             <br>
             <div id="pcoaoptions" class="">
@@ -950,7 +965,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <br>
             <form name="settingsoptionscolor">
@@ -979,6 +994,11 @@ document.getElementById("logotable").style.display = 'none';
         <div id="settings">
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <br>
+            Create labels? <input id="saveas_labels" class="checkbox" type="checkbox" style="">
+            <br>
+            <br>
+            For a PNG, simply press 'p'.
             <br>
             <br>
             <div id="pcoaoptions" class="">
@@ -1105,7 +1125,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <br>
             <form name="settingsoptionscolor">
@@ -1135,6 +1155,11 @@ document.getElementById("logotable").style.display = 'none';
         <div id="settings">
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <br>
+            Create labels? <input id="saveas_labels" class="checkbox" type="checkbox" style="">
+            <br>
+            <br>
+            For a PNG, simply press 'p'.
             <br>
             <br>
             <div id="pcoaoptions" class="">

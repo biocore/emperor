@@ -14,7 +14,8 @@ Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 * The "Colors" tab now has a selector, which allows to use the arrows to move between categories.
 * Default coloring scheme is discrete.
 * Add color pickers for the axes and axes labels.
-* To take a screenshot of your current visualization you can press `p`.
+* To take a screenshot (PNG) of your current visualization you can press `p`.
+* Export to SVG your visualization.
 
 
 *Bug Fixes*

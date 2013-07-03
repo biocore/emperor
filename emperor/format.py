@@ -406,11 +406,15 @@ EMPEROR_HEADER_HTML_STRING =\
     <script src="emperor_required_resources/js/spectrum.js"></script>
 
     <script src="emperor_required_resources/js/Three.js"></script>
+    <script src="emperor_required_resources/js/SVGRenderer.js"></script>
     <script src="emperor_required_resources/js/js/Detector.js"></script>
     <script src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
     <script src="emperor_required_resources/emperor/js/emperor.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/THREEx.screenshot.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/FileSaver.min.js"></script>
+    
     <script type="text/javascript">
+    
 """
 
 _ELLIPSE_OPACITY_SLIDER = """
@@ -559,7 +563,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <br>
             <form name="settingsoptionscolor">
@@ -584,6 +588,11 @@ document.getElementById("logotable").style.display = 'none';
         <div id="settings">
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            <br>
+            Create labels? <input id="saveas_labels" class="checkbox" type="checkbox" style="">
+            <br>
+            <br>
+            For a PNG, simply press 'p'.
             <br>
             <br>
             <div id="pcoaoptions" class="">
