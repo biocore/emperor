@@ -30,7 +30,8 @@ class EmperorLogicError(ValueError):
     pass
 
 def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
-                    coords_low=None, coords_high=None, number_of_axes=10):
+                    coords_low=None, coords_high=None, number_of_axes=10, 
+                    number_of_segments=8):
     """Write the javascript necessary to represent a pcoa file in emperor
 
     Inputs:
@@ -98,8 +99,9 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
                 "'color': 0, 'width': %f, 'height': %f, 'length': %f , 'x': %f,"
                 " 'y': %f, 'z': %f, %s }\n" % (s_header, s_header,delta[0], delta[1],
                 delta[2], s_coord[0], s_coord[1], s_coord[2], all_coords))
-
-    js_pcoa_string += 'var g_segments = 16, g_rings = 16, g_radius = %f;\n' % (radius)
+    
+    js_pcoa_string += 'var g_segments = %d, g_rings = %d, g_radius = %f;\n' % (number_of_segments, 
+        number_of_segments, radius)
     js_pcoa_string += 'var g_xAxisLength = %f;\n' % (abs(max_x)+abs(min_x))
     js_pcoa_string += 'var g_yAxisLength = %f;\n' % (abs(max_y)+abs(min_y))
     js_pcoa_string += 'var g_zAxisLength = %f;\n' % (abs(max_z)+abs(min_z))
@@ -406,7 +408,6 @@ EMPEROR_HEADER_HTML_STRING =\
     <script src="emperor_required_resources/js/spectrum.js"></script>
 
     <script src="emperor_required_resources/js/Three.js"></script>
-    <script src="emperor_required_resources/js/SVGRenderer.js"></script>
     <script src="emperor_required_resources/js/js/Detector.js"></script>
     <script src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
     <script src="emperor_required_resources/emperor/js/emperor.js"></script>
@@ -589,7 +590,7 @@ document.getElementById("logotable").style.display = 'none';
             <br>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
             <br>
-            Create labels? <input id="saveas_labels" class="checkbox" type="checkbox" style="">
+            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
             <br>
             <br>
             For a PNG, simply press 'p'.

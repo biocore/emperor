@@ -1457,6 +1457,11 @@ function drawEdges(){
 	}
 }
 
+/*Save the current view to SVG
+
+  This will take the current webGL renderer, convert it to SVG and then generate 
+  a file to download. Additionally it will create the labels if this option is selected.
+*/
 function saveSVG(button){
     if (g_visiblePoints>=3500) {
         var res = confirm("With more than 3500 samples the current implementation will " +
@@ -1499,7 +1504,7 @@ function saveSVG(button){
     saveAs(new Blob([svgfile], {type: "text/plain;charset=utf-8"}), 
         "emperor_screenshot.svg");
     
-    if ($('#saveas_labels').is(':checked')) {
+    if ($('#saveas_legends').is(':checked')) {
         var labels_text = '', pos_y = 1, increment = 40, max_len = 0, font_size = 12;
         $('#colorbylist_table tr div').each(function() {
             if ($(this).attr('name').length > max_len) max_len = $(this).attr('name').length 
@@ -1509,10 +1514,9 @@ function saveSVG(button){
                 '" x="1" stroke-width="1" ' + 'stroke="#FFFFFF" fill="' + 
                 $("#" + $(this).attr('id')).spectrum("get").toHexString(true) + '"/>';
             // adding text
-            labels_text += '<text xml:space="preserve" y="' + (pos_y+20) + 
-                '" x="86" text-anchor="middle" ' + 'font-family="Monospace" font-size="' +
-                font_size + '" stroke-width="0" stroke="#000000" fill="#000000">' +
-                $(this).attr('name') + '</text>';
+            labels_text += '<text xml:space="preserve" y="' + (pos_y+20) + '" x="35" ' + 
+                'font-family="Monospace" font-size="' + font_size + '" stroke-width="0" ' +
+                'stroke="#000000" fill="#000000">' + $(this).attr('name') + '</text>';
             pos_y += increment;
         });
         labels_text = '<svg width="' + ((font_size*max_len) + 30) + '" height="' + 
