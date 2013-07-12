@@ -303,13 +303,16 @@ def format_vectors_to_js(mapping_file_data, mapping_file_headers, coords_data,
 
     return ''.join(js_vectors_string)
 
-def format_comparison_bars_to_js(coords_data, coords_headers, clones):
+def format_comparison_bars_to_js(coords_data, coords_headers, clones,
+                                is_serial_comparison=True):
     """Format coordinates data to create a comparison plot
 
     Inputs:
     coords_data: numpy array with the replicated coordinates
     cooreds_headers: list with the headers for each of replicated coordinates
     clones: number of replicates in the coords_data and coords_headers
+    is_serial_comparison: whether the samples will be connected one after the
+    other (True) or all will originate in the first set of coordinates.
 
     Outputs:
     Javascript object that contains the data for the comparison plot
@@ -319,10 +322,18 @@ def format_comparison_bars_to_js(coords_data, coords_headers, clones):
     length.
     AssertionError if the number of clones doesn't concord with the samples
     being presented.
+
+    Unless the value of clones is > 0 this function will return an empty
+    javascript object initialization.
     """
 
     js_comparison_string = []
     js_comparison_string.append('\nvar g_comparisonPositions = new Array();\n')
+
+    if is_serial_comparison:
+        js_comparison_string.append('var g_isSerialComparisonPlot = true;\n')
+    else:
+        js_comparison_string.append('var g_isSerialComparisonPlot = false;\n')
 
     if clones:
         headers_length = len(coords_headers)
@@ -363,6 +374,9 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
 
     has_biplots: whether the plot has biplots or not
     has_ellipses: whether the plot has ellipses or not
+    has_vectors: whether the plot has vectors or not
+    has_edges: whether the plot has edges between samples (comparison plot)
+
 
     This function will remove unnecessary GUI elements from index.html to avoid
     confusions i. e. showing an ellipse opacity slider when there are no
@@ -446,7 +460,7 @@ _BIPLOT_SPHERES_COLOR_SELECTOR ="""
 _EDGES_VISIBILITY_SELECTOR = """
             <br>
             <form name="edgesvisibility">
-            <input type="checkbox" onClick="toggleEdgesVisibility()">Edges Visibility</input>
+            <input type="checkbox" onClick="toggleEdgesVisibility()" checked>Edges Visibility</input>
             </form>
             <br>"""
 

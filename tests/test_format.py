@@ -154,13 +154,30 @@ class TopLevelTests(TestCase):
 
         # empty string generation for comparison i. e. no clones
         out_js_comparison_string = format_comparison_bars_to_js(
-            self.comparison_coords_data, self.comparison_coords_headers, 0)
+            self.comparison_coords_data, self.comparison_coords_headers, 0,
+            True)
         self.assertEquals(out_js_comparison_string, '\nvar '
-            'g_comparisonPositions = new Array();\n')
+            'g_comparisonPositions = new Array();\nvar g_isSerialComparisonPlot'
+            ' = true;\n')
 
         out_js_comparison_string = format_comparison_bars_to_js(
-            self.comparison_coords_data, self.comparison_coords_headers, 3)
+            self.comparison_coords_data, self.comparison_coords_headers, 3,
+            True)
         self.assertEquals(out_js_comparison_string, COMPARISON_JS_STRING)
+
+        # empty string generation for comparison i. e. no clones
+        out_js_comparison_string = format_comparison_bars_to_js(
+            self.comparison_coords_data, self.comparison_coords_headers, 0,
+            False)
+        self.assertEquals(out_js_comparison_string, '\nvar '
+            'g_comparisonPositions = new Array();\nvar g_isSerialComparisonPlot'
+            ' = false;\n')
+
+        out_js_comparison_string = format_comparison_bars_to_js(
+            self.comparison_coords_data, self.comparison_coords_headers, 3,
+            False)
+        self.assertEquals(out_js_comparison_string,
+            COMPARISON_JS_STRING_NON_SERIAL)
 
     def test_format_comparison_bars_to_js_exceptions(self):
         """Check the correct exceptions are raised for incorrect inputs"""
@@ -361,6 +378,18 @@ g_vectorPositions['Fast']['PC.636'] = [0.281534642, 0.0710660196, 0.097154202];
 
 COMPARISON_JS_STRING = """
 var g_comparisonPositions = new Array();
+var g_isSerialComparisonPlot = true;
+g_comparisonPositions['sampa'] = [[-0.0677, -2.036, 0.2726], [-0.972, 0.551, 1.144], [0.2339, -0.88, -1.753]];
+g_comparisonPositions['sampb'] = [[-1.782, -0.972, 0.1582], [1.438, -2.603, -1.39], [0.436, 2.12, -0.935]];
+g_comparisonPositions['sampc'] = [[-0.659, -0.2566, 0.514], [-0.356, 0.0875, 0.772], [-0.88, 1.069, 1.069]];
+g_comparisonPositions['sampd'] = [[-1.179, -0.968, 2.525], [1.512, -1.239, -0.0365], [0.294, 0.2988, 0.0467]];
+g_comparisonPositions['sampe'] = [[-0.896, -1.765, 0.274], [1.17, 1.31, -1.407], [1.64, 0.2485, -0.354]];
+g_comparisonPositions['sampf'] = [[-0.0923, 1.414, -0.622], [2.618, 0.739, -0.01295], [0.821, -1.13, -1.794]];
+"""
+
+COMPARISON_JS_STRING_NON_SERIAL = """
+var g_comparisonPositions = new Array();
+var g_isSerialComparisonPlot = false;
 g_comparisonPositions['sampa'] = [[-0.0677, -2.036, 0.2726], [-0.972, 0.551, 1.144], [0.2339, -0.88, -1.753]];
 g_comparisonPositions['sampb'] = [[-1.782, -0.972, 0.1582], [1.438, -2.603, -1.39], [0.436, 2.12, -0.935]];
 g_comparisonPositions['sampc'] = [[-0.659, -0.2566, 0.514], [-0.356, 0.0875, 0.772], [-0.88, 1.069, 1.069]];
@@ -1117,7 +1146,7 @@ document.getElementById("logotable").style.display = 'none';
                 <br>
             <br>
             <form name="edgesvisibility">
-            <input type="checkbox" onClick="toggleEdgesVisibility()">Edges Visibility</input>
+            <input type="checkbox" onClick="toggleEdgesVisibility()" checked>Edges Visibility</input>
             </form>
             <br>
                 <br>
