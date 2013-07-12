@@ -62,14 +62,15 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     " to use for the missing values: ", "%prog -i unweighted_unifrac_pc.txt -m "
     "Fasting_Map_modified.txt -a DOB -o pcoa_dob_with_missing_custom_axes_value"
     "s -x 'DOB:20060000'"),
-    ("PCoA plot with an explicit axis and using --missing_custom_axes_values but "
-    "setting different values based on another column", "Create a PCoA plot with an "
-    "axis of the plot representing the 'DOB' of the samples and defining the position "
-    "over the gradient of those samples missing a numeric value but using as reference "
-    "another column of the mapping file. In this case we are going to plot the samples "
-    "that are Control on the Treatment column on 20080220 and on 20080240 those that "
-    "are Fast:", "%prog -i unweighted_unifrac_pc.txt -m Fasting_Map_modified.txt -a DOB "
-    "-o pcoa_dob_with_missing_custom_axes_with_multiple_values -x "
+    ("PCoA plot with an explicit axis and using --missing_custom_axes_values "
+    "but setting different values based on another column", "Create a PCoA plot"
+    " with an axis of the plot representing the 'DOB' of the samples and "
+    "defining the position over the gradient of those samples missing a numeric"
+    " value but using as reference another column of the mapping file. In this "
+    "case we are going to plot the samples that are Control on the Treatment "
+    "column on 20080220 and on 20080240 those that are Fast:", "%prog -i "
+    "unweighted_unifrac_pc.txt -m Fasting_Map_modified.txt -a DOB -o "
+    "pcoa_dob_with_missing_custom_axes_with_multiple_values -x "
     "'DOB:Treatment==Control=20080220' -x 'DOB:Treatment==Fast=20080240'"),    
     ("Jackknifed principal coordinates analysis plot", "Create a jackknifed "
     "PCoA plot (with confidence intervals for each sample) passing as the input"
@@ -178,25 +179,30 @@ script_info['optional_options'] = [
     ' the "--taxa_fp" file to display. Passing "-1" will cause to display all '
     'the taxonomic groups, this option is only used when creating BiPlots. '
     '[default=%default]', default=10, type='int'),
-    make_option('-s', '--master_pcoa', help='Used only when plotting ellipsoids'
-    ' for jackknifed beta diversity (i.e. using a directory of coord files'
-    ' instead of a single coord file). The coordinates in this file will be the'
-    ' center of each ellipisoid. [default: arbitrarily selected file from the '
-    'input directory]', default=None, type='existing_filepath'),
+    make_option('-s', '--master_pcoa', help='Used only when the input is a '
+    'directory of coordinate files i. e. for jackknifed beta diversity plot or'
+    ' for a coordinate comparison plot (procrustes analysis). The coordinates '
+    'in this file will be the center of each ellipsoid in the case of a '
+    'jackknifed PCoA plot or the center where the connecting arrows originate '
+    'from for a comparison plot. [default: arbitrarily selected file from the '
+    'input directory for a jackknifed plot or None for a comparison plot in '
+    'this case one file will be connected to the next one and so on]',
+    default=None, type='existing_filepath'),
     make_option('-t', '--taxa_fp', help='Path to a summarized taxa file (i. '
     'e. the output of summarize_taxa.py). This option is only used when '
     'creating BiPlots. [default=%default]', default=None, type=
     'existing_filepath'),
     make_option('-x', '--missing_custom_axes_values', help='Option to override '
-    'the error shown when the catergory used in \'--custom_axes\' has non-numeric '
-    'values in the mapping file. The basic format is custom_axis:new_value. For '
-    'example, if you want to plot in time 0 all the samples that do not have a numeric '
-    'value in the column Time. you would pass -x "Time:0". Additionally, you can pass '
-    'this format custom_axis:other_column==value_in_other_column=new_value, with this '
-    'format you can specify different values (new_value) to use in the substitution '
-    'based on other column (other_column) value (value_in_other_column); see example '
-    'above. This option could be used in all explicit axes.',action='append', 
-    default=None),
+    'the error shown when the catergory used in \'--custom_axes\' has '
+    'non-numeric values in the mapping file. The basic format is '
+    'custom_axis:new_value. For example, if you want to plot in time 0 all the '
+    'samples that do not have a numeric value in the column Time. you would '
+    'pass -x "Time:0". Additionally, you can pass this format '
+    'custom_axis:other_column==value_in_other_column=new_value, with this '
+    'format you can specify different values (new_value) to use in the '
+    'substitution based on other column (other_column) value '
+    '(value_in_other_column); see example above. This option could be used in '
+    'all explicit axes.',action='append', default=None),
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
     'output directory that will contain the PCoA plot. [default: %default]',
     default='emperor')
@@ -223,7 +229,7 @@ def main():
     verbose_output = opts.verbose
     number_of_axes = opts.number_of_axes
     compare_plots = opts.compare_plots
-    
+
     # verifying that the number of axes requested is greater than 3
     if number_of_axes<3:
         option_parser.error(('You need to plot at least 3 axes.'))
@@ -232,6 +238,8 @@ def main():
     # according to different criteria to the following variables
     offending_fields = []
     non_numeric_categories = []
+
+    serial_comparison = True
 
     # can't do averaged pcoa plots _and_ custom axes in the same plot
     if custom_axes!=None and len(custom_axes.split(','))>1 and\
@@ -279,6 +287,8 @@ def main():
             if master_pcoa in coord_fps: # remove it if duplicated
                 coord_fps.remove(master_pcoa)
             coord_fps = [master_pcoa] + coord_fps # prepend it to the list
+        if master_pcoa and compare_plots:
+            serial_comparison = False
 
         for fp in coord_fps:
             try:
@@ -401,16 +411,16 @@ def main():
 
 
 
-    # catch the errors that could ocurr when filling the mapping file values
+    # catch the errors that could occur when filling the mapping file values
     if missing_custom_axes_values:
         try:
             # the fact that this uses parse_metadata_state_descriptions makes
-            # the follwoing option '-x Category:7;PH:12' to work as well as the 
+            # the following option '-x Category:7;PH:12' to work as well as the 
             # script-interface-documented '-x Category:7 -x PH:12' option
             for val in missing_custom_axes_values:
                 if ':' not in val:
-                    option_parser.error("Not valid missing value for custom axes: %s"
-                        % val)
+                    option_parser.error("Not valid missing value for custom "
+                        "axes: %s" % val)
             mapping_data = fill_mapping_field_from_mapping_file(mapping_data,
                 header, ';'.join(missing_custom_axes_values))
             
@@ -551,7 +561,7 @@ def main():
     fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
         coords_headers, add_vectors[0], add_vectors[1]))
     fp_out.write(format_comparison_bars_to_js(coords_data, coords_headers,
-        clones))
+        clones, is_serial_comparison=serial_comparison))
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
         isdir(input_coords) and not compare_plots, add_vectors != [None, None],
         clones>0))
