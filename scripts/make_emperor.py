@@ -287,7 +287,16 @@ def main():
             if master_pcoa in coord_fps: # remove it if duplicated
                 coord_fps.remove(master_pcoa)
             coord_fps = [master_pcoa] + coord_fps # prepend it to the list
-        if master_pcoa and compare_plots:
+        # passing a master file means that the comparison is not serial
+        elif master_pcoa and compare_plots:
+            serial_comparison = False
+        # QIIME generates folders of transformed coordinates for the specific
+        # purpose of connecting all coordinates to a set of origin coordinates.
+        # The name of this file is suffixed as _transformed_reference.txt
+        elif master_pcoa == None and len([f for f in coord_fps if f.endswith(
+            '_transformed_reference.txt')]):
+            master_pcoa = [f for f in coord_fps if f.endswith(
+                '_transformed_reference.txt')][0]
             serial_comparison = False
 
         for fp in coord_fps:
