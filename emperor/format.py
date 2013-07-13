@@ -388,6 +388,7 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
     optional_strings.append(if_(has_biplots, _BIPLOT_SPHERES_COLOR_SELECTOR,''))
     optional_strings.append(if_(has_biplots, _BIPLOT_VISIBILITY_SELECTOR, ''))
     optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
+    optional_strings.append(if_(has_edges, _EDGES_COLOR_SELECTOR, ''))
     optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
     optional_strings.append(if_(has_vectors, _VECTORS_OPACITY_SLIDER, ''))
     optional_strings.append(if_(has_edges, _EDGES_VISIBILITY_SELECTOR, ''))
@@ -463,6 +464,11 @@ _EDGES_VISIBILITY_SELECTOR = """
             <input type="checkbox" onClick="toggleEdgesVisibility()" checked>Edges Visibility</input>
             </form>
             <br>"""
+
+_EDGES_COLOR_SELECTOR = """
+            <tr><td><div id="edgecolorselector_a" class="colorbox" name="edgecolorselector_a"></div></td><td title="edgecolor_a">Edge Color Selector A</td></tr>
+            <tr><td><div id="edgecolorselector_b" class="colorbox" name="edgecolorselector_b"></div></td><td title="edgecolor_b">Edge Color Selector B</td></tr>
+"""
 
 _EMPEROR_FOOTER_HTML_STRING ="""document.getElementById("logo").style.display = 'none';
 document.getElementById("logotable").style.display = 'none';
@@ -572,16 +578,16 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>%s
             </table>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
-            </form>
             <div id="pcoaviewoptions" class="">
                 <br>
                 <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br>%s%s%s
+                <br>
+                <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+                </form>%s%s%s
                 <br>
                 <label for="sphereopacity" class="text">Sphere Opacity</label>
                 <label id="sphereopacity" class="slidervalue"></label>

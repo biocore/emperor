@@ -509,14 +509,14 @@ document.getElementById("logotable").style.display = 'none';
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
-            </form>
             <div id="pcoaviewoptions" class="">
                 <br>
                 <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
                 <br>
+                <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+                </form>
             <br>
             <label for="ellipseopacity" class="text">Ellipse Opacity</label>
             <label id="ellipseopacity" class="slidervalue"></label>
@@ -678,14 +678,14 @@ document.getElementById("logotable").style.display = 'none';
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
-            </form>
             <div id="pcoaviewoptions" class="">
                 <br>
                 <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
                 <br>
+                <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+                </form>
                 <br>
                 <label for="sphereopacity" class="text">Sphere Opacity</label>
                 <label id="sphereopacity" class="slidervalue"></label>
@@ -830,14 +830,14 @@ document.getElementById("logotable").style.display = 'none';
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
-            </form>
             <div id="pcoaviewoptions" class="">
                 <br>
                 <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
                 <br>
+                <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+                </form>
                 <br>
                 <label for="sphereopacity" class="text">Sphere Opacity</label>
                 <label id="sphereopacity" class="slidervalue"></label>
@@ -981,14 +981,14 @@ document.getElementById("logotable").style.display = 'none';
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
-            </form>
             <div id="pcoaviewoptions" class="">
                 <br>
                 <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
                 <br>
+                <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+                </form>
             <br>
             <label for="vectorsopacity" class="text">Vectors Opacity</label>
             <label id="vectorsopacity" class="slidervalue"></label>
@@ -1135,15 +1135,18 @@ document.getElementById("logotable").style.display = 'none';
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+            <tr><td><div id="edgecolorselector_a" class="colorbox" name="edgecolorselector_a"></div></td><td title="edgecolor_a">Edge Color Selector A</td></tr>
+            <tr><td><div id="edgecolorselector_b" class="colorbox" name="edgecolorselector_b"></div></td><td title="edgecolor_b">Edge Color Selector B</td></tr>
+
             </table>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
-            </form>
             <div id="pcoaviewoptions" class="">
                 <br>
                 <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
                 <br>
+                <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+                </form>
             <br>
             <form name="edgesvisibility">
             <input type="checkbox" onClick="toggleEdgesVisibility()" checked>Edges Visibility</input>
