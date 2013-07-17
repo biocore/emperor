@@ -17,6 +17,7 @@ Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 * To take a screenshot (PNG) of your current visualization you can press `p`.
 * Export to SVG your visualization.
 * Emperor now relies on QIIME 1.7.0.
+* Added option `--number_of_segments` to control the quality of all spheres
 
 *Bug Fixes*
 

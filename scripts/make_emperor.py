@@ -200,9 +200,11 @@ script_info['optional_options'] = [
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
     'output directory that will contain the PCoA plot. [default: %default]',
     default='emperor'),
-    make_option('--number_of_segments', type=int, help='the number of segments to ' +
-    'generate the spheres. The higher the value the more quality and the bigger/slower ' +
-    'the plots will be. The value should be between 4 and 14. [default: %default]', 
+    make_option('--number_of_segments', type="int", help='the number of segments to '
+    'generate any spheres, this includes the samples, the taxa (biplots), and the '
+    'confidence intervals (jackknifing). Higher values will result in better quality but '
+    'can make the plots less responsive, also it will make the resulting SVG images '
+    'bigger. The value should be between 4 and 14. [default: %default]', 
     default=8),
 ]
 script_info['version'] = __version__

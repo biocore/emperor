@@ -44,6 +44,18 @@ var g_visiblePoints = 0;
 var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
 var g_useDiscreteColors = true;
+var g_screenshotBind;
+
+// valid ascii codes for filename
+var g_validAsciiCodes = new Array();
+// adding: .-_
+g_validAsciiCodes = g_validAsciiCodes.concat([45,46,95]);
+// adding: 0->9
+g_validAsciiCodes = g_validAsciiCodes.concat([48,49,50,51,52,53,54,55,56,57]);
+// adding: A->Z
+g_validAsciiCodes = g_validAsciiCodes.concat([65,66,67,68,68,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90]);
+// adding: a->z
+g_validAsciiCodes = g_validAsciiCodes.concat([97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122]);
 
 // taken from the qiime/colors.py module; a total of 29 colors
 k_QIIME_COLORS = [
@@ -71,7 +83,6 @@ k_QIIME_COLORS = [
 "0xA54700", // orange3
 "0x808000", // green3
 "0x008080"] // teal3
-
 
 // Taken from http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
 function isNumeric(n) {
@@ -1458,16 +1469,16 @@ function drawEdges(){
 }
 
 /*Save the current view to SVG
-
   This will take the current webGL renderer, convert it to SVG and then generate 
   a file to download. Additionally it will create the labels if this option is selected.
 */
 function saveSVG(button){
-    if (g_visiblePoints>=3500) {
-        var res = confirm("With more than 3500 samples the current implementation will " +
-            "take a long time (~30secs) and with more than 5000 an extremely long time " +
-            "(~15min) and in some computers the browser will crash. The suggestion is to " +
-            "use the png implementation. Do you want to continue?");
+    // add a name subfix for the filenames
+    if ((g_segments<=8 && g_visiblePoints>=10000) || (g_segments>8 && g_visiblePoints>=5000)) {
+        var res = confirm("The number of segments (" + g_segments + ") combined with the number " +
+            "of samples could take a long time and in some computers the browser will crash. " +
+            "If this happens we suggest to lower the number of segments or use the png " +
+            "implementation. Do you want to continue?");
         if (res==false) return;
     }
     $('body').css('cursor','progress');
@@ -1502,7 +1513,7 @@ function saveSVG(button){
     // adding xmlns header to open in the browser 
     svgfile = svgfile.replace('viewBox=', 'xmlns="http://www.w3.org/2000/svg" viewBox=')
     saveAs(new Blob([svgfile], {type: "text/plain;charset=utf-8"}), 
-        "emperor_screenshot.svg");
+         $('#saveas_name').val() + ".svg");
     
     if ($('#saveas_legends').is(':checked')) {
         var labels_text = '', pos_y = 1, increment = 40, max_len = 0, font_size = 12;
@@ -1519,11 +1530,12 @@ function saveSVG(button){
                 'stroke="#000000" fill="#000000">' + $(this).attr('name') + '</text>';
             pos_y += increment;
         });
-        labels_text = '<svg width="' + ((font_size*max_len) + 30) + '" height="' + 
+        labels_text = '<svg width="' + ((font_size*max_len) + 10) + '" height="' + 
             (pos_y-10) + '" xmlns="http://www.w3.org/2000/svg"><g>' + labels_text + 
             '</g></svg>';
+        
         saveAs(new Blob([labels_text], {type: "text/plain;charset=utf-8"}), 
-            "emperor_screenshot_labels.svg");
+            $('#saveas_name').val() + "_labels.svg");
     }
     
     $('body').css('cursor','default');
@@ -1682,6 +1694,9 @@ function togglePlots() {
 
 		// make all tabs usable
 		$("#menutabs").tabs({disabled: []});
+		
+		// adding ctrl-p
+		g_screenshotBind = THREEx.Screenshot.bindKey(g_mainRenderer, {charCode: 16});
 	}
 	// changes for parallel plots
 	else{
@@ -1697,7 +1712,12 @@ function togglePlots() {
 
 		// make the visibility, scaling, labels and axes tabs un-usable
 		// they have no contextualized meaning in when lookin at parallel plots
-		$("#menutabs").tabs({disabled: [2,3,4,5]});
+		// 0 = Key, 1 = Colors, 2 = Visibility, 3 = Scaling, 4 = Labels, 5 = Axes, 6 = View, 7 = Options
+		$("#menutabs").tabs({disabled: [2,3,4,5,7]});
+		
+		// removing the ctrl-p 
+        g_screenshotBind.unbind();
+		
 		colorByMenuChanged();
 	}
 }
@@ -1733,6 +1753,7 @@ function setParallelPlots() {
 $(document).ready(function() {
 	setJqueryUi()
 	
+	
 	// Detecting that webgl is activated
 	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
@@ -1749,6 +1770,13 @@ $(document).ready(function() {
 		g_sceneCamera.aspect = winAspect;
 		g_sceneCamera.updateProjectionMatrix();
 	});
+	
+	// Validating the string for the saveas filename = taken from http://stackoverflow.com/questions/6741175/trim-input-field-value-to-only-alphanumeric-characters-separate-spaces-with-wi
+    $('#saveas_name').keypress(function(event) {
+        var code = (event.keyCode ? event.keyCode : event.which);
+        if (g_validAsciiCodes.indexOf(code)==-1)
+            event.preventDefault();
+    });
 
 	init();
 	animate();
@@ -1843,8 +1871,8 @@ $(document).ready(function() {
 		// renderer, the default background color is black
 		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
         
-        // adding 'p' to print screenshot
-        THREEx.Screenshot.bindKey(g_mainRenderer);
+        // adding 'ctrl+p' to print screenshot
+        g_screenshotBind = THREEx.Screenshot.bindKey(g_mainRenderer, {charCode: 16});
         
 		g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );

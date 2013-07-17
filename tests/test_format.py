@@ -545,14 +545,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
+            <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
-            <br>
-            <br>
+            <br><br>
             For a PNG, simply press 'p'.
-            <br>
-            <br>
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
@@ -715,14 +716,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
+            <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
-            <br>
-            <br>
+            <br><br>
             For a PNG, simply press 'p'.
-            <br>
-            <br>
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
@@ -872,14 +874,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
+            <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
-            <br>
-            <br>
+            <br><br>
             For a PNG, simply press 'p'.
-            <br>
-            <br>
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
@@ -1032,14 +1035,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
+            <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
-            <br>
-            <br>
+            <br><br>
             For a PNG, simply press 'p'.
-            <br>
-            <br>
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
@@ -1193,14 +1197,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
+            <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
-            <br>
-            <br>
+            <br><br>
             For a PNG, simply press 'p'.
-            <br>
-            <br>
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>

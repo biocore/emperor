@@ -42,6 +42,8 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     custom_axes: list of category names for the custom axes
     coords_low: coordinates representing the lower edges of an ellipse
     coords_high: coordinates representing the highere edges of an ellipse
+    number_of_axes: number of axes to be returned
+    number_of_segments: number of segments and rings for each sphere 
 
     Output:
     string: javascript representation of the PCoA data inputed, contains a list
@@ -588,14 +590,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
+            <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
-            <br>
-            <br>
+            <br><br>
             For a PNG, simply press 'p'.
-            <br>
-            <br>
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
