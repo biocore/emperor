@@ -251,7 +251,7 @@ def main():
     # make sure the flag is not misunderstood from the command line interface
     if isdir(input_coords) == False and compare_plots:
         option_parser.error('Cannot use the \'--compare_plots\' flag unless the'
-            ' input input path is a directory.')
+            ' input path is a directory.')
 
     # before creating any output, check correct parsing of the main input files
     try:
@@ -298,6 +298,14 @@ def main():
             master_pcoa = [f for f in coord_fps if f.endswith(
                 '_transformed_reference.txt')][0]
             serial_comparison = False
+
+            # Note: the following steps are to guarantee consistency.
+            # remove the master from the list and re-add it as a first element
+            # the rest of the files must be sorted alphabetically so the result
+            # will be: ['unifrac_transformed_reference.txt',
+            # 'unifrac_transformed_q1.txt', 'unifrac_transformed_q2.txt'] etc
+            coord_fps.remove(master_pcoa)
+            coord_fps = [master_pcoa] + sorted(coord_fps)
 
         for fp in coord_fps:
             try:
@@ -352,7 +360,7 @@ def main():
         # other exeptions should be catched here; code will be updated then
         except ValueError:
             option_parser.error(('The PCoA file \'%s\' does not seem to be a '
-                'coordinates formatted file, verify by manuall inspecting '
+                'coordinates formatted file, verify by manually inspecting '
                 'the contents.') % input_coords)
 
         # number of samples ids that are shared between coords and mapping files
@@ -417,8 +425,6 @@ def main():
     # account for unmapped coords, else the program will exit before this point
     header, mapping_data = filter_mapping_file(mapping_data, header,
         sids_intersection, include_repeat_cols=True)
-
-
 
     # catch the errors that could occur when filling the mapping file values
     if missing_custom_axes_values:
@@ -577,7 +583,7 @@ def main():
     fp_out.close()
     copy_support_files(output_dir)
 
-    # write the bilot coords in the output file if a path is passed
+    # write the biplot coords in the output file if a path is passed
     if biplot_fp and taxa_fp:
         # make sure this file can be created
         try:
