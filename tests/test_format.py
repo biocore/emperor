@@ -552,7 +552,7 @@ document.getElementById("logotable").style.display = 'none';
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
             <br><br>
-            For a PNG, simply press 'p'.
+            For a PNG, simply press 'ctrl+p'.
             <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
@@ -723,7 +723,7 @@ document.getElementById("logotable").style.display = 'none';
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
             <br><br>
-            For a PNG, simply press 'p'.
+            For a PNG, simply press 'ctrl+p'.
             <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
@@ -881,7 +881,7 @@ document.getElementById("logotable").style.display = 'none';
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
             <br><br>
-            For a PNG, simply press 'p'.
+            For a PNG, simply press 'ctrl+p'.
             <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
@@ -1042,7 +1042,7 @@ document.getElementById("logotable").style.display = 'none';
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
             <br><br>
-            For a PNG, simply press 'p'.
+            For a PNG, simply press 'ctrl+p'.
             <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
@@ -1204,7 +1204,7 @@ document.getElementById("logotable").style.display = 'none';
             <br>
             Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
             <br><br>
-            For a PNG, simply press 'p'.
+            For a PNG, simply press 'ctrl+p'.
             <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
