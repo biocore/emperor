@@ -30,7 +30,8 @@ class EmperorLogicError(ValueError):
     pass
 
 def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
-                    coords_low=None, coords_high=None, number_of_axes=10):
+                    coords_low=None, coords_high=None, number_of_axes=10, 
+                    number_of_segments=8):
     """Write the javascript necessary to represent a pcoa file in emperor
 
     Inputs:
@@ -41,6 +42,8 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     custom_axes: list of category names for the custom axes
     coords_low: coordinates representing the lower edges of an ellipse
     coords_high: coordinates representing the highere edges of an ellipse
+    number_of_axes: number of axes to be returned
+    number_of_segments: number of segments and rings for each sphere 
 
     Output:
     string: javascript representation of the PCoA data inputed, contains a list
@@ -98,8 +101,9 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
                 "'color': 0, 'width': %f, 'height': %f, 'length': %f , 'x': %f,"
                 " 'y': %f, 'z': %f, %s }\n" % (s_header, s_header,delta[0], delta[1],
                 delta[2], s_coord[0], s_coord[1], s_coord[2], all_coords))
-
-    js_pcoa_string += 'var g_segments = 16, g_rings = 16, g_radius = %f;\n' % (radius)
+    
+    js_pcoa_string += 'var g_segments = %d, g_rings = %d, g_radius = %f;\n' % (number_of_segments, 
+        number_of_segments, radius)
     js_pcoa_string += 'var g_xAxisLength = %f;\n' % (abs(max_x)+abs(min_x))
     js_pcoa_string += 'var g_yAxisLength = %f;\n' % (abs(max_y)+abs(min_y))
     js_pcoa_string += 'var g_zAxisLength = %f;\n' % (abs(max_z)+abs(min_z))
@@ -409,7 +413,11 @@ EMPEROR_HEADER_HTML_STRING =\
     <script src="emperor_required_resources/js/js/Detector.js"></script>
     <script src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
     <script src="emperor_required_resources/emperor/js/emperor.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/THREEx.screenshot.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/FileSaver.min.js"></script>
+    
     <script type="text/javascript">
+    
 """
 
 _ELLIPSE_OPACITY_SLIDER = """
@@ -558,7 +566,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <br>
             <form name="settingsoptionscolor">
@@ -582,9 +590,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
             <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
+            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <br><br>
+            For a PNG, simply press 'ctrl+p'.
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>

@@ -199,7 +199,13 @@ script_info['optional_options'] = [
     default=None),
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
     'output directory that will contain the PCoA plot. [default: %default]',
-    default='emperor')
+    default='emperor'),
+    make_option('--number_of_segments', type="int", help='the number of segments to '
+    'generate any spheres, this includes the samples, the taxa (biplots), and the '
+    'confidence intervals (jackknifing). Higher values will result in better quality but '
+    'can make the plots less responsive, also it will make the resulting SVG images '
+    'bigger. The value should be between 4 and 14. [default: %default]', 
+    default=8),
 ]
 script_info['version'] = __version__
 
@@ -223,11 +229,16 @@ def main():
     verbose_output = opts.verbose
     number_of_axes = opts.number_of_axes
     compare_plots = opts.compare_plots
+    number_of_segments = opts.number_of_segments
     
     # verifying that the number of axes requested is greater than 3
     if number_of_axes<3:
         option_parser.error(('You need to plot at least 3 axes.'))
-    
+        
+    # verifying that the number of segments is between the desired range
+    if number_of_segments<4 or number_of_segments>14:
+        option_parser.error(('number_of_segments should be between 4 and 14.'))
+        
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
     offending_fields = []
@@ -543,7 +554,8 @@ def main():
     try:
         fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
             coords_eigenvalues, coords_pct, custom_axes, coords_low,
-            coords_high, number_of_axes=number_of_axes))
+            coords_high, number_of_axes=number_of_axes, 
+            number_of_segments=number_of_segments))
     except EmperorLogicError, e:
         option_parser.error(e.message)
 
