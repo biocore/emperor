@@ -109,6 +109,14 @@ class TopLevelTests(TestCase):
         self.assertRaises(EmperorLogicError, format_pcoa_to_js,
             self.pcoa_headers, self.pcoa_coords, self.pcoa_eigen_values,
             self.pcoa_pct_var_really_low)
+            
+        # test segments
+        out_js_pcoa_string = format_pcoa_to_js(self.pcoa_jk_headers,
+            self.pcoa_jk_coords, self.pcoa_jk_eigen_values,
+            self.pcoa_jk_pct_var, coords_low=self.pcoa_jk_coords_low,
+            coords_high=self.pcoa_jk_coords_high, number_of_segments=14)
+        self.assertEquals(out_js_pcoa_string, PCOA_JS_SEGMENTS)
+
 
     def test_format_mapping_file_to_js(self):
         """Tests correct formatting of the metadata mapping file"""
@@ -240,7 +248,7 @@ g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': -0.293353, 'y
 g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': -0.183191, 'y': 34912.621000, 'z': 0.008695, 'P1': -0.183191, 'P2': 34912.621000, 'P3': 0.008695, 'P4': -0.027388, 'P5': -0.052865, 'P6': -0.025058, 'P7': -0.052142, 'P8': 0.038200 };
 
 var g_ellipsesDimensions = new Array();
-var g_segments = 16, g_rings = 16, g_radius = 0.006899;
+var g_segments = 8, g_rings = 8, g_radius = 0.006899;
 var g_xAxisLength = 0.574888;
 var g_yAxisLength = 34912.787234;
 var g_zAxisLength = 0.276989;
@@ -272,7 +280,7 @@ g_spherePositions['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': -0.293353, 'y
 g_spherePositions['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': -0.183191, 'y': 34912.621000, 'z': 0.008695, 'P1': -0.183191, 'P2': 34912.621000, 'P3': 0.008695, 'P4': -0.027388, 'P5': -0.052865, 'P6': -0.025058, 'P7': -0.052142, 'P8': 0.038200 };
 
 var g_ellipsesDimensions = new Array();
-var g_segments = 16, g_rings = 16, g_radius = 0.006899;
+var g_segments = 8, g_rings = 8, g_radius = 0.006899;
 var g_xAxisLength = 0.574888;
 var g_yAxisLength = 34912.787234;
 var g_zAxisLength = 0.276989;
@@ -303,7 +311,38 @@ g_ellipsesDimensions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'width
 g_ellipsesDimensions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'width\': 0.100000, \'height\': 2.000000, \'length\': 0.000000 , \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000, \'P1\': 1.100000, \'P2\': 1.100000, \'P3\': 1.000000, \'P4\': 0.800000 }
 g_ellipsesDimensions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'width\': 0.300000, \'height\': 0.600000, \'length\': 4.000000 , \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000, \'P1\': 0.100000, \'P2\': 3.300000, \'P3\': 5.500000, \'P4\': 0.100000 }
 g_ellipsesDimensions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'width\': 0.010780, \'height\': 1.000000, \'length\': 0.023000 , \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000, \'P1\': 1.000000, \'P2\': 2.000000, \'P3\': 1.000000, \'P4\': 1.000000 }
-var g_segments = 16, g_rings = 16, g_radius = 0.012000;
+var g_segments = 8, g_rings = 8, g_radius = 0.012000;
+var g_xAxisLength = 1.200000;
+var g_yAxisLength = 3.800000;
+var g_zAxisLength = 5.600000;
+var g_xMaximumValue = 1.100000;
+var g_yMaximumValue = 3.300000;
+var g_zMaximumValue = 5.500000;
+var g_xMinimumValue = 0.100000;
+var g_yMinimumValue = 0.500000;
+var g_zMinimumValue = 0.100000;
+var g_maximum = 5.500000;
+var g_pc1Label = "PC1 (44 %)";
+var g_pc2Label = "PC2 (40 %)";
+var g_pc3Label = "PC3 (15 %)";
+var g_number_of_custom_axes = 0;
+var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
+var g_fractionExplainedRounded = [44, 40, 15, 1];
+"""
+
+PCOA_JS_SEGMENTS = """
+var g_spherePositions = new Array();
+g_spherePositions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000, \'P1\': 0.300000, \'P2\': 0.500000, \'P3\': 0.100000, \'P4\': 0.300000 };
+g_spherePositions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000, \'P1\': 1.100000, \'P2\': 1.100000, \'P3\': 1.000000, \'P4\': 0.800000 };
+g_spherePositions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000, \'P1\': 0.100000, \'P2\': 3.300000, \'P3\': 5.500000, \'P4\': 0.100000 };
+g_spherePositions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000, \'P1\': 1.000000, \'P2\': 2.000000, \'P3\': 1.000000, \'P4\': 1.000000 };
+
+var g_ellipsesDimensions = new Array();
+g_ellipsesDimensions[\'PC.355\'] = { \'name\': \'PC.355\', \'color\': 0, \'width\': 0.400000, \'height\': 0.500000, \'length\': 0.800000 , \'x\': 0.300000, \'y\': 0.500000, \'z\': 0.100000, \'P1\': 0.300000, \'P2\': 0.500000, \'P3\': 0.100000, \'P4\': 0.300000 }
+g_ellipsesDimensions[\'PC.607\'] = { \'name\': \'PC.607\', \'color\': 0, \'width\': 0.100000, \'height\': 2.000000, \'length\': 0.000000 , \'x\': 1.100000, \'y\': 1.100000, \'z\': 1.000000, \'P1\': 1.100000, \'P2\': 1.100000, \'P3\': 1.000000, \'P4\': 0.800000 }
+g_ellipsesDimensions[\'PC.634\'] = { \'name\': \'PC.634\', \'color\': 0, \'width\': 0.300000, \'height\': 0.600000, \'length\': 4.000000 , \'x\': 0.100000, \'y\': 3.300000, \'z\': 5.500000, \'P1\': 0.100000, \'P2\': 3.300000, \'P3\': 5.500000, \'P4\': 0.100000 }
+g_ellipsesDimensions[\'PC.635\'] = { \'name\': \'PC.635\', \'color\': 0, \'width\': 0.010780, \'height\': 1.000000, \'length\': 0.023000 , \'x\': 1.000000, \'y\': 2.000000, \'z\': 1.000000, \'P1\': 1.000000, \'P2\': 2.000000, \'P3\': 1.000000, \'P4\': 1.000000 }
+var g_segments = 14, g_rings = 14, g_radius = 0.012000;
 var g_xAxisLength = 1.200000;
 var g_yAxisLength = 3.800000;
 var g_zAxisLength = 5.600000;
@@ -507,7 +546,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <div id="pcoaviewoptions" class="">
                 <br>
@@ -535,9 +574,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
             <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
+            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <br><br>
+            For a PNG, simply press 'ctrl+p'.
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
@@ -676,7 +721,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <div id="pcoaviewoptions" class="">
                 <br>
@@ -700,9 +745,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
             <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
+            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <br><br>
+            For a PNG, simply press 'ctrl+p'.
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
@@ -828,7 +879,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <div id="pcoaviewoptions" class="">
                 <br>
@@ -852,9 +903,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
             <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
+            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <br><br>
+            For a PNG, simply press 'ctrl+p'.
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
@@ -979,7 +1036,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <div id="pcoaviewoptions" class="">
                 <br>
@@ -1007,9 +1064,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
             <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
+            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <br><br>
+            For a PNG, simply press 'ctrl+p'.
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
@@ -1134,7 +1197,7 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor"class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             <tr><td><div id="edgecolorselector_a" class="colorbox" name="edgecolorselector_a"></div></td><td title="edgecolor_a">Edge Color Selector A</td></tr>
             <tr><td><div id="edgecolorselector_b" class="colorbox" name="edgecolorselector_b"></div></td><td title="edgecolor_b">Edge Color Selector B</td></tr>
 
@@ -1166,9 +1229,15 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="settings">
             <br>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()">
+            Filename <small>(only letters, numbers, ., - and _)</small>:
             <br>
+            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
+            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <br><br>
+            For a PNG, simply press 'ctrl+p'.
+            <br><br>
             <div id="pcoaoptions" class="">
                 <form name="settingsoptions">
                     <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
