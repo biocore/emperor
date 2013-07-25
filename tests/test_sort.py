@@ -14,7 +14,8 @@ __status__ = "Development"
 
 from numpy import array
 from cogent.util.unit_test import TestCase, main
-from emperor.sort import sort_taxa_table_by_pcoa_coords
+from emperor.sort import (sort_taxa_table_by_pcoa_coords,
+    sort_comparison_filenames)
 
 class TopLevelTests(TestCase):
     def setUp(self):
@@ -37,8 +38,71 @@ class TopLevelTests(TestCase):
         self.coords_header = ['PC.354','PC.356','PC.481','PC.593',
             'PC.355','PC.607','PC.634', 'PC.636', 'PC.635']
 
+        self.coord_fps = ['output_data/emperor/bray_curtis_pc_transformed_q1.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q10.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q11.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q12.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q13.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q14.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q15.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q16.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q17.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q18.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q19.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q2.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q20.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q21.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q22.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q23.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q24.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q25.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q26.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q27.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q28.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q29.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q3.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q4.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q5.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q6.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q7.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q8.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q9.txt']
+
+        self.coord_fps_garbage = [
+            'output_data/emperor/bray_qurtis_pc_transformed_q1.txt',
+            'output_data/emperor/bray_111urtis_q_transformed_q10.txt',
+            'output_data/emperor/aaaaaaa.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q12.txt',
+            'output_data/emperor/qqq2223_curtis_qc_transformed_q13.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q14.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_reference.txtoutput_data/emperor/bray_curtis_pc_transformed_q15.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q16.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q17.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q18.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q19.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q2.txt',
+            'output_data/emperor/boom.txt',
+            'output_data/emperor/another_file with some characters and stuff .txt',
+            'output_data/emperor/some_other_file_that_foo_wants_to_compare.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q23.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q24.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q25.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q26.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q27.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q28.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q29.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q3.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q4.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q5.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q6.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q7.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q8.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q9.txt']
+
+
+
     def test_sort_taxa_table_by_pcoa_coords(self):
-        """ """
+        """Make sure OTU table and coordinates are sorted equally"""
 
         # case with shuffled inputs
         o_headers, o_otu_table = sort_taxa_table_by_pcoa_coords(
@@ -57,6 +121,80 @@ class TopLevelTests(TestCase):
             0.03333333, 0.02013423],[0.41610738, 0.22, 0.45637584],[0.03355705,
             0.01333333, 0.02013423],[0., 0.01333333, 0.],[0.14765101,
             0.02666667, 0.16107383]]))
+
+    def test_sort_comparison_filenames_regular(self):
+        """Check filenames are sorted correctly"""
+
+        # check it correctly sorts the files according to the suffix
+        out_sorted = sort_comparison_filenames(self.coord_fps)
+        self.assertEquals(out_sorted, [
+            'output_data/emperor/bray_curtis_pc_transformed_q1.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q2.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q3.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q4.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q5.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q6.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q7.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q8.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q9.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q10.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q11.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q12.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q13.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q14.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q15.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q16.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q17.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q18.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q19.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q20.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q21.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q22.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q23.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q24.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q25.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q26.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q27.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q28.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q29.txt'])
+
+        # if files with garbage are passed in, the sorting should be still
+        # consistent,putting the "garbaged" filenames at the beginning
+        out_sorted = sort_comparison_filenames(self.coord_fps_garbage)
+        self.assertEquals(out_sorted, ['output_data/emperor/aaaaaaa.txt',
+            'output_data/emperor/boom.txt',
+            'output_data/emperor/another_file with some characters and stuff .txt',
+            'output_data/emperor/some_other_file_that_foo_wants_to_compare.txt',
+            'output_data/emperor/bray_qurtis_pc_transformed_q1.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q2.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q3.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q4.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q5.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q6.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q7.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q8.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q9.txt',
+            'output_data/emperor/bray_111urtis_q_transformed_q10.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q12.txt',
+            'output_data/emperor/qqq2223_curtis_qc_transformed_q13.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q14.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_reference.txtoutput_data/emperor/bray_curtis_pc_transformed_q15.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q16.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q17.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q18.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q19.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q23.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q24.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q25.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q26.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q27.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q28.txt',
+            'output_data/emperor/bray_curtis_pc_transformed_q29.txt'])
+
+        # make sure nothing happens when an empty list is passed
+        self.assertEquals(sort_comparison_filenames([]), [])
+
+
 
 COORDS = array([[0.280399117569, -0.0060128286014, 0.0234854344148, -0.0468109474823, -0.146624450094, 0.00566979124596, -0.0354299634191, -0.255785794275, -4.84141986706e-09],
 [0.228820399536, -0.130142097093, -0.287149447883, 0.0864498846421, 0.0442951919304, 0.20604260722, 0.0310003571386, 0.0719920436501, -4.84141986706e-09],

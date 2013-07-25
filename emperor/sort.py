@@ -11,8 +11,8 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
-
 from numpy import zeros
+from re import compile, search
 
 def sort_taxa_table_by_pcoa_coords(coords_header, otu_table, otu_header):
     """Sort and match the samples in the otu table and in the coordinates data
@@ -48,3 +48,39 @@ def sort_taxa_table_by_pcoa_coords(coords_header, otu_table, otu_header):
             sorted_otu_headers.append(element)
 
     return sorted_otu_headers, sorted_otu_table
+
+def sort_comparison_filenames(coord_fps):
+    """Pass in a list of file names and sort them using the suffix
+
+    Input:
+    coord_fps: list of filenames with the format something_something_qX.txt
+    where X is the index of the file.
+
+    Output:
+    Returns a sorted version of the list that was passed in where the strings
+    are sorted according to the suffix they have, if the string doesn't have
+    a suffix it will be added to the beginning of the list.
+    """
+
+    if coord_fps == []:
+        return []
+
+    def _get_suffix(fp):
+        """Gets the number in the suffix for a string using a regex"""
+        # any alphanumeric set of characters proceeded by a q a number, a dot
+        # & a txt extension. For example: bray_curtis_q1.txt or unifrac_q11.txt 
+        re = compile(r'(\w+)_q([0-9]+).txt')
+        tmatch = search(re, fp)
+
+        try:
+            number = tmatch.group(2)
+        # if the regex doesn't match then put it at the beginning
+        except (IndexError, AttributeError):
+            number = -1
+
+        return float(number)
+
+    # the key function retrieves the suffix number for the function to sort
+    # according to it's floating point representation i. e. the cast to float
+    return sorted(coord_fps, key=_get_suffix)
+
