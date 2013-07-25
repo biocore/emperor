@@ -23,6 +23,7 @@ from qiime.util import (parse_command_line_parameters, make_option, create_dir,
 from qiime.biplots import make_biplot_scores_output
 
 from emperor.biplots import preprocess_otu_table
+from emperor.sort import sort_comparison_filenames
 from emperor.filter import keep_samples_from_pcoa_data
 from emperor.util import (copy_support_files, preprocess_mapping_file,
     preprocess_coords_file, fill_mapping_field_from_mapping_file, 
@@ -301,6 +302,12 @@ def main():
         # passing a master file means that the comparison is not serial
         elif master_pcoa and compare_plots:
             serial_comparison = False
+
+            # guarantee that the master is the first and is not repeated
+            if master_pcoa in  coord_fps:
+                coord_fps.remove(master_pcoa)
+                coord_fps = [master_pcoa] + sort_comparison_filenames(coord_fps)
+
         # QIIME generates folders of transformed coordinates for the specific
         # purpose of connecting all coordinates to a set of origin coordinates.
         # The name of this file is suffixed as _transformed_reference.txt
@@ -316,7 +323,7 @@ def main():
             # will be: ['unifrac_transformed_reference.txt',
             # 'unifrac_transformed_q1.txt', 'unifrac_transformed_q2.txt'] etc
             coord_fps.remove(master_pcoa)
-            coord_fps = [master_pcoa] + sorted(coord_fps)
+            coord_fps = [master_pcoa] + sort_comparison_filenames(coord_fps)
 
         for fp in coord_fps:
             try:
