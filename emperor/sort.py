@@ -67,9 +67,10 @@ def sort_comparison_filenames(coord_fps):
 
     def _get_suffix(fp):
         """Gets the number in the suffix for a string using a regex"""
-        # any alphanumeric set of characters proceeded by a q a number, a dot
-        # & a txt extension. For example: bray_curtis_q1.txt or unifrac_q11.txt 
-        re = compile(r'(\w+)_q([0-9]+).txt')
+        # any alphanumeric set of characters proceeded by a 'q', a number, a dot
+        # & a txt extension at the end of the line. Take for example 
+        # bray_curtis_q1.txt or unifrac_q11.txt
+        re = compile(r'(\w+)_q([0-9]+).txt$')
         tmatch = search(re, fp)
 
         try:

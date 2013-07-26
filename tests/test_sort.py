@@ -191,9 +191,22 @@ class TopLevelTests(TestCase):
             'output_data/emperor/bray_curtis_pc_transformed_q28.txt',
             'output_data/emperor/bray_curtis_pc_transformed_q29.txt'])
 
+        # tricky case with extensions in things that are not the filename
+        out_sorted = sort_comparison_filenames([
+            'output_data_q1.txt/emperor/bray_curtis_pc_transformed_q9.txt',
+            'output_data/emperorq11.txt/bray_curtis_pc_transformed_q2.txt',
+            'output_data_q44.txt/emperor/bray_curtis_pc_transformed_q11.txt',
+            'output_dataq-5.txt/emperor/bray_curtis_pc_transformed_q3.txt',
+            'output_data_q511.txt/emperor/bray_curtis_pc_transformed_q1.txt'])
+        self.assertEquals(out_sorted, [
+            'output_data_q511.txt/emperor/bray_curtis_pc_transformed_q1.txt',
+            'output_data/emperorq11.txt/bray_curtis_pc_transformed_q2.txt',
+            'output_dataq-5.txt/emperor/bray_curtis_pc_transformed_q3.txt',
+            'output_data_q1.txt/emperor/bray_curtis_pc_transformed_q9.txt',
+            'output_data_q44.txt/emperor/bray_curtis_pc_transformed_q11.txt'])
+
         # make sure nothing happens when an empty list is passed
         self.assertEquals(sort_comparison_filenames([]), [])
-
 
 
 COORDS = array([[0.280399117569, -0.0060128286014, 0.0234854344148, -0.0468109474823, -0.146624450094, 0.00566979124596, -0.0354299634191, -0.255785794275, -4.84141986706e-09],
