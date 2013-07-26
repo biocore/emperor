@@ -307,13 +307,16 @@ def format_vectors_to_js(mapping_file_data, mapping_file_headers, coords_data,
 
     return ''.join(js_vectors_string)
 
-def format_comparison_bars_to_js(coords_data, coords_headers, clones):
+def format_comparison_bars_to_js(coords_data, coords_headers, clones,
+                                is_serial_comparison=True):
     """Format coordinates data to create a comparison plot
 
     Inputs:
     coords_data: numpy array with the replicated coordinates
     cooreds_headers: list with the headers for each of replicated coordinates
     clones: number of replicates in the coords_data and coords_headers
+    is_serial_comparison: whether the samples will be connected one after the
+    other (True) or all will originate in the first set of coordinates.
 
     Outputs:
     Javascript object that contains the data for the comparison plot
@@ -323,10 +326,18 @@ def format_comparison_bars_to_js(coords_data, coords_headers, clones):
     length.
     AssertionError if the number of clones doesn't concord with the samples
     being presented.
+
+    Unless the value of clones is > 0 this function will return an empty
+    javascript object initialization.
     """
 
     js_comparison_string = []
     js_comparison_string.append('\nvar g_comparisonPositions = new Array();\n')
+
+    if is_serial_comparison:
+        js_comparison_string.append('var g_isSerialComparisonPlot = true;\n')
+    else:
+        js_comparison_string.append('var g_isSerialComparisonPlot = false;\n')
 
     if clones:
         headers_length = len(coords_headers)
@@ -367,6 +378,9 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
 
     has_biplots: whether the plot has biplots or not
     has_ellipses: whether the plot has ellipses or not
+    has_vectors: whether the plot has vectors or not
+    has_edges: whether the plot has edges between samples (comparison plot)
+
 
     This function will remove unnecessary GUI elements from index.html to avoid
     confusions i. e. showing an ellipse opacity slider when there are no
@@ -378,6 +392,7 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
     optional_strings.append(if_(has_biplots, _BIPLOT_SPHERES_COLOR_SELECTOR,''))
     optional_strings.append(if_(has_biplots, _BIPLOT_VISIBILITY_SELECTOR, ''))
     optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
+    optional_strings.append(if_(has_edges, _EDGES_COLOR_SELECTOR, ''))
     optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
     optional_strings.append(if_(has_vectors, _VECTORS_OPACITY_SLIDER, ''))
     optional_strings.append(if_(has_edges, _EDGES_VISIBILITY_SELECTOR, ''))
@@ -454,9 +469,14 @@ _BIPLOT_SPHERES_COLOR_SELECTOR ="""
 _EDGES_VISIBILITY_SELECTOR = """
             <br>
             <form name="edgesvisibility">
-            <input type="checkbox" onClick="toggleEdgesVisibility()">Edges Visibility</input>
+            <input type="checkbox" onClick="toggleEdgesVisibility()" checked>Edges Visibility</input>
             </form>
             <br>"""
+
+_EDGES_COLOR_SELECTOR = """
+            <tr><td><div id="edgecolorselector_a" class="colorbox" name="edgecolorselector_a"></div></td><td title="edgecolor_a">Edge Color Selector A</td></tr>
+            <tr><td><div id="edgecolorselector_b" class="colorbox" name="edgecolorselector_b"></div></td><td title="edgecolor_b">Edge Color Selector B</td></tr>
+"""
 
 _EMPEROR_FOOTER_HTML_STRING ="""document.getElementById("logo").style.display = 'none';
 document.getElementById("logotable").style.display = 'none';
@@ -566,16 +586,16 @@ document.getElementById("logotable").style.display = 'none';
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>%s
             </table>
-            <br>
-            <form name="settingsoptionscolor">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
-            </form>
             <div id="pcoaviewoptions" class="">
                 <br>
                 <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br>%s%s%s
+                <br>
+                <br>
+                <form name="settingsoptionscolor">
+                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+                </form>%s%s%s
                 <br>
                 <label for="sphereopacity" class="text">Sphere Opacity</label>
                 <label id="sphereopacity" class="slidervalue"></label>

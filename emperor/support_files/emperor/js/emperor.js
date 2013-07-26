@@ -130,6 +130,9 @@ function toggleScaleCoordinates(element) {
 	var axesLen;
 	var operation;
 
+	// used only for vector and edges re-drawing
+	var currentPosition = [], currentColor = 0x000000;
+
 	if (!isNumeric(g_fractionExplained[g_viewingAxes[0]])) {
 		alert("PC" + (g_viewingAxes[0]+1) + " is too small for this feature, change your selection.");
 		return;
@@ -140,9 +143,6 @@ function toggleScaleCoordinates(element) {
 		alert("PC" + (g_viewingAxes[2]+1) + " is too small for this feature, change your selection.");
 		return;
 	}
-	
-	// used only for the vector re-drawing
-	var currentPosition = [], currentColor;
 
 	// XOR operation for the checkbox widget, this will select an operation
 	// to perform over various properties, either a multiplication or a division
@@ -223,14 +223,14 @@ function toggleScaleCoordinates(element) {
 	for (sample_id in g_plotVectors){
 
 		// the color has to be formatted as an hex number for makeLine to work
-		currentColor = "0x"+g_plotVectors[sample_id].material.color.getHexString();
+		currentColor = g_plotVectors[sample_id].material.color.getHex();
 
 		// updating the position of a vertex in a line is a really expensive
 		// operation, hence we just remove it from the group and create it again
 		g_elementsGroup.remove(g_plotVectors[sample_id]);
 
 		for (vertex in g_plotVectors[sample_id].geometry.vertices){
-			currentPosition[vertex] = g_plotVectors[sample_id].geometry.vertices[vertex].position;
+			currentPosition[vertex] = g_plotVectors[sample_id].geometry.vertices[vertex];
 
 			// scale the position of each of the vertices
 			currentPosition[vertex].x = operation(currentPosition[vertex].x,
@@ -249,6 +249,45 @@ function toggleScaleCoordinates(element) {
 		g_plotVectors[sample_id] = makeLine(currentPosition[0],
 			currentPosition[1], currentColor, 2);
 		g_elementsGroup.add(g_plotVectors[sample_id]);
+	}
+
+	// support scaling of edges in plot comparisons
+	for(var sample_id in g_plotEdges){
+		// each edge is composed of two separate lines
+		for(var section in g_plotEdges[sample_id]){
+
+			// the color has to be formatted as an hex number for makeLine to work
+			currentColor = g_plotEdges[sample_id][section].material.color.getHex();
+
+			// remove them completely from the group and scene we no longer need
+			// these objects as re-creating them is as expensive as modifying
+			// most of their features
+			g_elementsGroup.remove(g_plotEdges[sample_id][section])
+			g_mainScene.remove(g_plotEdges[sample_id][section])
+
+			for (vertex in g_plotEdges[sample_id][section].geometry.vertices){
+				currentPosition[vertex] = g_plotEdges[sample_id][section].geometry.vertices[vertex];
+
+				// scale the position of each of the vertices
+				currentPosition[vertex].x = operation(currentPosition[vertex].x,
+					g_fractionExplained[g_viewingAxes[0]])
+				currentPosition[vertex].y = operation(currentPosition[vertex].y,
+					g_fractionExplained[g_viewingAxes[1]])
+				currentPosition[vertex].z = operation(currentPosition[vertex].z,
+					g_fractionExplained[g_viewingAxes[2]])
+
+				// create an array we can pass to makeLine
+				currentPosition[vertex] = [currentPosition[vertex].x,
+					currentPosition[vertex].y, currentPosition[vertex].z]
+			}
+
+			// add the element to the main vector array and to the group
+			g_plotEdges[sample_id][section] = makeLine(currentPosition[0],
+				currentPosition[1], currentColor, 2);
+			g_elementsGroup.add(g_plotEdges[sample_id][section]);
+			g_mainScene.add(g_plotEdges[sample_id][section]);
+
+		}
 	}
 }
 
@@ -753,6 +792,17 @@ function colorChangedForTaxaSpheres(color){
 	}
 }
 
+/* This function is called when a new color is selected for the edges
+
+ The two input parameters are a hexadecimal formatted color and an index, the
+ index indicates which side of the edges are going to be re-colored.
+*/
+function colorChangedForEdges(color, index){
+	for(var sample_id in g_plotEdges){
+		currentColor = g_plotEdges[sample_id][index].material.color.setHex(color);
+	}
+}
+
 /*This function is called when a new value is selected in the label menu*/
 function labelMenuChanged() {
 	if(document.getElementById('labelcombo').selectedIndex == 0){
@@ -898,12 +948,12 @@ function toggleBiplotVisibility(){
 	// if the element is supposed to be present; 0.5 is the default value
 	if(!document.biplotsvisibility.elements[0].checked){
 		for (index in g_plotTaxa){
-			g_plotTaxa[index].material.opacity = 0;
+			g_mainScene.remove(g_plotTaxa[index]);
 		}
 	}
 	else{
 		for (index in g_plotTaxa){
-			g_plotTaxa[index].material.opacity = 0.5;
+			g_mainScene.add(g_plotTaxa[index])
 		}
 	}
 }
@@ -913,16 +963,16 @@ function toggleEdgesVisibility(){
 
 	// each edge is really composed of two lines and those elements are stored
 	// in each of the keys that are stored for each sample comparison
-	if(document.edgesvisibility.elements[0].checked){
+	if(!document.edgesvisibility.elements[0].checked){
 		for (index in g_plotEdges){
-			g_plotEdges[index][0].material.opacity = 0;
-			g_plotEdges[index][1].material.opacity = 0;
+			g_mainScene.remove(g_plotEdges[index][0]);
+			g_mainScene.remove(g_plotEdges[index][1]);
 		}
 	}
 	else{
 		for (index in g_plotEdges){
-			g_plotEdges[index][0].material.opacity = 1;
-			g_plotEdges[index][1].material.opacity = 1;
+			g_mainScene.add(g_plotEdges[index][0]);
+			g_mainScene.add(g_plotEdges[index][1]);
 		}
 	}
 }
@@ -1165,6 +1215,43 @@ function setJqueryUi() {
 		});
 	}
 
+	// check if the plot is a comparison plot if so, setup the elements that
+	// will allow the user to change the color of the two sides of the edges
+	if(document.getElementById('edgecolorselector_a')){
+		$('#edgecolorselector_a').css('backgroundColor',"#FFFFFF");
+		$("#edgecolorselector_a").spectrum({
+			localStorageKey: 'key',
+			color: "#FFFFFF",
+			preferredFormat: "hex6",
+			showInitial: true,
+			showInput: true,
+			change:
+				function(color) {
+					// pass a boolean flag to convert to hex6 string
+					var c = color.toHexString(true);
+					$(this).css('backgroundColor', c);
+					colorChangedForEdges(c.replace('#', '0x'), 0);
+				}
+		});
+	}
+	if(document.getElementById('edgecolorselector_b')){
+		$('#edgecolorselector_b').css('backgroundColor',"#FF0000");
+		$("#edgecolorselector_b").spectrum({
+			localStorageKey: 'key',
+			color: "#FFFFFF",
+			preferredFormat: "hex6",
+			showInitial: true,
+			showInput: true,
+			change:
+				function(color) {
+					// pass a boolean flag to convert to hex6 string
+					var c = color.toHexString(true);
+					$(this).css('backgroundColor', c);
+					colorChangedForEdges(c.replace('#', '0x'), 1);
+				}
+		});
+	}
+
 	$("#sopacityslider").slider({
 		range: "max",
 		min: 0,
@@ -1207,7 +1294,6 @@ function setJqueryUi() {
 	});
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
 
-	
 	//default color for axes labels is white
 	$('#axeslabelscolor').css('backgroundColor',"#FFFFFF");
 	$("#axeslabelscolor").spectrum({
@@ -1375,6 +1461,7 @@ function drawTaxa(){
 		mesh.matrixAutoUpdate = true;
 
 		// add the element to the scene and to the g_plotTaxa dictionary
+		g_elementsGroup.add(mesh)
 		g_mainScene.add(mesh);
 		g_plotTaxa[key] = mesh;
 	}
@@ -1418,53 +1505,104 @@ function drawVectors(){
 	}
 }
 
-
 /*Draw the lines that connect samples being compared (see g_comparePositiosn)
 
   This will draw two lines between each compared sample, one with color red and
-  the other one with color white, the that must be noted here is that, these two
+  the other one with color white, what must be noted here is that, these two
   lines visually compose a single line and are both stored in the g_plotEdges
   array in arrays of two elements where the first element is the red line and
   the second element is the white line.
+
+  In the case of a non-serial comparison plot, all edges will originate in the
+  same point.
 */
 function drawEdges(){
-	var current_vector, previous = null, middle_point, index=0, line_a, line_b;
+	var previous = null, origin = null, current, middle_point, index=0, line_a, line_b;
 
-	for (var sampleKey in g_comparisonPositions){
-		for (var edgePosition in g_comparisonPositions[sampleKey]){
+	// note that this function is composed of an if-else statement with a loop
+	// that's almost identical under each case. This approach was taken as
+	// otherwise the comparison would need to happen N times instead of 1 time
+	// (N is the number of edges*2).
 
-			// if we don't have a start point store it and move along
-			if (previous == null) {
-				previous = g_comparisonPositions[sampleKey][edgePosition];
+	// if the comparison is serial draw one edge after the other
+	if (g_isSerialComparisonPlot == true){
+		for (var sampleKey in g_comparisonPositions){
+			for (var edgePosition in g_comparisonPositions[sampleKey]){
+
+				// if we don't have a start point store it and move along
+				if (previous == null) {
+					previous = g_comparisonPositions[sampleKey][edgePosition];
+				}
+				// if we already have a start point then draw the edge
+				else{
+					current = g_comparisonPositions[sampleKey][edgePosition];
+
+					// the edge is composed by two lines so calculate the middle
+					// point between these two lines and end the first line in this
+					// point and start the second line in this point
+					middle_point = [(previous[0]+current[0])/2,
+						(previous[1]+current[1])/2, (previous[2]+current[2])/2];
+
+					line_a = makeLine(previous, middle_point, 0xFFFFFF, 2);
+					line_b = makeLine(middle_point, current, 0xFF0000, 2);
+					line_a.transparent = false;
+					line_b.transparent = false;
+
+					// index the two lines by the name of the sample plus a suffix
+					g_plotEdges[sampleKey+'_'+index.toString()] = [line_a, line_b];
+
+					g_elementsGroup.add(line_a);
+					g_elementsGroup.add(line_b);
+					g_mainScene.add(line_a);
+					g_mainScene.add(line_b);
+
+					// the current line becomes the previous line for the next
+					// iteration as all samples must be connected
+					previous = g_comparisonPositions[sampleKey][edgePosition];
+				}
+				index = index+1;
 			}
-			// if we already have a start point then draw the edge
-			else{
-				current = g_comparisonPositions[sampleKey][edgePosition];
 
-				// the edge is composed by two lines so calculate the middle
-				// point between these two lines and end the first line in this
-				// point and start the second line in this point
-				middle_point = [(previous[0]+current[0])/2,
-					(previous[1]+current[1])/2, (previous[2]+current[2])/2]
-
-				line_a = makeLine(previous, middle_point, 0xFF0000, 2)
-				line_b = makeLine(middle_point, current, 0xFFFFFF, 2)
-
-				// index the two lines by the name of the sample plus a suffix
-				g_plotEdges[sampleKey+'_'+toString(index)] = [line_a, line_b]
-
-				g_elementsGroup.add(line_a)
-				g_elementsGroup.add(line_b)
-
-				// the current line becomes the previous line for the next
-				// iteration as all samples must be conected
-				previous = g_comparisonPositions[sampleKey][edgePosition];
-			}
-			index = index+1;
+			// if we've finished with the connecting lines let a new line start
+			previous = null;
 		}
+	}
+	// if the comparison is not serial, originate all edges in the same coords
+	else{
+		for (var sampleKey in g_comparisonPositions){
+			for (var edgePosition in g_comparisonPositions[sampleKey]){
+				if (origin == null) {
+					origin = g_comparisonPositions[sampleKey][edgePosition];
+				}
+				else{
+					current = g_comparisonPositions[sampleKey][edgePosition];
 
-		// if we've finished with the connecting lines let a new line start
-		previous = null;
+					// edges are composed of two lines so use the start and
+					// the end point to calculate the position of the vertices
+					middle_point = [(origin[0]+current[0])/2,
+						(origin[1]+current[1])/2, (origin[2]+current[2])/2];
+
+					// in the case of centered comparisons the origins are
+					// painted in color white one one side and red on the other
+					line_a = makeLine(origin, middle_point, 0xFFFFFF, 2);
+					line_b = makeLine(middle_point, current, 0xFF0000, 2);
+					line_a.transparent = false;
+					line_b.transparent = false;
+
+					// given that these are just sample repetitions just
+					// just add a suffix at the end of the sample id
+					g_plotEdges[sampleKey+'_'+index.toString()] = [line_a, line_b];
+
+					g_elementsGroup.add(line_a);
+					g_elementsGroup.add(line_b);
+					g_mainScene.add(line_a);
+					g_mainScene.add(line_b);
+
+				}
+				index = index + 1;
+			}
+			origin = null;
+		}
 	}
 }
 
@@ -1541,7 +1679,7 @@ function saveSVG(button){
     $('body').css('cursor','default');
 }
 
-/*Utility function to draw two vertices lines at a time
+/*Utility function to draw two-vertices lines at a time
 
   This function allows you to create a line with only two vertices i. e. the
   start point and the end point, plus the color and width of the line. The
@@ -1564,7 +1702,7 @@ function makeLine(coords_a, coords_b, color, width){
 	geometry.vertices.push(new THREE.Vector3(coords_a[0], coords_a[1], coords_a[2]));
 	geometry.vertices.push(new THREE.Vector3(coords_b[0], coords_b[1], coords_b[2]));
 
-	// the line will contain the two vertices and the describecd material
+	// the line will contain the two vertices and the described material
 	line = new THREE.Line(geometry, material);
 
 	return line;
@@ -1576,18 +1714,30 @@ function makeLine(coords_a, coords_b, color, width){
   displayed uses.
 */
 function drawAxisLines() {
+	var axesColorFromColorPicker;
+
 	// removing axes, if they do not exist the scene doesn't complain
 	g_mainScene.remove(g_xAxisLine);
 	g_mainScene.remove(g_yAxisLine);
 	g_mainScene.remove(g_zAxisLine);
-	
+
+	// value should be retrieved from the picker every time the axes are drawn
+	axesColorFromColorPicker = $("#axescolor").spectrum("get").toHexString(true);
+	axesColorFromColorPicker = axesColorFromColorPicker.replace('#','0x')
+	axesColorFromColorPicker = parseInt(axesColorFromColorPicker, 16)
+
 	// one line for each of the axes
 	g_xAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
-		[g_xMaximumValue, g_yMinimumValue, g_zMinimumValue], 0xFFFFFF, 3);
+		[g_xMaximumValue, g_yMinimumValue, g_zMinimumValue], axesColorFromColorPicker, 3);
 	g_yAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
-		[g_xMinimumValue, g_yMaximumValue, g_zMinimumValue], 0xFFFFFF, 3);
+		[g_xMinimumValue, g_yMaximumValue, g_zMinimumValue], axesColorFromColorPicker, 3);
 	g_zAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
-		[g_xMinimumValue, g_yMinimumValue, g_zMaximumValue], 0xFFFFFF, 3);
+		[g_xMinimumValue, g_yMinimumValue, g_zMaximumValue], axesColorFromColorPicker, 3);
+
+	// axes shouldn't be transparent
+	g_xAxisLine.material.transparent = false;
+	g_yAxisLine.material.transparent = false;
+	g_zAxisLine.material.transparent = false;
 
 	g_mainScene.add(g_xAxisLine)
 	g_mainScene.add(g_yAxisLine)
@@ -1599,7 +1749,7 @@ function changePointCount() {
 	document.getElementById('pointCount').innerHTML = g_visiblePoints+'/'+g_plotIds.length+' points'
 }
 
-/* Validating and modifying the view axes */	
+/* Validating and modifying the view axes */
 function changeAxesDisplayed() {
 	if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
 			!jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
@@ -2001,7 +2151,7 @@ $(document).ready(function() {
 
 		var labelCoordinates;
 
-		// reposistion the labels for the axes in the 3D plot
+		// reposition the labels for the axes in the 3D plot
 		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue), g_sceneCamera,$('#main_plot'));
 		$("#pc1_label").css('left', labelCoordinates['x'])
 		$("#pc1_label").css('top', labelCoordinates['y'])

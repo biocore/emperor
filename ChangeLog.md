@@ -18,6 +18,8 @@ Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 * Export to SVG your visualization.
 * Emperor now relies on QIIME 1.7.0.
 * Added option `--number_of_segments` to control the quality of all spheres
+* Add color pickers for connecting bars in coordinate comparison plots.
+* Add option to select a master set of coordinates when making a comparison plot.
 
 *Bug Fixes*
 
@@ -25,6 +27,9 @@ Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 * Category names are sorted alphabetically.
 * Category names with non-alphanumeric characters are colored correctly now.
 * Biplots checkbox now accurately reflects status of biplot visiblity rather than opposite.
+* Comparison bars checkbox now accurately reflects status of the visiblity rather than opposite.
+* Scaling by percent explained now works with vectors and coordinate comparison plots.
+* Fixed bug where only the first bars in coordinate comparison plots could be hidden.
 
 Emperor 0.9.0 (14 May 2013)
 ===========================
