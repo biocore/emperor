@@ -672,6 +672,8 @@ document.getElementById("logotable").style.display = 'none';
             <div id="labelColorHolder clearfix">
             <table>
                 <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+            <tr><td><div id="taxalabelcolor" class="colorbox"></div></td><td><label>Taxa Label Color</label></td></tr>
+
             </table></div>
         </div>
             <br>

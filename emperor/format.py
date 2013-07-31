@@ -378,6 +378,7 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
     optional_strings.append(if_(has_biplots, _BIPLOT_SPHERES_COLOR_SELECTOR,''))
     optional_strings.append(if_(has_biplots, _BIPLOT_VISIBILITY_SELECTOR, ''))
     optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
+    optional_strings.append(if_(has_biplots, _TAXA_LABELS_COLOR_SELECTOR, ''))
     optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
     optional_strings.append(if_(has_vectors, _VECTORS_OPACITY_SLIDER, ''))
     optional_strings.append(if_(has_edges, _EDGES_VISIBILITY_SELECTOR, ''))
@@ -436,6 +437,10 @@ _TAXA_LABELS_SELECTOR = """
             <form name="biplotoptions">
             <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
             </form>"""
+
+_TAXA_LABELS_COLOR_SELECTOR = """
+            <tr><td><div id="taxalabelcolor" class="colorbox"></div></td><td><label>Taxa Label Color</label></td></tr>
+"""
 
 _BIPLOT_VISIBILITY_SELECTOR = """
             <br>
@@ -546,7 +551,7 @@ document.getElementById("logotable").style.display = 'none';
             <div id="lopacityslider" class="slider-range-max"></div>
             <div id="labelColorHolder clearfix">
             <table>
-                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>%s
             </table></div>
         </div>
             <br>
