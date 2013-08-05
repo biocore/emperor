@@ -23,6 +23,7 @@ from qiime.util import (parse_command_line_parameters, make_option, create_dir,
 from qiime.biplots import make_biplot_scores_output
 
 from emperor.biplots import preprocess_otu_table
+from emperor.sort import sort_comparison_filenames
 from emperor.filter import keep_samples_from_pcoa_data
 from emperor.util import (copy_support_files, preprocess_mapping_file,
     preprocess_coords_file, fill_mapping_field_from_mapping_file, 
@@ -62,14 +63,15 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     " to use for the missing values: ", "%prog -i unweighted_unifrac_pc.txt -m "
     "Fasting_Map_modified.txt -a DOB -o pcoa_dob_with_missing_custom_axes_value"
     "s -x 'DOB:20060000'"),
-    ("PCoA plot with an explicit axis and using --missing_custom_axes_values but "
-    "setting different values based on another column", "Create a PCoA plot with an "
-    "axis of the plot representing the 'DOB' of the samples and defining the position "
-    "over the gradient of those samples missing a numeric value but using as reference "
-    "another column of the mapping file. In this case we are going to plot the samples "
-    "that are Control on the Treatment column on 20080220 and on 20080240 those that "
-    "are Fast:", "%prog -i unweighted_unifrac_pc.txt -m Fasting_Map_modified.txt -a DOB "
-    "-o pcoa_dob_with_missing_custom_axes_with_multiple_values -x "
+    ("PCoA plot with an explicit axis and using --missing_custom_axes_values "
+    "but setting different values based on another column", "Create a PCoA plot"
+    " with an axis of the plot representing the 'DOB' of the samples and "
+    "defining the position over the gradient of those samples missing a numeric"
+    " value but using as reference another column of the mapping file. In this "
+    "case we are going to plot the samples that are Control on the Treatment "
+    "column on 20080220 and on 20080240 those that are Fast:", "%prog -i "
+    "unweighted_unifrac_pc.txt -m Fasting_Map_modified.txt -a DOB -o "
+    "pcoa_dob_with_missing_custom_axes_with_multiple_values -x "
     "'DOB:Treatment==Control=20080220' -x 'DOB:Treatment==Fast=20080240'"),    
     ("Jackknifed principal coordinates analysis plot", "Create a jackknifed "
     "PCoA plot (with confidence intervals for each sample) passing as the input"
@@ -178,25 +180,30 @@ script_info['optional_options'] = [
     ' the "--taxa_fp" file to display. Passing "-1" will cause to display all '
     'the taxonomic groups, this option is only used when creating BiPlots. '
     '[default=%default]', default=10, type='int'),
-    make_option('-s', '--master_pcoa', help='Used only when plotting ellipsoids'
-    ' for jackknifed beta diversity (i.e. using a directory of coord files'
-    ' instead of a single coord file). The coordinates in this file will be the'
-    ' center of each ellipisoid. [default: arbitrarily selected file from the '
-    'input directory]', default=None, type='existing_filepath'),
+    make_option('-s', '--master_pcoa', help='Used only when the input is a '
+    'directory of coordinate files i. e. for jackknifed beta diversity plot or'
+    ' for a coordinate comparison plot (procrustes analysis). The coordinates '
+    'in this file will be the center of each ellipsoid in the case of a '
+    'jackknifed PCoA plot or the center where the connecting arrows originate '
+    'from for a comparison plot. [default: arbitrarily selected file from the '
+    'input directory for a jackknifed plot or None for a comparison plot in '
+    'this case one file will be connected to the next one and so on]',
+    default=None, type='existing_filepath'),
     make_option('-t', '--taxa_fp', help='Path to a summarized taxa file (i. '
     'e. the output of summarize_taxa.py). This option is only used when '
     'creating BiPlots. [default=%default]', default=None, type=
     'existing_filepath'),
     make_option('-x', '--missing_custom_axes_values', help='Option to override '
-    'the error shown when the catergory used in \'--custom_axes\' has non-numeric '
-    'values in the mapping file. The basic format is custom_axis:new_value. For '
-    'example, if you want to plot in time 0 all the samples that do not have a numeric '
-    'value in the column Time. you would pass -x "Time:0". Additionally, you can pass '
-    'this format custom_axis:other_column==value_in_other_column=new_value, with this '
-    'format you can specify different values (new_value) to use in the substitution '
-    'based on other column (other_column) value (value_in_other_column); see example '
-    'above. This option could be used in all explicit axes.',action='append', 
-    default=None),
+    'the error shown when the catergory used in \'--custom_axes\' has '
+    'non-numeric values in the mapping file. The basic format is '
+    'custom_axis:new_value. For example, if you want to plot in time 0 all the '
+    'samples that do not have a numeric value in the column Time. you would '
+    'pass -x "Time:0". Additionally, you can pass this format '
+    'custom_axis:other_column==value_in_other_column=new_value, with this '
+    'format you can specify different values (new_value) to use in the '
+    'substitution based on other column (other_column) value '
+    '(value_in_other_column); see example above. This option could be used in '
+    'all explicit axes.',action='append', default=None),
     make_option('-o','--output_dir',type="new_dirpath", help='path to the '
     'output directory that will contain the PCoA plot. [default: %default]',
     default='emperor'),
@@ -230,7 +237,7 @@ def main():
     number_of_axes = opts.number_of_axes
     compare_plots = opts.compare_plots
     number_of_segments = opts.number_of_segments
-    
+
     # verifying that the number of axes requested is greater than 3
     if number_of_axes<3:
         option_parser.error(('You need to plot at least 3 axes.'))
@@ -244,6 +251,8 @@ def main():
     offending_fields = []
     non_numeric_categories = []
 
+    serial_comparison = True
+
     # can't do averaged pcoa plots _and_ custom axes in the same plot
     if custom_axes!=None and len(custom_axes.split(','))>1 and\
         isdir(input_coords):
@@ -254,7 +263,7 @@ def main():
     # make sure the flag is not misunderstood from the command line interface
     if isdir(input_coords) == False and compare_plots:
         option_parser.error('Cannot use the \'--compare_plots\' flag unless the'
-            ' input input path is a directory.')
+            ' input path is a directory.')
 
     # before creating any output, check correct parsing of the main input files
     try:
@@ -290,6 +299,31 @@ def main():
             if master_pcoa in coord_fps: # remove it if duplicated
                 coord_fps.remove(master_pcoa)
             coord_fps = [master_pcoa] + coord_fps # prepend it to the list
+        # passing a master file means that the comparison is not serial
+        elif master_pcoa and compare_plots:
+            serial_comparison = False
+
+            # guarantee that the master is the first and is not repeated
+            if master_pcoa in  coord_fps:
+                coord_fps.remove(master_pcoa)
+                coord_fps = [master_pcoa] + sort_comparison_filenames(coord_fps)
+
+        # QIIME generates folders of transformed coordinates for the specific
+        # purpose of connecting all coordinates to a set of origin coordinates.
+        # The name of this file is suffixed as _transformed_reference.txt
+        elif master_pcoa == None and len([f for f in coord_fps if f.endswith(
+            '_transformed_reference.txt')]):
+            master_pcoa = [f for f in coord_fps if f.endswith(
+                '_transformed_reference.txt')][0]
+            serial_comparison = False
+
+            # Note: the following steps are to guarantee consistency.
+            # remove the master from the list and re-add it as a first element
+            # the rest of the files must be sorted alphabetically so the result
+            # will be: ['unifrac_transformed_reference.txt',
+            # 'unifrac_transformed_q1.txt', 'unifrac_transformed_q2.txt'] etc
+            coord_fps.remove(master_pcoa)
+            coord_fps = [master_pcoa] + sort_comparison_filenames(coord_fps)
 
         for fp in coord_fps:
             try:
@@ -344,7 +378,7 @@ def main():
         # other exeptions should be catched here; code will be updated then
         except ValueError:
             option_parser.error(('The PCoA file \'%s\' does not seem to be a '
-                'coordinates formatted file, verify by manuall inspecting '
+                'coordinates formatted file, verify by manually inspecting '
                 'the contents.') % input_coords)
 
         # number of samples ids that are shared between coords and mapping files
@@ -410,18 +444,16 @@ def main():
     header, mapping_data = filter_mapping_file(mapping_data, header,
         sids_intersection, include_repeat_cols=True)
 
-
-
-    # catch the errors that could ocurr when filling the mapping file values
+    # catch the errors that could occur when filling the mapping file values
     if missing_custom_axes_values:
         try:
             # the fact that this uses parse_metadata_state_descriptions makes
-            # the follwoing option '-x Category:7;PH:12' to work as well as the 
+            # the following option '-x Category:7;PH:12' to work as well as the 
             # script-interface-documented '-x Category:7 -x PH:12' option
             for val in missing_custom_axes_values:
                 if ':' not in val:
-                    option_parser.error("Not valid missing value for custom axes: %s"
-                        % val)
+                    option_parser.error("Not valid missing value for custom "
+                        "axes: %s" % val)
             mapping_data = fill_mapping_field_from_mapping_file(mapping_data,
                 header, ';'.join(missing_custom_axes_values))
             
@@ -563,14 +595,14 @@ def main():
     fp_out.write(format_vectors_to_js(mapping_data, header, coords_data,
         coords_headers, add_vectors[0], add_vectors[1]))
     fp_out.write(format_comparison_bars_to_js(coords_data, coords_headers,
-        clones))
+        clones, is_serial_comparison=serial_comparison))
     fp_out.write(format_emperor_html_footer_string(taxa_fp != None,
         isdir(input_coords) and not compare_plots, add_vectors != [None, None],
         clones>0))
     fp_out.close()
     copy_support_files(output_dir)
 
-    # write the bilot coords in the output file if a path is passed
+    # write the biplot coords in the output file if a path is passed
     if biplot_fp and taxa_fp:
         # make sure this file can be created
         try:
