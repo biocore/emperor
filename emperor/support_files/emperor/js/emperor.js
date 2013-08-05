@@ -58,7 +58,7 @@ g_validAsciiCodes = g_validAsciiCodes.concat([65,66,67,68,68,70,71,72,73,74,75,7
 g_validAsciiCodes = g_validAsciiCodes.concat([97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122]);
 
 // taken from the qiime/colors.py module; a total of 29 colors
-k_QIIME_COLORS = [
+var k_QIIME_COLORS = [
 "0xFF0000", // red1
 "0x0000FF", // blue1
 "0xF27304", // orange1
@@ -1212,6 +1212,31 @@ function setJqueryUi() {
 					$(this).css('backgroundColor', c);
 					colorChangedForTaxaSpheres(c.replace('#', '0x'));
 				}
+		});
+	}
+	// set up the color selector for the taxa labels
+	if(document.getElementById('taxalabelcolor')){
+		$('#taxalabelcolor').css('backgroundColor',"#FFFFFF");
+		$("#taxalabelcolor").spectrum({
+			localStorageKey: 'key',
+			color: "#FFFFFF",
+			preferredFormat: "hex6",
+			showInitial: true,
+			showInput: true,
+			change:
+				function(color) {
+				// pass a boolean flag to convert to hex6 string
+				var c = color.toHexString(true);
+
+				// set the color for the box and for the renderer
+				$(this).css('backgroundColor', c);
+
+				// get the taxonomic assignments and append '_taxalabel' to
+				// retrieve all the labels belonging to a sphere in the plot
+				for(var key in g_taxaPositions) {
+					$('#'+key+"_taxalabel").css('color', c);
+				}
+			}// on-change callback
 		});
 	}
 

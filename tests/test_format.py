@@ -525,10 +525,9 @@ document.getElementById("logotable").style.display = 'none';
             <label id="labelopacity" class="slidervalue"></label>
             <div id="lopacityslider" class="slider-range-max"></div>
             <div id="labelColorHolder clearfix">
-            <table><tr>
-            <td><div id="labelColor" class="colorbox">
-            </div></td><td><label>Master Label Color</label></td>
-            </tr></table></div>
+            <table>
+                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+            </table></div>
         </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
@@ -700,10 +699,11 @@ document.getElementById("logotable").style.display = 'none';
             <label id="labelopacity" class="slidervalue"></label>
             <div id="lopacityslider" class="slider-range-max"></div>
             <div id="labelColorHolder clearfix">
-            <table><tr>
-            <td><div id="labelColor" class="colorbox">
-            </div></td><td><label>Master Label Color</label></td>
-            </tr></table></div>
+            <table>
+                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+            <tr><td><div id="taxalabelcolor" class="colorbox"></div></td><td><label>Taxa Label Color</label></td></tr>
+
+            </table></div>
         </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
@@ -858,10 +858,9 @@ document.getElementById("logotable").style.display = 'none';
             <label id="labelopacity" class="slidervalue"></label>
             <div id="lopacityslider" class="slider-range-max"></div>
             <div id="labelColorHolder clearfix">
-            <table><tr>
-            <td><div id="labelColor" class="colorbox">
-            </div></td><td><label>Master Label Color</label></td>
-            </tr></table></div>
+            <table>
+                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+            </table></div>
         </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
@@ -1015,10 +1014,9 @@ document.getElementById("logotable").style.display = 'none';
             <label id="labelopacity" class="slidervalue"></label>
             <div id="lopacityslider" class="slider-range-max"></div>
             <div id="labelColorHolder clearfix">
-            <table><tr>
-            <td><div id="labelColor" class="colorbox">
-            </div></td><td><label>Master Label Color</label></td>
-            </tr></table></div>
+            <table>
+                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+            </table></div>
         </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
@@ -1176,10 +1174,9 @@ document.getElementById("logotable").style.display = 'none';
             <label id="labelopacity" class="slidervalue"></label>
             <div id="lopacityslider" class="slider-range-max"></div>
             <div id="labelColorHolder clearfix">
-            <table><tr>
-            <td><div id="labelColor" class="colorbox">
-            </div></td><td><label>Master Label Color</label></td>
-            </tr></table></div>
+            <table>
+                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+            </table></div>
         </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
