@@ -18,6 +18,7 @@ Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 * Export to SVG your visualization.
 * Emperor now relies on QIIME 1.7.0.
 * Added option `--number_of_segments` to control the quality of all spheres
+* Labels for biplots now have a color picker.
 * Add color pickers for connecting bars in coordinate comparison plots.
 * Add option to select a master set of coordinates when making a comparison plot.
 
