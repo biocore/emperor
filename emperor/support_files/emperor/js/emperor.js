@@ -89,6 +89,9 @@ function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
+//Resizes the menu div if the window gets resized. Called by resize() and draggable
+
+
 /*This function recenter the camera to the initial position it had*/
 function resetCamera() {
 	// We need to reset the camera controls first before modifying the values of the camera (this is the reset view!)
@@ -1644,6 +1647,7 @@ function saveSVG(button){
             "implementation. Do you want to continue?");
         if (res==false) return;
     }
+ 
     $('body').css('cursor','progress');
     
     var width = document.getElementById('pcoaPlotWrapper').offsetWidth;
@@ -1857,10 +1861,10 @@ function togglePlots() {
 	// set some interface changes for 3D visualizations
 	if(document.getElementById('pcoa').checked)
 	{
-		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-		document.getElementById('pcoaoptions').className = document.getElementById('pcoaoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-		document.getElementById('pcoaviewoptions').className = document.getElementById('pcoaviewoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-		document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('pcoaPlotWrapper').className = 'plotWrapper';
+		document.getElementById('pcoaoptions').className = '';
+		document.getElementById('pcoaviewoptions').className = '';
+		document.getElementById('pcoaaxes').className = '';
 		document.getElementById('parallelPlotWrapper').className += ' invisible'
 		document.getElementById('paralleloptions').className += ' invisible'
 
@@ -1944,7 +1948,32 @@ $(document).ready(function() {
 		winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 		g_sceneCamera.aspect = winAspect;
 		g_sceneCamera.updateProjectionMatrix();
+	$('#pcoaPlotWrapper').width($(window).width()*0.7);
+	var width_left = $('#pcoaPlotWrapper').width();
+	var width_right = $(window).width() - width_left - $('.separator').width();
+    $('#menu').width(width_right);
 	});
+	
+	$('.separator').draggable({
+                    axis: 'x',
+                    containment: [$(window).width()*0.5, 0, $(window).width(), $(window).height()],
+                    helper: 'clone',
+                    drag: function (event, ui) {
+                            var width_left = ui.offset.left;
+                            $('#plotToggle').width(width_left);
+                            $('#parallelPlotWrapper').width(width_left);
+                            $('#pcoaPlotWrapper').width(width_left);
+                            if(document.getElementById('parallel').checked)
+                            {
+                            	togglePlots();
+                            }
+                            var width_right = $(window).width() - width_left - $('.separator').width()-1;
+                                  
+                             $('#menu').width(width_right);
+                             
+                                  
+      }
+                     });
 	
 	// Validating the string for the saveas filename = taken from http://stackoverflow.com/questions/6741175/trim-input-field-value-to-only-alphanumeric-characters-separate-spaces-with-wi
     $('#saveas_name').keypress(function(event) {
@@ -2226,4 +2255,6 @@ $(document).ready(function() {
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 	}
+	
+
 });

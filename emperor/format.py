@@ -483,6 +483,90 @@ _EDGES_COLOR_SELECTOR = """
             <tr><td><div id="edgecolorselector_b" class="colorbox" name="edgecolorselector_b"></div></td><td title="edgecolor_b">Edge Color Selector B</td></tr>
 """
 
+
+
+EMPEROR_HEADER_HTML_STRING =\
+"""<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Emperor</title>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="emperor_required_resources/img/favicon.ico" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/emperor/css/emperor.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/d3.parcoords.css">
+    <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
+        <tr><td><img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="logo"/></td></tr>
+    </table>
+    <script type="text/javascript" src="emperor_required_resources/js/d3.v3.min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/d3.parcoords.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
+    <script src="emperor_required_resources/js/jquery.colorPicker.js"></script>
+    <script src="emperor_required_resources/js/spectrum.js"></script>
+
+    <script src="emperor_required_resources/js/Three.js"></script>
+    <script src="emperor_required_resources/js/js/Detector.js"></script>
+    <script src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
+    <script src="emperor_required_resources/emperor/js/emperor.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/THREEx.screenshot.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/FileSaver.min.js"></script>
+    
+    <script type="text/javascript">
+    
+"""
+
+_ELLIPSE_OPACITY_SLIDER = """
+            <br>
+            <label for="ellipseopacity" class="text">Ellipse Opacity</label>
+            <label id="ellipseopacity" class="slidervalue"></label>
+            <div id="eopacityslider" class="slider-range-max"></div>"""
+
+_VECTORS_OPACITY_SLIDER = """
+            <br>
+            <label for="vectorsopacity" class="text">Vectors Opacity</label>
+            <label id="vectorsopacity" class="slidervalue"></label>
+            <div id="vopacityslider" class="slider-range-max"></div>"""
+
+_TAXA_LABELS_SELECTOR = """
+            <form name="biplotoptions">
+            <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
+            </form>"""
+
+_TAXA_LABELS_COLOR_SELECTOR = """
+            <tr><td><div id="taxalabelcolor" class="colorbox"></div></td><td><label>Taxa Label Color</label></td></tr>
+"""
+
+_BIPLOT_VISIBILITY_SELECTOR = """
+            <br>
+            <form name="biplotsvisibility">
+            <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
+            </form>
+            <br>"""
+
+_BIPLOT_SPHERES_COLOR_SELECTOR ="""
+            <br>
+            <table>
+                <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
+            </table>
+            <br>"""
+
+_EDGES_VISIBILITY_SELECTOR = """
+            <br>
+            <form name="edgesvisibility">
+            <input type="checkbox" onClick="toggleEdgesVisibility()" checked>Edges Visibility</input>
+            </form>
+            <br>"""
+
+_EDGES_COLOR_SELECTOR = """
+            <tr><td><div id="edgecolorselector_a" class="colorbox" name="edgecolorselector_a"></div></td><td title="edgecolor_a">Edge Color Selector A</td></tr>
+            <tr><td><div id="edgecolorselector_b" class="colorbox" name="edgecolorselector_b"></div></td><td title="edgecolor_b">Edge Color Selector B</td></tr>
+"""
+
 _EMPEROR_FOOTER_HTML_STRING ="""document.getElementById("logo").style.display = 'none';
 document.getElementById("logotable").style.display = 'none';
 
@@ -521,6 +605,8 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="parallelPlotWrapper" class="plotWrapper">
 </div>
+
+<div class="separator"></div>
 
 <div id="menu">
     <div id="menutabs">

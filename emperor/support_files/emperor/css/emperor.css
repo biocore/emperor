@@ -1,45 +1,60 @@
-	  body, html {
+	
+
+  body, html {
 		font-size: 10px;
 		 height: 100%;
 		 width: 100%;
 		 margin: 0px;
-		 overflow: hidden;
-		 position: relative;
+		 overflow: auto;
+	  	float: left;
 	  }
 	  
 	  div.plotWrapper {
 	  	position: relative;
 	  	overflow:hidden;
 	  	height: 100%;
-	  	width: 75%;
+                width:73%;
 	  	float: left;
-		background-color: #eee;
+                margin:0;
 	  }
 	  
 	  #plotToggle {
 		  z-index: 5;
-		  width: 75%;
+		  width: 73%;
+                margin:0;
+		  overflow:hidden;
 		  bottom: 0;
 		  position: absolute;
+	  	  float: left;
 	  }
 
+
+
+	  div.separator {
+		  height:100%;
+		  width:1%;
+		  float:left;
+		  cursor:e-resize;
+		  background-color:#555555;
+          margin:0;
+	  }
+
+
 	div#menu {
-	position: relative;
 	height: 100%;
 	font-family: Helvetica, sans-serif;
-	z-index: 2;
-	float: right;
-	width: 25%;
-	padding-bottom: 10px;
+    width:26%;
+    overflow:hidden;
+    float:left;
+	padding: 0px;
+    margin:0;
 	}
 	
 	div#menutabs {
-	width:98%;
 	background: #eee;
-	float: right;
 	/*margin-before: 0px !important;*/
-	height: 98%;
-/*  overflow: scroll;*/
+	height: 100%;
+                margin:0;
 	}
 	
 	.ui-tabs .ui-widget .ui-widget-content .ui-corner-all {
