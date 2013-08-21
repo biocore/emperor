@@ -144,6 +144,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
             js_pcts_round.append('%d' % (round(pct_var[0])))
     js_pcoa_string += 'var g_fractionExplained = [%s];\n' % ', '.join(js_pcts)
     js_pcoa_string += 'var g_fractionExplainedRounded = [%s];\n' % ', '.join(js_pcts_round)
+    js_pcoa_string += 'var g_separator_left;\n'
     
     return js_pcoa_string
 

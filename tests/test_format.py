@@ -265,6 +265,7 @@ var g_pc3Label = "PC3 (14 %)";
 var g_number_of_custom_axes = 0;
 var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495];
 var g_fractionExplainedRounded = [27, 16, 14, 11, 10, 8, 8, 6];
+var g_separator_left;
 """
 
 PCOA_JS_CUSTOM_AXES = """
@@ -297,6 +298,7 @@ var g_pc3Label = "PC2 (16 %)";
 var g_number_of_custom_axes = 1;
 var g_fractionExplained = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495];
 var g_fractionExplainedRounded = [27, 27, 16, 14, 11, 10, 8, 8, 6];
+var g_separator_left;
 """
 
 PCOA_JS_JACKKNIFED = """
@@ -328,6 +330,7 @@ var g_pc3Label = "PC3 (15 %)";
 var g_number_of_custom_axes = 0;
 var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
 var g_fractionExplainedRounded = [44, 40, 15, 1];
+var g_separator_left;
 """
 
 PCOA_JS_SEGMENTS = """
@@ -359,6 +362,7 @@ var g_pc3Label = "PC3 (15 %)";
 var g_number_of_custom_axes = 0;
 var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
 var g_fractionExplainedRounded = [44, 40, 15, 1];
+var g_separator_left;
 """
 
 MAPPING_FILE_DATA = [\

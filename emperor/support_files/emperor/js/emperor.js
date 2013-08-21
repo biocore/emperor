@@ -1932,7 +1932,10 @@ function setParallelPlots() {
 $(document).ready(function() {
 	setJqueryUi()
 	
-	
+	// Default sizes
+	g_separator_left = 0.73;
+	containmentLeft = $(window).width()*0.5;
+	containmentRight = $(window).width()*0.99;
 	// Detecting that webgl is activated
 	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
@@ -1943,23 +1946,38 @@ $(document).ready(function() {
 	var winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight), view_angle = 35, view_near = 0.0000001, view_far = 10000;
 	var winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 
-	$(window).resize(function() {
+	$(window).resize(function() {	
 		winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight);
 		winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
+		
+		reset_div_sizes(g_separator_left*$(window).width());
+		containmentLeft = $(window).width()*0.5;
+		containmentRight = $(window).width()*0.99;
+		
 		g_sceneCamera.aspect = winAspect;
 		g_sceneCamera.updateProjectionMatrix();
-	$('#pcoaPlotWrapper').width($(window).width()*0.7);
-	var width_left = $('#pcoaPlotWrapper').width();
-	var width_right = $(window).width() - width_left - $('.separator').width();
-    $('#menu').width(width_right);
+		
+		separatorDraggable();
 	});
 	
-	$('.separator').draggable({
+	separatorDraggable();
+    
+    function separatorDraggable() {
+    $('.separator').draggable({
                     axis: 'x',
-                    containment: [$(window).width()*0.5, 0, $(window).width(), $(window).height()],
+                    containment: [containmentLeft, 0, containmentRight, $(window).height()],
                     helper: 'clone',
                     drag: function (event, ui) {
-                            var width_left = ui.offset.left;
+                    		offset = ui.offset.left;
+                    		if (offset > $(window).width()) {
+                    			offset = $(window).width()*0.99;
+                    		}
+                        	reset_div_sizes(offset);                                  
+  				    }
+    });
+    }
+                     
+    function reset_div_sizes(width_left) {
                             $('#plotToggle').width(width_left);
                             $('#parallelPlotWrapper').width(width_left);
                             $('#pcoaPlotWrapper').width(width_left);
@@ -1969,11 +1987,13 @@ $(document).ready(function() {
                             }
                             var width_right = $(window).width() - width_left - $('.separator').width()-1;
                                   
-                             $('#menu').width(width_right);
-                             
-                                  
-      }
-                     });
+                            $('#menu').width(width_right);
+                            g_separator_left = width_left/$(window).width();
+                            
+                            if (g_separator_left > 1) {
+                            	g_separator_left = 1;
+                            }
+    }
 	
 	// Validating the string for the saveas filename = taken from http://stackoverflow.com/questions/6741175/trim-input-field-value-to-only-alphanumeric-characters-separate-spaces-with-wi
     $('#saveas_name').keypress(function(event) {
