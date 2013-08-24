@@ -89,9 +89,6 @@ function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-//Resizes the menu div if the window gets resized. Called by resize() and draggable
-
-
 /*This function recenter the camera to the initial position it had*/
 function resetCamera() {
 	// We need to reset the camera controls first before modifying the values of the camera (this is the reset view!)
@@ -1923,6 +1920,38 @@ function setParallelPlots() {
 	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
 }
 
+// Makes separator draggable and implements drag function
+function separator_draggable() {
+	$('.separator').draggable({
+		axis: 'x',
+		containment: [containmentLeft, 0, containmentRight, $(window).height()],
+		helper: 'clone',
+		drag: function (event, ui) {
+			offset = ui.offset.left;
+			if (offset > $(window).width()) {
+				offset = $(window).width()*0.99;
+			}
+			reset_div_sizes(offset);                                  
+		}
+	});
+}
+         
+// Resizes plot and menu widths            
+function reset_div_sizes(width_left) {
+	$('#plotToggle').width(width_left);
+	$('#parallelPlotWrapper').width(width_left);
+	$('#pcoaPlotWrapper').width(width_left);
+	if(document.getElementById('parallel').checked) {
+		togglePlots();
+	}
+	var width_right = $(window).width() - width_left - $('.separator').width()-1;                       
+	$('#menu').width(width_right);
+	g_separator_left = width_left/$(window).width();               
+	if (g_separator_left > 1) {
+		g_separator_left = 1;
+	}
+}
+
 /*Setup and initialization function for the whole system
 
   This function will set all of the WebGL elements that are required to exist
@@ -1957,43 +1986,10 @@ $(document).ready(function() {
 		g_sceneCamera.aspect = winAspect;
 		g_sceneCamera.updateProjectionMatrix();
 		
-		separatorDraggable();
+		separator_draggable();
 	});
 	
-	separatorDraggable();
-    
-    function separatorDraggable() {
-    $('.separator').draggable({
-                    axis: 'x',
-                    containment: [containmentLeft, 0, containmentRight, $(window).height()],
-                    helper: 'clone',
-                    drag: function (event, ui) {
-                    		offset = ui.offset.left;
-                    		if (offset > $(window).width()) {
-                    			offset = $(window).width()*0.99;
-                    		}
-                        	reset_div_sizes(offset);                                  
-  				    }
-    });
-    }
-                     
-    function reset_div_sizes(width_left) {
-                            $('#plotToggle').width(width_left);
-                            $('#parallelPlotWrapper').width(width_left);
-                            $('#pcoaPlotWrapper').width(width_left);
-                            if(document.getElementById('parallel').checked)
-                            {
-                            	togglePlots();
-                            }
-                            var width_right = $(window).width() - width_left - $('.separator').width()-1;
-                                  
-                            $('#menu').width(width_right);
-                            g_separator_left = width_left/$(window).width();
-                            
-                            if (g_separator_left > 1) {
-                            	g_separator_left = 1;
-                            }
-    }
+	separator_draggable();
 	
 	// Validating the string for the saveas filename = taken from http://stackoverflow.com/questions/6741175/trim-input-field-value-to-only-alphanumeric-characters-separate-spaces-with-wi
     $('#saveas_name').keypress(function(event) {

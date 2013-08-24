@@ -26,17 +26,17 @@
         float: left;
     }
 
-
-
     div.separator {
         height:100%;
         width:1%;
         float:left;
-        cursor:e-resize;
-        background-color:#333333;
+        cursor:col-resize;
         margin:0;
+        background-color:#333333;
     }
-
+    div.separator:hover {
+    	background-color:#666666;
+    }
 
     div#menu {
         height: 100%;
