@@ -1920,6 +1920,18 @@ function setParallelPlots() {
 	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
 }
 
+// Resets the aspect ratio after dragging and window resize
+function aspectReset() {
+	winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight);
+	winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;                               
+	reset_div_sizes(g_separator_left*$(window).width());
+	containmentLeft = $(window).width()*0.5;
+	containmentRight = $(window).width()*0.99;
+	g_sceneCamera.aspect = winAspect;
+	g_sceneCamera.updateProjectionMatrix();		
+
+}
+
 // Makes separator draggable and implements drag function
 function separator_draggable() {
 	$('.separator').draggable({
@@ -1931,6 +1943,7 @@ function separator_draggable() {
 			if (offset > $(window).width()) {
 				offset = $(window).width()*0.99;
 			}
+			aspectReset();
 			reset_div_sizes(offset);                                  
 		}
 	});
@@ -1976,16 +1989,7 @@ $(document).ready(function() {
 	var winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 
 	$(window).resize(function() {	
-		winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight);
-		winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
-		
-		reset_div_sizes(g_separator_left*$(window).width());
-		containmentLeft = $(window).width()*0.5;
-		containmentRight = $(window).width()*0.99;
-		
-		g_sceneCamera.aspect = winAspect;
-		g_sceneCamera.updateProjectionMatrix();
-		
+		aspectReset();
 		separator_draggable();
 	});
 	
