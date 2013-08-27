@@ -45,6 +45,7 @@ var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
 var g_useDiscreteColors = true;
 var g_screenshotBind;
+var g_separator_left;
 
 // valid ascii codes for filename
 var g_validAsciiCodes = new Array();
