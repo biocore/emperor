@@ -45,6 +45,7 @@ var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
 var g_useDiscreteColors = true;
 var g_screenshotBind;
+var g_separator_left;
 
 // valid ascii codes for filename
 var g_validAsciiCodes = new Array();
@@ -1644,6 +1645,7 @@ function saveSVG(button){
             "implementation. Do you want to continue?");
         if (res==false) return;
     }
+ 
     $('body').css('cursor','progress');
     
     var width = document.getElementById('pcoaPlotWrapper').offsetWidth;
@@ -1857,10 +1859,10 @@ function togglePlots() {
 	// set some interface changes for 3D visualizations
 	if(document.getElementById('pcoa').checked)
 	{
-		document.getElementById('pcoaPlotWrapper').className = document.getElementById('pcoaPlotWrapper').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-		document.getElementById('pcoaoptions').className = document.getElementById('pcoaoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-		document.getElementById('pcoaviewoptions').className = document.getElementById('pcoaviewoptions').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
-		document.getElementById('pcoaaxes').className = document.getElementById('pcoaaxes').className.replace(/(?:^|\s)invisible(?!\S)/ , '');
+		document.getElementById('pcoaPlotWrapper').className = 'plotWrapper';
+		document.getElementById('pcoaoptions').className = '';
+		document.getElementById('pcoaviewoptions').className = '';
+		document.getElementById('pcoaaxes').className = '';
 		document.getElementById('parallelPlotWrapper').className += ' invisible'
 		document.getElementById('paralleloptions').className += ' invisible'
 
@@ -1919,6 +1921,51 @@ function setParallelPlots() {
 	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
 }
 
+// Resets the aspect ratio after dragging and window resize
+function aspectReset() {
+	winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight);
+	winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;                               
+	reset_div_sizes(g_separator_left*$(window).width());
+	containmentLeft = $(window).width()*0.5;
+	containmentRight = $(window).width()*0.99;
+	g_sceneCamera.aspect = winAspect;
+	g_sceneCamera.updateProjectionMatrix();		
+
+}
+
+// Makes separator draggable and implements drag function
+function separator_draggable() {
+	$('.separator').draggable({
+		axis: 'x',
+		containment: [containmentLeft, 0, containmentRight, $(window).height()],
+		helper: 'clone',
+		drag: function (event, ui) {
+			offset = ui.offset.left;
+			if (offset > $(window).width()) {
+				offset = $(window).width()*0.99;
+			}
+			aspectReset();
+			reset_div_sizes(offset);                                  
+		}
+	});
+}
+         
+// Resizes plot and menu widths            
+function reset_div_sizes(width_left) {
+	$('#plotToggle').width(width_left);
+	$('#parallelPlotWrapper').width(width_left);
+	$('#pcoaPlotWrapper').width(width_left);
+	if(document.getElementById('parallel').checked) {
+		togglePlots();
+	}
+	var width_right = $(window).width() - width_left - $('.separator').width()-1;                       
+	$('#menu').width(width_right);
+	g_separator_left = width_left/$(window).width();               
+	if (g_separator_left > 1) {
+		g_separator_left = 1;
+	}
+}
+
 /*Setup and initialization function for the whole system
 
   This function will set all of the WebGL elements that are required to exist
@@ -1928,7 +1975,10 @@ function setParallelPlots() {
 $(document).ready(function() {
 	setJqueryUi()
 	
-	
+	// Default sizes
+	g_separator_left = 0.73;
+	containmentLeft = $(window).width()*0.5;
+	containmentRight = $(window).width()*0.99;
 	// Detecting that webgl is activated
 	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
@@ -1939,12 +1989,12 @@ $(document).ready(function() {
 	var winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight), view_angle = 35, view_near = 0.0000001, view_far = 10000;
 	var winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 
-	$(window).resize(function() {
-		winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight);
-		winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
-		g_sceneCamera.aspect = winAspect;
-		g_sceneCamera.updateProjectionMatrix();
+	$(window).resize(function() {	
+		aspectReset();
+		separator_draggable();
 	});
+	
+	separator_draggable();
 	
 	// Validating the string for the saveas filename = taken from http://stackoverflow.com/questions/6741175/trim-input-field-value-to-only-alphanumeric-characters-separate-spaces-with-wi
     $('#saveas_name').keypress(function(event) {
@@ -2226,4 +2276,6 @@ $(document).ready(function() {
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 	}
+	
+
 });
