@@ -997,6 +997,13 @@ function toScreenXY( position, camera, jqdiv ) {
 		y: (-screenPosition.y+1)*jqdiv.height()/2 + jqdiv.offset().top};
 }
 
+// This function stops refreshing the page after pressing the enter key in filterkey()
+function stopRKey(evt) { 
+  var evt = (evt) ? evt : ((event) ? event : null); 
+  var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null); 
+  if ((evt.keyCode == 13) && (node.type=="text"))  {return false;} 
+}
+
 /*This function is used to filter the key to a user's provided search string*/
 function filterKey() {
 	var searchVal = document.keyFilter.filterBox.value.toLowerCase();
@@ -2003,6 +2010,8 @@ $(document).ready(function() {
             event.preventDefault();
     });
 
+	document.keyFilter.filterBox.onkeypress = stopRKey;
+
 	init();
 	animate();
 
@@ -2277,5 +2286,4 @@ $(document).ready(function() {
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 	}
 	
-
 });
