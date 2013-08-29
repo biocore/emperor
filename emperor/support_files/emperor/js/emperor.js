@@ -2002,6 +2002,13 @@ $(document).ready(function() {
         if (g_validAsciiCodes.indexOf(code)==-1)
             event.preventDefault();
     });
+    
+    // Disables the enter key in the search bar
+    $('#searchBox').keypress(function(event) {
+    	if (event.keyCode == 13) {
+        	event.preventDefault();
+    	}
+	});
 
 	init();
 	animate();
@@ -2277,5 +2284,4 @@ $(document).ready(function() {
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 	}
 	
-
 });

@@ -538,7 +538,7 @@ document.getElementById("logotable").style.display = 'none';
         </ul>
         <div id="keytab">
             <form name="keyFilter">
-            <label>Filter  </label><input name="filterBox" type="text" onkeyup="filterKey()"></input>
+            <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
             </form>
             <div id="key">
             </div>
