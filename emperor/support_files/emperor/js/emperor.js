@@ -1803,7 +1803,7 @@ function changeAxesDisplayed() {
 		return;
 	}
 
-	// Setting up new possitions
+	// Setting up new positions
 	var max_x = Number.NEGATIVE_INFINITY, max_y = Number.NEGATIVE_INFINITY,
 		max_z = Number.NEGATIVE_INFINITY, min_x = Number.POSITIVE_INFINITY,
 		min_y = Number.POSITIVE_INFINITY, min_z = Number.POSITIVE_INFINITY;
@@ -1812,22 +1812,39 @@ function changeAxesDisplayed() {
 		g_spherePositions[sid]['y'] = g_spherePositions[sid][pc2_axis];
 		g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis];
 
-		if (g_spherePositions[sid][pc1_axis]>max_x)
-			max_x=g_spherePositions[sid][pc1_axis];
-		if (g_spherePositions[sid][pc2_axis]>max_y)
-			max_y=g_spherePositions[sid][pc2_axis];
-		if (g_spherePositions[sid][pc3_axis]>max_z)
-			max_z=g_spherePositions[sid][pc3_axis];
-		if (g_spherePositions[sid][pc1_axis]<min_x)
-			min_x=g_spherePositions[sid][pc1_axis];
-		if (g_spherePositions[sid][pc2_axis]<min_y)
-			min_y=g_spherePositions[sid][pc2_axis];
-		if (g_spherePositions[sid][pc3_axis]<min_z)
-			min_z=g_spherePositions[sid][pc3_axis];
+		if (g_spherePositions[sid]['x']>max_x)
+			max_x=g_spherePositions[sid]['x'];
+		if (g_spherePositions[sid]['y']>max_y)
+			max_y=g_spherePositions[sid]['y'];
+		if (g_spherePositions[sid]['z']>max_z)
+			max_z=g_spherePositions[sid]['z'];
+		if (g_spherePositions[sid]['x']<min_x)
+			min_x=g_spherePositions[sid]['x'];
+		if (g_spherePositions[sid]['y']<min_y)
+			min_y=g_spherePositions[sid]['y'];
+		if (g_spherePositions[sid]['z']<min_z)
+			min_z=g_spherePositions[sid]['z'];
 	}
+	
+    if ($('#flip_axes_1').is(':checked')) {
+		for(var sid in g_spherePositions){
+			g_spherePositions[sid]['x'] = g_spherePositions[sid][pc1_axis]*(-1);
+		}
+	}
+    if ($('#flip_axes_2').is(':checked')) {
+		for(var sid in g_spherePositions){
+			g_spherePositions[sid]['y'] = g_spherePositions[sid][pc2_axis]*(-1);
+		}		
+	}	
+    if ($('#flip_axes_3').is(':checked')) {
+		for(var sid in g_spherePositions){
+			g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis]*(-1);
+		}		
+	}	
+	
 	for (var sample_id in g_plotSpheres){
-		g_plotSpheres[sample_id].position.set(g_spherePositions[sample_id][pc1_axis],
-			g_spherePositions[sample_id][pc2_axis], g_spherePositions[sample_id][pc3_axis]);
+		g_plotSpheres[sample_id].position.set(g_spherePositions[sample_id]['x'],
+			g_spherePositions[sample_id]['y'], g_spherePositions[sample_id]['z']);
 	}
 
 	// Setting up new axes for axes by coords explained
@@ -2170,7 +2187,9 @@ $(document).ready(function() {
 				text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
 			}
 		}
-		text += '</select></td></tr>'
+		text += '</select></td>'
+		text += '<td>Flip axis:<input id="flip_axes_1" class="checkbox" type="checkbox" style=""></td>';
+		text += '</tr>';
 
 		// Adding 2nd axis
 		text += '<tr>'
@@ -2183,7 +2202,9 @@ $(document).ready(function() {
 				text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
 			}
 		}
-		text += '</select></td></tr>'
+		text += '</select></td>'
+		text += '<td>Flip axis:<input id="flip_axes_2" class="checkbox" type="checkbox" style=""></td>';
+		text += '</tr>';
 
 		// Adding 3rd axis
 		text += '<tr>'
@@ -2196,8 +2217,9 @@ $(document).ready(function() {
 				text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
 			}
 		}
-		text += '</select></td></tr>';
-
+		text += '</select></td>'
+		text += '<td>Flip axis:<input id="flip_axes_3" class="checkbox" type="checkbox" style=""></td>';
+		text += '</tr>';
 		text += '</table>';
 
 		// Adding button
