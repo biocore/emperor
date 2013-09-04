@@ -1840,8 +1840,8 @@ function changeAxesDisplayed() {
 		for(var sid in g_spherePositions){
 			g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis]*(-1);
 		}		
-	}	
-	
+	}
+		
 	for (var sample_id in g_plotSpheres){
 		g_plotSpheres[sample_id].position.set(g_spherePositions[sample_id]['x'],
 			g_spherePositions[sample_id]['y'], g_spherePositions[sample_id]['z']);
@@ -1852,6 +1852,8 @@ function changeAxesDisplayed() {
 	g_pc1Label = "PC" + (g_viewingAxes[0]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[0]] + " %)";
 	g_pc2Label = "PC" + (g_viewingAxes[1]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[1]] + " %)";
 	g_pc3Label = "PC" + (g_viewingAxes[2]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[2]] + " %)";
+	
+	buildAxisLabels();
 		
 	g_xMaximumValue = max_x + (max_x>=0 ? 6*g_radius : -6*g_radius);
 	g_yMaximumValue = max_y + (max_y>=0 ? 6*g_radius : -6*g_radius);
@@ -1981,6 +1983,24 @@ function reset_div_sizes(width_left) {
 	if (g_separator_left > 1) {
 		g_separator_left = 1;
 	}
+}
+
+function buildAxisLabels() {
+	//build axis labels
+	var axislabelhtml = "";
+	var xcoords = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
+	axislabelhtml += "<label id=\"pc1_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(xcoords['x'])+"px; top:"+parseInt(xcoords['y'])+"px;\">";
+	axislabelhtml += g_pc1Label;
+	axislabelhtml += "</label>";
+	var ycoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
+	axislabelhtml += "<label id=\"pc2_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(ycoords['x'])+"px; top:"+parseInt(ycoords['y'])+"px;\">";
+	axislabelhtml += g_pc2Label;
+	axislabelhtml += "</label>";
+	var zcoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue),g_sceneCamera,$('#main_plot'));
+	axislabelhtml += "<label id=\"pc3_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(zcoords['x'])+"px; top:"+parseInt(zcoords['y'])+"px;\">";
+	axislabelhtml += g_pc3Label;
+	axislabelhtml += "</label>";
+	document.getElementById("axislabels").innerHTML = axislabelhtml;
 }
 
 /*Setup and initialization function for the whole system
@@ -2228,24 +2248,6 @@ $(document).ready(function() {
 		text += '<td id="refresh_axes_label"></td></tr>';
 		text += '</table>';
 		document.getElementById("axeslist").innerHTML = text;
-	}
-
-	function buildAxisLabels() {
-		//build axis labels
-		var axislabelhtml = "";
-		var xcoords = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
-		axislabelhtml += "<label id=\"pc1_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(xcoords['x'])+"px; top:"+parseInt(xcoords['y'])+"px;\">";
-		axislabelhtml += g_pc1Label;
-		axislabelhtml += "</label>";
-		var ycoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
-		axislabelhtml += "<label id=\"pc2_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(ycoords['x'])+"px; top:"+parseInt(ycoords['y'])+"px;\">";
-		axislabelhtml += g_pc2Label;
-		axislabelhtml += "</label>";
-		var zcoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue),g_sceneCamera,$('#main_plot'));
-		axislabelhtml += "<label id=\"pc3_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(zcoords['x'])+"px; top:"+parseInt(zcoords['y'])+"px;\">";
-		axislabelhtml += g_pc3Label;
-		axislabelhtml += "</label>";
-		document.getElementById("axislabels").innerHTML = axislabelhtml;
 	}
 
 	function animate() {
