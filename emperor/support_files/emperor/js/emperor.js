@@ -2208,7 +2208,7 @@ $(document).ready(function() {
 			}
 		}
 		text += '</select></td>'
-		text += '<td>Flip axis:<input id="flip_axes_1" class="checkbox" type="checkbox" style=""></td>';
+		text += '<td>Negate values:<input id="flip_axes_1" class="checkbox" type="checkbox" style=""></td>';
 		text += '</tr>';
 
 		// Adding 2nd axis
@@ -2223,7 +2223,7 @@ $(document).ready(function() {
 			}
 		}
 		text += '</select></td>'
-		text += '<td>Flip axis:<input id="flip_axes_2" class="checkbox" type="checkbox" style=""></td>';
+		text += '<td>Negate values:<input id="flip_axes_2" class="checkbox" type="checkbox" style=""></td>';
 		text += '</tr>';
 
 		// Adding 3rd axis
@@ -2238,7 +2238,7 @@ $(document).ready(function() {
 			}
 		}
 		text += '</select></td>'
-		text += '<td>Flip axis:<input id="flip_axes_3" class="checkbox" type="checkbox" style=""></td>';
+		text += '<td>Negate values:<input id="flip_axes_3" class="checkbox" type="checkbox" style=""></td>';
 		text += '</tr>';
 		text += '</table>';
 
