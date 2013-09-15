@@ -1542,9 +1542,9 @@ function drawVectors(){
   In the case of a non-serial comparison plot, all edges will originate in the
   same point.
 */
-function drawEdges(){
+function drawEdges(spherepositions){
 	var previous = null, origin = null, current, middle_point, index=0, line_a, line_b;
-
+					
 	// note that this function is composed of an if-else statement with a loop
 	// that's almost identical under each case. This approach was taken as
 	// otherwise the comparison would need to happen N times instead of 1 time
@@ -1552,17 +1552,17 @@ function drawEdges(){
 
 	// if the comparison is serial draw one edge after the other
 	if (g_isSerialComparisonPlot == true){
-		for (var sampleKey in g_comparisonPositions){
-			for (var edgePosition in g_comparisonPositions[sampleKey]){
+		for (var sampleKey in spherepositions){
+			for (var edgePosition in spherepositions[sampleKey]){
 
 				// if we don't have a start point store it and move along
 				if (previous == null) {
-					previous = g_comparisonPositions[sampleKey][edgePosition];
+					previous = spherepositions[sampleKey][edgePosition];
 				}
 				// if we already have a start point then draw the edge
 				else{
-					current = g_comparisonPositions[sampleKey][edgePosition];
-
+					current = spherepositions[sampleKey][edgePosition];
+					
 					// the edge is composed by two lines so calculate the middle
 					// point between these two lines and end the first line in this
 					// point and start the second line in this point
@@ -1595,13 +1595,13 @@ function drawEdges(){
 	}
 	// if the comparison is not serial, originate all edges in the same coords
 	else{
-		for (var sampleKey in g_comparisonPositions){
-			for (var edgePosition in g_comparisonPositions[sampleKey]){
+		for (var sampleKey in spherepositions){
+			for (var edgePosition in spherepositions[sampleKey]){
 				if (origin == null) {
-					origin = g_comparisonPositions[sampleKey][edgePosition];
+					origin = spherepositions[sampleKey][edgePosition];
 				}
 				else{
-					current = g_comparisonPositions[sampleKey][edgePosition];
+					current = spherepositions[sampleKey][edgePosition];
 
 					// edges are composed of two lines so use the start and
 					// the end point to calculate the position of the vertices
@@ -1809,21 +1809,26 @@ function changeAxesDisplayed() {
 		g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis];
 	}
 	
+	checkedboxes = []
     if ($('#flip_axes_1').is(':checked')) {
 		for(var sid in g_spherePositions){
 			g_spherePositions[sid]['x'] = g_spherePositions[sid][pc1_axis]*(-1);
 		}
+ 		checkedboxes.push(0);
 	}
     if ($('#flip_axes_2').is(':checked')) {
 		for(var sid in g_spherePositions){
 			g_spherePositions[sid]['y'] = g_spherePositions[sid][pc2_axis]*(-1);
 		}		
-	}	
+ 		checkedboxes.push(1);
+	}
     if ($('#flip_axes_3').is(':checked')) {
 		for(var sid in g_spherePositions){
 			g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis]*(-1);
 		}		
+ 		checkedboxes.push(2);
 	}
+	flipEdges(checkedboxes);
 	
 	// Setting up new positions
 	var max_x = Number.NEGATIVE_INFINITY, max_y = Number.NEGATIVE_INFINITY,
@@ -1864,11 +1869,37 @@ function changeAxesDisplayed() {
 	drawAxisLines();
 	buildAxisLabels();
 
-
 	// HACK: this is a work around for cases when the scale is on
 	if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': true});
 	
 	resetCamera();
+}
+
+function flipEdges(axis) {
+		var flippedPositions2d = new Array();
+		for (var sampleKey in g_comparisonPositions){
+			flippedPositions1d = []
+			for (var edgePosition in g_comparisonPositions[sampleKey]){
+				flippedPositions = [g_comparisonPositions[sampleKey][edgePosition][0], 
+									g_comparisonPositions[sampleKey][edgePosition][1],
+									g_comparisonPositions[sampleKey][edgePosition][2]]
+				for (var i=0;i<axis.length;i++) {
+					flippedPositions[axis[i]] *= (-1);
+				}
+				flippedPositions1d.push(flippedPositions);
+			}
+			flippedPositions2d[sampleKey] = flippedPositions1d;
+		}
+		removeEdges();
+		drawEdges(flippedPositions2d);
+}
+
+function removeEdges() {
+		for(var sample_id in g_plotEdges){
+			for(var section in g_plotEdges[sample_id]){
+				g_mainScene.remove(g_plotEdges[sample_id][section]);
+			}
+		}
 }
 
 function clean_label_refresh_axes() {
@@ -2073,7 +2104,7 @@ $(document).ready(function() {
 		drawEllipses();
 		drawTaxa();
 		drawVectors();
-		drawEdges();
+		drawEdges(g_comparisonPositions);
 
 		// set some of the scene properties
 		g_plotIds = g_plotIds.sort();
