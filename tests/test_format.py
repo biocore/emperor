@@ -446,6 +446,16 @@ document.getElementById("logotable").style.display = 'none';
 
 <body>    
 
+<div id="overlay">
+	<div>
+		<h1>WebGL is not enabled!</h1>
+		<p>Here is what you can do</p>
+		<p>Chrome: Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable it if you haven't already.</p>
+		<p>Safari: Open Safari menu and select Preferences. Click on the advanced tab, and then check Show Develop menu. Then open the Develop menu and select Enable WebGL.</p>
+		<p>Firefox: Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+	</div>
+</div>
+
 <div id="plotToggle">
     <form>
       <div id="plottype">
@@ -608,6 +618,16 @@ document.getElementById("logotable").style.display = 'none';
 </head>
 
 <body>    
+
+<div id="overlay">
+	<div>
+		<h1>WebGL is not enabled!</h1>
+		<p>Here is what you can do</p>
+		<p>Chrome: Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable it if you haven't already.</p>
+		<p>Safari: Open Safari menu and select Preferences. Click on the advanced tab, and then check Show Develop menu. Then open the Develop menu and select Enable WebGL.</p>
+		<p>Firefox: Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+	</div>
+</div>
 
 <div id="plotToggle">
     <form>
@@ -783,6 +803,16 @@ document.getElementById("logotable").style.display = 'none';
 
 <body>    
 
+<div id="overlay">
+	<div>
+		<h1>WebGL is not enabled!</h1>
+		<p>Here is what you can do</p>
+		<p>Chrome: Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable it if you haven't already.</p>
+		<p>Safari: Open Safari menu and select Preferences. Click on the advanced tab, and then check Show Develop menu. Then open the Develop menu and select Enable WebGL.</p>
+		<p>Firefox: Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+	</div>
+</div>
+
 <div id="plotToggle">
     <form>
       <div id="plottype">
@@ -940,6 +970,16 @@ document.getElementById("logotable").style.display = 'none';
 </head>
 
 <body>    
+
+<div id="overlay">
+	<div>
+		<h1>WebGL is not enabled!</h1>
+		<p>Here is what you can do</p>
+		<p>Chrome: Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable it if you haven't already.</p>
+		<p>Safari: Open Safari menu and select Preferences. Click on the advanced tab, and then check Show Develop menu. Then open the Develop menu and select Enable WebGL.</p>
+		<p>Firefox: Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+	</div>
+</div>
 
 <div id="plotToggle">
     <form>
@@ -1102,6 +1142,16 @@ document.getElementById("logotable").style.display = 'none';
 </head>
 
 <body>    
+
+<div id="overlay">
+	<div>
+		<h1>WebGL is not enabled!</h1>
+		<p>Here is what you can do</p>
+		<p>Chrome: Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable it if you haven't already.</p>
+		<p>Safari: Open Safari menu and select Preferences. Click on the advanced tab, and then check Show Develop menu. Then open the Develop menu and select Enable WebGL.</p>
+		<p>Firefox: Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+	</div>
+</div>
 
 <div id="plotToggle">
     <form>
