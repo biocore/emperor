@@ -1,7 +1,7 @@
 /*
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2013, Emperor"
- * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza"]
+ * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza","Jackson Chen"]
  * __license__ = "GPL"
  * __version__ = "0.9.0-dev"
  * __maintainer__ = "Meg Pirrung"
@@ -1584,7 +1584,7 @@ function drawEdges(spherepositions){
 
 					// the current line becomes the previous line for the next
 					// iteration as all samples must be connected
-					previous = g_comparisonPositions[sampleKey][edgePosition];
+					previous = spherepositions[sampleKey][edgePosition];
 				}
 				index = index+1;
 			}
@@ -1809,6 +1809,19 @@ function changeAxesDisplayed() {
 		g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis];
 	}
 	
+	for (var sampleKey in g_comparisonPositions) {
+		var sid = sampleKey + "_0"
+			g_comparisonPositions[sampleKey][0][0] = g_spherePositions[sid]['x']
+			g_comparisonPositions[sampleKey][0][1] = g_spherePositions[sid]['y']
+			g_comparisonPositions[sampleKey][0][2] = g_spherePositions[sid]['z']
+		var sid = sampleKey + "_1"
+ 			g_comparisonPositions[sampleKey][1][0] = g_spherePositions[sid]['x']
+ 			g_comparisonPositions[sampleKey][1][1] = g_spherePositions[sid]['y']
+ 			g_comparisonPositions[sampleKey][1][2] = g_spherePositions[sid]['z']
+	}
+	
+	
+	
 	checkedboxes = []
     if ($('#flip_axes_1').is(':checked')) {
 		for(var sid in g_spherePositions){
@@ -1895,11 +1908,11 @@ function flipEdges(axis) {
 }
 
 function removeEdges() {
-		for(var sample_id in g_plotEdges){
-			for(var section in g_plotEdges[sample_id]){
-				g_mainScene.remove(g_plotEdges[sample_id][section]);
-			}
+	for(var sample_id in g_plotEdges){
+		for(var section in g_plotEdges[sample_id]){
+			g_mainScene.remove(g_plotEdges[sample_id][section]);
 		}
+	}
 }
 
 function clean_label_refresh_axes() {
