@@ -1810,14 +1810,12 @@ function changeAxesDisplayed() {
 	}
 	
 	for (var sampleKey in g_comparisonPositions) {
-		var sid = sampleKey + "_0"
-			g_comparisonPositions[sampleKey][0][0] = g_spherePositions[sid]['x']
-			g_comparisonPositions[sampleKey][0][1] = g_spherePositions[sid]['y']
-			g_comparisonPositions[sampleKey][0][2] = g_spherePositions[sid]['z']
-		var sid = sampleKey + "_1"
- 			g_comparisonPositions[sampleKey][1][0] = g_spherePositions[sid]['x']
- 			g_comparisonPositions[sampleKey][1][1] = g_spherePositions[sid]['y']
- 			g_comparisonPositions[sampleKey][1][2] = g_spherePositions[sid]['z']
+		for (i in g_comparisonPositions.length) {
+		var sid = sampleKey + "_" + i
+			g_comparisonPositions[sampleKey][i][0] = g_spherePositions[sid]['x']
+			g_comparisonPositions[sampleKey][i][1] = g_spherePositions[sid]['y']
+			g_comparisonPositions[sampleKey][i][2] = g_spherePositions[sid]['z']
+ 		}
 	}
 	
 	
