@@ -231,12 +231,13 @@ class TopLevelTests(TestCase):
         autograph = format_emperor_autograph()
 
         # check for comment open and comment close
-        self.assertTrue('!<--' in autograph)
+        self.assertTrue('<!--' in autograph)
         self.assertTrue('-->' in autograph)
         # check for fields since we cannot check for the specifics
         self.assertTrue("*Summary of Emperor's Information*" in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
+        self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
         autograph = format_emperor_autograph('Python')
@@ -247,6 +248,7 @@ class TopLevelTests(TestCase):
         self.assertTrue("*Summary of Emperor's Information*" in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
+        self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
         autograph = format_emperor_autograph('C')
@@ -257,6 +259,7 @@ class TopLevelTests(TestCase):
         self.assertTrue("*Summary of Emperor's Information*" in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
+        self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
         autograph = format_emperor_autograph('Bash')
@@ -267,6 +270,7 @@ class TopLevelTests(TestCase):
         self.assertTrue("*Summary of Emperor's Information*" in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
+        self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
         # haskell is ... not supported

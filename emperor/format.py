@@ -27,6 +27,7 @@ from qiime.format import format_mapping_file
 from qiime.parse import mapping_file_to_dict, parse_mapping_file
 from qiime.filter import (filter_mapping_file_by_metadata_states,
     sample_ids_from_metadata_description)
+from qiime.util import get_qiime_library_version
 
 class EmperorLogicError(ValueError):
     """Exception raised when a requirement for the Emperor GUI is not met"""
@@ -411,14 +412,14 @@ def format_emperor_autograph(language='HTML'):
     """
 
     # supported open and closing of multi-line comments for different languages
-    _languages = {'HTML':('!<--', '-->'), 'Python':('"""', '"""'), 'C':('/*',
+    _languages = {'HTML':('<!--', '-->'), 'Python':('"""', '"""'), 'C':('/*',
         '*/'), 'Bash':('<<COMMENT', 'COMMENT')}
 
     assert language in _languages.keys(), '%s is not a supported language' %\
         language
 
     autograph = []
-    autograph.append(_languages[language][0])
+    autograph.append(_languages[language][0]+'\n')
     autograph.append("*Summary of Emperor's Information*")
     if any([True for element in argv if 'make_emperor.py' in element]):
         autograph.append('Command:\n%s' % ' '.join(argv))
@@ -427,11 +428,12 @@ def format_emperor_autograph(language='HTML'):
 
     # add library version and SHA-1 if available
     autograph.append('Emperor Version: %s' %  get_emperor_library_version())
+    autograph.append('QIIME Version: %s' % get_qiime_library_version())
 
     # add the day and time at which the command was called
     autograph.append(datetime.now().strftime('Command executed on %B %d, %Y at'
         ' %H:%M:%S'))
-    autograph.append(_languages[language][1])
+    autograph.append('\n'+_languages[language][1]+'\n')
 
     return '%s' % '\n'.join(autograph)
 
