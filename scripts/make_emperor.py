@@ -30,7 +30,8 @@ from emperor.util import (copy_support_files, preprocess_mapping_file,
     EmperorInputFilesError)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
-    format_comparison_bars_to_js, EMPEROR_HEADER_HTML_STRING, EmperorLogicError)
+    format_comparison_bars_to_js, EMPEROR_HEADER_HTML_STRING, EmperorLogicError,
+    format_emperor_autograph)
 
 script_info = {}
 
@@ -218,6 +219,9 @@ script_info['version'] = __version__
 
 
 def main():
+    # add some metadata to the output
+    emperor_autograph = format_emperor_autograph('HTML')
+
     option_parser, opts, args = parse_command_line_parameters(**script_info)
     input_coords = opts.input_coords
     map_fp = opts.map_fp
@@ -577,6 +581,7 @@ def main():
     create_dir(opts.output_dir,False)
 
     fp_out = open(join(output_dir, 'index.html'),'w')
+    fp_out.write(emperor_autograph)
     fp_out.write(EMPEROR_HEADER_HTML_STRING)
 
     # write the html file
