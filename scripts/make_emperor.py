@@ -219,9 +219,6 @@ script_info['version'] = __version__
 
 
 def main():
-    # add some metadata to the output
-    emperor_autograph = format_emperor_autograph('HTML')
-
     option_parser, opts, args = parse_command_line_parameters(**script_info)
     input_coords = opts.input_coords
     map_fp = opts.map_fp
@@ -241,6 +238,9 @@ def main():
     number_of_axes = opts.number_of_axes
     compare_plots = opts.compare_plots
     number_of_segments = opts.number_of_segments
+
+    # add some metadata to the output
+    emperor_autograph = format_emperor_autograph(map_fp, input_coords, 'HTML')
 
     # verifying that the number of axes requested is greater than 3
     if number_of_axes<3:
@@ -581,7 +581,7 @@ def main():
     create_dir(opts.output_dir,False)
 
     fp_out = open(join(output_dir, 'index.html'),'w')
-    fp_out.write(emperor_autograph)
+    fp_out.write(emperor_autograph+'\n')
     fp_out.write(EMPEROR_HEADER_HTML_STRING)
 
     # write the html file
