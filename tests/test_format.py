@@ -450,10 +450,11 @@ document.getElementById("logotable").style.display = 'none';
 	<div>
 	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
 		<h1>WebGL is not enabled!</h1>
-		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do</p>
-		<p><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable it if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then look to enable Override software rendering.</p>
-		<p><strong>Safari:</strong> Open Safari menu and select Preferences. Click on the advanced tab, and then check Show Develop menu. Then open the Develop menu and select Enable WebGL.</p>
-		<p><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
 	</div>
 </div>
 
@@ -624,10 +625,11 @@ document.getElementById("logotable").style.display = 'none';
 	<div>
 	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
 		<h1>WebGL is not enabled!</h1>
-		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do</p>
-		<p><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable it if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then look to enable Override software rendering.</p>
-		<p><strong>Safari:</strong> Open Safari menu and select Preferences. Click on the advanced tab, and then check Show Develop menu. Then open the Develop menu and select Enable WebGL.</p>
-		<p><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
 	</div>
 </div>
 
@@ -809,10 +811,11 @@ document.getElementById("logotable").style.display = 'none';
 	<div>
 	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
 		<h1>WebGL is not enabled!</h1>
-		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do</p>
-		<p><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable it if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then look to enable Override software rendering.</p>
-		<p><strong>Safari:</strong> Open Safari menu and select Preferences. Click on the advanced tab, and then check Show Develop menu. Then open the Develop menu and select Enable WebGL.</p>
-		<p><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
 	</div>
 </div>
 
@@ -978,10 +981,11 @@ document.getElementById("logotable").style.display = 'none';
 	<div>
 	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
 		<h1>WebGL is not enabled!</h1>
-		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do</p>
-		<p><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable it if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then look to enable Override software rendering.</p>
-		<p><strong>Safari:</strong> Open Safari menu and select Preferences. Click on the advanced tab, and then check Show Develop menu. Then open the Develop menu and select Enable WebGL.</p>
-		<p><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
 	</div>
 </div>
 
@@ -1151,10 +1155,11 @@ document.getElementById("logotable").style.display = 'none';
 	<div>
 	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
 		<h1>WebGL is not enabled!</h1>
-		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do</p>
-		<p><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable it if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then look to enable Override software rendering.</p>
-		<p><strong>Safari:</strong> Open Safari menu and select Preferences. Click on the advanced tab, and then check Show Develop menu. Then open the Develop menu and select Enable WebGL.</p>
-		<p><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
 	</div>
 </div>
 
