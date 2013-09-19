@@ -1968,8 +1968,14 @@ function reset_div_sizes(width_left) {
 
 //Unhides the info box if WebGL is disabled
 function overlay() {
-	el = document.getElementById("overlay");
-	el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+	overlay = document.getElementById("overlay");
+	overlay.style.visibility = (overlay.style.visibility == "visible") ? "hidden" : "visible";
+	parallel = document.getElementById("menu");
+	parallel.style.visibility = (parallel.style.visibility == "invisible") ? "visible" : "hidden";
+	separator = document.getElementById("separator");
+	separator.style.visibility = (separator.style.visibility == "invisible") ? "visible" : "hidden";
+	plotToggle = document.getElementById("plotToggle");
+	plotToggle.style.visibility = (plotToggle.style.visibility == "invisible") ? "visible" : "hidden";
 }
 
 /*Setup and initialization function for the whole system

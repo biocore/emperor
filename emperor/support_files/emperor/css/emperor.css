@@ -6,7 +6,11 @@
         overflow: hidden;
         float: left;
     }
-	
+    
+	#smalllogo {
+		width:150px;
+		height:45px;
+	}
     #overlay {
     	visibility: hidden;
     	position: absolute;
