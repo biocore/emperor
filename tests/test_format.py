@@ -228,53 +228,72 @@ class TopLevelTests(TestCase):
     def test_format_emperor_autograph(self):
         """Test signatures are created correctly for each of language"""
 
-        autograph = format_emperor_autograph()
+        autograph = format_emperor_autograph('mapping_file.txt',
+            'pcoa_unweighted_unifrac.txt')
 
         # check for comment open and comment close
         self.assertTrue('<!--' in autograph)
         self.assertTrue('-->' in autograph)
         # check for fields since we cannot check for the specifics
         self.assertTrue("*Summary of Emperor's Information*" in autograph)
+        self.assertTrue('Metadata:' in autograph)
+        self.assertTrue('Coordinates:' in autograph)
+        self.assertTrue('HostName:' in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
         self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
-        autograph = format_emperor_autograph('Python')
+        autograph = format_emperor_autograph('mapping_file.txt',
+            'pcoa_unweighted_unifrac.txt','Python')
         # check for comment open and comment close
         self.assertTrue('"""' in autograph)
         self.assertTrue('"""' in autograph)
         # check for fields since we cannot check for the specifics
         self.assertTrue("*Summary of Emperor's Information*" in autograph)
+        self.assertTrue('Metadata:' in autograph)
+        self.assertTrue('Coordinates:' in autograph)
+        self.assertTrue('HostName:' in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
         self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
-        autograph = format_emperor_autograph('C')
+        autograph = format_emperor_autograph('mapping_file.txt',
+            'pcoa_unweighted_unifrac.txt','C')
         # check for comment open and comment close
         self.assertTrue('/*' in autograph)
         self.assertTrue('*/' in autograph)
         # check for fields since we cannot check for the specifics
         self.assertTrue("*Summary of Emperor's Information*" in autograph)
+        self.assertTrue('Metadata:' in autograph)
+        self.assertTrue('Coordinates:' in autograph)
+        self.assertTrue('HostName:' in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
         self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
-        autograph = format_emperor_autograph('Bash')
+        autograph = format_emperor_autograph('mapping_file.txt',
+            'pcoa_unweighted_unifrac.txt','Bash')
         # check for comment open and comment close
         self.assertTrue('<<COMMENT' in autograph)
         self.assertTrue('COMMENT' in autograph)
         # check for fields since we cannot check for the specifics
         self.assertTrue("*Summary of Emperor's Information*" in autograph)
+        self.assertTrue('Metadata:' in autograph)
+        self.assertTrue('Coordinates:' in autograph)
+        self.assertTrue('HostName:' in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
         self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
-        # haskell is ... not supported
-        self.assertRaises(AssertionError, format_emperor_autograph, 'Haskell')
+        # haskell and cobol are ... not supported
+        self.assertRaises(AssertionError, format_emperor_autograph,
+            'mapping_file.txt', 'pcoa.txt', 'Haskell')
+        self.assertRaises(AssertionError, format_emperor_autograph,
+            'mapping_file.txt', 'pcoa.txt', 'Cobol')
         
 
 PCOA_DATA = array([[ -1.09166142e-01, 8.77774496e-02, 1.15866606e-02, -6.26863896e-02, 2.31533068e-02, 8.76934639e-02, 1.37400927e-03, -1.35496063e-05, 1.29849404e-09],

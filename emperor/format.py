@@ -14,8 +14,10 @@ __status__ = "Development"
 
 from sys import argv
 from copy import deepcopy
+from os.path import abspath
 from datetime import datetime
 from StringIO import StringIO
+from socket import gethostname
 
 from cogent.util.misc import if_
 from numpy import max, min, abs, argsort, array
@@ -404,7 +406,7 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
 
     return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
 
-def format_emperor_autograph(language='HTML'):
+def format_emperor_autograph(metadata_fp, coords_fp, language='HTML'):
     """Create a signature with some meta-data of the Emperor package
 
     language: language to which it will be formatted as a multi-line comment
@@ -419,21 +421,27 @@ def format_emperor_autograph(language='HTML'):
         language
 
     autograph = []
-    autograph.append(_languages[language][0]+'\n')
+    autograph.append(_languages[language][0])
     autograph.append("*Summary of Emperor's Information*")
-    if any([True for element in argv if 'make_emperor.py' in element]):
-        autograph.append('Command:\n%s' % ' '.join(argv))
-    else:
-        autograph.append('Command:\nCannot find direct call to make_emperor.py')
-
-    # add library version and SHA-1 if available
-    autograph.append('Emperor Version: %s' %  get_emperor_library_version())
-    autograph.append('QIIME Version: %s' % get_qiime_library_version())
 
     # add the day and time at which the command was called
     autograph.append(datetime.now().strftime('Command executed on %B %d, %Y at'
         ' %H:%M:%S'))
-    autograph.append('\n'+_languages[language][1]+'\n')
+
+    # add library version and SHA-1 if available
+    autograph.append('Emperor Version: %s' %  get_emperor_library_version())
+    autograph.append('QIIME Version: %s' % get_qiime_library_version())
+    autograph.append('HostName: %s' % gethostname())
+
+    # full path to input files
+    autograph.append('Metadata: %s' % abspath(metadata_fp))
+    autograph.append('Coordinates: %s' % abspath(coords_fp))
+
+    if any([True for element in argv if 'make_emperor.py' in element]):
+        autograph.append('Command: %s' % ' '.join(argv))
+    else:
+        autograph.append('Command: Cannot find direct call to make_emperor.py')
+    autograph.append(_languages[language][1])
 
     return '%s' % '\n'.join(autograph)
 
