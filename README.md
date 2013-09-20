@@ -9,7 +9,7 @@ To start using Emperor, please refer to the [installation notes](INSTALL.md).
 
 ## Usage examples
 
-The main interface to create Emperor visualizations is the `make_emperor.py` script, inputing a mapping file and a PCoA data file, will generate an Emperor graphical user interface to analize and visualize your data.
+The main interface to create Emperor visualizations is the `make_emperor.py` script, inputing a mapping file and a PCoA data file, will generate an Emperor graphical user interface to analyze and visualize your data.
 
 If you have a QIIME compliant mapping file and a PCoA file, try the following command from a terminal session:
 
