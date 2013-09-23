@@ -2047,6 +2047,18 @@ function buildAxisLabels() {
 	document.getElementById("axislabels").innerHTML = axislabelhtml;
 }
 
+//Unhides the info box if WebGL is disabled
+function overlay() {
+	overlay = document.getElementById("overlay");
+	overlay.style.visibility = (overlay.style.visibility == "visible") ? "hidden" : "visible";
+	parallel = document.getElementById("menu");
+	parallel.style.visibility = (parallel.style.visibility == "invisible") ? "visible" : "hidden";
+	separator = document.getElementById("separator");
+	separator.style.visibility = (separator.style.visibility == "invisible") ? "visible" : "hidden";
+	plotToggle = document.getElementById("plotToggle");
+	plotToggle.style.visibility = (plotToggle.style.visibility == "invisible") ? "visible" : "hidden";
+}
+
 /*Setup and initialization function for the whole system
 
   This function will set all of the WebGL elements that are required to exist
@@ -2061,8 +2073,9 @@ $(document).ready(function() {
 	containmentLeft = $(window).width()*0.5;
 	containmentRight = $(window).width()*0.99;
 	// Detecting that webgl is activated
-	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
-
+	if ( ! Detector.webgl ) {
+		overlay();
+	}
 	var main_plot = $('#main_plot');
 	var particles, geometry, parameters, i, h, color;
 	var mouseX = 0, mouseY = 0;

@@ -30,7 +30,8 @@ from emperor.util import (copy_support_files, preprocess_mapping_file,
     EmperorInputFilesError)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
-    format_comparison_bars_to_js, EMPEROR_HEADER_HTML_STRING, EmperorLogicError)
+    format_comparison_bars_to_js, EMPEROR_HEADER_HTML_STRING, EmperorLogicError,
+    format_emperor_autograph)
 
 script_info = {}
 
@@ -237,6 +238,9 @@ def main():
     number_of_axes = opts.number_of_axes
     compare_plots = opts.compare_plots
     number_of_segments = opts.number_of_segments
+
+    # add some metadata to the output
+    emperor_autograph = format_emperor_autograph(map_fp, input_coords, 'HTML')
 
     # verifying that the number of axes requested is greater than 3
     if number_of_axes<3:
@@ -577,6 +581,7 @@ def main():
     create_dir(opts.output_dir,False)
 
     fp_out = open(join(output_dir, 'index.html'),'w')
+    fp_out.write(emperor_autograph+'\n')
     fp_out.write(EMPEROR_HEADER_HTML_STRING)
 
     # write the html file

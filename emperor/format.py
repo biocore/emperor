@@ -12,18 +12,24 @@ __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 
+from sys import argv
 from copy import deepcopy
+from os.path import abspath
+from datetime import datetime
 from StringIO import StringIO
+from socket import gethostname
 
 from cogent.util.misc import if_
 from numpy import max, min, abs, argsort, array
 
-from emperor.util import keep_columns_from_mapping_file
+from emperor.util import (keep_columns_from_mapping_file,
+    get_emperor_library_version)
 
 from qiime.format import format_mapping_file
 from qiime.parse import mapping_file_to_dict, parse_mapping_file
 from qiime.filter import (filter_mapping_file_by_metadata_states,
     sample_ids_from_metadata_description)
+from qiime.util import get_qiime_library_version
 
 class EmperorLogicError(ValueError):
     """Exception raised when a requirement for the Emperor GUI is not met"""
@@ -400,6 +406,45 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
 
     return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
 
+def format_emperor_autograph(metadata_fp, coords_fp, language='HTML'):
+    """Create a signature with some meta-data of the Emperor package
+
+    language: language to which it will be formatted as a multi-line comment
+
+    """
+
+    # supported open and closing of multi-line comments for different languages
+    _languages = {'HTML':('<!--', '-->'), 'Python':('"""', '"""'), 'C':('/*',
+        '*/'), 'Bash':('<<COMMENT', 'COMMENT')}
+
+    assert language in _languages.keys(), '%s is not a supported language' %\
+        language
+
+    autograph = []
+    autograph.append(_languages[language][0])
+    autograph.append("*Summary of Emperor's Information*")
+
+    # add the day and time at which the command was called
+    autograph.append(datetime.now().strftime('Command executed on %B %d, %Y at'
+        ' %H:%M:%S'))
+
+    # add library version and SHA-1 if available
+    autograph.append('Emperor Version: %s' %  get_emperor_library_version())
+    autograph.append('QIIME Version: %s' % get_qiime_library_version())
+    autograph.append('HostName: %s' % gethostname())
+
+    # full path to input files
+    autograph.append('Metadata: %s' % abspath(metadata_fp))
+    autograph.append('Coordinates: %s' % abspath(coords_fp))
+
+    if any([True for element in argv if 'make_emperor.py' in element]):
+        autograph.append('Command: %s' % ' '.join(argv))
+    else:
+        autograph.append('Command: Cannot find direct call to make_emperor.py')
+    autograph.append(_languages[language][1])
+
+    return '%s' % '\n'.join(autograph)
+
 
 EMPEROR_HEADER_HTML_STRING =\
 """<!doctype html>
@@ -489,7 +534,21 @@ document.getElementById("logotable").style.display = 'none';
  </script>
 </head>
 
-<body>    
+<body>
+
+<div id="overlay">
+	<div>
+	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+		<h1>WebGL is not enabled!</h1>
+		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+		<p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
+		<p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
+		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
+	</div>
+</div>
 
 <div id="plotToggle">
     <form>

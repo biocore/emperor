@@ -22,9 +22,11 @@ from qiime.format import format_mapping_file
 from qiime.filter import filter_mapping_file
 from qiime.parse import mapping_file_to_dict, parse_metadata_state_descriptions
 from qiime.util import (qiime_system_call, create_dir, MetadataMap,
-    summarize_pcoas)
+    summarize_pcoas, is_valid_git_refname, is_valid_git_sha1)
 from qiime.make_3d_plots import (get_custom_coords, remove_nans,
     scale_custom_coords)
+
+from emperor import __version__ as emperor_library_version
 
 class EmperorSupportFilesError(IOError):
     """Exception for missing support files"""
@@ -33,6 +35,28 @@ class EmperorSupportFilesError(IOError):
 class EmperorInputFilesError(IOError):
     """Exception for missing support files"""
     pass
+
+# Based on qiime/qiime/util.py
+def get_emperor_library_version():
+    """Get Emperor version and the git SHA + current branch (if applicable)"""
+    emperor_dir = get_emperor_project_dir()
+    emperor_version = emperor_library_version
+
+    # more information could be retrieved following this pattern
+    sha_cmd = 'git --git-dir %s/.git rev-parse HEAD' % (emperor_dir)
+    sha_o, sha_e, sha_r = qiime_system_call(sha_cmd)
+    git_sha = sha_o.strip()
+
+    branch_cmd = 'git --git-dir %s/.git rev-parse --abbrev-ref HEAD' %\
+        (emperor_dir)
+    branch_o, branch_e, branch_r = qiime_system_call(branch_cmd)
+    git_branch = branch_o.strip()
+
+    # validate the output from both command calls
+    if is_valid_git_refname(git_branch) and is_valid_git_sha1(git_sha):
+        return '%s, %s@%s' % (emperor_version, git_branch, git_sha[0:7])
+    else:
+        return '%s' % emperor_version
 
 def get_emperor_project_dir():
     """ Returns the top-level Emperor directory
