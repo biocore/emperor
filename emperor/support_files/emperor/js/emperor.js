@@ -1538,6 +1538,9 @@ function drawVectors(){
   lines visually compose a single line and are both stored in the g_plotEdges
   array in arrays of two elements where the first element is the red line and
   the second element is the white line.
+  
+  A dynamic value that contains the coordinates of the spheres is passed in 
+  to allow the negating of the values.
 
   In the case of a non-serial comparison plot, all edges will originate in the
   same point.
@@ -1554,7 +1557,7 @@ function drawEdges(spherepositions){
 	if (g_isSerialComparisonPlot == true){
 		for (var sampleKey in spherepositions){
 			for (var edgePosition in spherepositions[sampleKey]){
-
+			
 				// if we don't have a start point store it and move along
 				if (previous == null) {
 					previous = spherepositions[sampleKey][edgePosition];
@@ -1569,8 +1572,12 @@ function drawEdges(spherepositions){
 					middle_point = [(previous[0]+current[0])/2,
 						(previous[1]+current[1])/2, (previous[2]+current[2])/2];
 
-					line_a = makeLine(previous, middle_point, 0xFFFFFF, 2);
-					line_b = makeLine(middle_point, current, 0xFF0000, 2);
+					currentColorA = $('#edgecolorselector_a').css( "background-color" );
+					currentColorA_hex = rgb2hex(currentColorA);
+					currentColorB = $('#edgecolorselector_b').css( "background-color" );
+					currentColorB_hex = rgb2hex(currentColorB);
+					line_a = makeLine(previous, middle_point, currentColorA_hex, 2);
+					line_b = makeLine(middle_point, current, currentColorB_hex, 2);
 					line_a.transparent = false;
 					line_b.transparent = false;
 
@@ -1610,8 +1617,12 @@ function drawEdges(spherepositions){
 
 					// in the case of centered comparisons the origins are
 					// painted in color white one one side and red on the other
-					line_a = makeLine(origin, middle_point, 0xFFFFFF, 2);
-					line_b = makeLine(middle_point, current, 0xFF0000, 2);
+					currentColorA = $('#edgecolorselector_a').css( "background-color" );
+					currentColorA_hex = rgb2hex(currentColorA);
+					currentColorB = $('#edgecolorselector_b').css( "background-color" );
+					currentColorB_hex = rgb2hex(currentColorB);
+					line_a = makeLine(origin, middle_point, currentColorA_hex, 2);
+					line_b = makeLine(middle_point, current, currentColorB_hex, 2);
 					line_a.transparent = false;
 					line_b.transparent = false;
 
@@ -1630,6 +1641,15 @@ function drawEdges(spherepositions){
 			origin = null;
 		}
 	}
+}
+
+//Converts RGB color to hex format
+function rgb2hex(rgb){
+	rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+	return "#" +
+	("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+	("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+	("0" + parseInt(rgb[3],10).toString(16)).slice(-2);
 }
 
 /*Save the current view to SVG
@@ -1883,6 +1903,14 @@ function changeAxesDisplayed() {
 	// HACK: this is a work around for cases when the scale is on
 	if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': true});
 	
+	// Change the css color of the 3d plot labels, set colors here because buildAxesLabels reverts color to default
+	axeslabelscolor = $('#axeslabelscolor').css( "background-color" );
+	console.log(axeslabelscolor);
+	axeslabelscolor_hex = rgb2hex(axeslabelscolor);
+	$("#pc1_label").css('color', axeslabelscolor);
+	$("#pc2_label").css('color', axeslabelscolor);
+	$("#pc3_label").css('color', axeslabelscolor);
+
 	resetCamera();
 }
 
