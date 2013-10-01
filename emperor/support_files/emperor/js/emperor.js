@@ -1264,7 +1264,7 @@ function setJqueryUi() {
 		$('#edgecolorselector_b').css('backgroundColor',"#FF0000");
 		$("#edgecolorselector_b").spectrum({
 			localStorageKey: 'key',
-			color: "#FFFFFF",
+			color: "#FF0000",
 			preferredFormat: "hex6",
 			showInitial: true,
 			showInput: true,
@@ -1334,7 +1334,6 @@ function setJqueryUi() {
 			function(color) {
 				// pass a boolean flag to convert to hex6 string
 				var c = color.toHexString(true);
-
 				// set the color for the box and for the renderer
 				$(this).css('backgroundColor', c);
 
@@ -1363,7 +1362,6 @@ function setJqueryUi() {
 			function(color) {
 				// pass a boolean flag to convert to hex6 string
 				var c = color.toHexString(true);
-
 				// create a new three.color from the string
 				var axesColor = new THREE.Color();
 				axesColor.setHex(c.replace('#','0x'));
@@ -1539,7 +1537,7 @@ function drawVectors(){
   array in arrays of two elements where the first element is the red line and
   the second element is the white line.
   
-  A dynamic value that contains the coordinates of the spheres is passed in 
+  A dynamic value that contains the coordinates of the spheres is passed in, that way 
   to allow the negating of the values.
 
   In the case of a non-serial comparison plot, all edges will originate in the
@@ -1572,10 +1570,8 @@ function drawEdges(spherepositions){
 					middle_point = [(previous[0]+current[0])/2,
 						(previous[1]+current[1])/2, (previous[2]+current[2])/2];
 
-					currentColorA = $('#edgecolorselector_a').css( "background-color" );
-					currentColorA_hex = rgb2hex(currentColorA);
-					currentColorB = $('#edgecolorselector_b').css( "background-color" );
-					currentColorB_hex = rgb2hex(currentColorB);
+					currentColorA_hex = $("#edgecolorselector_a").spectrum("get").toHexString(true);
+					currentColorB_hex = $("#edgecolorselector_b").spectrum("get").toHexString(true);
 					line_a = makeLine(previous, middle_point, currentColorA_hex, 2);
 					line_b = makeLine(middle_point, current, currentColorB_hex, 2);
 					line_a.transparent = false;
@@ -1617,10 +1613,8 @@ function drawEdges(spherepositions){
 
 					// in the case of centered comparisons the origins are
 					// painted in color white one one side and red on the other
-					currentColorA = $('#edgecolorselector_a').css( "background-color" );
-					currentColorA_hex = rgb2hex(currentColorA);
-					currentColorB = $('#edgecolorselector_b').css( "background-color" );
-					currentColorB_hex = rgb2hex(currentColorB);
+					currentColorA_hex = $("#edgecolorselector_a").spectrum("get").toHexString(true);
+					currentColorB_hex = $("#edgecolorselector_b").spectrum("get").toHexString(true);
 					line_a = makeLine(origin, middle_point, currentColorA_hex, 2);
 					line_b = makeLine(middle_point, current, currentColorB_hex, 2);
 					line_a.transparent = false;
@@ -1641,15 +1635,6 @@ function drawEdges(spherepositions){
 			origin = null;
 		}
 	}
-}
-
-//Converts RGB color to hex format
-function rgb2hex(rgb){
-	rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-	return "#" +
-	("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
-	("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
-	("0" + parseInt(rgb[3],10).toString(16)).slice(-2);
 }
 
 /*Save the current view to SVG
@@ -1838,8 +1823,6 @@ function changeAxesDisplayed() {
  		}
 	}
 	
-	
-	
 	checkedboxes = []
     if ($('#flip_axes_1').is(':checked')) {
 		for(var sid in g_spherePositions){
@@ -1905,8 +1888,8 @@ function changeAxesDisplayed() {
 	
 	// Change the css color of the 3d plot labels, set colors here because buildAxesLabels reverts color to default
 	axeslabelscolor = $('#axeslabelscolor').css( "background-color" );
-	console.log(axeslabelscolor);
-	axeslabelscolor_hex = rgb2hex(axeslabelscolor);
+	axeslabelscolor_hex = $("#axeslabelscolor").spectrum("get").toHexString(true);
+	console.log(axeslabelscolor_hex)
 	$("#pc1_label").css('color', axeslabelscolor);
 	$("#pc2_label").css('color', axeslabelscolor);
 	$("#pc3_label").css('color', axeslabelscolor);
@@ -1914,6 +1897,7 @@ function changeAxesDisplayed() {
 	resetCamera();
 }
 
+/*This function flips the lines in comparison plots when the user selects the option to negate the axes.*/
 function flipEdges(axis) {
 		var flippedPositions2d = new Array();
 		for (var sampleKey in g_comparisonPositions){
@@ -1933,6 +1917,7 @@ function flipEdges(axis) {
 		drawEdges(flippedPositions2d);
 }
 
+/*Removes the lines in comparison plots so the negated lines can be drawn*/
 function removeEdges() {
 	for(var sample_id in g_plotEdges){
 		for(var section in g_plotEdges[sample_id]){
@@ -2057,6 +2042,7 @@ function reset_div_sizes(width_left) {
 	}
 }
 
+/*Builds the axes labels from ground up after changing the axes*/
 function buildAxisLabels() {
 	//build axis labels
 	var axislabelhtml = "";

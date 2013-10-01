@@ -11,8 +11,6 @@ To start using Emperor, please refer to the [installation notes](INSTALL.md).
 
 The main interface to create Emperor visualizations is the `make_emperor.py` script, inputing a mapping file and a PCoA data file, will generate an Emperor graphical user interface to analyze and visualize your data.
 
-Emperor provides a feature to negate axes. With this feature you can negate the coordinates of each data point. As a result, the spheres and/or edges will be adjusted appropriately. 
-
 If you have a QIIME compliant mapping file and a PCoA file, try the following command from a terminal session:
 
 ```bash
