@@ -1889,7 +1889,6 @@ function changeAxesDisplayed() {
 	// Change the css color of the 3d plot labels, set colors here because buildAxesLabels reverts color to default
 	axeslabelscolor = $('#axeslabelscolor').css( "background-color" );
 	axeslabelscolor_hex = $("#axeslabelscolor").spectrum("get").toHexString(true);
-	console.log(axeslabelscolor_hex)
 	$("#pc1_label").css('color', axeslabelscolor);
 	$("#pc2_label").css('color', axeslabelscolor);
 	$("#pc3_label").css('color', axeslabelscolor);
