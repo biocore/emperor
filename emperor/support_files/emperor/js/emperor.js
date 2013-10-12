@@ -1814,12 +1814,14 @@ function changeAxesDisplayed() {
 		g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis];
 	}
 	
+	comparisonPositionlength = Object.keys(g_comparisonPositions).length
+	spherePositionslength = Object.keys(g_spherePositions).length/comparisonPositionlength
 	for (var sampleKey in g_comparisonPositions) {
-		for (i in g_comparisonPositions.length) {
-		var sid = sampleKey + "_" + i
-			g_comparisonPositions[sampleKey][i][0] = g_spherePositions[sid]['x']
-			g_comparisonPositions[sampleKey][i][1] = g_spherePositions[sid]['y']
-			g_comparisonPositions[sampleKey][i][2] = g_spherePositions[sid]['z']
+		for (var j=0;j<spherePositionslength;j++) {
+			var sid = sampleKey + "_" + j
+				g_comparisonPositions[sampleKey][j][0] = g_spherePositions[sid]['x']
+				g_comparisonPositions[sampleKey][j][1] = g_spherePositions[sid]['y']
+				g_comparisonPositions[sampleKey][j][2] = g_spherePositions[sid]['z']
  		}
 	}
 	
