@@ -27,8 +27,8 @@ make_emperor.py -i unweighted_unifrac_pc_time.txt -m mapping_with_time.txt -a TI
 
 Some build examples are bundled with every Emperor repository, you can begin exploring some sample data using **Google Chrome**:
 
-- To see an example of a simple PCoA plot, see this [link](http://emperor.colorado.edu/master/emperor_output/index.html).
-- To see an example of a Jackknifed plot, see this [link](http://emperor.colorado.edu/master/jackknifed_pcoa/index.html).
-- To see an example of a PCoA Biplot, see this [link](http://emperor.colorado.edu/master/biplot/index.html).
-- To see an example of a PCoA plot with connecting lines between samples, see this [link](http://emperor.colorado.edu/master/vectors/index.html).
-- To see an example of a PCoA plot with connecting lines between samples and an explicit axis, see this [link](http://emperor.colorado.edu/master/sorted_by_DOB/index.html).
+- To see an example of a simple PCoA plot, see this [link](http://emperor.colorado.edu/master/make_emperor/emperor_output/index.html).
+- To see an example of a Jackknifed plot, see this [link](http://emperor.colorado.edu/master/make_emperor/jackknifed_pcoa/index.html).
+- To see an example of a PCoA Biplot, see this [link](http://emperor.colorado.edu/master/make_emperor/biplot/index.html).
+- To see an example of a PCoA plot with connecting lines between samples, see this [link](http://emperor.colorado.edu/master/make_emperor/vectors/index.html).
+- To see an example of a PCoA plot with connecting lines between samples and an explicit axis, see this [link](http://emperor.colorado.edu/master/make_emperor/sorted_by_DOB/index.html).
