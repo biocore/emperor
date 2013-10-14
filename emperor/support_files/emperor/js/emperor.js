@@ -46,6 +46,7 @@ var g_keyBuilt = false;
 var g_useDiscreteColors = true;
 var g_screenshotBind;
 var g_separator_left;
+var g_separator_history;
 
 // valid ascii codes for filename
 var g_validAsciiCodes = new Array();
@@ -1945,7 +1946,10 @@ function separator_draggable() {
 				offset = $(window).width()*0.99;
 			}
 			aspectReset();
-			reset_div_sizes(offset);                                  
+			reset_div_sizes(offset);
+			if (offset < $(window).width()*0.93) {
+				g_separator_history = offset;
+			} 
 		}
 	});
 }
@@ -1978,6 +1982,17 @@ function overlay() {
 	plotToggle.style.visibility = (plotToggle.style.visibility == "invisible") ? "visible" : "hidden";
 }
 
+//Toggles fullscreen when double-clicking the separator
+function separatordoubleclick() {
+	if (g_separator_left > 0.98) {
+		reset_div_sizes(g_separator_history);
+	}
+	else {
+		reset_div_sizes($(window).width()*0.99);
+	}
+	aspectReset();	
+}
+
 /*Setup and initialization function for the whole system
 
   This function will set all of the WebGL elements that are required to exist
@@ -1987,8 +2002,9 @@ function overlay() {
 $(document).ready(function() {
 	setJqueryUi()
 	
-	// Default sizes
+	// Default sizes: g_separator_left is in percent and the others are in decimal
 	g_separator_left = 0.73;
+	g_separator_history = $(window).width()*0.73;
 	containmentLeft = $(window).width()*0.5;
 	containmentRight = $(window).width()*0.99;
 	// Detecting that webgl is activated
