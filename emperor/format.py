@@ -368,7 +368,7 @@ def format_comparison_bars_to_js(coords_data, coords_headers, clones,
         # coords to create the javascript object with the coordinates
         for index in xrange(0, headers_length, clones):
             # 1st object must have _0 as a suffix, trim it reveal the sample id
-            sample_id = coords_headers[index].rstrip('_0')
+            sample_id = coords_headers[index].replace('_0','')
 
             # convert all elements in the numpy array into a string before
             # formatting the elements into the javascript dictionary object

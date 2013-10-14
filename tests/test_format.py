@@ -83,6 +83,10 @@ class TopLevelTests(TestCase):
             'sampd_0', 'sampe_0', 'sampf_0', 'sampa_1', 'sampb_1', 'sampc_1',
             'sampd_1', 'sampe_1', 'sampf_1', 'sampa_2', 'sampb_2', 'sampc_2',
             'sampd_2', 'sampe_2', 'sampf_2']
+        self.comparison_coords_headers_zero = ['sampa0_0', 'sampb0_0', 'sampc0_0',
+            'sampd00_0', 'sampe00_0', 'sampf00_0', 'sampa0_1', 'sampb0_1', 'sampc0_1',
+            'sampd00_1', 'sampe00_1', 'sampf00_1', 'sampa0_2', 'sampb0_2', 'sampc0_2',
+            'sampd00_2', 'sampe00_2', 'sampf00_2']
 
     def test_format_pcoa_to_js(self):
         """Test correct formatting of the PCoA file"""
@@ -186,6 +190,11 @@ class TopLevelTests(TestCase):
             False)
         self.assertEquals(out_js_comparison_string,
             COMPARISON_JS_STRING_NON_SERIAL)
+            
+        out_js_comparison_string = format_comparison_bars_to_js(
+            self.comparison_coords_data, self.comparison_coords_headers_zero, 3,
+            False)
+        self.assertEquals(out_js_comparison_string, COMPARISON_COORDS_HEADERS_ZERO)         
 
     def test_format_comparison_bars_to_js_exceptions(self):
         """Check the correct exceptions are raised for incorrect inputs"""
@@ -506,6 +515,17 @@ g_comparisonPositions['sampc'] = [[-0.659, -0.2566, 0.514], [-0.356, 0.0875, 0.7
 g_comparisonPositions['sampd'] = [[-1.179, -0.968, 2.525], [1.512, -1.239, -0.0365], [0.294, 0.2988, 0.0467]];
 g_comparisonPositions['sampe'] = [[-0.896, -1.765, 0.274], [1.17, 1.31, -1.407], [1.64, 0.2485, -0.354]];
 g_comparisonPositions['sampf'] = [[-0.0923, 1.414, -0.622], [2.618, 0.739, -0.01295], [0.821, -1.13, -1.794]];
+"""
+
+COMPARISON_COORDS_HEADERS_ZERO = """
+var g_comparisonPositions = new Array();
+var g_isSerialComparisonPlot = false;
+g_comparisonPositions['sampa0'] = [[-0.0677, -2.036, 0.2726], [-0.972, 0.551, 1.144], [0.2339, -0.88, -1.753]];
+g_comparisonPositions['sampb0'] = [[-1.782, -0.972, 0.1582], [1.438, -2.603, -1.39], [0.436, 2.12, -0.935]];
+g_comparisonPositions['sampc0'] = [[-0.659, -0.2566, 0.514], [-0.356, 0.0875, 0.772], [-0.88, 1.069, 1.069]];
+g_comparisonPositions['sampd00'] = [[-1.179, -0.968, 2.525], [1.512, -1.239, -0.0365], [0.294, 0.2988, 0.0467]];
+g_comparisonPositions['sampe00'] = [[-0.896, -1.765, 0.274], [1.17, 1.31, -1.407], [1.64, 0.2485, -0.354]];
+g_comparisonPositions['sampf00'] = [[-0.0923, 1.414, -0.622], [2.618, 0.739, -0.01295], [0.821, -1.13, -1.794]];
 """
 
 EXPECTED_FOOTER_A =\
