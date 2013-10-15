@@ -21,6 +21,8 @@ Emperor 0.9.1 (changes since Emperor 0.9.0 go here)
 * Labels for biplots now have a color picker.
 * Add color pickers for connecting bars in coordinate comparison plots.
 * Add option to select a master set of coordinates when making a comparison plot.
+* Adds a feature to negate axes. With this feature you can negate the coordinates of each data point. As a result, the spheres and/or edges will be adjusted appropriately. 
+
 
 *Bug Fixes*
 

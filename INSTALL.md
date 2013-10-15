@@ -18,7 +18,7 @@ If you do not want to do a global installation, you will have to add the Emperor
 
 ``` bash
 echo "export PATH=$HOME/emperor_bin/:$PATH" >> ~/.bash_profile
-echo "export PYTHONPATH=$HOME/emperor_lib/:PYTHONPATH" >> ~/.bash_profile
+echo "export PYTHONPATH=$HOME/emperor_lib/:$PYTHONPATH" >> ~/.bash_profile
 python setup.py install --install-scripts=~/emperor_bin/ --install-purelib=~/emperor_lib/ --install-lib=~/emperor_lib/
 ```
 
