@@ -5,7 +5,7 @@ from __future__ import division
 __author__ = "Antonio Gonzalez Pena"
 __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Meg Pirrung", "Antonio Gonzalez Pena", "Yoshiki Vazquez Baeza"]
-__license__ = "GPL"
+__license__ = "BSD"
 __version__ = "0.9.0-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
@@ -19,7 +19,6 @@ from datetime import datetime
 from StringIO import StringIO
 from socket import gethostname
 
-from cogent.util.misc import if_
 from numpy import max, min, abs, argsort, array
 
 from emperor.util import (keep_columns_from_mapping_file,
@@ -396,14 +395,38 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
     optional_strings = []
 
     # the order of these statements matter, see _EMPEROR_FOOTER_HTML_STRING
-    optional_strings.append(if_(has_biplots, _BIPLOT_SPHERES_COLOR_SELECTOR,''))
-    optional_strings.append(if_(has_biplots, _BIPLOT_VISIBILITY_SELECTOR, ''))
-    optional_strings.append(if_(has_biplots, _TAXA_LABELS_SELECTOR, ''))
-    optional_strings.append(if_(has_biplots, _TAXA_LABELS_COLOR_SELECTOR, ''))
-    optional_strings.append(if_(has_edges, _EDGES_COLOR_SELECTOR, ''))
-    optional_strings.append(if_(has_ellipses, _ELLIPSE_OPACITY_SLIDER, ''))
-    optional_strings.append(if_(has_vectors, _VECTORS_OPACITY_SLIDER, ''))
-    optional_strings.append(if_(has_edges, _EDGES_VISIBILITY_SELECTOR, ''))
+    if has_biplots:
+        optional_strings.append(_BIPLOT_SPHERES_COLOR_SELECTOR)
+    else:
+        optional_strings.append('')
+    if has_biplots:
+        optional_strings.append(_BIPLOT_VISIBILITY_SELECTOR)
+    else:
+        optional_strings.append('')
+    if has_biplots:
+        optional_strings.append(_TAXA_LABELS_SELECTOR)
+    else:
+        optional_strings.append('')
+    if has_biplots:
+        optional_strings.append(_TAXA_LABELS_COLOR_SELECTOR)
+    else:
+        optional_strings.append('')
+    if has_edges:
+        optional_strings.append(_EDGES_COLOR_SELECTOR)
+    else:
+        optional_strings.append('')
+    if has_ellipses:
+        optional_strings.append(_ELLIPSE_OPACITY_SLIDER)
+    else:
+        optional_strings.append('')
+    if has_vectors:
+        optional_strings.append(_VECTORS_OPACITY_SLIDER)
+    else:
+        optional_strings.append('')
+    if has_edges:
+        optional_strings.append(_EDGES_VISIBILITY_SELECTOR)
+    else:
+        optional_strings.append('')
 
     return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
 
