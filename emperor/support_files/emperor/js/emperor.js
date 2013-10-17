@@ -1926,7 +1926,7 @@ function setParallelPlots() {
 function aspectReset() {
 	winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight);
 	winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;                               
-	reset_div_sizes(g_separator_left*$(window).width());
+	resetDivSizes(g_separator_left*$(window).width());
 	containmentLeft = $(window).width()*0.5;
 	containmentRight = $(window).width()*0.99;
 	g_sceneCamera.aspect = winAspect;
@@ -1946,7 +1946,7 @@ function separator_draggable() {
 				offset = $(window).width()*0.99;
 			}
 			aspectReset();
-			reset_div_sizes(offset);
+			resetDivSizes(offset);
 			if (offset < $(window).width()*0.93) {
 				g_separator_history = offset;
 			} 
@@ -1955,7 +1955,7 @@ function separator_draggable() {
 }
          
 // Resizes plot and menu widths            
-function reset_div_sizes(width_left) {
+function resetDivSizes(width_left) {
 	$('#plotToggle').width(width_left);
 	$('#parallelPlotWrapper').width(width_left);
 	$('#pcoaPlotWrapper').width(width_left);
@@ -1983,12 +1983,18 @@ function overlay() {
 }
 
 //Toggles fullscreen when double-clicking the separator
-function separatordoubleclick() {
+function separatorDoubleClick() {
 	if (g_separator_left > 0.98) {
-		reset_div_sizes(g_separator_history);
+		if (g_separator_history/$(window).width() < .5) {
+			g_separator_history = $(window).width()*.5;
+			resetDivSizes(g_separator_history);
+		}
+		else {
+			resetDivSizes(g_separator_history);
+		}
 	}
 	else {
-		reset_div_sizes($(window).width()*0.99);
+		resetDivSizes($(window).width()*0.99);
 	}
 	aspectReset();	
 }
