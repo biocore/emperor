@@ -582,7 +582,7 @@ document.getElementById("logotable").style.display = 'none';
 <div id="parallelPlotWrapper" class="plotWrapper">
 </div>
 
-<div class="separator"></div>
+<div class="separator" ondblclick="separatorDoubleClick()"></div>
 
 <div id="menu">
     <div id="menutabs">
