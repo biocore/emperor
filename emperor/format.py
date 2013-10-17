@@ -395,38 +395,16 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
     optional_strings = []
 
     # the order of these statements matter, see _EMPEROR_FOOTER_HTML_STRING
-    if has_biplots:
-        optional_strings.append(_BIPLOT_SPHERES_COLOR_SELECTOR)
-    else:
-        optional_strings.append('')
-    if has_biplots:
-        optional_strings.append(_BIPLOT_VISIBILITY_SELECTOR)
-    else:
-        optional_strings.append('')
-    if has_biplots:
-        optional_strings.append(_TAXA_LABELS_SELECTOR)
-    else:
-        optional_strings.append('')
-    if has_biplots:
-        optional_strings.append(_TAXA_LABELS_COLOR_SELECTOR)
-    else:
-        optional_strings.append('')
-    if has_edges:
-        optional_strings.append(_EDGES_COLOR_SELECTOR)
-    else:
-        optional_strings.append('')
-    if has_ellipses:
-        optional_strings.append(_ELLIPSE_OPACITY_SLIDER)
-    else:
-        optional_strings.append('')
-    if has_vectors:
-        optional_strings.append(_VECTORS_OPACITY_SLIDER)
-    else:
-        optional_strings.append('')
-    if has_edges:
-        optional_strings.append(_EDGES_VISIBILITY_SELECTOR)
-    else:
-        optional_strings.append('')
+    # we use python's built-in ternary operator to add or not a string
+    optional_strings.append(_BIPLOT_SPHERES_COLOR_SELECTOR if has_biplots else
+        '')
+    optional_strings.append(_BIPLOT_VISIBILITY_SELECTOR if has_biplots else '')
+    optional_strings.append(_TAXA_LABELS_SELECTOR if has_biplots else '')
+    optional_strings.append(_TAXA_LABELS_COLOR_SELECTOR if has_biplots else '')
+    optional_strings.append(_EDGES_COLOR_SELECTOR if has_edges else '')
+    optional_strings.append(_ELLIPSE_OPACITY_SLIDER if has_ellipses else '')
+    optional_strings.append(_VECTORS_OPACITY_SLIDER if has_vectors else '')
+    optional_strings.append(_EDGES_VISIBILITY_SELECTOR if has_edges else '')
 
     return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
 
