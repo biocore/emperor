@@ -46,6 +46,7 @@ var g_keyBuilt = false;
 var g_useDiscreteColors = true;
 var g_screenshotBind;
 var g_separator_left;
+var g_separator_history;
 
 // valid ascii codes for filename
 var g_validAsciiCodes = new Array();
@@ -2002,7 +2003,7 @@ function setParallelPlots() {
 function aspectReset() {
 	winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight);
 	winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;                               
-	reset_div_sizes(g_separator_left*$(window).width());
+	resetDivSizes(g_separator_left*$(window).width());
 	containmentLeft = $(window).width()*0.5;
 	containmentRight = $(window).width()*0.99;
 	g_sceneCamera.aspect = winAspect;
@@ -2022,13 +2023,16 @@ function separator_draggable() {
 				offset = $(window).width()*0.99;
 			}
 			aspectReset();
-			reset_div_sizes(offset);                                  
+			resetDivSizes(offset);
+			if (offset < $(window).width()*0.93) {
+				g_separator_history = offset;
+			} 
 		}
 	});
 }
          
 // Resizes plot and menu widths            
-function reset_div_sizes(width_left) {
+function resetDivSizes(width_left) {
 	$('#plotToggle').width(width_left);
 	$('#parallelPlotWrapper').width(width_left);
 	$('#pcoaPlotWrapper').width(width_left);
@@ -2074,6 +2078,23 @@ function overlay() {
 	plotToggle.style.visibility = (plotToggle.style.visibility == "invisible") ? "visible" : "hidden";
 }
 
+//Toggles fullscreen when double-clicking the separator
+function separatorDoubleClick() {
+	if (g_separator_left > 0.98) {
+		if (g_separator_history/$(window).width() < .5) {
+			g_separator_history = $(window).width()*.5;
+			resetDivSizes(g_separator_history);
+		}
+		else {
+			resetDivSizes(g_separator_history);
+		}
+	}
+	else {
+		resetDivSizes($(window).width()*0.99);
+	}
+	aspectReset();	
+}
+
 /*Setup and initialization function for the whole system
 
   This function will set all of the WebGL elements that are required to exist
@@ -2083,8 +2104,9 @@ function overlay() {
 $(document).ready(function() {
 	setJqueryUi()
 	
-	// Default sizes
+	// Default sizes: g_separator_left is in percent and the others are in decimal
 	g_separator_left = 0.73;
+	g_separator_history = $(window).width()*0.73;
 	containmentLeft = $(window).width()*0.5;
 	containmentRight = $(window).width()*0.99;
 	// Detecting that webgl is activated
