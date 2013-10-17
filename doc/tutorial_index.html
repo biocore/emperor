@@ -118,11 +118,20 @@
             <br>
             The dataset that we will use to exemplify Emperor’s functionality, comes from the <a href="http://www.pnas.org/content/107/14/6477.long">Fierer et. al. 2010</a> article, where three individuals and their keyboards were sampled, Figure 1.
             <br>
-            To get started, first download and unzip these <a href="files/files.zip">files</a>, here you will find a principal coordinates file, and a mapping file. These input files are in the standard format used in <a href="http://www.qiime.org">QIIME</a>. Before continuing with the tutorial make sure you have the latest version of <a href=" https://www.google.com/intl/en/chrome/browser/">Google Chrome</a> installed in your computer.
+            To get started, first download and unzip these <a href="files/files.zip">files</a>, here you will find a principal coordinates file, and a mapping file. These input files are in the standard format used in <a href="http://www.qiime.org">QIIME</a>. Before continuing with the tutorial make sure you have the latest version of <a href=" https://www.google.com/intl/en/chrome/browser/">Google Chrome</a> installed in your computer. The sections described in this tutorial are:
             <br>
+            <ul >
+            <li><a class="lead" href="#section0">Command Line Interface</a></li>
+            <li><a class="lead" href="#section1">Graphical User Interface</a></li>
+            <li><a class="lead" href="#section2">Changing The Coloring</a></li>
+            <li><a class="lead" href="#section3">Changing The Opacity</a></li>
+            <li><a class="lead" href="#section4">Color Schemes</a></li>
+            <li><a class="lead" href="#section5">Exporting</a></li>
+            <li><a class="lead" href="#section6">Sharing</a></li>
+            </ul>
           </p>
         <hr>
-        <h3 class="muted">Command Line Interface</h3>
+        <h3 class="muted" id="section0">Command Line Interface</h3>
           <p class="lead" align="justify">
             Emperor offers a convenient command line interface script (<code>make_emperor.py</code>), see the <a href="installation_index.html">installation notes</a> for further details. The minimum inputs that this interface requires are a coordinates file and a mapping file, it’s worth noting that the script interface offers many options that allow the user to refine the amount of data to visualize or even to change the way it will be presented, calling <code>make_emperor.py -h</code> from a terminal window, will display the available options and a concise description for each of these.
             <br>
@@ -146,7 +155,7 @@
             Opening <code>index.html</code> with Google Chrome will present the main GUI, to do so you can right click this file and make sure you open it with Google Chrome.
           </p>
         <hr>
-        <h3 class="muted">Graphical User Interface</h3>
+        <h3 class="muted" id="section1">Graphical User Interface</h3>
           <p class="lead" align="justify">
             Once you open the <code>index.html</code> file that was just generated, you should see something similar to the following figure:
           </p>
@@ -155,7 +164,7 @@
             For a detailed explanation of the options available from the main interface refer to the <a href="description_index.html">description section</a>.
             <br>
           </p>
-        <h3 class="muted">Changing the coloring</h3>
+        <h3 class="muted" id="section2">Changing The Coloring</h3>
           <p class="lead" align="justify">
             Spheres drawn in the main canvas are colored by the selected column in the mapping file under the Colors tab, in this example <code>AGE</code>. The available metadata categories are sorted in alphabetical order hence <code>AGE</code> is the first in this list. To change the coloring scheme click the Colors tab, then in the dropdown menu shown at the top click to select <code>HOST_SUBJECT_ID</code>. Now that samples are colored by this grouping, spheres will be colored in three different tints, each corresponding to a different subject.
           </p>
@@ -164,12 +173,12 @@
             Modifying the colors used to distinguish between subjects is achieved by clicking the frame by the side of each subject name. For example to change the color of the samples belonging to <code>232:M9</code>, click on the green square by the left side of this label (1), a color picker will appear on screen (2), select a new color by pointing and clicking at it with the mouse; to confirm this selection use the <code>choose</code> button (3).
           </p>
           <p align="center"><img src="img/tutorial/capture_2.png" alt="Three panels"></p>
-        <h3 class="muted">Changing the opacity</h3>
+        <h3 class="muted" id="section3">Changing The Opacity</h3>
           <p class="lead" align="justify">
             Similarly to the coloring of the samples, opacity is an attribute that can be determined on a per-category basis. To illustrate an example where this is useful, let’s reduce the opacity in the samples without an <code>AGE</code> value i. e. the keys of the subject’s keyboard. Begin by navigating to the visibility tab and with the slider under the label that reads <code>NA</code>, move it until you reach almost half the opacity. The end result will be similar to the next figure.
           </p>
           <p align="center"><img src="img/tutorial/6.png" alt="Opacity reduction"></p>
-        <h3 class="muted">Color schemes</h3>
+        <h3 class="muted" id="section4">Color Schemes</h3>
           <p class="lead" align="justify">
             Frequently you will find that metadata categories have multiple values that are easier to visualize with a color map, on the other side when the values have no sequential relationship, it’s better to use what’s called a discrete set of colors. In this dataset the <code>HAND&&HOST_SUBJECT_ID</code> category that we create with the <code>–b</code> option is a good example. Switch to the Colors tab and then in the dropdown menu to change the category from <code>HOST_SUBJECT_ID</code> to the combination of both the <code>HAND</code> and <code>HOST_SUBJECT_ID</code> values. Navigate to the View menu and click the “Use gradient colors” checkbox this will let immediately switch the colors used for each of the values under this mapping file header.
           </p>
@@ -187,6 +196,25 @@
           </p>
           <p align="center"><img src="img/tutorial/rotating_1.png" alt="Filter"></p>
           <p align="center"><img src="img/tutorial/rotating_2.png" alt="Filter"></p>
+        <h3 class="muted" id="section5">Exporting</h3>
+          <p class="lead" align="justify">
+            Emperor generates publication quality figures in scalable vector graphics (SVG) format. The "Save as SVG" button is found under the "Options" tab, note that if you mark the "Create labels?" checkbox an additional file with legends describing the coloring scheme, a color to category name pair, will be downloaded to your computer.
+          </p>
+          <p align="center"><img src="img/tutorial/11.png" alt="Export Screenshot"></p>
+          <p class="lead" align="justify">
+            In this example setting the file name as "figure_example" renames the legends file as "figure_example_labels.svg" and the current view in the visualization canvas as "figure_example.svg".
+            <br><br>
+            Converting these figures into other formats can be achieved using external and freely available tools like <a href="http://inkscape.org">Inkscape</a>, which conveniently provides a command line utility to convert files into different formats. The following command line call will convert our SVG formatted file to a PDF formatted file.
+          </p>
+          <pre><code>inkscape -f figure_example.svg -A figure_example.pdf</code></pre>
+          <p class="lead" align="justify">
+            More information about the usage of this command line utility can be found <a href="http://inkscape.org/doc/inkscape-man.html">here</a>.
+          </p>
+        <h3 class="muted" id="section6">Sharing</h3>
+          <p class="lead" align="justify">
+            Simply compress the output directory (specified by the <code>-o</code> option in <code>make_emperor.py</code>) and share. The newly created <code>index.html</code> file contained within the output directory can then be visualized and manipulated through the Chrome web browser as long as it is accompanied by the <code>emperor_required_resources</code> folder.
+          </p>
+
       <hr>
       <div class="footer">
         <a href="https://github.com/qiime/emperor/network/members">
