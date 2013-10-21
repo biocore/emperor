@@ -6,10 +6,10 @@ __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Yoshiki Vazquez Baeza"]
 __license__ = "BSD"
-__version__ = "0.9.0-dev"
+__version__ = "0.9.1"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
-__status__ = "Development"
+__status__ = "Release"
 
 from numpy import argsort, array
 
