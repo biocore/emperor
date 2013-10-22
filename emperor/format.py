@@ -6,10 +6,10 @@ __author__ = "Antonio Gonzalez Pena"
 __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Meg Pirrung", "Antonio Gonzalez Pena", "Yoshiki Vazquez Baeza"]
 __license__ = "BSD"
-__version__ = "0.9.1"
+__version__ = "0.9.1-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
-__status__ = "Release"
+__status__ = "Development"
 
 
 from sys import argv

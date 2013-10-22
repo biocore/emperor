@@ -7,10 +7,10 @@ __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Antonio Gonzalez Pena", "Meg Pirrung", "Yoshiki Vazquez Baeza"]
 __license__ = "BSD"
-__version__ = "0.9.1"
+__version__ = "0.9.1-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
-__status__ = "Release"
+__status__ = "Development"
 
 # without any of these emperor will not function correctly
 required_python_modules = ['numpy', 'cogent', 'qiime']
