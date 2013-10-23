@@ -1,6 +1,9 @@
 Emperor 0.9.2 (changes since Emperor 0.9.1 go here)
 ===================================================
 
+*Bug Fixes*
+
+* Fixes bug where files named `procrustes_results.txt` would not be ignored in a plot comparison.
 
 
 Emperor 0.9.1 (21 Oct 2013)
