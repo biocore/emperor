@@ -3,7 +3,7 @@
  * __copyright__ = "Copyright 2013, Emperor"
  * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza","Jackson Chen"]
  * __license__ = "BSD"
- * __version__ = "0.9.1-dev"
+ * __version__ = "0.9.2"
  * __maintainer__ = "Meg Pirrung"
  * __email__ = "meganap@gmail.com"
  * __status__ = "Development"
