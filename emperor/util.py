@@ -346,12 +346,22 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
         coords_file = [out_headers, out_coords]
 
         if custom_axes:
+            # this condition deals with the fact that in order for the custom
+            # axes to be added into the original coordinates, we have to add the
+            # suffix for the sample identifiers that the coordinates have
+            if clones:
+                out_data = []
+                for index in range(0, clones):
+                    out_data.extend([[element[0]+'_%d' % index]+element[1::]
+                        for element in mapping_data])
+                mapping_file = [mapping_header] + out_data
+
             # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
             get_custom_coords(custom_axes, mapping_file, coords_file)
             remove_nans(coords_file)
             scale_custom_coords(custom_axes, coords_file)
 
-    # if no coords summary is applied, return None in the correspoinding values
+    # if no coords summary is applied, return None in the corresponding values
     # note that the value of clones will be != 0 for a comparison plot
     return coords_file[0], coords_file[1], coords_eigenvals, coords_pct, None,\
         None, clones
