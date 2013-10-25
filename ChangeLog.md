@@ -1,5 +1,10 @@
-Emperor 0.9.2 (24 Oct 2013)
+Emperor 0.9.3 (changes since Emperor 0.9.2 go here)
 ===================================================
+
+
+
+Emperor 0.9.2 (24 Oct 2013)
+===========================
 
 *Bug Fixes*
 
