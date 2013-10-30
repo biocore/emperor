@@ -13,6 +13,7 @@ __status__ = "Development"
 
 from numpy import argsort, array
 
+from emperor.util import EmperorUnsupportedComputation
 from emperor.sort import sort_taxa_table_by_pcoa_coords
 from qiime.biplots import (get_taxa_prevalence, get_taxa_coords,
     make_biplot_scores_output)
@@ -79,6 +80,11 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
     # return empty values if any of the taxa data is empty
     if (otu_sample_ids == []) or (otu_table == array([])) or (lineages == []):
         return [], [], [], [], ''
+
+    # this means there's only one or fewer rows in the contingency table
+    if len(otu_table) <= 1 or len(lineages) <= 1:
+        raise EmperorUnsupportedComputation, "Biplots are not supported for "+\
+            "contingency tables with one or fewer rows"
 
     # if this element is a list take the first headers and coordinates
     # both of these will be the master coordinates, i. e. where data is centered

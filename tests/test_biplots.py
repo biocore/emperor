@@ -14,6 +14,7 @@ __status__ = "Development"
 from numpy import array
 from qiime.parse import parse_classic_otu_table
 from cogent.util.unit_test import TestCase, main
+from emperor.util import EmperorUnsupportedComputation
 from emperor.biplots import extract_taxa_data, preprocess_otu_table
 
 
@@ -70,6 +71,11 @@ class TopLevelTests(TestCase):
         self.coords = COORDS
         self.coords_header = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354',
             'PC.593', 'PC.355', 'PC.607', 'PC.634']
+
+        # data used to test a case where an exception should be raised
+        self.otu_table_broken = array([[0.02739726, 0.04697987, 0.02,
+            0.04697987, 0.01, 0.02027027, 0.01360544, 0.01342282, 0.02666667]])
+        self.lineages_broken = ['Root;k__Bacteria']
 
     def test_filter_taxa(self):
         """Check the appropriate number of elements are extracted"""
@@ -182,6 +188,25 @@ class TopLevelTests(TestCase):
         self.assertFloatEqual(o_otu_lineages, [])
         self.assertFloatEqual(o_prevalence, [])
         self.assertFloatEqual(lines, '')
+
+    def test_preprocess_otu_table_exceptions(self):
+        """Check the exceptions are raised appropriately"""
+        # should raise an exception because the inputs contain a single row
+        with self.assertRaises(EmperorUnsupportedComputation):
+            o_otu_coords, o_otu_table, o_otu_lineages, o_prevalence, lines =\
+                preprocess_otu_table(self.otu_sample_ids, self.otu_table_broken,
+                self.lineages_broken, self.coords, self.coords_header, 4)
+
+        # some inputs are completely wrong but should still fail because the
+        # contingency table has one row only, hence scores cannot be computed
+        with self.assertRaises(EmperorUnsupportedComputation):
+            o_otu_coords, o_otu_table, o_otu_lineages, o_prevalence, lines =\
+                preprocess_otu_table(self.otu_sample_ids, self.otu_table_broken,
+                [[]], self.coords, self.coords_header, 4)
+        with self.assertRaises(EmperorUnsupportedComputation):
+            o_otu_coords, o_otu_table, o_otu_lineages, o_prevalence, lines =\
+                preprocess_otu_table(self.otu_sample_ids, array([]),
+                self.lineages_broken, self.coords, self.coords_header, 4)
 
 
 OTU_TABLE = """Taxon\tPC.636\tPC.635\tPC.356\tPC.481\tPC.354\tPC.593\tPC.355\tPC.607\tPC.634
