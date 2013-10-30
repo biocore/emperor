@@ -36,6 +36,10 @@ class EmperorInputFilesError(IOError):
     """Exception for missing support files"""
     pass
 
+class EmperorUnsupportedComputation(ValueError):
+    """Exception for computations that lack a meaning"""
+    pass
+
 # Based on qiime/qiime/util.py
 def get_emperor_library_version():
     """Get Emperor version and the git SHA + current branch (if applicable)"""
