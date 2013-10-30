@@ -406,6 +406,10 @@ def main():
                 'have at least one match with the data in the mapping file and '
                 'with the coordinates file. Verify you are using input files '
                 'that belong to the same dataset.')
+        if len(lineages) <= 1:
+            option_parser.error('Contingency tables with one or fewer rows are '
+                'not supported, please try passing a contingency table with '
+                'more than one row.')
     else:
         # empty lists indicate that there was no taxa file passed in
         otu_sample_ids, lineages, otu_table = [], [], []
