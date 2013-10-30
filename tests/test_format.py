@@ -685,7 +685,7 @@ document.getElementById("logotable").style.display = 'none';
             <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
-            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
             <br><br>
             For a PNG, simply press 'ctrl+p'.
             <br><br>
@@ -873,7 +873,7 @@ document.getElementById("logotable").style.display = 'none';
             <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
-            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
             <br><br>
             For a PNG, simply press 'ctrl+p'.
             <br><br>
@@ -1046,7 +1046,7 @@ document.getElementById("logotable").style.display = 'none';
             <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
-            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
             <br><br>
             For a PNG, simply press 'ctrl+p'.
             <br><br>
@@ -1222,7 +1222,7 @@ document.getElementById("logotable").style.display = 'none';
             <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
-            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
             <br><br>
             For a PNG, simply press 'ctrl+p'.
             <br><br>
@@ -1402,7 +1402,7 @@ document.getElementById("logotable").style.display = 'none';
             <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
             <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
             <br>
-            Create labels? <input id="saveas_legends" class="checkbox" type="checkbox" style="">
+            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
             <br><br>
             For a PNG, simply press 'ctrl+p'.
             <br><br>
