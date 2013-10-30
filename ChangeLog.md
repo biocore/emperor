@@ -3,6 +3,10 @@ Emperor 0.9.3 (changes since Emperor 0.9.2 go here)
 
 
 
+*Bug Fixes*
+
+* Add more meaningful error message for biplots when the contingency table passed included only one row.
+
 Emperor 0.9.2 (24 Oct 2013)
 ===========================
 
