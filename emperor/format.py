@@ -607,6 +607,8 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby">
             <br>%s
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+            <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
             <div class="list" id="colorbylist">
@@ -662,7 +664,6 @@ document.getElementById("logotable").style.display = 'none';
                 <br>
                 <br>
                 <form name="settingsoptionscolor">
-                <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
                 </form>%s%s%s
                 <br>
                 <label for="sphereopacity" class="text">Sphere Opacity</label>
