@@ -595,8 +595,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab">
             <form name="keyFilter">
@@ -615,12 +614,21 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="showby">%s
+            <br>
+            <label for="sphereopacity" class="text">Sphere Opacity</label>
+            <label id="sphereopacity" class="slidervalue"></label>
+            <div id="sopacityslider" class="slider-range-max"></div>
+            <br>
             <select id="showbycombo" onchange="showByMenuChanged()">
             </select>
             <div class="list" id="showbylist">
             </div>
         </div>
         <div id="scalingby">
+            <label for="sphereradius" class="text">Sphere Scale</label>
+            <label id="sphereradius" class="slidervalue"></label>
+            <div id="sradiusslider" class="slider-range-max"></div>
+            <br>
             <select id="scalingbycombo" onchange="scalingByMenuChanged()">
             </select>
             <div class="list" id="scalingbylist">
@@ -652,50 +660,32 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="view">
+        <div id="options">
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>%s
             </table>
-            <div id="pcoaviewoptions" class="">
-                <br>
-                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br>
-                <br>
+            <div id="pcoaviewoptions" class="">%s%s%s
                 <form name="settingsoptionscolor">
-                </form>%s%s%s
-                <br>
-                <label for="sphereopacity" class="text">Sphere Opacity</label>
-                <label id="sphereopacity" class="slidervalue"></label>
-                <div id="sopacityslider" class="slider-range-max"></div>
-                <br>
-                <label for="sphereradius" class="text">Sphere Scale</label>
-                <label id="sphereradius" class="slidervalue"></label>
-                <div id="sradiusslider" class="slider-range-max"></div>
-                <br>
-            </div>
-            <br>
-        </div>
-        <div id="settings">
-            <br>
-            Filename <small>(only letters, numbers, ., - and _)</small>:
-            <br>
-            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-            <br>
-            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-            <br><br>
-            For a PNG, simply press 'ctrl+p'.
-            <br><br>
-            <div id="pcoaoptions" class="">
-                <form name="settingsoptions">
-                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
                 </form>
+                <div id="pcoaoptions" class="">
+                    <form name="settingsoptions">
+                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                    </form>
+                </div>
+                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br><br>
+                <hr class='section-break'>
+                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                <br><br>For a PNG, simply press 'ctrl+p'.
+                <div id="paralleloptions" class="">
+                </div>
             </div>
             <br>
-            <div id="paralleloptions" class="">
-            </div>
         </div>
     </div>  
 </div>
