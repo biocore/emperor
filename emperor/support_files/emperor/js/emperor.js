@@ -469,9 +469,11 @@ function colorParallelPlots(vals,colors)
 	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
 	
 	var color = function(d) {
-		var sid = d[0];
-		var divid = sid.replace(/\./g,'')+"_key";
-		var catValue = g_mappingFileData[sid][g_categoryIndex];
+		var colorKey = "";
+		for (var i = 1; i < Object.keys(d).length+1; i++) {
+			colorKey += String(d[i]);
+		}
+		var catValue = color_map[colorKey];
 		var catColor = colors[catValue];
 
 		try {
@@ -482,14 +484,30 @@ function colorParallelPlots(vals,colors)
 		return hex;
 	}
 
-	var pc = d3.parcoords()("#parallelPlot")
-	  .data(g_parallelPlots)
+	var num_axes = g_fractionExplained.length-g_number_of_custom_axes;
+	var data2 = new Array();
+	var color_map = {};
+	for (sid in g_spherePositions) {
+		var a_map = {};
+		var key = "";
+		var value = g_mappingFileData[sid][g_categoryIndex];
+		for (var i = 1; i < num_axes+1; i++) {
+			a_map[i] = g_spherePositions[sid]['P'+i];
+			key += String(a_map[i]);
+		}
+		color_map[key] = value;
+		data2.push(a_map);
+	}
+
+	var pc = d3.parcoords()("#parallelPlot");
+	pc
+	  .data(data2)
 	  .color(color)
 	  .margin({ top: 40, left: 50, bottom: 40, right: 0 })
 	  .mode("queue")
 	  .render()
 	  .brushable();
-
+	  
 	$('.parcoords text').css('stroke', $('#axeslabelscolor').css('backgroundColor'));
 	$('.parcoords .axis line, .parcoords .axis path').css('stroke', $('#axescolor').css('backgroundColor'));
 }
