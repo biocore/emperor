@@ -231,7 +231,7 @@ class TopLevelTests(TestCase):
 
         # comparison plot
         out_string = format_emperor_html_footer_string(False, False, False,True)
-        # self.assertEqual(out_string, EXPECTED_FOOTER_E)
+        self.assertEqual(out_string, EXPECTED_FOOTER_E)
 
 
     def test_format_emperor_autograph(self):
