@@ -1153,6 +1153,11 @@ function sphereRadiusChange(ui, category) {
 	}
 }
 
+/*Add a clear description of what the hell happens when this gets executed*/
+function animationSpeedChanged(ui){
+	document.getElementById("animation_speed").innerHTML = ui.value+"x";
+}
+
 /*Setup the interface elements required for the sidebar of the main interface*/
 function setJqueryUi() {
 	$("#menutabs").tabs();
@@ -1338,6 +1343,20 @@ function setJqueryUi() {
 		}
 	});
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
+
+	$("#animation_speed_slider").slider({
+		range: "max",
+		min: 0.1,
+		max: 5,
+		value: 1,
+		slide: function( event, ui ) {
+			animationSpeedChanged(ui);
+		},
+		change: function( event, ui ) {
+			animationSpeedChanged(ui);
+		}
+	});
+	document.getElementById('animation_speed').innerHTML = $("#animation_speed_slider").slider("value")+"x"
 
 	//default color for axes labels is white
 	$('#axeslabelscolor').css('backgroundColor',"#FFFFFF");

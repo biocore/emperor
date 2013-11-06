@@ -28,7 +28,7 @@ from qiime.format import format_mapping_file
 from qiime.parse import mapping_file_to_dict, parse_mapping_file
 from qiime.filter import (filter_mapping_file_by_metadata_states,
     sample_ids_from_metadata_description)
-from qiime.util import get_qiime_library_version
+from qiime.util import get_qiime_library_version, MetadataMap
 
 class EmperorLogicError(ValueError):
     """Exception raised when a requirement for the Emperor GUI is not met"""
@@ -185,6 +185,12 @@ def format_mapping_file_to_js(mapping_file_data, mapping_file_headers, columns):
         ["'%s'" % col for col in mapping_file_headers])
     js_mapping_file_string += 'var g_mappingFileData = { %s };\n' % ','.join(
         map_values)
+
+    map_object = MetadataMap(mapping_file_dict, [])
+    animatable_categories = [category for category in MetadataMap.CategoryNames\
+        if MetadataMap.isNumericCategory(category)]
+    js_mapping_file_string += 'var g_animatableMappingFileHeaders = [%s];\n' %\
+        ','.join(["'%s'" % col for col in animatable_categories])
 
     return js_mapping_file_string
 
@@ -595,6 +601,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#animations">Animations</a></li>
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
@@ -651,6 +658,51 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+        </div>
+        <div id="animations">
+            <table width="90%%" align="center">
+                <tr>
+                    <td>
+                        <a class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="animation_speed" class="text">Speed</label>
+                        <label id="animation_speed" class="slidervalue"></label>
+                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <div id="labelColorHolder clearfix">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br><label for="animationGradient" class="text">Animate Over (eg. time)</label><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="animationovercombo" onchange="animationOverMenuChanged()"></select><br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="animation" class="text">Animate</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="animationcombo" onchange="animationMenuChanged()"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="animationlist" id="animationlist"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="view">
             <table>
