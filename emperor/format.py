@@ -187,8 +187,10 @@ def format_mapping_file_to_js(mapping_file_data, mapping_file_headers, columns):
         map_values)
 
     map_object = MetadataMap(mapping_file_dict, [])
-    animatable_categories = [category for category in MetadataMap.CategoryNames\
-        if MetadataMap.isNumericCategory(category)]
+    # make sure the comparison for SampleID is made first because otherwise
+    # if the metadata map tries to check 'SampleID' it will raise an exception
+    animatable_categories = [category for category in columns\
+        if category != 'SampleID' and map_object.isNumericCategory(category)]
     js_mapping_file_string += 'var g_animatableMappingFileHeaders = [%s];\n' %\
         ','.join(["'%s'" % col for col in animatable_categories])
 
@@ -678,12 +680,12 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <br><label for="animationGradient" class="text">Animate Over (eg. time)</label><br>
+                        <br><label for="animationGradient" class="text">Categories to Animate Over</label><br>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="animationovercombo" onchange="animationOverMenuChanged()"></select><br>
+                        <select id="animatable_categories_combo" onchange="animationOverMenuChanged()"></select><br>
                     </td>
                 </tr>
 
@@ -694,7 +696,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <select id="animationcombo" onchange="animationMenuChanged()"></select>
+                        <select id="animation_types_combo" onchange="animationMenuChanged()"></select>
                     </td>
                 </tr>
                 <tr>
