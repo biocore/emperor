@@ -2240,6 +2240,19 @@ $(document).ready(function() {
 			$("#labelcombo").append(line);
 		}
 
+		// add the header names that can be animated over
+		sortedAnimatableMappingFileHeaders = _splitAndSortNumericAndAlpha(g_animatableMappingFileHeaders);
+		for (var i in _splitAndSortNumericAndAlpha(g_animatableMappingFileHeaders)) {
+			// note that each category is added to all the dropdown menus in the
+			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
+			if (i==0) {
+			    line = "<option selected value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
+			} else {
+			    line = "<option value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
+			}
+			$("#animatable_categories_combo").append(line);
+		}
+
 		setParallelPlots();
 
 		colorByMenuChanged();
