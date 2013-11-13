@@ -613,26 +613,53 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby">%s
-            <br>
-            <label for="sphereopacity" class="text">Sphere Opacity</label>
-            <label id="sphereopacity" class="slidervalue"></label>
-            <div id="sopacityslider" class="slider-range-max"></div>
-            <br>
-            <select id="showbycombo" onchange="showByMenuChanged()">
-            </select>
-            <div class="list" id="showbylist">
-            </div>
+        <div id="showby" align="center">%s
+            <table width="93%%">
+                <tr>
+                    <td align="center">
+                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                        <label for="sphereopacity" class="text">Global Sphere Opacity</label>
+                        <label id="sphereopacity" class="slidervalue"></label>
+                        <div id="sopacityslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="scalingby">
-            <label for="sphereradius" class="text">Sphere Scale</label>
-            <label id="sphereradius" class="slidervalue"></label>
-            <div id="sradiusslider" class="slider-range-max"></div>
-            <br>
-            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
-            </select>
-            <div class="list" id="scalingbylist">
-            </div>
+            <table width="100%%">
+                <tr>
+                    <td align="center">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                        <label for="sphereradius" class="text">Global Sphere Scale</label>
+                        <label id="sphereradius" class="slidervalue"></label>
+                        <div id="sradiusslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="labelby">
         <div id="labelsTop">
