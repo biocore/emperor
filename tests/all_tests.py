@@ -10,11 +10,17 @@ import re
 from os import walk
 from sys import exit
 from glob import glob
-from qiime.test import run_script_usage_tests
 from emperor.util import get_emperor_project_dir
 from os.path import join, abspath, dirname, split, exists
 from qiime.util import (parse_command_line_parameters, qiime_system_call,
     make_option)
+
+# in QIIME 1.7.0-release this function was still in qiime.test but in the
+# middle of the development cycle for 1.7.0 it was moved to qcli
+try:
+    from qiime.test import run_script_usage_tests
+except ImportError:
+    from qcli.test import run_script_usage_tests
 
 __author__ = "Rob Knight"
 __copyright__ = "Copyright 2013, The Emperor Project" #consider project name
@@ -123,12 +129,17 @@ def main():
             script_tests = script_usage_tests.split(',')
         else:
             script_tests = None
-        # Run the script usage testing functionality
+        # Run the script usage testing functionality; note that depending on the
+        # module where this was imported, the name of the arguments will change
+        # that's the reason why I added the name of the arguments in here
         script_usage_result_summary, script_usage_failures = \
-            run_script_usage_tests(qiime_test_data_dir=emperor_test_data_dir,
-            qiime_scripts_dir=emperor_scripts_dir,
-            working_dir=temp_filepath, verbose=True,
-            tests=script_tests, failure_log_fp=None, force_overwrite=False)
+            run_script_usage_tests( emperor_test_data_dir,  # test_data_dir
+                                    emperor_scripts_dir,    # scripts_dir
+                                    temp_filepath,          # working_dir
+                                    True,                   # verbose
+                                    script_tests,           # tests
+                                    None,                   # failure_log_fp
+                                    False)                  # force_overwrite
 
     print "==============\nResult summary\n=============="
 
