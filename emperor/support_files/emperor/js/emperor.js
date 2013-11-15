@@ -2238,6 +2238,7 @@ $(document).ready(function() {
 			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
+			$("#animate_through_category_combo").append(line);
 		}
 
 		// add the header names that can be animated over
@@ -2250,7 +2251,7 @@ $(document).ready(function() {
 			} else {
 			    line = "<option value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
 			}
-			$("#animatable_categories_combo").append(line);
+			$("#animate_over_category_combo").append(line);
 		}
 
 		setParallelPlots();

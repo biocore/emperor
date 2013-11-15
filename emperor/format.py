@@ -680,28 +680,23 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <br><label for="animationGradient" class="text">Categories to Animate Over</label><br>
+                        <br><label for="animate_over_category_combo" class="text">Category to Animate Over</label><br>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="animatable_categories_combo" onchange="animationOverMenuChanged()"></select><br>
+                        <select id="animate_over_category_combo" onchange="animationOverMenuChanged()"></select><br>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label for="animation" class="text">Animate</label>
+                        <label for="animate_through_category_combo" class="text">Category to Animate Through</label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="animation_types_combo" onchange="animationMenuChanged()"></select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="animationlist" id="animationlist"></div>
+                        <select id="animate_through_category_combo" onchange="animationMenuChanged()"></select>
                     </td>
                 </tr>
             </table>
