@@ -1,7 +1,8 @@
 /*
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2013, Emperor"
- * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza","Jackson Chen"]
+ * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza",
+ *                "Jackson Chen", "Emily TerAvest"]
  * __license__ = "BSD"
  * __version__ = "0.9.2-dev"
  * __maintainer__ = "Meg Pirrung"
@@ -323,6 +324,7 @@ function getColorList(vals) {
 		colors[vals[1]].setHex("0x0000ff");
 	}
 	else {
+		var numcolors = vals.length;
 		for(var index in vals){
 			colors[vals[index]] = new THREE.Color();
 			if(g_useDiscreteColors){
@@ -331,7 +333,10 @@ function getColorList(vals) {
 			}
 			else{
 				// multiplying the value by 0.66 makes the colormap go R->G->B
-				THREE.ColorConverter.setHSV(colors[vals[index]], index*.66/vals.length, 1, 1)
+				//reverse the oder to standard default B->G->R
+				//changed what is multiplied by 0.66 to be 2,1,0 from 0,1,2
+				THREE.ColorConverter.setHSV(colors[vals[index]], 
+					   (numcolors - index -1 )*.66/numcolors, 1, 1);
 			}
 		}
 	}
