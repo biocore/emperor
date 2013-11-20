@@ -324,7 +324,7 @@ function getColorList(vals) {
 		colors[vals[1]].setHex("0x0000ff");
 	}
 	else {
-		var numcolors = vals.length;
+		var numColors = vals.length;
 		for(var index in vals){
 			colors[vals[index]] = new THREE.Color();
 			if(g_useDiscreteColors){
@@ -332,11 +332,10 @@ function getColorList(vals) {
 				colors[vals[index]].setHex(getDiscreteColor(index)*1);
 			}
 			else{
-				// multiplying the value by 0.66 makes the colormap go R->G->B
 				//reverse the oder to standard default B->G->R
 				//changed what is multiplied by 0.66 to be 2,1,0 from 0,1,2
 				THREE.ColorConverter.setHSV(colors[vals[index]], 
-					   (numcolors - index -1 )*.66/numcolors, 1, 1);
+					   (numColors - index -1 )*.66/numColors, 1, 1);
 			}
 		}
 	}
