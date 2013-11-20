@@ -1,0 +1,3 @@
+[submodule "emperor/support_files"]
+	path = emperor/support_files
+	url = git@github.com:qiime/emperor_support_files.git
