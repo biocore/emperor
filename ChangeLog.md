@@ -2,6 +2,7 @@ Emperor 0.9.3 (changes since Emperor 0.9.2 go here)
 ===================================================
 
 * `Use gradient colors` checkbox is now found under the `Colors` tab.
+* `Use gradient colors` checkbox now uses the standard blue -> red color gradient
 
 *Bug Fixes*
 
