@@ -1,7 +1,8 @@
 /*
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2013, Emperor"
- * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza","Jackson Chen"]
+ * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza",
+ *                "Jackson Chen", "Emily TerAvest"]
  * __license__ = "BSD"
  * __version__ = "0.9.2-dev"
  * __maintainer__ = "Meg Pirrung"
@@ -323,6 +324,7 @@ function getColorList(vals) {
 		colors[vals[1]].setHex("0x0000ff");
 	}
 	else {
+		var numColors = vals.length;
 		for(var index in vals){
 			colors[vals[index]] = new THREE.Color();
 			if(g_useDiscreteColors){
@@ -330,8 +332,10 @@ function getColorList(vals) {
 				colors[vals[index]].setHex(getDiscreteColor(index)*1);
 			}
 			else{
-				// multiplying the value by 0.66 makes the colormap go R->G->B
-				THREE.ColorConverter.setHSV(colors[vals[index]], index*.66/vals.length, 1, 1)
+				//reverse the oder to standard default B->G->R
+				//changed what is multiplied by 0.66 to be 2,1,0 from 0,1,2
+				THREE.ColorConverter.setHSV(colors[vals[index]], 
+					   (numColors - index -1 )*.66/numColors, 1, 1);
 			}
 		}
 	}
@@ -469,9 +473,11 @@ function colorParallelPlots(vals,colors)
 	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
 	
 	var color = function(d) {
-		var sid = d[0];
-		var divid = sid.replace(/\./g,'')+"_key";
-		var catValue = g_mappingFileData[sid][g_categoryIndex];
+		var colorKey = "";
+		for (var i = 1; i < Object.keys(d).length+1; i++) {
+			colorKey += String(d[i]);
+		}
+		var catValue = color_map[colorKey];
 		var catColor = colors[catValue];
 
 		try {
@@ -482,14 +488,30 @@ function colorParallelPlots(vals,colors)
 		return hex;
 	}
 
-	var pc = d3.parcoords()("#parallelPlot")
-	  .data(g_parallelPlots)
+	var num_axes = g_fractionExplained.length-g_number_of_custom_axes;
+	var data2 = new Array();
+	var color_map = {};
+	for (sid in g_spherePositions) {
+		var a_map = {};
+		var key = "";
+		var value = g_mappingFileData[sid][g_categoryIndex];
+		for (var i = 1; i < num_axes+1; i++) {
+			a_map[i] = g_spherePositions[sid]['P'+i];
+			key += String(a_map[i]);
+		}
+		color_map[key] = value;
+		data2.push(a_map);
+	}
+
+	var pc = d3.parcoords()("#parallelPlot");
+	pc
+	  .data(data2)
 	  .color(color)
 	  .margin({ top: 40, left: 50, bottom: 40, right: 0 })
 	  .mode("queue")
 	  .render()
 	  .brushable();
-
+	  
 	$('.parcoords text').css('stroke', $('#axeslabelscolor').css('backgroundColor'));
 	$('.parcoords .axis line, .parcoords .axis path').css('stroke', $('#axescolor').css('backgroundColor'));
 }
