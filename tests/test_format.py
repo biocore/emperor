@@ -626,7 +626,7 @@ document.getElementById("logotable").style.display = 'none';
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="padding-left: 12px; padding-right:12px;">
                         <br>
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
@@ -650,7 +650,7 @@ document.getElementById("logotable").style.display = 'none';
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="padding-left: 12px; padding-right:12px;">
                         <br>
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
@@ -831,7 +831,7 @@ document.getElementById("logotable").style.display = 'none';
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="padding-left: 12px; padding-right:12px;">
                         <br>
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
@@ -855,7 +855,7 @@ document.getElementById("logotable").style.display = 'none';
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="padding-left: 12px; padding-right:12px;">
                         <br>
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
@@ -1027,7 +1027,7 @@ document.getElementById("logotable").style.display = 'none';
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="padding-left: 12px; padding-right:12px;">
                         <br>
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
@@ -1051,7 +1051,7 @@ document.getElementById("logotable").style.display = 'none';
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="padding-left: 12px; padding-right:12px;">
                         <br>
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
@@ -1217,7 +1217,7 @@ document.getElementById("logotable").style.display = 'none';
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="padding-left: 12px; padding-right:12px;">
                         <br>
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
@@ -1241,7 +1241,7 @@ document.getElementById("logotable").style.display = 'none';
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="padding-left: 12px; padding-right:12px;">
                         <br>
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
@@ -1411,7 +1411,7 @@ document.getElementById("logotable").style.display = 'none';
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="padding-left: 12px; padding-right:12px;">
                         <br>
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
@@ -1435,7 +1435,7 @@ document.getElementById("logotable").style.display = 'none';
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="padding-left: 12px; padding-right:12px;">
                         <br>
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>

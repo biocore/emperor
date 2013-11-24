@@ -531,7 +531,8 @@ function scalingByMenuChanged(){
 	}
 	values = _splitAndSortNumericAndAlpha(dedupe(values));
 
-	lines = '<table width="100%" height="100%">'
+	// the padding accounts for the slider handle that can move all to the left or right
+	lines = '<table width="100%" height="100%" style="padding-right:10px;padding-left:10px;">'
 	for(var i in values){
 		// construct a sanitized category name for all HTML elements
 		idString = "r"+i+"c"+scalingByCategoryIndex;
@@ -608,8 +609,9 @@ function showByMenuChanged() {
 
 	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
-	// build the showby checkbox table in HTML
-	var lines = '<form name="showbyform"><table width="100%">'
+	// build the showby checkbox table in HTML; the padding to the right makes
+	// the slider fit great inside the table without ever showing scroll bars
+	var lines = '<form name="showbyform"><table width="100%" style="padding-right:10px;padding-left:10px;">'
 
 	for(var i in vals){
 		// tag each slider & percent label with the idString to avoid conflicts
