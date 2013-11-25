@@ -611,7 +611,7 @@ function showByMenuChanged() {
 
 	// build the showby checkbox table in HTML; the padding to the right makes
 	// the slider fit great inside the table without ever showing scroll bars
-	var lines = '<form name="showbyform"><table width="100%" style="padding-right:10px;padding-left:10px;">'
+	var lines = '<form name="showbyform"><table height="100%" width="100%" style="padding-right:10px;padding-left:10px;">'
 
 	for(var i in vals){
 		// tag each slider & percent label with the idString to avoid conflicts

@@ -612,7 +612,7 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="showby" align="center">
-            <table width="93%">
+            <table width="100%">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -635,7 +635,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
             </table>
         </div>
-        <div id="scalingby">
+        <div id="scalingby" align="center">
             <table width="100%">
                 <tr>
                     <td align="center">
@@ -817,7 +817,7 @@ document.getElementById("logotable").style.display = 'none';
             <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
             </form>
             <br>
-            <table width="93%">
+            <table width="100%">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -840,7 +840,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
             </table>
         </div>
-        <div id="scalingby">
+        <div id="scalingby" align="center">
             <table width="100%">
                 <tr>
                     <td align="center">
@@ -1013,7 +1013,7 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="showby" align="center">
-            <table width="93%">
+            <table width="100%">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -1036,7 +1036,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
             </table>
         </div>
-        <div id="scalingby">
+        <div id="scalingby" align="center">
             <table width="100%">
                 <tr>
                     <td align="center">
@@ -1203,7 +1203,7 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="showby" align="center">
-            <table width="93%">
+            <table width="100%">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -1226,7 +1226,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
             </table>
         </div>
-        <div id="scalingby">
+        <div id="scalingby" align="center">
             <table width="100%">
                 <tr>
                     <td align="center">
@@ -1397,7 +1397,7 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="showby" align="center">
-            <table width="93%">
+            <table width="100%">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -1420,7 +1420,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
             </table>
         </div>
-        <div id="scalingby">
+        <div id="scalingby" align="center">
             <table width="100%">
                 <tr>
                     <td align="center">
