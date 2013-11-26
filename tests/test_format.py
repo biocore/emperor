@@ -538,17 +538,17 @@ document.getElementById("logotable").style.display = 'none';
 <body>
 
 <div id="overlay">
-	<div>
-	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
-		<h1>WebGL is not enabled!</h1>
-		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
-		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
-		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
-		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
-		<p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
-		<p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
-		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
-	</div>
+    <div>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+        <h1>WebGL is not enabled!</h1>
+        <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+        <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+        <p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+        <p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+        <p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
+        <p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
+        <p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
+    </div>
 </div>
 
 <div id="plotToggle">
@@ -593,8 +593,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab">
             <form name="keyFilter">
@@ -612,17 +611,53 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby">
-            <select id="showbycombo" onchange="showByMenuChanged()">
-            </select>
-            <div class="list" id="showbylist">
-            </div>
+        <div id="showby" align="center">
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="showbylist" style="height:100%;width:100%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 12px; padding-right:12px;">
+                        <br>
+                        <label for="sphereopacity" class="text">Global Sphere Opacity</label>
+                        <label id="sphereopacity" class="slidervalue"></label>
+                        <div id="sopacityslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div id="scalingby">
-            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
-            </select>
-            <div class="list" id="scalingbylist">
-            </div>
+        <div id="scalingby" align="center">
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 12px; padding-right:12px;">
+                        <br>
+                        <label for="sphereradius" class="text">Global Sphere Scale</label>
+                        <label id="sphereradius" class="slidervalue"></label>
+                        <div id="sradiusslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="labelby">
         <div id="labelsTop">
@@ -650,54 +685,36 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="view">
+        <div id="options">
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <div id="pcoaviewoptions" class="">
-                <br>
-                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br>
-                <br>
-                <form name="settingsoptionscolor">
-                </form>
             <br>
             <label for="ellipseopacity" class="text">Ellipse Opacity</label>
             <label id="ellipseopacity" class="slidervalue"></label>
             <div id="eopacityslider" class="slider-range-max"></div>
-                <br>
-                <label for="sphereopacity" class="text">Sphere Opacity</label>
-                <label id="sphereopacity" class="slidervalue"></label>
-                <div id="sopacityslider" class="slider-range-max"></div>
-                <br>
-                <label for="sphereradius" class="text">Sphere Scale</label>
-                <label id="sphereradius" class="slidervalue"></label>
-                <div id="sradiusslider" class="slider-range-max"></div>
-                <br>
-            </div>
-            <br>
-        </div>
-        <div id="settings">
-            <br>
-            Filename <small>(only letters, numbers, ., - and _)</small>:
-            <br>
-            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-            <br>
-            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-            <br><br>
-            For a PNG, simply press 'ctrl+p'.
-            <br><br>
-            <div id="pcoaoptions" class="">
-                <form name="settingsoptions">
-                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                <form name="settingsoptionscolor">
                 </form>
+                <div id="pcoaoptions" class="">
+                    <form name="settingsoptions">
+                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                    </form>
+                </div>
+                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br><br>
+                <hr class='section-break'>
+                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                <br><br>For a PNG, simply press 'ctrl+p'.
+                <div id="paralleloptions" class="">
+                </div>
             </div>
             <br>
-            <div id="paralleloptions" class="">
-            </div>
         </div>
     </div>  
 </div>
@@ -716,17 +733,17 @@ document.getElementById("logotable").style.display = 'none';
 <body>
 
 <div id="overlay">
-	<div>
-	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
-		<h1>WebGL is not enabled!</h1>
-		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
-		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
-		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
-		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
-		<p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
-		<p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
-		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
-	</div>
+    <div>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+        <h1>WebGL is not enabled!</h1>
+        <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+        <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+        <p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+        <p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+        <p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
+        <p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
+        <p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
+    </div>
 </div>
 
 <div id="plotToggle">
@@ -771,8 +788,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab">
             <form name="keyFilter">
@@ -795,22 +811,58 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby">
+        <div id="showby" align="center">
             <br>
             <form name="biplotsvisibility">
             <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
             </form>
             <br>
-            <select id="showbycombo" onchange="showByMenuChanged()">
-            </select>
-            <div class="list" id="showbylist">
-            </div>
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="showbylist" style="height:100%;width:100%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 12px; padding-right:12px;">
+                        <br>
+                        <label for="sphereopacity" class="text">Global Sphere Opacity</label>
+                        <label id="sphereopacity" class="slidervalue"></label>
+                        <div id="sopacityslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div id="scalingby">
-            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
-            </select>
-            <div class="list" id="scalingbylist">
-            </div>
+        <div id="scalingby" align="center">
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 12px; padding-right:12px;">
+                        <br>
+                        <label for="sphereradius" class="text">Global Sphere Scale</label>
+                        <label id="sphereradius" class="slidervalue"></label>
+                        <div id="sradiusslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="labelby">
         <div id="labelsTop">
@@ -843,50 +895,32 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="view">
+        <div id="options">
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <div id="pcoaviewoptions" class="">
-                <br>
-                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br>
-                <br>
                 <form name="settingsoptionscolor">
                 </form>
-                <br>
-                <label for="sphereopacity" class="text">Sphere Opacity</label>
-                <label id="sphereopacity" class="slidervalue"></label>
-                <div id="sopacityslider" class="slider-range-max"></div>
-                <br>
-                <label for="sphereradius" class="text">Sphere Scale</label>
-                <label id="sphereradius" class="slidervalue"></label>
-                <div id="sradiusslider" class="slider-range-max"></div>
-                <br>
+                <div id="pcoaoptions" class="">
+                    <form name="settingsoptions">
+                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                    </form>
+                </div>
+                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br><br>
+                <hr class='section-break'>
+                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                <br><br>For a PNG, simply press 'ctrl+p'.
+                <div id="paralleloptions" class="">
+                </div>
             </div>
             <br>
-        </div>
-        <div id="settings">
-            <br>
-            Filename <small>(only letters, numbers, ., - and _)</small>:
-            <br>
-            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-            <br>
-            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-            <br><br>
-            For a PNG, simply press 'ctrl+p'.
-            <br><br>
-            <div id="pcoaoptions" class="">
-                <form name="settingsoptions">
-                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-                </form>
-            </div>
-            <br>
-            <div id="paralleloptions" class="">
-            </div>
         </div>
     </div>  
 </div>
@@ -905,17 +939,17 @@ document.getElementById("logotable").style.display = 'none';
 <body>
 
 <div id="overlay">
-	<div>
-	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
-		<h1>WebGL is not enabled!</h1>
-		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
-		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
-		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
-		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
-		<p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
-		<p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
-		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
-	</div>
+    <div>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+        <h1>WebGL is not enabled!</h1>
+        <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+        <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+        <p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+        <p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+        <p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
+        <p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
+        <p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
+    </div>
 </div>
 
 <div id="plotToggle">
@@ -960,8 +994,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab">
             <form name="keyFilter">
@@ -979,17 +1012,53 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby">
-            <select id="showbycombo" onchange="showByMenuChanged()">
-            </select>
-            <div class="list" id="showbylist">
-            </div>
+        <div id="showby" align="center">
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="showbylist" style="height:100%;width:100%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 12px; padding-right:12px;">
+                        <br>
+                        <label for="sphereopacity" class="text">Global Sphere Opacity</label>
+                        <label id="sphereopacity" class="slidervalue"></label>
+                        <div id="sopacityslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div id="scalingby">
-            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
-            </select>
-            <div class="list" id="scalingbylist">
-            </div>
+        <div id="scalingby" align="center">
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 12px; padding-right:12px;">
+                        <br>
+                        <label for="sphereradius" class="text">Global Sphere Scale</label>
+                        <label id="sphereradius" class="slidervalue"></label>
+                        <div id="sradiusslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="labelby">
         <div id="labelsTop">
@@ -1017,50 +1086,32 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="view">
+        <div id="options">
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <div id="pcoaviewoptions" class="">
-                <br>
-                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br>
-                <br>
                 <form name="settingsoptionscolor">
                 </form>
-                <br>
-                <label for="sphereopacity" class="text">Sphere Opacity</label>
-                <label id="sphereopacity" class="slidervalue"></label>
-                <div id="sopacityslider" class="slider-range-max"></div>
-                <br>
-                <label for="sphereradius" class="text">Sphere Scale</label>
-                <label id="sphereradius" class="slidervalue"></label>
-                <div id="sradiusslider" class="slider-range-max"></div>
-                <br>
+                <div id="pcoaoptions" class="">
+                    <form name="settingsoptions">
+                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                    </form>
+                </div>
+                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br><br>
+                <hr class='section-break'>
+                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                <br><br>For a PNG, simply press 'ctrl+p'.
+                <div id="paralleloptions" class="">
+                </div>
             </div>
             <br>
-        </div>
-        <div id="settings">
-            <br>
-            Filename <small>(only letters, numbers, ., - and _)</small>:
-            <br>
-            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-            <br>
-            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-            <br><br>
-            For a PNG, simply press 'ctrl+p'.
-            <br><br>
-            <div id="pcoaoptions" class="">
-                <form name="settingsoptions">
-                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-                </form>
-            </div>
-            <br>
-            <div id="paralleloptions" class="">
-            </div>
         </div>
     </div>  
 </div>
@@ -1078,17 +1129,17 @@ document.getElementById("logotable").style.display = 'none';
 <body>
 
 <div id="overlay">
-	<div>
-	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
-		<h1>WebGL is not enabled!</h1>
-		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
-		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
-		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
-		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
-		<p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
-		<p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
-		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
-	</div>
+    <div>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+        <h1>WebGL is not enabled!</h1>
+        <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+        <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+        <p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+        <p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+        <p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
+        <p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
+        <p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
+    </div>
 </div>
 
 <div id="plotToggle">
@@ -1133,8 +1184,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab">
             <form name="keyFilter">
@@ -1152,17 +1202,53 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby">
-            <select id="showbycombo" onchange="showByMenuChanged()">
-            </select>
-            <div class="list" id="showbylist">
-            </div>
+        <div id="showby" align="center">
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="showbylist" style="height:100%;width:100%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 12px; padding-right:12px;">
+                        <br>
+                        <label for="sphereopacity" class="text">Global Sphere Opacity</label>
+                        <label id="sphereopacity" class="slidervalue"></label>
+                        <div id="sopacityslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div id="scalingby">
-            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
-            </select>
-            <div class="list" id="scalingbylist">
-            </div>
+        <div id="scalingby" align="center">
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 12px; padding-right:12px;">
+                        <br>
+                        <label for="sphereradius" class="text">Global Sphere Scale</label>
+                        <label id="sphereradius" class="slidervalue"></label>
+                        <div id="sradiusslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="labelby">
         <div id="labelsTop">
@@ -1190,54 +1276,36 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="view">
+        <div id="options">
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             </table>
             <div id="pcoaviewoptions" class="">
-                <br>
-                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br>
-                <br>
-                <form name="settingsoptionscolor">
-                </form>
             <br>
             <label for="vectorsopacity" class="text">Vectors Opacity</label>
             <label id="vectorsopacity" class="slidervalue"></label>
             <div id="vopacityslider" class="slider-range-max"></div>
-                <br>
-                <label for="sphereopacity" class="text">Sphere Opacity</label>
-                <label id="sphereopacity" class="slidervalue"></label>
-                <div id="sopacityslider" class="slider-range-max"></div>
-                <br>
-                <label for="sphereradius" class="text">Sphere Scale</label>
-                <label id="sphereradius" class="slidervalue"></label>
-                <div id="sradiusslider" class="slider-range-max"></div>
-                <br>
-            </div>
-            <br>
-        </div>
-        <div id="settings">
-            <br>
-            Filename <small>(only letters, numbers, ., - and _)</small>:
-            <br>
-            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-            <br>
-            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-            <br><br>
-            For a PNG, simply press 'ctrl+p'.
-            <br><br>
-            <div id="pcoaoptions" class="">
-                <form name="settingsoptions">
-                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                <form name="settingsoptionscolor">
                 </form>
+                <div id="pcoaoptions" class="">
+                    <form name="settingsoptions">
+                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                    </form>
+                </div>
+                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br><br>
+                <hr class='section-break'>
+                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                <br><br>For a PNG, simply press 'ctrl+p'.
+                <div id="paralleloptions" class="">
+                </div>
             </div>
             <br>
-            <div id="paralleloptions" class="">
-            </div>
         </div>
     </div>  
 </div>
@@ -1255,17 +1323,17 @@ document.getElementById("logotable").style.display = 'none';
 <body>
 
 <div id="overlay">
-	<div>
-	<img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
-		<h1>WebGL is not enabled!</h1>
-		<p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
-		<p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
-		<p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
-		<p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
-		<p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
-		<p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
-		<p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
-	</div>
+    <div>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+        <h1>WebGL is not enabled!</h1>
+        <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
+        <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
+        <p id="explanation"><strong>Safari:</strong> Open Safari's menu and select Preferences. Click on the advanced tab, and then check "Show Developer" menu. Then open the "Developer" menu and select "Enable WebGL".</p>
+        <p id="explanation"><strong>Firefox:</strong> Go to Options through Firefox > Options or Tools > Options. Go to Advanced, then General. Check "Use hardware acceleration when available" and restart Firefox.</p>
+        <p id="explanation"><strong>Other browsers:</strong> The only browsers that support WebGL are Chrome, Safari, and Firefox. Please switch to these browsers when using Emperor.</p>
+        <p id="explanation"><em>Note:</em> Once you went through these changes, reload the page and it should work!</p>
+        <p id="source">Sources: Instructions for <a href="https://www.biodigitalhuman.com/home/enabling-webgl.html">Chrome and Safari</a>, and <a href="http://www.infewbytes.com/?p=144">Firefox</a></p>
+    </div>
 </div>
 
 <div id="plotToggle">
@@ -1310,8 +1378,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab">
             <form name="keyFilter">
@@ -1329,17 +1396,53 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby">
-            <select id="showbycombo" onchange="showByMenuChanged()">
-            </select>
-            <div class="list" id="showbylist">
-            </div>
+        <div id="showby" align="center">
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="showbylist" style="height:100%;width:100%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 12px; padding-right:12px;">
+                        <br>
+                        <label for="sphereopacity" class="text">Global Sphere Opacity</label>
+                        <label id="sphereopacity" class="slidervalue"></label>
+                        <div id="sopacityslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div id="scalingby">
-            <select id="scalingbycombo" onchange="scalingByMenuChanged()">
-            </select>
-            <div class="list" id="scalingbylist">
-            </div>
+        <div id="scalingby" align="center">
+            <table width="100%">
+                <tr>
+                    <td align="center">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 12px; padding-right:12px;">
+                        <br>
+                        <label for="sphereradius" class="text">Global Sphere Scale</label>
+                        <label id="sphereradius" class="slidervalue"></label>
+                        <div id="sradiusslider" class="slider-range-max"></div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="labelby">
         <div id="labelsTop">
@@ -1367,7 +1470,7 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="view">
+        <div id="options">
             <table>
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
@@ -1377,48 +1480,30 @@ document.getElementById("logotable").style.display = 'none';
 
             </table>
             <div id="pcoaviewoptions" class="">
-                <br>
-                <input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br>
-                <br>
-                <form name="settingsoptionscolor">
-                </form>
             <br>
             <form name="edgesvisibility">
             <input type="checkbox" onClick="toggleEdgesVisibility()" checked>Edges Visibility</input>
             </form>
             <br>
-                <br>
-                <label for="sphereopacity" class="text">Sphere Opacity</label>
-                <label id="sphereopacity" class="slidervalue"></label>
-                <div id="sopacityslider" class="slider-range-max"></div>
-                <br>
-                <label for="sphereradius" class="text">Sphere Scale</label>
-                <label id="sphereradius" class="slidervalue"></label>
-                <div id="sradiusslider" class="slider-range-max"></div>
-                <br>
-            </div>
-            <br>
-        </div>
-        <div id="settings">
-            <br>
-            Filename <small>(only letters, numbers, ., - and _)</small>:
-            <br>
-            <input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-            <br>
-            <input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-            <br><br>
-            For a PNG, simply press 'ctrl+p'.
-            <br><br>
-            <div id="pcoaoptions" class="">
-                <form name="settingsoptions">
-                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                <form name="settingsoptionscolor">
                 </form>
+                <div id="pcoaoptions" class="">
+                    <form name="settingsoptions">
+                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                    </form>
+                </div>
+                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                <br><br>
+                <hr class='section-break'>
+                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                <br><br>For a PNG, simply press 'ctrl+p'.
+                <div id="paralleloptions" class="">
+                </div>
             </div>
             <br>
-            <div id="paralleloptions" class="">
-            </div>
         </div>
     </div>  
 </div>

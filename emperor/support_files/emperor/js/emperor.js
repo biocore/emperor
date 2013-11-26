@@ -531,7 +531,8 @@ function scalingByMenuChanged(){
 	}
 	values = _splitAndSortNumericAndAlpha(dedupe(values));
 
-	lines = "<table width=\"90%\">"
+	// the padding accounts for the slider handle that can move all to the left or right
+	lines = '<table width="100%" height="100%" style="padding-right:10px;padding-left:10px;">'
 	for(var i in values){
 		// construct a sanitized category name for all HTML elements
 		idString = "r"+i+"c"+scalingByCategoryIndex;
@@ -608,8 +609,10 @@ function showByMenuChanged() {
 
 	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
-	// build the showby checkbox table in HTML
-	var lines = "<form name=\"showbyform\"><table width=\"90%\">"
+	// build the showby checkbox table in HTML; the padding to the right makes
+	// the slider fit great inside the table without ever showing scroll bars
+	var lines = '<form name="showbyform"><table height="100%" width="100%" style="padding-right:10px;padding-left:10px;">'
+
 	for(var i in vals){
 		// tag each slider & percent label with the idString to avoid conflicts
 		var idString = "r"+i+"c"+showByMenuIndex;
@@ -627,7 +630,7 @@ function showByMenuChanged() {
 
 		// add a slider and a current-value-label to the table
 		lines +="</td></tr>";
-		lines += "<tr><td></td><td>";
+		lines += '<td colspan="2">';
 		lines += "<label id=\""+idString+"opacityvalue\" name=\""+vals[i]+"\" class=\"slidervalue\"></label>"
 		lines += "<div id=\""+idString+"opacityslider\" name=\""+vals[i]+"\" class=\"slider-range-max\"></div>"
 		lines +="</td></tr>";
@@ -1313,7 +1316,7 @@ function setJqueryUi() {
 			sphereOpacityChange(ui, null);
 		}
 	});
-	document.getElementById('sphereopacity').innerHTML = $( "#sopacityslider" ).slider( "value")+"%";
+	document.getElementById('sphereopacity').innerHTML = $( "#sopacityslider" ).slider( "value").toString()+"%";
 
 	$("#sradiusslider" ).slider({
 		range: "max",
