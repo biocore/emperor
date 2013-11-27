@@ -136,34 +136,47 @@ function distanceBetweenPoints( x_1, y_1, z_1, x_2, y_2, z_2){
  *
  *
  */
-function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders, mappingFileData, trajectoryCategory, gradientCategory, coordinatesData){
+function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders, mappingFileData, coordinatesData, trajectoryCategory, gradientCategory){
 	var gradientIndex = mappingFileHeaders.indexOf(gradientCategory);
 	var trajectoryIndex = mappingFileHeaders.indexOf(trajectoryCategory);
 
-	var chewedSampleData = new Array();
-
+	var chewedSampleData = new Object();
 	var trajectoryBuffer = null, gradientBuffer = null;
 
+	// this is the most utterly annoying thing ever
+	if (gradientIndex === -1) {
+		throw new Error("Gradient category not found in mapping file header");
+	}
+	if (trajectoryIndex === -1) {
+		throw new Error("Trajectory category not found in mapping file header");
+	}
 
-	console.log('Value of chewedSampleData'+chewedSampleData);
+	for (var sampleId in mappingFileData){
+		// console.log('The value of the SampleId is '+sampleId);
 
-	for (var index in mappingFileData){
-		sampleId = mappingFileData[sampleId]
-		console.log('The value of the SampleId is '+sampleId);
-
-
-		trajectoryBuffer = mappingFileData[sampleId][trajectoryCategory];
+		trajectoryBuffer = mappingFileData[sampleId][trajectoryIndex];
 		gradientBuffer = mappingFileData[sampleId][gradientIndex];
 
-		console.log('Value of chewedSampleData'+chewedSampleData);
-		console.log(chewedSampleData);
+		// console.log('Value of chewedSampleData'+chewedSampleData);
+		// console.log(chewedSampleData);
 
 		// check if there's already an element for this trajectory
 		if (chewedSampleData[trajectoryBuffer] === undefined){
+			console.log('initializing the array');
 			chewedSampleData[trajectoryBuffer] = new Array();
 		}
+		chewedSampleData[trajectoryBuffer].push({'name': sampleId,
+			'value': gradientBuffer, 'x': coordinatesData[sampleId]['x'],
+			'y': coordinatesData[sampleId]['y'], 'z': coordinatesData[sampleId]['z']});
+	}
 
-		chewedSampleData.push({'name': sampleId, 'value': gradientBuffer});
+	// we need this custom sorting function to make the values be sorted in
+	// ascending order but accounting for the data structure that we just built
+	var sortingFunction = function (a, b){return parseFloat(a["value"]) - parseFloat(b["value"]);}
+
+	for (var key in chewedSampleData){
+		// console.log('The value of the key is '+key);
+		chewedSampleData[key].sort(sortingFunction);
 	}
 
 	return chewedSampleData;
