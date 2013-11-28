@@ -162,7 +162,7 @@ function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders, mappingF
 
 		// check if there's already an element for this trajectory
 		if (chewedSampleData[trajectoryBuffer] === undefined){
-			console.log('initializing the array');
+			// console.log('initializing the array');
 			chewedSampleData[trajectoryBuffer] = new Array();
 		}
 		chewedSampleData[trajectoryBuffer].push({'name': sampleId,
@@ -195,7 +195,7 @@ function getMinimumDelta(sampleData){
 
 	for (var key in sampleData){
 		console.log('The value of the key is: '+key);
-		console.log('The length of the array is: '+sampleData[key].length);
+		// console.log('The length of the array is: '+sampleData[key].length);
 		for (var index = 0; index < sampleData[key].length; index++){
 			bufferArray.push(sampleData[key][index]['value']);
 		}
