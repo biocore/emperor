@@ -181,3 +181,36 @@ function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders, mappingF
 
 	return chewedSampleData;
 }
+
+/**
+ *
+ *
+ */
+function getMinimumDelta(sampleData){
+	if (sampleData === undefined){
+		throw new Error("The sample data cannot be undefined");
+	}
+
+	var bufferArray = new Array(), deltasArray = new Array();
+
+	for (var key in sampleData){
+		console.log('The value of the key is: '+key);
+		console.log('The length of the array is: '+sampleData[key].length);
+		for (var index = 0; index < sampleData[key].length; index++){
+			bufferArray.push(sampleData[key][index]['value']);
+		}
+		for (var index = 0; index < bufferArray.length-1; index++){
+			deltasArray.push(Math.abs(bufferArray[index+1]-bufferArray[index]));
+		}
+		// clean buffer array
+		bufferArray.length = 0;
+	}
+
+	// if (deltasArray == null){
+	// 	throw new Error("Could not find records to compute minimum delta");
+	// }
+
+	deltasArray = _.filter(deltasArray, function(num){ return num !== 0; });
+
+	return _.min(deltasArray);
+}
