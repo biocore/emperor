@@ -43,10 +43,12 @@ function AnimationDirector(mappingFileHeaders, mappingFileData, coordinatesData,
 	this.frames = frames;
 
 	this.minimumDelta = null;
-
+	this.maximumTrajectoryLength = null;
+	this.currentFrame = -1;
 	this.trajectories = new Array();
 
 	this.initializeTrajectories();
+	this.getMaximumTrajectoryLength();
 
 	return this;
 }
@@ -103,9 +105,25 @@ AnimationDirector.prototype.initializeTrajectories = function(){
  *
  *
  */
-AnimationDirector.prototype.computeN = function (){
-	return 60;
+AnimationDirector.prototype.getMaximumTrajectoryLength = function (){
+	if(this.maximumTrajectoryLength == null){
+		this._computeN();
+	}
+
+	return this.maximumTrajectoryLength;
 }
+
+AnimationDirector.prototype._computeN = function (){
+	var arrayOfLengths = new Array();
+
+	for (var index = 0; index < this.trajectories.length; index++){
+		// console.log('Iterating through '+index);
+		arrayOfLengths.push(this.trajectories[index].interpolatedCoordinates.length);
+	}
+
+	this.maximumTrajectoryLength = _.max(arrayOfLengths);
+}
+
 
 /**
  *
@@ -136,5 +154,10 @@ AnimationDirector.prototype.getGroup = function (){
  *
  */
 AnimationDirector.prototype.updateFrame = function (){
-	return null;
+	this.currentFrame = this.currentFrame + 1;
+}
+
+AnimationDirector.prototype.animationCycleFinished = function (){
+	console.log('The value of the current frame is %s, the value of the maximumTrajectoryLength is %s', this.currentFrame, this.maximumTrajectoryLength.length);
+	return this.currentFrame > this.getMaximumTrajectoryLength();
 }
