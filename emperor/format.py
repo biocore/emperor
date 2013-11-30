@@ -487,7 +487,11 @@ EMPEROR_HEADER_HTML_STRING =\
     <script src="emperor_required_resources/emperor/js/emperor.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/THREEx.screenshot.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/FileSaver.min.js"></script>
-    
+
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/trajectory.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/underscore.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/animate.js"></script>
+
     <script type="text/javascript">
     
 """
@@ -665,9 +669,9 @@ document.getElementById("logotable").style.display = 'none';
             <table width="90%%" align="center">
                 <tr>
                     <td>
-                        <a class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
-                        <a class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
-                        <a class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
                     </td>
                 </tr>
                 <tr>
@@ -680,23 +684,23 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <br><label for="animate_over_category_combo" class="text">Category to Animate Over</label><br>
+                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="animate_over_category_combo" onchange="animationOverMenuChanged()"></select><br>
+                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label for="animate_through_category_combo" class="text">Category to Animate Through</label>
+                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="animate_through_category_combo" onchange="animationMenuChanged()"></select>
+                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
                     </td>
                 </tr>
             </table>

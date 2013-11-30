@@ -59,6 +59,9 @@ g_validAsciiCodes = g_validAsciiCodes.concat([65,66,67,68,68,70,71,72,73,74,75,7
 // adding: a->z
 g_validAsciiCodes = g_validAsciiCodes.concat([97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122]);
 
+var g_steven = null;
+var g_isPlaying = null;
+
 // taken from the qiime/colors.py module; a total of 29 colors
 var k_QIIME_COLORS = [
 "0xFF0000", // red1
@@ -2238,7 +2241,7 @@ $(document).ready(function() {
 			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
-			$("#animate_through_category_combo").append(line);
+			$("#trajectory_category_combo").append(line);
 		}
 
 		// add the header names that can be animated over
@@ -2251,7 +2254,7 @@ $(document).ready(function() {
 			} else {
 			    line = "<option value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
 			}
-			$("#animate_over_category_combo").append(line);
+			$("#gradient_category_combo").append(line);
 		}
 
 		setParallelPlots();
@@ -2448,9 +2451,56 @@ $(document).ready(function() {
 	}
    
 	function render() {
+		var gradientCategory, trajectoryCategory;
+
 		g_sceneControl.update();
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
+
+		if (g_isPlaying) {
+		// Animational fun
+			if (g_steven == null) {
+				console.log('Initializing steven');
+
+				trajectoryCategory = document.getElementById('trajectory_category_combo')[document.getElementById('trajectory_category_combo').selectedIndex].value;
+				gradientCategory = document.getElementById('gradient_category_combo')[document.getElementById('gradient_category_combo').selectedIndex].value;
+
+				g_steven = new AnimationDirector(g_mappingFileHeaders, g_mappingFileData, g_spherePositions, gradientCategory, trajectoryCategory, 10);
+				console.log('steven is now initialized');
+				g_steven.updateFrame();
+
+			}
+			else{
+				g_steven.updateFrame();
+				console.log('The value of the maximum length is %d', g_steven.getMaximumTrajectoryLength());
+
+				if (g_steven.animationCycleFinished() == false){
+					console.log('The current frame is: '+g_steven.currentFrame);
+				}
+				else{
+					// Animation cycle is don?
+					g_isPlaying = false;
+					document.getElementById("play_button").disabled="false";
+					g_steven = null;
+					console.log("steven has now been reset to null");
+				}// animation cycle is done
+			}// steven is not null
+		}// is playing
+
 	}
 	
 });
+
+
+function playAnimation() {
+	g_isPlaying = true;
+	document.getElementById("play_button").disabled="true";
+}
+
+function gradientCategoryMenuChanged(){
+
+}
+
+function trajectoryCategoryMenuChanged(){
+
+}
