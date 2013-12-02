@@ -61,6 +61,7 @@ g_validAsciiCodes = g_validAsciiCodes.concat([97,98,99,100,101,102,103,104,105,1
 
 var g_steven = null;
 var g_isPlaying = null;
+var g_animationLines = new Array();
 
 // taken from the qiime/colors.py module; a total of 29 colors
 var k_QIIME_COLORS = [
@@ -2452,6 +2453,7 @@ $(document).ready(function() {
    
 	function render() {
 		var gradientCategory, trajectoryCategory;
+		var drawingLineBuffer;
 
 		g_sceneControl.update();
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
@@ -2476,6 +2478,30 @@ $(document).ready(function() {
 
 				if (g_steven.animationCycleFinished() == false){
 					console.log('The current frame is: '+g_steven.currentFrame);
+
+					// we are trying to remove the lines from the previous frame
+					for (var index = 0; index < g_animationLines.length; index++){
+						g_mainScene.remove(g_animationLines[index]);
+						g_elementsGroup.remove(g_animationLines[index]);
+					}
+
+					g_animationLines.length = 0;
+
+					// whaaaaam
+					for (var index = 0; index < g_steven.trajectories.length; index++){
+						console.log('Drawing line');
+						// console.log(g_steven.trajectories[index].interpolatedCoordinates);
+						console.log('Begin drawing line ' + index);
+						console.log(g_steven.trajectories[index].interpolatedCoordinates);
+						drawingLineBuffer = drawTrajectoryLine(g_steven.trajectories[index].interpolatedCoordinates, g_steven.currentFrame, 0xFFFFFF, 2);
+						console.log('Finish drawing line ' + index);
+
+						g_mainScene.add(drawingLineBuffer);
+						g_elementsGroup.add(drawingLineBuffer);
+
+						g_animationLines.push(drawingLineBuffer);
+					}
+					g_steven.currentFrame = 1000;
 				}
 				else{
 					// Animation cycle is don?
@@ -2504,3 +2530,38 @@ function gradientCategoryMenuChanged(){
 function trajectoryCategoryMenuChanged(){
 
 }
+
+function drawTrajectoryLine(trajectory, currentFrame, color, width){
+	// based on the example described in:
+	// https://github.com/mrdoob/three.js/wiki/Drawing-lines
+	var material, geometry, line, limit;
+
+	if (currentFrame > trajectory.length){
+		limit = trajectory.length;
+	}
+	else{
+		limit = currentFrame;
+	}
+
+	// make the material transparent and with full opacity
+	material = new THREE.LineBasicMaterial({color:color, linewidth:width});
+	material.matrixAutoUpdate = true;
+	material.transparent = true;
+	material.opacity = 1.0;
+
+	// add the two vertices to the geometry
+	geometry = new THREE.Geometry();
+
+	for (var index = 0; index < currentFrame; index++){
+		geometry.vertices.push(new THREE.Vector3(trajectory[index]['x'], trajectory[index]['y'], trajectory[index]['z']));
+	}
+
+	// geometry.vertices.push(new THREE.Vector3(coords_a[0], coords_a[1], coords_a[2]));
+	// geometry.vertices.push(new THREE.Vector3(coords_b[0], coords_b[1], coords_b[2]));
+
+	// the line will contain the two vertices and the described material
+	line = new THREE.Line(geometry, material);
+
+	return line;
+}
+

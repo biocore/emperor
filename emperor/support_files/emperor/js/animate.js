@@ -158,6 +158,6 @@ AnimationDirector.prototype.updateFrame = function (){
 }
 
 AnimationDirector.prototype.animationCycleFinished = function (){
-	console.log('The value of the current frame is %s, the value of the maximumTrajectoryLength is %s', this.currentFrame, this.maximumTrajectoryLength.length);
+	// console.log('The value of the current frame is %s, the value of the maximumTrajectoryLength is %s', this.currentFrame, this.maximumTrajectoryLength.length);
 	return this.currentFrame > this.getMaximumTrajectoryLength();
 }
