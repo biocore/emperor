@@ -16,7 +16,7 @@ from numpy import array
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
     EmperorLogicError, format_comparison_bars_to_js, format_emperor_autograph)
-from cogent.util.unit_test import TestCase, main
+from unittest import TestCase, main
 
 class TopLevelTests(TestCase):
 

@@ -13,7 +13,8 @@ __status__ = "Development"
 
 
 from numpy import array
-from cogent.util.unit_test import TestCase, main
+from unittest import TestCase, main
+from numpy.testing import assert_almost_equal
 from emperor.sort import (sort_taxa_table_by_pcoa_coords,
     sort_comparison_filenames)
 
@@ -110,13 +111,13 @@ class TopLevelTests(TestCase):
 
         self.assertEquals(o_headers, ['PC.354','PC.356','PC.481','PC.593',
             'PC.355','PC.607','PC.634', 'PC.636', 'PC.635'])
-        self.assertFloatEqual(o_otu_table, OTU_TABLE_A)
+        assert_almost_equal(o_otu_table, OTU_TABLE_A)
 
         # case with shuffled inputs and fewer samples
         o_headers, o_otu_table = sort_taxa_table_by_pcoa_coords(['PC.354',
             'PC.356','PC.635'], self.otu_table, self.otu_headers)
         self.assertEquals(o_headers, ['PC.354','PC.356','PC.635'])
-        self.assertFloatEqual(o_otu_table, array([[ 0.01, 0.02, 0.04697987],[0.,
+        assert_almost_equal(o_otu_table, array([[ 0.01, 0.02, 0.04697987],[0.,
             0.02, 0.02013423], [0.38926174, 0.65333333, 0.27516779],[0.,
             0.03333333, 0.02013423],[0.41610738, 0.22, 0.45637584],[0.03355705,
             0.01333333, 0.02013423],[0., 0.01333333, 0.],[0.14765101,
