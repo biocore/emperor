@@ -17,8 +17,6 @@ import numpy as np
 from os import system
 from unittest import TestCase, main
 from numpy.testing import assert_almost_equal, assert_array_almost_equal
-# from cogent.util.misc import get_random_directory_name
-from tempfile import TemporaryFile
 
 class BiplotTests(TestCase):
     
