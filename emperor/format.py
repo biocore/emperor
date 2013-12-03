@@ -24,10 +24,11 @@ from numpy import max, min, abs, argsort, array
 from emperor.util import (keep_columns_from_mapping_file,
     get_emperor_library_version)
 
-from qiime.format import format_mapping_file
-from qiime.parse import mapping_file_to_dict, parse_mapping_file
-from qiime.filter import (filter_mapping_file_by_metadata_states,
-    sample_ids_from_metadata_description)
+from emperor.qiime_backports.format import format_mapping_file
+from emperor.qiime_backports.parse import (mapping_file_to_dict,
+    parse_mapping_file)
+from emperor.qiime_backports.filter import (
+    filter_mapping_file_by_metadata_states,sample_ids_from_metadata_description)
 from qiime.util import get_qiime_library_version
 
 class EmperorLogicError(ValueError):

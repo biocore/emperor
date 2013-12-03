@@ -15,8 +15,8 @@ from numpy import argsort, array
 
 from emperor.util import EmperorUnsupportedComputation
 from emperor.sort import sort_taxa_table_by_pcoa_coords
-from qiime.biplots import (get_taxa_prevalence, get_taxa_coords,
-    make_biplot_scores_output)
+from emperor.qiime_backports.biplots import (get_taxa_prevalence,
+    get_taxa_coords, make_biplot_scores_output)
 
 def extract_taxa_data(otu_coords, otu_table, lineages, prevalence, N=0):
     """Extrac the N most prevalent elements according to a prevalence vector
