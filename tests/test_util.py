@@ -17,7 +17,7 @@ from shutil import rmtree
 from os.path import exists, join
 from unittest import TestCase, main
 from numpy.testing import assert_almost_equal
-from qiime.util import get_qiime_temp_dir, get_tmp_filename
+from tempfile import gettempdir
 from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
     preprocess_mapping_file, preprocess_coords_file, EmperorInputFilesError,
     fill_mapping_field_from_mapping_file, sanitize_mapping_file)
@@ -29,8 +29,8 @@ class TopLevelTests(TestCase):
         self.mapping_file_headers = ['SampleID', 'BarcodeSequence',
             'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description']
         self.valid_columns = ['Treatment', 'DOB']
-        self.support_files_filename = get_qiime_temp_dir()
-        self.support_files_filename_spaces = join(get_qiime_temp_dir(),
+        self.support_files_filename = gettempdir()
+        self.support_files_filename_spaces = join(gettempdir(),
             'Directory With Spaces/AndNoSpaces')
 
         # data for the custom axes, contains columns that are gradients
