@@ -12,7 +12,7 @@ __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 from numpy import array
-from qiime.parse import parse_classic_otu_table
+from emperor.qiime_backports.parse import parse_classic_otu_table
 from unittest import TestCase, main
 from numpy.testing import assert_almost_equal
 from emperor.util import EmperorUnsupportedComputation

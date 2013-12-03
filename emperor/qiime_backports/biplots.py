@@ -10,7 +10,7 @@ __maintainer__ = "Dan Knights"
 __email__ = "daniel.knights@colorado.edu"
 __status__ = "Development"
 
-from qiime.parse import parse_otu_table
+from emperor.qiime_backports.parse import parse_otu_table
 from numpy import array,apply_along_axis,dot,delete,argsort
 import numpy as np
 
