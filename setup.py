@@ -13,7 +13,7 @@ __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 # without any of these emperor will not function correctly
-required_python_modules = ['numpy', 'cogent', 'qiime']
+required_python_modules = ['numpy', 'qiime']
 unavailable_dependencies = []
 
 for module in required_python_modules:
