@@ -356,5 +356,35 @@ expected_lineages1 = [['Bacteria','Actinobacteria','Actinobacteridae','Propionib
 ['Bacteria','Cyanobacteria','Chloroplasts','vectors']]
 
 
+COORDS_NO_VECTORS = """A\t0.11\t0.09\t0.23
+B\t0.03\t0.07\t-0.26
+C\t0.12\t0.06\t-0.32
+eigvals\t4.94\t1.79\t1.50
+% variation explained\t14.3\t5.2\t4.3"""
+
+COORDS_NO_EIGENVALS = """pc vector number\t1\t2\t3
+A\t0.11\t0.09\t0.23
+B\t0.03\t0.07\t-0.26
+C\t0.12\t0.06\t-0.32
+foo\t4.94\t1.79\t1.50
+% variation explained\t14.3\t5.2\t4.3"""
+
+COORDS_NO_PCNTS = """pc vector number\t1\t2\t3
+A\t0.11\t0.09\t0.23
+B\t0.03\t0.07\t-0.26
+C\t0.12\t0.06\t-0.32
+eigvals\t4.94\t1.79\t1.50"""
+
+taxa_summary1 = """#Full OTU Counts
+Taxon\tEven1\tEven2\tEven3
+Bacteria;Actinobacteria;Actinobacteria(class);Actinobacteridae\t0.0880247251673\t0.0721968465746\t0.081371761759
+Bacteria;Bacteroidetes/Chlorobigroup;Bacteroidetes;Bacteroidia\t0.192137761955\t0.191095101593\t0.188504131885
+Bacteria;Firmicutes;Bacilli;Lactobacillales\t0.0264895739603\t0.0259942669171\t0.0318460745596
+# some comment
+Bacteria;Firmicutes;Clostridia;Clostridiales\t0.491800007824\t0.526186212556\t0.49911159984
+Bacteria;Firmicutes;Erysipelotrichi;Erysipelotrichales\t0.0311411916592\t0.0184083913576\t0.0282325481054
+Bacteria;Proteobacteria;Gammaproteobacteria;Enterobacteriales\t0.166137214246\t0.163087129528\t0.168923372865
+No blast hit;Other\t0.00426952518811\t0.00303205147361\t0.0020105109874"""
+
 if __name__ == '__main__':
     main()
