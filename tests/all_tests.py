@@ -12,8 +12,9 @@ from sys import exit
 from glob import glob
 from emperor.util import get_emperor_project_dir
 from os.path import join, abspath, dirname, split, exists
-from qiime.util import (parse_command_line_parameters, qiime_system_call,
-    make_option)
+
+from qcli.util import qcli_system_call
+from qcli.option_parsing import parse_command_line_parameters, make_option
 
 # in QIIME 1.7.0-release this function was still in qiime.test but in the
 # middle of the development cycle for 1.7.0 it was moved to qcli
@@ -112,7 +113,7 @@ def main():
         for unittest_name in unittest_names:
             print "Testing %s:\n" % unittest_name
             command = '%s %s -v' % (python_name, unittest_name)
-            stdout, stderr, return_value = qiime_system_call(command)
+            stdout, stderr, return_value = qcli_system_call(command)
             print stderr
             if not unittest_good_pattern.search(stderr):
                 if application_not_found_pattern.search(stderr):
