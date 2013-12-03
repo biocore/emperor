@@ -20,7 +20,7 @@ from numpy.testing import assert_almost_equal
 
 from emperor.qiime_backports.parse import (parse_mapping_file,
     parse_metadata_state_descriptions, parse_coords, parse_classic_otu_table,
-    mapping_file_to_dict, parse_mapping_file_to_dict)
+    mapping_file_to_dict, parse_mapping_file_to_dict, QiimeParseError)
 
 class TopLevelTests(TestCase):
 
@@ -133,8 +133,22 @@ eigvals\t4.94\t1.79\t1.50
         self.assertEqual(obs[0], exp[0])
         assert_almost_equal(obs[1], exp[1])
 
+    def test_parse_coords_exceptions(self):
+        """Check exceptions are raised accordingly with missing information"""
 
+        # missing eigenvalues line
+        with self.assertRaises(QiimeParseError):
+            out = parse_coords(COORDS_NO_EIGENVALS.splitlines())
+        # missing percentages explained line
+        with self.assertRaises(QiimeParseError):
+            out = parse_coords(COORDS_NO_PCNTS.splitlines())
+        # missing vector number line
+        with self.assertRaises(QiimeParseError):
+            out = parse_coords(COORDS_NO_VECTORS.splitlines())
 
+        # a whole different file (taxa summary)
+        with self.assertRaises(QiimeParseError):
+            out = parse_coords(taxa_summary1.splitlines())
 
     def test_parse_classic_otu_table_legacy(self):
         """parse_classic_otu_table functions as expected with legacy OTU table
