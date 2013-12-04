@@ -78,6 +78,12 @@ def main():
     if opts.emperor_scripts_dir == None:
         emperor_scripts_dir = abspath(join(get_emperor_project_dir(),
             'scripts/'))
+
+        # let's try to guess cases for qiime-deploy type of installs
+        if get_emperor_project_dir().endswith('/lib'):
+            emperor_scripts_dir = abspath(join(get_emperor_project_dir()[:-3],
+                'scripts/'))
+
     else:
         emperor_scripts_dir = abspath(opts.emperor_scripts_dir)
 
