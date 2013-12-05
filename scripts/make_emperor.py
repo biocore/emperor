@@ -6,10 +6,10 @@ __author__ = "Antonio Gonzalez Pena"
 __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Antonio Gonzalez Pena", "Yoshiki Vazquez Baeza"]
 __license__ = "BSD"
-__version__ = "0.9.2-dev"
+__version__ = "0.9.3"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "antgonza@gmail.com"
-__status__ = "Development"
+__status__ = "Release"
 
 from os import listdir, makedirs
 from os.path import join, exists, isdir, abspath

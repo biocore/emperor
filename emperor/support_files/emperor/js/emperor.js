@@ -4,10 +4,10 @@
  * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza",
  *                "Jackson Chen", "Emily TerAvest"]
  * __license__ = "BSD"
- * __version__ = "0.9.2-dev"
+ * __version__ = "0.9.3"
  * __maintainer__ = "Meg Pirrung"
  * __email__ = "meganap@gmail.com"
- * __status__ = "Development"
+ * __status__ = "Release"
  */
 
 // spheres and ellipses that are being displayed on screen
