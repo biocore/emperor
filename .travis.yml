@@ -4,4 +4,4 @@ python:
 install:
   - pip install .
 script:
-  - python tests/all_tests.py
+  - python tests/all_tests.py --emperor_scripts_dir scripts
