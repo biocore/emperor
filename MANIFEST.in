@@ -1,0 +1,15 @@
+include README.md
+include INSTALL.md
+include LICENSE.md
+include ChangeLog.md
+
+graft emperor
+graft scripts
+graft doc
+graft images
+graft tests
+
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude .git
+global-exclude *~

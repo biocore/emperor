@@ -5,22 +5,19 @@
 #(http://github.com/qiime/qiime) project at svn revision 3290, now taken from
 #the E-vident (http://github.com/qiime/evident) project master branch at git SHA
 #dde2a06f2d990db8b09da65764cd27fc047db788
+
 import re
 
 from os import walk
 from sys import exit
 from glob import glob
-from emperor.util import get_emperor_project_dir
 from os.path import join, abspath, dirname, split, exists
-from qiime.util import (parse_command_line_parameters, qiime_system_call,
-    make_option)
 
-# in QIIME 1.7.0-release this function was still in qiime.test but in the
-# middle of the development cycle for 1.7.0 it was moved to qcli
-try:
-    from qiime.test import run_script_usage_tests
-except ImportError:
-    from qcli.test import run_script_usage_tests
+from emperor.util import get_emperor_project_dir
+
+from qcli.util import qcli_system_call
+from qcli.test import run_script_usage_tests
+from qcli.option_parsing import parse_command_line_parameters, make_option
 
 __author__ = "Rob Knight"
 __copyright__ = "Copyright 2013, The Emperor Project" #consider project name
@@ -74,9 +71,15 @@ def main():
     # line since there is no other way to get the scripts dir. If not provided
     # the base structure of the repository will be assumed. Note that for both
     # cases we are using absolute paths, to avoid unwanted failures.
-    if opts.emperor_scripts_dir == None:
+    if opts.emperor_scripts_dir is None:
         emperor_scripts_dir = abspath(join(get_emperor_project_dir(),
             'scripts/'))
+
+        # let's try to guess cases for qiime-deploy type of installs
+        if get_emperor_project_dir().endswith('/lib'):
+            emperor_scripts_dir = abspath(join(get_emperor_project_dir()[:-3],
+                'scripts/'))
+
     else:
         emperor_scripts_dir = abspath(opts.emperor_scripts_dir)
 
@@ -112,7 +115,7 @@ def main():
         for unittest_name in unittest_names:
             print "Testing %s:\n" % unittest_name
             command = '%s %s -v' % (python_name, unittest_name)
-            stdout, stderr, return_value = qiime_system_call(command)
+            stdout, stderr, return_value = qcli_system_call(command)
             print stderr
             if not unittest_good_pattern.search(stderr):
                 if application_not_found_pattern.search(stderr):

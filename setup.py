@@ -12,31 +12,27 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
-# without any of these emperor will not function correctly
-required_python_modules = ['numpy', 'cogent', 'qiime']
-unavailable_dependencies = []
+# based on the text found in github.com/qiime/pynast
+classes = """
+    Development Status :: 4 - Beta
+    License :: OSI Approved :: BSD License
+    Topic :: Software Development :: Libraries :: Application Frameworks
+    Topic :: Software Development :: User Interfaces
+    Programming Language :: Python
+    Programming Language :: Python :: 2.7
+    Programming Language :: Python :: Implementation :: CPython
+    Operating System :: OS Independent
+    Operating System :: POSIX
+    Operating System :: MacOS :: MacOS X
+"""
 
-for module in required_python_modules:
-    try:
-        exec 'import %s' % module
-    except ImportError:
-        unavailable_dependencies.append(module)
-
-if unavailable_dependencies:
-    print ('Cannot find the following python package(s): %s. Check your '
-        'PYTHONPATH environment variable and/or site-packages folder.' %
-        ', '.join(unavailable_dependencies))
-    exit(1)
-
-# slightly modified from the biom-format setup.py script
-qiime_version = tuple(map(int, qiime.__version__.replace('-dev','').split('.'))) 
-if qiime_version < (1, 7, 0):
-    print ('The minimum required version of the QIIME libraries is 1.7.0 '
-        'please update your version accordingly (your current version %s).' %
-        qiime.__version__)
-    exit(2)
+classifiers = [s.strip() for s in classes.split('\n') if s]
 
 long_description = """Emperor: a tool for visualizing high-throughput microbial community data
+
+EMPeror: a tool for visualizing high-throughput microbial community data.
+Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.
+Gigascience. 2013 Nov 26;2(1):16.
 """
 
 setup(name='emperor',
@@ -47,7 +43,8 @@ setup(name='emperor',
         maintainer=__maintainer__,
         maintainer_email=__email__,
         url='http://github.com/qiime/emperor',
-        packages=['emperor'],
+        packages=['emperor', 'emperor/pycogent_backports',
+            'emperor/qiime_backports'],
         scripts=glob('scripts/*py'),
         package_data={'emperor':['support_files/js/*.js',
             'support_files/js/js/*.js', 'support_files/js/js/ctm/*.js',
@@ -58,5 +55,7 @@ setup(name='emperor',
             'support_files/emperor/css/*.css',
             'support_files/emperor/js/*.js',]},
         data_files={},
-        long_description=long_description)
+        install_requires=["numpy >= 1.5.1", "qcli"],
+        long_description=long_description,
+        classifiers=classifiers)
 

@@ -14,7 +14,8 @@ __status__ = "Development"
 from numpy import array
 from emperor.filter import (filter_samples_from_coords,
     keep_samples_from_pcoa_data)
-from cogent.util.unit_test import TestCase, main
+from unittest import TestCase, main
+from numpy.testing import assert_almost_equal
 
 class TopLevelTests(TestCase):
     
@@ -40,14 +41,14 @@ class TopLevelTests(TestCase):
         out_headers, out_coords = filter_samples_from_coords(self.coords_header,
             self.coords_data, ['PC.636', 'PC.355'])
         self.assertEquals(out_headers, ['PC.355', 'PC.636'])
-        self.assertFloatEqual(out_coords, array([[-0.2, -0.1, 0.06, -0.06],
+        assert_almost_equal(out_coords, array([[-0.2, -0.1, 0.06, -0.06],
             [0.1, -0.1, -0.2, 0.08]]))
 
         # check it removes the requested samples
         out_headers, out_coords = filter_samples_from_coords(self.coords_header,
             self.coords_data, ['PC.636', 'PC.355'], negate=True)
         self.assertEquals(out_headers, ['PC.635', 'PC.354'])
-        self.assertFloatEqual(out_coords, array([[-0.3, 0.04, -0.1, 0.15],
+        assert_almost_equal(out_coords, array([[-0.3, 0.04, -0.1, 0.15],
             [0.04, -0.01, 0.06, -0.34]]))
 
     def test_remove_samples_from_pcoa_data(self):
@@ -56,7 +57,7 @@ class TopLevelTests(TestCase):
         out_headers, out_coords = keep_samples_from_pcoa_data(
             self.coords_header, self.coords_data, ['PC.636', 'PC.355'])
         self.assertEquals(out_headers, ['PC.355', 'PC.636'])
-        self.assertFloatEqual(out_coords, array([[-0.2, -0.1, 0.06, -0.06],
+        assert_almost_equal(out_coords, array([[-0.2, -0.1, 0.06, -0.06],
             [0.1, -0.1, -0.2, 0.08]]))
 
         # check it keeps the requested samples when the input is jackknifed data
@@ -64,7 +65,7 @@ class TopLevelTests(TestCase):
             self.jk_coords_header, self.jk_coords_data, ['1', '3'])
         self.assertEqual(out_headers, [['1', '3'], ['1', '3'], ['1', '3'], ['1',
             '3']])
-        self.assertFloatEqual(out_coords,[array([[1.2, 0.1, -1.2],
+        assert_almost_equal(out_coords,[array([[1.2, 0.1, -1.2],
             [0.11, 5.33,-0.23]]),array([[-1.4, 0.05, 1.3],[0.14, 2.00, -1.11]]),
             array([[-1.5, 0.05, 1.6],[1.0, -0.8, 0.01]]),array([
             [-1.5, 0.05, 1.6],[2, 0, 1.11111]])])
@@ -74,7 +75,7 @@ class TopLevelTests(TestCase):
             self.jk_coords_header, self.jk_coords_data, ['3', '1'])
         self.assertEqual(out_headers, [['1', '3'], ['1', '3'], ['1', '3'], ['1',
             '3']])
-        self.assertFloatEqual(out_coords,[array([[1.2, 0.1, -1.2],
+        assert_almost_equal(out_coords,[array([[1.2, 0.1, -1.2],
             [0.11, 5.33,-0.23]]),array([[-1.4, 0.05, 1.3],[0.14, 2.00, -1.11]]),
             array([[-1.5, 0.05, 1.6],[1.0, -0.8, 0.01]]),array([
             [-1.5, 0.05, 1.6],[2, 0, 1.11111]])])

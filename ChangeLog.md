@@ -4,6 +4,9 @@ Emperor 0.9.3 (changes since Emperor 0.9.2 go here)
 * `Use gradient colors` checkbox is now found under the `Colors` tab.
 * Merge the `Options` and `View` tabs; additionally the global opacity slider and global scale slider were moved to their respective tabs.
 * `Use gradient colors` checkbox now uses the standard blue -> red color gradient
+* Add Emperor to the Python Package Index, now you can install Emperor running `pip install emperor`.
+* Remove dependency on QIIME and PyCogent.
+* Emperor now depends on qcli and Numpy.
 
 *Bug Fixes*
 

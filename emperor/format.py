@@ -24,11 +24,12 @@ from numpy import max, min, abs, argsort, array
 from emperor.util import (keep_columns_from_mapping_file,
     get_emperor_library_version)
 
-from qiime.format import format_mapping_file
-from qiime.parse import mapping_file_to_dict, parse_mapping_file
-from qiime.filter import (filter_mapping_file_by_metadata_states,
-    sample_ids_from_metadata_description)
-from qiime.util import get_qiime_library_version
+from emperor.qiime_backports.format import format_mapping_file
+from emperor.qiime_backports.parse import (mapping_file_to_dict,
+    parse_mapping_file)
+from emperor.qiime_backports.filter import (
+    filter_mapping_file_by_metadata_states,sample_ids_from_metadata_description)
+from emperor.qiime_backports import __version__ as qiime_backports_version
 
 class EmperorLogicError(ValueError):
     """Exception raised when a requirement for the Emperor GUI is not met"""
@@ -433,7 +434,7 @@ def format_emperor_autograph(metadata_fp, coords_fp, language='HTML'):
 
     # add library version and SHA-1 if available
     autograph.append('Emperor Version: %s' %  get_emperor_library_version())
-    autograph.append('QIIME Version: %s' % get_qiime_library_version())
+    autograph.append('QIIME Version: %s' % qiime_backports_version)
     autograph.append('HostName: %s' % gethostname())
 
     # full path to input files

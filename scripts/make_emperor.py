@@ -11,14 +11,15 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
-from os import listdir
+from os import listdir, makedirs
 from os.path import join, exists, isdir, abspath
 
-from qiime.filter import filter_mapping_file
-from qiime.parse import (parse_mapping_file, parse_coords, mapping_file_to_dict,
-    parse_otu_table)
-from qiime.util import (parse_command_line_parameters, make_option, create_dir,
-    MetadataMap)
+from emperor.qiime_backports.filter import filter_mapping_file
+from emperor.qiime_backports.parse import (parse_mapping_file, parse_coords,
+    mapping_file_to_dict, parse_otu_table)
+from emperor.qiime_backports.util import MetadataMap
+
+from qcli.option_parsing import parse_command_line_parameters, make_option
 
 from emperor.biplots import preprocess_otu_table
 from emperor.sort import sort_comparison_filenames
@@ -581,7 +582,8 @@ def main():
         color_by_column_names, unique=not add_unique_columns, clones=clones)
 
     # create the output directory before creating any other output
-    create_dir(opts.output_dir,False)
+    if not isdir(opts.output_dir):
+        makedirs(opts.output_dir)
 
     fp_out = open(join(output_dir, 'index.html'),'w')
     fp_out.write(emperor_autograph+'\n')

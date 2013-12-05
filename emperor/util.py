@@ -15,16 +15,20 @@ __status__ = "Development"
 from numpy import ndarray, array, ones, zeros, vstack
 from string import strip
 
+from os import makedirs
 from os.path import abspath, dirname, join, exists
-
 from copy import deepcopy
-from qiime.format import format_mapping_file
-from qiime.filter import filter_mapping_file
-from qiime.parse import mapping_file_to_dict, parse_metadata_state_descriptions
-from qiime.util import (qiime_system_call, create_dir, MetadataMap,
-    summarize_pcoas, is_valid_git_refname, is_valid_git_sha1)
-from qiime.make_3d_plots import (get_custom_coords, remove_nans,
-    scale_custom_coords)
+
+from qcli.util import qcli_system_call
+
+from emperor.qiime_backports.format import format_mapping_file
+from emperor.qiime_backports.filter import filter_mapping_file
+from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
+    remove_nans, scale_custom_coords)
+from emperor.qiime_backports.parse import (mapping_file_to_dict,
+    parse_metadata_state_descriptions)
+from emperor.qiime_backports.util import (MetadataMap, is_valid_git_refname,
+    is_valid_git_sha1, summarize_pcoas)
 
 from emperor import __version__ as emperor_library_version
 
@@ -48,12 +52,12 @@ def get_emperor_library_version():
 
     # more information could be retrieved following this pattern
     sha_cmd = 'git --git-dir %s/.git rev-parse HEAD' % (emperor_dir)
-    sha_o, sha_e, sha_r = qiime_system_call(sha_cmd)
+    sha_o, sha_e, sha_r = qcli_system_call(sha_cmd)
     git_sha = sha_o.strip()
 
     branch_cmd = 'git --git-dir %s/.git rev-parse --abbrev-ref HEAD' %\
         (emperor_dir)
-    branch_o, branch_e, branch_r = qiime_system_call(branch_cmd)
+    branch_o, branch_e, branch_r = qcli_system_call(branch_cmd)
     git_branch = branch_o.strip()
 
     # validate the output from both command calls
@@ -88,15 +92,15 @@ def copy_support_files(file_path):
     """
     file_path = join(file_path, 'emperor_required_resources')
 
-    if exists(file_path) == False:
-        create_dir(file_path, False)
+    if not exists(file_path):
+        makedirs(file_path)
 
     # shutil.copytree does not provide an easy way to copy the contents of a
     # directory into another existing directory, hence the system call.
     # use double quotes for the paths to escape any invalid chracter(s)/spaces
     cmd = 'cp -R "%s/"* "%s"' % (get_emperor_support_files_dir(),
         abspath(file_path))
-    cmd_o, cmd_e, cmd_r = qiime_system_call(cmd)
+    cmd_o, cmd_e, cmd_r = qcli_system_call(cmd)
 
     if cmd_e:
         raise EmperorSupportFilesError, "Error found whilst trying to copy " +\
