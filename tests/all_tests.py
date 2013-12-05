@@ -5,23 +5,19 @@
 #(http://github.com/qiime/qiime) project at svn revision 3290, now taken from
 #the E-vident (http://github.com/qiime/evident) project master branch at git SHA
 #dde2a06f2d990db8b09da65764cd27fc047db788
+
 import re
 
 from os import walk
 from sys import exit
 from glob import glob
 from os.path import join, abspath, dirname, split, exists
+
 from emperor.util import get_emperor_project_dir
 
 from qcli.util import qcli_system_call
+from qcli.test import run_script_usage_tests
 from qcli.option_parsing import parse_command_line_parameters, make_option
-
-# in QIIME 1.7.0-release this function was still in qiime.test but in the
-# middle of the development cycle for 1.7.0 it was moved to qcli
-try:
-    from qiime.test import run_script_usage_tests
-except ImportError:
-    from qcli.test import run_script_usage_tests
 
 __author__ = "Rob Knight"
 __copyright__ = "Copyright 2013, The Emperor Project" #consider project name
