@@ -11,10 +11,11 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
+from unittest import TestCase, main
 
 from numpy import array
-from unittest import TestCase, main
 from numpy.testing import assert_almost_equal
+
 from emperor.sort import (sort_taxa_table_by_pcoa_coords,
     sort_comparison_filenames)
 

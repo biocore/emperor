@@ -11,10 +11,12 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
-from numpy import array
-from emperor.qiime_backports.parse import parse_classic_otu_table
 from unittest import TestCase, main
+
+from numpy import array
 from numpy.testing import assert_almost_equal
+
+from emperor.qiime_backports.parse import parse_classic_otu_table
 from emperor.util import EmperorUnsupportedComputation
 from emperor.biplots import extract_taxa_data, preprocess_otu_table
 

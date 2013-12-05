@@ -6,8 +6,8 @@ Principles of Multivariate analysis, by Krzanowski
 """
 
 from numpy.linalg import svd
-from numpy import array, sqrt, sum, zeros, trace, dot, transpose,\
-    divide, square, subtract, shape, any, abs, mean
+from numpy import (array, sqrt, sum, zeros, trace, dot, transpose,
+    divide, square, subtract, shape, any, abs, mean)
 from numpy import append as numpy_append
 
 __author__ = "Justin Kuczynski"

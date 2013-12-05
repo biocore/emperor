@@ -10,8 +10,8 @@ import re
 from os import walk
 from sys import exit
 from glob import glob
-from emperor.util import get_emperor_project_dir
 from os.path import join, abspath, dirname, split, exists
+from emperor.util import get_emperor_project_dir
 
 from qcli.util import qcli_system_call
 from qcli.option_parsing import parse_command_line_parameters, make_option
@@ -75,7 +75,7 @@ def main():
     # line since there is no other way to get the scripts dir. If not provided
     # the base structure of the repository will be assumed. Note that for both
     # cases we are using absolute paths, to avoid unwanted failures.
-    if opts.emperor_scripts_dir == None:
+    if opts.emperor_scripts_dir is None:
         emperor_scripts_dir = abspath(join(get_emperor_project_dir(),
             'scripts/'))
 

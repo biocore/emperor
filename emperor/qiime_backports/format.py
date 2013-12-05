@@ -2,8 +2,8 @@
 from __future__ import division
 __author__ = "Rob Knight"
 __copyright__ = "Copyright 2011, The QIIME Project" 
-__credits__ = ["Rob Knight", "Justin Kuczynski","Jeremy Widmann",
-               "Antonio Gonzalez Pena", "Daniel McDonald", "Jai Ram Rideout"]
+__credits__ = ["Rob Knight", "Justin Kuczynski", "Antonio Gonzalez Pena",
+               "Daniel McDonald", "Jai Ram Rideout"]
 #remember to add yourself if you make changes
 __license__ = "GPL"
 __version__ = "1.7.0-dev"
@@ -22,7 +22,6 @@ def format_mapping_file(headers, mapping_data, comments=None):
     * if included, commments will be inserted above the header line
     comments should not include a # - that will be appended in this formatter
     """
-
     result = [] # each elem is a string representing a line
 
     result.append('#' + '\t'.join(headers))

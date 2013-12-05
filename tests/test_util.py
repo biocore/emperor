@@ -12,12 +12,14 @@ __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 
-from numpy import array
+from unittest import TestCase, main
 from shutil import rmtree
 from os.path import exists, join
-from unittest import TestCase, main
-from numpy.testing import assert_almost_equal
 from tempfile import gettempdir
+
+from numpy import array
+from numpy.testing import assert_almost_equal
+
 from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
     preprocess_mapping_file, preprocess_coords_file, EmperorInputFilesError,
     fill_mapping_field_from_mapping_file, sanitize_mapping_file)

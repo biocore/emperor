@@ -11,7 +11,7 @@ __email__ = "daniel.knights@colorado.edu"
 __status__ = "Development"
 
 from emperor.qiime_backports.parse import parse_otu_table
-from numpy import array,apply_along_axis,dot,delete,argsort
+from numpy import array, apply_along_axis, dot,delete, argsort
 import numpy as np
 
 def get_taxa_coords(tax_counts,sample_coords):

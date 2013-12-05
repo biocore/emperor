@@ -17,7 +17,6 @@ from string import strip
 
 from os import makedirs
 from os.path import abspath, dirname, join, exists
-
 from copy import deepcopy
 
 from qcli.util import qcli_system_call
@@ -93,7 +92,7 @@ def copy_support_files(file_path):
     """
     file_path = join(file_path, 'emperor_required_resources')
 
-    if exists(file_path) == False:
+    if not exists(file_path):
         makedirs(file_path)
 
     # shutil.copytree does not provide an easy way to copy the contents of a
