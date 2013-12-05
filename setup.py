@@ -29,6 +29,10 @@ classes = """
 classifiers = [s.strip() for s in classes.split('\n') if s]
 
 long_description = """Emperor: a tool for visualizing high-throughput microbial community data
+
+EMPeror: a tool for visualizing high-throughput microbial community data.
+Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.
+Gigascience. 2013 Nov 26;2(1):16.
 """
 
 setup(name='emperor',
