@@ -5,7 +5,7 @@ __copyright__ = "Copyright 2011, The QIIME Project"
 __credits__ = ["Rob Knight", "Justin Kuczynski", "Antonio Gonzalez Pena",
                "Daniel McDonald", "Jai Ram Rideout"]
 #remember to add yourself if you make changes
-__license__ = "GPL"
+__license__ = "BSD"
 __version__ = "1.7.0-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"

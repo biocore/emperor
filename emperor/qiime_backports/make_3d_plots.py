@@ -4,7 +4,7 @@
 __author__ = "Dan Knights"
 __copyright__ = "Copyright 2011, The QIIME Project" 
 __credits__ = ["Dan Knights"]
-__license__ = "GPL"
+__license__ = "BSD"
 __version__ = "1.7.0-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
