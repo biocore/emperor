@@ -30,7 +30,7 @@ function TrajectoryOfSamples(sampleNames, gradientPoints, coordinates, minimumDe
 
 	// the default supplied N will last "ideally" a couple seconds, that is
 	// if the frames per second is running at at least 30
-	this.suppliedN = suppliedN !== undefined ? suppliedN : 60;
+	this.suppliedN = suppliedN !== undefined ? suppliedN : 5;
 
 	if (this.coordinates.length != this.gradientPoints.length) {
 		console.log("That's a bold move Cotton, let's see if it pays off");
@@ -146,6 +146,7 @@ function distanceBetweenPoints( x_1, y_1, z_1, x_2, y_2, z_2){
  *
  */
 function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders, mappingFileData, coordinatesData, trajectoryCategory, gradientCategory){
+	console.log('start get samples');
 	var gradientIndex = mappingFileHeaders.indexOf(gradientCategory);
 	var trajectoryIndex = mappingFileHeaders.indexOf(trajectoryCategory);
 
@@ -187,7 +188,7 @@ function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders, mappingF
 		// console.log('The value of the key is '+key);
 		chewedSampleData[key].sort(sortingFunction);
 	}
-
+	console.log('finish get samples');
 	return chewedSampleData;
 }
 
