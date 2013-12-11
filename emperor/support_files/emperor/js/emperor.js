@@ -2198,7 +2198,7 @@ $(document).ready(function() {
 		g_mainScene.fog = new THREE.FogExp2( 0x000000, 0.0009);
 		g_mainScene.add(g_sceneCamera);
 
-		g_genericSphere = new THREE.SphereGeometry(g_radius, g_segments, g_rings);
+		g_genericSphere = new THREE.SphereGeometry(g_radius/2, g_segments, g_rings);
 		g_elementsGroup = new THREE.Object3D();
 		g_mainScene.add(g_elementsGroup);
 
@@ -2460,7 +2460,7 @@ $(document).ready(function() {
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 
 		if (g_isPlaying) {
-		// Animational fun
+			// Animational fun
 			if (g_steven == null) {
 				console.log('Initializing steven');
 
@@ -2474,10 +2474,10 @@ $(document).ready(function() {
 			}
 			else{
 				g_steven.updateFrame();
-				console.log('The value of the maximum length is %d', g_steven.getMaximumTrajectoryLength());
+				// console.log('The value of the maximum length is %d', g_steven.getMaximumTrajectoryLength());
 
 				if (g_steven.animationCycleFinished() == false){
-					console.log('The current frame is: '+g_steven.currentFrame);
+					// console.log('The current frame is: '+g_steven.currentFrame);
 
 					// we are trying to remove the lines from the previous frame
 					for (var index = 0; index < g_animationLines.length; index++){
@@ -2489,21 +2489,22 @@ $(document).ready(function() {
 
 					// whaaaaam
 					for (var index = 0; index < g_steven.trajectories.length; index++){
-						console.log('Drawing line');
+						// console.log('Drawing line');
 						// console.log(g_steven.trajectories[index].interpolatedCoordinates);
-						console.log('Begin drawing line ' + index);
-						console.log(g_steven.trajectories[index].interpolatedCoordinates);
-						drawingLineBuffer = drawTrajectoryLine(g_steven.trajectories[index].interpolatedCoordinates, g_steven.currentFrame, 0xFFFFFF, 2);
-						console.log('Finish drawing line ' + index);
+						// console.log('Begin drawing line ' + index);
+						// console.log(g_steven.trajectories[index].interpolatedCoordinates);
+						drawingLineBuffer = drawTrajectoryLine(g_steven.trajectories[index].interpolatedCoordinates, g_steven.currentFrame, 0xFFFFFF, 10);
+						// console.log('Finish drawing line ' + index);
 
 						g_mainScene.add(drawingLineBuffer);
 						g_elementsGroup.add(drawingLineBuffer);
 
 						g_animationLines.push(drawingLineBuffer);
 					}
-					g_steven.currentFrame = 1000;
+					// g_steven.currentFrame = 1000;
 				}
 				else{
+					console.log('in the end the frame value is '+g_steven.currentFrame);
 					// Animation cycle is don?
 					g_isPlaying = false;
 					document.getElementById("play_button").disabled="false";
@@ -2541,8 +2542,9 @@ function trajectoryCategoryMenuChanged(){
 function drawTrajectoryLine(trajectory, currentFrame, color, width){
 	// based on the example described in:
 	// https://github.com/mrdoob/three.js/wiki/Drawing-lines
-	var material, geometry, line, limit;
+	var material, geometry, line, limit = 0;
 
+	// truncate to the length of the trajectory
 	if (currentFrame > trajectory.length){
 		limit = trajectory.length;
 	}
@@ -2559,7 +2561,7 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width){
 	// add the two vertices to the geometry
 	geometry = new THREE.Geometry();
 
-	for (var index = 0; index < currentFrame; index++){
+	for (var index = 0; index < limit; index++){
 		geometry.vertices.push(new THREE.Vector3(trajectory[index]['x'], trajectory[index]['y'], trajectory[index]['z']));
 	}
 
