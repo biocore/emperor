@@ -60,7 +60,7 @@ function AnimationDirector(mappingFileHeaders, mappingFileData, coordinatesData,
 AnimationDirector.prototype.initializeTrajectories = function(){
 
 	var chewedData = null, trajectoryBuffer = null, minimumDelta;
-	var sampleNamesBuffer, gradientPointsBuffer, coordinatesBuffer;
+	var sampleNamesBuffer = new Array(), gradientPointsBuffer = new Array(), coordinatesBuffer = new Array();
 
 	// console.log(this.mappingFileHeaders);
 
@@ -69,7 +69,7 @@ AnimationDirector.prototype.initializeTrajectories = function(){
 		this.mappingFileData, this.coordinatesData, this.trajectoryCategory,
 		this.gradientCategory);
 
-	if (chewedData == null){
+	if (chewedData === null){
 		throw new Error("Error initializing the trajectories");
 	}
 
@@ -78,9 +78,11 @@ AnimationDirector.prototype.initializeTrajectories = function(){
 	console.log('The minimum delta is '+this.minimumDelta);
 
 	for (var key in chewedData){
-		sampleNamesBuffer = new Array();
-		gradientPointsBuffer = new Array();
-		coordinatesBuffer = new Array();
+		sampleNamesBuffer.length = 0;
+		gradientPointsBuffer.length = 0;
+		coordinatesBuffer.length = 0;
+
+		// console.log('There goes another key '+key+' the length is '+ chewedData[key].length);
 
 		for (var index = 0; index < chewedData[key].length; index++){
 			sampleNamesBuffer.push(chewedData[key][index]['name']);
@@ -106,7 +108,7 @@ AnimationDirector.prototype.initializeTrajectories = function(){
  *
  */
 AnimationDirector.prototype.getMaximumTrajectoryLength = function (){
-	if(this.maximumTrajectoryLength == null){
+	if(this.maximumTrajectoryLength === null){
 		this._computeN();
 	}
 
@@ -120,7 +122,8 @@ AnimationDirector.prototype._computeN = function (){
 		// console.log('Iterating through '+index);
 		arrayOfLengths.push(this.trajectories[index].interpolatedCoordinates.length);
 	}
-
+	console.log('The array of lengths');
+	console.log(arrayOfLengths);
 	this.maximumTrajectoryLength = _.max(arrayOfLengths);
 }
 
