@@ -2523,6 +2523,13 @@ function playAnimation() {
 	document.getElementById("play_button").disabled="true";
 }
 
+function pauseAnimation() {
+	if (g_isPlaying === true){
+		g_isPlaying = false;
+		document.getElementById("play_button").disabled="false"
+	}
+}
+
 function gradientCategoryMenuChanged(){
 
 }
