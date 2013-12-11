@@ -49,24 +49,33 @@ function TrajectoryOfSamples(sampleNames, gradientPoints, coordinates, minimumDe
  */
 TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
 	var pointsPerStep = 0, delta = 0;
+	var interpolatedCoordinatesBuffer = new Array();
 
 	// iterate over the deltas in the category
 	for (var index = 0; index < this.gradientPoints.length-1; index++){
-
+		// console.log('Generating point '+index);
 		// calculate the absolute difference of the current pair of points
 		delta = Math.abs(Math.abs(this.gradientPoints[index])-Math.abs(this.gradientPoints[index+1]));
 
 		pointsPerStep = calculateNumberOfPointsForDelta(delta, this.suppliedN, this.minimumDelta);
 
-		this.interpolatedCoordinates = linearInterpolation(
-			this.coordinates[index]['x'], this.coordinates[index]['y'], this.coordinates[index]['z'],
-			this.coordinates[index+1]['x'], this.coordinates[index+1]['y'], this.coordinates[index+1]['z'],
-			pointsPerStep);
+		interpolatedCoordinatesBuffer = _.union(interpolatedCoordinatesBuffer,
+							linearInterpolation(this.coordinates[index]['x'],
+												this.coordinates[index]['y'],
+												this.coordinates[index]['z'],
+												this.coordinates[index+1]['x'],
+												this.coordinates[index+1]['y'],
+												this.coordinates[index+1]['z'],
+												pointsPerStep)
+				);
 
+		// console.log('This section had these many points '+this.interpolatedCoordinates.length)
 		// for (var point = 0; point < pointsPerStep; point++){
 		// 	this.interpolatedCoordinates.push(/*insert the freaking magic in here; I'm ready just do it*/)
 		// }
 	}
+
+	this.interpolatedCoordinates = interpolatedCoordinatesBuffer;
 }
 
 /**
@@ -194,7 +203,7 @@ function getMinimumDelta(sampleData){
 	var bufferArray = new Array(), deltasArray = new Array();
 
 	for (var key in sampleData){
-		console.log('The value of the key is: '+key);
+		// console.log('The value of the key is: '+key);
 		// console.log('The length of the array is: '+sampleData[key].length);
 		for (var index = 0; index < sampleData[key].length; index++){
 			bufferArray.push(sampleData[key][index]['value']);
