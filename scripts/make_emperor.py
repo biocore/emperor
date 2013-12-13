@@ -16,7 +16,7 @@ from os.path import join, exists, isdir, abspath
 
 from emperor.qiime_backports.filter import filter_mapping_file
 from emperor.qiime_backports.parse import (parse_mapping_file, parse_coords,
-    mapping_file_to_dict, parse_otu_table)
+    mapping_file_to_dict, parse_otu_table, QiimeParseError)
 from emperor.qiime_backports.util import MetadataMap
 
 from qcli.option_parsing import parse_command_line_parameters, make_option
@@ -333,14 +333,17 @@ def main():
             try:
                 _coords_headers, _coords_data, _coords_eigenvalues,_coords_pct=\
                     parse_coords(open(fp,'U'))
-
-                # pack all the data correspondingly
-                coords_headers.append(_coords_headers)
-                coords_data.append(_coords_data)
-                coords_eigenvalues.append(_coords_eigenvalues)
-                coords_pct.append(_coords_pct)
-            except ValueError:
+            except (ValueError, QiimeParseError):
                 offending_coords_fp.append(fp)
+
+                # do not add any of the data and move along
+                continue
+
+            # pack all the data correspondingly only if it was correctly parsed
+            coords_headers.append(_coords_headers)
+            coords_data.append(_coords_data)
+            coords_eigenvalues.append(_coords_eigenvalues)
+            coords_pct.append(_coords_pct)
 
         # in case there were files that couldn't be parsed
         if offending_coords_fp:
@@ -380,7 +383,7 @@ def main():
                 parse_coords(open(input_coords,'U'))
         # this exception was noticed when there were letters in the coords file
         # other exeptions should be catched here; code will be updated then
-        except ValueError:
+        except (ValueError, QiimeParseError):
             option_parser.error(('The PCoA file \'%s\' does not seem to be a '
                 'coordinates formatted file, verify by manually inspecting '
                 'the contents.') % input_coords)
