@@ -48,6 +48,8 @@ class TopLevelTests(TestCase):
         self.mapping_file_headers = ['SampleID', 'BarcodeSequence',
             'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description']
         self.good_columns = ['Treatment', 'LinkerPrimerSequence']
+        self.columns_with_gradients = ['Treatment', 'LinkerPrimerSequence',
+                                       'DOB']
 
         self.otu_coords = array([[2.80399118e-01, -6.01282860e-03,
             2.34854344e-02, -4.68109475e-02, -1.46624450e-01, 5.66979125e-03,
@@ -124,9 +126,20 @@ class TopLevelTests(TestCase):
 
     def test_format_mapping_file_to_js(self):
         """Tests correct formatting of the metadata mapping file"""
+
+        # regular case, no categories that can be animated
         out_js_mapping_file_string = format_mapping_file_to_js(
-            self.mapping_file_data, self.mapping_file_headers, self.good_columns)
+            self.mapping_file_data, self.mapping_file_headers,
+            self.good_columns)
         self.assertEquals(out_js_mapping_file_string, MAPPING_FILE_JS)
+
+        # case with categories that can be animated i. e. that work as gradients
+        out_js_mapping_file_string = format_mapping_file_to_js(
+            self.mapping_file_data, self.mapping_file_headers,
+            self.columns_with_gradients)
+        self.assertEquals(out_js_mapping_file_string,
+                          MAPPING_FILE_JS_WITH_ANIMATABLE_CATEGORIES)
+
 
     def test_format_taxa_to_js(self):
         """Tests correct formatting of the taxa"""
@@ -454,6 +467,12 @@ MAPPING_FILE_DATA = [\
 
 MAPPING_FILE_JS = """var g_mappingFileHeaders = ['BarcodeSequence','LinkerPrimerSequence','Treatment','DOB','Description'];
 var g_mappingFileData = { 'PC.481': ['ACCAGCGACTAG','YATGCTGCCTCCCGTAGGAGT','Control','20070314','Control_mouse_I.D._481'],'PC.607': ['AACTGTGCGTAC','YATGCTGCCTCCCGTAGGAGT','Fast','20071112','Fasting_mouse_I.D._607'],'PC.634': ['ACAGAGTCGGCT','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._634'],'PC.635': ['ACCGCAGAGTCA','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._635'],'PC.593': ['AGCAGCACTTGT','YATGCTGCCTCCCGTAGGAGT','Control','20071210','Control_mouse_I.D._593'],'PC.636': ['ACGGTGAGTGTC','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._636'],'PC.355': ['AACTCGTCGATG','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._355'],'PC.354': ['AGCACGAGCCTA','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._354'],'PC.356': ['ACAGACCACTCA','YATGCTGCCTCCCGTAGGAGT','Control','20061126','Control_mouse_I.D._356'] };
+var g_animatableMappingFileHeaders = [];
+"""
+
+MAPPING_FILE_JS_WITH_ANIMATABLE_CATEGORIES = """var g_mappingFileHeaders = ['BarcodeSequence','LinkerPrimerSequence','Treatment','DOB','Description'];
+var g_mappingFileData = { 'PC.481': ['ACCAGCGACTAG','YATGCTGCCTCCCGTAGGAGT','Control','20070314','Control_mouse_I.D._481'],'PC.607': ['AACTGTGCGTAC','YATGCTGCCTCCCGTAGGAGT','Fast','20071112','Fasting_mouse_I.D._607'],'PC.634': ['ACAGAGTCGGCT','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._634'],'PC.635': ['ACCGCAGAGTCA','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._635'],'PC.593': ['AGCAGCACTTGT','YATGCTGCCTCCCGTAGGAGT','Control','20071210','Control_mouse_I.D._593'],'PC.636': ['ACGGTGAGTGTC','YATGCTGCCTCCCGTAGGAGT','Fast','20080116','Fasting_mouse_I.D._636'],'PC.355': ['AACTCGTCGATG','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._355'],'PC.354': ['AGCACGAGCCTA','YATGCTGCCTCCCGTAGGAGT','Control','20061218','Control_mouse_I.D._354'],'PC.356': ['ACAGACCACTCA','YATGCTGCCTCCCGTAGGAGT','Control','20061126','Control_mouse_I.D._356'] };
+var g_animatableMappingFileHeaders = ['DOB'];
 """
 
 TAXA_JS_STRING = """
@@ -593,6 +612,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#animations">Animations</a></li>
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
@@ -649,6 +669,46 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+        </div>
+        <div id="animations">
+            <table width="90%" align="center">
+                <tr>
+                    <td>
+                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="animation_speed" class="text">Speed</label>
+                        <label id="animation_speed" class="slidervalue"></label>
+                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <div id="labelColorHolder clearfix">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="view">
             <table>
@@ -771,6 +831,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#animations">Animations</a></li>
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
@@ -842,6 +903,46 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+        </div>
+        <div id="animations">
+            <table width="90%" align="center">
+                <tr>
+                    <td>
+                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="animation_speed" class="text">Speed</label>
+                        <label id="animation_speed" class="slidervalue"></label>
+                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <div id="labelColorHolder clearfix">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="view">
             <table>
@@ -960,6 +1061,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#animations">Animations</a></li>
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
@@ -1016,6 +1118,46 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+        </div>
+        <div id="animations">
+            <table width="90%" align="center">
+                <tr>
+                    <td>
+                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="animation_speed" class="text">Speed</label>
+                        <label id="animation_speed" class="slidervalue"></label>
+                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <div id="labelColorHolder clearfix">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="view">
             <table>
@@ -1133,6 +1275,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#animations">Animations</a></li>
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
@@ -1189,6 +1332,46 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+        </div>
+        <div id="animations">
+            <table width="90%" align="center">
+                <tr>
+                    <td>
+                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="animation_speed" class="text">Speed</label>
+                        <label id="animation_speed" class="slidervalue"></label>
+                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <div id="labelColorHolder clearfix">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="view">
             <table>
@@ -1310,6 +1493,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#animations">Animations</a></li>
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
@@ -1366,6 +1550,46 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+        </div>
+        <div id="animations">
+            <table width="90%" align="center">
+                <tr>
+                    <td>
+                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="animation_speed" class="text">Speed</label>
+                        <label id="animation_speed" class="slidervalue"></label>
+                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <div id="labelColorHolder clearfix">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="view">
             <table>
