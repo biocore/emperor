@@ -3,11 +3,11 @@
 
 __author__ = "Emperor Development Team"
 __copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Antonio Gonzalez Pena", "Meg Pirrung", "Yoshiki Vazquez Baeza"]
+__credits__ = ["Yoshiki Vazquez Baeza"]
 __license__ = "BSD"
 __version__ = "0.9.3-dev"
-__maintainer__ = "Antonio Gonzalez Pena"
-__email__ = "antgonza@gmail.com"
+__maintainer__ = "Yoshiki Vazquez Baeza"
+__email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
-__all__ = ['biplots', 'format', 'filter', 'sort', 'util']
+__all__ = ['biplots', 'filter', 'format', 'make_3d_plots', 'parse', 'util']

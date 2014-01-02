@@ -5,23 +5,26 @@
 #(http://github.com/qiime/qiime) project at svn revision 3290, now taken from
 #the E-vident (http://github.com/qiime/evident) project master branch at git SHA
 #dde2a06f2d990db8b09da65764cd27fc047db788
+
 import re
 
 from os import walk
 from sys import exit
 from glob import glob
-from qiime.test import run_script_usage_tests
-from emperor.util import get_emperor_project_dir
 from os.path import join, abspath, dirname, split, exists
-from qiime.util import (parse_command_line_parameters, qiime_system_call,
-    make_option)
+
+from emperor.util import get_emperor_project_dir
+
+from qcli.util import qcli_system_call
+from qcli.test import run_script_usage_tests
+from qcli.option_parsing import parse_command_line_parameters, make_option
 
 __author__ = "Rob Knight"
 __copyright__ = "Copyright 2013, The Emperor Project" #consider project name
 __credits__ = ["Rob Knight","Greg Caporaso", "Jai Ram Rideout",
     "Yoshiki Vazquez-Baeza"] #remember to add yourself if you make changes
 __license__ = "BSD"
-__version__ = "0.9.2-dev"
+__version__ = "0.9.3-dev"
 __maintainer__ = "Yoshiki Vazquez-Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
@@ -68,9 +71,15 @@ def main():
     # line since there is no other way to get the scripts dir. If not provided
     # the base structure of the repository will be assumed. Note that for both
     # cases we are using absolute paths, to avoid unwanted failures.
-    if opts.emperor_scripts_dir == None:
+    if opts.emperor_scripts_dir is None:
         emperor_scripts_dir = abspath(join(get_emperor_project_dir(),
             'scripts/'))
+
+        # let's try to guess cases for qiime-deploy type of installs
+        if get_emperor_project_dir().endswith('/lib'):
+            emperor_scripts_dir = abspath(join(get_emperor_project_dir()[:-3],
+                'scripts/'))
+
     else:
         emperor_scripts_dir = abspath(opts.emperor_scripts_dir)
 
@@ -106,7 +115,7 @@ def main():
         for unittest_name in unittest_names:
             print "Testing %s:\n" % unittest_name
             command = '%s %s -v' % (python_name, unittest_name)
-            stdout, stderr, return_value = qiime_system_call(command)
+            stdout, stderr, return_value = qcli_system_call(command)
             print stderr
             if not unittest_good_pattern.search(stderr):
                 if application_not_found_pattern.search(stderr):
@@ -123,12 +132,17 @@ def main():
             script_tests = script_usage_tests.split(',')
         else:
             script_tests = None
-        # Run the script usage testing functionality
+        # Run the script usage testing functionality; note that depending on the
+        # module where this was imported, the name of the arguments will change
+        # that's the reason why I added the name of the arguments in here
         script_usage_result_summary, script_usage_failures = \
-            run_script_usage_tests(qiime_test_data_dir=emperor_test_data_dir,
-            qiime_scripts_dir=emperor_scripts_dir,
-            working_dir=temp_filepath, verbose=True,
-            tests=script_tests, failure_log_fp=None, force_overwrite=False)
+            run_script_usage_tests( emperor_test_data_dir,  # test_data_dir
+                                    emperor_scripts_dir,    # scripts_dir
+                                    temp_filepath,          # working_dir
+                                    True,                   # verbose
+                                    script_tests,           # tests
+                                    None,                   # failure_log_fp
+                                    False)                  # force_overwrite
 
     print "==============\nResult summary\n=============="
 

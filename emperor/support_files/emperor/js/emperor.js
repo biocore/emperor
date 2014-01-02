@@ -1,9 +1,10 @@
 /*
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2013, Emperor"
- * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza","Jackson Chen"]
+ * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza",
+ *                "Jackson Chen", "Emily TerAvest"]
  * __license__ = "BSD"
- * __version__ = "0.9.2-dev"
+ * __version__ = "0.9.3-dev"
  * __maintainer__ = "Meg Pirrung"
  * __email__ = "meganap@gmail.com"
  * __status__ = "Development"
@@ -327,6 +328,7 @@ function getColorList(vals) {
 		colors[vals[1]].setHex("0x0000ff");
 	}
 	else {
+		var numColors = vals.length;
 		for(var index in vals){
 			colors[vals[index]] = new THREE.Color();
 			if(g_useDiscreteColors){
@@ -334,8 +336,10 @@ function getColorList(vals) {
 				colors[vals[index]].setHex(getDiscreteColor(index)*1);
 			}
 			else{
-				// multiplying the value by 0.66 makes the colormap go R->G->B
-				THREE.ColorConverter.setHSV(colors[vals[index]], index*.66/vals.length, 1, 1)
+				//reverse the oder to standard default B->G->R
+				//changed what is multiplied by 0.66 to be 2,1,0 from 0,1,2
+				THREE.ColorConverter.setHSV(colors[vals[index]], 
+					   (numColors - index -1 )*.66/numColors, 1, 1);
 			}
 		}
 	}
@@ -531,7 +535,8 @@ function scalingByMenuChanged(){
 	}
 	values = _splitAndSortNumericAndAlpha(dedupe(values));
 
-	lines = "<table width=\"90%\">"
+	// the padding accounts for the slider handle that can move all to the left or right
+	lines = '<table width="100%" height="100%" style="padding-right:10px;padding-left:10px;">'
 	for(var i in values){
 		// construct a sanitized category name for all HTML elements
 		idString = "r"+i+"c"+scalingByCategoryIndex;
@@ -608,8 +613,10 @@ function showByMenuChanged() {
 
 	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
 
-	// build the showby checkbox table in HTML
-	var lines = "<form name=\"showbyform\"><table width=\"90%\">"
+	// build the showby checkbox table in HTML; the padding to the right makes
+	// the slider fit great inside the table without ever showing scroll bars
+	var lines = '<form name="showbyform"><table height="100%" width="100%" style="padding-right:10px;padding-left:10px;">'
+
 	for(var i in vals){
 		// tag each slider & percent label with the idString to avoid conflicts
 		var idString = "r"+i+"c"+showByMenuIndex;
@@ -627,7 +634,7 @@ function showByMenuChanged() {
 
 		// add a slider and a current-value-label to the table
 		lines +="</td></tr>";
-		lines += "<tr><td></td><td>";
+		lines += '<td colspan="2">';
 		lines += "<label id=\""+idString+"opacityvalue\" name=\""+vals[i]+"\" class=\"slidervalue\"></label>"
 		lines += "<div id=\""+idString+"opacityslider\" name=\""+vals[i]+"\" class=\"slider-range-max\"></div>"
 		lines +="</td></tr>";
@@ -1318,7 +1325,7 @@ function setJqueryUi() {
 			sphereOpacityChange(ui, null);
 		}
 	});
-	document.getElementById('sphereopacity').innerHTML = $( "#sopacityslider" ).slider( "value")+"%";
+	document.getElementById('sphereopacity').innerHTML = $( "#sopacityslider" ).slider( "value").toString()+"%";
 
 	$("#sradiusslider" ).slider({
 		range: "max",

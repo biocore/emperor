@@ -103,14 +103,6 @@
         overflow:scroll;
     }
     
-    div#showby{
-        padding-top: 0px;
-        padding-bottom: 0px;
-        width:100%;
-        height:100%;
-        overflow:scroll;
-    }
-    
     div#keytab {
         height: 94%;
         width:90%;

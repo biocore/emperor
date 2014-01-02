@@ -1,14 +1,30 @@
-Emperor 0.9.3 (changes since Emperor 0.9.2 go here)
-===================================================
+Emperor ChangeLog
+=================
+
+Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
+-------------------------------------------------------
+
+*Bug Fixes*
+
+*New Features*
+
+
+Emperor 0.9.3 (5 Dec 2013)
+--------------------------
 
 * `Use gradient colors` checkbox is now found under the `Colors` tab.
+* Merge the `Options` and `View` tabs; additionally the global opacity slider and global scale slider were moved to their respective tabs.
+* `Use gradient colors` checkbox now uses the standard blue -> red color gradient
+* Add Emperor to the Python Package Index, now you can install Emperor running `pip install emperor`.
+* Remove dependency on QIIME and PyCogent.
+* Emperor now depends on qcli and Numpy.
 
 *Bug Fixes*
 
 * Add more meaningful error message for biplots when the contingency table passed included only one row.
 
 Emperor 0.9.2 (24 Oct 2013)
-===========================
+---------------------------
 
 *Bug Fixes*
 
@@ -16,7 +32,7 @@ Emperor 0.9.2 (24 Oct 2013)
 
 
 Emperor 0.9.1 (21 Oct 2013)
-===========================
+---------------------------
 
 *New features*
 
@@ -58,7 +74,7 @@ Emperor 0.9.1 (21 Oct 2013)
 
 
 Emperor 0.9.0 (14 May 2013)
-===========================
+---------------------------
 
 *New features*:
 

@@ -6,17 +6,20 @@ __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Yoshiki Vazquez Baeza"]
 __license__ = "BSD"
-__version__ = "0.9.2-dev"
+__version__ = "0.9.3-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 
-from numpy import array
+from unittest import TestCase, main
 from shutil import rmtree
 from os.path import exists, join
-from cogent.util.unit_test import TestCase, main
-from qiime.util import get_qiime_temp_dir, get_tmp_filename
+from tempfile import gettempdir
+
+from numpy import array
+from numpy.testing import assert_almost_equal
+
 from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
     preprocess_mapping_file, preprocess_coords_file, EmperorInputFilesError,
     fill_mapping_field_from_mapping_file, sanitize_mapping_file)
@@ -28,8 +31,8 @@ class TopLevelTests(TestCase):
         self.mapping_file_headers = ['SampleID', 'BarcodeSequence',
             'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description']
         self.valid_columns = ['Treatment', 'DOB']
-        self.support_files_filename = get_qiime_temp_dir()
-        self.support_files_filename_spaces = join(get_qiime_temp_dir(),
+        self.support_files_filename = gettempdir()
+        self.support_files_filename_spaces = join(gettempdir(),
             'Directory With Spaces/AndNoSpaces')
 
         # data for the custom axes, contains columns that are gradients
@@ -192,8 +195,8 @@ class TopLevelTests(TestCase):
         self.assertEquals(out_coords_header, self.coords_header)
         self.assertEquals(out_coords_high, None)
         self.assertEquals(out_coords_low, None)
-        self.assertEquals(self.coords_eigenvalues, array([1, 2, 3, 4]))
-        self.assertEquals(self.coords_pct, array([40, 30, 20, 10]))
+        assert_almost_equal(self.coords_eigenvalues, array([1, 2, 3, 4]))
+        assert_almost_equal(self.coords_pct, array([40, 30, 20, 10]))
         self.assertEquals(o_clones, 0)
 
         # check each individual value because currently cogent assertEquals
@@ -211,16 +214,16 @@ class TopLevelTests(TestCase):
             jackknifing_method='sdev')
 
         self.assertEquals(out_coords_header, ['1', '2', '3'])
-        self.assertFloatEqual(out_coords_data, array([[ 1.4, -0.0125, -1.425],
+        assert_almost_equal(out_coords_data, array([[ 1.4, -0.0125, -1.425],
             [-2.475, -4.025, 4.7]]))
-        self.assertFloatEqual(out_eigenvals, array([ 0.81, 0.14, 0.05]))
-        self.assertFloatEqual(out_pcts, array([0.8, 0.1, 0.1]))
+        assert_almost_equal(out_eigenvals, array([ 0.81, 0.14, 0.05]))
+        assert_almost_equal(out_pcts, array([0.8, 0.1, 0.1]))
         self.assertEquals(o_clones, 0)
 
         # test the coords are working fine
-        self.assertFloatEqual(out_coords_low, array([[-0.07071068, -0.0375,
+        assert_almost_equal(out_coords_low, array([[-0.07071068, -0.0375,
             -0.10307764], [-0.04787136, -0.025, -0.07071068]]))
-        self.assertFloatEqual(out_coords_high, array([[ 0.07071068, 0.0375, 
+        assert_almost_equal(out_coords_high, array([[ 0.07071068, 0.0375, 
             0.10307764], [0.04787136, 0.025, 0.07071068]]))
 
         # test custom axes and jackknifed plots
@@ -234,17 +237,17 @@ class TopLevelTests(TestCase):
 
         self.assertEquals(out_coords_header, ['PC.354', 'PC.355', 'PC.635',
             'PC.636'])
-        self.assertFloatEqual(out_coords_data, array([[-2.4, 1.15, 0.55, -0.95,
+        assert_almost_equal(out_coords_data, array([[-2.4, 1.15, 0.55, -0.95,
             0.85], [0.73333333, -2.4, -3.5, 4.25, 1.025], [0.73333333, 0.5,
             0.45, 3.5, 1.2505], [2.3, 0.6325, 0.2575, 1.0675, 2.125]]))
-        self.assertFloatEqual(out_eigenvals, array([ 0.81, 0.14, 0.05, 0.]))
-        self.assertFloatEqual(out_pcts, array([ 0.8,  0.1,  0.1,  0. ]))
+        assert_almost_equal(out_eigenvals, array([ 0.81, 0.14, 0.05, 0.]))
+        assert_almost_equal(out_pcts, array([ 0.8,  0.1,  0.1,  0. ]))
 
         # test the coords are working fine
-        self.assertFloatEqual(out_coords_low, array([[ 0., -0.25980762, -0.25,
+        assert_almost_equal(out_coords_low, array([[ 0., -0.25980762, -0.25,
             -0.25], [ 0., -0.5, -0.25, -0.725], [ 0., -0.85, -0., -0.24983344],
             [ 0., -0.02809953, -0.07877976, -0.04787136]]))
-        self.assertFloatEqual(out_coords_high, array([[1.00000000e-05, 
+        assert_almost_equal(out_coords_high, array([[1.00000000e-05, 
             2.59807621e-01, 2.50000000e-01, 2.50000000e-01], [1.00000000e-05,
             5.00000000e-01, 2.50000000e-01, 7.25000000e-01], [1.00000000e-05,
             8.50000000e-01, 0.00000000e+00, 2.49833445e-01], [1.00000000e-05,
@@ -268,11 +271,11 @@ class TopLevelTests(TestCase):
 
         self.assertEquals(out_coords_header, ['1_0', '2_0', '3_0', '1_1', '2_1',
             '3_1', '1_2', '2_2', '3_2', '1_3', '2_3', '3_3'])
-        self.assertFloatEqual(out_coords_data, array([[ 1.2 , 0.1 , -1.2],[-2.5,
+        assert_almost_equal(out_coords_data, array([[ 1.2 , 0.1 , -1.2],[-2.5,
             -4., 4.5], [-1.4, 0.05, 1.3], [ 2.6, 4.1, -4.7], [-1.5, 0.05, 1.6],
             [ 2.4, 4., -4.8], [-1.5, 0.05, 1.6], [ 2.4, 4., -4.8]]))
-        self.assertEquals(out_eigenvals, self.jk_coords_eigenvalues[0])
-        self.assertEquals(out_pcts, self.jk_coords_pcts[0])
+        assert_almost_equal(out_eigenvals, self.jk_coords_eigenvalues[0])
+        assert_almost_equal(out_pcts, self.jk_coords_pcts[0])
         self.assertEquals(out_coords_low, None)
         self.assertEquals(out_coords_high, None)
         self.assertEquals(o_clones, 4)
