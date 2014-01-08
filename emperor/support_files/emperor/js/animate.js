@@ -60,40 +60,41 @@ function AnimationDirector(mappingFileHeaders, mappingFileData, coordinatesData,
 AnimationDirector.prototype.initializeTrajectories = function(){
 
 	var chewedData = null, trajectoryBuffer = null, minimumDelta;
-	var sampleNamesBuffer = new Array(), gradientPointsBuffer = new Array(), coordinatesBuffer = new Array();
+	var sampleNamesBuffer = new Array(), gradientPointsBuffer = new Array();
+	var coordinatesBuffer = new Array();
 
-	// console.log(this.mappingFileHeaders);
-
-	// function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders, mappingFileData, coordinatesData, trajectoryCategory, gradientCategory){
+	// compute a dictionary from where we will extract the germane data
 	chewedData = getSampleNamesAndDataForSortedTrajectories(this.mappingFileHeaders,
 		this.mappingFileData, this.coordinatesData, this.trajectoryCategory,
 		this.gradientCategory);
 
 	if (chewedData === null){
-		throw new Error("Error initializing the trajectories");
+		throw new Error("Error initializing the trajectories, could not compute the data");
 	}
 
-	// function getMinimumDelta(sampleData){
+	// calculate the minimum delta per step
 	this.minimumDelta = getMinimumDelta(chewedData);
-	console.log('The minimum delta is '+this.minimumDelta);
 
 	for (var key in chewedData){
 		sampleNamesBuffer.length = 0;
 		gradientPointsBuffer.length = 0;
 		coordinatesBuffer.length = 0;
 
-		// console.log('There goes another key '+key+' the length is '+ chewedData[key].length);
-
+		// each of the keys is a trajectory name i. e. CONTROL, TREATMENT, etc
+		// we are going to generate buffers so we can initialize the trajectory
 		for (var index = 0; index < chewedData[key].length; index++){
+			// list of sample identifiers
 			sampleNamesBuffer.push(chewedData[key][index]['name']);
 
+			// list of the value each sample has in the gradient
 			gradientPointsBuffer.push(chewedData[key][index]['value']);
 
+			// x, y and z values for the coordinates data
 			coordinatesBuffer.push({'x':chewedData[key][index]['x'],
 				'y':chewedData[key][index]['y'], 'z':chewedData[key][index]['z']});
 		}
 
-		// function TrajectoryOfSamples(sampleNames, gradientPoints, coordinates, minimumDelta, suppliedN){
+		// create the trajectory object
 		trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer,
 			gradientPointsBuffer, coordinatesBuffer, this.minimumDelta);
 
@@ -118,12 +119,12 @@ AnimationDirector.prototype.getMaximumTrajectoryLength = function (){
 AnimationDirector.prototype._computeN = function (){
 	var arrayOfLengths = new Array();
 
+	// retrieve the length of all the trajectories
 	for (var index = 0; index < this.trajectories.length; index++){
-		// console.log('Iterating through '+index);
 		arrayOfLengths.push(this.trajectories[index].interpolatedCoordinates.length);
 	}
-	console.log('The array of lengths');
-	console.log(arrayOfLengths);
+
+	// assign the value of the maximum value for these lengths
 	this.maximumTrajectoryLength = _.max(arrayOfLengths);
 }
 
@@ -161,6 +162,5 @@ AnimationDirector.prototype.updateFrame = function (){
 }
 
 AnimationDirector.prototype.animationCycleFinished = function (){
-	// console.log('The value of the current frame is %s, the value of the maximumTrajectoryLength is %s', this.currentFrame, this.maximumTrajectoryLength.length);
 	return this.currentFrame > this.getMaximumTrajectoryLength();
 }
