@@ -2467,13 +2467,14 @@ $(document).ready(function() {
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
 
 		if (g_isPlaying) {
-			// Animational fun
-			if (g_steven == null) {
-				console.log('Initializing steven');
+			// if it's the 1st frame to  animate then the director will be null
+			if (g_steven === null) {
 
+				// retrieve the values from the interface
 				trajectoryCategory = document.getElementById('trajectory_category_combo')[document.getElementById('trajectory_category_combo').selectedIndex].value;
 				gradientCategory = document.getElementById('gradient_category_combo')[document.getElementById('gradient_category_combo').selectedIndex].value;
 
+				// initialize the animation director
 				g_steven = new AnimationDirector(g_mappingFileHeaders, g_mappingFileData, g_spherePositions, gradientCategory, trajectoryCategory, 10);
 				console.log('steven is now initialized');
 				g_steven.updateFrame();
@@ -2481,11 +2482,8 @@ $(document).ready(function() {
 			}
 			else{
 				g_steven.updateFrame();
-				// console.log('The value of the maximum length is %d', g_steven.getMaximumTrajectoryLength());
 
 				if (g_steven.animationCycleFinished() == false){
-					// console.log('The current frame is: '+g_steven.currentFrame);
-
 					// we are trying to remove the lines from the previous frame
 					for (var index = 0; index < g_animationLines.length; index++){
 						g_mainScene.remove(g_animationLines[index]);
@@ -2494,32 +2492,25 @@ $(document).ready(function() {
 
 					g_animationLines.length = 0;
 
-					// whaaaaam
 					for (var index = 0; index < g_steven.trajectories.length; index++){
-						// console.log('Drawing line');
-						// console.log(g_steven.trajectories[index].interpolatedCoordinates);
-						// console.log('Begin drawing line ' + index);
-						// console.log(g_steven.trajectories[index].interpolatedCoordinates);
+						// draw a trajectory line per trajectory
 						drawingLineBuffer = drawTrajectoryLine(g_steven.trajectories[index].interpolatedCoordinates, g_steven.currentFrame, 0xFFFFFF, 10);
-						// console.log('Finish drawing line ' + index);
 
 						g_mainScene.add(drawingLineBuffer);
 						g_elementsGroup.add(drawingLineBuffer);
 
 						g_animationLines.push(drawingLineBuffer);
 					}
-					// g_steven.currentFrame = 1000;
 				}
 				else{
-					console.log('in the end the frame value is '+g_steven.currentFrame);
-					// Animation cycle is don?
+					// the animation is done, clean up the interface and other variables
+					g_steven = null;
 					g_isPlaying = false;
 					document.getElementById("play_button").disabled="false";
-					g_steven = null;
-					console.log("steven has now been reset to null");
+
 				}// animation cycle is done
-			}// steven is not null
-		}// is playing
+			}// animation director is not null
+		}// animation is playing
 
 	}
 	
@@ -2569,11 +2560,9 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width){
 	geometry = new THREE.Geometry();
 
 	for (var index = 0; index < limit; index++){
-		geometry.vertices.push(new THREE.Vector3(trajectory[index]['x'], trajectory[index]['y'], trajectory[index]['z']));
+		geometry.vertices.push(new THREE.Vector3(trajectory[index]['x'],
+			trajectory[index]['y'], trajectory[index]['z']));
 	}
-
-	// geometry.vertices.push(new THREE.Vector3(coords_a[0], coords_a[1], coords_a[2]));
-	// geometry.vertices.push(new THREE.Vector3(coords_b[0], coords_b[1], coords_b[2]));
 
 	// the line will contain the two vertices and the described material
 	line = new THREE.Line(geometry, material);
