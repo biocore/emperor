@@ -16,7 +16,8 @@
  *
  *
  */
-function TrajectoryOfSamples(sampleNames, gradientPoints, coordinates, minimumDelta, suppliedN){
+function TrajectoryOfSamples(sampleNames, gradientPoints, coordinates,
+							 minimumDelta, suppliedN){
 	this.sampleNames = sampleNames;
 
 	// array of the values that samples have through the gradient
@@ -28,8 +29,8 @@ function TrajectoryOfSamples(sampleNames, gradientPoints, coordinates, minimumDe
 	// minimum distance in the gradient
 	this.minimumDelta = minimumDelta;
 
-	// the default supplied N will last "ideally" a couple seconds, that is
-	// if the frames per second is running at at least 30
+	// this value determines how fast the animation will run for now let's use
+	// 5 and stick to it as a good default value; 60 was way too slow
 	this.suppliedN = suppliedN !== undefined ? suppliedN : 5;
 
 	if (this.coordinates.length != this.gradientPoints.length) {
@@ -39,7 +40,6 @@ function TrajectoryOfSamples(sampleNames, gradientPoints, coordinates, minimumDe
 	// initialize as an empty array but fill it up upon request
 	this.interpolatedCoordinates = null;
 
-	// will this even work?
 	this._generateInterpolatedCoordinates();
 }
 
@@ -51,14 +51,17 @@ TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
 	var pointsPerStep = 0, delta = 0;
 	var interpolatedCoordinatesBuffer = new Array();
 
-	// iterate over the deltas in the category
+	// iterate over the gradient points to compute the interpolated distances
 	for (var index = 0; index < this.gradientPoints.length-1; index++){
-		// console.log('Generating point '+index);
+
 		// calculate the absolute difference of the current pair of points
-		delta = Math.abs(Math.abs(this.gradientPoints[index])-Math.abs(this.gradientPoints[index+1]));
+		delta = Math.abs(Math.abs(this.gradientPoints[index])-Math.abs(
+			this.gradientPoints[index+1]));
 
-		pointsPerStep = calculateNumberOfPointsForDelta(delta, this.suppliedN, this.minimumDelta);
+		pointsPerStep = calculateNumberOfPointsForDelta(delta, this.suppliedN,
+														this.minimumDelta);
 
+		// extend to include these interpolated points
 		interpolatedCoordinatesBuffer = _.union(interpolatedCoordinatesBuffer,
 							linearInterpolation(this.coordinates[index]['x'],
 												this.coordinates[index]['y'],
@@ -68,11 +71,6 @@ TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
 												this.coordinates[index+1]['z'],
 												pointsPerStep)
 				);
-
-		// console.log('This section had these many points '+this.interpolatedCoordinates.length)
-		// for (var point = 0; point < pointsPerStep; point++){
-		// 	this.interpolatedCoordinates.push(/*insert the freaking magic in here; I'm ready just do it*/)
-		// }
 	}
 
 	this.interpolatedCoordinates = interpolatedCoordinatesBuffer;
@@ -145,8 +143,11 @@ function distanceBetweenPoints( x_1, y_1, z_1, x_2, y_2, z_2){
  *
  *
  */
-function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders, mappingFileData, coordinatesData, trajectoryCategory, gradientCategory){
-	console.log('start get samples');
+function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
+													mappingFileData,
+													coordinatesData,
+													trajectoryCategory,
+													gradientCategory){
 	var gradientIndex = mappingFileHeaders.indexOf(gradientCategory);
 	var trajectoryIndex = mappingFileHeaders.indexOf(trajectoryCategory);
 
@@ -162,33 +163,32 @@ function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders, mappingF
 	}
 
 	for (var sampleId in mappingFileData){
-		// console.log('The value of the SampleId is '+sampleId);
 
 		trajectoryBuffer = mappingFileData[sampleId][trajectoryIndex];
 		gradientBuffer = mappingFileData[sampleId][gradientIndex];
 
-		// console.log('Value of chewedSampleData'+chewedSampleData);
-		// console.log(chewedSampleData);
-
-		// check if there's already an element for this trajectory
+		// check if there's already an element for this trajectory, if not
+		// initialize a new array for this element of the processed data
 		if (chewedSampleData[trajectoryBuffer] === undefined){
-			// console.log('initializing the array');
 			chewedSampleData[trajectoryBuffer] = new Array();
 		}
 		chewedSampleData[trajectoryBuffer].push({'name': sampleId,
 			'value': gradientBuffer, 'x': coordinatesData[sampleId]['x'],
-			'y': coordinatesData[sampleId]['y'], 'z': coordinatesData[sampleId]['z']});
+			'y': coordinatesData[sampleId]['y'],
+			'z': coordinatesData[sampleId]['z']});
 	}
 
 	// we need this custom sorting function to make the values be sorted in
 	// ascending order but accounting for the data structure that we just built
-	var sortingFunction = function (a, b){return parseFloat(a["value"]) - parseFloat(b["value"]);}
+	var sortingFunction = function (a, b){
+		return parseFloat(a["value"]) - parseFloat(b["value"]);
+	}
 
+	// sort all the values using the custom anonymous function
 	for (var key in chewedSampleData){
-		// console.log('The value of the key is '+key);
 		chewedSampleData[key].sort(sortingFunction);
 	}
-	console.log('finish get samples');
+
 	return chewedSampleData;
 }
 
@@ -203,24 +203,22 @@ function getMinimumDelta(sampleData){
 
 	var bufferArray = new Array(), deltasArray = new Array();
 
+	// go over all the data and compute the deltas for all trajectories
 	for (var key in sampleData){
-		// console.log('The value of the key is: '+key);
-		// console.log('The length of the array is: '+sampleData[key].length);
 		for (var index = 0; index < sampleData[key].length; index++){
 			bufferArray.push(sampleData[key][index]['value']);
 		}
 		for (var index = 0; index < bufferArray.length-1; index++){
 			deltasArray.push(Math.abs(bufferArray[index+1]-bufferArray[index]));
 		}
+
 		// clean buffer array
 		bufferArray.length = 0;
 	}
 
-	// if (deltasArray == null){
-	// 	throw new Error("Could not find records to compute minimum delta");
-	// }
-
+	// remove all the deltas of zero so we don't skew our results
 	deltasArray = _.filter(deltasArray, function(num){ return num !== 0; });
 
+	// return the minimum of these values
 	return _.min(deltasArray);
 }
