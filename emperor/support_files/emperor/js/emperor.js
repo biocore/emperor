@@ -2179,7 +2179,6 @@ $(document).ready(function() {
 		$('#main_plot canvas').attr('height',document.getElementById('pcoaPlotWrapper').offsetHeight);
 
 		g_mainScene = new THREE.Scene();
-		g_mainScene.fog = new THREE.FogExp2( 0x000000, 0.0009);
 		g_mainScene.add(g_sceneCamera);
 
 		g_genericSphere = new THREE.SphereGeometry(g_radius, g_segments, g_rings);

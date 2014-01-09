@@ -41,6 +41,10 @@ script_info['script_description'] = "This script automates the creation  of "+\
 script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "colored using a corresponding mapping file: ","%prog -i "
     "unweighted_unifrac_pc.txt -m Fasting_Map.txt -o emperor_output"),
+    ("Plot data generated from non-phylogenetic distance matrices", "Visualize"
+    " a PCoA file where the data was computed with a non-phylogenetic distance "
+    "metric (Euclidian, Bray-Curtis, etc.)", "%prog -i euclidian_pc.txt -m "
+    "Fasting_Map.txt -o euclidian"),
     ("Coloring by metadata mapping file", "Additionally, using the supplied "
     "mapping file and a specific category or any combination of the available "
     "categories. When using the -b option, the user can specify "
