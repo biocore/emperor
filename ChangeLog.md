@@ -6,8 +6,11 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 
 *Bug Fixes*
 
+* Fix bug where spaces where the values of the coordinates were big would fail to display on screen.
+
 *New Features*
 
+* Add animations tab to the main user interface.
 
 Emperor 0.9.3 (5 Dec 2013)
 --------------------------
