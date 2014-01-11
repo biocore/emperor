@@ -2475,7 +2475,6 @@ $(document).ready(function() {
 
 				// initialize the animation director
 				g_steven = new AnimationDirector(g_mappingFileHeaders, g_mappingFileData, g_spherePositions, gradientCategory, trajectoryCategory, 10);
-				console.log('steven is now initialized');
 				g_steven.updateFrame();
 
 			}
@@ -2515,12 +2514,23 @@ $(document).ready(function() {
 	
 });
 
-
+/**
+ *
+ * Callback function for the play button in the main interface, will trigger the
+ * creation of the AnimationDirector.
+ *
+ */
 function playAnimation() {
 	g_isPlaying = true;
 	document.getElementById("play_button").disabled="true";
 }
 
+/**
+ *
+ * Callback function for the pause button in the main interface, will pause the
+ * animation at the current frame.
+ *
+ */
 function pauseAnimation() {
 	if (g_isPlaying === true){
 		g_isPlaying = false;
@@ -2528,14 +2538,18 @@ function pauseAnimation() {
 	}
 }
 
-function gradientCategoryMenuChanged(){
-
-}
-
-function trajectoryCategoryMenuChanged(){
-
-}
-
+/**
+ *
+ * Create a line object off of a SampleTrajectory object
+ *
+ * @param {trajectory} SampleTrajectory object.
+ * @param {currentFrame} The current frame at which this line should be drawn.
+ * @param {color} 4 Byte integer word with the color in RGB format.
+ * @param {width} Float value representing the width of the line.
+ *
+ * @return Returns a line with the required attributes as defined by the input
+ * parameters.
+ */
 function drawTrajectoryLine(trajectory, currentFrame, color, width){
 	// based on the example described in:
 	// https://github.com/mrdoob/three.js/wiki/Drawing-lines
