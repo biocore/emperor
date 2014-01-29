@@ -634,6 +634,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -658,6 +659,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -674,6 +676,7 @@ document.getElementById("logotable").style.display = 'none';
             <div id="labelColorHolder clearfix">
             <table>
                 <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>%s
+                <br><br>
             </table></div>
         </div>
             <br>
@@ -687,6 +690,7 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+            <br><br><br>
         </div>
         <div id="options">
             <table>
