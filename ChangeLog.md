@@ -4,6 +4,8 @@ Emperor ChangeLog
 Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 -------------------------------------------------------
 
+* Category names are no longer trimmed to 25 characters in the user interface.
+
 *Bug Fixes*
 
 *New Features*
