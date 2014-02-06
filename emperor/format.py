@@ -75,7 +75,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
         raise EmperorLogicError("Due to the variation explained, Emperor "
                                 "could not plot at least 3 axes, check the "
                                 "input files to ensure that the percent "
-                                "explained is greater than 0.5 in at least "
+                                "explained is greater than 0.01 in at least "
                                 "three axes.")
 
     # ranges for the PCoA space
