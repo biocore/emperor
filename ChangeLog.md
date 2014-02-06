@@ -4,7 +4,12 @@ Emperor ChangeLog
 Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 -------------------------------------------------------
 
+* Change the minimum percent required to display a plot to be greater than 0.01 instead of 0.5.
+
 *Bug Fixes*
+
+* Fixed problem where coordinate files with large values (greater than 100) would not be displayed on screen.
+* Fixed problem that prevented the user from scrolling through the categories in the user interface.
 
 *New Features*
 
