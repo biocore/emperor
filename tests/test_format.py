@@ -339,12 +339,12 @@ var g_xMinimumValue = -0.293353;
 var g_yMinimumValue = -0.166234;
 var g_zMinimumValue = -0.141717;
 var g_maximum = 34912.621000;
-var g_pc1Label = "PC1 (27 %)";
-var g_pc2Label = "PC2 (16 %)";
-var g_pc3Label = "PC3 (14 %)";
+var g_pc1Label = "PC1 (26.69 %)";
+var g_pc2Label = "PC2 (16.26 %)";
+var g_pc3Label = "PC3 (13.78 %)";
 var g_number_of_custom_axes = 0;
 var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495];
-var g_fractionExplainedRounded = [27, 16, 14, 11, 10, 8, 8, 6];
+var g_fractionExplainedRounded = [26.69, 16.26, 13.78, 11.22, 10.02, 8.23, 7.56, 6.25];
 """
 
 PCOA_JS_CUSTOM_AXES = """
@@ -372,11 +372,11 @@ var g_yMinimumValue = -0.166234;
 var g_zMinimumValue = -0.141717;
 var g_maximum = 34912.621000;
 var g_pc1Label = "Instant";
-var g_pc2Label = "PC1 (27 %)";
-var g_pc3Label = "PC2 (16 %)";
+var g_pc2Label = "PC1 (26.69 %)";
+var g_pc3Label = "PC2 (16.26 %)";
 var g_number_of_custom_axes = 1;
 var g_fractionExplained = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495];
-var g_fractionExplainedRounded = [27, 27, 16, 14, 11, 10, 8, 8, 6];
+var g_fractionExplainedRounded = [26.69, 26.69, 16.26, 13.78, 11.22, 10.02, 8.23, 7.56, 6.25];
 """
 
 PCOA_JS_JACKKNIFED = """
@@ -402,12 +402,12 @@ var g_xMinimumValue = 0.100000;
 var g_yMinimumValue = 0.500000;
 var g_zMinimumValue = 0.100000;
 var g_maximum = 5.500000;
-var g_pc1Label = "PC1 (44 %)";
-var g_pc2Label = "PC2 (40 %)";
-var g_pc3Label = "PC3 (15 %)";
+var g_pc1Label = "PC1 (44.00 %)";
+var g_pc2Label = "PC2 (40.00 %)";
+var g_pc3Label = "PC3 (15.00 %)";
 var g_number_of_custom_axes = 0;
 var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
-var g_fractionExplainedRounded = [44, 40, 15, 1];
+var g_fractionExplainedRounded = [44.00, 40.00, 15.00, 1.00];
 """
 
 PCOA_JS_SEGMENTS = """
@@ -433,12 +433,12 @@ var g_xMinimumValue = 0.100000;
 var g_yMinimumValue = 0.500000;
 var g_zMinimumValue = 0.100000;
 var g_maximum = 5.500000;
-var g_pc1Label = "PC1 (44 %)";
-var g_pc2Label = "PC2 (40 %)";
-var g_pc3Label = "PC3 (15 %)";
+var g_pc1Label = "PC1 (44.00 %)";
+var g_pc2Label = "PC2 (40.00 %)";
+var g_pc3Label = "PC3 (15.00 %)";
 var g_number_of_custom_axes = 0;
 var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
-var g_fractionExplainedRounded = [44, 40, 15, 1];
+var g_fractionExplainedRounded = [44.00, 40.00, 15.00, 1.00];
 """
 
 MAPPING_FILE_DATA = [\

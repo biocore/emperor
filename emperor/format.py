@@ -135,7 +135,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
             offset+=1 # offset will help us retrieve the correct pcoalabels val
         except:
             # if there are custom axes then subtract the number of custom axes
-            js_pcoa_string += 'var g_pc%dLabel = \"PC%d (%.0f %%)\";\n' %\
+            js_pcoa_string += 'var g_pc%dLabel = \"PC%d (%.2f %%)\";\n' %\
                 (i+1, i+1-offset, pcoalabels[i-offset])
     js_pcoa_string += 'var g_number_of_custom_axes = %d;\n' % offset
     
@@ -146,10 +146,10 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
         try:
             # scale the percent so it's a number from 0 to 1
             js_pcts.append('%f' % (float(element)/100))
-            js_pcts_round.append('%d' % (round(element)))
+            js_pcts_round.append('%.2f' % (element))
         except ValueError:
             js_pcts.append('%f' % (float(pct_var[0]/100)))
-            js_pcts_round.append('%d' % (round(pct_var[0])))
+            js_pcts_round.append('%.2f' % (pct_var[0]))
     js_pcoa_string += 'var g_fractionExplained = [%s];\n' % ', '.join(js_pcts)
     js_pcoa_string += 'var g_fractionExplainedRounded = [%s];\n' % ', '.join(js_pcts_round)
     
