@@ -422,12 +422,8 @@ function colorByMenuChanged() {
 		// set the div id so that we can reference this div later
 		lines += "<tr><td><div id=\""+idString+"\"class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
 
-		if(vals[i].length > 25){
-			lines+= vals[i].substring(0,25) + "..."
-		}
-		else{
-			lines += vals[i];
-		}
+		// add the category names
+		lines += vals[i];
 
 		lines+= "</td></tr>";
 	}
@@ -540,13 +536,10 @@ function scalingByMenuChanged(){
 		lines += "<tr><td>";
 		// add a label with the name of the category
 		lines +=" <label for=\""+values[i]+"\" class=\"text\">"
-		// do not make the category name too long
-		if(values[i].length > 25){
-			lines+= values[i].substring(0,25) + "..."
-		}
-		else{
-			lines += values[i];
-		}
+
+		// add the category names
+		lines += values[i];
+
 		lines +="</label>"
 
 		// // add a slider and a current-value-label to the table
@@ -621,12 +614,9 @@ function showByMenuChanged() {
 		lines += "<tr><td width=\"10px\">";
 		lines +="<input name=\""+vals[i]+"_show\" value=\""+vals[i]+"\" type=\"checkbox\" checked=\"yes\" onClick=\"toggleVisible(\'"+vals[i]+"\')\">";
 		lines +="</input></td><td title=\""+vals[i]+"\">";
-		if(vals[i].length > 25){
-			lines+= vals[i].substring(0,25) + "..."
-		}
-		else{
-			lines += vals[i];
-		}
+
+		// add the category names
+		lines += vals[i];
 
 		// add a slider and a current-value-label to the table
 		lines +="</td></tr>";
@@ -861,12 +851,8 @@ function labelMenuChanged() {
 		// set the div id, checkbox name so that we can reference this later
 		lines += "<tr><td><input name=\""+vals[i]+"\" type=\"checkbox\" checked=\"true\" onClick=\"toggleLabels()\" ></input></td><td><div id=\""+idString+"Label\" class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
 
-		if(vals[i].length > 25){
-			lines+= vals[i].substring(0,25) + "..."
-		}
-		else{
-			lines += vals[i];
-		}
+		// add the category names
+		lines += vals[i];
 
 		lines+= "</td></tr>";
 	}
