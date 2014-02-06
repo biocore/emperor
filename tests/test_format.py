@@ -25,7 +25,7 @@ class TopLevelTests(TestCase):
             1.37754129e+01, 1.12172158e+01, 1.00247750e+01, 8.22835130e+00,
             7.55971174e+00, 6.24945796e+00, 1.17437419e-14])
         self.pcoa_pct_var_really_low = array([2.66887049e+01, 1.62563704e+01,
-            0.1, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15])
+            0.001, 0.0001, 0.0019, 0.0018, 0.0017, 0.0016, 0.0015])
         self.pcoa_headers = ['PC.355','PC.607','PC.634','PC.635','PC.593',
             'PC.636','PC.481','PC.354','PC.356']
         self.pcoa_coords = PCOA_DATA
@@ -109,7 +109,7 @@ class TopLevelTests(TestCase):
         self.assertEquals(out_js_pcoa_string, PCOA_JS_JACKKNIFED)
 
         # check it raises an exception when the variation explained on the
-        # axes is not greater than 0.51 for at least three of them
+        # axes is not greater than 0.01 for at least three of them
         self.assertRaises(EmperorLogicError, format_pcoa_to_js,
             self.pcoa_headers, self.pcoa_coords, self.pcoa_eigen_values,
             self.pcoa_pct_var_really_low)

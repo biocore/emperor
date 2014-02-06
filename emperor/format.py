@@ -64,17 +64,19 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     # validating that the number of coords in coords
     if number_of_axes>len(coords[0]):
         number_of_axes = len(coords[0])
-    # validating that all the axes are above 0.51%, this accounts for really
+
+    # validating that all the axes are above 0.01%, this accounts for really
     # small variations explained in some axes that end up being not practical
-    # the GUI has some problems when presenting those values on screen
-    valid_pcoalabels = len([i for i in pct_var if i>0.51])
+    # as the GUI has some problems when presenting those values on screen
+    valid_pcoalabels = len([i for i in pct_var if i>0.01])
     if number_of_axes>valid_pcoalabels:
         number_of_axes = valid_pcoalabels
-    if number_of_axes<3:
-        raise EmperorLogicError, "Due to the variation explained, Emperor "+\
-            "could not plot at least 3 axes, check the input files to ensure"+\
-            " that the percent explained is greater than 0.5 in at least "+\
-            "three axes."
+    if number_of_axes < 3:
+        raise EmperorLogicError("Due to the variation explained, Emperor "
+                                "could not plot at least 3 axes, check the "
+                                "input files to ensure that the percent "
+                                "explained is greater than 0.5 in at least "
+                                "three axes.")
 
     # ranges for the PCoA space
     max_x = max(coords[:,0:1])
