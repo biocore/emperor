@@ -748,6 +748,14 @@ function setKey(values, colors) {
 			catch(TypeError){}
 		}
 		keyHTML += "</table>";
+
+		// the new lines are added because there's no good way to have the
+		// contents of the tab use 100% of the available space, doing it this
+		// way we add some extra space that allows the contents to be displayed
+		// Note that we have to add this much space because the key tab has a
+		// filter text box that occupies a lot of space
+		keyHTML += "<br><br><br><br><br><br>";
+
 		document.getElementById("key").innerHTML = keyHTML;
 
 		for(var i in g_plotIds){

@@ -152,13 +152,13 @@
         overflow:scroll;
     }
     div#keytab {
-        height: 94%;
+        height: 100%;
         width:90%;
         padding-top: 0px;
         padding-bottom: 0px;
     }
     div#key {
-        height: 85%;
+        height: 100%;
         overflow: auto;
     }
 
