@@ -4,6 +4,8 @@ Emperor ChangeLog
 Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 -------------------------------------------------------
 
+- The `Key` tab now uses all the available space on screen.
+
 *Bug Fixes*
 
 *New Features*
