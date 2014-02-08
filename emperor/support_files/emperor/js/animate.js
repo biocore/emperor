@@ -202,7 +202,9 @@ AnimationDirector.prototype._computeN = function (){
  *
  */
 AnimationDirector.prototype.updateFrame = function (){
-	this.currentFrame = this.currentFrame + 1;
+	if (this.animationCycleFinished() == false) {
+		this.currentFrame = this.currentFrame + 1;
+	}
 }
 
 /**
