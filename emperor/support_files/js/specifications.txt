@@ -1,1 +1,0 @@
-Study names are passed as all lowercase with no spaces
