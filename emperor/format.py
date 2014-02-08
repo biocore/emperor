@@ -500,7 +500,7 @@ EMPEROR_HEADER_HTML_STRING =\
     <script type="text/javascript" src="emperor_required_resources/js/THREEx.screenshot.js"></script>
 
     <!-- General utilities (underscore.js and FileSaver.js) -->
-    <script type="text/javascript" src="emperor_required_resources/js/underscore.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/underscore-min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/FileSaver.min.js"></script>
 
     <!-- Emperor library code -->
