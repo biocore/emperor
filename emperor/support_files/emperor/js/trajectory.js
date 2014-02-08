@@ -176,7 +176,7 @@ function linearInterpolation( x_1, y_1, z_1, x_2, y_2, z_2, steps){
 	var newz = 0;
 	var result = new Array();
 
-	for( var s = 0; s < steps; s++ ){
+	for( var s = 0; s <= steps; s++ ){
 		newx = x_1+(xStep*s);
 		newy = y_1+(yStep*s);
 		newz = z_1+(zStep*s);
