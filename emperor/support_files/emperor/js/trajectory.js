@@ -32,6 +32,7 @@
  *
  */
 
+
 /**
  *
  * @name TrajectoryOfSamples
@@ -76,8 +77,9 @@ function TrajectoryOfSamples(sampleNames, gradientPoints, coordinates,
 
 	// initialize as an empty array but fill it up upon request
 	this.interpolatedCoordinates = null;
-
 	this._generateInterpolatedCoordinates();
+
+	return this;
 }
 
 /**
@@ -97,8 +99,7 @@ TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
 		delta = Math.abs(Math.abs(this.gradientPoints[index])-Math.abs(
 			this.gradientPoints[index+1]));
 
-		pointsPerStep = calculateNumberOfPointsForDelta(delta, this.suppliedN,
-														this.minimumDelta);
+		pointsPerStep = this.calculateNumberOfPointsForDelta(delta);
 
 		// extend to include these interpolated points
 		interpolatedCoordinatesBuffer = _.union(interpolatedCoordinatesBuffer,
@@ -113,11 +114,13 @@ TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
 	}
 
 	this.interpolatedCoordinates = interpolatedCoordinatesBuffer;
+
+	return;
 }
 
 /**
  *
- * Helper function to calculate the number of points that there should be for a
+ * Helper method to calculate the number of points that there should be for a
  * differential.
  *
  * @param {delta} float value for which to determine the required number of
@@ -131,8 +134,8 @@ TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
  * differential
  *
  */
-function calculateNumberOfPointsForDelta(delta, suppliedN, minimumDelta) {
-	return Math.floor((delta*suppliedN)/minimumDelta);
+TrajectoryOfSamples.prototype.calculateNumberOfPointsForDelta = function(delta){
+	return Math.floor((delta*this.suppliedN)/this.minimumDelta);
 }
 
 /**
