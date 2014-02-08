@@ -4,9 +4,14 @@ Emperor ChangeLog
 Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 -------------------------------------------------------
 
-- The `Key` tab now uses all the available space on screen.
+* Change the minimum percent required to display a plot to be greater than 0.01 instead of 0.5.
+* The percent explained by each of the axes is now formatted as a floating point number with two digits in the mantissa.
+* The `Key` tab now uses all the available space on screen.
 
 *Bug Fixes*
+
+* Fixed problem where coordinate files with large values (greater than 100) would not be displayed on screen.
+* Fixed problem that prevented the user from scrolling through the categories in the user interface.
 
 *New Features*
 
