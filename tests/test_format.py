@@ -25,7 +25,7 @@ class TopLevelTests(TestCase):
             1.37754129e+01, 1.12172158e+01, 1.00247750e+01, 8.22835130e+00,
             7.55971174e+00, 6.24945796e+00, 1.17437419e-14])
         self.pcoa_pct_var_really_low = array([2.66887049e+01, 1.62563704e+01,
-            0.1, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15])
+            0.001, 0.0001, 0.0019, 0.0018, 0.0017, 0.0016, 0.0015])
         self.pcoa_headers = ['PC.355','PC.607','PC.634','PC.635','PC.593',
             'PC.636','PC.481','PC.354','PC.356']
         self.pcoa_coords = PCOA_DATA
@@ -111,7 +111,7 @@ class TopLevelTests(TestCase):
         self.assertEquals(out_js_pcoa_string, PCOA_JS_JACKKNIFED)
 
         # check it raises an exception when the variation explained on the
-        # axes is not greater than 0.51 for at least three of them
+        # axes is not greater than 0.01 for at least three of them
         self.assertRaises(EmperorLogicError, format_pcoa_to_js,
             self.pcoa_headers, self.pcoa_coords, self.pcoa_eigen_values,
             self.pcoa_pct_var_really_low)
@@ -352,12 +352,12 @@ var g_xMinimumValue = -0.293353;
 var g_yMinimumValue = -0.166234;
 var g_zMinimumValue = -0.141717;
 var g_maximum = 34912.621000;
-var g_pc1Label = "PC1 (27 %)";
-var g_pc2Label = "PC2 (16 %)";
-var g_pc3Label = "PC3 (14 %)";
+var g_pc1Label = "PC1 (26.69 %)";
+var g_pc2Label = "PC2 (16.26 %)";
+var g_pc3Label = "PC3 (13.78 %)";
 var g_number_of_custom_axes = 0;
 var g_fractionExplained = [0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495];
-var g_fractionExplainedRounded = [27, 16, 14, 11, 10, 8, 8, 6];
+var g_fractionExplainedRounded = [26.69, 16.26, 13.78, 11.22, 10.02, 8.23, 7.56, 6.25];
 """
 
 PCOA_JS_CUSTOM_AXES = """
@@ -385,11 +385,11 @@ var g_yMinimumValue = -0.166234;
 var g_zMinimumValue = -0.141717;
 var g_maximum = 34912.621000;
 var g_pc1Label = "Instant";
-var g_pc2Label = "PC1 (27 %)";
-var g_pc3Label = "PC2 (16 %)";
+var g_pc2Label = "PC1 (26.69 %)";
+var g_pc3Label = "PC2 (16.26 %)";
 var g_number_of_custom_axes = 1;
 var g_fractionExplained = [0.266887, 0.266887, 0.162564, 0.137754, 0.112172, 0.100248, 0.082284, 0.075597, 0.062495];
-var g_fractionExplainedRounded = [27, 27, 16, 14, 11, 10, 8, 8, 6];
+var g_fractionExplainedRounded = [26.69, 26.69, 16.26, 13.78, 11.22, 10.02, 8.23, 7.56, 6.25];
 """
 
 PCOA_JS_JACKKNIFED = """
@@ -415,12 +415,12 @@ var g_xMinimumValue = 0.100000;
 var g_yMinimumValue = 0.500000;
 var g_zMinimumValue = 0.100000;
 var g_maximum = 5.500000;
-var g_pc1Label = "PC1 (44 %)";
-var g_pc2Label = "PC2 (40 %)";
-var g_pc3Label = "PC3 (15 %)";
+var g_pc1Label = "PC1 (44.00 %)";
+var g_pc2Label = "PC2 (40.00 %)";
+var g_pc3Label = "PC3 (15.00 %)";
 var g_number_of_custom_axes = 0;
 var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
-var g_fractionExplainedRounded = [44, 40, 15, 1];
+var g_fractionExplainedRounded = [44.00, 40.00, 15.00, 1.00];
 """
 
 PCOA_JS_SEGMENTS = """
@@ -446,12 +446,12 @@ var g_xMinimumValue = 0.100000;
 var g_yMinimumValue = 0.500000;
 var g_zMinimumValue = 0.100000;
 var g_maximum = 5.500000;
-var g_pc1Label = "PC1 (44 %)";
-var g_pc2Label = "PC2 (40 %)";
-var g_pc3Label = "PC3 (15 %)";
+var g_pc1Label = "PC1 (44.00 %)";
+var g_pc2Label = "PC2 (40.00 %)";
+var g_pc3Label = "PC3 (15.00 %)";
 var g_number_of_custom_axes = 0;
 var g_fractionExplained = [0.440000, 0.400000, 0.150000, 0.010000];
-var g_fractionExplainedRounded = [44, 40, 15, 1];
+var g_fractionExplainedRounded = [44.00, 40.00, 15.00, 1.00];
 """
 
 MAPPING_FILE_DATA = [\
@@ -653,6 +653,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -677,6 +678,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -693,6 +695,7 @@ document.getElementById("logotable").style.display = 'none';
             <div id="labelColorHolder clearfix">
             <table>
                 <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+                <br><br>
             </table></div>
         </div>
             <br>
@@ -706,6 +709,7 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%" align="center">
@@ -900,6 +904,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -924,6 +929,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -945,6 +951,7 @@ document.getElementById("logotable").style.display = 'none';
                 <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
             <tr><td><div id="taxalabelcolor" class="colorbox"></div></td><td><label>Taxa Label Color</label></td></tr>
 
+                <br><br>
             </table></div>
         </div>
             <br>
@@ -958,6 +965,7 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%" align="center">
@@ -1138,6 +1146,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -1162,6 +1171,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -1178,6 +1188,7 @@ document.getElementById("logotable").style.display = 'none';
             <div id="labelColorHolder clearfix">
             <table>
                 <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+                <br><br>
             </table></div>
         </div>
             <br>
@@ -1191,6 +1202,7 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%" align="center">
@@ -1370,6 +1382,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -1394,6 +1407,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -1410,6 +1424,7 @@ document.getElementById("logotable").style.display = 'none';
             <div id="labelColorHolder clearfix">
             <table>
                 <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+                <br><br>
             </table></div>
         </div>
             <br>
@@ -1423,6 +1438,7 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%" align="center">
@@ -1606,6 +1622,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -1630,6 +1647,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -1646,6 +1664,7 @@ document.getElementById("logotable").style.display = 'none';
             <div id="labelColorHolder clearfix">
             <table>
                 <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+                <br><br>
             </table></div>
         </div>
             <br>
@@ -1659,6 +1678,7 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%" align="center">

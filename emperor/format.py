@@ -65,17 +65,19 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     # validating that the number of coords in coords
     if number_of_axes>len(coords[0]):
         number_of_axes = len(coords[0])
-    # validating that all the axes are above 0.51%, this accounts for really
+
+    # validating that all the axes are above 0.01%, this accounts for really
     # small variations explained in some axes that end up being not practical
-    # the GUI has some problems when presenting those values on screen
-    valid_pcoalabels = len([i for i in pct_var if i>0.51])
+    # as the GUI has some problems when presenting those values on screen
+    valid_pcoalabels = len([i for i in pct_var if i>0.01])
     if number_of_axes>valid_pcoalabels:
         number_of_axes = valid_pcoalabels
-    if number_of_axes<3:
-        raise EmperorLogicError, "Due to the variation explained, Emperor "+\
-            "could not plot at least 3 axes, check the input files to ensure"+\
-            " that the percent explained is greater than 0.5 in at least "+\
-            "three axes."
+    if number_of_axes < 3:
+        raise EmperorLogicError("Due to the variation explained, Emperor "
+                                "could not plot at least 3 axes, check the "
+                                "input files to ensure that the percent "
+                                "explained is greater than 0.01 in at least "
+                                "three axes.")
 
     # ranges for the PCoA space
     max_x = max(coords[:,0:1])
@@ -134,7 +136,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
             offset+=1 # offset will help us retrieve the correct pcoalabels val
         except:
             # if there are custom axes then subtract the number of custom axes
-            js_pcoa_string += 'var g_pc%dLabel = \"PC%d (%.0f %%)\";\n' %\
+            js_pcoa_string += 'var g_pc%dLabel = \"PC%d (%.2f %%)\";\n' %\
                 (i+1, i+1-offset, pcoalabels[i-offset])
     js_pcoa_string += 'var g_number_of_custom_axes = %d;\n' % offset
     
@@ -145,10 +147,10 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
         try:
             # scale the percent so it's a number from 0 to 1
             js_pcts.append('%f' % (float(element)/100))
-            js_pcts_round.append('%d' % (round(element)))
+            js_pcts_round.append('%.2f' % (element))
         except ValueError:
             js_pcts.append('%f' % (float(pct_var[0]/100)))
-            js_pcts_round.append('%d' % (round(pct_var[0])))
+            js_pcts_round.append('%.2f' % (pct_var[0]))
     js_pcoa_string += 'var g_fractionExplained = [%s];\n' % ', '.join(js_pcts)
     js_pcoa_string += 'var g_fractionExplainedRounded = [%s];\n' % ', '.join(js_pcts_round)
     
@@ -663,6 +665,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -687,6 +690,7 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
+                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -703,6 +707,7 @@ document.getElementById("logotable").style.display = 'none';
             <div id="labelColorHolder clearfix">
             <table>
                 <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>%s
+                <br><br>
             </table></div>
         </div>
             <br>
@@ -716,6 +721,7 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%%" align="center">
