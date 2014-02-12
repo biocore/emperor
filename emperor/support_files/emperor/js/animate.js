@@ -69,7 +69,7 @@
  *
  */
 function AnimationDirector(mappingFileHeaders, mappingFileData, coordinatesData,
-							gradientCategory, trajectoryCategory, frames){
+							gradientCategory, trajectoryCategory){
 
 	// all arguments are required
 	if (mappingFileHeaders === undefined || mappingFileData === undefined ||
@@ -202,7 +202,7 @@ AnimationDirector.prototype._computeN = function (){
  *
  */
 AnimationDirector.prototype.updateFrame = function (){
-	if (this.animationCycleFinished() == false) {
+	if (this.animationCycleFinished() === false) {
 		this.currentFrame = this.currentFrame + 1;
 	}
 }
