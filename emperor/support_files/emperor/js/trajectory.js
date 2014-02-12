@@ -91,6 +91,7 @@ function TrajectoryOfSamples(sampleNames, gradientPoints, coordinates,
 TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
 	var pointsPerStep = 0, delta = 0;
 	var interpolatedCoordinatesBuffer = new Array();
+	var currInterpolation;
 
 	// iterate over the gradient points to compute the interpolated distances
 	for (var index = 0; index < this.gradientPoints.length-1; index++){
@@ -101,16 +102,17 @@ TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
 
 		pointsPerStep = this.calculateNumberOfPointsForDelta(delta);
 
-		// extend to include these interpolated points
-		interpolatedCoordinatesBuffer = _.union(interpolatedCoordinatesBuffer,
-							linearInterpolation(this.coordinates[index]['x'],
+		currInterpolation = linearInterpolation(this.coordinates[index]['x'],
 												this.coordinates[index]['y'],
 												this.coordinates[index]['z'],
 												this.coordinates[index+1]['x'],
 												this.coordinates[index+1]['y'],
 												this.coordinates[index+1]['z'],
-												pointsPerStep)
-				);
+												pointsPerStep);
+
+		// extend to include these interpolated points
+		interpolatedCoordinatesBuffer = _.union(interpolatedCoordinatesBuffer,
+							                    currInterpolation);
 	}
 
 	this.interpolatedCoordinates = interpolatedCoordinatesBuffer;
@@ -157,13 +159,14 @@ TrajectoryOfSamples.prototype.calculateNumberOfPointsForDelta = function(delta){
  * @return Array with a objects that have an x, y and z attributes
  *
  */
+
 function linearInterpolation( x_1, y_1, z_1, x_2, y_2, z_2, steps){
 	var xAbs = Math.abs(x_1-x_2);
 	var yAbs = Math.abs(y_1-y_2);
 	var zAbs = Math.abs(z_1-z_2);
 	var xDiff = x_2-x_1;
 	var yDiff = y_2-y_1;
-	var zDiff = z_2-z_1
+	var zDiff = z_2-z_1;
 
 	// and apparetnly this makes takes no effect whatsoever
 	var length = Math.sqrt(xAbs*xAbs + yAbs*yAbs + zAbs*zAbs);
@@ -212,7 +215,7 @@ function distanceBetweenPoints( x_1, y_1, z_1, x_2, y_2, z_2){
 	// Math.pow is faster than simple multiplication
 	xs = Math.pow(Math.abs(x_2-x_1), 2);
 	ys = Math.pow(Math.abs(y_2-y_1), 2);
-	zs = Math.pow(Math.abs(z_2-z_1), 2)
+	zs = Math.pow(Math.abs(z_2-z_1), 2);
 
 	return Math.sqrt(xs+ys+zs);
 }
