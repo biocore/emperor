@@ -17,6 +17,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 *New Features*
 
 * Add animations tab to the main user interface.
+* Add unit tests for the JavaScript library code.
 
 Emperor 0.9.3 (5 Dec 2013)
 --------------------------
