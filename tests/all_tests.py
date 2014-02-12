@@ -8,7 +8,7 @@
 
 import re
 
-from os import walk
+from os import walk, getcwd, chdir
 from sys import exit
 from glob import glob
 from os.path import join, abspath, dirname, split, exists
@@ -41,6 +41,9 @@ script_info['optional_options'] = [
     ' execution of Emperor\'s unit tests [default: %default]', default=False),
     make_option('--suppress_script_usage_tests', action='store_true', help=
     'suppress Emperor\'s script usage tests [default: %default]',default=False),
+    make_option('--suppress_javascript_unit_tests', action='store_true', help=
+    'suppress Emperor\'s JavaScript unit tests [default: %default]',
+    default=False),
     make_option('--unittest_glob', help='wildcard pattern to match the unit '
     'tests to execute [default: %default]', default=None),
     make_option('--script_usage_tests', help='comma-separated list of the '
@@ -62,6 +65,7 @@ def main():
     script_usage_tests = opts.script_usage_tests
     suppress_unit_tests = opts.suppress_unit_tests
     suppress_script_usage_tests = opts.suppress_script_usage_tests
+    suppress_javascript_unit_tests = opts.suppress_javascript_unit_tests
 
     # since the test data is in the tests folder just add scripts_test_data
     emperor_test_data_dir = join(abspath(dirname(__file__)),
@@ -84,7 +88,8 @@ def main():
         emperor_scripts_dir = abspath(opts.emperor_scripts_dir)
 
     # make a sanity check
-    if (suppress_unit_tests and suppress_script_usage_tests):
+    if (suppress_unit_tests and suppress_script_usage_tests and
+        suppress_javascript_unit_tests):
         option_parser.error("All tests have been suppresed. Nothing to run.")
 
     test_dir = abspath(dirname(__file__))
@@ -132,6 +137,9 @@ def main():
             script_tests = script_usage_tests.split(',')
         else:
             script_tests = None
+
+        initial_working_directory = getcwd()
+
         # Run the script usage testing functionality; note that depending on the
         # module where this was imported, the name of the arguments will change
         # that's the reason why I added the name of the arguments in here
@@ -143,6 +151,26 @@ def main():
                                     script_tests,           # tests
                                     None,                   # failure_log_fp
                                     False)                  # force_overwrite
+
+        # running script usage tests breaks the current working directory
+        chdir(initial_working_directory)
+
+    if not suppress_javascript_unit_tests:
+        runner = join(test_dir, 'javascript_tests', 'runner.js')
+        index = join(test_dir, 'javascript_tests', 'index.html')
+
+        o, e, r = qcli_system_call('phantomjs %s %s' % (runner, index))
+
+        if o:
+            print o
+        if e:
+            print e
+
+        # if all the tests passed
+        javascript_tests_passed = True if r == 0 else False
+    else:
+        javascript_tests_passed = True
+
 
     print "==============\nResult summary\n=============="
 
@@ -158,22 +186,30 @@ def main():
                 % '\n'.join(missing_application_tests)
         
         if not(missing_application_tests or bad_tests):
-            print "\nAll unit tests passed.\n\n"
+            print "\nAll unit tests passed.\n"
 
     if not suppress_script_usage_tests:
         if exists(emperor_test_data_dir) and exists(emperor_scripts_dir):
             print "\nScript usage test result summary"+\
-                "\n------------------------------------\n"
+                "\n--------------------------------\n"
             print script_usage_result_summary
         else:
             print ("\nCould not run script usage tests.\nThe Emperor scripts "
                 "directory could not be automatically located, try supplying "
                 " it manually using the --emperor_scripts_dir option.")
 
+    if not suppress_javascript_unit_tests:
+        print ('\nJavaScript unit tests result summary\n'
+               '------------------------------------\n')
+        if javascript_tests_passed:
+            print 'All JavaScript unit tests passed.\n'
+        else:
+            print 'JavaScript unit tests failed, check the summary above.'
+
     # In case there were no failures of any type, exit with a return code of 0
     return_code = 1
     if (len(bad_tests) == 0 and len(missing_application_tests) == 0 and
-        script_usage_failures == 0):
+        script_usage_failures == 0 and javascript_tests_passed):
         return_code = 0
 
     return return_code
