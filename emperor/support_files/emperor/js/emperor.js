@@ -95,7 +95,7 @@ function isNumeric(n) {
 /*This function recenter the camera to the initial position it had*/
 function resetCamera() {
 	// We need to reset the camera controls first before modifying the values of the camera (this is the reset view!)
-	g_sceneControl.reset();
+	g_sceneControl.update();
 	
 	g_sceneCamera.aspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 	g_sceneCamera.rotation.set( 0, 0, 0);
@@ -2235,7 +2235,7 @@ $(document).ready(function() {
 		g_sceneCamera.add(g_sceneLight);
 
 		// Adding camera
-		g_sceneControl = new THREE.TrackballControls(g_sceneCamera, document.getElementById('main_plot'));
+		g_sceneControl = new THREE.OrbitControls(g_sceneCamera, document.getElementById('main_plot'));
 		g_sceneControl.rotateSpeed = 1.0;
 		g_sceneControl.zoomSpeed = 1.2;
 		g_sceneControl.panSpeed = 0.8;
