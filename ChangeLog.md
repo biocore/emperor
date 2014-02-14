@@ -9,6 +9,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * The percent explained by each of the axes is now formatted as a floating point number with two digits in the mantissa.
 * The `Key` tab now uses all the available space on screen.
 * Improve mouse sensitivity to rotate, pan, zoom-in and zoom out in the 3D plot.
+* Emperor is now hosted under the biocore GitHub organization.
 
 *Bug Fixes*
 
