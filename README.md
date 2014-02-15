@@ -1,7 +1,7 @@
 Emperor
 =======
 
-[![Build Status](https://travis-ci.org/qiime/emperor.png?branch=master)](https://travis-ci.org/qiime/emperor)
+[![Build Status](https://travis-ci.org/biocore/emperor.png?branch=master)](https://travis-ci.org/biocore/emperor)
 
 Emperor is a next-generation tool for the analysis and visualization of large microbial ecology datasets; amongst many features Emperor provides a modern user interface that will rapidly adjust to your daily workflow.
 

@@ -1,16 +1,20 @@
 Emperor Installation Notes
 ==========================
 
-Emperor is a python package that relies in [QIIME](http://www.qiime.org), [NumPy](http://www.numpy.org) and [PyCogent](http://www.pycogent.org). These packages must be installed prior running the `setup.py` script.
+Emperor is a python package that relies in [QCLI](https://pypi.python.org/pypi/qcli) and [NumPy](http://www.numpy.org). These packages must be installed prior running the `setup.py` script.
 
-To download Emperor, use [this link](https://github.com/qiime/emperor/archive/master.zip) or use git to get the latest version of the repository:
+To download Emperor, use [this link](https://github.com/biocore/emperor/archive/master.zip) or use git to get the latest version of the repository:
 
-    git clone git://github.com/qiime/emperor.git
+    git clone git://github.com/biocore/emperor.git
 
 Installation
 ============
 
-To perform a global installation of Emperor, execute the following command from a terminal session:
+By far the easiest way to install Emperor is running:
+
+    pip install emperor
+
+In other case, to perform a global installation of Emperor, execute the following command from a terminal session:
 
     python setup.py install
 
@@ -25,4 +29,3 @@ python setup.py install --install-scripts=~/emperor_bin/ --install-purelib=~/emp
 To test for a correct installation, open a new terminal window and issue the following command to see the help of `make_emperor.py`:
 
     make_emperor.py -h
-
