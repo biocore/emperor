@@ -635,7 +635,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td align="center">
-                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Toggle Selected</button>
+                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
                         <br><br><br><br>
                     </td>
                 </tr>
@@ -851,7 +851,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td align="center">
-                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Toggle Selected</button>
+                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
                         <br><br><br><br>
                     </td>
                 </tr>
@@ -1058,7 +1058,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td align="center">
-                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Toggle Selected</button>
+                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
                         <br><br><br><br>
                     </td>
                 </tr>
@@ -1259,7 +1259,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td align="center">
-                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Toggle Selected</button>
+                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
                         <br><br><br><br>
                     </td>
                 </tr>
@@ -1464,7 +1464,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td align="center">
-                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Toggle Selected</button>
+                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
                         <br><br><br><br>
                     </td>
                 </tr>

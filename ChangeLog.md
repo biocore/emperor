@@ -10,7 +10,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * The `Key` tab now uses all the available space on screen.
 * Improve mouse sensitivity to rotate, pan, zoom-in and zoom out in the 3D plot.
 * Emperor is now hosted under the biocore GitHub organization.
-* Add toggle visible button under the `Visibility` tab, this button will change hidden categories to visible and vice-versa.
+* Add toggle visible button (`Invert Selected`) under the `Visibility` tab, this button will change hidden categories to visible and vice-versa.
 
 *Bug Fixes*
 
