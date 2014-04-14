@@ -12,6 +12,10 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
+# I am adding a variety of lines
+# here and there
+# and also there
+
 # based on the text found in github.com/qiime/pynast
 classes = """
     Development Status :: 4 - Beta
