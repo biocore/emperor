@@ -99,7 +99,7 @@ function isNumeric(n) {
 /*This function recenter the camera to the initial position it had*/
 function resetCamera() {
 	// We need to reset the camera controls first before modifying the values of the camera (this is the reset view!)
-	g_sceneControl.reset();
+	g_sceneControl.update();
 	
 	g_sceneCamera.aspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 	g_sceneCamera.rotation.set( 0, 0, 0);
@@ -305,6 +305,28 @@ function toggleContinuousAndDiscreteColors(element){
 	// re-coloring the samples and labels now will use the appropriate coloring
 	colorByMenuChanged();
 	labelMenuChanged();
+}
+
+/**
+ * Toggles the visibility for all the categories listed in the "Visibility" tab
+ * i. e. this function will hide all the visible categories and show all the
+ * hidden categories.
+ */
+function toggleVisibleCategories(){
+
+    // the table with the visibility widgets has the id show-by-table and each
+    // of rows has either a checkbox and a label or a slider and a label (see
+    // the UI for more details). What we want are only the rows with checkboxes
+    // and labels, thus we iterate over them using jQuery and get the
+    // checkbox's name to toggle the checkmark as a final step we pass this
+    // name over to toggleVisible wich takes care of hiding/showing the
+    // appropriate spheres
+    $('#show-by-table td:nth-child(2)').each(function (index, row){
+        var name = "[name='" + $(this).attr('title') + "_show']";
+        var checkbox = $(name);
+        checkbox.prop('checked', !checkbox.prop('checked'));
+        toggleVisible($(this).attr('title'));
+   });
 }
 
 /*Generate a list of colors that corresponds to all the samples in the plot
@@ -608,7 +630,7 @@ function showByMenuChanged() {
 
 	// build the showby checkbox table in HTML; the padding to the right makes
 	// the slider fit great inside the table without ever showing scroll bars
-	var lines = '<form name="showbyform"><table height="100%" width="100%" style="padding-right:10px;padding-left:10px;">'
+	var lines = '<form name="showbyform"><table id="show-by-table" height="100%" width="100%" style="padding-right:10px;padding-left:10px;">'
 
 	for(var i in vals){
 		// tag each slider & percent label with the idString to avoid conflicts
@@ -2272,7 +2294,7 @@ $(document).ready(function() {
 		g_sceneCamera.add(g_sceneLight);
 
 		// Adding camera
-		g_sceneControl = new THREE.TrackballControls(g_sceneCamera, document.getElementById('main_plot'));
+		g_sceneControl = new THREE.OrbitControls(g_sceneCamera, document.getElementById('main_plot'));
 		g_sceneControl.rotateSpeed = 1.0;
 		g_sceneControl.zoomSpeed = 1.2;
 		g_sceneControl.panSpeed = 0.8;

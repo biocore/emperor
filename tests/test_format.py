@@ -649,11 +649,17 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td style="padding-left: 12px; padding-right:12px;">
+                        <hr class='section-break'>
                         <br>
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
-                        <br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
+                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
@@ -674,6 +680,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td style="padding-left: 12px; padding-right:12px;">
+                        <hr class='section-break'>
                         <br>
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
@@ -900,11 +907,17 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td style="padding-left: 12px; padding-right:12px;">
+                        <hr class='section-break'>
                         <br>
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
-                        <br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
+                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
@@ -925,6 +938,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td style="padding-left: 12px; padding-right:12px;">
+                        <hr class='section-break'>
                         <br>
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
@@ -1142,11 +1156,17 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td style="padding-left: 12px; padding-right:12px;">
+                        <hr class='section-break'>
                         <br>
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
-                        <br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
+                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
@@ -1167,6 +1187,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td style="padding-left: 12px; padding-right:12px;">
+                        <hr class='section-break'>
                         <br>
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
@@ -1378,11 +1399,17 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td style="padding-left: 12px; padding-right:12px;">
+                        <hr class='section-break'>
                         <br>
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
-                        <br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
+                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
@@ -1403,6 +1430,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td style="padding-left: 12px; padding-right:12px;">
+                        <hr class='section-break'>
                         <br>
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
@@ -1618,11 +1646,17 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td style="padding-left: 12px; padding-right:12px;">
+                        <hr class='section-break'>
                         <br>
                         <label for="sphereopacity" class="text">Global Sphere Opacity</label>
                         <label id="sphereopacity" class="slidervalue"></label>
                         <div id="sopacityslider" class="slider-range-max"></div>
-                        <br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
+                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
@@ -1643,6 +1677,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td style="padding-left: 12px; padding-right:12px;">
+                        <hr class='section-break'>
                         <br>
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
