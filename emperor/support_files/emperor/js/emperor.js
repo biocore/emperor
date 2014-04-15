@@ -60,9 +60,9 @@ g_validAsciiCodes = g_validAsciiCodes.concat([65,66,67,68,68,70,71,72,73,74,75,7
 // adding: a->z
 g_validAsciiCodes = g_validAsciiCodes.concat([97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122]);
 
-var g_steven = null;
+var g_animationDirector = null;
 var g_isPlaying = null;
-var g_animationLines = new Array();
+var g_animationLines = [];
 
 // taken from the qiime/colors.py module; a total of 29 colors
 var k_QIIME_COLORS = [
@@ -2220,7 +2220,7 @@ $(document).ready(function() {
 		g_mainScene = new THREE.Scene();
 		g_mainScene.add(g_sceneCamera);
 
-		g_genericSphere = new THREE.SphereGeometry(g_radius/2, g_segments, g_rings);
+		g_genericSphere = new THREE.SphereGeometry(g_radius, g_segments, g_rings);
 		g_elementsGroup = new THREE.Object3D();
 		g_mainScene.add(g_elementsGroup);
 
@@ -2483,21 +2483,21 @@ $(document).ready(function() {
 
 		if (g_isPlaying) {
 			// if it's the 1st frame to  animate then the director will be null
-			if (g_steven === null) {
+			if (g_animationDirector === null) {
 
 				// retrieve the values from the interface
 				trajectoryCategory = document.getElementById('trajectory_category_combo')[document.getElementById('trajectory_category_combo').selectedIndex].value;
 				gradientCategory = document.getElementById('gradient_category_combo')[document.getElementById('gradient_category_combo').selectedIndex].value;
 
 				// initialize the animation director
-				g_steven = new AnimationDirector(g_mappingFileHeaders, g_mappingFileData, g_spherePositions, gradientCategory, trajectoryCategory, 10);
-				g_steven.updateFrame();
+				g_animationDirector = new AnimationDirector(g_mappingFileHeaders, g_mappingFileData, g_spherePositions, gradientCategory, trajectoryCategory, 10);
+				g_animationDirector.updateFrame();
 
 			}
 			else{
-				g_steven.updateFrame();
+				g_animationDirector.updateFrame();
 
-				if (g_steven.animationCycleFinished() == false){
+				if (g_animationDirector.animationCycleFinished() == false){
 					// we are trying to remove the lines from the previous frame
 					for (var index = 0; index < g_animationLines.length; index++){
 						g_mainScene.remove(g_animationLines[index]);
@@ -2506,9 +2506,9 @@ $(document).ready(function() {
 
 					g_animationLines.length = 0;
 
-					for (var index = 0; index < g_steven.trajectories.length; index++){
+					for (var index = 0; index < g_animationDirector.trajectories.length; index++){
 						// draw a trajectory line per trajectory
-						drawingLineBuffer = drawTrajectoryLine(g_steven.trajectories[index].interpolatedCoordinates, g_steven.currentFrame, 0xFFFFFF, 10);
+						drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index].interpolatedCoordinates, g_animationDirector.currentFrame, 0xFFFFFF, 10);
 
 						g_mainScene.add(drawingLineBuffer);
 						g_elementsGroup.add(drawingLineBuffer);
@@ -2518,7 +2518,7 @@ $(document).ready(function() {
 				}
 				else{
 					// the animation is done, clean up the interface and other variables
-					g_steven = null;
+					g_animationDirector = null;
 					g_isPlaying = false;
 					document.getElementById("play_button").disabled="false";
 
