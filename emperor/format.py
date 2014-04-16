@@ -702,31 +702,33 @@ document.getElementById("logotable").style.display = 'none';
             <br><br><br>
         </div>
         <div id="options">
-            <table>
+            <table class="menu-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>%s
+                <tr><td colspan="2">
+                        <div id="pcoaviewoptions" class="">%s%s%s
+                            <form name="settingsoptionscolor">
+                            </form>
+                            <div id="pcoaoptions" class="">
+                                <form name="settingsoptions">
+                                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                                </form>
+                            </div>
+                            <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                            <br><br>
+                            <hr class='section-break'>
+                            <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                            <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                            <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                            <br><br>For a PNG, simply press 'ctrl+p'.
+                            <div id="paralleloptions" class="">
+                            </div>
+                        </div>
+                        <br>
+                </td></tr>
             </table>
-            <div id="pcoaviewoptions" class="">%s%s%s
-                <form name="settingsoptionscolor">
-                </form>
-                <div id="pcoaoptions" class="">
-                    <form name="settingsoptions">
-                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-                    </form>
-                </div>
-                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br><br>
-                <hr class='section-break'>
-                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
-                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-                <br><br>For a PNG, simply press 'ctrl+p'.
-                <div id="paralleloptions" class="">
-                </div>
-            </div>
-            <br>
         </div>
     </div>  
 </div>

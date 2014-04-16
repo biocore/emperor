@@ -109,7 +109,7 @@
     }
 
     /*Tabs in the menu*/
-    div#colorby {
+    /*div#colorby {
         padding-top: 0px;
         padding-bottom: 0px;
         width:100%;
@@ -143,13 +143,13 @@
         width:100%;
         height:100%;
         overflow:scroll;
-    }
-    div#options {
+    }*/
+    div#options, div#axes, div#labelby, div#showby, div#scalingby {
         padding-top: 0px;
-        padding-bottom: 100px;
-        width:100%;
+        padding-bottom: 10cm;
         height:100%;
-        overflow:scroll;
+        overflow:auto;
+        align: center; /*align the contents to the center*/
     }
     div#keytab {
         height: 100%;
@@ -327,4 +327,13 @@
 
     .invisible {
         display: none;
+    }
+
+    .menu-table {
+         display:table;
+         margin-right:auto;
+         margin-left:auto;
+         width:100%;
+         height:100%
+         text-align: left;
     }
