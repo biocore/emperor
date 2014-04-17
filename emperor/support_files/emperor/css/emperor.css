@@ -19,10 +19,11 @@ body, html {
   float: left;
 }
 
-/* all of the following styling is used in the message shows up on screen at
- * startup if WebGL is not enabled
+/* #small-logo, #overlay, #explanation and #source are all styling elements
+ * that get in use when WebGL is not enabled and a small help message needs to
+ * be shown
  */
-#smalllogo {
+#small-logo {
   width: 150px;
   height: 45px;
 }
@@ -56,9 +57,9 @@ body, html {
   font-size: 11px;
   text-align: left;
 }
-/* end classes for WebGL not enabled message */
 
-div.plotWrapper {
+/* the plotting area */
+div.emperor-plot-wrapper {
   position: relative;
   overflow: hidden;
   height: 100%;
@@ -68,7 +69,7 @@ div.plotWrapper {
 }
 
 /* button to select between parallel coordinates and 3D plots */
-#plotToggle {
+#emperor-plot-toggle {
   z-index: 5;
   width: 73%;
   margin: 0;
@@ -78,7 +79,11 @@ div.plotWrapper {
   float: left;
 }
 
-div.separator {
+/* div.emperor-separator and div.emperor-separator:hover are classes that make
+ * the separator on the right of the user interface that let's you rescale the
+ * area of the plot
+ */
+div.emperor-separator {
   height: 100%;
   width: 1%;
   float: left;
@@ -86,11 +91,15 @@ div.separator {
   margin: 0;
   background-color: #333333;
 }
-div.separator:hover {
+
+div.emperor-separator:hover {
   background-color:#666666;
 }
 
-div#menu {
+/* #emperor-menu and #emperor-menu-tabs the two things that show in the right
+ * side-bar, #emperor-menu is the container for all the tabs and
+ * #emperor-menu-tabs is the container for the name of the tabs */
+div#emperor-menu {
   height: 100%;
   font-family: Helvetica, sans-serif;
   width: 26%;
@@ -100,7 +109,7 @@ div#menu {
   margin: 0;
 }
 
-div#menutabs {
+div#emperor-menu-tabs {
   background: #eee;
   /*margin-before: 0px !important;*/
   height: 100%;
@@ -136,9 +145,18 @@ div#menutabs {
    text-align: left;
 }
 
+/* general styling for a variety of elements in emperor */
 table {
   font-family: Helvetica, sans-serif;
   font-size: 12px !important;
+}
+
+form {
+  margin: 0px;
+}
+
+input {
+  font-style: 10pt helvetica;
 }
 
 div.colorbox {
@@ -182,11 +200,12 @@ label.slidervalue {
   padding: 2px 5px !important;
 }
 
-div#labellist {
+/* style for all labels in emperor */
+div#label-list {
   height: 60%;
 }
 
-div.labelsTop {
+div.#labels-top {
   height: 30%;
 }
 
@@ -210,30 +229,34 @@ div#taxalabels {
   z-index: 1;
 }
 
-.axislabels {
+.axis-labels {
   color: #fff;
 }
 
-div#labelColorHolder {
+div#label-color-holder {
   width: 100%;
 }
 
-div#labelColorHolder div {
+div#label-color-holder div {
   float: left;
 }
 
-div#labelColorHolder label{
+div#label-color-holder label{
   float: left;
   width: 50%;
 }
 
-form {
-  margin: 0px;
+/* arrow that's shown on the plot when you double click a sample */
+.arrow-right {
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 10px solid white;
 }
 
-input {
-  font-style: 10pt helvetica;
-}
 
 /* the media-button class used in the animations tab */
 a.media-button img {
@@ -244,6 +267,7 @@ a.media-button: hover img{
   background-color: #cff;
 }
 
+/* miscellaneous useful classes */
 *.unselectable {
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
@@ -263,26 +287,6 @@ a.media-button: hover img{
   color: #fff;
   border: 1px solid white;
   position: absolute;
-}
-
-.arrow-right {
-  opacity: 0;
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 10px solid white;
-}
-
-.circle {
-  position: absolute;
-  opacity: 0;
-  border: 3px solid white;
-  border-radius: 50%;
-  width: 10px;
-  height: 10px; 
-  /* width and height can be anything, as long as they're equal */
 }
 
 .invisible {

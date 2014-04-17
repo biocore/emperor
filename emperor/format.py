@@ -544,7 +544,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="overlay">
     <div>
-    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="small-logo"/>
         <h1>WebGL is not enabled!</h1>
         <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
         <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
@@ -556,7 +556,7 @@ document.getElementById("logotable").style.display = 'none';
     </div>
 </div>
 
-<div id="plotToggle">
+<div id="emperor-plot-toggle">
     <form>
       <div id="plottype">
         <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
@@ -564,7 +564,7 @@ document.getElementById("logotable").style.display = 'none';
       </div>
     </form>
 </div>
-<div id="pcoaPlotWrapper" class="plotWrapper">
+<div id="pcoaPlotWrapper" class="emperor-plot-wrapper">
     <label id="pointCount" class="ontop">
     </label>
 
@@ -577,20 +577,20 @@ document.getElementById("logotable").style.display = 'none';
     <div id="taxalabels" class="unselectable">
     </div>
 
-    <div id="axislabels" class="axislabels">
+    <div id="axislabels" class="axis-labels">
     </div>
 
     <div id="main_plot">
     </div>
 </div>
 
-<div id="parallelPlotWrapper" class="plotWrapper">
+<div id="parallelPlotWrapper" class="emperor-plot-wrapper">
 </div>
 
-<div class="separator" ondblclick="separatorDoubleClick()"></div>
+<div class="emperor-separator" ondblclick="separatorDoubleClick()"></div>
 
-<div id="menu">
-    <div id="menutabs">
+<div id="emperor-menu">
+    <div id="emperor-menu-tabs">
         <ul>
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
@@ -674,7 +674,7 @@ document.getElementById("logotable").style.display = 'none';
             </table>
         </div>
         <div id="labelby" class="emperor-tab-div">
-            <div id="labelsTop">
+            <div id="labels-top">
                 <form name="plotoptions">
                     <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
                 </form>%s
@@ -682,7 +682,7 @@ document.getElementById("logotable").style.display = 'none';
                 <label for="labelopacity" class="text">Label Opacity</label>
                 <label id="labelopacity" class="slidervalue"></label>
                 <div id="lopacityslider" class="slider-range-max"></div>
-                <div id="labelColorHolder clearfix">
+                <div id="label-color-holder clearfix">
                     <table class="emperor-tab-table">
                         <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>%s
                         <br><br>
@@ -691,7 +691,7 @@ document.getElementById("logotable").style.display = 'none';
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
-            <div class="list" id="labellist">
+            <div class="list" id="label-list">
             </div>
         </div>
         <div id="axes" class="emperor-tab-div">
