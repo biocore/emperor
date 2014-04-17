@@ -600,14 +600,14 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#axes">Axes</a></li>
             <li><a href="#options">Options</a></li>
         </ul>
-        <div id="keytab">
+        <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
-            <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
+                <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
             </form>
             <div id="key">
             </div>
         </div>
-        <div id="colorby">
+        <div id="colorby" class="emperor-tab-div">
             <br>%s
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
@@ -616,8 +616,8 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby" align="center">%s
-            <table width="100%%">
+        <div id="showby" class="emperor-tab-div">%s
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -647,8 +647,8 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
             </table>
         </div>
-        <div id="scalingby" align="center">
-            <table width="100%%">
+        <div id="scalingby" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="scalingbycombo" onchange="scalingByMenuChanged()">
@@ -673,36 +673,36 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
             </table>
         </div>
-        <div id="labelby">
-        <div id="labelsTop">
-            <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
-            </form>%s
-            <br>
-            <label for="labelopacity" class="text">Label Opacity</label>
-            <label id="labelopacity" class="slidervalue"></label>
-            <div id="lopacityslider" class="slider-range-max"></div>
-            <div id="labelColorHolder clearfix">
-            <table>
-                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>%s
-                <br><br>
-            </table></div>
-        </div>
+        <div id="labelby" class="emperor-tab-div">
+            <div id="labelsTop">
+                <form name="plotoptions">
+                    <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+                </form>%s
+                <br>
+                <label for="labelopacity" class="text">Label Opacity</label>
+                <label id="labelopacity" class="slidervalue"></label>
+                <div id="lopacityslider" class="slider-range-max"></div>
+                <div id="labelColorHolder clearfix">
+                    <table class="emperor-tab-table">
+                        <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>%s
+                        <br><br>
+                </table></div>
+            </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
             <div class="list" id="labellist">
             </div>
         </div>
-        <div id="axes">
+        <div id="axes" class="emperor-tab-div">
             <div id="pcoaaxes">
                 <div class="list" id="axeslist">
                 </div>
             </div>
             <br><br><br>
         </div>
-        <div id="options">
-            <table class="menu-table">
+        <div id="options" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>%s
