@@ -550,7 +550,7 @@ function scalingByMenuChanged(){
 	values = _splitAndSortNumericAndAlpha(dedupe(values));
 
 	// the padding accounts for the slider handle that can move all to the left or right
-	lines = '<table class="emperor-tab-table">'
+	lines = '<table class="emperor-tab-table-with-sliders">'
 	for(var i in values){
 		// construct a sanitized category name for all HTML elements
 		idString = "r"+i+"c"+scalingByCategoryIndex;
@@ -626,7 +626,7 @@ function showByMenuChanged() {
 
 	// build the showby checkbox table in HTML; the padding to the right makes
 	// the slider fit great inside the table without ever showing scroll bars
-	var lines = '<form name="showbyform"><table class="emperor-tab-table">'
+	var lines = '<form name="showbyform"><table id="show-by-table" class="emperor-tab-table-with-sliders">'
 
 	for(var i in vals){
 		// tag each slider & percent label with the idString to avoid conflicts
