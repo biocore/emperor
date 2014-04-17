@@ -608,8 +608,7 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <br>%s
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>%s
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
@@ -642,7 +641,6 @@ document.getElementById("logotable").style.display = 'none';
                 <tr>
                     <td align="center">
                         <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
-                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
@@ -668,7 +666,6 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
-                        <br><br>
                     </td>
                 </tr>
             </table>
@@ -699,7 +696,6 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
-            <br><br><br>
         </div>
         <div id="options" class="emperor-tab-div">
             <table class="emperor-tab-table">

@@ -114,12 +114,7 @@ div#emperor-menu-tabs {
   /*margin-before: 0px !important;*/
   height: 100%;
   margin: 0;
-}
-
-.ui-tabs .ui-widget .ui-widget-content .ui-corner-all {
-  /*  height: 95%;*/
-  padding-left: 0px !important;
-  padding-top: 0px;
+  overflow: auto;
 }
 
 /* class used in the divs that contain the widgets for the menu tabs like:
@@ -127,9 +122,9 @@ div#emperor-menu-tabs {
  */ 
 .emperor-tab-div{
   padding-top: 0px;
-  padding-bottom: 10cm;
-  height:100%;
-  overflow:auto;
+  padding-bottom: 0px;
+  height: 100%;
+  overflow: auto;
   align: center; /*align the contents to the center*/
 }
 
