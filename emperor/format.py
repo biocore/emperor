@@ -580,14 +580,14 @@ document.getElementById("logotable").style.display = 'none';
     <div id="axislabels" class="axis-labels">
     </div>
 
-    <div id="main_plot">
+    <div id="main-plot">
     </div>
 </div>
 
 <div id="parallelPlotWrapper" class="emperor-plot-wrapper">
 </div>
 
-<div class="emperor-separator" ondblclick="separatorDoubleClick()"></div>
+<div id="emperor-separator" class="emperor-separator" ondblclick="separatorDoubleClick()"></div>
 
 <div id="emperor-menu">
     <div id="emperor-menu-tabs">
