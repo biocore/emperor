@@ -111,7 +111,6 @@ div#emperor-menu {
 
 div#emperor-menu-tabs {
   background: #eee;
-  /*margin-before: 0px !important;*/
   height: 100%;
   margin: 0;
   overflow: auto;
@@ -251,7 +250,6 @@ div#label-color-holder label{
   border-bottom: 5px solid transparent;
   border-left: 10px solid white;
 }
-
 
 /* the media-button class used in the animations tab */
 a.media-button img {
