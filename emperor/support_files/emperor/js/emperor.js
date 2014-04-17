@@ -550,7 +550,7 @@ function scalingByMenuChanged(){
 	values = _splitAndSortNumericAndAlpha(dedupe(values));
 
 	// the padding accounts for the slider handle that can move all to the left or right
-	lines = '<table width="100%" height="100%" style="padding-right:10px;padding-left:10px;">'
+	lines = '<table class="emperor-tab-table">'
 	for(var i in values){
 		// construct a sanitized category name for all HTML elements
 		idString = "r"+i+"c"+scalingByCategoryIndex;
@@ -626,7 +626,7 @@ function showByMenuChanged() {
 
 	// build the showby checkbox table in HTML; the padding to the right makes
 	// the slider fit great inside the table without ever showing scroll bars
-	var lines = '<form name="showbyform"><table id="show-by-table" height="100%" width="100%" style="padding-right:10px;padding-left:10px;">'
+	var lines = '<form name="showbyform"><table class="emperor-tab-table">'
 
 	for(var i in vals){
 		// tag each slider & percent label with the idString to avoid conflicts
@@ -760,13 +760,6 @@ function setKey(values, colors) {
 			catch(TypeError){}
 		}
 		keyHTML += "</table>";
-
-		// the new lines are added because there's no good way to have the
-		// contents of the tab use 100% of the available space, doing it this
-		// way we add some extra space that allows the contents to be displayed
-		// Note that we have to add this much space because the key tab has a
-		// filter text box that occupies a lot of space
-		keyHTML += "<br><br><br><br><br><br>";
 
 		document.getElementById("key").innerHTML = keyHTML;
 
@@ -2320,14 +2313,14 @@ $(document).ready(function() {
 	function drawMenuAxesDisplayed() {
 		if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
 			!jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
-			text = '<table width="100%%">';
+			text = '<table class="emperor-tab-table">';
 			text += '<tr><td><font color="red">This is disabled for custom axes, biplots, vectors, and jackknifed</font></td></tr>';
 			text += '</table>';
 			document.getElementById("axeslist").innerHTML = text;
 			return;
 		}
 
-		text = '<table border="0" width="80%">';
+		text = '<table class="emperor-tab-table">';
 
 		// Adding 1st axis
 		text += '<tr>'
