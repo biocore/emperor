@@ -398,19 +398,26 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
     """
     optional_strings = []
 
-    # the order of these statements matter, see _EMPEROR_FOOTER_HTML_STRING
     # we use python's built-in ternary operator to add or not a string
-    optional_strings.append(_BIPLOT_SPHERES_COLOR_SELECTOR if has_biplots else
-        '')
-    optional_strings.append(_BIPLOT_VISIBILITY_SELECTOR if has_biplots else '')
-    optional_strings.append(_TAXA_LABELS_SELECTOR if has_biplots else '')
-    optional_strings.append(_TAXA_LABELS_COLOR_SELECTOR if has_biplots else '')
-    optional_strings.append(_EDGES_COLOR_SELECTOR if has_edges else '')
-    optional_strings.append(_ELLIPSE_OPACITY_SLIDER if has_ellipses else '')
-    optional_strings.append(_VECTORS_OPACITY_SLIDER if has_vectors else '')
-    optional_strings.append(_EDGES_VISIBILITY_SELECTOR if has_edges else '')
+    # see _EMPEROR_FOOTER_HTML_STRING
+    format_dict = {'biplot_spheres_color_selector':
+                   _BIPLOT_SPHERES_COLOR_SELECTOR if has_biplots else '',
+                   'biplot_visibility_selector':
+                   _BIPLOT_VISIBILITY_SELECTOR if has_biplots else '',
+                   'taxa_labels_selector':
+                   _TAXA_LABELS_SELECTOR if has_biplots else '',
+                   'taxa_labels_color_selector':
+                   _TAXA_LABELS_COLOR_SELECTOR if has_biplots else '',
+                   'edges_color_selector':
+                   _EDGES_COLOR_SELECTOR if has_edges else '',
+                   'ellipse_opacity_slider':
+                   _ELLIPSE_OPACITY_SLIDER if has_ellipses else '',
+                   'vectors_opacity_slider':
+                   _VECTORS_OPACITY_SLIDER if has_vectors else '',
+                   'edges_visibility_selector':
+                   _EDGES_VISIBILITY_SELECTOR if has_edges else ''}
 
-    return _EMPEROR_FOOTER_HTML_STRING % tuple(optional_strings)
+    return _EMPEROR_FOOTER_HTML_STRING.format(**format_dict)
 
 def format_emperor_autograph(metadata_fp, coords_fp, language='HTML'):
     """Create a signature with some meta-data of the Emperor package
@@ -608,14 +615,14 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>%s
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>{biplot_spheres_color_selector}
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby" class="emperor-tab-div">%s
+        <div id="showby" class="emperor-tab-div">{biplot_visibility_selector}
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
@@ -674,14 +681,14 @@ document.getElementById("logotable").style.display = 'none';
             <div id="labels-top">
                 <form name="plotoptions">
                     <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
-                </form>%s
+                </form>{taxa_labels_selector}
                 <br>
                 <label for="labelopacity" class="text">Label Opacity</label>
                 <label id="labelopacity" class="slidervalue"></label>
                 <div id="lopacityslider" class="slider-range-max"></div>
                 <div id="label-color-holder clearfix">
                     <table class="emperor-tab-table">
-                        <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>%s
+                        <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>{taxa_labels_color_selector}
                         <br><br>
                 </table></div>
             </div>
@@ -701,9 +708,9 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
-                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>%s
+                <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>{edges_color_selector}
                 <tr><td colspan="2">
-                        <div id="pcoaviewoptions" class="">%s%s%s
+                        <div id="pcoaviewoptions" class="">{ellipse_opacity_slider}{vectors_opacity_slider}{edges_visibility_selector}
                             <form name="settingsoptionscolor">
                             </form>
                             <div id="pcoaoptions" class="">
