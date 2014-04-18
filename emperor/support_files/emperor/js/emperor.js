@@ -554,7 +554,7 @@ function scalingByMenuChanged(){
 	values = _splitAndSortNumericAndAlpha(dedupe(values));
 
 	// the padding accounts for the slider handle that can move all to the left or right
-	lines = '<table width="100%" height="100%" style="padding-right:10px;padding-left:10px;">'
+	lines = '<table class="emperor-tab-table-with-sliders">'
 	for(var i in values){
 		// construct a sanitized category name for all HTML elements
 		idString = "r"+i+"c"+scalingByCategoryIndex;
@@ -630,7 +630,7 @@ function showByMenuChanged() {
 
 	// build the showby checkbox table in HTML; the padding to the right makes
 	// the slider fit great inside the table without ever showing scroll bars
-	var lines = '<form name="showbyform"><table id="show-by-table" height="100%" width="100%" style="padding-right:10px;padding-left:10px;">'
+	var lines = '<form name="showbyform"><table id="show-by-table" class="emperor-tab-table-with-sliders">'
 
 	for(var i in vals){
 		// tag each slider & percent label with the idString to avoid conflicts
@@ -765,13 +765,6 @@ function setKey(values, colors) {
 		}
 		keyHTML += "</table>";
 
-		// the new lines are added because there's no good way to have the
-		// contents of the tab use 100% of the available space, doing it this
-		// way we add some extra space that allows the contents to be displayed
-		// Note that we have to add this much space because the key tab has a
-		// filter text box that occupies a lot of space
-		keyHTML += "<br><br><br><br><br><br>";
-
 		document.getElementById("key").innerHTML = keyHTML;
 
 		for(var i in g_plotIds){
@@ -792,7 +785,7 @@ function toggleFinder(div, divName) {
 		$('.colorbox').css('border','1px solid black');
 		div.css('border','1px solid white');
 		$('#finder').css('opacity',1);
-		var coords = toScreenXY(g_plotSpheres[divName].position, g_sceneCamera, $('#main_plot'));
+		var coords = toScreenXY(g_plotSpheres[divName].position, g_sceneCamera, $('#main-plot'));
 		$('#finder').css('left',coords['x']-15);
 		$('#finder').css('top',coords['y']-5);
 		g_foundId = divName;
@@ -857,7 +850,7 @@ function colorChangedForEdges(color, index){
 /*This function is called when a new value is selected in the label menu*/
 function labelMenuChanged() {
 	if(document.getElementById('labelcombo').selectedIndex == 0){
-		document.getElementById("labellist").innerHTML = "";
+		document.getElementById("label-list").innerHTML = "";
 		return;
 	}
 
@@ -892,7 +885,7 @@ function labelMenuChanged() {
 	}
 
 	lines += "</table></form>";
-	document.getElementById("labellist").innerHTML = lines;
+	document.getElementById("label-list").innerHTML = lines;
 
 	for(var i in vals){
 		// each field is identified by the value it has in the deduplicated
@@ -1187,7 +1180,7 @@ function animationSpeedChanged(ui){
 
 /*Setup the interface elements required for the sidebar of the main interface*/
 function setJqueryUi() {
-	$("#menutabs").tabs();
+	$("#emperor-menu-tabs").tabs();
 	$("#plottype").buttonset();
 	$("input[name='plottype']").change(togglePlots);
 	
@@ -2001,7 +1994,7 @@ function togglePlots() {
 	// set some interface changes for 3D visualizations
 	if(document.getElementById('pcoa').checked)
 	{
-		document.getElementById('pcoaPlotWrapper').className = 'plotWrapper';
+		document.getElementById('pcoaPlotWrapper').className = 'emperor-plot-wrapper';
 		document.getElementById('pcoaoptions').className = '';
 		document.getElementById('pcoaviewoptions').className = '';
 		document.getElementById('pcoaaxes').className = '';
@@ -2009,10 +2002,10 @@ function togglePlots() {
 		document.getElementById('paralleloptions').className += ' invisible'
 
 		// key menu is the default
-		$("#menutabs").tabs('select',0);
+		$("#emperor-menu-tabs").tabs('select',0);
 
 		// make all tabs usable
-		$("#menutabs").tabs({disabled: []});
+		$("#emperor-menu-tabs").tabs({disabled: []});
 		
 		// adding ctrl-p
 		g_screenshotBind = THREEx.Screenshot.bindKey(g_mainRenderer, {charCode: 16});
@@ -2027,12 +2020,12 @@ function togglePlots() {
 		document.getElementById('pcoaaxes').className += ' invisible'
 
 		// switch back to the key menu
-		$("#menutabs").tabs('select',0);
+		$("#emperor-menu-tabs").tabs('select',0);
 
 		// make the visibility, scaling, labels and axes tabs un-usable
 		// they have no contextualized meaning in when lookin at parallel plots
 		// 0 = Key, 1 = Colors, 2 = Visibility, 3 = Scaling, 4 = Labels, 5 = Axes, 6 = View, 7 = Options
-		$("#menutabs").tabs({disabled: [2,3,4,5,7]});
+		$("#emperor-menu-tabs").tabs({disabled: [2,3,4,5,7]});
 		
 		// removing the ctrl-p 
         g_screenshotBind.unbind();
@@ -2077,7 +2070,7 @@ function aspectReset() {
 
 // Makes separator draggable and implements drag function
 function separator_draggable() {
-	$('.separator').draggable({
+	$('.emperor-separator').draggable({
 		axis: 'x',
 		containment: [containmentLeft, 0, containmentRight, $(window).height()],
 		helper: 'clone',
@@ -2097,14 +2090,14 @@ function separator_draggable() {
          
 // Resizes plot and menu widths            
 function resetDivSizes(width_left) {
-	$('#plotToggle').width(width_left);
+	$('#emperor-plot-toggle').width(width_left);
 	$('#parallelPlotWrapper').width(width_left);
 	$('#pcoaPlotWrapper').width(width_left);
 	if(document.getElementById('parallel').checked) {
 		togglePlots();
 	}
-	var width_right = $(window).width() - width_left - $('.separator').width()-1;                       
-	$('#menu').width(width_right);
+	var width_right = $(window).width() - width_left - $('.emperor-separator').width()-1;
+	$('#emperor-menu').width(width_right);
 	g_separator_left = width_left/$(window).width();               
 	if (g_separator_left > 1) {
 		g_separator_left = 1;
@@ -2115,15 +2108,15 @@ function resetDivSizes(width_left) {
 function buildAxisLabels() {
 	//build axis labels
 	var axislabelhtml = "";
-	var xcoords = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
+	var xcoords = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main-plot'));
 	axislabelhtml += "<label id=\"pc1_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(xcoords['x'])+"px; top:"+parseInt(xcoords['y'])+"px;\">";
 	axislabelhtml += g_pc1Label;
 	axislabelhtml += "</label>";
-	var ycoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue),g_sceneCamera,$('#main_plot'));
+	var ycoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue),g_sceneCamera,$('#main-plot'));
 	axislabelhtml += "<label id=\"pc2_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(ycoords['x'])+"px; top:"+parseInt(ycoords['y'])+"px;\">";
 	axislabelhtml += g_pc2Label;
 	axislabelhtml += "</label>";
-	var zcoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue),g_sceneCamera,$('#main_plot'));
+	var zcoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue),g_sceneCamera,$('#main-plot'));
 	axislabelhtml += "<label id=\"pc3_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(zcoords['x'])+"px; top:"+parseInt(zcoords['y'])+"px;\">";
 	axislabelhtml += g_pc3Label;
 	axislabelhtml += "</label>";
@@ -2134,11 +2127,11 @@ function buildAxisLabels() {
 function overlay() {
 	overlay = document.getElementById("overlay");
 	overlay.style.visibility = (overlay.style.visibility == "visible") ? "hidden" : "visible";
-	parallel = document.getElementById("menu");
+	parallel = document.getElementById("emperor-menu");
 	parallel.style.visibility = (parallel.style.visibility == "invisible") ? "visible" : "hidden";
-	separator = document.getElementById("separator");
+	separator = document.getElementById("emperor-separator");
 	separator.style.visibility = (separator.style.visibility == "invisible") ? "visible" : "hidden";
-	plotToggle = document.getElementById("plotToggle");
+	plotToggle = document.getElementById("emperor-plot-toggle");
 	plotToggle.style.visibility = (plotToggle.style.visibility == "invisible") ? "visible" : "hidden";
 }
 
@@ -2177,7 +2170,7 @@ $(document).ready(function() {
 	if ( ! Detector.webgl ) {
 		overlay();
 	}
-	var main_plot = $('#main_plot');
+	var main_plot = $('#main-plot');
 	var particles, geometry, parameters, i, h, color;
 	var mouseX = 0, mouseY = 0;
 
@@ -2214,8 +2207,8 @@ $(document).ready(function() {
 		g_sceneCamera = new THREE.PerspectiveCamera(view_angle, winAspect, view_near, view_far);
 		g_sceneCamera.position.set(0, 0, 0);
 
-		$('#main_plot canvas').attr('width',document.getElementById('pcoaPlotWrapper').offsetWidth);
-		$('#main_plot canvas').attr('height',document.getElementById('pcoaPlotWrapper').offsetHeight);
+		$('#main-plot canvas').attr('width',document.getElementById('pcoaPlotWrapper').offsetWidth);
+		$('#main-plot canvas').attr('height',document.getElementById('pcoaPlotWrapper').offsetHeight);
 
 		g_mainScene = new THREE.Scene();
 		g_mainScene.add(g_sceneCamera);
@@ -2294,7 +2287,7 @@ $(document).ready(function() {
 		g_sceneCamera.add(g_sceneLight);
 
 		// Adding camera
-		g_sceneControl = new THREE.OrbitControls(g_sceneCamera, document.getElementById('main_plot'));
+		g_sceneControl = new THREE.OrbitControls(g_sceneCamera, document.getElementById('main-plot'));
 		g_sceneControl.rotateSpeed = 1.0;
 		g_sceneControl.zoomSpeed = 1.2;
 		g_sceneControl.panSpeed = 0.8;
@@ -2325,7 +2318,7 @@ $(document).ready(function() {
 			var sid = g_plotIds[i];
 			var divid = sid.replace(/\./g,'');
 			mesh = g_plotSpheres[sid];
-			var coords = toScreenXY(mesh.position,g_sceneCamera,$('#main_plot'));
+			var coords = toScreenXY(mesh.position,g_sceneCamera,$('#main-plot'));
 			labelshtml += "<label id=\""+divid+"_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
 			labelshtml += sid;
 			labelshtml += "</label>";
@@ -2337,7 +2330,7 @@ $(document).ready(function() {
 		for(var key in g_taxaPositions){
 
 			// get the coordinate of this taxa sphere
-			var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main_plot'));
+			var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
 
 			// labels are identified by the key they have in g_taxaPositions
 			labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
@@ -2357,14 +2350,14 @@ $(document).ready(function() {
 	function drawMenuAxesDisplayed() {
 		if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
 			!jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
-			text = '<table width="100%%">';
+			text = '<table class="emperor-tab-table">';
 			text += '<tr><td><font color="red">This is disabled for custom axes, biplots, vectors, and jackknifed</font></td></tr>';
 			text += '</table>';
 			document.getElementById("axeslist").innerHTML = text;
 			return;
 		}
 
-		text = '<table border="0" width="80%">';
+		text = '<table class="emperor-tab-table">';
 
 		// Adding 1st axis
 		text += '<tr>'
@@ -2429,13 +2422,13 @@ $(document).ready(function() {
 		var labelCoordinates;
 
 		// reposition the labels for the axes in the 3D plot
-		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue), g_sceneCamera,$('#main_plot'));
+		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue), g_sceneCamera,$('#main-plot'));
 		$("#pc1_label").css('left', labelCoordinates['x'])
 		$("#pc1_label").css('top', labelCoordinates['y'])
-		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue), g_sceneCamera,$('#main_plot'));
+		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue), g_sceneCamera,$('#main-plot'));
 		$("#pc2_label").css('left', labelCoordinates['x'])
 		$("#pc2_label").css('top', labelCoordinates['y'])
-		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue), g_sceneCamera,$('#main_plot'));
+		labelCoordinates = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue), g_sceneCamera,$('#main-plot'));
 		$("#pc3_label").css('left', labelCoordinates['x'])
 		$("#pc3_label").css('top', labelCoordinates['y'])
 
@@ -2445,7 +2438,7 @@ $(document).ready(function() {
 			for(var i in g_plotIds) {
 				var sid = g_plotIds[i];
 				mesh = g_plotSpheres[sid];
-				var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main_plot'));
+				var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main-plot'));
 				var divid = sid.replace(/\./g,'');
 				$('#'+divid+"_label").css('left',coords['x']);
 				$('#'+divid+"_label").css('top',coords['y']);
@@ -2458,7 +2451,7 @@ $(document).ready(function() {
 				for(var key in g_taxaPositions) {
 					// retrieve the position of the taxa on screen
 					var coords = toScreenXY(g_plotTaxa[key].position,
-						g_sceneCamera, $('#main_plot'));
+						g_sceneCamera, $('#main-plot'));
 
 					// add the label at the appropriate position
 					$('#'+key+"_taxalabel").css('left',coords['x']);
@@ -2467,7 +2460,7 @@ $(document).ready(function() {
 			}
 		}
 		if(g_foundId) {
-			var coords = toScreenXY(g_plotSpheres[g_foundId].position, g_sceneCamera, $('#main_plot'));
+			var coords = toScreenXY(g_plotSpheres[g_foundId].position, g_sceneCamera, $('#main-plot'));
 			$('#finder').css('left',coords['x']-15);
 			$('#finder').css('top',coords['y']-5);
 		}

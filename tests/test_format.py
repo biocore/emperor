@@ -559,7 +559,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="overlay">
     <div>
-    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="small-logo"/>
         <h1>WebGL is not enabled!</h1>
         <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
         <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
@@ -571,7 +571,7 @@ document.getElementById("logotable").style.display = 'none';
     </div>
 </div>
 
-<div id="plotToggle">
+<div id="emperor-plot-toggle">
     <form>
       <div id="plottype">
         <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
@@ -579,7 +579,7 @@ document.getElementById("logotable").style.display = 'none';
       </div>
     </form>
 </div>
-<div id="pcoaPlotWrapper" class="plotWrapper">
+<div id="pcoaPlotWrapper" class="emperor-plot-wrapper">
     <label id="pointCount" class="ontop">
     </label>
 
@@ -592,20 +592,20 @@ document.getElementById("logotable").style.display = 'none';
     <div id="taxalabels" class="unselectable">
     </div>
 
-    <div id="axislabels" class="axislabels">
+    <div id="axislabels" class="axis-labels">
     </div>
 
-    <div id="main_plot">
+    <div id="main-plot">
     </div>
 </div>
 
-<div id="parallelPlotWrapper" class="plotWrapper">
+<div id="parallelPlotWrapper" class="emperor-plot-wrapper">
 </div>
 
-<div class="separator" ondblclick="separatorDoubleClick()"></div>
+<div id="emperor-separator" class="emperor-separator" ondblclick="separatorDoubleClick()"></div>
 
-<div id="menu">
-    <div id="menutabs">
+<div id="emperor-menu">
+    <div id="emperor-menu-tabs">
         <ul>
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
@@ -617,15 +617,14 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
-        <div id="keytab">
+        <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
-            <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
+                <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
             </form>
             <div id="key">
             </div>
         </div>
-        <div id="colorby">
-            <br>
+        <div id="colorby" class="emperor-tab-div">
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
@@ -633,8 +632,8 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby" align="center">
-            <table width="100%">
+        <div id="showby" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -643,7 +642,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="showbylist" style="height:100%;width:100%">
+                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
                         </div>
                     </td>
                 </tr>
@@ -659,13 +658,12 @@ document.getElementById("logotable").style.display = 'none';
                 <tr>
                     <td align="center">
                         <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
-                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="scalingby" align="center">
-            <table width="100%">
+        <div id="scalingby" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="scalingbycombo" onchange="scalingByMenuChanged()">
@@ -674,7 +672,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
+                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
                         </div>
                     </td>
                 </tr>
@@ -685,38 +683,36 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
-                        <br><br>
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="labelby">
-        <div id="labelsTop">
-            <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
-            </form>
-            <br>
-            <label for="labelopacity" class="text">Label Opacity</label>
-            <label id="labelopacity" class="slidervalue"></label>
-            <div id="lopacityslider" class="slider-range-max"></div>
-            <div id="labelColorHolder clearfix">
-            <table>
-                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
-                <br><br>
-            </table></div>
-        </div>
+        <div id="labelby" class="emperor-tab-div">
+            <div id="labels-top">
+                <form name="plotoptions">
+                    <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+                </form>
+                <br>
+                <label for="labelopacity" class="text">Label Opacity</label>
+                <label id="labelopacity" class="slidervalue"></label>
+                <div id="lopacityslider" class="slider-range-max"></div>
+                <div id="label-color-holder clearfix">
+                    <table class="emperor-tab-table">
+                        <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+                        <br><br>
+                </table></div>
+            </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
-            <div class="list" id="labellist">
+            <div class="list" id="label-list">
             </div>
         </div>
-        <div id="axes">
+        <div id="axes" class="emperor-tab-div">
             <div id="pcoaaxes">
                 <div class="list" id="axeslist">
                 </div>
             </div>
-            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%" align="center">
@@ -760,34 +756,38 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="view">
             <table>
+        <div id="options" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
-            </table>
-            <div id="pcoaviewoptions" class="">
+                <tr><td colspan="2">
+                        <div id="pcoaviewoptions" class="">
             <br>
             <label for="ellipseopacity" class="text">Ellipse Opacity</label>
             <label id="ellipseopacity" class="slidervalue"></label>
             <div id="eopacityslider" class="slider-range-max"></div>
-                <form name="settingsoptionscolor">
-                </form>
-                <div id="pcoaoptions" class="">
-                    <form name="settingsoptions">
-                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-                    </form>
-                </div>
-                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br><br>
-                <hr class='section-break'>
-                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
-                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-                <br><br>For a PNG, simply press 'ctrl+p'.
-                <div id="paralleloptions" class="">
-                </div>
-            </div>
-            <br>
+                            <form name="settingsoptionscolor">
+                            </form>
+                            <div id="pcoaoptions" class="">
+                                <form name="settingsoptions">
+                                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                                </form>
+                            </div>
+                            <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                            <br><br>
+                            <hr class='section-break'>
+                            <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                            <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                            <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                            <br><br>For a PNG, simply press 'ctrl+p'.
+                            <div id="paralleloptions" class="">
+                            </div>
+                        </div>
+                        <br>
+                </td></tr>
+            </table>
         </div>
     </div>  
 </div>
@@ -807,7 +807,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="overlay">
     <div>
-    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="small-logo"/>
         <h1>WebGL is not enabled!</h1>
         <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
         <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
@@ -819,7 +819,7 @@ document.getElementById("logotable").style.display = 'none';
     </div>
 </div>
 
-<div id="plotToggle">
+<div id="emperor-plot-toggle">
     <form>
       <div id="plottype">
         <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
@@ -827,7 +827,7 @@ document.getElementById("logotable").style.display = 'none';
       </div>
     </form>
 </div>
-<div id="pcoaPlotWrapper" class="plotWrapper">
+<div id="pcoaPlotWrapper" class="emperor-plot-wrapper">
     <label id="pointCount" class="ontop">
     </label>
 
@@ -840,20 +840,20 @@ document.getElementById("logotable").style.display = 'none';
     <div id="taxalabels" class="unselectable">
     </div>
 
-    <div id="axislabels" class="axislabels">
+    <div id="axislabels" class="axis-labels">
     </div>
 
-    <div id="main_plot">
+    <div id="main-plot">
     </div>
 </div>
 
-<div id="parallelPlotWrapper" class="plotWrapper">
+<div id="parallelPlotWrapper" class="emperor-plot-wrapper">
 </div>
 
-<div class="separator" ondblclick="separatorDoubleClick()"></div>
+<div id="emperor-separator" class="emperor-separator" ondblclick="separatorDoubleClick()"></div>
 
-<div id="menu">
-    <div id="menutabs">
+<div id="emperor-menu">
+    <div id="emperor-menu-tabs">
         <ul>
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
@@ -865,34 +865,33 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
-        <div id="keytab">
+        <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
-            <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
+                <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
             </form>
             <div id="key">
             </div>
         </div>
-        <div id="colorby">
-            <br>
+        <div id="colorby" class="emperor-tab-div">
+            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br>
             <table>
                 <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
             </table>
             <br>
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
             </select>
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby" align="center">
+        <div id="showby" class="emperor-tab-div">
             <br>
             <form name="biplotsvisibility">
             <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
             </form>
             <br>
-            <table width="100%">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -901,7 +900,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="showbylist" style="height:100%;width:100%">
+                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
                         </div>
                     </td>
                 </tr>
@@ -917,13 +916,12 @@ document.getElementById("logotable").style.display = 'none';
                 <tr>
                     <td align="center">
                         <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
-                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="scalingby" align="center">
-            <table width="100%">
+        <div id="scalingby" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="scalingbycombo" onchange="scalingByMenuChanged()">
@@ -932,7 +930,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
+                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
                         </div>
                     </td>
                 </tr>
@@ -943,43 +941,41 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
-                        <br><br>
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="labelby">
-        <div id="labelsTop">
-            <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
-            </form>
+        <div id="labelby" class="emperor-tab-div">
+            <div id="labels-top">
+                <form name="plotoptions">
+                    <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+                </form>
             <form name="biplotoptions">
             <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
             </form>
-            <br>
-            <label for="labelopacity" class="text">Label Opacity</label>
-            <label id="labelopacity" class="slidervalue"></label>
-            <div id="lopacityslider" class="slider-range-max"></div>
-            <div id="labelColorHolder clearfix">
-            <table>
-                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+                <br>
+                <label for="labelopacity" class="text">Label Opacity</label>
+                <label id="labelopacity" class="slidervalue"></label>
+                <div id="lopacityslider" class="slider-range-max"></div>
+                <div id="label-color-holder clearfix">
+                    <table class="emperor-tab-table">
+                        <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
             <tr><td><div id="taxalabelcolor" class="colorbox"></div></td><td><label>Taxa Label Color</label></td></tr>
 
-                <br><br>
-            </table></div>
-        </div>
+                        <br><br>
+                </table></div>
+            </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
-            <div class="list" id="labellist">
+            <div class="list" id="label-list">
             </div>
         </div>
-        <div id="axes">
+        <div id="axes" class="emperor-tab-div">
             <div id="pcoaaxes">
                 <div class="list" id="axeslist">
                 </div>
             </div>
-            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%" align="center">
@@ -1023,30 +1019,34 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="view">
             <table>
+        <div id="options" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td colspan="2">
+                        <div id="pcoaviewoptions" class="">
+                            <form name="settingsoptionscolor">
+                            </form>
+                            <div id="pcoaoptions" class="">
+                                <form name="settingsoptions">
+                                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                                </form>
+                            </div>
+                            <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                            <br><br>
+                            <hr class='section-break'>
+                            <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                            <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                            <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                            <br><br>For a PNG, simply press 'ctrl+p'.
+                            <div id="paralleloptions" class="">
+                            </div>
+                        </div>
+                        <br>
+                </td></tr>
             </table>
-            <div id="pcoaviewoptions" class="">
-                <form name="settingsoptionscolor">
-                </form>
-                <div id="pcoaoptions" class="">
-                    <form name="settingsoptions">
-                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-                    </form>
-                </div>
-                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br><br>
-                <hr class='section-break'>
-                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
-                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-                <br><br>For a PNG, simply press 'ctrl+p'.
-                <div id="paralleloptions" class="">
-                </div>
-            </div>
-            <br>
         </div>
     </div>  
 </div>
@@ -1066,7 +1066,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="overlay">
     <div>
-    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="small-logo"/>
         <h1>WebGL is not enabled!</h1>
         <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
         <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
@@ -1078,7 +1078,7 @@ document.getElementById("logotable").style.display = 'none';
     </div>
 </div>
 
-<div id="plotToggle">
+<div id="emperor-plot-toggle">
     <form>
       <div id="plottype">
         <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
@@ -1086,7 +1086,7 @@ document.getElementById("logotable").style.display = 'none';
       </div>
     </form>
 </div>
-<div id="pcoaPlotWrapper" class="plotWrapper">
+<div id="pcoaPlotWrapper" class="emperor-plot-wrapper">
     <label id="pointCount" class="ontop">
     </label>
 
@@ -1099,20 +1099,20 @@ document.getElementById("logotable").style.display = 'none';
     <div id="taxalabels" class="unselectable">
     </div>
 
-    <div id="axislabels" class="axislabels">
+    <div id="axislabels" class="axis-labels">
     </div>
 
-    <div id="main_plot">
+    <div id="main-plot">
     </div>
 </div>
 
-<div id="parallelPlotWrapper" class="plotWrapper">
+<div id="parallelPlotWrapper" class="emperor-plot-wrapper">
 </div>
 
-<div class="separator" ondblclick="separatorDoubleClick()"></div>
+<div id="emperor-separator" class="emperor-separator" ondblclick="separatorDoubleClick()"></div>
 
-<div id="menu">
-    <div id="menutabs">
+<div id="emperor-menu">
+    <div id="emperor-menu-tabs">
         <ul>
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
@@ -1124,15 +1124,14 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
-        <div id="keytab">
+        <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
-            <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
+                <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
             </form>
             <div id="key">
             </div>
         </div>
-        <div id="colorby">
-            <br>
+        <div id="colorby" class="emperor-tab-div">
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
@@ -1140,8 +1139,8 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby" align="center">
-            <table width="100%">
+        <div id="showby" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -1150,7 +1149,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="showbylist" style="height:100%;width:100%">
+                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
                         </div>
                     </td>
                 </tr>
@@ -1166,13 +1165,12 @@ document.getElementById("logotable").style.display = 'none';
                 <tr>
                     <td align="center">
                         <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
-                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="scalingby" align="center">
-            <table width="100%">
+        <div id="scalingby" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="scalingbycombo" onchange="scalingByMenuChanged()">
@@ -1181,7 +1179,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
+                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
                         </div>
                     </td>
                 </tr>
@@ -1192,38 +1190,36 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
-                        <br><br>
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="labelby">
-        <div id="labelsTop">
-            <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
-            </form>
-            <br>
-            <label for="labelopacity" class="text">Label Opacity</label>
-            <label id="labelopacity" class="slidervalue"></label>
-            <div id="lopacityslider" class="slider-range-max"></div>
-            <div id="labelColorHolder clearfix">
-            <table>
-                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
-                <br><br>
-            </table></div>
-        </div>
+        <div id="labelby" class="emperor-tab-div">
+            <div id="labels-top">
+                <form name="plotoptions">
+                    <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+                </form>
+                <br>
+                <label for="labelopacity" class="text">Label Opacity</label>
+                <label id="labelopacity" class="slidervalue"></label>
+                <div id="lopacityslider" class="slider-range-max"></div>
+                <div id="label-color-holder clearfix">
+                    <table class="emperor-tab-table">
+                        <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+                        <br><br>
+                </table></div>
+            </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
-            <div class="list" id="labellist">
+            <div class="list" id="label-list">
             </div>
         </div>
-        <div id="axes">
+        <div id="axes" class="emperor-tab-div">
             <div id="pcoaaxes">
                 <div class="list" id="axeslist">
                 </div>
             </div>
-            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%" align="center">
@@ -1267,30 +1263,34 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="view">
             <table>
+        <div id="options" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
+                <tr><td colspan="2">
+                        <div id="pcoaviewoptions" class="">
+                            <form name="settingsoptionscolor">
+                            </form>
+                            <div id="pcoaoptions" class="">
+                                <form name="settingsoptions">
+                                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                                </form>
+                            </div>
+                            <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                            <br><br>
+                            <hr class='section-break'>
+                            <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                            <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                            <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                            <br><br>For a PNG, simply press 'ctrl+p'.
+                            <div id="paralleloptions" class="">
+                            </div>
+                        </div>
+                        <br>
+                </td></tr>
             </table>
-            <div id="pcoaviewoptions" class="">
-                <form name="settingsoptionscolor">
-                </form>
-                <div id="pcoaoptions" class="">
-                    <form name="settingsoptions">
-                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-                    </form>
-                </div>
-                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br><br>
-                <hr class='section-break'>
-                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
-                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-                <br><br>For a PNG, simply press 'ctrl+p'.
-                <div id="paralleloptions" class="">
-                </div>
-            </div>
-            <br>
         </div>
     </div>  
 </div>
@@ -1309,7 +1309,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="overlay">
     <div>
-    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="small-logo"/>
         <h1>WebGL is not enabled!</h1>
         <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
         <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
@@ -1321,7 +1321,7 @@ document.getElementById("logotable").style.display = 'none';
     </div>
 </div>
 
-<div id="plotToggle">
+<div id="emperor-plot-toggle">
     <form>
       <div id="plottype">
         <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
@@ -1329,7 +1329,7 @@ document.getElementById("logotable").style.display = 'none';
       </div>
     </form>
 </div>
-<div id="pcoaPlotWrapper" class="plotWrapper">
+<div id="pcoaPlotWrapper" class="emperor-plot-wrapper">
     <label id="pointCount" class="ontop">
     </label>
 
@@ -1342,20 +1342,20 @@ document.getElementById("logotable").style.display = 'none';
     <div id="taxalabels" class="unselectable">
     </div>
 
-    <div id="axislabels" class="axislabels">
+    <div id="axislabels" class="axis-labels">
     </div>
 
-    <div id="main_plot">
+    <div id="main-plot">
     </div>
 </div>
 
-<div id="parallelPlotWrapper" class="plotWrapper">
+<div id="parallelPlotWrapper" class="emperor-plot-wrapper">
 </div>
 
-<div class="separator" ondblclick="separatorDoubleClick()"></div>
+<div id="emperor-separator" class="emperor-separator" ondblclick="separatorDoubleClick()"></div>
 
-<div id="menu">
-    <div id="menutabs">
+<div id="emperor-menu">
+    <div id="emperor-menu-tabs">
         <ul>
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
@@ -1367,15 +1367,14 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
-        <div id="keytab">
+        <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
-            <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
+                <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
             </form>
             <div id="key">
             </div>
         </div>
-        <div id="colorby">
-            <br>
+        <div id="colorby" class="emperor-tab-div">
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
@@ -1383,8 +1382,8 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby" align="center">
-            <table width="100%">
+        <div id="showby" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -1393,7 +1392,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="showbylist" style="height:100%;width:100%">
+                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
                         </div>
                     </td>
                 </tr>
@@ -1409,13 +1408,12 @@ document.getElementById("logotable").style.display = 'none';
                 <tr>
                     <td align="center">
                         <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
-                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="scalingby" align="center">
-            <table width="100%">
+        <div id="scalingby" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="scalingbycombo" onchange="scalingByMenuChanged()">
@@ -1424,7 +1422,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
+                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
                         </div>
                     </td>
                 </tr>
@@ -1435,38 +1433,36 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
-                        <br><br>
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="labelby">
-        <div id="labelsTop">
-            <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
-            </form>
-            <br>
-            <label for="labelopacity" class="text">Label Opacity</label>
-            <label id="labelopacity" class="slidervalue"></label>
-            <div id="lopacityslider" class="slider-range-max"></div>
-            <div id="labelColorHolder clearfix">
-            <table>
-                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
-                <br><br>
-            </table></div>
-        </div>
+        <div id="labelby" class="emperor-tab-div">
+            <div id="labels-top">
+                <form name="plotoptions">
+                    <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+                </form>
+                <br>
+                <label for="labelopacity" class="text">Label Opacity</label>
+                <label id="labelopacity" class="slidervalue"></label>
+                <div id="lopacityslider" class="slider-range-max"></div>
+                <div id="label-color-holder clearfix">
+                    <table class="emperor-tab-table">
+                        <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+                        <br><br>
+                </table></div>
+            </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
-            <div class="list" id="labellist">
+            <div class="list" id="label-list">
             </div>
         </div>
-        <div id="axes">
+        <div id="axes" class="emperor-tab-div">
             <div id="pcoaaxes">
                 <div class="list" id="axeslist">
                 </div>
             </div>
-            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%" align="center">
@@ -1510,34 +1506,38 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="view">
             <table>
+        <div id="options" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
-            </table>
-            <div id="pcoaviewoptions" class="">
+                <tr><td colspan="2">
+                        <div id="pcoaviewoptions" class="">
             <br>
             <label for="vectorsopacity" class="text">Vectors Opacity</label>
             <label id="vectorsopacity" class="slidervalue"></label>
             <div id="vopacityslider" class="slider-range-max"></div>
-                <form name="settingsoptionscolor">
-                </form>
-                <div id="pcoaoptions" class="">
-                    <form name="settingsoptions">
-                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-                    </form>
-                </div>
-                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br><br>
-                <hr class='section-break'>
-                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
-                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-                <br><br>For a PNG, simply press 'ctrl+p'.
-                <div id="paralleloptions" class="">
-                </div>
-            </div>
-            <br>
+                            <form name="settingsoptionscolor">
+                            </form>
+                            <div id="pcoaoptions" class="">
+                                <form name="settingsoptions">
+                                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                                </form>
+                            </div>
+                            <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                            <br><br>
+                            <hr class='section-break'>
+                            <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                            <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                            <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                            <br><br>For a PNG, simply press 'ctrl+p'.
+                            <div id="paralleloptions" class="">
+                            </div>
+                        </div>
+                        <br>
+                </td></tr>
+            </table>
         </div>
     </div>  
 </div>
@@ -1556,7 +1556,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="overlay">
     <div>
-    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="smalllogo"/>
+    <img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="small-logo"/>
         <h1>WebGL is not enabled!</h1>
         <p>Emperor's visualization framework is WebGL based, it seems that your system doesn't have this resource available. Here is what you can do:</p>
         <p id="explanation"><strong>Chrome:</strong> Type "chrome://flags/" into the address bar, then search for "Disable WebGL". Disable this option if you haven't already. <em>Note:</em> If you follow these steps and still don't see an image, go to "chrome://flags/" and then search for "Override software rendering list" and enable this option.</p>
@@ -1568,7 +1568,7 @@ document.getElementById("logotable").style.display = 'none';
     </div>
 </div>
 
-<div id="plotToggle">
+<div id="emperor-plot-toggle">
     <form>
       <div id="plottype">
         <input id="pcoa" type="radio" id="pcoa" name="plottype" checked="checked" /><label for="pcoa">PCoA</label>
@@ -1576,7 +1576,7 @@ document.getElementById("logotable").style.display = 'none';
       </div>
     </form>
 </div>
-<div id="pcoaPlotWrapper" class="plotWrapper">
+<div id="pcoaPlotWrapper" class="emperor-plot-wrapper">
     <label id="pointCount" class="ontop">
     </label>
 
@@ -1589,20 +1589,20 @@ document.getElementById("logotable").style.display = 'none';
     <div id="taxalabels" class="unselectable">
     </div>
 
-    <div id="axislabels" class="axislabels">
+    <div id="axislabels" class="axis-labels">
     </div>
 
-    <div id="main_plot">
+    <div id="main-plot">
     </div>
 </div>
 
-<div id="parallelPlotWrapper" class="plotWrapper">
+<div id="parallelPlotWrapper" class="emperor-plot-wrapper">
 </div>
 
-<div class="separator" ondblclick="separatorDoubleClick()"></div>
+<div id="emperor-separator" class="emperor-separator" ondblclick="separatorDoubleClick()"></div>
 
-<div id="menu">
-    <div id="menutabs">
+<div id="emperor-menu">
+    <div id="emperor-menu-tabs">
         <ul>
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
@@ -1614,15 +1614,14 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#view">View</a></li>
             <li><a href="#settings">Options</a></li>
         </ul>
-        <div id="keytab">
+        <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
-            <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
+                <label>Filter  </label><input name="filterBox" id="searchBox" type="text" onkeyup="filterKey()"></input>
             </form>
             <div id="key">
             </div>
         </div>
-        <div id="colorby">
-            <br>
+        <div id="colorby" class="emperor-tab-div">
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
@@ -1630,8 +1629,8 @@ document.getElementById("logotable").style.display = 'none';
             <div class="list" id="colorbylist">
             </div>
         </div>
-        <div id="showby" align="center">
-            <table width="100%">
+        <div id="showby" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="showbycombo" onchange="showByMenuChanged()">
@@ -1640,7 +1639,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="showbylist" style="height:100%;width:100%">
+                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
                         </div>
                     </td>
                 </tr>
@@ -1656,13 +1655,12 @@ document.getElementById("logotable").style.display = 'none';
                 <tr>
                     <td align="center">
                         <button id="toggle-visibility-selection-button" onClick="toggleVisibleCategories()">Invert Selected</button>
-                        <br><br><br><br>
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="scalingby" align="center">
-            <table width="100%">
+        <div id="scalingby" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
                         <select id="scalingbycombo" onchange="scalingByMenuChanged()">
@@ -1671,7 +1669,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
+                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
                         </div>
                     </td>
                 </tr>
@@ -1682,38 +1680,36 @@ document.getElementById("logotable").style.display = 'none';
                         <label for="sphereradius" class="text">Global Sphere Scale</label>
                         <label id="sphereradius" class="slidervalue"></label>
                         <div id="sradiusslider" class="slider-range-max"></div>
-                        <br><br>
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="labelby">
-        <div id="labelsTop">
-            <form name="plotoptions">
-            <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
-            </form>
-            <br>
-            <label for="labelopacity" class="text">Label Opacity</label>
-            <label id="labelopacity" class="slidervalue"></label>
-            <div id="lopacityslider" class="slider-range-max"></div>
-            <div id="labelColorHolder clearfix">
-            <table>
-                <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
-                <br><br>
-            </table></div>
-        </div>
+        <div id="labelby" class="emperor-tab-div">
+            <div id="labels-top">
+                <form name="plotoptions">
+                    <input type="checkbox" onClick="toggleLabels()">Samples Label Visibility</input>
+                </form>
+                <br>
+                <label for="labelopacity" class="text">Label Opacity</label>
+                <label id="labelopacity" class="slidervalue"></label>
+                <div id="lopacityslider" class="slider-range-max"></div>
+                <div id="label-color-holder clearfix">
+                    <table class="emperor-tab-table">
+                        <tr><td><div id="labelColor" class="colorbox"></div></td><td><label>Master Label Color</label></td></tr>
+                        <br><br>
+                </table></div>
+            </div>
             <br>
             <select id="labelcombo" onchange="labelMenuChanged()">
             </select>
-            <div class="list" id="labellist">
+            <div class="list" id="label-list">
             </div>
         </div>
-        <div id="axes">
+        <div id="axes" class="emperor-tab-div">
             <div id="pcoaaxes">
                 <div class="list" id="axeslist">
                 </div>
             </div>
-            <br><br><br>
         </div>
         <div id="animations">
             <table width="90%" align="center">
@@ -1757,38 +1753,42 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="view">
             <table>
+        <div id="options" class="emperor-tab-div">
+            <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
                 <tr><td><div id="axescolor" class="colorbox" name="axescolor"></div></td><td title="Axes Color Title">Axes Color</td></tr>
                 <tr><td><div id="rendererbackgroundcolor" class="colorbox" name="rendererbackgroundcolor"></div></td><td title="Background Color Title">Background Color</td></tr>
             <tr><td><div id="edgecolorselector_a" class="colorbox" name="edgecolorselector_a"></div></td><td title="edgecolor_a">Edge Color Selector A</td></tr>
             <tr><td><div id="edgecolorselector_b" class="colorbox" name="edgecolorselector_b"></div></td><td title="edgecolor_b">Edge Color Selector B</td></tr>
 
-            </table>
-            <div id="pcoaviewoptions" class="">
+                <tr><td colspan="2">
+                        <div id="pcoaviewoptions" class="">
             <br>
             <form name="edgesvisibility">
             <input type="checkbox" onClick="toggleEdgesVisibility()" checked>Edges Visibility</input>
             </form>
             <br>
-                <form name="settingsoptionscolor">
-                </form>
-                <div id="pcoaoptions" class="">
-                    <form name="settingsoptions">
-                        <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
-                    </form>
-                </div>
-                <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
-                <br><br>
-                <hr class='section-break'>
-                <br>Filename <small>(only letters, numbers, ., - and _)</small>:
-                <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
-                <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
-                <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
-                <br><br>For a PNG, simply press 'ctrl+p'.
-                <div id="paralleloptions" class="">
-                </div>
-            </div>
-            <br>
+                            <form name="settingsoptionscolor">
+                            </form>
+                            <div id="pcoaoptions" class="">
+                                <form name="settingsoptions">
+                                    <input type="checkbox" onchange="toggleScaleCoordinates(this)" id="scale_checkbox" name="scale_checkbox">Scale coords by percent explained</input>
+                                </form>
+                            </div>
+                            <br><input id="reset" class="button" type="submit" value="Recenter Camera" style="" onClick="resetCamera()">
+                            <br><br>
+                            <hr class='section-break'>
+                            <br>Filename <small>(only letters, numbers, ., - and _)</small>:
+                            <br><input name="saveas_name" id="saveas_name" value="screenshot" type="text"/>
+                            <br><input id="saveas_legends" class="checkbox" type="checkbox" style=""> Create legend
+                            <input id="saveas" class="button" type="submit" value="Save as SVG" style="" onClick="saveSVG()"/>
+                            <br><br>For a PNG, simply press 'ctrl+p'.
+                            <div id="paralleloptions" class="">
+                            </div>
+                        </div>
+                        <br>
+                </td></tr>
+            </table>
         </div>
     </div>  
 </div>

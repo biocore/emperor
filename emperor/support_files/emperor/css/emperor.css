@@ -2,7 +2,7 @@
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2013, Emperor"
  * __credits__ = ["Meg Pirrung", "Yoshiki Vazquez Baeza",
-                  "Antonio Gonzalez Pena"]
+                  "Antonio Gonzalez Pena", "Jackson Chen"]
  * __license__ = "BSD"
  * __version__ = "0.9.3-dev"
  * __maintainer__ = "Yoshiki Vazquez Baeza"
@@ -10,321 +10,296 @@
  * __status__ = "Development"
  */
 
-    body, html {
-        font-size: 10px;
-        height: 100%;
-        width: 100%;
-        margin: 0px;
-        overflow: hidden;
-        float: left;
-    }
+body, html {
+  font-size: 10px;
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  overflow: hidden;
+  float: left;
+}
 
-    #smalllogo {
-        width:150px;
-        height:45px;
-    }
+/* #small-logo, #overlay, #explanation and #source are all styling elements
+ * that get in use when WebGL is not enabled and a small help message needs to
+ * be shown
+ */
+#small-logo {
+  width: 150px;
+  height: 45px;
+}
 
-    #overlay {
-        visibility: hidden;
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        width:100%;
-        height:100%;
-        font-size: 13px;
-        text-align:center;
-        z-index: 1000;
-    }
+#overlay {
+  visibility: hidden;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  font-size: 13px;
+  text-align: center;
+  z-index: 1000;
+}
 
-    #overlay div {
-        width:325px;
-        margin: 75px auto;
-        background-color: #fff;
-        border:1px solid #000;
-        padding:15px;
-        text-align:center;
-    }
+#overlay div {
+  width: 325px;
+  margin: 75px auto;
+  background-color: #fff;
+  border: 1px solid #000;
+  padding: 15px;
+  text-align: center;
+}
 
-    #explanation {
-        text-align:left;
-    }
+#explanation {
+  text-align: left;
+}
 
-    #source {
-        font-size:11px;
-        text-align:left;
-    }
+#source {
+  font-size: 11px;
+  text-align: left;
+}
 
-    div.plotWrapper {
-        position: relative;
-        overflow:hidden;
-        height: 100%;
-        width:73%;
-        float: left;
-        margin:0;
-    }
+/* the plotting area */
+div.emperor-plot-wrapper {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 73%;
+  float: left;
+  margin: 0;
+}
 
-    #plotToggle {
-        z-index: 5;
-        width: 73%;
-        margin:0;
-        overflow:hidden;
-        bottom: 0;
-        position: absolute;
-        float: left;
-    }
+/* button to select between parallel coordinates and 3D plots */
+#emperor-plot-toggle {
+  z-index: 5;
+  width: 73%;
+  margin: 0;
+  overflow: hidden;
+  bottom: 0;
+  position: absolute;
+  float: left;
+}
 
-    div.separator {
-        height:100%;
-        width:1%;
-        float:left;
-        cursor:col-resize;
-        margin:0;
-        background-color:#333333;
-    }
-    div.separator:hover {
-        background-color:#666666;
-    }
+/* div.emperor-separator and div.emperor-separator:hover are classes that make
+ * the separator on the right of the user interface that let's you rescale the
+ * area of the plot
+ */
+div.emperor-separator {
+  height: 100%;
+  width: 1%;
+  float: left;
+  cursor: col-resize;
+  margin: 0;
+  background-color: #333333;
+}
 
-    div#menu {
-        height: 100%;
-        font-family: Helvetica, sans-serif;
-        width:26%;
-        overflow:hidden;
-        float:left;
-        padding: 0px;
-        margin:0;
-    }
+div.emperor-separator:hover {
+  background-color:#666666;
+}
 
-    div#menutabs {
-        background: #eee;
-        /*margin-before: 0px !important;*/
-        height: 100%;
-        margin:0;
-    }
+/* #emperor-menu and #emperor-menu-tabs the two things that show in the right
+ * side-bar, #emperor-menu is the container for all the tabs and
+ * #emperor-menu-tabs is the container for the name of the tabs */
+div#emperor-menu {
+  height: 100%;
+  font-family: Helvetica, sans-serif;
+  width: 26%;
+  overflow: hidden;
+  float: left;
+  padding: 0px;
+  margin: 0;
+}
 
-    .ui-tabs .ui-widget .ui-widget-content .ui-corner-all {
-        /*  height: 95%;*/
-        padding-left: 0px !important;
-        padding-top: 0px;
-    }
+div#emperor-menu-tabs {
+  background: #eee;
+  height: 100%;
+  margin: 0;
+  overflow: auto;
+}
 
-    /*Tabs in the menu*/
-    div#colorby {
-        padding-top: 0px;
-        padding-bottom: 0px;
-        width:100%;
-        height:100%;
-        overflow:scroll;
-    }
-    div#showby {
-        padding-top: 0px;
-        padding-bottom: 100px;
-        width:100%;
-        height:100%;
-        overflow:scroll;
-    }
-    div#scalingby {
-        padding-top: 0px;
-        padding-bottom: 0px;
-        width:100%;
-        height:100%;
-        overflow:scroll;
-    }
-    div#labelby {
-        padding-top: 0px;
-        padding-bottom: 100px;
-        width:100%;
-        height:100%;
-        overflow:scroll;
-    }
-    div#axes {
-        padding-top: 0px;
-        padding-bottom: 100px;
-        width:100%;
-        height:100%;
-        overflow:scroll;
-    }
-    div#options {
-        padding-top: 0px;
-        padding-bottom: 100px;
-        width:100%;
-        height:100%;
-        overflow:scroll;
-    }
-    div#keytab {
-        height: 100%;
-        width:90%;
-        padding-top: 0px;
-        padding-bottom: 0px;
-    }
-    div#key {
-        height: 100%;
-        overflow: auto;
-    }
+/* class used in the divs that contain the widgets for the menu tabs like:
+ * axes, show by, and all the other tabs in the main interface.
+ */ 
+.emperor-tab-div{
+  padding-top: 0px;
+  padding-bottom: 0px;
+  height: 100%;
+  overflow: auto;
+  align: center; /*align the contents to the center*/
+}
 
-    table {
-        font-family: Helvetica, sans-serif;
-        font-size: 12px !important;
-    }
-    select {
-        /*  height: 20%;*/
-        /*width: 100%;*/
-    }
+/* tables displayed inside any div of class emperor-tab-div should have the
+ * following class to keep consistency between the displayed elements
+ */
+.emperor-tab-table {
+   display: table;
+   margin-right: auto;
+   margin-left: auto;
+   width: 100%;
+   height: 100%
+   text-align: left;
+}
 
-    div.colorbox {
-        border: 1px solid black;
-        height: 18px;
-        width: 18px;
-    }
+/* tables displayed inside any div of class emperor-tab-div that list sliders
+ * should have the following class that will prevent horizontal scroll bars to
+ * appear on screen
+ */
+.emperor-tab-table-with-sliders{
+   display: table;
+   margin-right: auto;
+   margin-left: auto;
+   width: 100%;
+   height: 100%
+   text-align: left;
 
-    div.animationlist {
-        margin-top: 1em;
-        width: 100%;
-        overflow: auto;
-        height: 60%;
-    }
+   /* avoid showing horizontal scrollbars when the slider is at 0% or 100% */
+   padding-right: 10px;
+   padding-left: 10px;
+}
 
-    div.list{
-        width: 100%;
-        height: 85%;
-        overflow: auto;
-    }
+/* general styling for a variety of elements in emperor */
+table {
+  font-family: Helvetica, sans-serif;
+  font-size: 12px !important;
+}
 
-    div.list ul {
-        width: 100%;
-        padding-left: 0px !important;
-        list-style-type: none;
-        font-size: 12px !important;
-    }
+form {
+  margin: 0px;
+}
 
-    input.button {
-        height: 2em;
-        width: 100%;
-    }
+input {
+  font-style: 10pt helvetica;
+}
 
-    label {
-        border:0; 
-        font: 9pt Helvetica;
-    }
+div.colorbox {
+  border: 1px solid black;
+  height: 18px;
+  width: 18px;
+}
 
-    label.slidervalue {
-        float: right;
-        border:0; 
-        color:#6cf; 
-        font-weight:bold;
-        font: 9pt Helvetica;
-    }
+div.list{
+  width: 100%;
+  height: 85%;
+  overflow: auto;
+}
 
-    .ui-tabs .ui-tabs-nav li a{
-        padding: 2px 5px !important;
-    }
+div.list ul {
+  width: 100%;
+  padding-left: 0px !important;
+  list-style-type: none;
+  font-size: 12px !important;
+}
 
-    div#labelby {
-        height: 90%;
-    }
+input.button {
+  height: 2em;
+  width: 100%;
+}
 
-    div#labellist {
-        height: 60%;
-    }
+label {
+  border: 0; 
+  font: 9pt Helvetica;
+}
 
-    div.labelsTop {
-        height: 30%;
-    }
+label.slidervalue {
+  float: right;
+  border: 0; 
+  color: #6cf; 
+  font-weight: bold;
+  font: 9pt Helvetica;
+}
 
-    div#labels {
-        display: none;
-        font-family: courier;
-        color: #fff;
-        height: 0px;
-        float: left;
-        position: absolute;
-        z-index: 1;
-    }
+.ui-tabs .ui-tabs-nav li a{
+  padding: 2px 5px !important;
+}
 
-    div#taxalabels {
-        display: none;
-        font-family: courier;
-        color: #fff;
-        height: 0px;
-        float: left;
-        position: absolute;
-        z-index: 1;
-    }
+/* style for all labels in emperor */
+div#label-list {
+  height: 60%;
+}
 
-    .axislabels {
-        color: #fff;
-    }
+div.#labels-top {
+  height: 30%;
+}
 
-    div#labelColorHolder {
-        width: 100%;
-    }
+div#labels {
+  display: none;
+  font-family: courier;
+  color: #fff;
+  height: 0px;
+  float: left;
+  position: absolute;
+  z-index: 1;
+}
 
-    div#labelColorHolder div {
-        float: left;
-    }
+div#taxalabels {
+  display: none;
+  font-family: courier;
+  color: #fff;
+  height: 0px;
+  float: left;
+  position: absolute;
+  z-index: 1;
+}
 
-    div#labelColorHolder label{
-        float: left;
-        width: 50%;
-    }
+.axis-labels {
+  color: #fff;
+}
 
-    form {
-        margin: 0px;
-    }
+div#label-color-holder {
+  width: 100%;
+}
 
-    input {
-      font-style: 10pt helvetica;
-    }
+div#label-color-holder div {
+  float: left;
+}
 
-    a.mediabutton img {
-        background-color: #eee;
-    }
+div#label-color-holder label{
+  float: left;
+  width: 50%;
+}
 
-    a.mediabutton:hover img{
-        background-color: #cff;
-    }
+/* arrow that's shown on the plot when you double click a sample */
+.arrow-right {
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 10px solid white;
+}
 
-    *.unselectable {
-        -moz-user-select: -moz-none;
-        -khtml-user-select: none;
-        -webkit-user-select: none;
+/* the media-button class used in the animations tab */
+a.media-button img {
+  background-color: #eee;
+}
 
-        /*
-            Introduced in IE 10.
-            See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
-        */
-        -ms-user-select: none;
-        user-select: none;
-    }
+a.media-button: hover img{
+  background-color: #cff;
+}
 
-    .ontop {
-        padding: 2px;
-        font-style: 9pt helvetica;
-        color: #fff;
-        border: 1px solid white;
-        position: absolute;
-    }
+/* miscellaneous useful classes */
+*.unselectable {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
 
-    .arrow-right {
-        opacity: 0;
-        position: absolute;
-        width: 0;
-        height: 0;
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        border-left: 10px solid white;
-    }
+  /*
+  Introduced in IE 10.
+  See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+  */
+  -ms-user-select: none;
+  user-select: none;
+}
 
-    .circle {
-        position: absolute;
-        opacity: 0;
-        border: 3px solid white;
-        border-radius: 50%;
-        width: 10px;
-        height: 10px; 
-        /* width and height can be anything, as long as they're equal */
-    }
+.ontop {
+  padding: 2px;
+  font-style: 9pt helvetica;
+  color: #fff;
+  border: 1px solid white;
+  position: absolute;
+}
 
-    .invisible {
-        display: none;
-    }
+.invisible {
+  display: none;
+}
+
