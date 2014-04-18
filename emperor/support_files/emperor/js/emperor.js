@@ -2501,7 +2501,7 @@ $(document).ready(function() {
 
 					for (var index = 0; index < g_animationDirector.trajectories.length; index++){
 						// draw a trajectory line per trajectory
-						drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index].interpolatedCoordinates, g_animationDirector.currentFrame, 0xFFFFFF, 10);
+						drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index].interpolatedCoordinates, g_animationDirector.currentFrame, 0x00FF00, 10);
 
 						g_mainScene.add(drawingLineBuffer);
 						g_elementsGroup.add(drawingLineBuffer);
@@ -2562,7 +2562,7 @@ function pauseAnimation() {
 function drawTrajectoryLine(trajectory, currentFrame, color, width){
 	// based on the example described in:
 	// https://github.com/mrdoob/three.js/wiki/Drawing-lines
-	var material, geometry, line, limit = 0;
+	var material, points = [], lineGeometry, limit = 0, path;
 
 	// truncate to the length of the trajectory
 	if (currentFrame > trajectory.length){
@@ -2572,23 +2572,20 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width){
 		limit = currentFrame;
 	}
 
-	// make the material transparent and with full opacity
-	material = new THREE.LineBasicMaterial({color:color, linewidth:width});
+	material = new THREE.MeshLambertMaterial({color:color});
 	material.matrixAutoUpdate = true;
-	material.transparent = true;
-	material.opacity = 1.0;
-
-	// add the two vertices to the geometry
-	geometry = new THREE.Geometry();
+	material.transparent = false;
 
 	for (var index = 0; index < limit; index++){
-		geometry.vertices.push(new THREE.Vector3(trajectory[index]['x'],
+		points.push(new THREE.Vector3(trajectory[index]['x'],
 			trajectory[index]['y'], trajectory[index]['z']));
 	}
 
+    path = new THREE.SplineCurve3(points)
 	// the line will contain the two vertices and the described material
-	line = new THREE.Line(geometry, material);
+	lineGeometry = new THREE.TubeGeometry(path, g_segments, g_radius,
+                                          g_segments, false, false);
 
-	return line;
+	return new THREE.Mesh(lineGeometry, material);
 }
 
