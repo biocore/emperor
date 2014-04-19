@@ -156,6 +156,14 @@ div#emperor-menu-tabs {
    padding-left: 10px;
 }
 
+/* drop-down menus inside the tabs should use as much space as possible but
+ * never go out of the tab size, this is important because otherwise it breaks
+ * some of the interface's layout.
+ */
+.emperor-tab-drop-down{
+  width: 100%;
+}
+
 /* general styling for a variety of elements in emperor */
 table {
   font-family: Helvetica, sans-serif;
