@@ -604,7 +604,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="colorby" class="emperor-tab-div">
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -613,7 +613,7 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
-                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        <select id="showbycombo" onchange="showByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
                 </tr>
@@ -643,7 +643,7 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
-                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
                 </tr>
@@ -680,7 +680,7 @@ document.getElementById("logotable").style.display = 'none';
                 </table></div>
             </div>
             <br>
-            <select id="labelcombo" onchange="labelMenuChanged()">
+            <select id="labelcombo" onchange="labelMenuChanged()" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="label-list">
             </div>
@@ -813,7 +813,7 @@ document.getElementById("logotable").style.display = 'none';
             </table>
             <br>
             <br><br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -827,7 +827,7 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
-                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        <select id="showbycombo" onchange="showByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
                 </tr>
@@ -857,7 +857,7 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
-                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
                 </tr>
@@ -899,7 +899,7 @@ document.getElementById("logotable").style.display = 'none';
                 </table></div>
             </div>
             <br>
-            <select id="labelcombo" onchange="labelMenuChanged()">
+            <select id="labelcombo" onchange="labelMenuChanged()" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="label-list">
             </div>
@@ -1023,7 +1023,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="colorby" class="emperor-tab-div">
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -1032,7 +1032,7 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
-                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        <select id="showbycombo" onchange="showByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
                 </tr>
@@ -1062,7 +1062,7 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
-                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
                 </tr>
@@ -1099,7 +1099,7 @@ document.getElementById("logotable").style.display = 'none';
                 </table></div>
             </div>
             <br>
-            <select id="labelcombo" onchange="labelMenuChanged()">
+            <select id="labelcombo" onchange="labelMenuChanged()" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="label-list">
             </div>
@@ -1222,7 +1222,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="colorby" class="emperor-tab-div">
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -1231,7 +1231,7 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
-                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        <select id="showbycombo" onchange="showByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
                 </tr>
@@ -1261,7 +1261,7 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
-                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
                 </tr>
@@ -1298,7 +1298,7 @@ document.getElementById("logotable").style.display = 'none';
                 </table></div>
             </div>
             <br>
-            <select id="labelcombo" onchange="labelMenuChanged()">
+            <select id="labelcombo" onchange="labelMenuChanged()" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="label-list">
             </div>
@@ -1425,7 +1425,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="colorby" class="emperor-tab-div">
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -1434,7 +1434,7 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
-                        <select id="showbycombo" onchange="showByMenuChanged()">
+                        <select id="showbycombo" onchange="showByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
                 </tr>
@@ -1464,7 +1464,7 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table">
                 <tr>
                     <td align="center">
-                        <select id="scalingbycombo" onchange="scalingByMenuChanged()">
+                        <select id="scalingbycombo" onchange="scalingByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
                 </tr>
@@ -1501,7 +1501,7 @@ document.getElementById("logotable").style.display = 'none';
                 </table></div>
             </div>
             <br>
-            <select id="labelcombo" onchange="labelMenuChanged()">
+            <select id="labelcombo" onchange="labelMenuChanged()" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="label-list">
             </div>
