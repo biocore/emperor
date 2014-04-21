@@ -49,3 +49,25 @@ function naturalSort(list){
   return result.concat(alphaPart, numericPart);
 }
 
+/**
+ *
+ * Utility function to convert an XML DOM documents to a string useful for unit
+ * testing
+ *
+ * @param {node} XML DOM object, usually as created by the document object.
+ *
+ * @return string representation of the node object.
+ *
+ * This code is based on this answer http://stackoverflow.com/a/1750890
+ *
+ */
+function convertXMLToString(node) {
+  if (typeof(XMLSerializer) !== 'undefined') {
+    var serializer = new XMLSerializer();
+    return serializer.serializeToString(node);
+  }
+  else if (node.xml) {
+    return node.xml;
+  }
+}
+

@@ -101,4 +101,19 @@ $(document).ready(function() {
 
   });
 
+  test("Test convertXMLToString", function(){
+    var el;
+
+    el = document.createElement("p");
+    el.appendChild(document.createTextNode("Test"));
+    equal(convertXMLToString(el), '<p>Test</p>', 'Test a parragraph tag is '+
+          'converted correctly');
+
+    el = document.createElement("div");
+    el.appendChild(document.createTextNode("Test"));
+    el.className="test-div-class"
+    equal(convertXMLToString(el), '<div class="test-div-class">Test</div>',
+          'Test a div tag is converted correctly');
+  });
+
 });
