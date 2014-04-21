@@ -60,12 +60,27 @@ $(document).ready(function() {
    *
    */
   test("Test color manager table construction", function() {
-    var table;
-
+    var table, crawfordTable;
+    crawfordTable="<table class=\"emperor-tab-table\"><tbody><tr><td><div "+
+      "id=\"row-8-column-0\" class=\"colorbox\" name=\"PC.356\"></div></td"+
+      "><td title=\"PC.356\">PC.356</td></tr><tr><td><div id=\"row-7-colum"+
+      "n-0\" class=\"colorbox\" name=\"PC.354\"></div></td><td title=\"PC."+
+      "354\">PC.354</td></tr><tr><td><div id=\"row-6-column-0\" class=\"co"+
+      "lorbox\" name=\"PC.355\"></div></td><td title=\"PC.355\">PC.355</td"+
+      "></tr><tr><td><div id=\"row-5-column-0\" class=\"colorbox\" name=\""+
+      "PC.636\"></div></td><td title=\"PC.636\">PC.636</td></tr><tr><td><d"+
+      "iv id=\"row-4-column-0\" class=\"colorbox\" name=\"PC.593\"></div><"+
+      "/td><td title=\"PC.593\">PC.593</td></tr><tr><td><div id=\"row-3-co"+
+      "lumn-0\" class=\"colorbox\" name=\"PC.635\"></div></td><td title=\""+
+      "PC.635\">PC.635</td></tr><tr><td><div id=\"row-2-column-0\" class="+
+      "\"colorbox\" name=\"PC.634\"></div></td><td title=\"PC.634\">PC.63"+
+      "4</td></tr><tr><td><div id=\"row-1-column-0\" class=\"colorbox\" n"+
+      "ame=\"PC.607\"></div></td><td title=\"PC.607\">PC.607</td></tr><tr"+
+      "><td><div id=\"row-0-column-0\" class=\"colorbox\" name=\"PC.481\""+
+      "></div></td><td title=\"PC.481\">PC.481</td></tr></tbody></table>"
     table = buildColorSelectorTable(mappingFileHeaders, mappingFileData,
                                     'SampleID', false);
-    console.log(typeof(table))
-    equal(table, '')
+    equal(convertXMLToString(table), crawfordTable)
   });
 
   /**
