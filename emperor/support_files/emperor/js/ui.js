@@ -13,8 +13,17 @@
 
 /**
  *
+ * Formatting function that creates a table to display color pickers.
+ *
+ * @param {headers} mapping file headers
+ * @param {data} mapping file data
+ * @param {category} category in the mapping file
+ * @param {id} id prefix added to every id element in the table
+ *
+ * @return a DOM document object where the table has been formated.
+ *
  */
-function buildColorSelectorTable(headers, data, category, discrete, id){
+function buildColorSelectorTable(headers, data, category, id){
   var categoryIndex, table, values = [], row, cell, div;
 
   categoryIndex = headers.indexOf(category);
@@ -23,10 +32,9 @@ function buildColorSelectorTable(headers, data, category, discrete, id){
     throw new Error('The category to build the table does not exist');
   }
 
-  discrete = (discrete === undefined) ? false : discrete;
   id = (id === undefined) ? '' : id+'-';
 
-	// get all values of this category from the mapping file
+  // get all values of this category from the mapping file
   values = _.map(data, function(sample){ return sample[categoryIndex] });
   values = _.uniq(values);
 
@@ -35,7 +43,8 @@ function buildColorSelectorTable(headers, data, category, discrete, id){
   // see emperor.css
   table.className = 'emperor-tab-table';
 
-  for (var i=0; i < values.length; i++){
+  // we want to go in this order to have the first rows at the top
+  for (var i=values.length-1; i >= 0; i--){
     row = table.insertRow();
 
     // add the name of the category to the right of the color box
@@ -52,6 +61,6 @@ function buildColorSelectorTable(headers, data, category, discrete, id){
     cell.appendChild(div);
 
   }
-  
+
   return table;
 }
