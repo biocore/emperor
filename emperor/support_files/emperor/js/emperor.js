@@ -1136,7 +1136,7 @@ function sphereRadiusChange(ui, category) {
 
 /*Add a clear description of what the hell happens when this gets executed*/
 function animationSpeedChanged(ui){
-	document.getElementById("animation_speed").innerHTML = ui.value+"x";
+	document.getElementById("animation-speed").innerHTML = ui.value+"x";
 }
 
 /*Setup the interface elements required for the sidebar of the main interface*/
@@ -1325,7 +1325,7 @@ function setJqueryUi() {
 	});
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
 
-	$("#animation_speed_slider").slider({
+	$("#animation-speed-slider").slider({
 		range: "max",
 		min: 0.1,
 		max: 5,
@@ -1337,7 +1337,7 @@ function setJqueryUi() {
 			animationSpeedChanged(ui);
 		}
 	});
-	document.getElementById('animation_speed').innerHTML = $("#animation_speed_slider").slider("value")+"x"
+	document.getElementById('animation-speed').innerHTML = $("#animation-speed-slider").slider("value")+"x"
 
 	//default color for axes labels is white
 	$('#axeslabelscolor').css('backgroundColor',"#FFFFFF");
@@ -2218,7 +2218,7 @@ $(document).ready(function() {
 			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
-			$("#trajectory_category_combo").append(line);
+			$("#trajectory-category-drop-down").append(line);
 		}
 
 		// add the header names that can be animated over
@@ -2231,7 +2231,7 @@ $(document).ready(function() {
 			} else {
 			    line = "<option value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
 			}
-			$("#gradient_category_combo").append(line);
+			$("#gradient-category-drop-down").append(line);
 		}
 
 		setParallelPlots();
@@ -2440,8 +2440,8 @@ $(document).ready(function() {
 			if (g_animationDirector === null) {
 
 				// retrieve the values from the interface
-				trajectoryCategory = document.getElementById('trajectory_category_combo')[document.getElementById('trajectory_category_combo').selectedIndex].value;
-				gradientCategory = document.getElementById('gradient_category_combo')[document.getElementById('gradient_category_combo').selectedIndex].value;
+				trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
+				gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
 
 				// initialize the animation director
 				g_animationDirector = new AnimationDirector(g_mappingFileHeaders, g_mappingFileData, g_spherePositions, gradientCategory, trajectoryCategory, 10);
@@ -2474,7 +2474,7 @@ $(document).ready(function() {
 					// the animation is done, clean up the interface and other variables
 					g_animationDirector = null;
 					g_isPlaying = false;
-					document.getElementById("play_button").disabled="false";
+					document.getElementById("play-button").disabled="false";
 
 				}// animation cycle is done
 			}// animation director is not null
@@ -2492,7 +2492,7 @@ $(document).ready(function() {
  */
 function playAnimation() {
 	g_isPlaying = true;
-	document.getElementById("play_button").disabled="true";
+	document.getElementById("play-button").disabled="true";
 }
 
 /**
@@ -2504,7 +2504,7 @@ function playAnimation() {
 function pauseAnimation() {
 	if (g_isPlaying === true){
 		g_isPlaying = false;
-		document.getElementById("play_button").disabled="false"
+		document.getElementById("play-button").disabled="false"
 	}
 }
 

@@ -737,38 +737,38 @@ document.getElementById("logotable").style.display = 'none';
             <table class="emperor-tab-table-with-sliders">
                 <tr>
                     <td>
-                        <a id="reset_button" class="media-button" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
-                        <a id="play_button" class="media-button" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
-                        <a id="pause_button" class="media-button" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                        <a id="reset-button" class="media-button" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play-button" class="media-button" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause-button" class="media-button" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <label for="animation_speed" class="text">Speed</label>
-                        <label id="animation_speed" class="slidervalue"></label>
-                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <label for="animation-speed" class="text">Speed</label>
+                        <label id="animation-speed" class="slidervalue"></label>
+                        <div id="animation-speed-slider" class="slider-range-max"></div>
                         <div id="labelColorHolder clearfix">
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                        <br><label for="gradient-category-drop-down" class="text">Gradient Category</label><br>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="gradient_category_combo"></select><br>
+                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down"></select><br>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                        <label for="trajectory-category-drop-down" class="text">Trajectory Category</label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="trajectory_category_combo"></select>
+                        <select id="trajectory-category-drop-down" class="emperor-tab-drop-down"></select>
                     </td>
                 </tr>
                 <tr>
