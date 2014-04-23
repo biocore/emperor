@@ -383,19 +383,6 @@ function getDiscreteColor(index){
 	return k_QIIME_COLORS[index]
 }
 
-/*Start timer (for debugging)*/
-function startTimer() {
-	var d=new Date()
-	g_time = d.getTime();
-}
-
-/*End timer (for debugging)*/
-function stopTimer(info) {
-	var d=new Date()
-	g_time = d.getTime() - g_time;
-	console.log("time to " +info +":"+g_time+"ms")
-}
-
 /* Sorting function that deals with alpha and numeric elements
 
   This function takes a list of strings, divides it into two new lists, one
