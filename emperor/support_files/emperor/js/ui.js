@@ -37,6 +37,7 @@ function buildColorSelectorTable(headers, data, category, id){
   // get all values of this category from the mapping file
   values = _.map(data, function(sample){ return sample[categoryIndex] });
   values = _.uniq(values);
+  values = naturalSort(values);
 
   table = document.createElement('table');
 

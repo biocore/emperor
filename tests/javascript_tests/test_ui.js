@@ -63,22 +63,22 @@ $(document).ready(function() {
     function() {
       var table, crawfordTable;
       crawfordTable = "<table class=\"emperor-tab-table\"><tbody><tr><td><div"+
-        " id=\"row-0-column-0\" class=\"colorbox\" name=\"PC.481\"></div></td"+
-        "><td title=\"PC.481\">PC.481</td></tr><tr><td><div id=\"row-1-column"+
-        "-0\" class=\"colorbox\" name=\"PC.607\"></div></td><td title=\"PC.60"+
-        "7\">PC.607</td></tr><tr><td><div id=\"row-2-column-0\" class=\"color"+
-        "box\" name=\"PC.634\"></div></td><td title=\"PC.634\">PC.634</td></t"+
-        "r><tr><td><div id=\"row-3-column-0\" class=\"colorbox\" name=\"PC.63"+
-        "5\"></div></td><td title=\"PC.635\">PC.635</td></tr><tr><td><div id="+
+        " id=\"row-0-column-0\" class=\"colorbox\" name=\"PC.354\"></div></td"+
+        "><td title=\"PC.354\">PC.354</td></tr><tr><td><div id=\"row-1-column"+
+        "-0\" class=\"colorbox\" name=\"PC.355\"></div></td><td title=\"PC.35"+
+        "5\">PC.355</td></tr><tr><td><div id=\"row-2-column-0\" class=\"color"+
+        "box\" name=\"PC.356\"></div></td><td title=\"PC.356\">PC.356</td></t"+
+        "r><tr><td><div id=\"row-3-column-0\" class=\"colorbox\" name=\"PC.48"+
+        "1\"></div></td><td title=\"PC.481\">PC.481</td></tr><tr><td><div id="+
         "\"row-4-column-0\" class=\"colorbox\" name=\"PC.593\"></div></td><td"+
         " title=\"PC.593\">PC.593</td></tr><tr><td><div id=\"row-5-column-0\""+
-        " class=\"colorbox\" name=\"PC.636\"></div></td><td title=\"PC.636\">"+
-        "PC.636</td></tr><tr><td><div id=\"row-6-column-0\" class=\"colorbox"+
-        "\" name=\"PC.355\"></div></td><td title=\"PC.355\">PC.355</td></tr><"+
-        "tr><td><div id=\"row-7-column-0\" class=\"colorbox\" name=\"PC.354\""+
-        "></div></td><td title=\"PC.354\">PC.354</td></tr><tr><td><div id=\"r"+
-        "ow-8-column-0\" class=\"colorbox\" name=\"PC.356\"></div></td><td ti"+
-        "tle=\"PC.356\">PC.356</td></tr></tbody></table>"
+        " class=\"colorbox\" name=\"PC.607\"></div></td><td title=\"PC.607\">"+
+        "PC.607</td></tr><tr><td><div id=\"row-6-column-0\" class=\"colorbox"+
+        "\" name=\"PC.634\"></div></td><td title=\"PC.634\">PC.634</td></tr><"+
+        "tr><td><div id=\"row-7-column-0\" class=\"colorbox\" name=\"PC.635\""+
+        "></div></td><td title=\"PC.635\">PC.635</td></tr><tr><td><div id=\"r"+
+        "ow-8-column-0\" class=\"colorbox\" name=\"PC.636\"></div></td><td ti"+
+        "tle=\"PC.636\">PC.636</td></tr></tbody></table>"
       table = buildColorSelectorTable(mappingFileHeaders, mappingFileData,
                                       'SampleID');
       equal(convertXMLToString(table), crawfordTable);
@@ -95,21 +95,21 @@ $(document).ready(function() {
       var table, crawfordTable;
       crawfordTable = ''+
         '<table class="emperor-tab-table"><tbody><tr><td><div id="foo-row-0'+
-        '-column-0" class="colorbox" name="PC.481"></div></td><td title="PC.'+
-        '481">PC.481</td></tr><tr><td><div id="foo-row-1-column-0" class="co'+
-        'lorbox" name="PC.607"></div></td><td title="PC.607">PC.607</td></tr'+
-        '><tr><td><div id="foo-row-2-column-0" class="colorbox" name="PC.634'+
-        '"></div></td><td title="PC.634">PC.634</td></tr><tr><td><div id="fo'+
-        'o-row-3-column-0" class="colorbox" name="PC.635"></div></td><td tit'+
-        'le="PC.635">PC.635</td></tr><tr><td><div id="foo-row-4-column-0" cl'+
+        '-column-0" class="colorbox" name="PC.354"></div></td><td title="PC.'+
+        '354">PC.354</td></tr><tr><td><div id="foo-row-1-column-0" class="co'+
+        'lorbox" name="PC.355"></div></td><td title="PC.355">PC.355</td></tr'+
+        '><tr><td><div id="foo-row-2-column-0" class="colorbox" name="PC.356'+
+        '"></div></td><td title="PC.356">PC.356</td></tr><tr><td><div id="fo'+
+        'o-row-3-column-0" class="colorbox" name="PC.481"></div></td><td tit'+
+        'le="PC.481">PC.481</td></tr><tr><td><div id="foo-row-4-column-0" cl'+
         'ass="colorbox" name="PC.593"></div></td><td title="PC.593">PC.593</'+
         'td></tr><tr><td><div id="foo-row-5-column-0" class="colorbox" name='+
-        '"PC.636"></div></td><td title="PC.636">PC.636</td></tr><tr><td><div'+
-        ' id="foo-row-6-column-0" class="colorbox" name="PC.355"></div></td>'+
-        '<td title="PC.355">PC.355</td></tr><tr><td><div id="foo-row-7-colum'+
-        'n-0" class="colorbox" name="PC.354"></div></td><td title="PC.354">P'+
-        'C.354</td></tr><tr><td><div id="foo-row-8-column-0" class="colorbox'+
-        '" name="PC.356"></div></td><td title="PC.356">PC.356</td></tr></tbo'+
+        '"PC.607"></div></td><td title="PC.607">PC.607</td></tr><tr><td><div'+
+        ' id="foo-row-6-column-0" class="colorbox" name="PC.634"></div></td>'+
+        '<td title="PC.634">PC.634</td></tr><tr><td><div id="foo-row-7-colum'+
+        'n-0" class="colorbox" name="PC.635"></div></td><td title="PC.635">P'+
+        'C.635</td></tr><tr><td><div id="foo-row-8-column-0" class="colorbox'+
+        '" name="PC.636"></div></td><td title="PC.636">PC.636</td></tr></tbo'+
         'dy></table>'
       table = buildColorSelectorTable(mappingFileHeaders, mappingFileData,
                                       'SampleID', 'foo');
