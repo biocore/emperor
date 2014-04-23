@@ -513,9 +513,10 @@ EMPEROR_HEADER_HTML_STRING =\
     <script type="text/javascript" src="emperor_required_resources/js/FileSaver.min.js"></script>
 
     <!-- Emperor library code -->
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/animate.js"></script>
     <script type="text/javascript" src="emperor_required_resources/emperor/js/emperor.js"></script>
     <script type="text/javascript" src="emperor_required_resources/emperor/js/trajectory.js"></script>
-    <script type="text/javascript" src="emperor_required_resources/emperor/js/animate.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/util.js"></script>
 
     <script type="text/javascript">
     

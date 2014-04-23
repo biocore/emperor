@@ -383,32 +383,6 @@ function getDiscreteColor(index){
 	return k_QIIME_COLORS[index]
 }
 
-/* Sorting function that deals with alpha and numeric elements
-
-  This function takes a list of strings, divides it into two new lists, one
-  that's alpha-only and one that's numeric only. The resulting list will have
-  sorted all alpha elements at the beginning & all numeric elements at the end.
- */
-function _splitAndSortNumericAndAlpha(list){
-	var numericPart = [], alphaPart = [], result = [];
-
-	// separate the numeric and the alpha elements of the array
-	for(var index = 0; index < list.length; index++){
-		if(isNaN(parseFloat(list[index]))){
-			alphaPart.push(list[index])
-		}
-		else{
-			numericPart.push(list[index])
-		}
-	}
-
-	// sort each of the two parts, numeric part is ascending order
-	alphaPart.sort();
-	numericPart.sort(function(a,b){return parseFloat(a)-parseFloat(b)})
-
-	return result.concat(alphaPart, numericPart);
-}
-
 /*This function is called when a new value is selected in the colorBy menu */
 function colorByMenuChanged() {
 	// set the new current category and index
@@ -421,7 +395,7 @@ function colorByMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
 	}
 
-	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+	vals = naturalSort(dedupe(vals));
 	colors = getColorList(vals);
 	
 	// build the colorby table in HTML
@@ -538,7 +512,7 @@ function scalingByMenuChanged(){
 	for(var i in g_plotIds){
 		values.push(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex]);
 	}
-	values = _splitAndSortNumericAndAlpha(dedupe(values));
+	values = naturalSort(dedupe(values));
 
 	// the padding accounts for the slider handle that can move all to the left or right
 	lines = '<table class="emperor-tab-table-with-sliders">'
@@ -613,7 +587,7 @@ function showByMenuChanged() {
 	g_visiblePoints = g_plotIds.length;
 	changePointCount();
 
-	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+	vals = naturalSort(dedupe(vals));
 
 	// build the showby checkbox table in HTML; the padding to the right makes
 	// the slider fit great inside the table without ever showing scroll bars
@@ -851,7 +825,7 @@ function labelMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][labelCatIndex]);
 	}
 
-	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+	vals = naturalSort(dedupe(vals));
 	colors = getColorList(vals);
 
 	// build the label table in HTML
@@ -1071,7 +1045,7 @@ function sphereOpacityChange(ui, category) {
 	for(var i in g_plotIds){
 		vals.push(g_mappingFileData[g_plotIds[i]][showByCategoryIndex]);
 	}
-	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+	vals = naturalSort(dedupe(vals));
 
 	// category as null means that it's the general opacity slider (the on in the options tab)
 	if (category == null) {
@@ -1133,7 +1107,7 @@ function sphereRadiusChange(ui, category) {
 	for(var i in g_plotIds){
 		values.push(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex]);
 	}
-	values = _splitAndSortNumericAndAlpha(dedupe(values));
+	values = naturalSort(dedupe(values));
 
 	if (category == null){
 		for (index in values){
@@ -2221,7 +2195,7 @@ $(document).ready(function() {
 
 		// this sorted list of headers is only used in the following loop
 		// to create the 'color by', 'show by' and 'label by' drop-down menus
-		sortedMappingFileHeaders = _splitAndSortNumericAndAlpha(g_mappingFileHeaders)
+		sortedMappingFileHeaders = naturalSort(g_mappingFileHeaders)
 		for(var i in sortedMappingFileHeaders){
 			var temp = [];
 			for(var j in g_plotIds) {
@@ -2248,8 +2222,8 @@ $(document).ready(function() {
 		}
 
 		// add the header names that can be animated over
-		sortedAnimatableMappingFileHeaders = _splitAndSortNumericAndAlpha(g_animatableMappingFileHeaders);
-		for (var i in _splitAndSortNumericAndAlpha(g_animatableMappingFileHeaders)) {
+		sortedAnimatableMappingFileHeaders = naturalSort(g_animatableMappingFileHeaders);
+		for (var i in naturalSort(g_animatableMappingFileHeaders)) {
 			// note that each category is added to all the dropdown menus in the
 			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
 			if (i==0) {
