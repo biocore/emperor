@@ -58,7 +58,7 @@ setup(name='emperor',
         install_requires=["numpy >= 1.7", "qcli",
                           "scikit-bio == 0.0.0-dev"],
         dependency_links=[
-            'https://github.com/biocore/scikit-bio/archive/master.zip#egg=scikit-bio-0.0.0-dev',
+            "https://github.com/biocore/scikit-bio/archive/master.zip#egg=scikit-bio-0.0.0-dev"
         ],
         long_description=long_description,
         classifiers=classifiers)

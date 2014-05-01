@@ -1,0 +1,2 @@
+-e git+https://github.com/biocore/scikit-bio.git#egg=scikit-bio-0.0.0-dev
+
