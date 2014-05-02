@@ -14,7 +14,6 @@ before_install:
 install:
   - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy=$NUMPY_VERSION scipy matplotlib
   - source activate env_name
-  - pip install -r requirements.txt
-  - pip install .
+  - pip install -r requirements.txt -e .
 script:
   - python tests/all_tests.py --emperor_scripts_dir scripts
