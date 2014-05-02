@@ -516,6 +516,7 @@ EMPEROR_HEADER_HTML_STRING =\
     <script type="text/javascript" src="emperor_required_resources/emperor/js/animate.js"></script>
     <script type="text/javascript" src="emperor_required_resources/emperor/js/emperor.js"></script>
     <script type="text/javascript" src="emperor_required_resources/emperor/js/trajectory.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/ui.js"></script>
     <script type="text/javascript" src="emperor_required_resources/emperor/js/util.js"></script>
 
     <script type="text/javascript">
@@ -757,7 +758,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down"></select><br>
+                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down" onchange="colorAnimationsByCategoryChanged()"></select><br>
                     </td>
                 </tr>
 
