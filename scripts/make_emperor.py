@@ -4,7 +4,8 @@ from __future__ import division
 
 __author__ = "Antonio Gonzalez Pena"
 __copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Antonio Gonzalez Pena", "Yoshiki Vazquez Baeza"]
+__credits__ = ["Antonio Gonzalez Pena", "Yoshiki Vazquez Baeza",
+               "Jose Antonio Navas Molina"]
 __license__ = "BSD"
 __version__ = "0.9.3-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
@@ -15,7 +16,7 @@ from os import listdir, makedirs
 from os.path import join, exists, isdir, abspath
 
 from emperor.qiime_backports.filter import filter_mapping_file
-from emperor.qiime_backports.parse import (parse_mapping_file, parse_coords,
+from emperor.qiime_backports.parse import (parse_mapping_file,
     mapping_file_to_dict, parse_otu_table, QiimeParseError)
 from emperor.qiime_backports.util import MetadataMap
 
@@ -31,6 +32,7 @@ from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
     format_comparison_bars_to_js, EMPEROR_HEADER_HTML_STRING, EmperorLogicError,
     format_emperor_autograph)
+from emperor.parse import parse_coords
 
 script_info = {}
 

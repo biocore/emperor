@@ -9,8 +9,8 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshik89@gmail.com"
 __status__ = "Development"
 
+from skbio.maths.stats.spatial import procrustes
 from emperor.qiime_backports.parse import parse_mapping_file_to_dict
-from emperor.pycogent_backports.procrustes import procrustes
 
 from numpy.ma.extras import apply_along_axis
 from numpy.ma import MaskedArray

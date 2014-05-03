@@ -364,7 +364,7 @@ def format_comparison_bars_to_js(coords_data, coords_headers, clones,
         # convert to a numpy array first & back to a list to avoid sorting again
         indices = argsort(coords_headers)
         coords_data = coords_data[indices, :]
-        coords_headers = array(coords_headers)[indices, :].tolist()
+        coords_headers = array(coords_headers)[indices].tolist()
 
         # in steps of the number of clones iterate through the headers and the
         # coords to create the javascript object with the coordinates

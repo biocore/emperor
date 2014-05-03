@@ -5,7 +5,8 @@ from glob import glob
 
 __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Antonio Gonzalez Pena", "Meg Pirrung", "Yoshiki Vazquez Baeza"]
+__credits__ = ["Antonio Gonzalez Pena", "Meg Pirrung", "Yoshiki Vazquez Baeza",
+               "Jose Antonio Navas Molina"]
 __license__ = "BSD"
 __version__ = "0.9.3-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
@@ -43,8 +44,7 @@ setup(name='emperor',
         maintainer=__maintainer__,
         maintainer_email=__email__,
         url='http://github.com/biocore/emperor',
-        packages=['emperor', 'emperor/pycogent_backports',
-            'emperor/qiime_backports'],
+        packages=['emperor', 'emperor/qiime_backports'],
         scripts=glob('scripts/*py'),
         package_data={'emperor':['support_files/js/*.js',
             'support_files/js/js/*.js', 'support_files/js/js/ctm/*.js',
@@ -55,7 +55,11 @@ setup(name='emperor',
             'support_files/emperor/css/*.css',
             'support_files/emperor/js/*.js',]},
         data_files={},
-        install_requires=["numpy >= 1.5.1, <=1.7.1", "qcli"],
+        install_requires=["numpy >= 1.7", "qcli",
+                          "scikit-bio == 0.0.0-dev"],
+        dependency_links=[
+            "https://github.com/biocore/scikit-bio/archive/master.zip#egg=scikit-bio-0.0.0-dev"
+        ],
         long_description=long_description,
         classifiers=classifiers)
 
