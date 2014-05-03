@@ -12,6 +12,9 @@ __email__ = "josenavasmolina@gmail.com"
 __status__ = "Development"
 
 from skbio.maths.stats.ordination import OrdinationResults
+from skbio.core.exception import FileFormatError
+
+from emperor.qiime_backports.parse import parse_coords as qiime_parse_coords
 
 
 def parse_coords(lines):
@@ -30,6 +33,9 @@ def parse_coords(lines):
     Strategy: read the file using skbio's parser and return the objects
               we want
     """
-    pcoa_results = OrdinationResults.from_file(lines)
-    return (pcoa_results.site_ids, pcoa_results.site, pcoa_results.eigvals,
-            pcoa_results.proportion_explained)
+    try:
+        pcoa_results = OrdinationResults.from_file(lines)
+        return (pcoa_results.site_ids, pcoa_results.site, pcoa_results.eigvals,
+                pcoa_results.proportion_explained)
+    except FileFormatError:
+        return qiime_parse_coords(lines)

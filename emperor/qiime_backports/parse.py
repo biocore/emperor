@@ -217,3 +217,54 @@ def parse_classic_otu_table(lines,count_map_f=int, remove_empty_rows=False):
                         
     return sample_ids, otu_ids, asarray(otu_table), metadata
 parse_otu_table = parse_classic_otu_table
+
+def parse_coords(lines):
+    """Parse unifrac coord file into coords, labels, eigvals, pct_explained.
+
+    Returns:
+    - list of sample labels in order
+    - array of coords (rows = samples, cols = axes in descending order)
+    - list of eigenvalues
+    - list of percent variance explained
+
+    File format is tab-delimited with following contents:
+    - header line (starts 'pc vector number')
+    - one-per-line per-sample coords
+    - two blank lines
+    - eigvals
+    - % variation explained
+
+    Strategy: just read the file into memory, find the lines we want
+    """
+
+    lines = list(lines)
+
+    # make sure these and the other checks below are true as they are what
+    # differentiate coordinates files from distance matrix files
+    if not lines[0].startswith('pc vector number'):
+        raise QiimeParseError("The line with the vector number was not found"
+            ", this information is required in coordinates files")
+
+    lines = map(strip, lines[1:])   #discard first line, which is a label
+    lines = filter(None, lines) #remove any blank lines
+
+    # check on this information post removal of blank lines
+    if not lines[-2].startswith('eigvals'):
+        raise QiimeParseError("The line containing the eigenvalues was not "
+            "found, this information is required in coordinates files")
+    if not lines[-1].startswith('% variation'):
+        raise QiimeParseError("The line with the percent of variation explained"
+            " was not found, this information is required in coordinates files")
+
+    #now last 2 lines are eigvals and % variation, so read them
+    eigvals = asarray(lines[-2].split('\t')[1:], dtype=float)
+    pct_var = asarray(lines[-1].split('\t')[1:], dtype=float)
+
+    #finally, dump the rest of the lines into a table
+    header, result = [], []
+    for line in lines[:-2]:
+        fields = map(strip, line.split('\t'))
+        header.append(fields[0])
+        result.append(map(float, fields[1:]))
+
+    return header, asarray(result), eigvals, pct_var

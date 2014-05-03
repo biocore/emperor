@@ -15,11 +15,9 @@ __status__ = "Development"
 from os import listdir, makedirs
 from os.path import join, exists, isdir, abspath
 
-from skbio.core.exception import FileFormatError
-
 from emperor.qiime_backports.filter import filter_mapping_file
 from emperor.qiime_backports.parse import (parse_mapping_file,
-    mapping_file_to_dict, parse_otu_table)
+    mapping_file_to_dict, parse_otu_table, QiimeParseError)
 from emperor.qiime_backports.util import MetadataMap
 
 from qcli.option_parsing import parse_command_line_parameters, make_option
@@ -341,7 +339,7 @@ def main():
             try:
                 _coords_headers, _coords_data, _coords_eigenvalues,_coords_pct=\
                     parse_coords(open(fp,'U'))
-            except (ValueError, FileFormatError):
+            except (ValueError, QiimeParseError):
                 offending_coords_fp.append(fp)
 
                 # do not add any of the data and move along
@@ -391,13 +389,10 @@ def main():
                 parse_coords(open(input_coords,'U'))
         # this exception was noticed when there were letters in the coords file
         # other exeptions should be catched here; code will be updated then
-        except (ValueError, FileFormatError):
+        except (ValueError, QiimeParseError):
             option_parser.error(('The PCoA file \'%s\' does not seem to be a '
                 'coordinates formatted file, verify by manually inspecting '
-                'the contents. The PCoA file format has changed in version '
-                '0.9.3-dev. Check '
-                'skbio.maths.stats.ordination.OrdinationResults for more '
-                'information about the format') % input_coords)
+                'the contents.') % input_coords)
 
         # number of samples ids that are shared between coords and mapping files
         sids_intersection = list(set(zip(*mapping_data)[0])&set(coords_headers))
