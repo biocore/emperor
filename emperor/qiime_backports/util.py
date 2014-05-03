@@ -10,7 +10,6 @@ __email__ = "yoshik89@gmail.com"
 __status__ = "Development"
 
 from skbio.maths.stats.spatial import procrustes
-
 from emperor.qiime_backports.parse import parse_mapping_file_to_dict
 
 from numpy.ma.extras import apply_along_axis
