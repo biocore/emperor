@@ -12,6 +12,8 @@ __email__ = "josenavasmolina@gmail.com"
 __status__ = "Development"
 
 from unittest import TestCase, main
+from tempfile import mkstemp
+from os import close
 
 import numpy as np
 import numpy.testing as npt
@@ -37,9 +39,30 @@ class ParseTests(TestCase):
         npt.assert_almost_equal(obs[3], exp[3])
 
     def test_parse_coords_qiime(self):
-        """parse_coords should handle old qiime PCoA coords file"""
+        """parse_coords should handle old qiime PCoA coords format"""
         coords = qiime_pcoa_file.splitlines()
         obs = parse_coords(coords)
+        exp = (['A', 'B', 'C'],
+               np.array([[.11, .09, .23], [.03, .07, -.26], [.12, .06, -.32]]),
+               np.array([4.94, 1.79, 1.50]),
+               np.array([14.3, 5.2, 4.3]))
+        # test the header and the values apart from each other
+        self.assertEqual(obs[0], exp[0])
+        npt.assert_almost_equal(obs[1], exp[1])
+        npt.assert_almost_equal(obs[2], exp[2])
+        npt.assert_almost_equal(obs[3], exp[3])
+
+    def test_parse_coords_qiime_file(self):
+        """parse_coords should handle old qiime PCoA coords file"""
+        fd, fp = mkstemp()
+        close(fd)
+
+        with open(fp, 'w') as f:
+            f.write(qiime_pcoa_file)
+
+        with open(fp, 'U') as f:
+            obs = parse_coords(f)
+
         exp = (['A', 'B', 'C'],
                np.array([[.11, .09, .23], [.03, .07, -.26], [.12, .06, -.32]]),
                np.array([4.94, 1.79, 1.50]),
