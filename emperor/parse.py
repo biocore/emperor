@@ -38,4 +38,6 @@ def parse_coords(lines):
         return (pcoa_results.site_ids, pcoa_results.site, pcoa_results.eigvals,
                 pcoa_results.proportion_explained)
     except FileFormatError:
+        if type(lines) == file:
+            lines.seek(0)
         return qiime_parse_coords(lines)
