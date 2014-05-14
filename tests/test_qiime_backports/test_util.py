@@ -19,7 +19,7 @@ from unittest import TestCase, main
 from numpy.testing import assert_almost_equal
 from numpy import array, isnan, asarray, arange
 
-from skbio.maths.stats.spatial import procrustes
+from skbio.math.stats.spatial import procrustes
 
 from emperor.qiime_backports.parse import (parse_mapping_file_to_dict,
     QiimeParseError)

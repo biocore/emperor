@@ -11,7 +11,7 @@ __maintainer__ = "Jose Antonio Navas Molina"
 __email__ = "josenavasmolina@gmail.com"
 __status__ = "Development"
 
-from skbio.maths.stats.ordination import OrdinationResults
+from skbio.math.stats.ordination import OrdinationResults
 from skbio.core.exception import FileFormatError
 
 from emperor.qiime_backports.parse import parse_coords as qiime_parse_coords
@@ -28,7 +28,7 @@ def parse_coords(lines):
     - list of percent variance explained
 
     For the file format check
-    skbio.maths.stats.ordination.OrdinationResults.from_file
+    skbio.math.stats.ordination.OrdinationResults.from_file
 
     Strategy: read the file using skbio's parser and return the objects
               we want
