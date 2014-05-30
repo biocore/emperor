@@ -758,7 +758,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down" onchange="colorAnimationsByCategoryChanged()"></select><br>
+                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down"></select><br>
                     </td>
                 </tr>
 
@@ -769,7 +769,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <select id="trajectory-category-drop-down" class="emperor-tab-drop-down"></select>
+                        <select id="trajectory-category-drop-down" class="emperor-tab-drop-down" onchange="colorAnimationsByCategoryChanged()"></select>
                     </td>
                 </tr>
                 <tr>
