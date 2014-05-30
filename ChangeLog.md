@@ -11,6 +11,8 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Improve mouse sensitivity to rotate, pan, zoom-in and zoom out in the 3D plot.
 * Emperor is now hosted under the biocore GitHub organization.
 * Add toggle visible button (`Invert Selected`) under the `Visibility` tab, this button will change hidden categories to visible and vice-versa.
+* Supports both NumPy 1.7 and 1.8.
+* Depends on scikit-bio-dev.
 
 *Bug Fixes*
 
@@ -23,6 +25,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 
 * Add animations tab to the main user interface.
 * Add unit tests for the JavaScript library code.
+* Support both classic and [scikit-bio](http://scikit-bio.org)'s coordinate formats.
 
 Emperor 0.9.3 (5 Dec 2013)
 --------------------------

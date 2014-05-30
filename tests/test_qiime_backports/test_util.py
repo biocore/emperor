@@ -19,7 +19,8 @@ from unittest import TestCase, main
 from numpy.testing import assert_almost_equal
 from numpy import array, isnan, asarray, arange
 
-from emperor.pycogent_backports.procrustes import procrustes
+from skbio.math.stats.spatial import procrustes
+
 from emperor.qiime_backports.parse import (parse_mapping_file_to_dict,
     QiimeParseError)
 from emperor.qiime_backports.util import (MetadataMap, is_valid_git_sha1,
