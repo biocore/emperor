@@ -106,14 +106,32 @@ $(document).ready(function() {
 
     el = document.createElement("p");
     el.appendChild(document.createTextNode("Test"));
-    equal(convertXMLToString(el), '<p>Test</p>', 'Test a parragraph tag is '+
+    equal(convertXMLToString(el), '<p xmlns="http://www.w3.org/1999/xhtml">'+
+          'Test</p>', 'Test a parragraph tag is '+
           'converted correctly');
 
     el = document.createElement("div");
     el.appendChild(document.createTextNode("Test"));
     el.className="test-div-class"
-    equal(convertXMLToString(el), '<div class="test-div-class">Test</div>',
-          'Test a div tag is converted correctly');
+    equal(convertXMLToString(el), '<div xmlns="http://www.w3.org/1999/xhtml"'+
+          ' class="test-div-class">Test</div>',
+       'Test a div tag is converted correctly');
+  });
+
+  test("Test discrete colors are retrieved correctly", function(){
+    equal(getDiscreteColor(0), "0xFF0000", "Test color is indeed red");
+    equal(getDiscreteColor(1), "0x0000FF", "Test color is indeed blue");
+    equal(getDiscreteColor(2), "0xF27304", "Test color is indeed orange");
+  });
+
+  test("Test discrete colors are retrieved on roll-over", function(){
+    equal(getDiscreteColor(24), "0xFF0000", "Test color is indeed red even in"+
+          " the event of a roll-over");
+    equal(getDiscreteColor(25), "0x0000FF", "Test color is indeed red even in"+
+          " the event of a roll-over");
+    equal(getDiscreteColor(26), "0xF27304", "Test color is indeed red even in"+
+          " the event of a roll-over");
+
   });
 
 });
