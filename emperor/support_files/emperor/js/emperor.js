@@ -406,6 +406,58 @@ function colorByMenuChanged() {
 	setKey(vals, colors);
 }
 
+/**
+ *
+ *
+ */
+function colorAnimationsByCategoryChanged() {
+	// set the new current category and index
+    var gradient, trajectory, table, values, idString, hexString, colorIndex=0;
+
+    // names of the categories used to do the animations
+    gradient = $('#gradient-category-drop-down').find('option:selected').text();
+    trajectory = $('#trajectory-category-drop-down').find('option:selected').text();
+
+    table = buildColorSelectorTable(g_mappingFileHeaders, g_mappingFileData,
+                                    trajectory, 'animations');
+
+    // add the DOM object to this div, note that this will reset the contents
+    $('#emperor-animation-color-selector').html(table);
+
+    $('#emperor-animation-color-selector').children().find('div').each(
+            function(){
+                // get the id and the color for this element
+                idString = '#' + $(this).attr('id');
+                hexString = getDiscreteColor(colorIndex);
+
+                // CSS uses #FFFFFF instead of 0xFFFFFF
+                $(idString).css('backgroundColor',
+                                hexString.replace('0x', '#'));
+
+                // initialize an spectrum selector for this identifier
+                $(idString).spectrum({
+                    localStorageKey: 'key',
+                    color: hexString,
+                    showInitial: true,
+                    showInput: true,
+                    preferredFormat: "hex6",
+                    change:
+                    function(color) {
+                        $(this).css('backgroundColor', color.toHexString());
+
+                        // what I need here is a callback to change the
+                        // color of the trajectory
+                        //var c = color.toHexString();
+                        //colorChanged($(this).attr('name'), c);
+                        //colorParallelPlots(vals, colors);
+                    }
+                });
+
+                // the number of the row helps retrieve the color we will use
+                colorIndex = colorIndex + 1;
+            });
+}
+
 function colorParallelPlots(vals,colors) 
 {
 	pwidth = document.getElementById('parallelPlotWrapper').offsetWidth
@@ -2191,7 +2243,7 @@ $(document).ready(function() {
 			}
 			$("#gradient-category-drop-down").append(line);
 		}
-
+        colorAnimationsByCategoryChanged();
 		setParallelPlots();
 
 		colorByMenuChanged();
