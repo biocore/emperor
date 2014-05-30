@@ -62,7 +62,9 @@ $(document).ready(function() {
   test("Test color manager table construction with no extra parameters",
     function() {
       var table, crawfordTable;
-      crawfordTable = "<table class=\"emperor-tab-table\"><tbody><tr><td><div"+
+      crawfordTable = ''+
+        '<table xmlns="http://www.w3.org/1999/xhtml" '+
+        "class=\"emperor-tab-table\"><tbody><tr><td><div"+
         " id=\"row-0-column-0\" class=\"colorbox\" name=\"PC.354\"></div></td"+
         "><td title=\"PC.354\">PC.354</td></tr><tr><td><div id=\"row-1-column"+
         "-0\" class=\"colorbox\" name=\"PC.355\"></div></td><td title=\"PC.35"+
@@ -94,7 +96,8 @@ $(document).ready(function() {
     function() {
       var table, crawfordTable;
       crawfordTable = ''+
-        '<table class="emperor-tab-table"><tbody><tr><td><div id="foo-row-0'+
+        '<table xmlns="http://www.w3.org/1999/xhtml" '+
+        'class="emperor-tab-table"><tbody><tr><td><div id="foo-row-0'+
         '-column-0" class="colorbox" name="PC.354"></div></td><td title="PC.'+
         '354">PC.354</td></tr><tr><td><div id="foo-row-1-column-0" class="co'+
         'lorbox" name="PC.355"></div></td><td title="PC.355">PC.355</td></tr'+
