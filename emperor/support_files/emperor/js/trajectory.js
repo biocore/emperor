@@ -42,6 +42,8 @@
  *
  * @param {sampleNames} an Array of strings where each string is a sample
  * identifier.
+ * @param {metadataCategoryName} a string indicating the name of the category
+ * in the mapping file used to generate this trajectory.
  * @param {gradientPoints} an Array of floating point values where each value
  * corresponds to the position of the samples in the gradient.
  * @param {coordinates} an Array of objects with x, y and z properties where
@@ -54,9 +56,10 @@
  * should be found in the the trajectory.
  *
  **/
-function TrajectoryOfSamples(sampleNames, gradientPoints, coordinates,
-                             minimumDelta, suppliedN){
+function TrajectoryOfSamples(sampleNames, metadataCategoryName, gradientPoints,
+                             coordinates, minimumDelta, suppliedN){
   this.sampleNames = sampleNames;
+  this.metadataCategoryName = metadataCategoryName;
 
   // array of the values that samples have through the gradient
   this.gradientPoints = gradientPoints;

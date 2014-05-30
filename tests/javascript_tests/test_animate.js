@@ -73,7 +73,10 @@ $(document).ready(function() {
         equal(director.currentFrame, -1, 'The current frame is correct');
         equal(director.trajectories.length, 2, 'The number of trajectories is '+
               'correct');
-
+        equal(director.trajectories[0].metadataCategoryName, 'Control', 'The'+
+              'metadata category name is set correctly for the trajectory 1');
+        equal(director.trajectories[1].metadataCategoryName, 'Fast', 'The'+
+              'metadata category name is set correctly for the trajectory 1');
     });
 
     /**

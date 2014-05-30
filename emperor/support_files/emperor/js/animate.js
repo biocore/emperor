@@ -160,7 +160,7 @@ AnimationDirector.prototype.initializeTrajectories = function(){
     }
 
     // create the trajectory object
-    trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer,
+    trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer, key,
         gradientPointsBuffer, coordinatesBuffer, this.minimumDelta);
 
     this.trajectories.push(trajectoryBuffer);

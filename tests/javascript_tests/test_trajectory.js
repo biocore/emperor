@@ -95,37 +95,43 @@ $(document).ready(function() {
     test("Test constructor", function() {
         var trajectory;
 
-        trajectory = new TrajectoryOfSamples(sampleNames, gradientPoints,
-                                             coordinates, 2, 10);
+        trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
+                                             gradientPoints, coordinates, 2,
+                                             10);
         deepEqual(trajectory.sampleNames, ['PC.636', 'PC.635', 'PC.356',
                   'PC.481', 'PC.354'], 'Sample names are set correctly');
-        deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient point'+
-                  ' values are set correctly');
+        equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata '+
+              'category name is set correctly');
+        deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient '+
+                  'point values are set correctly');
         deepEqual(trajectory.coordinates, [{'x':0, 'y':0, 'z':0},
                   {'x':1, 'y':1, 'z':1}, {'x':-9, 'y':-9, 'z':-9},
-                  {'x':3, 'y':3, 'z':3}, {'x':8, 'y':8, 'z':8}], "Coordinates "+
-                  "values are set correctly");
+                  {'x':3, 'y':3, 'z':3}, {'x':8, 'y':8, 'z':8}], "Coordinates"+
+                  " values are set correctly");
         equal(trajectory.minimumDelta, 2, "Minimum delta is set correctly");
         equal(trajectory.suppliedN, 10, 'Value of N is set correctly');
 
-        trajectory = new TrajectoryOfSamples(sampleNames, gradientPoints,
+        trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
+                                             gradientPoints,
                                              coordinates, 2);
-        deepEqual(trajectory.sampleNames, ['PC.636', 'PC.635', 'PC.356', 'PC.481',
-                  'PC.354'], 'Sample names are set correctly');
-        deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient point '+
-                  'values are set correctly');
+        deepEqual(trajectory.sampleNames, ['PC.636', 'PC.635', 'PC.356',
+                  'PC.481', 'PC.354'], 'Sample names are set correctly');
+        equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata '+
+              'category name is set correctly');
+        deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient'+
+                  ' point values are set correctly');
         deepEqual(trajectory.coordinates, [{'x':0, 'y':0, 'z':0},
                   {'x':1, 'y':1, 'z':1}, {'x':-9, 'y':-9, 'z':-9},
-                  {'x':3, 'y':3, 'z':3}, {'x':8, 'y':8, 'z':8}], "Coordinates "+
-                  "values are set correctly");
+                  {'x':3, 'y':3, 'z':3}, {'x':8, 'y':8, 'z':8}], "Coordinates"+
+                  " values are set correctly");
         equal(trajectory.minimumDelta, 2, "Minimum delta is set correctly");
         equal(trajectory.suppliedN, 5, "Default value of N is set to 5");
     });
 
     /**
      *
-     * Test the trajectory object raises the appropriate errors when constructing
-     * with bad arguments.
+     * Test the trajectory object raises the appropriate errors when
+     * constructing with bad arguments.
      *
      */
     test("Test constructor exceptions", function(){
@@ -134,7 +140,7 @@ $(document).ready(function() {
         // check this happens for all the properties
         throws(
             function (){
-                result = new TrajectoryOfSamples(sampleNames, [1, 2, 3],
+                result = new TrajectoryOfSamples(sampleNames, 'foo', [1, 2, 3],
                                                  coordinates);
             },
             Error,
@@ -145,7 +151,8 @@ $(document).ready(function() {
 
     /**
      *
-     * Test the trajectory object computes the interpolated coordinates correctly
+     * Test the trajectory object computes the interpolated coordinates
+     * correctly
      *
      */
     test("Test _generateInterpolatedCoordinates", function(){
@@ -205,8 +212,9 @@ $(document).ready(function() {
             {"x": 7.333333333333333, "y": 7.333333333333333, "z": 7.333333333333333},
             {"x": 7.666666666666666, "y": 7.666666666666666, "z": 7.666666666666666},
             {"x": 8, "y": 8, "z": 8}];
-        trajectory = new TrajectoryOfSamples(sampleNames, gradientPoints,
-                                             coordinates, 2, 10);
+        trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
+                                             gradientPoints, coordinates, 2,
+                                             10);
         deepEqual(trajectory.interpolatedCoordinates,
                   expectedInterpolatedCoordinates,
                   'Check the interpolated coordinates are computed correctly');
@@ -228,8 +236,9 @@ $(document).ready(function() {
                                            {"x": 5.5, "y": 5.5, "z": 5.5},
                                            {"x": 6.75, "y": 6.75, "z": 6.75},
                                            {"x": 8, "y": 8, "z": 8 }];
-        trajectory = new TrajectoryOfSamples(sampleNames, gradientPoints,
-                                             coordinates, 2, 3);
+        trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
+                                             gradientPoints, coordinates, 2,
+                                             3);
         deepEqual(trajectory.interpolatedCoordinates,
                   expectedInterpolatedCoordinates,
                   'Check the interpolated coordinates are computed correctly');
@@ -244,8 +253,9 @@ $(document).ready(function() {
     test('Test calculateNumberOfPointsForDelta', function(){
         var trajectory;
 
-        trajectory = new TrajectoryOfSamples(sampleNames, gradientPoints,
-                                             coordinates, 2, 10);
+        trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
+                                             gradientPoints, coordinates, 2,
+                                             10);
         equal(trajectory.calculateNumberOfPointsForDelta(3), 15, 'Number of '+
               'points for delta is calculated correctly');
         equal(trajectory.calculateNumberOfPointsForDelta(8), 40, 'Number of '+
