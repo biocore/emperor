@@ -2471,8 +2471,16 @@ $(document).ready(function() {
 					g_animationLines.length = 0;
 
 					for (var index = 0; index < g_animationDirector.trajectories.length; index++){
+
+                        categoryName = g_animationDirector.trajectories[index].metadataCategoryName;
+                        trajectoryColor = $('#emperor-animation-color-selector').find('div[name='+categoryName+']').css('background-color');
+
+                        // THREE cannot process spaces inside rgb(0, 0, 0) it has to be rgb(0,0,0)
+                        trajectoryColor = trajectoryColor.replace(/\s/g, '');
+
 						// draw a trajectory line per trajectory
-						drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index].interpolatedCoordinates, g_animationDirector.currentFrame, 0x00FF00, 10);
+						drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index].interpolatedCoordinates,
+                                                               g_animationDirector.currentFrame, trajectoryColor, 10);
 
 						g_mainScene.add(drawingLineBuffer);
 						g_elementsGroup.add(drawingLineBuffer);
@@ -2524,7 +2532,7 @@ function pauseAnimation() {
  *
  * @param {trajectory} SampleTrajectory object.
  * @param {currentFrame} The current frame at which this line should be drawn.
- * @param {color} 4 Byte integer word with the color in RGB format.
+ * @param {color} string or integer that can be parsed by THREE.Color.
  * @param {width} Float value representing the width of the line.
  *
  * @return Returns a line with the required attributes as defined by the input
