@@ -134,4 +134,10 @@ $(document).ready(function() {
 
   });
 
+  test("Test regular expressions are escaped correctly", function(){
+    equal(escapeRegularExpression('some.sample.id'), 'some\\.sample\\.id');
+    equal(escapeRegularExpression('some-sample.id'), 'some\\-sample\\.id');
+    equal(escapeRegularExpression('s/.*?ome.sample.id'), 's/\\.\\*\\?ome\\.sample\\.id');
+  });
+
 });

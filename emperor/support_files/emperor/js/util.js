@@ -122,3 +122,17 @@ function getDiscreteColor(index){
 	return k_QIIME_COLORS[index]
 }
 
+/**
+ *
+ * Escape special characters in a string for use in a regular expression.
+ *
+ * @param {regex} string to escape for use in a regular expression.
+ *
+ * @return string with escaped characters for use in a regular expression.
+ *
+ * Credits go to this SO answer http://stackoverflow.com/a/5306111
+ */
+function escapeRegularExpression(regex){
+    return regex.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
