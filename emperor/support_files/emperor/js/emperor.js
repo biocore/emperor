@@ -2473,6 +2473,7 @@ $(document).ready(function() {
 					for (var index = 0; index < g_animationDirector.trajectories.length; index++){
 
                         categoryName = g_animationDirector.trajectories[index].metadataCategoryName;
+                        categoryName = escapeRegularExpression(categoryName);
                         trajectoryColor = $('#emperor-animation-color-selector').find('div[name='+categoryName+']').css('background-color');
 
                         // THREE cannot process spaces inside rgb(0, 0, 0) it has to be rgb(0,0,0)
