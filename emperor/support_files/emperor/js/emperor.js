@@ -2454,7 +2454,12 @@ $(document).ready(function() {
 				gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
 
 				// initialize the animation director
-				g_animationDirector = new AnimationDirector(g_mappingFileHeaders, g_mappingFileData, g_spherePositions, gradientCategory, trajectoryCategory, 10);
+				g_animationDirector = new AnimationDirector(g_mappingFileHeaders,
+                                                            g_mappingFileData,
+                                                            g_spherePositions,
+                                                            gradientCategory,
+                                                            trajectoryCategory,
+                                                            10);
 				g_animationDirector.updateFrame();
 
 			}

@@ -105,6 +105,9 @@ TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
         this.gradientPoints[index+1]));
 
     pointsPerStep = this.calculateNumberOfPointsForDelta(delta);
+    if (pointsPerStep > 10){
+      pointsPerStep = 10
+    }
 
     currInterpolation = linearInterpolation(this.coordinates[index]['x'],
                                             this.coordinates[index]['y'],
