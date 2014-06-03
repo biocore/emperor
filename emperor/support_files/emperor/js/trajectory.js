@@ -148,6 +148,38 @@ TrajectoryOfSamples.prototype.calculateNumberOfPointsForDelta = function(delta){
 }
 
 /**
+ *
+ * Retrieve the representative coordinates needed for a trajectory to be drawn.
+ *
+ * @param {idx} int value for which to determine the required number of
+ * points.
+ *
+ * @return an Array containing the representative coordinates needed to draw
+ * a trajectory at the given index.
+ *
+ * Note that this implementation is naive and will return points that lay on a
+ * rect line if these were part of the original set of coordinates.
+ *
+ */
+TrajectoryOfSamples.prototype.representativeCoordinatesAtIndex = function(idx){
+
+  if (idx === 0){
+    return [];
+  }
+
+  // we only need to show the edges and none of the interpolated points
+  if (this.interpolatedCoordinates.length-1 <= idx){
+    return this.coordinates;
+  }
+
+  var output = [];
+
+  // behold the code that shall be written here
+
+  return output;
+}
+
+/**
  * 
  * Function to interpolate a certain number of steps between two three
  * dimensional points.
