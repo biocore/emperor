@@ -56,10 +56,9 @@ setup(name='emperor',
             'support_files/emperor/js/*.js',]},
         data_files={},
         install_requires=["numpy >= 1.7", "qcli",
-                          "scikit-bio == 0.0.0-dev"],
+                          "scikit-bio == 0.1.4"],
         dependency_links=[
             "https://github.com/biocore/scikit-bio/archive/master.zip#egg=scikit-bio-0.0.0-dev"
         ],
         long_description=long_description,
         classifiers=classifiers)
-
