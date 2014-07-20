@@ -51,6 +51,28 @@ class Emperor(object):
         List of strings representing the header names of the
         `mapping_file_data`. All names should be unique.
 
+    Examples
+    --------
+    Create an Emperor object and display it from the IPython notebook:
+
+    >>> data = [['PC.354', 'Control', '20061218', 'Control_mouse_I.D._354'],
+    ... ['PC.355', 'Control', '20061218', 'Control_mouse_I.D._355'],
+    ... ['PC.356', 'Control', '20061126', 'Control_mouse_I.D._356'],
+    ... ['PC.481', 'Control', '20070314', 'Control_mouse_I.D._481'],
+    ... ['PC.593', 'Control', '20071210', 'Control_mouse_I.D._593'],
+    ... ['PC.607', 'Fast', '20071112', 'Fasting_mouse_I.D._607'],
+    ... ['PC.634', 'Fast', '20080116', 'Fasting_mouse_I.D._634'],
+    ... ['PC.635', 'Fast', '20080116', 'Fasting_mouse_I.D._635'],
+    ... ['PC.636', 'Fast', '20080116', 'Fasting_mouse_I.D._636']]
+    >>> headers = ['SampleID', 'Treatment', 'DOB', 'Description']
+    >>> ordination = OrdinationResults.from_file('unweighted_unifrac_pc.txt')
+
+    Now import the Emperor object and display it using IPython, note that this
+    call will have no effect under an interactive Python session:
+
+    >>> from emperor import Emperor
+    >>> Emperor(ordination, data, headers)
+
     Notes
     -----
     This object currently does not support the full range of actions that the
