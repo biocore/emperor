@@ -42,6 +42,26 @@ class Emperor(object):
 
     Parameters
     ----------
+    ordination: skbio.maths.stats.ordination.OrdinationResults
+        Object containing the computed values for an ordination method in
+        scikit-bio.
+    mapping_file_data: list of list objects
+        Metadata mapping file used to color the plot.
+    mapping_file_headers: list of str objects
+        List of strings representing the header names of the
+        `mapping_file_data`. All names should be unique.
+
+    Notes
+    -----
+    This object currently does not support the full range of actions that the
+    GUI does support and should be considered experimental at the moment.
+
+    References
+    ----------
+    .. [1] EMPeror: a tool for visualizing high-throughput microbial community
+    data Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.  Gigascience. 2013
+    Nov 26;2(1):16.
+
     """
     def __init__(self, ordination, mapping_file_data, mapping_file_headers):
         self.ordination = ordination
@@ -55,7 +75,6 @@ class Emperor(object):
             self._make_emperor()
         return self._html
 
-
     def _repr_html_(self):
         """Used to be displayed in the IPython notebook"""
 
@@ -68,6 +87,8 @@ class Emperor(object):
         # filesystem, it will instead retrieve them from the official website
         output = str(self).replace('emperor_required_resources',
                                    RESOURCES_URL)
+
+        # thanks to the IPython devs for helping me figure this one out
         return display(HTML(output), metadata=dict(isolated=True))
 
     def _make_emperor(self):
