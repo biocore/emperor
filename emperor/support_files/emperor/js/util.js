@@ -136,3 +136,17 @@ function escapeRegularExpression(regex){
     return regex.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
 
+/**
+ *
+ * Clean a string in HTML formatted strings that get created with the namespace
+ * tag in some browsers and not in others. Intended to facilitate testing.
+ *
+ * @param {htmlString} string to remove namespace from.
+ *
+ * @return string without namespace.
+ *
+ */
+function cleanHTML(htmlString){
+    return htmlString.replace(' xmlns="http://www.w3.org/1999/xhtml"', '')
+}
+
