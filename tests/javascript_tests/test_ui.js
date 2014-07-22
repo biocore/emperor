@@ -62,28 +62,26 @@ $(document).ready(function() {
   test("Test color manager table construction with no extra parameters",
     function() {
       var table, crawfordTable;
-      crawfordTable = ''+
-        '<table xmlns="http://www.w3.org/1999/xhtml" '+
-        "class=\"emperor-tab-table\"><tbody><tr><td><div"+
-        " id=\"row-0-column-0\" class=\"colorbox\" name=\"PC.354\"></div></td"+
-        "><td title=\"PC.354\">PC.354</td></tr><tr><td><div id=\"row-1-column"+
-        "-0\" class=\"colorbox\" name=\"PC.355\"></div></td><td title=\"PC.35"+
-        "5\">PC.355</td></tr><tr><td><div id=\"row-2-column-0\" class=\"color"+
-        "box\" name=\"PC.356\"></div></td><td title=\"PC.356\">PC.356</td></t"+
-        "r><tr><td><div id=\"row-3-column-0\" class=\"colorbox\" name=\"PC.48"+
-        "1\"></div></td><td title=\"PC.481\">PC.481</td></tr><tr><td><div id="+
-        "\"row-4-column-0\" class=\"colorbox\" name=\"PC.593\"></div></td><td"+
-        " title=\"PC.593\">PC.593</td></tr><tr><td><div id=\"row-5-column-0\""+
-        " class=\"colorbox\" name=\"PC.607\"></div></td><td title=\"PC.607\">"+
-        "PC.607</td></tr><tr><td><div id=\"row-6-column-0\" class=\"colorbox"+
-        "\" name=\"PC.634\"></div></td><td title=\"PC.634\">PC.634</td></tr><"+
-        "tr><td><div id=\"row-7-column-0\" class=\"colorbox\" name=\"PC.635\""+
-        "></div></td><td title=\"PC.635\">PC.635</td></tr><tr><td><div id=\"r"+
-        "ow-8-column-0\" class=\"colorbox\" name=\"PC.636\"></div></td><td ti"+
-        "tle=\"PC.636\">PC.636</td></tr></tbody></table>"
+      crawfordTable = '<table class=\"emperor-tab-table\"><tbody><tr><td titl'+
+      'e=\"PC.636\">PC.636</td><td><div id=\"row-8-column-0\" class=\"colorbo'+
+      'x\" name=\"PC.636\"></div></td></tr><tr><td title=\"PC.635\">PC.635</t'+
+      'd><td><div id=\"row-7-column-0\" class=\"colorbox\" name=\"PC.635\"></'+
+      'div></td></tr><tr><td title=\"PC.634\">PC.634</td><td><div id=\"row-6-'+
+      'column-0\" class=\"colorbox\" name=\"PC.634\"></div></td></tr><tr><td '+
+      'title=\"PC.607\">PC.607</td><td><div id=\"row-5-column-0\" class=\"col'+
+      'orbox\" name=\"PC.607\"></div></td></tr><tr><td title=\"PC.593\">PC.59'+
+      '3</td><td><div id=\"row-4-column-0\" class=\"colorbox\" name=\"PC.593'+
+      '\"></div></td></tr><tr><td title=\"PC.481\">PC.481</td><td><div id=\"ro'+
+      'w-3-column-0\" class=\"colorbox\" name=\"PC.481\"></div></td></tr><tr>'+
+      '<td title=\"PC.356\">PC.356</td><td><div id=\"row-2-column-0\" class='+
+      '\"colorbox\" name=\"PC.356\"></div></td></tr><tr><td title=\"PC.355\">P'+
+      'C.355</td><td><div id=\"row-1-column-0\" class=\"colorbox\" name=\"PC.'+
+      '355\"></div></td></tr><tr><td title=\"PC.354\">PC.354</td><td><div id='+
+      '\"row-0-column-0\" class=\"colorbox\" name=\"PC.354\"></div></td></tr>'+
+      '</tbody></table>'
       table = buildColorSelectorTable(mappingFileHeaders, mappingFileData,
                                       'SampleID');
-      equal(convertXMLToString(table), crawfordTable);
+      equal(cleanHTML(convertXMLToString(table)), cleanHTML(crawfordTable));
     }
   );
 
@@ -95,28 +93,26 @@ $(document).ready(function() {
   test("Test color manager table construction with an extra parameter",
     function() {
       var table, crawfordTable;
-      crawfordTable = ''+
-        '<table xmlns="http://www.w3.org/1999/xhtml" '+
-        'class="emperor-tab-table"><tbody><tr><td><div id="foo-row-0'+
-        '-column-0" class="colorbox" name="PC.354"></div></td><td title="PC.'+
-        '354">PC.354</td></tr><tr><td><div id="foo-row-1-column-0" class="co'+
-        'lorbox" name="PC.355"></div></td><td title="PC.355">PC.355</td></tr'+
-        '><tr><td><div id="foo-row-2-column-0" class="colorbox" name="PC.356'+
-        '"></div></td><td title="PC.356">PC.356</td></tr><tr><td><div id="fo'+
-        'o-row-3-column-0" class="colorbox" name="PC.481"></div></td><td tit'+
-        'le="PC.481">PC.481</td></tr><tr><td><div id="foo-row-4-column-0" cl'+
-        'ass="colorbox" name="PC.593"></div></td><td title="PC.593">PC.593</'+
-        'td></tr><tr><td><div id="foo-row-5-column-0" class="colorbox" name='+
-        '"PC.607"></div></td><td title="PC.607">PC.607</td></tr><tr><td><div'+
-        ' id="foo-row-6-column-0" class="colorbox" name="PC.634"></div></td>'+
-        '<td title="PC.634">PC.634</td></tr><tr><td><div id="foo-row-7-colum'+
-        'n-0" class="colorbox" name="PC.635"></div></td><td title="PC.635">P'+
-        'C.635</td></tr><tr><td><div id="foo-row-8-column-0" class="colorbox'+
-        '" name="PC.636"></div></td><td title="PC.636">PC.636</td></tr></tbo'+
-        'dy></table>'
+      crawfordTable = '<table class=\"emperor-tab-table\"><tbody><tr><td titl'+
+      'e=\"PC.636\">PC.636</td><td><div id=\"foo-row-8-column-0\" class=\"col'+
+      'orbox\" name=\"PC.636\"></div></td></tr><tr><td title=\"PC.635\">PC.63'+
+      '5</td><td><div id=\"foo-row-7-column-0\" class=\"colorbox\" name=\"PC.'+
+      '635\"></div></td></tr><tr><td title=\"PC.634\">PC.634</td><td><div id='+
+      '\"foo-row-6-column-0\" class=\"colorbox\" name=\"PC.634\"></div></td><'+
+      '/tr><tr><td title=\"PC.607\">PC.607</td><td><div id=\"foo-row-5-column'+
+      '-0\" class=\"colorbox\" name=\"PC.607\"></div></td></tr><tr><td title='+
+      '\"PC.593\">PC.593</td><td><div id=\"foo-row-4-column-0\" class=\"color'+
+      'box\" name=\"PC.593\"></div></td></tr><tr><td title=\"PC.481\">PC.481<'+
+      '/td><td><div id=\"foo-row-3-column-0\" class=\"colorbox\" name=\"PC.48'+
+      '1\"></div></td></tr><tr><td title=\"PC.356\">PC.356</td><td><div id=\"'+
+      'foo-row-2-column-0\" class=\"colorbox\" name=\"PC.356\"></div></td></t'+
+      'r><tr><td title=\"PC.355\">PC.355</td><td><div id=\"foo-row-1-column-0'+
+      '\" class=\"colorbox\" name=\"PC.355\"></div></td></tr><tr><td title=\"'+
+      'PC.354\">PC.354</td><td><div id=\"foo-row-0-column-0\" class=\"colorbo'+
+      'x\" name=\"PC.354\"></div></td></tr></tbody></table>'+
       table = buildColorSelectorTable(mappingFileHeaders, mappingFileData,
                                       'SampleID', 'foo');
-      equal(convertXMLToString(table), crawfordTable);
+      equal(cleanHTML(convertXMLToString(table)), cleanHTML(crawfordTable));
     }
   );
 
