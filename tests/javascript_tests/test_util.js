@@ -107,17 +107,16 @@ $(document).ready(function() {
     el = document.createElement("p");
     el.appendChild(document.createTextNode("Test"));
     equal(cleanHTML(convertXMLToString(el)),
-          cleanHTML('<p xmlns="http://www.w3.org/1999/xhtml">'+
-                    'Test</p>', 'Test a parragraph tag is '+
-                    'converted correctly'));
+          cleanHTML('<p xmlns="http://www.w3.org/1999/xhtml">Test</p>'),
+          'Test a parragraph tag is converted correctly');
 
     el = document.createElement("div");
     el.appendChild(document.createTextNode("Test"));
     el.className="test-div-class"
     equal(cleanHTML(convertXMLToString(el)),
-          cleanHTML('<div xmlns="http://www.w3.org/1999/xhtml"'+
-                    ' class="test-div-class">Test</div>',
-                    'Test a div tag is converted correctly'));
+          cleanHTML('<div xmlns="http://www.w3.org/1999/xhtml" class="test-div'
+          '-class">Test</div>'),
+          'Test a div tag is converted correctly');
   });
 
   test("Test discrete colors are retrieved correctly", function(){
