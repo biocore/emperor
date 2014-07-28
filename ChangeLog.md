@@ -20,6 +20,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Fixed problem that prevented the user from scrolling through the categories in the user interface.
 * Clean-up the layout of the user interface so it's cleaner and consistent.
 * Fix problem where long category names would alter the layout of the interface.
+* Fix inability to write an 'E' character in the Filename field when exporting an svg.
 
 *New Features*
 
