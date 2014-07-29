@@ -10,4 +10,6 @@ __maintainer__ = "Antonio Gonzalez Pena"
 __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
-__all__ = ['biplots', 'format', 'filter', 'sort', 'util']
+from emperor.core import Emperor
+
+__all__ = ['Emperor', 'biplots', 'format', 'filter', 'sort', 'util']

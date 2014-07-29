@@ -13,6 +13,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Add toggle visible button (`Invert Selected`) under the `Visibility` tab, this button will change hidden categories to visible and vice-versa.
 * Supports both NumPy 1.7 and 1.8.
 * Depends on scikit-bio-dev.
+* Emperor provides a Python object that is IPython aware (emperor.Emperor) that will display a usable plot from within the IPython notebook.
 
 *Bug Fixes*
 
@@ -20,6 +21,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Fixed problem that prevented the user from scrolling through the categories in the user interface.
 * Clean-up the layout of the user interface so it's cleaner and consistent.
 * Fix problem where long category names would alter the layout of the interface.
+* Fix inability to write an 'E' character in the Filename field when exporting an svg.
 
 *New Features*
 
