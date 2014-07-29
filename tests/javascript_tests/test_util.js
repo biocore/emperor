@@ -114,8 +114,8 @@ $(document).ready(function() {
     el.appendChild(document.createTextNode("Test"));
     el.className="test-div-class"
     equal(cleanHTML(convertXMLToString(el)),
-          cleanHTML('<div xmlns="http://www.w3.org/1999/xhtml" class="test-div'
-          '-class">Test</div>'),
+          cleanHTML('<div xmlns="http://www.w3.org/1999/xhtml" class="test-di'+
+          'v-class">Test</div>'),
           'Test a div tag is converted correctly');
   });
 

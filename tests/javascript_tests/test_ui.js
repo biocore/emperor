@@ -109,7 +109,7 @@ $(document).ready(function() {
       'r><tr><td title=\"PC.355\">PC.355</td><td><div id=\"foo-row-1-column-0'+
       '\" class=\"colorbox\" name=\"PC.355\"></div></td></tr><tr><td title=\"'+
       'PC.354\">PC.354</td><td><div id=\"foo-row-0-column-0\" class=\"colorbo'+
-      'x\" name=\"PC.354\"></div></td></tr></tbody></table>'+
+      'x\" name=\"PC.354\"></div></td></tr></tbody></table>'
       table = buildColorSelectorTable(mappingFileHeaders, mappingFileData,
                                       'SampleID', 'foo');
       equal(cleanHTML(convertXMLToString(table)), cleanHTML(crawfordTable));
