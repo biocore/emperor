@@ -137,9 +137,12 @@ AnimationDirector.prototype.initializeTrajectories = function(){
   // we have to iterate over the keys because chewedData is a dictionary-like
   // object, if possible this should be changed in the future to be an Array
   for (var key in chewedData){
-    sampleNamesBuffer.length = 0;
-    gradientPointsBuffer.length = 0;
-    coordinatesBuffer.length = 0;
+
+    // re-initalize the arrays, essentially dropping all the previously
+    // existing information
+    sampleNamesBuffer = [];
+    gradientPointsBuffer = [];
+    coordinatesBuffer = [];
 
     // buffer this to avoid the multiple look-ups below
     chewedDataBuffer = chewedData[key];

@@ -53,7 +53,7 @@ $(document).ready(function() {
 
         var director = new AnimationDirector(mappingFileHeaders,mappingFileData,
                                              coordinatesData, 'DOB',
-                                             'Treatment', 1000);
+                                             'Treatment', 1000, 10);
 
         // a quick run through all the properties
         equal(director.mappingFileHeaders, mappingFileHeaders, 'The mapping '+
@@ -68,7 +68,7 @@ $(document).ready(function() {
               'trajectoryCategory is set correctly');
         equal(director.minimumDelta, 92, 'The minimum delta is computed'+
               'correctly');
-        equal(director.maximumTrajectoryLength, 551, 'The maximum trajectory '+
+        equal(director.maximumTrajectoryLength, 26, 'The maximum trajectory '+
               'length value is correct');
         equal(director.currentFrame, -1, 'The current frame is correct');
         equal(director.trajectories.length, 2, 'The number of trajectories is '+
@@ -77,6 +77,23 @@ $(document).ready(function() {
               'metadata category name is set correctly for the trajectory 1');
         equal(director.trajectories[1].metadataCategoryName, 'Fast', 'The'+
               'metadata category name is set correctly for the trajectory 1');
+
+
+
+        // check the trajectories are overall ok -- reason why I added this, because they are not :P
+        deepEqual(director.trajectories[0].representativeCoordinatesAtIndex(1000),
+                  [{"x": 0.22882, "y": -0.130142, "z": -0.287149},
+                  {"x": 0.170518, "y": -0.194113, "z": -0.030897},
+                  {"x": 0.280399, "y": -0.006013, "z": 0.023485},
+                  {"x": 0.042263, "y": -0.013968, "z": 0.063531},
+                  {"x": 0.232873, "y": 0.139788, "z": 0.322871}],
+                  'Control');
+        deepEqual(director.trajectories[1].representativeCoordinatesAtIndex(1000),
+                  [{"x": -0.09133, "y": 0.424147, "z": -0.135627},
+                  {"x": -0.349339, "y": -0.120788, "z": 0.115275},
+                  {"x": -0.237661, "y": 0.046053, "z": -0.138136},
+                  {"x": -0.276542, "y": -0.144964, "z": 0.066647}],
+                  'Fast');
     });
 
     /**
@@ -148,20 +165,20 @@ $(document).ready(function() {
         var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
                                              coordinatesData, 'DOB',
                                              'Treatment', 1000);
-        equal(director.getMaximumTrajectoryLength(), 551,
+        equal(director.getMaximumTrajectoryLength(), 26,
               'Test for the correct getMaximumTrajectoryLength value to be '+
               'returned');
         var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
                                              coordinatesData, 'DOB',
                                              'Treatment', 10000);
-        equal(director.getMaximumTrajectoryLength(), 551,
+        equal(director.getMaximumTrajectoryLength(), 26,
               'Test for the correct getMaximumTrajectoryLength value to be '+
               'returned');
         var director = new AnimationDirector(mappingFileHeaders,
                                              mappingFileData, coordinatesData,
                                              'DOB', 'LinkerPrimerSequence',
                                              1000);
-        equal(director.getMaximumTrajectoryLength(), 1039,
+        equal(director.getMaximumTrajectoryLength(), 41,
               'Test for the correct getMaximumTrajectoryLength value to be '+
               'returned');
     });
@@ -184,7 +201,7 @@ $(document).ready(function() {
         for (var i = 1; i < 1000; i++) {
             director.updateFrame();
         }
-        equal(director.currentFrame, 552, 'The current frame is stopped at the'+
+        equal(director.currentFrame, 27, 'The current frame is stopped at the'+
               ' maximum trajectory length');
     });
 
