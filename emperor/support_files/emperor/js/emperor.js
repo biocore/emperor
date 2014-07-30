@@ -2485,7 +2485,7 @@ $(document).ready(function() {
                         trajectoryColor = trajectoryColor.replace(/\s/g, '');
 
 						// draw a trajectory line per trajectory
-						drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index].interpolatedCoordinates,
+						drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index],
                                                                g_animationDirector.currentFrame, trajectoryColor, 10);
 
 						g_mainScene.add(drawingLineBuffer);
@@ -2549,21 +2549,15 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width){
 	// https://github.com/mrdoob/three.js/wiki/Drawing-lines
 	var material, points = [], lineGeometry, limit = 0, path;
 
-	// truncate to the length of the trajectory
-	if (currentFrame > trajectory.length){
-		limit = trajectory.length;
-	}
-	else{
-		limit = currentFrame;
-	}
+    _trajectory = trajectory.representativeCoordinatesAtIndex(currentFrame);
 
 	material = new THREE.MeshLambertMaterial({color:color});
 	material.matrixAutoUpdate = true;
 	material.transparent = false;
 
-	for (var index = 0; index < limit; index++){
-		points.push(new THREE.Vector3(trajectory[index]['x'],
-			trajectory[index]['y'], trajectory[index]['z']));
+	for (var index = 0; index < _trajectory.length; index++){
+		points.push(new THREE.Vector3(_trajectory[index]['x'],
+			_trajectory[index]['y'], _trajectory[index]['z']));
 	}
 
     path = new THREE.SplineCurve3(points)
