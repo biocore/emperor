@@ -54,10 +54,11 @@
  * animated together, usually by an AnimationDirector object.
  * @param {suppliedN} a parameter that will determine how many points should
  * should be found in the the trajectory.
+ * @param {maxN} maximum number of samples allowed per interpolation interval.
  *
  **/
 function TrajectoryOfSamples(sampleNames, metadataCategoryName, gradientPoints,
-                             coordinates, minimumDelta, suppliedN){
+                             coordinates, minimumDelta, suppliedN, maxN){
   this.sampleNames = sampleNames;
   this.metadataCategoryName = metadataCategoryName;
 
@@ -73,6 +74,7 @@ function TrajectoryOfSamples(sampleNames, metadataCategoryName, gradientPoints,
   // this value determines how fast the animation will run for now let's use
   // 5 and stick to it as a good default value; 60 was way too slow
   this.suppliedN = suppliedN !== undefined ? suppliedN : 5;
+  this.maxN = maxN !== undefined ? maxN : 10;
 
   if (this.coordinates.length != this.gradientPoints.length) {
     throw new Error("The number of coordinate points and gradient points is"+
@@ -94,7 +96,8 @@ function TrajectoryOfSamples(sampleNames, metadataCategoryName, gradientPoints,
  */
 TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
   var pointsPerStep = 0, delta = 0;
-  var interpolatedCoordinatesBuffer = new Array();
+  var interpolatedCoordinatesBuffer = new Array(),
+      intervalBuffer = new Array();
   var currInterpolation;
 
   // iterate over the gradient points to compute the interpolated distances
@@ -105,8 +108,8 @@ TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
         this.gradientPoints[index+1]));
 
     pointsPerStep = this.calculateNumberOfPointsForDelta(delta);
-    if (pointsPerStep > 10){
-      pointsPerStep = 10
+    if (pointsPerStep > this.maxN){
+      pointsPerStep = this.maxN;
     }
 
     currInterpolation = linearInterpolation(this.coordinates[index]['x'],
@@ -117,12 +120,23 @@ TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
                                             this.coordinates[index+1]['z'],
                                             pointsPerStep);
 
-    // extend to include these interpolated points
-    interpolatedCoordinatesBuffer = _.union(interpolatedCoordinatesBuffer,
-                                            currInterpolation);
+    // extend to include these interpolated points, do not include the last
+    // element of the array to avoid repeating the number per interval
+    interpolatedCoordinatesBuffer = interpolatedCoordinatesBuffer.concat(
+        currInterpolation.slice(0, -1));
+
+    // extend the interval buffer
+    // credit goes to http://stackoverflow.com/a/13735425/379593
+    intervalBuffer = intervalBuffer.concat(
+            Array.apply(null, new Array(pointsPerStep)).map(
+                Number.prototype.valueOf, index));
+
   }
 
-  this.interpolatedCoordinates = interpolatedCoordinatesBuffer;
+  // add the last point to make sure the trajectory is closed
+  this.interpolatedCoordinates = interpolatedCoordinatesBuffer.concat(
+          currInterpolation.slice(-1));
+  this._intervalValues = intervalBuffer;
 
   return;
 }
@@ -164,7 +178,7 @@ TrajectoryOfSamples.prototype.calculateNumberOfPointsForDelta = function(delta){
 TrajectoryOfSamples.prototype.representativeCoordinatesAtIndex = function(idx){
 
   if (idx === 0){
-    return [];
+    return [this.coordinates[0]];
   }
 
   // we only need to show the edges and none of the interpolated points
@@ -172,9 +186,8 @@ TrajectoryOfSamples.prototype.representativeCoordinatesAtIndex = function(idx){
     return this.coordinates;
   }
 
-  var output = [];
-
-  // behold the code that shall be written here
+  var output = this.coordinates.slice(0, this._intervalValues[idx]+1);
+  output = output.concat(this.interpolatedCoordinates[idx]);
 
   return output;
 }
