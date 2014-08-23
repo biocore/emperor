@@ -246,7 +246,6 @@ class TopLevelTests(TestCase):
         out_string = format_emperor_html_footer_string(False, False, False,True)
         self.assertEqual(out_string, EXPECTED_FOOTER_E)
 
-
     def test_format_emperor_autograph(self):
         """Test signatures are created correctly for each of language"""
 
@@ -614,8 +613,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
             <li><a href="#animations">Animations</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
@@ -714,48 +712,50 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="animations">
-            <table width="90%" align="center">
+        <div id="animations" class="emperor-tab-div">
+            <table class="emperor-tab-table-with-sliders">
                 <tr>
                     <td>
-                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
-                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
-                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                        <a id="reset-button" class="media-button" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play-button" class="media-button" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause-button" class="media-button" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <label for="animation_speed" class="text">Speed</label>
-                        <label id="animation_speed" class="slidervalue"></label>
-                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <label for="animation-speed" class="text">Speed</label>
+                        <label id="animation-speed" class="slidervalue"></label>
+                        <div id="animation-speed-slider" class="slider-range-max"></div>
                         <div id="labelColorHolder clearfix">
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                        <br><label for="gradient-category-drop-down" class="text">Gradient Category</label><br>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
+                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down"></select><br>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                        <label for="trajectory-category-drop-down" class="text">Trajectory Category</label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
+                        <select id="trajectory-category-drop-down" class="emperor-tab-drop-down" onchange="colorAnimationsByCategoryChanged()"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="emperor-animation-color-selector">
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="view">
-            <table>
         <div id="options" class="emperor-tab-div">
             <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
@@ -862,8 +862,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
             <li><a href="#animations">Animations</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
@@ -977,48 +976,50 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="animations">
-            <table width="90%" align="center">
+        <div id="animations" class="emperor-tab-div">
+            <table class="emperor-tab-table-with-sliders">
                 <tr>
                     <td>
-                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
-                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
-                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                        <a id="reset-button" class="media-button" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play-button" class="media-button" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause-button" class="media-button" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <label for="animation_speed" class="text">Speed</label>
-                        <label id="animation_speed" class="slidervalue"></label>
-                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <label for="animation-speed" class="text">Speed</label>
+                        <label id="animation-speed" class="slidervalue"></label>
+                        <div id="animation-speed-slider" class="slider-range-max"></div>
                         <div id="labelColorHolder clearfix">
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                        <br><label for="gradient-category-drop-down" class="text">Gradient Category</label><br>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
+                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down"></select><br>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                        <label for="trajectory-category-drop-down" class="text">Trajectory Category</label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
+                        <select id="trajectory-category-drop-down" class="emperor-tab-drop-down" onchange="colorAnimationsByCategoryChanged()"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="emperor-animation-color-selector">
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="view">
-            <table>
         <div id="options" class="emperor-tab-div">
             <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
@@ -1121,8 +1122,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
             <li><a href="#animations">Animations</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
@@ -1221,48 +1221,50 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="animations">
-            <table width="90%" align="center">
+        <div id="animations" class="emperor-tab-div">
+            <table class="emperor-tab-table-with-sliders">
                 <tr>
                     <td>
-                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
-                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
-                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                        <a id="reset-button" class="media-button" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play-button" class="media-button" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause-button" class="media-button" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <label for="animation_speed" class="text">Speed</label>
-                        <label id="animation_speed" class="slidervalue"></label>
-                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <label for="animation-speed" class="text">Speed</label>
+                        <label id="animation-speed" class="slidervalue"></label>
+                        <div id="animation-speed-slider" class="slider-range-max"></div>
                         <div id="labelColorHolder clearfix">
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                        <br><label for="gradient-category-drop-down" class="text">Gradient Category</label><br>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
+                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down"></select><br>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                        <label for="trajectory-category-drop-down" class="text">Trajectory Category</label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
+                        <select id="trajectory-category-drop-down" class="emperor-tab-drop-down" onchange="colorAnimationsByCategoryChanged()"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="emperor-animation-color-selector">
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="view">
-            <table>
         <div id="options" class="emperor-tab-div">
             <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
@@ -1299,7 +1301,8 @@ document.getElementById("logotable").style.display = 'none';
 </html>
 """
 
-EXPECTED_FOOTER_D = """document.getElementById("logo").style.display = 'none';
+EXPECTED_FOOTER_D =\
+"""document.getElementById("logo").style.display = 'none';
 document.getElementById("logotable").style.display = 'none';
 
  </script>
@@ -1364,8 +1367,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
             <li><a href="#animations">Animations</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
@@ -1464,48 +1466,50 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="animations">
-            <table width="90%" align="center">
+        <div id="animations" class="emperor-tab-div">
+            <table class="emperor-tab-table-with-sliders">
                 <tr>
                     <td>
-                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
-                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
-                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                        <a id="reset-button" class="media-button" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play-button" class="media-button" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause-button" class="media-button" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <label for="animation_speed" class="text">Speed</label>
-                        <label id="animation_speed" class="slidervalue"></label>
-                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <label for="animation-speed" class="text">Speed</label>
+                        <label id="animation-speed" class="slidervalue"></label>
+                        <div id="animation-speed-slider" class="slider-range-max"></div>
                         <div id="labelColorHolder clearfix">
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                        <br><label for="gradient-category-drop-down" class="text">Gradient Category</label><br>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
+                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down"></select><br>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                        <label for="trajectory-category-drop-down" class="text">Trajectory Category</label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
+                        <select id="trajectory-category-drop-down" class="emperor-tab-drop-down" onchange="colorAnimationsByCategoryChanged()"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="emperor-animation-color-selector">
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="view">
-            <table>
         <div id="options" class="emperor-tab-div">
             <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
@@ -1546,7 +1550,8 @@ document.getElementById("logotable").style.display = 'none';
 </html>
 """
 
-EXPECTED_FOOTER_E = """document.getElementById("logo").style.display = 'none';
+EXPECTED_FOOTER_E =\
+"""document.getElementById("logo").style.display = 'none';
 document.getElementById("logotable").style.display = 'none';
 
  </script>
@@ -1611,8 +1616,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
             <li><a href="#animations">Animations</a></li>
-            <li><a href="#view">View</a></li>
-            <li><a href="#settings">Options</a></li>
+            <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab" class="emperor-tab-div">
             <form name="keyFilter">
@@ -1711,48 +1715,50 @@ document.getElementById("logotable").style.display = 'none';
                 </div>
             </div>
         </div>
-        <div id="animations">
-            <table width="90%" align="center">
+        <div id="animations" class="emperor-tab-div">
+            <table class="emperor-tab-table-with-sliders">
                 <tr>
                     <td>
-                        <a id="reset_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
-                        <a id="play_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
-                        <a id="pause_button" class="mediabutton" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                        <a id="reset-button" class="media-button" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play-button" class="media-button" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause-button" class="media-button" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <label for="animation_speed" class="text">Speed</label>
-                        <label id="animation_speed" class="slidervalue"></label>
-                        <div id="animation_speed_slider" class="slider-range-max"></div>
+                        <label for="animation-speed" class="text">Speed</label>
+                        <label id="animation-speed" class="slidervalue"></label>
+                        <div id="animation-speed-slider" class="slider-range-max"></div>
                         <div id="labelColorHolder clearfix">
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <br><label for="gradient_category_combo" class="text">Gradient Category</label><br>
+                        <br><label for="gradient-category-drop-down" class="text">Gradient Category</label><br>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="gradient_category_combo" onchange="gradientCategoryMenuChanged()"></select><br>
+                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down"></select><br>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label for="trajectory_category_combo" class="text">Trajectory Category</label>
+                        <label for="trajectory-category-drop-down" class="text">Trajectory Category</label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <select id="trajectory_category_combo" onchange="trajectoryCategoryMenuChanged()"></select>
+                        <select id="trajectory-category-drop-down" class="emperor-tab-drop-down" onchange="colorAnimationsByCategoryChanged()"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="emperor-animation-color-selector">
                     </td>
                 </tr>
             </table>
         </div>
-        <div id="view">
-            <table>
         <div id="options" class="emperor-tab-div">
             <table class="emperor-tab-table">
                 <tr><td><div id="axeslabelscolor" class="colorbox" name="axeslabelscolor"></div></td><td title="Axes Labels Color">Axes Labels Color</td></tr>
@@ -1796,7 +1802,6 @@ document.getElementById("logotable").style.display = 'none';
 
 </html>
 """
-
 
 if __name__ == "__main__":
     main()
