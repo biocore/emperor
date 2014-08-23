@@ -514,6 +514,7 @@ EMPEROR_HEADER_HTML_STRING =\
 
     <!-- Emperor library code -->
     <script type="text/javascript" src="emperor_required_resources/emperor/js/animate.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/draw.js"></script>
     <script type="text/javascript" src="emperor_required_resources/emperor/js/emperor.js"></script>
     <script type="text/javascript" src="emperor_required_resources/emperor/js/trajectory.js"></script>
     <script type="text/javascript" src="emperor_required_resources/emperor/js/ui.js"></script>
