@@ -36,6 +36,10 @@ class TopLevelTests(TestCase):
 
     def test_str(self):
         emp = Emperor(self.ord_res, self.data, self.headers)
+        fd = open('blagh.txt', 'w')
+        fd.write(str(emp))
+        fd.close()
+
         self.assertEqual(HTML_STRING, str(emp))
 
     def test_ids(self):
@@ -93,33 +97,55 @@ HTML_STRING = """<!doctype html>
     <meta charset="utf-8">
     <link rel="shortcut icon" href="emperor_required_resources/img/favicon.ico" />
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!-- Style files -->
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/emperor/css/emperor.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/jquery-ui2.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/d3.parcoords.css">
+
+    <!-- Emperor logo for the splash window -->
     <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
         <tr><td><img src="emperor_required_resources/img/emperor.png" alt="Emperor" id="logo"/></td></tr>
     </table>
-    <script type="text/javascript" src="emperor_required_resources/js/d3.v3.min.js"></script>
-    <script type="text/javascript" src="emperor_required_resources/js/d3.parcoords.js"></script>
+
+    <!-- JavaScript code -->
+
+    <!-- jQuery and other plugins -->
     <script type="text/javascript" src="emperor_required_resources/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
-    <script src="emperor_required_resources/js/jquery.colorPicker.js"></script>
-    <script src="emperor_required_resources/js/spectrum.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/jquery.colorPicker.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/spectrum.js"></script>
 
-    <script src="emperor_required_resources/js/Three.js"></script>
-    <script src="emperor_required_resources/js/js/Detector.js"></script>
-    <script src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
-    <script src="emperor_required_resources/emperor/js/emperor.js"></script>
+    <!-- D3.js for the parallel coordinates plugin -->
+    <script type="text/javascript" src="emperor_required_resources/js/d3.v3.min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/d3.parcoords.js"></script>
+
+    <!-- THREE.js and plugins for screenshots -->
+    <script type="text/javascript" src="emperor_required_resources/js/Three.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/js/Detector.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/THREEx.screenshot.js"></script>
+
+    <!-- General utilities (underscore.js and FileSaver.js) -->
+    <script type="text/javascript" src="emperor_required_resources/js/underscore-min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/FileSaver.min.js"></script>
-    
+
+    <!-- Emperor library code -->
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/animate.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/draw.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/emperor.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/trajectory.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/ui.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/emperor/js/util.js"></script>
+
     <script type="text/javascript">
     
 
 var g_mappingFileHeaders = ['SampleID','Treatment','DOB','Description'];
 var g_mappingFileData = { 'PC.636': ['PC.636','Fast','20080116','Fasting_mouse_I.D._636'],'PC.355': ['PC.355','Control','20061218','Control_mouse_I.D._355'],'PC.607': ['PC.607','Fast','20071112','Fasting_mouse_I.D._607'],'PC.634': ['PC.634','Fast','20080116','Fasting_mouse_I.D._634'],'PC.635': ['PC.635','Fast','20080116','Fasting_mouse_I.D._635'],'PC.593': ['PC.593','Control','20071210','Control_mouse_I.D._593'],'PC.356': ['PC.356','Control','20061126','Control_mouse_I.D._356'],'PC.481': ['PC.481','Control','20070314','Control_mouse_I.D._481'],'PC.354': ['PC.354','Control','20061218','Ctrol_mouse_I.D._354'] };
+var g_animatableMappingFileHeaders = ['DOB'];
 
 
 var g_spherePositions = new Array();
@@ -227,6 +253,7 @@ document.getElementById("logotable").style.display = 'none';
             <li><a href="#scalingby">Scaling</a></li>
             <li><a href="#labelby">Labels</a></li>
             <li><a href="#axes">Axes</a></li>
+            <li><a href="#animations">Animations</a></li>
             <li><a href="#options">Options</a></li>
         </ul>
         <div id="keytab" class="emperor-tab-div">
@@ -325,6 +352,50 @@ document.getElementById("logotable").style.display = 'none';
                 <div class="list" id="axeslist">
                 </div>
             </div>
+        </div>
+        <div id="animations" class="emperor-tab-div">
+            <table class="emperor-tab-table-with-sliders">
+                <tr>
+                    <td>
+                        <a id="reset-button" class="media-button" href="javascript:void(0);" onclick="javascript:resetAnimation()"><img src="emperor_required_resources/img/reset.png" ></img></a>
+                        <a id="play-button" class="media-button" href="javascript:void(0);" onclick="javascript:playAnimation()"><img src="emperor_required_resources/img/play.png"></img></a>
+                        <a id="pause-button" class="media-button" href="javascript:void(0);" onclick="javascript:pauseAnimation()"><img src="emperor_required_resources/img/pause.png"></img></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="animation-speed" class="text">Speed</label>
+                        <label id="animation-speed" class="slidervalue"></label>
+                        <div id="animation-speed-slider" class="slider-range-max"></div>
+                        <div id="labelColorHolder clearfix">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br><label for="gradient-category-drop-down" class="text">Gradient Category</label><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="gradient-category-drop-down" class="emperor-tab-drop-down"></select><br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="trajectory-category-drop-down" class="text">Trajectory Category</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="trajectory-category-drop-down" class="emperor-tab-drop-down" onchange="colorAnimationsByCategoryChanged()"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="emperor-animation-color-selector">
+                    </td>
+                </tr>
+            </table>
         </div>
         <div id="options" class="emperor-tab-div">
             <table class="emperor-tab-table">

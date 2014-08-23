@@ -14,6 +14,6 @@ before_install:
 install:
   - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy=$NUMPY_VERSION scipy matplotlib openpyxl=1.8.2 pandas
   - source activate env_name
-  - pip install -r requirements.txt -e .
+  - pip install -e .
 script:
   - python tests/all_tests.py --emperor_scripts_dir scripts

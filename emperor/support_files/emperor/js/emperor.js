@@ -60,32 +60,9 @@ g_validAsciiCodes = g_validAsciiCodes.concat([65,66,67,68,69,70,71,72,73,74,75,7
 // adding: a->z
 g_validAsciiCodes = g_validAsciiCodes.concat([97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122]);
 
-// taken from the qiime/colors.py module; a total of 29 colors
-var k_QIIME_COLORS = [
-"0xFF0000", // red1
-"0x0000FF", // blue1
-"0xF27304", // orange1
-"0x008000", // green
-"0x91278D", // purple1
-"0xFFFF00", // yellow1
-"0x7CECF4", // cyan1
-"0xF49AC2", // pink1
-"0x5DA09E", // teal1
-"0x6B440B", // brown1
-"0x808080", // gray1
-"0xF79679", // red2
-"0x7DA9D8", // blue2
-"0xFCC688", // orange2
-"0x80C99B", // green2
-"0xA287BF", // purple2
-"0xFFF899", // yellow2
-"0xC49C6B", // brown2
-"0xC0C0C0", // gray2
-"0xED008A", // red3
-"0x00B6FF", // blue3
-"0xA54700", // orange3
-"0x808000", // green3
-"0x008080"] // teal3
+var g_animationDirector = null;
+var g_isPlaying = null;
+var g_animationLines = [];
 
 // Taken from http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
 function isNumeric(n) {
@@ -364,60 +341,6 @@ function getColorList(vals) {
 	return colors;
 }
 
-/* Retrieve one of the discrete colors from the list
-
-  This function will return the color at the requested index, if this value
-  value is greater than the number of colors available, the function will just
-  rollover and retrieve the next available color.
-*/
-function getDiscreteColor(index){
-	var size = k_QIIME_COLORS.length;
-	if(index >= size){
-		index = index - (Math.floor(index/size)*size)
-	}
-
-	return k_QIIME_COLORS[index]
-}
-
-/*Start timer (for debugging)*/
-function startTimer() {
-	var d=new Date()
-	g_time = d.getTime();
-}
-
-/*End timer (for debugging)*/
-function stopTimer(info) {
-	var d=new Date()
-	g_time = d.getTime() - g_time;
-	console.log("time to " +info +":"+g_time+"ms")
-}
-
-/* Sorting function that deals with alpha and numeric elements
-
-  This function takes a list of strings, divides it into two new lists, one
-  that's alpha-only and one that's numeric only. The resulting list will have
-  sorted all alpha elements at the beginning & all numeric elements at the end.
- */
-function _splitAndSortNumericAndAlpha(list){
-	var numericPart = [], alphaPart = [], result = [];
-
-	// separate the numeric and the alpha elements of the array
-	for(var index = 0; index < list.length; index++){
-		if(isNaN(parseFloat(list[index]))){
-			alphaPart.push(list[index])
-		}
-		else{
-			numericPart.push(list[index])
-		}
-	}
-
-	// sort each of the two parts, numeric part is ascending order
-	alphaPart.sort();
-	numericPart.sort(function(a,b){return parseFloat(a)-parseFloat(b)})
-
-	return result.concat(alphaPart, numericPart);
-}
-
 /*This function is called when a new value is selected in the colorBy menu */
 function colorByMenuChanged() {
 	// set the new current category and index
@@ -430,7 +353,7 @@ function colorByMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
 	}
 
-	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+	vals = naturalSort(dedupe(vals));
 	colors = getColorList(vals);
 	
 	// build the colorby table in HTML
@@ -481,6 +404,58 @@ function colorByMenuChanged() {
 
 	colorParallelPlots(vals, colors);
 	setKey(vals, colors);
+}
+
+/**
+ *
+ *
+ */
+function colorAnimationsByCategoryChanged() {
+	// set the new current category and index
+    var gradient, trajectory, table, values, idString, hexString, colorIndex=0;
+
+    // names of the categories used to do the animations
+    gradient = $('#gradient-category-drop-down').find('option:selected').text();
+    trajectory = $('#trajectory-category-drop-down').find('option:selected').text();
+
+    table = buildColorSelectorTable(g_mappingFileHeaders, g_mappingFileData,
+                                    trajectory, 'animations');
+
+    // add the DOM object to this div, note that this will reset the contents
+    $('#emperor-animation-color-selector').html(table);
+
+    $('#emperor-animation-color-selector').children().find('div').each(
+            function(){
+                // get the id and the color for this element
+                idString = '#' + $(this).attr('id');
+                hexString = getDiscreteColor(colorIndex);
+
+                // CSS uses #FFFFFF instead of 0xFFFFFF
+                $(idString).css('backgroundColor',
+                                hexString.replace('0x', '#'));
+
+                // initialize an spectrum selector for this identifier
+                $(idString).spectrum({
+                    localStorageKey: 'key',
+                    color: hexString,
+                    showInitial: true,
+                    showInput: true,
+                    preferredFormat: "hex6",
+                    change:
+                    function(color) {
+                        $(this).css('backgroundColor', color.toHexString());
+
+                        // what I need here is a callback to change the
+                        // color of the trajectory
+                        //var c = color.toHexString();
+                        //colorChanged($(this).attr('name'), c);
+                        //colorParallelPlots(vals, colors);
+                    }
+                });
+
+                // the number of the row helps retrieve the color we will use
+                colorIndex = colorIndex + 1;
+            });
 }
 
 function colorParallelPlots(vals,colors) 
@@ -547,7 +522,7 @@ function scalingByMenuChanged(){
 	for(var i in g_plotIds){
 		values.push(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex]);
 	}
-	values = _splitAndSortNumericAndAlpha(dedupe(values));
+	values = naturalSort(dedupe(values));
 
 	// the padding accounts for the slider handle that can move all to the left or right
 	lines = '<table class="emperor-tab-table-with-sliders">'
@@ -622,7 +597,7 @@ function showByMenuChanged() {
 	g_visiblePoints = g_plotIds.length;
 	changePointCount();
 
-	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+	vals = naturalSort(dedupe(vals));
 
 	// build the showby checkbox table in HTML; the padding to the right makes
 	// the slider fit great inside the table without ever showing scroll bars
@@ -860,7 +835,7 @@ function labelMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][labelCatIndex]);
 	}
 
-	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+	vals = naturalSort(dedupe(vals));
 	colors = getColorList(vals);
 
 	// build the label table in HTML
@@ -1080,7 +1055,7 @@ function sphereOpacityChange(ui, category) {
 	for(var i in g_plotIds){
 		vals.push(g_mappingFileData[g_plotIds[i]][showByCategoryIndex]);
 	}
-	vals = _splitAndSortNumericAndAlpha(dedupe(vals));
+	vals = naturalSort(dedupe(vals));
 
 	// category as null means that it's the general opacity slider (the on in the options tab)
 	if (category == null) {
@@ -1142,7 +1117,7 @@ function sphereRadiusChange(ui, category) {
 	for(var i in g_plotIds){
 		values.push(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex]);
 	}
-	values = _splitAndSortNumericAndAlpha(dedupe(values));
+	values = naturalSort(dedupe(values));
 
 	if (category == null){
 		for (index in values){
@@ -1167,6 +1142,11 @@ function sphereRadiusChange(ui, category) {
 			document.getElementById(idString+"scalingvalue").innerHTML = $("#"+idString+"scalingslider").slider("value")/5;
 		}
 	}
+}
+
+/*Add a clear description of what the hell happens when this gets executed*/
+function animationSpeedChanged(ui){
+	document.getElementById("animation-speed").innerHTML = ui.value+"x";
 }
 
 /*Setup the interface elements required for the sidebar of the main interface*/
@@ -1354,6 +1334,20 @@ function setJqueryUi() {
 		}
 	});
 	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
+
+	$("#animation-speed-slider").slider({
+		range: "max",
+		min: 0.1,
+		max: 5,
+		value: 1,
+		slide: function( event, ui ) {
+			animationSpeedChanged(ui);
+		},
+		change: function( event, ui ) {
+			animationSpeedChanged(ui);
+		}
+	});
+	document.getElementById('animation-speed').innerHTML = $("#animation-speed-slider").slider("value")+"x"
 
 	//default color for axes labels is white
 	$('#axeslabelscolor').css('backgroundColor',"#FFFFFF");
@@ -2211,7 +2205,7 @@ $(document).ready(function() {
 
 		// this sorted list of headers is only used in the following loop
 		// to create the 'color by', 'show by' and 'label by' drop-down menus
-		sortedMappingFileHeaders = _splitAndSortNumericAndAlpha(g_mappingFileHeaders)
+		sortedMappingFileHeaders = naturalSort(g_mappingFileHeaders)
 		for(var i in sortedMappingFileHeaders){
 			var temp = [];
 			for(var j in g_plotIds) {
@@ -2234,8 +2228,22 @@ $(document).ready(function() {
 			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
+			$("#trajectory-category-drop-down").append(line);
 		}
 
+		// add the header names that can be animated over
+		sortedAnimatableMappingFileHeaders = naturalSort(g_animatableMappingFileHeaders);
+		for (var i in naturalSort(g_animatableMappingFileHeaders)) {
+			// note that each category is added to all the dropdown menus in the
+			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
+			if (i==0) {
+			    line = "<option selected value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
+			} else {
+			    line = "<option value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
+			}
+			$("#gradient-category-drop-down").append(line);
+		}
+        colorAnimationsByCategoryChanged();
 		setParallelPlots();
 
 		colorByMenuChanged();
@@ -2430,9 +2438,135 @@ $(document).ready(function() {
 	}
    
 	function render() {
+		var gradientCategory, trajectoryCategory;
+		var drawingLineBuffer;
+
 		g_sceneControl.update();
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
 		g_mainRenderer.render( g_mainScene, g_sceneCamera);
+
+		if (g_isPlaying) {
+			// if it's the 1st frame to  animate then the director will be null
+			if (g_animationDirector === null) {
+
+				// retrieve the values from the interface
+				trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
+				gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
+
+				// initialize the animation director
+				g_animationDirector = new AnimationDirector(g_mappingFileHeaders,
+                                                            g_mappingFileData,
+                                                            g_spherePositions,
+                                                            gradientCategory,
+                                                            trajectoryCategory,
+                                                            10);
+				g_animationDirector.updateFrame();
+
+			}
+			else{
+				g_animationDirector.updateFrame();
+
+				if (g_animationDirector.animationCycleFinished() == false){
+					// we are trying to remove the lines from the previous frame
+					for (var index = 0; index < g_animationLines.length; index++){
+						g_mainScene.remove(g_animationLines[index]);
+						g_elementsGroup.remove(g_animationLines[index]);
+					}
+
+					g_animationLines.length = 0;
+
+					for (var index = 0; index < g_animationDirector.trajectories.length; index++){
+
+                        categoryName = g_animationDirector.trajectories[index].metadataCategoryName;
+                        categoryName = escapeRegularExpression(categoryName);
+                        trajectoryColor = $('#emperor-animation-color-selector').find('div[name='+categoryName+']').css('background-color');
+
+                        // THREE cannot process spaces inside rgb(0, 0, 0) it has to be rgb(0,0,0)
+                        trajectoryColor = trajectoryColor.replace(/\s/g, '');
+
+						// draw a trajectory line per trajectory
+						drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index],
+                                                               g_animationDirector.currentFrame, trajectoryColor, 10);
+
+						g_mainScene.add(drawingLineBuffer);
+						g_elementsGroup.add(drawingLineBuffer);
+
+						g_animationLines.push(drawingLineBuffer);
+					}
+				}
+				else{
+					// the animation is done, clean up the interface and other variables
+					g_animationDirector = null;
+					g_isPlaying = false;
+					document.getElementById("play-button").disabled="false";
+
+				}// animation cycle is done
+			}// animation director is not null
+		}// animation is playing
+
 	}
 	
 });
+
+/**
+ *
+ * Callback function for the play button in the main interface, will trigger the
+ * creation of the AnimationDirector.
+ *
+ */
+function playAnimation() {
+	g_isPlaying = true;
+	document.getElementById("play-button").disabled="true";
+}
+
+/**
+ *
+ * Callback function for the pause button in the main interface, will pause the
+ * animation at the current frame.
+ *
+ */
+function pauseAnimation() {
+	if (g_isPlaying === true){
+		g_isPlaying = false;
+		document.getElementById("play-button").disabled="false"
+	}
+}
+
+/**
+ *
+ * Create a line object off of a SampleTrajectory object
+ *
+ * @param {trajectory} SampleTrajectory object.
+ * @param {currentFrame} The current frame at which this line should be drawn.
+ * @param {color} string or integer that can be parsed by THREE.Color.
+ * @param {width} Float value representing the width of the line.
+ *
+ * @return Returns a line with the required attributes as defined by the input
+ * parameters.
+ */
+function drawTrajectoryLine(trajectory, currentFrame, color, width, label){
+  // based on the example described in:
+  // https://github.com/mrdoob/three.js/wiki/Drawing-lines
+  var material, points = [], lineGeometry, limit = 0, path;
+
+  _trajectory = trajectory.representativeCoordinatesAtIndex(currentFrame);
+
+  material = new THREE.MeshLambertMaterial({color:color});
+  material.matrixAutoUpdate = true;
+  material.transparent = false;
+
+  for (var index = 0; index < _trajectory.length; index++){
+    points.push(new THREE.Vector3(_trajectory[index]['x'],
+                _trajectory[index]['y'], _trajectory[index]['z']));
+  }
+
+  path = new THREE.EmperorTrajectory(points, label)
+  // the line will contain the two vertices and the described material
+  // we increase the number of points to have a smoother transition on
+  // edges i. e. where the trajectory changes the direction it is going
+  lineGeometry = new THREE.TubeGeometry(path, (points.length-1)*3, g_radius,
+                                          g_segments, false, true);
+
+  return new THREE.Mesh(lineGeometry, material);
+}
+
