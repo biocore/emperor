@@ -12,7 +12,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Emperor is now hosted under the biocore GitHub organization.
 * Add toggle visible button (`Invert Selected`) under the `Visibility` tab, this button will change hidden categories to visible and vice-versa.
 * Supports both NumPy 1.7 and 1.8.
-* Depends on scikit-bio-dev.
+* Depends on scikit-bio 0.1.4.
 * Emperor provides a Python object that is IPython aware (emperor.Emperor) that will display a usable plot from within the IPython notebook.
 
 *Bug Fixes*
