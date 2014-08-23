@@ -11,7 +11,18 @@
  *
  */
 
-// http://stackoverflow.com/a/18580832/379593
+/**
+ *
+ * @name THREE.EmperorTrajectory
+ *
+ * @class This class represents the internal logic for a linearly interpolated
+ * tube/trajectory in THREE.js the object itself is a subclass of the
+ * THREE.Curve.
+ *
+ * @credits: This answer in StackOverflow helped a lot:
+ * http://stackoverflow.com/a/18580832/379593
+ *
+ */
 THREE.EmperorTrajectory = THREE.Curve.create(
   function ( points) {
     this.points = (points == undefined) ? [] : points;
