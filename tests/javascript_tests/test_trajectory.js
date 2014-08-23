@@ -43,7 +43,6 @@ $(document).ready(function() {
                            {'x':-9, 'y':-9, 'z':-9}, {'x':3, 'y':3, 'z':3},
                            {'x':8, 'y':8, 'z':8}];
 
-
             crunchedDataOneCategory = {"YATGCTGCCTCCCGTAGGAGT": [
                               { "name": "PC.356", "value": "20061126", "x": 0.22882, "y": -0.130142, "z": -0.287149},
                               { "name": "PC.355", "value": "20061218", "x": 0.170518, "y": -0.194113, "z": -0.030897},

@@ -78,8 +78,6 @@ $(document).ready(function() {
         equal(director.trajectories[1].metadataCategoryName, 'Fast', 'The'+
               'metadata category name is set correctly for the trajectory 1');
 
-
-
         // check the trajectories are overall ok -- reason why I added this, because they are not :P
         deepEqual(director.trajectories[0].representativeCoordinatesAtIndex(1000),
                   [{"x": 0.22882, "y": -0.130142, "z": -0.287149},
