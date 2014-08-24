@@ -2534,6 +2534,25 @@ function pauseAnimation() {
 
 /**
  *
+ * Callback function for the rewind button in the main interface, will remove
+ * the traces from the screen and re-initialize the state.
+ *
+ */
+function resetAnimation() {
+  g_isPlaying = false;
+  g_animationDirector = null;
+  document.getElementById("play-button").disabled="false";
+
+  for (var index = 0; index < g_animationLines.length; index++){
+    g_mainScene.remove(g_animationLines[index]);
+    g_elementsGroup.remove(g_animationLines[index]);
+  }
+
+  // re-initialize as an empty array
+  g_animationLines = [];
+}
+/**
+ *
  * Create a line object off of a SampleTrajectory object
  *
  * @param {trajectory} SampleTrajectory object.
