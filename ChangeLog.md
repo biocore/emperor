@@ -22,6 +22,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Clean-up the layout of the user interface so it's cleaner and consistent.
 * Fix problem where long category names would alter the layout of the interface.
 * Fix inability to write an 'E' character in the Filename field when exporting an svg.
+* Fix inability to reset an animation using the rewind button.
 
 *New Features*
 
