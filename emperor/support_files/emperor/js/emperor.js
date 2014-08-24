@@ -2544,7 +2544,7 @@ function pauseAnimation() {
  * @return Returns a line with the required attributes as defined by the input
  * parameters.
  */
-function drawTrajectoryLine(trajectory, currentFrame, color, width, label){
+function drawTrajectoryLine(trajectory, currentFrame, color, width){
   // based on the example described in:
   // https://github.com/mrdoob/three.js/wiki/Drawing-lines
   var material, points = [], lineGeometry, limit = 0, path;
@@ -2560,12 +2560,12 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width, label){
                 _trajectory[index]['y'], _trajectory[index]['z']));
   }
 
-  path = new THREE.EmperorTrajectory(points, label)
+  path = new THREE.EmperorTrajectory(points)
   // the line will contain the two vertices and the described material
   // we increase the number of points to have a smoother transition on
   // edges i. e. where the trajectory changes the direction it is going
   lineGeometry = new THREE.TubeGeometry(path, (points.length-1)*3, g_radius,
-                                          g_segments, false, true);
+                                        g_segments, false, true);
 
   return new THREE.Mesh(lineGeometry, material);
 }
