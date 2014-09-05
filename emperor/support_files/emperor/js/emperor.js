@@ -2551,6 +2551,7 @@ function resetAnimation() {
   // re-initialize as an empty array
   g_animationLines = [];
 }
+
 /**
  *
  * Create a line object off of a SampleTrajectory object
