@@ -32,6 +32,13 @@ $(document).ready(function() {
             coordinatesData['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': 0.170518, 'y': -0.194113, 'z': -0.030897, 'P1': 0.170518, 'P2': -0.194113, 'P3': -0.030897, 'P4': 0.019809, 'P5': 0.155100, 'P6': -0.279924, 'P7': 0.057609, 'P8': 0.024248 };
             coordinatesData['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': -0.091330, 'y': 0.424147, 'z': -0.135627, 'P1': -0.091330, 'P2': 0.424147, 'P3': -0.135627, 'P4': -0.057519, 'P5': 0.151363, 'P6': -0.025394, 'P7': 0.051731, 'P8': -0.038738 };
             coordinatesData['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': -0.349339, 'y': -0.120788, 'z': 0.115275, 'P1': -0.349339, 'P2': -0.120788, 'P3': 0.115275, 'P4': 0.069495, 'P5': -0.025372, 'P6': 0.067853, 'P7': 0.244448, 'P8': -0.059883 };
+
+            mappingFileDataShort = { 'PC.481': ['PC.481','YATGCTGCCTCCCGTAGGAGT','Control','20070314'],'PC.635': ['PC.635','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.636': ['PC.636','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.356': ['PC.356','YATGCTGCCTCCCGTAGGAGT','Fast','20061126'] };
+            coordinatesDataShort = new Array();
+            coordinatesDataShort['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647, 'P1': -0.276542, 'P2': -0.144964, 'P3': 0.066647, 'P4': -0.067711, 'P5': 0.176070, 'P6': 0.072969, 'P7': -0.229889, 'P8': -0.046599 };
+            coordinatesDataShort['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136, 'P1': -0.237661, 'P2': 0.046053, 'P3': -0.138136, 'P4': 0.159061, 'P5': -0.247485, 'P6': -0.115211, 'P7': -0.112864, 'P8': 0.064794 };
+            coordinatesDataShort['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': 0.228820, 'y': -0.130142, 'z': -0.287149, 'P1': 0.228820, 'P2': -0.130142, 'P3': -0.287149, 'P4': 0.086450, 'P5': 0.044295, 'P6': 0.206043, 'P7': 0.031000, 'P8': 0.071992 };
+            coordinatesDataShort['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': 0.042263, 'y': -0.013968, 'z': 0.063531, 'P1': 0.042263, 'P2': -0.013968, 'P3': 0.063531, 'P4': -0.346121, 'P5': -0.127814, 'P6': 0.013935, 'P7': 0.030021, 'P8': 0.140148 };
         },
 
         teardown: function(){
@@ -217,6 +224,20 @@ $(document).ready(function() {
         var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
                                              coordinatesData, 'DOB',
                                              'LinkerPrimerSequence', 1000);
+        equal(director.trajectories.length, 1,'Correct number of trajectories');
+
+    });
+
+    /**
+     *
+     * Test that the animation object ignores one-sample trajectories
+     *
+     */
+    test('Test that tricky trajectories are initialized correctly', function(){
+        var director = new AnimationDirector(mappingFileHeaders,
+                                             mappingFileDataShort,
+                                             coordinatesDataShort,
+                                             'DOB', 'Treatment', 1000);
         equal(director.trajectories.length, 1,'Correct number of trajectories');
 
     });
