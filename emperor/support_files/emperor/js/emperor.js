@@ -1708,11 +1708,18 @@ function saveSVG(button){
         viewBox[1] + '" x="' + viewBox[0] + '" stroke-width="0" stroke="#000000" fill="' + color + '"/>'
     index = svgfile.indexOf('>',index)+1;
     svgfile = svgfile.substr(0, index) + background + svgfile.substr(index);
-    
-    // adding xmlns header to open in the browser 
-    svgfile = svgfile.replace('viewBox=', 'xmlns="http://www.w3.org/2000/svg" viewBox=')
+
+    // some browsers (Chrome) will add the namespace, some won't. Make sure
+    // that if it's not there, you add it to make sure the file can be opened
+    // in tools like Adobe Illustrator or in browsers like Safari or FireFox
+    if (svgfile.indexOf('xmlns="http://www.w3.org/2000/svg"') === -1){
+      // adding xmlns header to open in the browser
+      svgfile = svgfile.replace('viewBox=',
+                                'xmlns="http://www.w3.org/2000/svg" viewBox=');
+    }
+
     saveAs(new Blob([svgfile], {type: "text/plain;charset=utf-8"}), 
-         $('#saveas_name').val() + ".svg");
+           $('#saveas_name').val() + ".svg");
     
     if ($('#saveas_legends').is(':checked')) {
         var names = [], colors = [];
