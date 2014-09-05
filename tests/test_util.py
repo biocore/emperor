@@ -121,8 +121,8 @@ class TopLevelTests(TestCase):
 
         # check it removes columns with unique values
         out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
-            self.mapping_file_headers, ['SampleID', 'BarcodeSequence',
-            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'],
+            self.mapping_file_headers, ['SampleID', 'LinkerPrimerSequence',
+            'Treatment', 'DOB'],
             unique=True)
         self.assertEquals(out_headers, ['SampleID', 'LinkerPrimerSequence',
             'Treatment', 'DOB'])
@@ -131,7 +131,7 @@ class TopLevelTests(TestCase):
         # check it removes columns where there is only one value
         out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
             self.mapping_file_headers, ['SampleID', 'BarcodeSequence',
-            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'],
+            'Treatment', 'DOB', 'Description'],
             single=True)
         self.assertEquals(out_headers,['SampleID', 'BarcodeSequence',
             'Treatment', 'DOB', 'Description'])
