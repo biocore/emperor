@@ -162,6 +162,11 @@ AnimationDirector.prototype.initializeTrajectories = function(){
                               'z':chewedDataBuffer[index]['z']});
     }
 
+    // don't add a new trajectory
+    if (sampleNamesBuffer.length <= 1){
+      continue;
+    }
+
     // create the trajectory object
     trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer, key,
         gradientPointsBuffer, coordinatesBuffer, this.minimumDelta);
