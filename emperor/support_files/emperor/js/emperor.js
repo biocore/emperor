@@ -1715,26 +1715,17 @@ function saveSVG(button){
          $('#saveas_name').val() + ".svg");
     
     if ($('#saveas_legends').is(':checked')) {
-        var labels_text = '', pos_y = 1, increment = 40, max_len = 0, font_size = 12;
+        var names = [], colors = [];
+
+        // get lists of the data to create the legend
         $('#colorbylist_table tr div').each(function() {
-            if ($(this).attr('name').length > max_len) max_len = $(this).attr('name').length 
-            
-            // adding rectangle
-            labels_text += '<rect height="27" width="27" y="' + pos_y + 
-                '" x="1" stroke-width="1" ' + 'stroke="#FFFFFF" fill="' + 
-                $("#" + $(this).attr('id')).spectrum("get").toHexString(true) + '"/>';
-            // adding text
-            labels_text += '<text xml:space="preserve" y="' + (pos_y+20) + '" x="35" ' + 
-                'font-family="Monospace" font-size="' + font_size + '" stroke-width="0" ' +
-                'stroke="#000000" fill="#000000">' + $(this).attr('name') + '</text>';
-            pos_y += increment;
+            names.push($(this).attr('name'));
+            colors.push($("#" + $(this).attr('id')).spectrum("get").toHexString(true));
         });
-        labels_text = '<svg width="' + ((font_size*max_len) + 10) + '" height="' + 
-            (pos_y-10) + '" xmlns="http://www.w3.org/2000/svg"><g>' + labels_text + 
-            '</g></svg>';
-        
-        saveAs(new Blob([labels_text], {type: "text/plain;charset=utf-8"}), 
-            $('#saveas_name').val() + "_labels.svg");
+
+        labels_svg = formatSVGLegend(names, colors);
+        saveAs(new Blob([labels_svg], {type: "text/plain;charset=utf-8"}),
+               $('#saveas_name').val() + "_labels.svg");
     }
     
     $('body').css('cursor','default');
