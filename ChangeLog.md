@@ -23,6 +23,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Clean-up the layout of the user interface so it's cleaner and consistent.
 * Fix problem where long category names would alter the layout of the interface.
 * Fix inability to write an 'E' character in the Filename field when exporting an svg.
+* Fix problem where Emperor would generate invalid SVG files for the labels and the plot.
 * Fix inability to reset an animation using the rewind button.
 * Fix one-sample trajectories to not fail during rendering of the animation (these will get ignored).
 * Fix sample identifiers that would fail when the animation started.
@@ -32,6 +33,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Add animations tab to the main user interface.
 * Add unit tests for the JavaScript library code.
 * Support both classic and [scikit-bio](http://scikit-bio.org)'s coordinate formats.
+* The legends file that emperor generates now has a non-monospace font and a line surrounding each colored square.
 
 Emperor 0.9.3 (5 Dec 2013)
 --------------------------
