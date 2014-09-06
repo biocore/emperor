@@ -121,8 +121,8 @@ class TopLevelTests(TestCase):
 
         # check it removes columns with unique values
         out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
-            self.mapping_file_headers, ['SampleID', 'BarcodeSequence',
-            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'],
+            self.mapping_file_headers, ['SampleID', 'LinkerPrimerSequence',
+            'Treatment', 'DOB'],
             unique=True)
         self.assertEquals(out_headers, ['SampleID', 'LinkerPrimerSequence',
             'Treatment', 'DOB'])
@@ -131,7 +131,7 @@ class TopLevelTests(TestCase):
         # check it removes columns where there is only one value
         out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
             self.mapping_file_headers, ['SampleID', 'BarcodeSequence',
-            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'],
+            'Treatment', 'DOB', 'Description'],
             single=True)
         self.assertEquals(out_headers,['SampleID', 'BarcodeSequence',
             'Treatment', 'DOB', 'Description'])
@@ -151,6 +151,32 @@ class TopLevelTests(TestCase):
         self.assertEquals(out_data, MAPPING_FILE_DATA_DUPLICATED)
         self.assertEquals(out_headers, ['SampleID', 'Treatment', 'DOB'])
 
+        # check it doesn't remove columns because all are included in the list
+        out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
+            self.mapping_file_headers, ['SampleID', 'BarcodeSequence',
+            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'],
+            unique=True)
+        self.assertEquals(out_headers, ['SampleID', 'BarcodeSequence',
+            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'])
+        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
+
+        # check it doesn't remove columns because all are included in the list
+        out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
+            self.mapping_file_headers, ['SampleID', 'BarcodeSequence',
+            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'],
+            single=True)
+        self.assertEquals(out_headers, ['SampleID', 'BarcodeSequence',
+            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'])
+        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
+
+        # check it doesn't remove columns because all are included in the list
+        out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
+            self.mapping_file_headers, ['SampleID', 'BarcodeSequence',
+            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'],
+            unique=True, single=True)
+        self.assertEquals(out_headers, ['SampleID', 'BarcodeSequence',
+            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'])
+        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
 
     def test_keep_columns_from_mapping_file(self):
         """Check correct selection of metadata is being done"""
@@ -437,6 +463,20 @@ MAPPING_FILE_DATA_CAT_F = [
     ['PC.634', 'Fast', 'Fast20080116'],
     ['PC.635', 'Fast', 'Fast20080116'],
     ['PC.636', 'Fast', 'Fast20080116']]
+
+MAPPING_FILE_DATA_CAT_G = [['PC.354', 'AGCACGAGCCTA', 'YATGCTGCCTCCCGTAGGAGT',
+'Control', '20061218', 'Control_mouse_I.D._354'], ['PC.355', 'AACTCGTCGATG',
+'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218', 'Control_mouse_I.D._355'],
+['PC.356', 'ACAGACCACTCA', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126',
+'Control_mouse_I.D._356'], ['PC.481', 'ACCAGCGACTAG', 'YATGCTGCCTCCCGTAGGAGT',
+'Control', '20070314', 'Control_mouse_I.D._481'], ['PC.593', 'AGCAGCACTTGT',
+'YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210', 'Control_mouse_I.D._593'],
+['PC.607', 'AACTGTGCGTAC', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112',
+'Fasting_mouse_I.D._607'], ['PC.634', 'ACAGAGTCGGCT', 'YATGCTGCCTCCCGTAGGAGT',
+'Fast', '20080116', 'Fasting_mouse_I.D._634'], ['PC.635', 'ACCGCAGAGTCA',
+'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116', 'Fasting_mouse_I.D._635'],
+['PC.636', 'ACGGTGAGTGTC', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116',
+'Fasting_mouse_I.D._636']]
 
 MAPPING_FILE_DATA_GRADIENT = [
     ['PC.354', 'Control','3', '40', 'Control20061218'],
