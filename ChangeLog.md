@@ -24,6 +24,8 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Fix problem where long category names would alter the layout of the interface.
 * Fix inability to write an 'E' character in the Filename field when exporting an svg.
 * Fix inability to reset an animation using the rewind button.
+* Fix one-sample trajectories to not fail during rendering of the animation (these will get ignored).
+* Fix sample identifiers that would fail when the animation started.
 
 *New Features*
 
