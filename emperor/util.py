@@ -35,7 +35,7 @@ from emperor import __version__ as emperor_library_version
 class EmperorSupportFilesError(IOError):
     """Exception for missing support files"""
     pass
-    
+
 class EmperorInputFilesError(IOError):
     """Exception for missing support files"""
     pass
@@ -83,7 +83,7 @@ def get_emperor_support_files_dir():
     return join(get_emperor_project_dir(), 'emperor/support_files/')
 
 def copy_support_files(file_path):
-    """Copy the support files to a named destination 
+    """Copy the support files to a named destination
 
     file_path: path where you want the support files to be copied to
 
@@ -418,53 +418,56 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
         if colname not in values_dict:
             values_dict[colname] = []
         values_dict[colname].extend(vals)
-    
+
     for key, v in values_dict.items():
         for value in v:
-            # variable that is going to contain the name of the column for multiple 
-            # subtitutions 
+            # variable that is going to contain the name of the column for multiple
+            # subtitutions
             column = None
             # variable to control if the values with in a column exist
             used_column_index = False
-            
+
             try:
                 header_index = headers.index(key)
             except ValueError:
                 raise EmperorInputFilesError, ("The header %s does not exist in the "
                     "mapping file" % key)
-            
-            # for the special case of multiple entries 
+
+            # for the special case of multiple entries
             if '==' in value and '=' in value:
                 arrow_index = value.index('==')
                 equal_index = value.rindex('=')
                 assert ((arrow_index+2)!=equal_index and (arrow_index+1)!=equal_index), \
                     "Not properly formatted: %s" % value
-                
+
                 column = value[:arrow_index]
                 column_value = value[arrow_index+2:equal_index]
                 new_value = value[equal_index+1:]
-                
+
                 try:
                     column_index = headers.index(column)
                 except ValueError:
                     raise EmperorInputFilesError, ("The header %s does not exist in the "
                         "mapping file" % column)
-            
+
             # fill in the data
+            fill_the_data = False
             for line in out_data:
                 if criteria(line[header_index]) == False:
                     if not column:
                         line[header_index] = value
                         used_column_index = True
+                        fill_the_data = True
                     else:
-                        if line[column_index] == column_value:     
+                        if line[column_index] == column_value:
                             line[header_index] = new_value
                             used_column_index = True
-            
-            if not used_column_index:
+                            fill_the_data = True
+
+            if not used_column_index and fill_the_data:
                 raise EmperorInputFilesError, ("This value '%s' doesn't exist in '%s' or "
                 "it wasn't used in for processing" % (column_value, column))
-            
+
     return out_data
 
 def sanitize_mapping_file(data, headers):
