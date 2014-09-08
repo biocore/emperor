@@ -460,17 +460,20 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                         "mapping file" % column)
 
             # fill in the data
+            fill_the_data = False
             for line in out_data:
                 if criteria(line[header_index]) == False:
                     if not column:
                         line[header_index] = value
                         used_column_index = True
+                        fill_the_data = True
                     else:
                         if line[column_index] == column_value:
                             line[header_index] = new_value
                             used_column_index = True
+                            fill_the_data = True
 
-            if not used_column_index:
+            if not used_column_index and fill_the_data:
                 raise EmperorInputFilesError, ("This value '%s' doesn't exist in '%s' or "
                 "it wasn't used in for processing" % (column_value, column))
 
