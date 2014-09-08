@@ -237,7 +237,7 @@ class TopLevelTests(TestCase):
             self.jk_coords_header, self.jk_coords_data,
             self.jk_coords_eigenvalues, self.jk_coords_pcts,
             self.jk_mapping_file_headers, self.jk_mapping_file_data,
-            jackknifing_method='sdev', percent_variation_below_one=True)
+            jackknifing_method='sdev', pct_variation_below_one=True)
 
         self.assertEquals(out_coords_header, ['1', '2', '3'])
         assert_almost_equal(out_coords_data, array([[ 1.4, -0.0125, -1.425],
@@ -259,7 +259,7 @@ class TopLevelTests(TestCase):
             self.jk_coords_eigenvalues_gradient, self.jk_coords_pcts_gradient,
             self.jk_mapping_file_headers_gradient,
             self.jk_mapping_file_data_gradient, custom_axes=['Time'],
-            jackknifing_method='sdev', percent_variation_below_one=True)
+            jackknifing_method='sdev', pct_variation_below_one=True)
 
         self.assertEquals(out_coords_header, ['PC.354', 'PC.355', 'PC.635',
             'PC.636'])
@@ -280,14 +280,14 @@ class TopLevelTests(TestCase):
             2.80995255e-02, 7.87797563e-02, 4.78713554e-02]]))
         self.assertEquals(o_clones, 0)
 
-        # test that percent_variation_below_one is working
+        # test that pct_variation_below_one is working
         out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
             out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
             self.jk_coords_header_gradient, self.jk_coords_data_gradient,
             self.jk_coords_eigenvalues_gradient, self.jk_coords_pcts_gradient,
             self.jk_mapping_file_headers_gradient,
             self.jk_mapping_file_data_gradient, custom_axes=['Time'],
-            jackknifing_method='sdev', percent_variation_below_one=False)
+            jackknifing_method='sdev', pct_variation_below_one=False)
 
         self.assertEquals(out_coords_header, ['PC.354', 'PC.355', 'PC.635',
             'PC.636'])
@@ -296,7 +296,6 @@ class TopLevelTests(TestCase):
             0.45, 3.5, 1.2505], [2.3, 0.6325, 0.2575, 1.0675, 2.125]]))
         assert_almost_equal(out_eigenvals, array([ 0.81, 0.14, 0.05, 0.]))
         assert_almost_equal(out_pcts, array([ 80,  10,  10,  0 ]))
-
 
     def test_preprocess_coords_file_comparison(self):
         """Check the cases for comparisons plots and the special usages"""
@@ -311,7 +310,7 @@ class TopLevelTests(TestCase):
             self.jk_coords_header, self.jk_coords_data,
             self.jk_coords_eigenvalues, self.jk_coords_pcts,
             self.jk_mapping_file_headers, self.jk_mapping_file_data,
-            is_comparison=True, percent_variation_below_one=True)
+            is_comparison=True, pct_variation_below_one=True)
 
         self.assertEquals(out_coords_header, ['1_0', '2_0', '3_0', '1_1', '2_1',
             '3_1', '1_2', '2_2', '3_2', '1_3', '2_3', '3_3'])

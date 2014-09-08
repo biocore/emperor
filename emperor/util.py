@@ -232,7 +232,7 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
                         coords_pct, mapping_header, mapping_data,
                         custom_axes=None, jackknifing_method=None,
                         is_comparison=False,
-                        percent_variation_below_one=False):
+                        pct_variation_below_one=False):
     """Process a PCoA data and handle customizations in the contents
 
     Inputs:
@@ -254,7 +254,7 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
     see qiime.util.summarize_pcoas
     is_comparison: whether or not the inputs should be considered as the ones
     for a comparison plot
-    percent_variation_below_one: boolean to allow percet variation of the axes
+    pct_variation_below_one: boolean to allow percet variation of the axes
     be under one
 
     Outputs:
@@ -328,7 +328,7 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             coords_high[:, 0:axes] = ones([coords_high.shape[0], axes])*0.00001
             coords_data = coords_file[1]
 
-        if master_pcoa[3][0]<1.0 and not percent_variation_below_one:
+        if master_pcoa[3][0]<1.0 and not pct_variation_below_one:
             master_pcoa[3] = master_pcoa[3]*100
 
         # return a value containing coords_low and coords_high
@@ -378,7 +378,7 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             remove_nans(coords_file)
             scale_custom_coords(custom_axes, coords_file)
 
-    if coords_pct[0]<1.0 and not percent_variation_below_one:
+    if coords_pct[0]<1.0 and not pct_variation_below_one:
         coords_pct = coords_pct*100
 
     # if no coords summary is applied, return None in the corresponding values

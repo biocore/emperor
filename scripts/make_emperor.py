@@ -220,7 +220,7 @@ script_info['optional_options'] = [
     'result in better quality but can make the plots less responsive, also it '
     'will make the resulting SVG images bigger. The value should be between 4 '
     'and 14. [default: %default]', default=8),
-    make_option('--percent_variation_below_one',action="store_true",
+    make_option('--pct_variation_below_one',action="store_true",
     help='Allow the percent variation explained by the axis to be below one. '
     'The default behaivor is to multiply by 100 all values if PC1 is < 1.0 '
     '[default: %default]', default=False),
@@ -248,7 +248,7 @@ def main():
     number_of_axes = opts.number_of_axes
     compare_plots = opts.compare_plots
     number_of_segments = opts.number_of_segments
-    percent_variation_below_one = opts.percent_variation_below_one
+    pct_variation_below_one = opts.pct_variation_below_one
 
     # add some metadata to the output
     emperor_autograph = format_emperor_autograph(map_fp, input_coords, 'HTML')
@@ -582,7 +582,7 @@ def main():
         coords_high, clones = preprocess_coords_file(coords_headers,coords_data,
         coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
         jackknifing_method=jackknifing_method, is_comparison=compare_plots,
-        percent_variation_below_one=percent_variation_below_one)
+        pct_variation_below_one=pct_variation_below_one)
 
     # process the otu table after processing the coordinates to get custom axes
     # (when available) or any other change that occurred to the coordinates

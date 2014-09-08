@@ -14,6 +14,7 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Supports both NumPy 1.7 and 1.8.
 * Depends on scikit-bio 0.1.4.
 * Emperor provides a Python object that is IPython aware (emperor.Emperor) that will display a usable plot from within the IPython notebook.
+* Emperor will multiply by 100 the percentages explained in the input file if PC1 is lower than 1. This behavior can be stopped using --pct_variation_below_one. 
 
 *Bug Fixes*
 
