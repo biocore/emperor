@@ -229,7 +229,7 @@ class TopLevelTests(TestCase):
         # fails when comparing the whole matrix at once
         for out_el, exp_el in zip(out_coords_data, expected_coords_data):
             for out_el_sub, exp_el_sub in zip(out_el, exp_el):
-                self.assertAlmostEquals(out_el_sub, exp_el_sub)        
+                self.assertAlmostEquals(out_el_sub, exp_el_sub)
 
         # case for jackknifing, based on qiime/tests/test_util.summarize_pcoas
         out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
@@ -237,7 +237,7 @@ class TopLevelTests(TestCase):
             self.jk_coords_header, self.jk_coords_data,
             self.jk_coords_eigenvalues, self.jk_coords_pcts,
             self.jk_mapping_file_headers, self.jk_mapping_file_data,
-            jackknifing_method='sdev')
+            jackknifing_method='sdev', percent_variation_below_one=True)
 
         self.assertEquals(out_coords_header, ['1', '2', '3'])
         assert_almost_equal(out_coords_data, array([[ 1.4, -0.0125, -1.425],
@@ -249,7 +249,7 @@ class TopLevelTests(TestCase):
         # test the coords are working fine
         assert_almost_equal(out_coords_low, array([[-0.07071068, -0.0375,
             -0.10307764], [-0.04787136, -0.025, -0.07071068]]))
-        assert_almost_equal(out_coords_high, array([[ 0.07071068, 0.0375, 
+        assert_almost_equal(out_coords_high, array([[ 0.07071068, 0.0375,
             0.10307764], [0.04787136, 0.025, 0.07071068]]))
 
         # test custom axes and jackknifed plots
@@ -259,7 +259,7 @@ class TopLevelTests(TestCase):
             self.jk_coords_eigenvalues_gradient, self.jk_coords_pcts_gradient,
             self.jk_mapping_file_headers_gradient,
             self.jk_mapping_file_data_gradient, custom_axes=['Time'],
-            jackknifing_method='sdev')
+            jackknifing_method='sdev', percent_variation_below_one=True)
 
         self.assertEquals(out_coords_header, ['PC.354', 'PC.355', 'PC.635',
             'PC.636'])
@@ -273,12 +273,30 @@ class TopLevelTests(TestCase):
         assert_almost_equal(out_coords_low, array([[ 0., -0.25980762, -0.25,
             -0.25], [ 0., -0.5, -0.25, -0.725], [ 0., -0.85, -0., -0.24983344],
             [ 0., -0.02809953, -0.07877976, -0.04787136]]))
-        assert_almost_equal(out_coords_high, array([[1.00000000e-05, 
+        assert_almost_equal(out_coords_high, array([[1.00000000e-05,
             2.59807621e-01, 2.50000000e-01, 2.50000000e-01], [1.00000000e-05,
             5.00000000e-01, 2.50000000e-01, 7.25000000e-01], [1.00000000e-05,
             8.50000000e-01, 0.00000000e+00, 2.49833445e-01], [1.00000000e-05,
             2.80995255e-02, 7.87797563e-02, 4.78713554e-02]]))
         self.assertEquals(o_clones, 0)
+
+        # test that percent_variation_below_one is working
+        out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
+            out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
+            self.jk_coords_header_gradient, self.jk_coords_data_gradient,
+            self.jk_coords_eigenvalues_gradient, self.jk_coords_pcts_gradient,
+            self.jk_mapping_file_headers_gradient,
+            self.jk_mapping_file_data_gradient, custom_axes=['Time'],
+            jackknifing_method='sdev', percent_variation_below_one=False)
+
+        self.assertEquals(out_coords_header, ['PC.354', 'PC.355', 'PC.635',
+            'PC.636'])
+        assert_almost_equal(out_coords_data, array([[-2.4, 1.15, 0.55, -0.95,
+            0.85], [0.73333333, -2.4, -3.5, 4.25, 1.025], [0.73333333, 0.5,
+            0.45, 3.5, 1.2505], [2.3, 0.6325, 0.2575, 1.0675, 2.125]]))
+        assert_almost_equal(out_eigenvals, array([ 0.81, 0.14, 0.05, 0.]))
+        assert_almost_equal(out_pcts, array([ 80,  10,  10,  0 ]))
+
 
     def test_preprocess_coords_file_comparison(self):
         """Check the cases for comparisons plots and the special usages"""
@@ -293,7 +311,7 @@ class TopLevelTests(TestCase):
             self.jk_coords_header, self.jk_coords_data,
             self.jk_coords_eigenvalues, self.jk_coords_pcts,
             self.jk_mapping_file_headers, self.jk_mapping_file_data,
-            is_comparison=True)
+            is_comparison=True, percent_variation_below_one=True)
 
         self.assertEquals(out_coords_header, ['1_0', '2_0', '3_0', '1_1', '2_1',
             '3_1', '1_2', '2_2', '3_2', '1_3', '2_3', '3_3'])
@@ -328,32 +346,32 @@ class TopLevelTests(TestCase):
         self.assertRaises(EmperorInputFilesError, fill_mapping_field_from_mapping_file,
             self.broken_mapping_file_data, self.mapping_file_headers_gradient,
             'Spam:Foo')
-        
+
         # testing multiple values
         out_data = fill_mapping_field_from_mapping_file(
             self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
             'Time:Treatment==Control=444;Time:Treatment==Fast=888')
         self.assertEquals(out_data, [
-            ['PC.354', 'Control', '3', '40', 'Control20061218'], 
-            ['PC.355', 'Control', '444', '44', 'Control20061218'], 
-            ['PC.635', 'Fast', '888', 'x', 'Fast20080116'], 
+            ['PC.354', 'Control', '3', '40', 'Control20061218'],
+            ['PC.355', 'Control', '444', '44', 'Control20061218'],
+            ['PC.635', 'Fast', '888', 'x', 'Fast20080116'],
             ['PC.636', 'Fast', '12', '37.22', 'Fast20080116']])
-        
+
         # testing multiple values: blank column name
         self.assertRaises(AssertionError, fill_mapping_field_from_mapping_file,
             self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
             'Time:Treatment===200600020')
-        
+
         # testing multiple values: wrong order
         self.assertRaises(AssertionError, fill_mapping_field_from_mapping_file,
             self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
             'Time:Treatment=Control==200600020')
-        
+
         # testing multiple values: error when more than 1 value is passed
         self.assertRaises(AssertionError, fill_mapping_field_from_mapping_file,
             self.broken_mapping_file_data_2_values, self.mapping_file_headers_gradient,
             'Time:Treatment=Control==200600020,435')
- 
+
     def test_sanitize_mapping_file(self):
         """Check the mapping file strings are sanitized for it's use in JS"""
 
@@ -523,7 +541,7 @@ BROKEN_MAPPING_FILE = [
     ['PC.355', 'Control','y', '44', 'Control20061218'],
     ['PC.635', 'Fast','9', 'x', 'Fast20080116'],
     ['PC.636', 'Fast','12', '37.22', 'Fast20080116']]
-    
+
 BROKEN_MAPPING_FILE_2_VALUES = [
     ['PC.354', 'Control','3', '40', 'Control20061218'],
     ['PC.355', 'Control','NA', '44', 'Control20061218'],
