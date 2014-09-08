@@ -35,7 +35,7 @@ from emperor import __version__ as emperor_library_version
 class EmperorSupportFilesError(IOError):
     """Exception for missing support files"""
     pass
-    
+
 class EmperorInputFilesError(IOError):
     """Exception for missing support files"""
     pass
@@ -83,7 +83,7 @@ def get_emperor_support_files_dir():
     return join(get_emperor_project_dir(), 'emperor/support_files/')
 
 def copy_support_files(file_path):
-    """Copy the support files to a named destination 
+    """Copy the support files to a named destination
 
     file_path: path where you want the support files to be copied to
 
@@ -231,7 +231,8 @@ def keep_columns_from_mapping_file(data, headers, columns, negate=False):
 def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
                         coords_pct, mapping_header, mapping_data,
                         custom_axes=None, jackknifing_method=None,
-                        is_comparison=False):
+                        is_comparison=False,
+                        percent_variation_below_one=False):
     """Process a PCoA data and handle customizations in the contents
 
     Inputs:
@@ -253,6 +254,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
     see qiime.util.summarize_pcoas
     is_comparison: whether or not the inputs should be considered as the ones
     for a comparison plot
+    percent_variation_below_one: boolean to allow percet variation of the axes
+    be under one
 
     Outputs:
     coords_header: list of sample identifiers in the PCoA file
@@ -325,6 +328,9 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             coords_high[:, 0:axes] = ones([coords_high.shape[0], axes])*0.00001
             coords_data = coords_file[1]
 
+        if master_pcoa[3][0]<1.0 and not percent_variation_below_one:
+            master_pcoa[3] = master_pcoa[3]*100
+
         # return a value containing coords_low and coords_high
         return identifiers, coords_data, eigenvalues_average, master_pcoa[3],\
             coords_low, coords_high, clones
@@ -372,6 +378,9 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             remove_nans(coords_file)
             scale_custom_coords(custom_axes, coords_file)
 
+    if coords_pct[0]<1.0 and not percent_variation_below_one:
+        coords_pct = coords_pct*100
+
     # if no coords summary is applied, return None in the corresponding values
     # note that the value of clones will be != 0 for a comparison plot
     return coords_file[0], coords_file[1], coords_eigenvals, coords_pct, None,\
@@ -418,38 +427,38 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
         if colname not in values_dict:
             values_dict[colname] = []
         values_dict[colname].extend(vals)
-    
+
     for key, v in values_dict.items():
         for value in v:
-            # variable that is going to contain the name of the column for multiple 
-            # subtitutions 
+            # variable that is going to contain the name of the column for multiple
+            # subtitutions
             column = None
             # variable to control if the values with in a column exist
             used_column_index = False
-            
+
             try:
                 header_index = headers.index(key)
             except ValueError:
                 raise EmperorInputFilesError, ("The header %s does not exist in the "
                     "mapping file" % key)
-            
-            # for the special case of multiple entries 
+
+            # for the special case of multiple entries
             if '==' in value and '=' in value:
                 arrow_index = value.index('==')
                 equal_index = value.rindex('=')
                 assert ((arrow_index+2)!=equal_index and (arrow_index+1)!=equal_index), \
                     "Not properly formatted: %s" % value
-                
+
                 column = value[:arrow_index]
                 column_value = value[arrow_index+2:equal_index]
                 new_value = value[equal_index+1:]
-                
+
                 try:
                     column_index = headers.index(column)
                 except ValueError:
                     raise EmperorInputFilesError, ("The header %s does not exist in the "
                         "mapping file" % column)
-            
+
             # fill in the data
             for line in out_data:
                 if criteria(line[header_index]) == False:
@@ -457,14 +466,14 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                         line[header_index] = value
                         used_column_index = True
                     else:
-                        if line[column_index] == column_value:     
+                        if line[column_index] == column_value:
                             line[header_index] = new_value
                             used_column_index = True
-            
+
             if not used_column_index:
                 raise EmperorInputFilesError, ("This value '%s' doesn't exist in '%s' or "
                 "it wasn't used in for processing" % (column_value, column))
-            
+
     return out_data
 
 def sanitize_mapping_file(data, headers):
