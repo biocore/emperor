@@ -26,7 +26,7 @@ from emperor.biplots import preprocess_otu_table
 from emperor.sort import sort_comparison_filenames
 from emperor.filter import keep_samples_from_pcoa_data
 from emperor.util import (copy_support_files, preprocess_mapping_file,
-    preprocess_coords_file, fill_mapping_field_from_mapping_file, 
+    preprocess_coords_file, fill_mapping_field_from_mapping_file,
     EmperorInputFilesError)
 from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
     format_taxa_to_js, format_vectors_to_js, format_emperor_html_footer_string,
@@ -78,7 +78,7 @@ script_info['script_usage'] = [("Plot PCoA data","Visualize the a PCoA file "
     "column on 20080220 and on 20080240 those that are Fast:", "%prog -i "
     "unweighted_unifrac_pc.txt -m Fasting_Map_modified.txt -a DOB -o "
     "pcoa_dob_with_missing_custom_axes_with_multiple_values -x "
-    "'DOB:Treatment==Control=20080220' -x 'DOB:Treatment==Fast=20080240'"),    
+    "'DOB:Treatment==Control=20080220' -x 'DOB:Treatment==Fast=20080240'"),
     ("Jackknifed principal coordinates analysis plot", "Create a jackknifed "
     "PCoA plot (with confidence intervals for each sample) passing as the input"
     " a directory of coordinates files (where each file corresponds to a "
@@ -220,6 +220,10 @@ script_info['optional_options'] = [
     'result in better quality but can make the plots less responsive, also it '
     'will make the resulting SVG images bigger. The value should be between 4 '
     'and 14. [default: %default]', default=8),
+    make_option('--pct_variation_below_one',action="store_true",
+    help='Allow the percent variation explained by the axis to be below one. '
+    'The default behaivor is to multiply by 100 all values if PC1 is < 1.0 '
+    '[default: %default]', default=False),
 ]
 script_info['version'] = __version__
 
@@ -244,6 +248,7 @@ def main():
     number_of_axes = opts.number_of_axes
     compare_plots = opts.compare_plots
     number_of_segments = opts.number_of_segments
+    pct_variation_below_one = opts.pct_variation_below_one
 
     # add some metadata to the output
     emperor_autograph = format_emperor_autograph(map_fp, input_coords, 'HTML')
@@ -251,11 +256,11 @@ def main():
     # verifying that the number of axes requested is greater than 3
     if number_of_axes<3:
         option_parser.error(('You need to plot at least 3 axes.'))
-        
+
     # verifying that the number of segments is between the desired range
     if number_of_segments<4 or number_of_segments>14:
         option_parser.error(('number_of_segments should be between 4 and 14.'))
-        
+
     # append headernames that the script didn't find in the mapping file
     # according to different criteria to the following variables
     offending_fields = []
@@ -465,7 +470,7 @@ def main():
     if missing_custom_axes_values:
         try:
             # the fact that this uses parse_metadata_state_descriptions makes
-            # the following option '-x Category:7;PH:12' to work as well as the 
+            # the following option '-x Category:7;PH:12' to work as well as the
             # script-interface-documented '-x Category:7 -x PH:12' option
             for val in missing_custom_axes_values:
                 if ':' not in val:
@@ -473,12 +478,12 @@ def main():
                         "axes: %s" % val)
             mapping_data = fill_mapping_field_from_mapping_file(mapping_data,
                 header, ';'.join(missing_custom_axes_values))
-            
+
         except AssertionError, e:
             option_parser.error(e.message)
         except EmperorInputFilesError, e:
             option_parser.error(e.message)
-    
+
     # check that all the required columns exist in the metadata mapping file
     if color_by_column_names:
         color_by_column_names = color_by_column_names.split(',')
@@ -576,7 +581,8 @@ def main():
     coords_headers, coords_data, coords_eigenvalues, coords_pct, coords_low,\
         coords_high, clones = preprocess_coords_file(coords_headers,coords_data,
         coords_eigenvalues, coords_pct, header, mapping_data, custom_axes,
-        jackknifing_method=jackknifing_method, is_comparison=compare_plots)
+        jackknifing_method=jackknifing_method, is_comparison=compare_plots,
+        pct_variation_below_one=pct_variation_below_one)
 
     # process the otu table after processing the coordinates to get custom axes
     # (when available) or any other change that occurred to the coordinates
@@ -605,7 +611,7 @@ def main():
     try:
         fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
             coords_eigenvalues, coords_pct, custom_axes, coords_low,
-            coords_high, number_of_axes=number_of_axes, 
+            coords_high, number_of_axes=number_of_axes,
             number_of_segments=number_of_segments))
     except EmperorLogicError, e:
         option_parser.error(e.message)
