@@ -9,7 +9,7 @@ __license__ = "BSD"
 __version__ = "1.7.0-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
-__status__ = "Release"
+__status__ = "Development"
 
 from unittest import main, TestCase
 from emperor.qiime_backports.format import format_mapping_file

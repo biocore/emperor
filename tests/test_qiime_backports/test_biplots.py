@@ -9,7 +9,7 @@ __license__ = "BSD"
 __version__ = "1.7.0-dev"
 __maintainer__ = "Justin Kuczynski"
 __email__ = "justinak@gmail.com"
-__status__ = "Release"
+__status__ = "Development"
 
 import emperor.qiime_backports.biplots as bp
 import numpy as np

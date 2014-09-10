@@ -6,10 +6,10 @@ __author__ = "Jose Antonio Navas Molina"
 __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Jose Antonio Navas Molina"]
 __license__ = "BSD"
-__version__ = "0.9.4"
+__version__ = "0.9.4-dev"
 __maintainer__ = "Jose Antonio Navas Molina"
 __email__ = "josenavasmolina@gmail.com"
-__status__ = "Release"
+__status__ = "Development"
 
 from skbio.math.stats.ordination import OrdinationResults
 from skbio.core.exception import FileFormatError
