@@ -73,28 +73,15 @@ function isNumeric(n) {
 function resetCamera() {
 	// We need to reset the camera controls first before modifying the values of the camera (this is the reset view!)
 	g_sceneControl.update();
-	
+
 	g_sceneCamera.aspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 	g_sceneCamera.rotation.set( 0, 0, 0);
 	g_sceneCamera.updateProjectionMatrix();
-	
+
 	if ($('#scale_checkbox').is(':checked'))
 		g_sceneCamera.position.set(0 , 0, (g_maximum*4.2) + g_radius);
 	else
-		g_sceneCamera.position.set(0 , 0, (g_maximum*4.8) + g_radius);	
-}
-
-/*Removes duplicates from a list of samples*/
-function dedupe(list) {
-	var set = {};
-	for (var i = 0; i < list.length; i++){
-		set[list[i]] = true;
-	}
-	list = [];
-	for (var obj in set){
-		list.push(obj);
-	}
-	return list;
+		g_sceneCamera.position.set(0 , 0, (g_maximum*4.8) + g_radius);
 }
 
 /*Toggle between the scaled and unscaled version of the plot
@@ -333,7 +320,7 @@ function getColorList(vals) {
 			else{
 				//reverse the oder to standard default B->G->R
 				//changed what is multiplied by 0.66 to be 2,1,0 from 0,1,2
-				THREE.ColorConverter.setHSV(colors[vals[index]], 
+				THREE.ColorConverter.setHSV(colors[vals[index]],
 					   (numColors - index -1 )*.66/numColors, 1, 1);
 			}
 		}
@@ -353,9 +340,10 @@ function colorByMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
 	}
 
-	vals = naturalSort(dedupe(vals));
+  uniq_counts = _.groupBy(vals)
+	vals = naturalSort(_.keys(uniq_counts));
 	colors = getColorList(vals);
-	
+
 	// build the colorby table in HTML
 	var lines = "<table id='colorbylist_table'>";
 	for(var i in vals){
@@ -365,11 +353,12 @@ function colorByMenuChanged() {
 		var idString = "r"+i+"c"+g_categoryIndex;
 
 		// set the div id so that we can reference this div later
-		lines += "<tr><td><div id=\""+idString+"\"class=\"colorbox\" name=\""+vals[i]+"\"></div></td><td title=\""+vals[i]+"\">";
+		lines += '<tr><td><div id="' + idString + '" class="colorbox" name="' +
+             vals[i] + '" display_name="' + '(' + uniq_counts[vals[i]].length +
+             ') ' + vals[i] + '"></div></td><td title="' + vals[i] + '">';
 
 		// add the category names
-		lines += vals[i];
-
+		lines += '('+ uniq_counts[vals[i]].length + ') ' + vals[i];
 		lines+= "</td></tr>";
 	}
 	lines += "</table>";
@@ -458,13 +447,13 @@ function colorAnimationsByCategoryChanged() {
             });
 }
 
-function colorParallelPlots(vals,colors) 
+function colorParallelPlots(vals,colors)
 {
 	pwidth = document.getElementById('parallelPlotWrapper').offsetWidth
 	pheight = document.getElementById('parallelPlotWrapper').offsetHeight
-	
+
 	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
-	
+
 	var color = function(d) {
 		var colorKey = "";
 		for (var i = 1; i < Object.keys(d).length+1; i++) {
@@ -504,7 +493,7 @@ function colorParallelPlots(vals,colors)
 	  .mode("queue")
 	  .render()
 	  .brushable();
-	  
+
 	$('.parcoords text').css('stroke', $('#axeslabelscolor').css('backgroundColor'));
 	$('.parcoords .axis line, .parcoords .axis path').css('stroke', $('#axescolor').css('backgroundColor'));
 }
@@ -522,7 +511,7 @@ function scalingByMenuChanged(){
 	for(var i in g_plotIds){
 		values.push(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex]);
 	}
-	values = naturalSort(dedupe(values));
+	values = naturalSort(_.uniq(values, false));
 
 	// the padding accounts for the slider handle that can move all to the left or right
 	lines = '<table class="emperor-tab-table-with-sliders">'
@@ -597,7 +586,7 @@ function showByMenuChanged() {
 	g_visiblePoints = g_plotIds.length;
 	changePointCount();
 
-	vals = naturalSort(dedupe(vals));
+	vals = naturalSort(_.uniq(vals, false));
 
 	// build the showby checkbox table in HTML; the padding to the right makes
 	// the slider fit great inside the table without ever showing scroll bars
@@ -783,7 +772,7 @@ function colorChanged(catValue,color) {
 		{
 			// get the valid divId for the key and set its color
 			$("#"+sid.replace(/\./g,'')+"_key").css('backgroundColor',color);
-			// set the color of the corresponding sphere and ellipse 
+			// set the color of the corresponding sphere and ellipse
 			try {
 				g_plotEllipses[sid].material.color.setHex(color.replace('#','0x'));
 			}
@@ -835,7 +824,7 @@ function labelMenuChanged() {
 		vals.push(g_mappingFileData[g_plotIds[i]][labelCatIndex]);
 	}
 
-	vals = naturalSort(dedupe(vals));
+	vals = naturalSort(_.uniq(vals, false));
 	colors = getColorList(vals);
 
 	// build the label table in HTML
@@ -1055,7 +1044,7 @@ function sphereOpacityChange(ui, category) {
 	for(var i in g_plotIds){
 		vals.push(g_mappingFileData[g_plotIds[i]][showByCategoryIndex]);
 	}
-	vals = naturalSort(dedupe(vals));
+	vals = naturalSort(_.uniq(vals, false));
 
 	// category as null means that it's the general opacity slider (the on in the options tab)
 	if (category == null) {
@@ -1117,7 +1106,7 @@ function sphereRadiusChange(ui, category) {
 	for(var i in g_plotIds){
 		values.push(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex]);
 	}
-	values = naturalSort(dedupe(values));
+	values = naturalSort(_.uniq(values, false));
 
 	if (category == null){
 		for (index in values){
@@ -1154,7 +1143,7 @@ function setJqueryUi() {
 	$("#emperor-menu-tabs").tabs();
 	$("#plottype").buttonset();
 	$("input[name='plottype']").change(togglePlots);
-	
+
 	$("#labelColor").css('backgroundColor', '#ffffff');
 
 	$("#labelColor").spectrum({
@@ -1430,7 +1419,7 @@ function setJqueryUi() {
 				// set the color for the box and for the renderer
 				$(this).css('backgroundColor', c);
 				g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
-				
+
 				$('#parallelPlotWrapper').css('backgroundColor', c);
 			}
 	});
@@ -1565,8 +1554,8 @@ function drawVectors(){
   lines visually compose a single line and are both stored in the g_plotEdges
   array in arrays of two elements where the first element is the red line and
   the second element is the white line.
-  
-  A dynamic value that contains the coordinates of the spheres is passed in, that way 
+
+  A dynamic value that contains the coordinates of the spheres is passed in, that way
   to allow the negating of the values.
 
   In the case of a non-serial comparison plot, all edges will originate in the
@@ -1574,7 +1563,7 @@ function drawVectors(){
 */
 function drawEdges(spherepositions){
 	var previous = null, origin = null, current, middle_point, index=0, line_a, line_b;
-					
+
 	// note that this function is composed of an if-else statement with a loop
 	// that's almost identical under each case. This approach was taken as
 	// otherwise the comparison would need to happen N times instead of 1 time
@@ -1584,7 +1573,7 @@ function drawEdges(spherepositions){
 	if (g_isSerialComparisonPlot == true){
 		for (var sampleKey in spherepositions){
 			for (var edgePosition in spherepositions[sampleKey]){
-			
+
 				// if we don't have a start point store it and move along
 				if (previous == null) {
 					previous = spherepositions[sampleKey][edgePosition];
@@ -1592,7 +1581,7 @@ function drawEdges(spherepositions){
 				// if we already have a start point then draw the edge
 				else{
 					current = spherepositions[sampleKey][edgePosition];
-					
+
 					// the edge is composed by two lines so calculate the middle
 					// point between these two lines and end the first line in this
 					// point and start the second line in this point
@@ -1667,7 +1656,7 @@ function drawEdges(spherepositions){
 }
 
 /*Save the current view to SVG
-  This will take the current webGL renderer, convert it to SVG and then generate 
+  This will take the current webGL renderer, convert it to SVG and then generate
   a file to download. Additionally it will create the labels if this option is selected.
 */
 function saveSVG(button){
@@ -1679,32 +1668,32 @@ function saveSVG(button){
             "implementation. Do you want to continue?");
         if (res==false) return;
     }
- 
+
     $('body').css('cursor','progress');
-    
+
     var width = document.getElementById('pcoaPlotWrapper').offsetWidth;
     var height = document.getElementById('pcoaPlotWrapper').offsetHeight;
-    
+
     var color = $("#rendererbackgroundcolor").spectrum("get").toHexString(true);
     var rendererBackgroundColor = new THREE.Color();
     rendererBackgroundColor.setHex(color.replace('#','0x'));
 
-	var svgRenderer = new THREE.SVGRenderer({ antialias: true, preserveDrawingBuffer: true }); 
-	// this is the proper way to set the color of the background but it doesn't work   
+	var svgRenderer = new THREE.SVGRenderer({ antialias: true, preserveDrawingBuffer: true });
+	// this is the proper way to set the color of the background but it doesn't work
     svgRenderer.setClearColor(rendererBackgroundColor, 1);
     svgRenderer.setSize(width, height);
     svgRenderer.render(g_mainScene, g_sceneCamera);
     svgRenderer.sortObjects = true;
-        
+
     // converting svgRenderer to string: http://stackoverflow.com/questions/17398134/three-svgrenderer-save-text-of-image
-    var XMLS = new XMLSerializer(); 
+    var XMLS = new XMLSerializer();
     var svgfile = XMLS.serializeToString(svgRenderer.domElement);
-    
+
     // hacking the color to the svg
     var index = svgfile.indexOf('viewBox="')+9;
     var viewBox = svgfile.substring(index, svgfile.indexOf('"',index))
     viewBox = viewBox.split(" ");
-    var background = '<rect id="background" height="' + viewBox[3] + '" width="' + viewBox[2] + '" y="' + 
+    var background = '<rect id="background" height="' + viewBox[3] + '" width="' + viewBox[2] + '" y="' +
         viewBox[1] + '" x="' + viewBox[0] + '" stroke-width="0" stroke="#000000" fill="' + color + '"/>'
     index = svgfile.indexOf('>',index)+1;
     svgfile = svgfile.substr(0, index) + background + svgfile.substr(index);
@@ -1718,15 +1707,15 @@ function saveSVG(button){
                                 'xmlns="http://www.w3.org/2000/svg" viewBox=');
     }
 
-    saveAs(new Blob([svgfile], {type: "text/plain;charset=utf-8"}), 
+    saveAs(new Blob([svgfile], {type: "text/plain;charset=utf-8"}),
            $('#saveas_name').val() + ".svg");
-    
+
     if ($('#saveas_legends').is(':checked')) {
         var names = [], colors = [];
 
         // get lists of the data to create the legend
         $('#colorbylist_table tr div').each(function() {
-            names.push($(this).attr('name'));
+            names.push($(this).attr('display_name'));
             colors.push($("#" + $(this).attr('id')).spectrum("get").toHexString(true));
         });
 
@@ -1734,7 +1723,7 @@ function saveSVG(button){
         saveAs(new Blob([labels_svg], {type: "text/plain;charset=utf-8"}),
                $('#saveas_name').val() + "_labels.svg");
     }
-    
+
     $('body').css('cursor','default');
 }
 
@@ -1815,7 +1804,7 @@ function changeAxesDisplayed() {
 			resetCamera();
 			return;
 	}
-	
+
 	// HACK: this is a work around for cases when the scale is on
 	if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': false});
 
@@ -1840,7 +1829,7 @@ function changeAxesDisplayed() {
 		g_spherePositions[sid]['y'] = g_spherePositions[sid][pc2_axis];
 		g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis];
 	}
-	
+
 	comparisonPositionlength = Object.keys(g_comparisonPositions).length
 	spherePositionslength = Object.keys(g_spherePositions).length/comparisonPositionlength
 	for (var sampleKey in g_comparisonPositions) {
@@ -1851,7 +1840,7 @@ function changeAxesDisplayed() {
 				g_comparisonPositions[sampleKey][j][2] = g_spherePositions[sid]['z']
  		}
 	}
-	
+
 	checkedboxes = []
     if ($('#flip_axes_1').is(':checked')) {
 		for(var sid in g_spherePositions){
@@ -1862,17 +1851,17 @@ function changeAxesDisplayed() {
     if ($('#flip_axes_2').is(':checked')) {
 		for(var sid in g_spherePositions){
 			g_spherePositions[sid]['y'] = g_spherePositions[sid][pc2_axis]*(-1);
-		}		
+		}
  		checkedboxes.push(1);
 	}
     if ($('#flip_axes_3').is(':checked')) {
 		for(var sid in g_spherePositions){
 			g_spherePositions[sid]['z'] = g_spherePositions[sid][pc3_axis]*(-1);
-		}		
+		}
  		checkedboxes.push(2);
 	}
 	flipEdges(checkedboxes);
-	
+
 	// Setting up new positions
 	var max_x = Number.NEGATIVE_INFINITY, max_y = Number.NEGATIVE_INFINITY,
 		max_z = Number.NEGATIVE_INFINITY, min_x = Number.POSITIVE_INFINITY,
@@ -1891,7 +1880,7 @@ function changeAxesDisplayed() {
 		if (g_spherePositions[sid]['z']<min_z)
 			min_z=g_spherePositions[sid]['z'];
 	}
-		
+
 	for (var sample_id in g_plotSpheres){
 		g_plotSpheres[sample_id].position.set(g_spherePositions[sample_id]['x'],
 			g_spherePositions[sample_id]['y'], g_spherePositions[sample_id]['z']);
@@ -1902,7 +1891,7 @@ function changeAxesDisplayed() {
 	g_pc1Label = "PC" + (g_viewingAxes[0]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[0]] + " %)";
 	g_pc2Label = "PC" + (g_viewingAxes[1]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[1]] + " %)";
 	g_pc3Label = "PC" + (g_viewingAxes[2]+1) + " (" + g_fractionExplainedRounded[g_viewingAxes[2]] + " %)";
-			
+
 	g_xMaximumValue = max_x + (max_x>=0 ? 6*g_radius : -6*g_radius);
 	g_yMaximumValue = max_y + (max_y>=0 ? 6*g_radius : -6*g_radius);
 	g_zMaximumValue = max_z + (max_z>=0 ? 6*g_radius : -6*g_radius);
@@ -1914,7 +1903,7 @@ function changeAxesDisplayed() {
 
 	// HACK: this is a work around for cases when the scale is on
 	if ($('#scale_checkbox').is(':checked')) toggleScaleCoordinates({'checked': true});
-	
+
 	// Change the css color of the 3d plot labels, set colors here because buildAxesLabels reverts color to default
 	axeslabelscolor = $('#axeslabelscolor').css( "background-color" );
 	axeslabelscolor_hex = $("#axeslabelscolor").spectrum("get").toHexString(true);
@@ -1931,7 +1920,7 @@ function flipEdges(axis) {
 		for (var sampleKey in g_comparisonPositions){
 			flippedPositions1d = []
 			for (var edgePosition in g_comparisonPositions[sampleKey]){
-				flippedPositions = [g_comparisonPositions[sampleKey][edgePosition][0], 
+				flippedPositions = [g_comparisonPositions[sampleKey][edgePosition][0],
 									g_comparisonPositions[sampleKey][edgePosition][1],
 									g_comparisonPositions[sampleKey][edgePosition][2]]
 				for (var i=0;i<axis.length;i++) {
@@ -1975,7 +1964,7 @@ function togglePlots() {
 
 		// make all tabs usable
 		$("#emperor-menu-tabs").tabs({disabled: []});
-		
+
 		// adding ctrl-p
 		g_screenshotBind = THREEx.Screenshot.bindKey(g_mainRenderer, {charCode: 16});
 	}
@@ -1995,10 +1984,10 @@ function togglePlots() {
 		// they have no contextualized meaning in when lookin at parallel plots
 		// 0 = Key, 1 = Colors, 2 = Visibility, 3 = Scaling, 4 = Labels, 5 = Axes, 6 = View, 7 = Options
 		$("#emperor-menu-tabs").tabs({disabled: [2,3,4,5,7]});
-		
-		// removing the ctrl-p 
+
+		// removing the ctrl-p
         g_screenshotBind.unbind();
-		
+
 		colorByMenuChanged();
 	}
 }
@@ -2028,12 +2017,12 @@ function setParallelPlots() {
 // Resets the aspect ratio after dragging and window resize
 function aspectReset() {
 	winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight);
-	winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;                               
+	winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 	resetDivSizes(g_separator_left*$(window).width());
 	containmentLeft = $(window).width()*0.5;
 	containmentRight = $(window).width()*0.99;
 	g_sceneCamera.aspect = winAspect;
-	g_sceneCamera.updateProjectionMatrix();		
+	g_sceneCamera.updateProjectionMatrix();
 
 }
 
@@ -2052,12 +2041,12 @@ function separator_draggable() {
 			resetDivSizes(offset);
 			if (offset < $(window).width()*0.93) {
 				g_separator_history = offset;
-			} 
+			}
 		}
 	});
 }
-         
-// Resizes plot and menu widths            
+
+// Resizes plot and menu widths
 function resetDivSizes(width_left) {
 	$('#emperor-plot-toggle').width(width_left);
 	$('#parallelPlotWrapper').width(width_left);
@@ -2067,7 +2056,7 @@ function resetDivSizes(width_left) {
 	}
 	var width_right = $(window).width() - width_left - $('.emperor-separator').width()-1;
 	$('#emperor-menu').width(width_right);
-	g_separator_left = width_left/$(window).width();               
+	g_separator_left = width_left/$(window).width();
 	if (g_separator_left > 1) {
 		g_separator_left = 1;
 	}
@@ -2118,7 +2107,7 @@ function separatorDoubleClick() {
 	else {
 		resetDivSizes($(window).width()*0.99);
 	}
-	aspectReset();	
+	aspectReset();
 }
 
 /*Setup and initialization function for the whole system
@@ -2129,7 +2118,7 @@ function separatorDoubleClick() {
 */
 $(document).ready(function() {
 	setJqueryUi()
-	
+
 	// Default sizes: g_separator_left is in percent and the others are in decimal
 	g_separator_left = 0.73;
 	g_separator_history = $(window).width()*0.73;
@@ -2146,20 +2135,20 @@ $(document).ready(function() {
 	var winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight), view_angle = 35, view_near = 0.0000001, view_far = 10000;
 	var winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 
-	$(window).resize(function() {	
+	$(window).resize(function() {
 		aspectReset();
 		separator_draggable();
 	});
-	
+
 	separator_draggable();
-	
+
 	// Validating the string for the saveas filename = taken from http://stackoverflow.com/questions/6741175/trim-input-field-value-to-only-alphanumeric-characters-separate-spaces-with-wi
     $('#saveas_name').keypress(function(event) {
         var code = (event.keyCode ? event.keyCode : event.which);
         if (g_validAsciiCodes.indexOf(code)==-1)
             event.preventDefault();
     });
-    
+
     // Disables the enter key in the search bar
     $('#searchBox').keypress(function(event) {
     	if (event.keyCode == 13) {
@@ -2213,8 +2202,8 @@ $(document).ready(function() {
 				}
 				temp.push(g_mappingFileData[g_plotIds[j]][i])
 			}
-			temp = dedupe(temp);
-			
+			temp = _.uniq(temp, false);
+
 			// note that each category is added to all the dropdown menus in the
 			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
 			if (i==0) {
@@ -2272,10 +2261,10 @@ $(document).ready(function() {
 
 		// renderer, the default background color is black
 		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-        
+
         // adding 'ctrl+p' to print screenshot
         g_screenshotBind = THREEx.Screenshot.bindKey(g_mainRenderer, {charCode: 16});
-        
+
 		g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
 		g_mainRenderer.sortObjects = true;
@@ -2307,7 +2296,7 @@ $(document).ready(function() {
 			labelshtml += "</label>";
 		}
 		document.getElementById("taxalabels").innerHTML = labelshtml
-		
+
 		// adding values for axes to display
 		drawMenuAxesDisplayed();
 		changeAxesDisplayed();
@@ -2434,7 +2423,7 @@ $(document).ready(function() {
 			$('#finder').css('top',coords['y']-5);
 		}
 	}
-   
+
 	function render() {
 		var gradientCategory, trajectoryCategory;
 		var drawingLineBuffer;
@@ -2503,7 +2492,7 @@ $(document).ready(function() {
 		}// animation is playing
 
 	}
-	
+
 });
 
 /**
@@ -2587,4 +2576,3 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width){
 
   return new THREE.Mesh(lineGeometry, material);
 }
-
