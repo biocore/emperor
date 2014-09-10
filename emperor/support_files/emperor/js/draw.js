@@ -4,10 +4,10 @@
  * @copyright Copyright 2013, The Emperor Project
  * @credits Yoshiki Vazquez Baeza
  * @license BSD
- * @version 0.9.3-dev
+ * @version 0.9.4
  * @maintainer Yoshiki Vazquez Baeza
  * @email yoshiki89@gmail.com
- * @status Development
+ * @status Release
  *
  */
 

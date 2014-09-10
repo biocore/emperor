@@ -10,7 +10,7 @@ __license__ = "BSD"
 __version__ = "1.7.0-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
-__status__ = "Development"
+__status__ = "Release"
 
 from emperor.qiime_backports.format import format_mapping_file
 from emperor.qiime_backports.parse import (parse_metadata_state_descriptions,

@@ -9,7 +9,7 @@ __license__ = "BSD"
 __version__ = "1.7.0-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
-__status__ = "Development"
+__status__ = "Release"
  
 from StringIO import StringIO
 from unittest import TestCase, main

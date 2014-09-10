@@ -8,7 +8,7 @@ __license__ = "BSD"
 __version__ = "1.7.0-dev"
 __maintainer__ = "Dan Knights"
 __email__ = "daniel.knights@colorado.edu"
-__status__ = "Development"
+__status__ = "Release"
 
 from emperor.qiime_backports.parse import parse_otu_table
 from numpy import array, apply_along_axis, dot,delete, argsort
