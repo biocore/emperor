@@ -231,7 +231,8 @@ def keep_columns_from_mapping_file(data, headers, columns, negate=False):
 def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
                         coords_pct, mapping_header, mapping_data,
                         custom_axes=None, jackknifing_method=None,
-                        is_comparison=False):
+                        is_comparison=False,
+                        pct_variation_below_one=False):
     """Process a PCoA data and handle customizations in the contents
 
     Inputs:
@@ -253,6 +254,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
     see qiime.util.summarize_pcoas
     is_comparison: whether or not the inputs should be considered as the ones
     for a comparison plot
+    pct_variation_below_one: boolean to allow percet variation of the axes
+    be under one
 
     Outputs:
     coords_header: list of sample identifiers in the PCoA file
@@ -325,6 +328,9 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             coords_high[:, 0:axes] = ones([coords_high.shape[0], axes])*0.00001
             coords_data = coords_file[1]
 
+        if master_pcoa[3][0]<1.0 and not pct_variation_below_one:
+            master_pcoa[3] = master_pcoa[3]*100
+
         # return a value containing coords_low and coords_high
         return identifiers, coords_data, eigenvalues_average, master_pcoa[3],\
             coords_low, coords_high, clones
@@ -371,6 +377,9 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             get_custom_coords(custom_axes, mapping_file, coords_file)
             remove_nans(coords_file)
             scale_custom_coords(custom_axes, coords_file)
+
+    if coords_pct[0]<1.0 and not pct_variation_below_one:
+        coords_pct = coords_pct*100
 
     # if no coords summary is applied, return None in the corresponding values
     # note that the value of clones will be != 0 for a comparison plot
