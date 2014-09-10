@@ -14,7 +14,8 @@ Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
 * Supports both NumPy 1.7 and 1.8.
 * Depends on scikit-bio 0.1.4.
 * Emperor provides a Python object that is IPython aware (emperor.Emperor) that will display a usable plot from within the IPython notebook.
-* Emperor will multiply by 100 the percentages explained in the input file if PC1 is lower than 1. This behavior can be stopped using --pct_variation_below_one. 
+* Each of the categories in the Colors tab displays the # of samples. Also, the labels svg has this information.  
+* Emperor will multiply by 100 the percentages explained in the input file if PC1 is lower than 1. This behavior can be stopped using --pct_variation_below_one.
 
 *Bug Fixes*
 
@@ -82,7 +83,7 @@ Emperor 0.9.1 (21 Oct 2013)
 * Labels for biplots now have a color picker.
 * Add color pickers for connecting bars in coordinate comparison plots.
 * Add option to select a master set of coordinates when making a comparison plot.
-* Adds a feature to negate axes. With this feature you can negate the coordinates of each data point. As a result, the spheres and/or edges will be adjusted appropriately. 
+* Adds a feature to negate axes. With this feature you can negate the coordinates of each data point. As a result, the spheres and/or edges will be adjusted appropriately.
 * Minor additions to the separator controller for the side bar.
 * As of 308629f550ff3e108903d3bcf1ce76ce85f4cb96 Emperor is now released under a BSD license.
 
