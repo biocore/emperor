@@ -24,10 +24,10 @@ __copyright__ = "Copyright 2013, The Emperor Project" #consider project name
 __credits__ = ["Rob Knight","Greg Caporaso", "Jai Ram Rideout",
     "Yoshiki Vazquez-Baeza"] #remember to add yourself if you make changes
 __license__ = "BSD"
-__version__ = "0.9.3-dev"
+__version__ = "0.9.4"
 __maintainer__ = "Yoshiki Vazquez-Baeza"
 __email__ = "yoshiki89@gmail.com"
-__status__ = "Development"
+__status__ = "Release"
 
 
 script_info = {}

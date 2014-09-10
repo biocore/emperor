@@ -1,8 +1,8 @@
 Emperor ChangeLog
 =================
 
-Emperor 0.9.3-dev (changes since Emperor 0.9.2 go here)
--------------------------------------------------------
+Emperor 0.9.4 (10 Sept 2014)
+----------------------------
 
 * Category names are no longer trimmed to 25 characters in the user interface.
 * Change the minimum percent required to display a plot to be greater than 0.01 instead of 0.5.
