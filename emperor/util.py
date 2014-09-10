@@ -146,23 +146,20 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
             line.append(''.join([line[index] for index in indices]))
         headers.append(new_column)
 
-    # remove all unique or singled valued columns that are not included in
-    # the list of categories that should be kept i. e. columns
+    # remove all unique or singled valued columns
     if unique or single:
         columns_to_remove = []
         metadata = MetadataMap(mapping_file_to_dict(data, headers), [])
 
         # find columns that have values that are all unique
-        if unique:
-            for c in headers[1::]:
-                if metadata.hasUniqueCategoryValues(c) and c not in columns:
-                    columns_to_remove.append(c)
+        if unique == True:
+            columns_to_remove += [column_name for column_name in headers[1::]
+                if metadata.hasUniqueCategoryValues(column_name)]
 
         # remove categories where there is only one value
-        if single:
-            for c in headers[1::]:
-                if metadata.hasSingleCategoryValue(c) and c not in columns:
-                    columns_to_remove.append(c)
+        if single == True:
+            columns_to_remove += [column_name for column_name in headers[1::]
+                if metadata.hasSingleCategoryValue(column_name)]
         columns_to_remove = list(set(columns_to_remove))
 
         # remove the single or unique columns
