@@ -8,7 +8,7 @@ __license__ = "BSD"
 __version__ = "1.7.0-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
-__status__ = "Release"
+__status__ = "Development"
 
 from numpy import array, nan
 from unittest import TestCase, main

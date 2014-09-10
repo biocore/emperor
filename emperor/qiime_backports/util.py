@@ -7,7 +7,7 @@ __license__ = "BSD"
 __version__ = "1.7.0-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshik89@gmail.com"
-__status__ = "Release"
+__status__ = "Development"
 
 from skbio.math.stats.spatial import procrustes
 from emperor.qiime_backports.parse import parse_mapping_file_to_dict
