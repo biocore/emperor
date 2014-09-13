@@ -45,7 +45,7 @@ extensions = ['sphinx.ext.autodoc',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['.templates']
+templates_path = ['_templates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -81,7 +81,7 @@ release = '0.9.4-dev'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['build', '.templates/autosummary/*.rst', 'sphinxext']
+exclude_patterns = ['build', '_templates/autosummary/*.rst', 'sphinxext']
 
 # If true, links to the reST sources are added to the pages.
 html_show_sourcelink = False
@@ -155,7 +155,7 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['.static']
+html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
