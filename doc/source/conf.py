@@ -248,7 +248,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'Emperor', u'Emperor Documentation',
-   u'Emperor Development Team', 'Emperor', 'One line description of project.',
+   u'Emperor Development Team', 'Emperor', 'A tool to visualize '
+   'high-dimensional microbial datasets',
    'Miscellaneous'),
 ]
 
