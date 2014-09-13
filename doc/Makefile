@@ -48,8 +48,10 @@ help:
 
 clean:
 	rm -rf $(BUILDDIR)/*
+	rm -rf source/scripts/*
 
 html:
+	qcli_make_rst -i ../scripts/*.py -o source/scripts/
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
