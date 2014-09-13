@@ -1,15 +1,18 @@
 r"""
-Emperor 3D PCoA viewer
-======================
+Emperor 3D PCoA viewer (:mod:`emperor.core`)
+============================================
 
 This module provides an Object to interact and visualize an Emperor plot
 from the IPython notebook.
 
+.. currentmodule:: emperor.core
+
 Classes
 -------
 .. autosummary::
-    Emperor
+    :toctree: generated/
 
+    Emperor
 """
 from __future__ import division
 
@@ -81,8 +84,8 @@ class Emperor(object):
     References
     ----------
     .. [1] EMPeror: a tool for visualizing high-throughput microbial community
-    data Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.  Gigascience. 2013
-    Nov 26;2(1):16.
+       data Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.  Gigascience.
+       2013 Nov 26;2(1):16.
 
     """
     def __init__(self, ordination, mapping_file_data, mapping_file_headers):

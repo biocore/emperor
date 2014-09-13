@@ -34,3 +34,11 @@ Scripts:
 
    scripts/make_emperor
 
+Classes:
+========
+
+.. toctree::
+   :maxdepth: 4
+
+   emperor_objects
+
