@@ -274,5 +274,8 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
 
+# Add the 'copybutton' javascript, to hide/show the prompt in code
+# examples, originally taken from scikit-learn's doc/conf.py
 def setup(app):
+    app.add_javascript('copybutton.js')
     app.add_stylesheet('style.css')
