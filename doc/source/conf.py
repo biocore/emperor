@@ -14,13 +14,19 @@
 
 import sys
 import os
+import glob
 
 import sphinx_bootstrap_theme
 
+# NOTE: parts of this file were taken from scipy's doc/source/conf.py. See
+# biom-format/licenses/scipy.txt for scipy's license.
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('sphinxext/numpydoc/'))
+
+# -- Options for autosummary ----------------------------------------------
+autosummary_generate = glob.glob('*.rst') + glob.glob('source/*.rst')
 
 # -- General configuration ------------------------------------------------
 
@@ -30,9 +36,12 @@ import sphinx_bootstrap_theme
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.pngmath',
+              'numpydoc',
+              'sphinx.ext.coverage',
+              'sphinx.ext.doctest',
+              'sphinx.ext.autosummary'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -72,7 +81,7 @@ release = '0.9.4-dev'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ['build', '.templates/autosummary/*.rst', 'sphinxext']
 
 # If true, links to the reST sources are added to the pages.
 html_show_sourcelink = False

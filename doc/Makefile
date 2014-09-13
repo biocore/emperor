@@ -49,6 +49,7 @@ help:
 clean:
 	rm -rf $(BUILDDIR)/*
 	rm -rf source/scripts/*
+	rm -rf source/generated
 
 html:
 	qcli_make_rst -i ../scripts/*.py -o source/scripts/
