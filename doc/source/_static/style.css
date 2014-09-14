@@ -1,0 +1,38 @@
+blockquote {
+    font-size: 14px !important;
+}
+
+/* -- admonitions ----------------------------------------------------------- */
+
+div.admonition {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 7px;
+    background:#E6E6E6;
+    border-color: black;
+    color: black;
+}
+
+div.admonition a {
+    color: #27A4F2; 
+}
+
+div.admonition dt {
+    font-weight: bold;
+    font-family: "Courier New";
+}
+
+div.admonition dl {
+    margin-bottom: 0;
+}
+
+p.admonition-title {
+    margin: 0px 10px 5px 0px;
+    font-weight: bold;
+}
+
+div.body p.centered {
+    text-align: center;
+    margin-top: 25px;
+}
+

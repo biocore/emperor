@@ -4,6 +4,10 @@ Emperor ChangeLog
 Emperor 0.9.4-dev (changes since Emperor 0.9.4 go here)
 -------------------------------------------------------
 
+* Add `make_emperor.py` script auto-generated documentation.
+* Add numpydoc generated documentation setup.
+* Emperor's documentation requires `sphinx-boostrap-theme` and `sphinx`.
+
 
 Emperor 0.9.4 (10 Sept 2014)
 ----------------------------

@@ -57,5 +57,6 @@ setup(name='emperor',
         data_files={},
         install_requires=["numpy >= 1.7", "qcli",
                           "scikit-bio == 0.1.4"],
+        extras_require={'doc': ["Sphinx >= 1.2.2", "sphinx-bootstrap-theme"]},
         long_description=long_description,
         classifiers=classifiers)
