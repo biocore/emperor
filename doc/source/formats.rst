@@ -26,14 +26,14 @@ Coordinates File
 ^^^^^^^^^^^^^^^^
 
 Coordinates files describe the position in which each of the samples should be
-positioned in space, as of version `0.9.4-dev` there are two different file
+placed in space, as of version `0.9.4-dev` there are two different file
 formats that are accepted by Emperor:
 
 **Classic Format**
 
 This format is tab-delimited and must include the following information (
 versions of QIIME <= 1.8.0 generate this file when you execute
-`principale_coordinates.py`):
+`principal_coordinates.py`):
 
 - The first line is the header for each of the dimensions.
 - For each of the samples in your dataset you'll find a line with a sample
