@@ -42,3 +42,11 @@ Classes:
 
    emperor_objects
 
+Format Description:
+===================
+
+.. toctree::
+   :maxdepth: 2
+
+   formats
+
