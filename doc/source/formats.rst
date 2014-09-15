@@ -6,16 +6,15 @@ File Formats
 ============
 
 Emperor uses two main files as inputs, a mapping file and a coordinates file,
-here we will describe the format these two files should be in for Emperor to
-work correctly.
+here we will describe their structure.
 
 Mapping File
 ^^^^^^^^^^^^
 
-A mapping file refers to the additional information collected with your data
-some common examples are body site, collection time, pH, latitude, longitude,
-etc. This information is used by Emperor to color and modify visual aspects of
-your plot in a systematic way.
+A mapping file refers to the additional information collected about your
+samples, some common examples are body site, collection time, pH, latitude,
+longitude, etc. This information is used by Emperor to color and modify visual
+aspects of your plot in a systematic way.
 
 Mapping files should conform to the format as described by `QIIME
 <http://qiime.org/documentation/file_formats.html#metadata-mapping-files>`_.
@@ -36,7 +35,7 @@ This format is tab-delimited and must include the following information (
 versions of QIIME <= 1.8.0 generate this file when you execute
 `principale_coordinates.py`):
 
-- The first line has a header for each of the dimensions.
+- The first line is the header for each of the dimensions.
 - For each of the samples in your dataset you'll find a line with a sample
   identifier and its value at each dimension. If you have 7 samples you should
   expect to see 7 lines with coordinates spanning through 7 dimensions.
