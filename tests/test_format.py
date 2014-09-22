@@ -115,7 +115,7 @@ class TopLevelTests(TestCase):
         self.assertRaises(EmperorLogicError, format_pcoa_to_js,
             self.pcoa_headers, self.pcoa_coords, self.pcoa_eigen_values,
             self.pcoa_pct_var_really_low)
-            
+
         # test segments
         out_js_pcoa_string = format_pcoa_to_js(self.pcoa_jk_headers,
             self.pcoa_jk_coords, self.pcoa_jk_eigen_values,
@@ -203,11 +203,11 @@ class TopLevelTests(TestCase):
             False)
         self.assertEquals(out_js_comparison_string,
             COMPARISON_JS_STRING_NON_SERIAL)
-            
+
         out_js_comparison_string = format_comparison_bars_to_js(
             self.comparison_coords_data, self.comparison_coords_headers_zero, 3,
             False)
-        self.assertEquals(out_js_comparison_string, COMPARISON_COORDS_HEADERS_ZERO)         
+        self.assertEquals(out_js_comparison_string, COMPARISON_COORDS_HEADERS_ZERO)
 
     def test_format_comparison_bars_to_js_exceptions(self):
         """Check the correct exceptions are raised for incorrect inputs"""
@@ -315,7 +315,7 @@ class TopLevelTests(TestCase):
             'mapping_file.txt', 'pcoa.txt', 'Haskell')
         self.assertRaises(AssertionError, format_emperor_autograph,
             'mapping_file.txt', 'pcoa.txt', 'Cobol')
-        
+
 
 PCOA_DATA = array([[ -1.09166142e-01, 8.77774496e-02, 1.15866606e-02, -6.26863896e-02, 2.31533068e-02, 8.76934639e-02, 1.37400927e-03, -1.35496063e-05, 1.29849404e-09],
 [6.88959784e-02, -1.66234067e-01, -9.98300962e-02, -2.90522450e-02, 5.05569953e-02, -2.95200038e-03, -3.25863204e-02, -2.17218431e-02, 1.29849404e-09],
@@ -789,7 +789,7 @@ document.getElementById("logotable").style.display = 'none';
                 </td></tr>
             </table>
         </div>
-    </div>  
+    </div>
 </div>
 </body>
 
@@ -1049,7 +1049,7 @@ document.getElementById("logotable").style.display = 'none';
                 </td></tr>
             </table>
         </div>
-    </div>  
+    </div>
 </div>
 </body>
 
@@ -1294,7 +1294,7 @@ document.getElementById("logotable").style.display = 'none';
                 </td></tr>
             </table>
         </div>
-    </div>  
+    </div>
 </div>
 </body>
 
@@ -1543,7 +1543,7 @@ document.getElementById("logotable").style.display = 'none';
                 </td></tr>
             </table>
         </div>
-    </div>  
+    </div>
 </div>
 </body>
 
@@ -1796,7 +1796,7 @@ document.getElementById("logotable").style.display = 'none';
                 </td></tr>
             </table>
         </div>
-    </div>  
+    </div>
 </div>
 </body>
 

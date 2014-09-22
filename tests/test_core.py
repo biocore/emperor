@@ -119,9 +119,11 @@ HTML_STRING = """<!doctype html>
     <script type="text/javascript" src="emperor_required_resources/js/d3.parcoords.js"></script>
 
     <!-- THREE.js and plugins for screenshots -->
-    <script type="text/javascript" src="emperor_required_resources/js/Three.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/three.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/js/Detector.js"></script>
-    <script type="text/javascript" src="emperor_required_resources/js/js/RequestAnimationFrame.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/js/OrbitControls.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/js/ColorConverter.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/js/SVGRenderer.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/THREEx.screenshot.js"></script>
 
     <!-- General utilities (underscore.js and FileSaver.js) -->
@@ -137,7 +139,7 @@ HTML_STRING = """<!doctype html>
     <script type="text/javascript" src="emperor_required_resources/emperor/js/util.js"></script>
 
     <script type="text/javascript">
-    
+
 
 var g_mappingFileHeaders = ['SampleID','Treatment','DOB','Description'];
 var g_mappingFileData = { 'PC.636': ['PC.636','Fast','20080116','Fasting_mouse_I.D._636'],'PC.355': ['PC.355','Control','20061218','Control_mouse_I.D._355'],'PC.607': ['PC.607','Fast','20071112','Fasting_mouse_I.D._607'],'PC.634': ['PC.634','Fast','20080116','Fasting_mouse_I.D._634'],'PC.635': ['PC.635','Fast','20080116','Fasting_mouse_I.D._635'],'PC.593': ['PC.593','Control','20071210','Control_mouse_I.D._593'],'PC.356': ['PC.356','Control','20061126','Control_mouse_I.D._356'],'PC.481': ['PC.481','Control','20070314','Control_mouse_I.D._481'],'PC.354': ['PC.354','Control','20061218','Ctrol_mouse_I.D._354'] };
@@ -422,7 +424,7 @@ document.getElementById("logotable").style.display = 'none';
                 </td></tr>
             </table>
         </div>
-    </div>  
+    </div>
 </div>
 </body>
 

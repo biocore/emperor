@@ -8,6 +8,7 @@ Emperor 0.9.4-dev (changes since Emperor 0.9.4 go here)
 * Add numpydoc generated documentation setup.
 * Emperor's documentation requires `sphinx-boostrap-theme` and `sphinx`.
 * Add documentation about file formats.
+* Updated to three.js revision 68.
 
 
 Emperor 0.9.4 (10 Sept 2014)
