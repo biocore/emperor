@@ -36,10 +36,6 @@ class TopLevelTests(TestCase):
 
     def test_str(self):
         emp = Emperor(self.ord_res, self.data, self.headers)
-        fd = open('blagh.txt', 'w')
-        fd.write(str(emp))
-        fd.close()
-
         self.assertEqual(HTML_STRING, str(emp))
 
     def test_ids(self):
