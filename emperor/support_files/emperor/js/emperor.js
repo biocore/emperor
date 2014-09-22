@@ -2218,6 +2218,13 @@ $(document).ready(function() {
 			$("#trajectory-category-drop-down").append(line);
 		}
 
+    $("#colorbycombo").chosen({width: "100%", search_contains: true});
+    $("#scalingbycombo").chosen({width: "100%", search_contains: true});
+    $("#showbycombo").chosen({width: "100%", search_contains: true});
+    $("#labelcombo").chosen({width: "100%", search_contains: true});
+    $("#trajectory-category-drop-down").chosen({width: "100%", search_contains: true});
+
+
 		// add the header names that can be animated over
 		sortedAnimatableMappingFileHeaders = naturalSort(g_animatableMappingFileHeaders);
 		for (var i in naturalSort(g_animatableMappingFileHeaders)) {
@@ -2230,7 +2237,8 @@ $(document).ready(function() {
 			}
 			$("#gradient-category-drop-down").append(line);
 		}
-        colorAnimationsByCategoryChanged();
+    $("#gradient-category-drop-down").chosen({width: "100%", search_contains: true});
+    colorAnimationsByCategoryChanged();
 		setParallelPlots();
 
 		colorByMenuChanged();

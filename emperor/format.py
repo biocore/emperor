@@ -37,7 +37,7 @@ class EmperorLogicError(ValueError):
     pass
 
 def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
-                    coords_low=None, coords_high=None, number_of_axes=10, 
+                    coords_low=None, coords_high=None, number_of_axes=10,
                     number_of_segments=8):
     """Write the javascript necessary to represent a pcoa file in emperor
 
@@ -50,7 +50,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     coords_low: coordinates representing the lower edges of an ellipse
     coords_high: coordinates representing the highere edges of an ellipse
     number_of_axes: number of axes to be returned
-    number_of_segments: number of segments and rings for each sphere 
+    number_of_segments: number of segments and rings for each sphere
 
     Output:
     string: javascript representation of the PCoA data inputed, contains a list
@@ -61,7 +61,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     declarations.
     """
     js_pcoa_string = ''
-    
+
     # validating that the number of coords in coords
     if number_of_axes>len(coords[0]):
         number_of_axes = len(coords[0])
@@ -88,7 +88,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     min_z = min(coords[:,2:3])
     maximum = max(abs(coords[:,:number_of_axes]))
     pcoalabels = pct_var[:number_of_axes]
-    
+
     radius = (max_x-min_x)*.012
 
     # write the values for all the spheres
@@ -110,8 +110,8 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
                 "'color': 0, 'width': %f, 'height': %f, 'length': %f , 'x': %f,"
                 " 'y': %f, 'z': %f, %s }\n" % (s_header, s_header,delta[0], delta[1],
                 delta[2], s_coord[0], s_coord[1], s_coord[2], all_coords))
-    
-    js_pcoa_string += 'var g_segments = %d, g_rings = %d, g_radius = %f;\n' % (number_of_segments, 
+
+    js_pcoa_string += 'var g_segments = %d, g_rings = %d, g_radius = %f;\n' % (number_of_segments,
         number_of_segments, radius)
     js_pcoa_string += 'var g_xAxisLength = %f;\n' % (abs(max_x)+abs(min_x))
     js_pcoa_string += 'var g_yAxisLength = %f;\n' % (abs(max_y)+abs(min_y))
@@ -139,7 +139,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
             js_pcoa_string += 'var g_pc%dLabel = \"PC%d (%.2f %%)\";\n' %\
                 (i+1, i+1-offset, pcoalabels[i-offset])
     js_pcoa_string += 'var g_number_of_custom_axes = %d;\n' % offset
-    
+
     js_pcts = []
     js_pcts_round = []
     if custom_axes == None: custom_axes = []
@@ -153,7 +153,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
             js_pcts_round.append('%.2f' % (pct_var[0]))
     js_pcoa_string += 'var g_fractionExplained = [%s];\n' % ', '.join(js_pcts)
     js_pcoa_string += 'var g_fractionExplainedRounded = [%s];\n' % ', '.join(js_pcts_round)
-    
+
     return js_pcoa_string
 
 def format_mapping_file_to_js(mapping_file_data, mapping_file_headers, columns):
@@ -203,7 +203,7 @@ def format_mapping_file_to_js(mapping_file_data, mapping_file_headers, columns):
 def format_taxa_to_js(otu_coords, lineages, prevalence, min_taxon_radius=0.5,
                     max_taxon_radius=5, radius=1.0):
     """Write a string representing the taxa in a PCoA plot as javascript
-    
+
     Inputs:
     otu_coords: numpy array where the taxa is positioned
     lineages: label for each of these lineages
@@ -484,6 +484,7 @@ EMPEROR_HEADER_HTML_STRING =\
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/d3.parcoords.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/chosen.min.css">
 
     <!-- Emperor logo for the splash window -->
     <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
@@ -497,6 +498,7 @@ EMPEROR_HEADER_HTML_STRING =\
     <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/jquery.colorPicker.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/spectrum.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/chosen.jquery.min.js"></script>
 
     <!-- D3.js for the parallel coordinates plugin -->
     <script type="text/javascript" src="emperor_required_resources/js/d3.v3.min.js"></script>
@@ -521,7 +523,7 @@ EMPEROR_HEADER_HTML_STRING =\
     <script type="text/javascript" src="emperor_required_resources/emperor/js/util.js"></script>
 
     <script type="text/javascript">
-    
+
 """
 
 _ELLIPSE_OPACITY_SLIDER = """
@@ -648,7 +650,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="colorby" class="emperor-tab-div">
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>{biplot_spheres_color_selector}
             <br><br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3" class="emperor-tab-drop-down">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -656,7 +658,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="showby" class="emperor-tab-div">{biplot_visibility_selector}
             <table class="emperor-tab-table">
                 <tr>
-                    <td align="center">
+                    <td>
                         <select id="showbycombo" onchange="showByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
@@ -686,7 +688,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="scalingby" class="emperor-tab-div">
             <table class="emperor-tab-table">
                 <tr>
-                    <td align="center">
+                    <td>
                         <select id="scalingbycombo" onchange="scalingByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
@@ -808,7 +810,7 @@ document.getElementById("logotable").style.display = 'none';
                 </td></tr>
             </table>
         </div>
-    </div>  
+    </div>
 </div>
 </body>
 
