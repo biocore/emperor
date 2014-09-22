@@ -5,7 +5,7 @@ Emperor makes usage of all of the following copyrighted packages; their licenses
 
 --------------------------------------------------------------------------------
 
-### THREE.js ([r58](https://github.com/mrdoob/three.js/tree/r58)) is released under the MIT License
+### THREE.js ([r68](https://github.com/mrdoob/three.js/tree/r68)) is released under the MIT License
 
 The MIT License
 
@@ -171,7 +171,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 --------------------------------------------------------------------------------
 
-### THREEx.screenshot [v1](http://learningthreejs.com/data/THREEx/docs/THREEx.screenshot.html) 
+### THREEx.screenshot [v1](http://learningthreejs.com/data/THREEx/docs/THREEx.screenshot.html)
 [repository](https://github.com/jeromeetienne/threex)
 
 Copyright (c) 2011 Jerome Etienne, http://jetienne.com
@@ -197,7 +197,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### FileSaver.js [283e78fd3c](https://github.com/eligrey/FileSaver.js/) 
+### FileSaver.js [283e78fd3c](https://github.com/eligrey/FileSaver.js/)
 
 Copyright (c) 2011 [Eli Grey](http://eligrey.com).
 
