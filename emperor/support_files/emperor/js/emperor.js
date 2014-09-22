@@ -568,11 +568,11 @@ function showByMenuChanged() {
 		// get all of the values for the selected category
 		vals.push(g_mappingFileData[sid][showByMenuIndex]);
 		// set everything to visible
-    if (typeof g_plotEllipses[sid] !== undefined)
+    if (typeof g_plotEllipses[sid] != 'undefined')
       g_elementsGroup.add(g_plotEllipses[sid])
-    if (typeof g_plotSpheres[sid] !== undefined)
+    if (typeof g_plotSpheres[sid] != 'undefined')
       g_elementsGroup.add(g_plotSpheres[sid])
-    if (typeof g_plotVectors[sid] !== undefined)
+    if (typeof g_plotVectors[sid] != 'undefined')
       g_elementsGroup.add(g_plotVectors[sid])
 
 		$('#'+divid+"_label").css('display','block');

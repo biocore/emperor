@@ -126,6 +126,8 @@ HTML_STRING = """<!doctype html>
     <script type="text/javascript" src="emperor_required_resources/js/three.min.js"></script>>
     <script type="text/javascript" src="emperor_required_resources/js/js/Detector.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/js/OrbitControls.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/js/ColorConverter.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/js/SVGRenderer.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/THREEx.screenshot.js"></script>
 
     <!-- General utilities (underscore.js and FileSaver.js) -->
