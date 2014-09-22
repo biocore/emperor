@@ -123,7 +123,7 @@ HTML_STRING = """<!doctype html>
     <script type="text/javascript" src="emperor_required_resources/js/d3.parcoords.js"></script>
 
     <!-- THREE.js and plugins for screenshots -->
-    <script type="text/javascript" src="emperor_required_resources/js/three.min.js"></script>>
+    <script type="text/javascript" src="emperor_required_resources/js/three.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/js/Detector.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/js/OrbitControls.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/js/ColorConverter.js"></script>
