@@ -500,7 +500,7 @@ def main():
                 offending_fields.append(col)
     else:
         # if the user didn't specify the header names display everything
-        color_by_column_names = header[:]
+        color_by_column_names = [None]
 
     # extract a list of the custom axes provided and each element is numeric
     if custom_axes:

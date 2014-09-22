@@ -178,6 +178,14 @@ class TopLevelTests(TestCase):
             'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'])
         self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
 
+        # check it remove columns that are unique and keeps all the other ones
+        out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
+                ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
+                 'Treatment', 'DOB', 'Description'], [None], unique=True)
+        self.assertEquals(out_headers, ['SampleID', 'LinkerPrimerSequence',
+            'Treatment', 'DOB'])
+        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_H)
+
     def test_keep_columns_from_mapping_file(self):
         """Check correct selection of metadata is being done"""
 
@@ -494,6 +502,16 @@ MAPPING_FILE_DATA_CAT_G = [['PC.354', 'AGCACGAGCCTA', 'YATGCTGCCTCCCGTAGGAGT',
 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116', 'Fasting_mouse_I.D._635'],
 ['PC.636', 'ACGGTGAGTGTC', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116',
 'Fasting_mouse_I.D._636']]
+
+MAPPING_FILE_DATA_CAT_H = [['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'Control',
+'20061218'], ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126'], ['PC.481',
+'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'], ['PC.593',
+'YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'], ['PC.607',
+'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112' ], ['PC.634',
+'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], ['PC.635',
+'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], ['PC.636',
+'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116' ]]
 
 MAPPING_FILE_DATA_GRADIENT = [
     ['PC.354', 'Control','3', '40', 'Control20061218'],
