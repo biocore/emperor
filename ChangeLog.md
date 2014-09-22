@@ -31,6 +31,7 @@ Emperor 0.9.4 (10 Sept 2014)
 
 * Fixed problem where coordinate files with large values (greater than 100) would not be displayed on screen.
 * Fixed problem that prevented the user from scrolling through the categories in the user interface.
+* Fixed problem that removed unique/single-valued categories in the mapping file even if these were selected with `--color_by`.
 * Clean-up the layout of the user interface so it's cleaner and consistent.
 * Fix problem where long category names would alter the layout of the interface.
 * Fix inability to write an 'E' character in the Filename field when exporting an svg.
