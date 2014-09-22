@@ -301,13 +301,13 @@ function getColorList(vals) {
 	// coloring scheme is continuous or discrete; choose red or red and blue
 	if(vals.length == 1){
 		colors[vals[0]] = new THREE.Color();
-		colors[vals[0]].setHex("0xff0000");
+		colors[vals[0]].setHex(getDiscreteColor(0));
 	}
 	else if (vals.length == 2) {
 		colors[vals[0]] = new THREE.Color();
-		colors[vals[0]].setHex("0xff0000");
+		colors[vals[0]].setHex(getDiscreteColor(0));
 		colors[vals[1]] = new THREE.Color();
-		colors[vals[1]].setHex("0x0000ff");
+		colors[vals[1]].setHex(getDiscreteColor(1));
 	}
 	else {
 		var numColors = vals.length;
@@ -315,7 +315,7 @@ function getColorList(vals) {
 			colors[vals[index]] = new THREE.Color();
 			if(g_useDiscreteColors){
 				// get the next available color
-				colors[vals[index]].setHex(getDiscreteColor(index)*1);
+				colors[vals[index]].setHex(getDiscreteColor(index));
 			}
 			else{
 				//reverse the oder to standard default B->G->R
