@@ -2220,6 +2220,11 @@ $(document).ready(function() {
 			$("#trajectory-category-drop-down").append(line);
 		}
     $("#colorbycombo").chosen({width: "100%", search_contains: true});
+    // adding event in case the user press esc
+    $("#colorbycombo").on('chosen:hiding_dropdown', function(evt, params) {
+      colorByMenuChanged()
+    });
+
     $("#scalingbycombo").chosen({width: "100%", search_contains: true});
     $("#showbycombo").chosen({width: "100%", search_contains: true});
     $("#labelcombo").chosen({width: "100%", search_contains: true});
