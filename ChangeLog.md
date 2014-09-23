@@ -10,7 +10,7 @@ Emperor 0.9.4-dev (changes since Emperor 0.9.4 go here)
 * Add documentation about file formats.
 * Updated to three.js revision 68.
 * Added [chosen](http://harvesthq.github.io/chosen/) v1.1.0 for drop down menu.
-
+* Replace MeshLambertMaterial for MeshPhongMaterial to get nicer coloring.
 
 Emperor 0.9.4 (10 Sept 2014)
 ----------------------------

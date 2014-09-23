@@ -1428,7 +1428,7 @@ function setJqueryUi() {
 function drawEllipses() {
 	for(var sid in g_ellipsesDimensions) {
 		//draw ellipsoid
-		var emesh = new THREE.Mesh( g_genericSphere,new THREE.MeshLambertMaterial() );
+		var emesh = new THREE.Mesh( g_genericSphere,new THREE.MeshPhongMaterial() );
 		emesh.scale.x = g_ellipsesDimensions[sid]['width']/g_radius;
 		emesh.scale.y = g_ellipsesDimensions[sid]['height']/g_radius;
 		emesh.scale.z = g_ellipsesDimensions[sid]['length']/g_radius;
@@ -1450,7 +1450,7 @@ function drawEllipses() {
 function drawSpheres() {
 	for(var sid in g_spherePositions){
 		//draw ball
-		var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshLambertMaterial() );
+		var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshPhongMaterial() );
 		mesh.material.color = new THREE.Color()
 		mesh.material.transparent = true;
 		mesh.material.depthWrite = false;
@@ -1478,7 +1478,7 @@ function drawTaxa(){
 
 	for (var key in g_taxaPositions){
 		var mesh = new THREE.Mesh(g_genericSphere,
-			new THREE.MeshLambertMaterial());
+			new THREE.MeshPhongMaterial());
 
 		// set the volume of the sphere
 		mesh.scale.x = g_taxaPositions[key]['radius'];
@@ -2571,7 +2571,7 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width){
 
   _trajectory = trajectory.representativeCoordinatesAtIndex(currentFrame);
 
-  material = new THREE.MeshLambertMaterial({color:color});
+  material = new THREE.MeshPhongMaterial({color:color});
   material.matrixAutoUpdate = true;
   material.transparent = false;
 
