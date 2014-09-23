@@ -329,9 +329,9 @@ function getColorList(vals) {
 }
 
 /*This function is called when a new value is selected in the colorBy menu */
-function colorByMenuChanged() {
+function colorByMenuChanged(categoryName) {
 	// set the new current category and index
-	g_categoryName = document.getElementById('colorbycombo')[document.getElementById('colorbycombo').selectedIndex].value;
+	g_categoryName = categoryName || document.getElementById('colorbycombo')[document.getElementById('colorbycombo').selectedIndex].value;
 	g_categoryIndex = g_mappingFileHeaders.indexOf(g_categoryName);
 
 	// get all values of this category from the mapping
@@ -2138,17 +2138,17 @@ $(document).ready(function() {
 	separator_draggable();
 
 	// Validating the string for the saveas filename = taken from http://stackoverflow.com/questions/6741175/trim-input-field-value-to-only-alphanumeric-characters-separate-spaces-with-wi
-    $('#saveas_name').keypress(function(event) {
-        var code = (event.keyCode ? event.keyCode : event.which);
-        if (g_validAsciiCodes.indexOf(code)==-1)
-            event.preventDefault();
-    });
+  $('#saveas_name').keypress(function(event) {
+    var code = (event.keyCode ? event.keyCode : event.which);
+    if (g_validAsciiCodes.indexOf(code)==-1)
+      event.preventDefault();
+  });
 
-    // Disables the enter key in the search bar
-    $('#searchBox').keypress(function(event) {
-    	if (event.keyCode == 13) {
-        	event.preventDefault();
-    	}
+  // Disables the enter key in the search bar
+  $('#searchBox').keypress(function(event) {
+    if (event.keyCode == 13) {
+      event.preventDefault();
+    }
 	});
 
 	init();
@@ -2212,6 +2212,16 @@ $(document).ready(function() {
 			$("#labelcombo").append(line);
 			$("#trajectory-category-drop-down").append(line);
 		}
+    $("#colorbycombo").chosen({width: "100%", search_contains: true});
+    // adding event in case the user press esc
+    $("#colorbycombo").on('chosen:hiding_dropdown', function(evt, params) {
+      colorByMenuChanged()
+    });
+
+    $("#scalingbycombo").chosen({width: "100%", search_contains: true});
+    $("#showbycombo").chosen({width: "100%", search_contains: true});
+    $("#labelcombo").chosen({width: "100%", search_contains: true});
+    $("#trajectory-category-drop-down").chosen({width: "100%", search_contains: true});
 
 		// add the header names that can be animated over
 		sortedAnimatableMappingFileHeaders = naturalSort(g_animatableMappingFileHeaders);
@@ -2225,7 +2235,8 @@ $(document).ready(function() {
 			}
 			$("#gradient-category-drop-down").append(line);
 		}
-        colorAnimationsByCategoryChanged();
+    $("#gradient-category-drop-down").chosen({width: "100%", search_contains: true});
+    colorAnimationsByCategoryChanged();
 		setParallelPlots();
 
 		colorByMenuChanged();
@@ -2570,4 +2581,29 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width){
                                         g_segments, false, true);
 
   return new THREE.Mesh(lineGeometry, material);
+}
+
+
+/**
+ *
+ * This is a callback function for items highlighted by chosen so we can color
+ * when we move between elements
+ *
+ * @param {chosen} Chosen object.
+ * @param {highlight} li object that is being highlighted.
+ *
+ *
+ * For this to actually work you need to add this line:
+ * ,chosen_highlight_callback(this, this.result_highlight) after
+ * this.result_highlight.addClass("highlighted") within the chosen js file
+ */
+function chosen_highlight_callback(chosen, highlight){
+  if (// ignore if not the colorbycombo
+      chosen.form_field.id != 'colorbycombo' ||
+      // ignore if it doesn't have context, not the element that we are
+      // looking for
+      !('context' in highlight)
+     )
+    return
+  colorByMenuChanged(highlight[0].innerHTML)
 }
