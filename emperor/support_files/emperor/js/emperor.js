@@ -2151,13 +2151,6 @@ $(document).ready(function() {
     }
 	});
 
-  // Disables the enter key in the search bar
-  $('#searchBox').keypress(function(event) {
-    if (event.keyCode == 13) {
-      event.preventDefault();
-    }
-  });
-
 	init();
 	animate();
 
