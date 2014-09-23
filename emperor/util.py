@@ -147,11 +147,6 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
             line.append(''.join([line[index] for index in indices]))
         headers.append(new_column)
 
-    # when a None is contained in columns, we imply we want to use all the
-    # available categories in the mapping file, thus just overwrite the value
-    if None in columns:
-        columns = headers[:]
-
     # remove all unique or singled valued columns that are not included in
     # the list of categories that should be kept i. e. columns
     if unique or single:
@@ -172,6 +167,7 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
         # TL;DR
         # see https://github.com/biocore/emperor/issues/271
         if None in columns:
+            columns = headers[:]
             f_unique = metadata.hasUniqueCategoryValues
             f_single = metadata.hasSingleCategoryValue
         else:
@@ -195,6 +191,13 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
         # remove the single or unique columns
         data, headers = keep_columns_from_mapping_file(data, headers,
             columns_to_remove, negate=True)
+    else:
+        # when a None is contained in columns, we imply we want to use all the
+        # available categories in the mapping file, thus just overwrite the
+        # value
+        if None in columns:
+            columns = headers[:]
+
 
     # remove anything not specified in the input
     data, headers = keep_columns_from_mapping_file(data, headers, columns)
