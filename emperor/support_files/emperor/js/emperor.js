@@ -2608,5 +2608,4 @@ function chosen_highlight_callback(chosen, highlight){
      )
     return
   colorByMenuChanged(highlight[0].innerHTML)
-  // chosen:hiding_dropdown
 }
