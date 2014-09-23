@@ -100,6 +100,7 @@ HTML_STRING = """<!doctype html>
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/colorPicker.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/spectrum.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/d3.parcoords.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/chosen.min.css">
 
     <!-- Emperor logo for the splash window -->
     <table id="logotable" style="vertical-align:middle;text-align:center;height:100%;width:100%;margin:0;padding:0;border:0;">
@@ -113,6 +114,7 @@ HTML_STRING = """<!doctype html>
     <script type="text/javascript" src="emperor_required_resources/js/jquery-ui-1.8.17.custom.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/jquery.colorPicker.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/spectrum.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/chosen.jquery.min.js"></script>
 
     <!-- D3.js for the parallel coordinates plugin -->
     <script type="text/javascript" src="emperor_required_resources/js/d3.v3.min.js"></script>
@@ -264,7 +266,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="colorby" class="emperor-tab-div">
             <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
             <br><br>
-            <select id="colorbycombo" onchange="colorByMenuChanged()" size="3" class="emperor-tab-drop-down">
+            <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
             <div class="list" id="colorbylist">
             </div>
@@ -272,7 +274,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="showby" class="emperor-tab-div">
             <table class="emperor-tab-table">
                 <tr>
-                    <td align="center">
+                    <td>
                         <select id="showbycombo" onchange="showByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
@@ -302,7 +304,7 @@ document.getElementById("logotable").style.display = 'none';
         <div id="scalingby" class="emperor-tab-div">
             <table class="emperor-tab-table">
                 <tr>
-                    <td align="center">
+                    <td>
                         <select id="scalingbycombo" onchange="scalingByMenuChanged()" class="emperor-tab-drop-down">
                         </select>
                     </td>
