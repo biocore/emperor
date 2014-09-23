@@ -10,7 +10,8 @@ Emperor 0.9.4-dev (changes since Emperor 0.9.4 go here)
 * Add documentation about file formats.
 * Updated to three.js revision 68.
 * Fixed problem that removed unique/single-valued categories in the mapping file even if these were selected with `--color_by`.
-
+* Added [chosen](http://harvesthq.github.io/chosen/) v1.1.0 for drop down menu.
+* Replace MeshLambertMaterial for MeshPhongMaterial to get nicer coloring.
 
 Emperor 0.9.4 (10 Sept 2014)
 ----------------------------

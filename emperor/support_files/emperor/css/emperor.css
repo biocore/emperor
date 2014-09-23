@@ -118,7 +118,7 @@ div#emperor-menu-tabs {
 
 /* class used in the divs that contain the widgets for the menu tabs like:
  * axes, show by, and all the other tabs in the main interface.
- */ 
+ */
 .emperor-tab-div{
   padding-top: 0px;
   padding-bottom: 0px;
@@ -203,14 +203,14 @@ input.button {
 }
 
 label {
-  border: 0; 
+  border: 0;
   font: 9pt Helvetica;
 }
 
 label.slidervalue {
   float: right;
-  border: 0; 
-  color: #6cf; 
+  border: 0;
+  color: #6cf;
   font-weight: bold;
   font: 9pt Helvetica;
 }
@@ -310,4 +310,3 @@ a.media-button:hover img{
 .invisible {
   display: none;
 }
-
