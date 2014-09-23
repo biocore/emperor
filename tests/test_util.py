@@ -178,13 +178,14 @@ class TopLevelTests(TestCase):
             'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'])
         self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
 
-        # check it remove columns that are unique and keeps all the other ones
+        # make sure that when keeping columns that are all unique the
+        # columns are basically intact i. e. everything in the dataset is kept
         out_data, out_headers = preprocess_mapping_file(self.mapping_file_data,
                 ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-                 'Treatment', 'DOB', 'Description'], [None], unique=True)
-        self.assertEquals(out_headers, ['SampleID', 'LinkerPrimerSequence',
-            'Treatment', 'DOB'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_H)
+                 'Treatment', 'DOB', 'Description'], [None], unique=False)
+        self.assertEquals(out_headers,['SampleID', 'BarcodeSequence',
+            'LinkerPrimerSequence', 'Treatment', 'DOB', 'Description'])
+        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
 
     def test_keep_columns_from_mapping_file(self):
         """Check correct selection of metadata is being done"""
