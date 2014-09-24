@@ -164,7 +164,8 @@ script_info['optional_options'] = [
     'separating them without spaces. The user can also combine columns in'
     ' the mapping file by separating the categories by "&&" without spaces. '
     '[default=color by all categories except ones where all values are '
-    'different]', default=''),
+    'different, to disable this behaviour pass --add_unique_columns]',
+    default=None),
     make_option('--biplot_fp', help='Output filepath that will contain the '
     'coordinates where each taxonomic sphere is centered. [default: %default]',
     default=None, type='new_filepath'),
@@ -499,7 +500,7 @@ def main():
                 offending_fields.append(col)
     else:
         # if the user didn't specify the header names display everything
-        color_by_column_names = header[:]
+        color_by_column_names = [None]
 
     # extract a list of the custom axes provided and each element is numeric
     if custom_axes:

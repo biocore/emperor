@@ -134,7 +134,8 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
     # process concatenated columns if needed
     merge = []
     for column in columns:
-        if '&&' in column:
+        # the list can contain None so check "if column" before treating as str
+        if column and '&&' in column:
             merge.append(column)
     # each element needs several columns to be merged
     for new_column in merge:
@@ -146,25 +147,57 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
             line.append(''.join([line[index] for index in indices]))
         headers.append(new_column)
 
-    # remove all unique or singled valued columns
+    # remove all unique or singled valued columns that are not included in
+    # the list of categories that should be kept i. e. columns
     if unique or single:
         columns_to_remove = []
         metadata = MetadataMap(mapping_file_to_dict(data, headers), [])
 
-        # find columns that have values that are all unique
-        if unique == True:
-            columns_to_remove += [column_name for column_name in headers[1::]
-                if metadata.hasUniqueCategoryValues(column_name)]
+        # the --coloy_by option in the script interface allows the user to
+        # specify the categories you want to use in the generated plot, this
+        # the default behaviour is to color by all categories that are not
+        # unique. If the user specifies a category with with the --color_by
+        # option and this category contains a unique values, this category must
+        # still be added thus the structure of the next few lines that
+        # form the structure for the two different routes. (1) where no value
+        # is specified in the CLI (the value of columns will be [None, x1, x2,
+        # x3] where x{1,2,3} are categories requested in other CLI options) and
+        # (2) where a value is specified in the CLI.
+        #
+        # TL;DR
+        # see https://github.com/biocore/emperor/issues/271
+        if None in columns:
+            columns = headers[:]
+            f_unique = metadata.hasUniqueCategoryValues
+            f_single = metadata.hasSingleCategoryValue
+        else:
+            f_unique = lambda x: metadata.hasUniqueCategoryValues(x) and\
+                                 x not in columns
+            f_single = lambda x: metadata.hasSingleCategoryValue(x) and\
+                                 x not in columns
 
+        # find columns that have values that are all unique
+        if unique:
+            for c in headers[1::]:
+                if f_unique(c):
+                    columns_to_remove.append(c)
         # remove categories where there is only one value
-        if single == True:
-            columns_to_remove += [column_name for column_name in headers[1::]
-                if metadata.hasSingleCategoryValue(column_name)]
+        if single:
+            for c in headers[1::]:
+                if f_single(c):
+                    columns_to_remove.append(c)
         columns_to_remove = list(set(columns_to_remove))
 
         # remove the single or unique columns
         data, headers = keep_columns_from_mapping_file(data, headers,
             columns_to_remove, negate=True)
+    else:
+        # when a None is contained in columns, we imply we want to use all the
+        # available categories in the mapping file, thus just overwrite the
+        # value
+        if None in columns:
+            columns = headers[:]
+
 
     # remove anything not specified in the input
     data, headers = keep_columns_from_mapping_file(data, headers, columns)
