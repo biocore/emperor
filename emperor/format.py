@@ -514,6 +514,7 @@ EMPEROR_HEADER_HTML_STRING =\
 
     <!-- General utilities (underscore.js and FileSaver.js) -->
     <script type="text/javascript" src="emperor_required_resources/js/underscore-min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/chroma.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/FileSaver.min.js"></script>
 
     <!-- Emperor library code -->
@@ -650,7 +651,20 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>{biplot_spheres_color_selector}
+            <table class="emperor-tab-table">
+                <tr>
+                    <td>
+                        <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">
+                    </td>
+                    <td>
+                        Continuous Colormap
+                    </td>
+                    <td>
+                        <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
+                    </td>
+                </tr>
+            </table>
+            </input>{biplot_spheres_color_selector}
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>

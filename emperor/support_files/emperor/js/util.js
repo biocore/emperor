@@ -16,30 +16,44 @@
 // colorbrewer will provide you with two lists of colors, those have been
 // added here
 var k_COLORBREWER_COLORS = [
-"0x8dd3c7", // first list starts here
-"0xffffb3",
-"0xbebada",
-"0xfb8072",
-"0x80b1d3",
-"0xfdb462",
-"0xb3de69",
-"0xfccde5",
-"0xd9d9d9",
-"0xbc80bd",
-"0xccebc5",
-"0xffed6f",
-"0xa6cee3", // second list starts here
-"0x1f78b4",
-"0xb2df8a",
-"0x33a02c",
-"0xfb9a99",
-"0xe31a1c",
-"0xfdbf6f",
-"0xff7f00",
-"0xcab2d6",
-"0x6a3d9a",
-"0xffff99",
-"0xb15928"]
+"#8dd3c7", // first list starts here
+"#ffffb3",
+"#bebada",
+"#fb8072",
+"#80b1d3",
+"#fdb462",
+"#b3de69",
+"#fccde5",
+"#d9d9d9",
+"#bc80bd",
+"#ccebc5",
+"#ffed6f",
+"#a6cee3", // second list starts here
+"#1f78b4",
+"#b2df8a",
+"#33a02c",
+"#fb9a99",
+"#e31a1c",
+"#fdbf6f",
+"#ff7f00",
+"#cab2d6",
+"#6a3d9a",
+"#ffff99",
+"#b15928"]
+
+// these colors are included in chroma and are the only ones we should
+// use to interpolate through whe coloring in a continuous mode
+var k_CHROMABREWER_MAPS = ['OrRd', 'PuBu', 'BuPu', 'Oranges', 'BuGn', 'YlOrBr',
+    'YlGn', 'Reds', 'RdPu', 'Greens', 'YlGnBu', 'Purples', 'GnBu', 'Greys',
+    'YlOrRd', 'PuRd', 'Blues', 'PuBuGn', 'Spectral', 'RdYlGn', 'RdBu', 'PiYG',
+    'PRGn', 'RdYlBu', 'BrBG', 'RdGy', 'PuOr'];
+var k_CHROMABREWER_MAPNAMES = ['Orange-Red', 'Purple-Blue', 'Blue-Purple',
+    'Oranges', 'Blue-Green', 'Yellow-Orange-Brown', 'Yellow-Green',
+    'Reds', 'Red-Purple', 'Greens', 'Yellow-Green-Blue', 'Purples',
+    'Green-Blue', 'Greys', 'Yellow-Orange-Red', 'Purple-Red', 'Blues',
+    'Purple-Blue-Green', 'Spectral', 'Red-Yellow-Green', 'Red-Blue',
+    'Pink-Yellow-Green', 'Pink-Red-Green', 'Red-Yellow-Blue',
+    'Brown-Blue-Green', 'Red-Grey', 'Purple-Orange']
 
 /**
  *
@@ -123,6 +137,44 @@ function getDiscreteColor(index){
 
   return k_COLORBREWER_COLORS[index]
 }
+
+
+/**
+ *
+ * Generate a list of colors that corresponds to all the samples in the plot
+ *
+ * @param {values} list of objects to generate a color for, usually a category
+ * in a given metadata column.
+ * @param {bool} whether or not the coloring scheme is using divergent or
+ * continuous colors.
+ *
+ *
+ * This function will generate a list of coloring values depending on the
+ * coloring scheme that the system is currently using (discrete or continuous).
+*/
+function getColorList(values, discrete, map) {
+  var colors = {}, numColors = values.length-1, counter=0, interpolator;
+
+  if (discrete === false){
+    map = chroma.brewer[map];
+    interpolator = chroma.interpolate.bezier([map[0], map[3], map[4], map[5],
+                                              map[8]]);
+  }
+
+  for(var index in values){
+    if(discrete){
+      // get the next available color
+      colors[values[index]] = getDiscreteColor(index);
+    }
+    else{
+      colors[values[index]] =  interpolator(counter/numColors).hex();
+      counter = counter + 1;
+    }
+  }
+
+  return colors;
+}
+
 
 /**
  *
