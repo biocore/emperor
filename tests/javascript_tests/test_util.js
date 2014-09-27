@@ -120,17 +120,17 @@ $(document).ready(function() {
   });
 
   test("Test discrete colors are retrieved correctly", function(){
-    equal(getDiscreteColor(0), "0xFF0000", "Test color is indeed red");
-    equal(getDiscreteColor(1), "0x0000FF", "Test color is indeed blue");
-    equal(getDiscreteColor(2), "0xF27304", "Test color is indeed orange");
+    equal(getDiscreteColor(0), "#8dd3c7", "Test color is indeed red");
+    equal(getDiscreteColor(1), "#ffffb3", "Test color is indeed blue");
+    equal(getDiscreteColor(2), "#bebada", "Test color is indeed orange");
   });
 
   test("Test discrete colors are retrieved on roll-over", function(){
-    equal(getDiscreteColor(24), "0xFF0000", "Test color is indeed red even in"+
+    equal(getDiscreteColor(24), "#8dd3c7", "Test color is indeed red even in"+
           " the event of a roll-over");
-    equal(getDiscreteColor(25), "0x0000FF", "Test color is indeed red even in"+
+    equal(getDiscreteColor(25), "#ffffb3", "Test color is indeed red even in"+
           " the event of a roll-over");
-    equal(getDiscreteColor(26), "0xF27304", "Test color is indeed red even in"+
+    equal(getDiscreteColor(26), "#bebada", "Test color is indeed red even in"+
           " the event of a roll-over");
 
   });
