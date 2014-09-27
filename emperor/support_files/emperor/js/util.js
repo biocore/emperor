@@ -155,9 +155,12 @@ function getDiscreteColor(index){
 function getColorList(values, discrete, map) {
   var colors = {}, numColors = values.length-1, counter=0, interpolator;
 
+  if (k_CHROMABREWER_MAPS.indexOf(map) === -1) {
+    throw new Error("Could not find the colormap in available colormaps");
+  }
+
   // 1 color and continuous coloring should return the first element of the map
   if (numColors === 0 && discrete === false){
-    console.log('punchatelas'+chroma.brewer[map][0])
     colors[values[0]] = chroma.brewer[map][0];
     return colors;
   }
