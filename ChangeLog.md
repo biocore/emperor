@@ -12,6 +12,8 @@ Emperor 0.9.4-dev (changes since Emperor 0.9.4 go here)
 * Fixed problem that removed unique/single-valued categories in the mapping file even if these were selected with `--color_by`.
 * Added [chosen](http://harvesthq.github.io/chosen/) v1.1.0 for drop down menu.
 * Replace MeshLambertMaterial for MeshPhongMaterial to get nicer coloring.
+* Add options to select among different [colorbrewer](http://colorbrewer2.org) colormaps for continuous coloring.
+* Discrete colors are provided by [colorbrewer](http://colorbrewer2.org).
 
 Emperor 0.9.4 (10 Sept 2014)
 ----------------------------
