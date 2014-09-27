@@ -14,6 +14,7 @@ Emperor 0.9.4-dev (changes since Emperor 0.9.4 go here)
 * Replace MeshLambertMaterial for MeshPhongMaterial to get nicer coloring.
 * Add options to select among different [colorbrewer](http://colorbrewer2.org) colormaps for continuous coloring.
 * Discrete colors are provided by [colorbrewer](http://colorbrewer2.org).
+* The rainbow colormap has disappeared from emperor, see [this paper](http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=4118486) if you want to use that colormap.
 
 Emperor 0.9.4 (10 Sept 2014)
 ----------------------------
