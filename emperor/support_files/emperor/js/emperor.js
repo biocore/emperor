@@ -44,7 +44,6 @@ var g_time;
 var g_visiblePoints = 0;
 var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
-var g_useDiscreteColors = true;
 var g_screenshotBind;
 var g_separator_left;
 var g_separator_history;
@@ -258,15 +257,6 @@ function toggleScaleCoordinates(element) {
 	}
 }
 
-/* Toggle between discrete and continuous coloring for samples and labels */
-function toggleContinuousAndDiscreteColors(element){
-	g_useDiscreteColors = !element.checked;
-
-	// re-coloring the samples and labels now will use the appropriate coloring
-	colorByMenuChanged();
-	labelMenuChanged();
-}
-
 /**
  * Toggles the visibility for all the categories listed in the "Visibility" tab
  * i. e. this function will hide all the visible categories and show all the
@@ -305,7 +295,7 @@ function colorByMenuChanged(categoryName) {
 
   uniq_counts = _.groupBy(vals)
 	vals = naturalSort(_.keys(uniq_counts));
-	colors = getColorList(vals, g_useDiscreteColors, colormap);
+	colors = getColorList(vals, colormap);
 
 	// build the colorby table in HTML
 	var lines = "<table id='colorbylist_table'>";
@@ -396,12 +386,6 @@ function colorAnimationsByCategoryChanged() {
                     change:
                     function(color) {
                         $(this).css('backgroundColor', color.toHexString());
-
-                        // what I need here is a callback to change the
-                        // color of the trajectory
-                        //var c = color.toHexString();
-                        //colorChanged($(this).attr('name'), c);
-                        //colorParallelPlots(vals, colors);
                     }
                 });
 
@@ -785,7 +769,7 @@ function labelMenuChanged() {
 	}
 
 	vals = naturalSort(_.uniq(vals, false));
-	colors = getColorList(vals, g_useDiscreteColors, colormap);
+	colors = getColorList(vals, colormap);
 
 	// build the label table in HTML
 	var lines = "<form name=\"labels\" id=\"labelForm\"><table>";
@@ -2202,9 +2186,10 @@ $(document).ready(function() {
 		}
 
         for (var i in k_CHROMABREWER_MAPS){
-			line = "<option value=\""+k_CHROMABREWER_MAPS[i]+"\">"+k_CHROMABREWER_MAPNAMES[i]+"</option>"
+			line = '<option value="'+k_CHROMABREWER_MAPS[i]+'">'+k_CHROMABREWER_MAPNAMES[i]+'</option>';
             $("#colormap-drop-down").append(line);
         }
+
 
     // initialize the dropdowns after inserting the options
     $("#colormap-drop-down").chosen({width: "100%", search_contains: true});

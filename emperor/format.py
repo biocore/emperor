@@ -651,20 +651,8 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <table class="emperor-tab-table">
-                <tr>
-                    <td>
-                        <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">
-                    </td>
-                    <td>
-                        Continuous Colormap
-                    </td>
-                    <td>
-                        <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
-                    </td>
-                </tr>
-            </table>
-            </input>{biplot_spheres_color_selector}
+            <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
+            {biplot_spheres_color_selector}
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>

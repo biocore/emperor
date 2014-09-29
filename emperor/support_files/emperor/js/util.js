@@ -43,16 +43,17 @@ var k_COLORBREWER_COLORS = [
 
 // these colors are included in chroma and are the only ones we should
 // use to interpolate through whe coloring in a continuous mode
-var k_CHROMABREWER_MAPS = ['OrRd', 'PuBu', 'BuPu', 'Oranges', 'BuGn', 'YlOrBr',
-    'YlGn', 'Reds', 'RdPu', 'Greens', 'YlGnBu', 'Purples', 'GnBu', 'Greys',
-    'YlOrRd', 'PuRd', 'Blues', 'PuBuGn', 'Spectral', 'RdYlGn', 'RdBu', 'PiYG',
-    'PRGn', 'RdYlBu', 'BrBG', 'RdGy', 'PuOr'];
-var k_CHROMABREWER_MAPNAMES = ['Orange-Red', 'Purple-Blue', 'Blue-Purple',
-    'Oranges', 'Blue-Green', 'Yellow-Orange-Brown', 'Yellow-Green',
-    'Reds', 'Red-Purple', 'Greens', 'Yellow-Green-Blue', 'Purples',
-    'Green-Blue', 'Greys', 'Yellow-Orange-Red', 'Purple-Red', 'Blues',
-    'Purple-Blue-Green', 'Spectral', 'Red-Yellow-Green', 'Red-Blue',
-    'Pink-Yellow-Green', 'Pink-Red-Green', 'Red-Yellow-Blue',
+var k_CHROMABREWER_MAPS = ['discrete-coloring', 'OrRd', 'PuBu', 'BuPu',
+    'Oranges', 'BuGn', 'YlOrBr', 'YlGn', 'Reds', 'RdPu', 'Greens', 'YlGnBu',
+    'Purples', 'GnBu', 'Greys', 'YlOrRd', 'PuRd', 'Blues', 'PuBuGn',
+    'Spectral', 'RdYlGn', 'RdBu', 'PiYG', 'PRGn', 'RdYlBu', 'BrBG', 'RdGy',
+    'PuOr'];
+var k_CHROMABREWER_MAPNAMES = ['Discrete Coloring', 'Orange-Red',
+    'Purple-Blue', 'Blue-Purple', 'Oranges', 'Blue-Green',
+    'Yellow-Orange-Brown', 'Yellow-Green', 'Reds', 'Red-Purple', 'Greens',
+    'Yellow-Green-Blue', 'Purples', 'Green-Blue', 'Greys', 'Yellow-Orange-Red',
+    'Purple-Red', 'Blues', 'Purple-Blue-Green', 'Spectral', 'Red-Yellow-Green',
+    'Red-Blue', 'Pink-Yellow-Green', 'Pink-Red-Green', 'Red-Yellow-Blue',
     'Brown-Blue-Green', 'Red-Grey', 'Purple-Orange']
 
 /**
@@ -145,18 +146,22 @@ function getDiscreteColor(index){
  *
  * @param {values} list of objects to generate a color for, usually a category
  * in a given metadata column.
- * @param {bool} whether or not the coloring scheme is using divergent or
- * continuous colors.
+ * @param {map} name of the color map to use, see k_CHROMABREWER_MAPS.
  *
  *
  * This function will generate a list of coloring values depending on the
  * coloring scheme that the system is currently using (discrete or continuous).
 */
-function getColorList(values, discrete, map) {
-  var colors = {}, numColors = values.length-1, counter=0, interpolator;
+function getColorList(values, map) {
+  var colors = {}, numColors = values.length-1, counter=0, interpolator,
+      discrete = false;
 
   if (k_CHROMABREWER_MAPS.indexOf(map) === -1) {
-    throw new Error("Could not find the colormap in available colormaps");
+    throw new Error("Could not find "+map+" in the available colormaps");
+  }
+
+  if (map === 'discrete-coloring'){
+    discrete = true;
   }
 
   // 1 color and continuous coloring should return the first element of the map

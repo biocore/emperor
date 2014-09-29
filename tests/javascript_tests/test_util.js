@@ -135,7 +135,7 @@ $(document).ready(function() {
 
   });
 
-  test("Test getColorList works (discrete)", function(){
+  test("Test getColorList works", function(){
     var five, ten, twenty;
 
     five = [0, 1, 2, 3, 4];
@@ -143,23 +143,27 @@ $(document).ready(function() {
     twenty = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
               19]
 
-    deepEqual(getColorList(five, false, 'OrRd'), { "0": "#fff7ec", "1":
-        "#ffbf92", "2": "#fc8d59", "3": "#d6593a", "4": "#7f0000" });
-    deepEqual(getColorList([0], false, 'OrRd'), {"0": "#fff7ec"});
 
-    deepEqual(getColorList(ten, false, 'Blues'), { "0": "#f7fbff", "1":
+    deepEqual(getColorList(five, 'discrete-coloring'), { "0": "#8dd3c7", "1":
+        "#ffffb3", "2": "#bebada", "3": "#fb8072", "4": "#80b1d3" });
+
+    deepEqual(getColorList(five, 'OrRd'), { "0": "#fff7ec", "1":
+        "#ffbf92", "2": "#fc8d59", "3": "#d6593a", "4": "#7f0000" });
+    deepEqual(getColorList([0], 'OrRd'), {"0": "#fff7ec"});
+
+    deepEqual(getColorList(ten, 'Blues'), { "0": "#f7fbff", "1":
         "#d2e6f3", "2": "#b1d3e8", "3": "#93c3df", "4": "#78b4d9", "5":
         "#63a7d1", "6": "#5092c3", "7": "#3c77ac", "8": "#26568f", "9":
         "#08306b" });
-    deepEqual(getColorList([0], false, 'Blues'), {"0": "#f7fbff"});
+    deepEqual(getColorList([0], 'Blues'), {"0": "#f7fbff"});
 
-    deepEqual(getColorList(twenty, false, 'BrBG'), { "0": "#543005", "1":
+    deepEqual(getColorList(twenty, 'BrBG'), { "0": "#543005", "1":
         "#6f4b1d", "10": "#f6e9c8", "11": "#f2e9cf", "12": "#eae7d3", "13":
         "#dee3d3", "14": "#cedcd0", "15": "#bad3c9", "16": "#a2c7bf", "17":
         "#85bab2", "18": "#63a9a2", "19": "#35978f", "2": "#886533", "3":
         "#9f7d49", "4": "#b4945e", "5": "#c6a973", "6": "#d5bb87", "7":
         "#e2cb99", "8": "#ecd9ab", "9": "#f3e4bb" });
-    deepEqual(getColorList([0], false, 'OrRd'), {"0": "#fff7ec"});
+    deepEqual(getColorList([0], 'OrRd'), {"0": "#fff7ec"});
 
   });
 
