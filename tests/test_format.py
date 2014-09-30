@@ -623,7 +623,8 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+            <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
+            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
@@ -872,7 +873,8 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+            <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
+            
             <br>
             <table>
                 <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
@@ -1132,7 +1134,8 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+            <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
+            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
@@ -1377,7 +1380,8 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+            <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
+            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
@@ -1626,7 +1630,8 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+            <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
+            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>

@@ -44,7 +44,6 @@ var g_time;
 var g_visiblePoints = 0;
 var g_sphereScaler = 1.0;
 var g_keyBuilt = false;
-var g_useDiscreteColors = true;
 var g_screenshotBind;
 var g_separator_left;
 var g_separator_history;
@@ -258,15 +257,6 @@ function toggleScaleCoordinates(element) {
 	}
 }
 
-/* Toggle between discrete and continuous coloring for samples and labels */
-function toggleContinuousAndDiscreteColors(element){
-	g_useDiscreteColors = !element.checked;
-
-	// re-coloring the samples and labels now will use the appropriate coloring
-	colorByMenuChanged();
-	labelMenuChanged();
-}
-
 /**
  * Toggles the visibility for all the categories listed in the "Visibility" tab
  * i. e. this function will hide all the visible categories and show all the
@@ -289,47 +279,10 @@ function toggleVisibleCategories(){
    });
 }
 
-/*Generate a list of colors that corresponds to all the samples in the plot
-
-  This function will generate a list of coloring values depending on the
-  coloring scheme that the system is currently using (discrete or continuous).
-*/
-function getColorList(vals) {
-	var colors = {};
-
-	// cases with one or two categories are basically the same no matter if the
-	// coloring scheme is continuous or discrete; choose red or red and blue
-	if(vals.length == 1){
-		colors[vals[0]] = new THREE.Color();
-		colors[vals[0]].setHex("0xff0000");
-	}
-	else if (vals.length == 2) {
-		colors[vals[0]] = new THREE.Color();
-		colors[vals[0]].setHex("0xff0000");
-		colors[vals[1]] = new THREE.Color();
-		colors[vals[1]].setHex("0x0000ff");
-	}
-	else {
-		var numColors = vals.length;
-		for(var index in vals){
-			colors[vals[index]] = new THREE.Color();
-			if(g_useDiscreteColors){
-				// get the next available color
-				colors[vals[index]].setHex(getDiscreteColor(index)*1);
-			}
-			else{
-				//reverse the oder to standard default B->G->R
-				//changed what is multiplied by 0.66 to be 2,1,0 from 0,1,2
-				THREE.ColorConverter.setHSV(colors[vals[index]],
-					   (numColors - index -1 )*.66/numColors, 1, 1);
-			}
-		}
-	}
-	return colors;
-}
-
 /*This function is called when a new value is selected in the colorBy menu */
 function colorByMenuChanged(categoryName) {
+    var colormap = $("#colormap-drop-down").val();
+
 	// set the new current category and index
 	g_categoryName = categoryName || document.getElementById('colorbycombo')[document.getElementById('colorbycombo').selectedIndex].value;
 	g_categoryIndex = g_mappingFileHeaders.indexOf(g_categoryName);
@@ -342,7 +295,7 @@ function colorByMenuChanged(categoryName) {
 
   uniq_counts = _.groupBy(vals)
 	vals = naturalSort(_.keys(uniq_counts));
-	colors = getColorList(vals);
+	colors = getColorList(vals, colormap);
 
 	// build the colorby table in HTML
 	var lines = "<table id='colorbylist_table'>";
@@ -370,10 +323,10 @@ function colorByMenuChanged(categoryName) {
 		var idString = "r"+i+"c"+g_categoryIndex;
 
 		// get the div built earlier and turn it into a color picker
-		$('#'+idString).css('backgroundColor',"#"+colors[vals[i]].getHexString());
+		$('#'+idString).css('backgroundColor', colors[vals[i]]);
 		$("#"+idString).spectrum({
 			localStorageKey: 'key',
-			color: colors[vals[i]].getHexString(),
+			color: colors[vals[i]],
 			showInitial: true,
 			showInput: true,
 			preferredFormat: "hex6",
@@ -433,12 +386,6 @@ function colorAnimationsByCategoryChanged() {
                     change:
                     function(color) {
                         $(this).css('backgroundColor', color.toHexString());
-
-                        // what I need here is a callback to change the
-                        // color of the trajectory
-                        //var c = color.toHexString();
-                        //colorChanged($(this).attr('name'), c);
-                        //colorParallelPlots(vals, colors);
                     }
                 });
 
@@ -463,7 +410,7 @@ function colorParallelPlots(vals,colors)
 		var catColor = colors[catValue];
 
 		try {
-			var hex = '#'+catColor.getHexString();
+			var hex = catColor;
 		}catch(TypeError) {
 			var hex = catColor;
 		}
@@ -688,7 +635,7 @@ function toggleVisible(value) {
 function setKey(values, colors) {
 	if(g_keyBuilt){
 		for(var i = 0; i < values.length; i++){
-			colorChanged(values[i], '#'+colors[values[i]].getHexString());
+			colorChanged(values[i], colors[values[i]]);
 		}
 	}
 	else {
@@ -698,23 +645,23 @@ function setKey(values, colors) {
 			var divid = sid.replace(/\./g,'')+"_key";
 			var catValue = g_mappingFileData[sid][g_categoryIndex];
 			var catColor = colors[catValue];
-			keyHTML += "<tr id=\""+divid+"row\"><td><div id=\""+divid+"\" name=\""+sid+"\" class=\"colorbox\" style=\"background-color:#";
-			keyHTML += catColor.getHexString();
+			keyHTML += "<tr id=\""+divid+"row\"><td><div id=\""+divid+"\" name=\""+sid+"\" class=\"colorbox\" style=\"background-color:";
+			keyHTML += catColor;
 			keyHTML += ";\"></div>";
 			keyHTML +="</td><td>";
 			keyHTML += sid;
 			keyHTML += "</td></tr>";
 
 			try {
-				g_plotEllipses[g_plotIds[i]].material.color.setHex("0x"+catColor.getHexString());
+				g_plotEllipses[g_plotIds[i]].material.color.setStyle(catColor);
 			}
 			catch(TypeError){}
 			try {
-				g_plotSpheres[g_plotIds[i]].material.color.setHex("0x"+catColor.getHexString());
+				g_plotSpheres[g_plotIds[i]].material.color.setStyle(catColor);
 			}
 			catch(TypeError){}
 			try {
-				g_plotVectors[g_plotIds[i]].material.color.setHex("0x"+catColor.getHexString());
+				g_plotVectors[g_plotIds[i]].material.color.setStyle(catColor);
 			}
 			catch(TypeError){}
 		}
@@ -804,6 +751,8 @@ function colorChangedForEdges(color, index){
 
 /*This function is called when a new value is selected in the label menu*/
 function labelMenuChanged() {
+    var colormap = $("#colormap-drop-down").val();
+
 	if(document.getElementById('labelcombo').selectedIndex == 0){
 		document.getElementById("label-list").innerHTML = "";
 		return;
@@ -820,7 +769,7 @@ function labelMenuChanged() {
 	}
 
 	vals = naturalSort(_.uniq(vals, false));
-	colors = getColorList(vals);
+	colors = getColorList(vals, colormap);
 
 	// build the label table in HTML
 	var lines = "<form name=\"labels\" id=\"labelForm\"><table>";
@@ -849,11 +798,11 @@ function labelMenuChanged() {
 		var idString = "r"+i+"c"+g_categoryIndex;
 
 		// get the div built earlier and turn it into a color picker
-		$('#'+idString+'Label').css('backgroundColor',"#"+colors[vals[i]].getHexString());
-		labelColorChanged(vals[i], "#"+colors[vals[i]].getHexString());
+		$('#'+idString+'Label').css('backgroundColor', colors[vals[i]]);
+		labelColorChanged(vals[i], colors[vals[i]]);
 
 		$("#"+idString+'Label').spectrum({
-			color: colors[vals[i]].getHexString(),
+			color: colors[vals[i]],
 			showInitial: true,
 			showPalette: true,
 			preferredFormat: "hex6",
@@ -2235,6 +2184,15 @@ $(document).ready(function() {
 			}
 			$("#gradient-category-drop-down").append(line);
 		}
+
+        for (var i in k_CHROMABREWER_MAPS){
+			line = '<option value="'+k_CHROMABREWER_MAPS[i]+'">'+k_CHROMABREWER_MAPNAMES[i]+'</option>';
+            $("#colormap-drop-down").append(line);
+        }
+
+
+    // initialize the dropdowns after inserting the options
+    $("#colormap-drop-down").chosen({width: "100%", search_contains: true});
     $("#gradient-category-drop-down").chosen({width: "100%", search_contains: true});
     colorAnimationsByCategoryChanged();
 		setParallelPlots();

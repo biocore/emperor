@@ -12,32 +12,49 @@
  */
 
 
-// taken from the qiime/colors.py module; a total of 24 colors
-var k_QIIME_COLORS = [
-"0xFF0000", // red1
-"0x0000FF", // blue1
-"0xF27304", // orange1
-"0x008000", // green
-"0x91278D", // purple1
-"0xFFFF00", // yellow1
-"0x7CECF4", // cyan1
-"0xF49AC2", // pink1
-"0x5DA09E", // teal1
-"0x6B440B", // brown1
-"0x808080", // gray1
-"0xF79679", // red2
-"0x7DA9D8", // blue2
-"0xFCC688", // orange2
-"0x80C99B", // green2
-"0xA287BF", // purple2
-"0xFFF899", // yellow2
-"0xC49C6B", // brown2
-"0xC0C0C0", // gray2
-"0xED008A", // red3
-"0x00B6FF", // blue3
-"0xA54700", // orange3
-"0x808000", // green3
-"0x008080"] // teal3
+// http://colorbrewer2.org > qualitative > Number of Data Classes = 12
+// colorbrewer will provide you with two lists of colors, those have been
+// added here
+var k_COLORBREWER_COLORS = [
+"#8dd3c7", // first list starts here
+"#ffffb3",
+"#bebada",
+"#fb8072",
+"#80b1d3",
+"#fdb462",
+"#b3de69",
+"#fccde5",
+"#d9d9d9",
+"#bc80bd",
+"#ccebc5",
+"#ffed6f",
+"#a6cee3", // second list starts here
+"#1f78b4",
+"#b2df8a",
+"#33a02c",
+"#fb9a99",
+"#e31a1c",
+"#fdbf6f",
+"#ff7f00",
+"#cab2d6",
+"#6a3d9a",
+"#ffff99",
+"#b15928"]
+
+// these colors are included in chroma and are the only ones we should
+// use to interpolate through whe coloring in a continuous mode
+var k_CHROMABREWER_MAPS = ['discrete-coloring', 'OrRd', 'PuBu', 'BuPu',
+    'Oranges', 'BuGn', 'YlOrBr', 'YlGn', 'Reds', 'RdPu', 'Greens', 'YlGnBu',
+    'Purples', 'GnBu', 'Greys', 'YlOrRd', 'PuRd', 'Blues', 'PuBuGn',
+    'Spectral', 'RdYlGn', 'RdBu', 'PiYG', 'PRGn', 'RdYlBu', 'BrBG', 'RdGy',
+    'PuOr'];
+var k_CHROMABREWER_MAPNAMES = ['Discrete Coloring', 'Orange-Red',
+    'Purple-Blue', 'Blue-Purple', 'Oranges', 'Blue-Green',
+    'Yellow-Orange-Brown', 'Yellow-Green', 'Reds', 'Red-Purple', 'Greens',
+    'Yellow-Green-Blue', 'Purples', 'Green-Blue', 'Greys', 'Yellow-Orange-Red',
+    'Purple-Red', 'Blues', 'Purple-Blue-Green', 'Spectral', 'Red-Yellow-Green',
+    'Red-Blue', 'Pink-Yellow-Green', 'Pink-Red-Green', 'Red-Yellow-Blue',
+    'Brown-Blue-Green', 'Red-Grey', 'Purple-Orange']
 
 /**
  *
@@ -106,21 +123,73 @@ function convertXMLToString(node) {
  * @param {index} int, the index of the color to retrieve.
  *
  * @return string representation of the hexadecimal value for a color in the
- * list of k_QIIME_COLORS. If this value value is greater than the number of
- * colors available, the function will just rollover and retrieve the next
+ * list of k_COLORBREWER_COLORS. If this value value is greater than the number
+ * of colors available, the function will just rollover and retrieve the next
  * available color.
  *
- * See k_QIIME_COLORS at the top level of this module.
+ * See k_COLORBREWER_COLORS at the top level of this module.
  *
  */
 function getDiscreteColor(index){
-	var size = k_QIIME_COLORS.length;
-	if(index >= size){
-		index = index - (Math.floor(index/size)*size)
-	}
+  var size = k_COLORBREWER_COLORS.length;
+  if(index >= size){
+    index = index - (Math.floor(index/size)*size)
+  }
 
-	return k_QIIME_COLORS[index]
+  return k_COLORBREWER_COLORS[index]
 }
+
+
+/**
+ *
+ * Generate a list of colors that corresponds to all the samples in the plot
+ *
+ * @param {values} list of objects to generate a color for, usually a category
+ * in a given metadata column.
+ * @param {map} name of the color map to use, see k_CHROMABREWER_MAPS.
+ *
+ *
+ * This function will generate a list of coloring values depending on the
+ * coloring scheme that the system is currently using (discrete or continuous).
+*/
+function getColorList(values, map) {
+  var colors = {}, numColors = values.length-1, counter=0, interpolator,
+      discrete = false;
+
+  if (k_CHROMABREWER_MAPS.indexOf(map) === -1) {
+    throw new Error("Could not find "+map+" in the available colormaps");
+  }
+
+  if (map === 'discrete-coloring'){
+    discrete = true;
+  }
+
+  // 1 color and continuous coloring should return the first element of the map
+  if (numColors === 0 && discrete === false){
+    colors[values[0]] = chroma.brewer[map][0];
+    return colors;
+  }
+
+  if (discrete === false){
+    map = chroma.brewer[map];
+    interpolator = chroma.interpolate.bezier([map[0], map[3], map[4], map[5],
+                                              map[8]]);
+  }
+
+  for(var index in values){
+    if(discrete){
+      // get the next available color
+      colors[values[index]] = getDiscreteColor(index);
+    }
+    else{
+      colors[values[index]] =  interpolator(counter/numColors).hex();
+      counter = counter + 1;
+    }
+  }
+
+  return colors;
+}
+
 
 /**
  *

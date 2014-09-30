@@ -130,6 +130,7 @@ HTML_STRING = """<!doctype html>
 
     <!-- General utilities (underscore.js and FileSaver.js) -->
     <script type="text/javascript" src="emperor_required_resources/js/underscore-min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/chroma.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/FileSaver.min.js"></script>
 
     <!-- Emperor library code -->
@@ -264,7 +265,8 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <input type="checkbox" onchange="toggleContinuousAndDiscreteColors(this)" id="discreteorcontinuouscolors" name="discreteorcontinuouscolors">  Use gradient colors</input>
+            <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
+            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
