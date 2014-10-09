@@ -132,7 +132,35 @@ $(document).ready(function() {
           " the event of a roll-over");
     equal(getDiscreteColor(26), "#bebada", "Test color is indeed red even in"+
           " the event of a roll-over");
+  });
 
+  test("Test discrete colors with other maps", function(){
+    equal(getDiscreteColor(0, 'discrete-coloring'), "#8dd3c7",
+          "Test color is indeed red");
+    equal(getDiscreteColor(1, 'discrete-coloring-qiime'), "#0000ff",
+          "Test color is indeed blue");
+  });
+
+  test("Test discrete colors with other maps (rollover)", function(){
+    equal(getDiscreteColor(24, "discrete-coloring"), "#8dd3c7",
+          "Test color is indeed red even in the event of a roll-over");
+    equal(getDiscreteColor(25, "discrete-coloring-qiime"), "#0000ff",
+          "Test color is indeed red even in the event of a roll-over");
+    equal(getDiscreteColor(26, "discrete-coloring-qiime"), "#f27304",
+          "Test color is indeed red even in the event of a roll-over");
+  });
+
+  test("Test getColorList exceptions", function(){
+    var five;
+    five = [0, 1, 2, 3, 4];
+
+    throws(
+      function (){
+        var color = getDiscreteColor(0, 'discrete-coloring-non-existant');
+      },
+      Error,
+      'An error is raised if the colormap does not exist'
+    );
   });
 
   test("Test getColorList works", function(){

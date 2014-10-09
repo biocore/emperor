@@ -15,46 +15,35 @@
 // http://colorbrewer2.org > qualitative > Number of Data Classes = 12
 // colorbrewer will provide you with two lists of colors, those have been
 // added here
-var k_COLORBREWER_COLORS = [
-"#8dd3c7", // first list starts here
-"#ffffb3",
-"#bebada",
-"#fb8072",
-"#80b1d3",
-"#fdb462",
-"#b3de69",
-"#fccde5",
-"#d9d9d9",
-"#bc80bd",
-"#ccebc5",
-"#ffed6f",
-"#a6cee3", // second list starts here
-"#1f78b4",
-"#b2df8a",
-"#33a02c",
-"#fb9a99",
-"#e31a1c",
-"#fdbf6f",
-"#ff7f00",
-"#cab2d6",
-"#6a3d9a",
-"#ffff99",
-"#b15928"]
+var colorbrewerDiscrete = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072",
+    "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd",
+    "#ccebc5", "#ffed6f", /*first list ends here*/
+    "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c",
+    "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928"];
+// taken from the qiime/colors.py module; a total of 24 colors
+var qiimeDiscrete = [ "#ff0000", "#0000ff", "#f27304", "#008000", "#91278d",
+    "#ffff00", "#7cecf4", "#f49ac2", "#5da09e", "#6b440b", "#808080",
+    "#f79679", "#7da9d8", "#fcc688", "#80c99b", "#a287bf", "#fff899",
+    "#c49c6b", "#c0c0c0", "#ed008a", "#00b6ff", "#a54700", "#808000",
+    "#008080"];
+var k_DiscreteColorMaps = {"discrete-coloring":colorbrewerDiscrete,
+                           "discrete-coloring-qiime":qiimeDiscrete};
 
 // these colors are included in chroma and are the only ones we should
 // use to interpolate through whe coloring in a continuous mode
-var k_CHROMABREWER_MAPS = ['discrete-coloring', 'OrRd', 'PuBu', 'BuPu',
-    'Oranges', 'BuGn', 'YlOrBr', 'YlGn', 'Reds', 'RdPu', 'Greens', 'YlGnBu',
-    'Purples', 'GnBu', 'Greys', 'YlOrRd', 'PuRd', 'Blues', 'PuBuGn',
-    'Spectral', 'RdYlGn', 'RdBu', 'PiYG', 'PRGn', 'RdYlBu', 'BrBG', 'RdGy',
-    'PuOr'];
-var k_CHROMABREWER_MAPNAMES = ['Discrete Coloring', 'Orange-Red',
-    'Purple-Blue', 'Blue-Purple', 'Oranges', 'Blue-Green',
-    'Yellow-Orange-Brown', 'Yellow-Green', 'Reds', 'Red-Purple', 'Greens',
-    'Yellow-Green-Blue', 'Purples', 'Green-Blue', 'Greys', 'Yellow-Orange-Red',
-    'Purple-Red', 'Blues', 'Purple-Blue-Green', 'Spectral', 'Red-Yellow-Green',
-    'Red-Blue', 'Pink-Yellow-Green', 'Pink-Red-Green', 'Red-Yellow-Blue',
-    'Brown-Blue-Green', 'Red-Grey', 'Purple-Orange']
+var k_CHROMABREWER_MAPS = ['discrete-coloring-qiime', 'discrete-coloring',
+    'OrRd', 'PuBu', 'BuPu', 'Oranges', 'BuGn', 'YlOrBr', 'YlGn', 'Reds',
+    'RdPu', 'Greens', 'YlGnBu', 'Purples', 'GnBu', 'Greys', 'YlOrRd', 'PuRd',
+    'Blues', 'PuBuGn', 'Spectral', 'RdYlGn', 'RdBu', 'PiYG', 'PRGn', 'RdYlBu',
+    'BrBG', 'RdGy', 'PuOr'];
+var k_CHROMABREWER_MAPNAMES = ['Classic QIIME Colors',
+    'Discrete Coloring (Colorbrewer)', 'Orange-Red', 'Purple-Blue',
+    'Blue-Purple', 'Oranges', 'Blue-Green', 'Yellow-Orange-Brown',
+    'Yellow-Green', 'Reds', 'Red-Purple', 'Greens', 'Yellow-Green-Blue',
+    'Purples', 'Green-Blue', 'Greys', 'Yellow-Orange-Red', 'Purple-Red',
+    'Blues', 'Purple-Blue-Green', 'Spectral', 'Red-Yellow-Green', 'Red-Blue',
+    'Pink-Yellow-Green', 'Pink-Red-Green', 'Red-Yellow-Blue',
+    'Brown-Blue-Green', 'Red-Grey', 'Purple-Orange'];
 
 /**
  *
@@ -118,25 +107,33 @@ function convertXMLToString(node) {
 
 /**
  *
- * Retrieve a discrete color from the list of QIIME colors
+ * Retrieve a discrete color.
  *
  * @param {index} int, the index of the color to retrieve.
+ * @param {map} string, name of the discrete color map to use.
  *
  * @return string representation of the hexadecimal value for a color in the
- * list of k_COLORBREWER_COLORS. If this value value is greater than the number
- * of colors available, the function will just rollover and retrieve the next
- * available color.
+ * list the QIIME colors or the ColorBrewer discrete colors. If this value
+ * value is greater than the number of colors available, the function will just
+ * rollover and retrieve the next available color.
  *
- * See k_COLORBREWER_COLORS at the top level of this module.
+ * Defaults to use ColorBrewer colors if there's no map passed in.
  *
  */
-function getDiscreteColor(index){
-  var size = k_COLORBREWER_COLORS.length;
+function getDiscreteColor(index, map){
+  if (map === undefined){
+    map = 'discrete-coloring';
+  }
+  if (_.has(k_DiscreteColorMaps, map) === false){
+    throw new Error("Could not find "+map+" as a discrete colormap.")
+  }
+
+  var size = k_DiscreteColorMaps[map].length;
   if(index >= size){
     index = index - (Math.floor(index/size)*size)
   }
 
-  return k_COLORBREWER_COLORS[index]
+  return k_DiscreteColorMaps[map][index]
 }
 
 
@@ -160,7 +157,7 @@ function getColorList(values, map) {
     throw new Error("Could not find "+map+" in the available colormaps");
   }
 
-  if (map === 'discrete-coloring'){
+  if (map === 'discrete-coloring' || map === 'discrete-coloring-qiime'){
     discrete = true;
   }
 
@@ -179,7 +176,7 @@ function getColorList(values, map) {
   for(var index in values){
     if(discrete){
       // get the next available color
-      colors[values[index]] = getDiscreteColor(index);
+      colors[values[index]] = getDiscreteColor(index, map);
     }
     else{
       colors[values[index]] =  interpolator(counter/numColors).hex();
