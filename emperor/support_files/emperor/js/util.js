@@ -31,13 +31,13 @@ var k_DiscreteColorMaps = {"discrete-coloring":colorbrewerDiscrete,
 
 // these colors are included in chroma and are the only ones we should
 // use to interpolate through whe coloring in a continuous mode
-var k_CHROMABREWER_MAPS = ['discrete-coloring', 'discrete-coloring-qiime',
+var k_CHROMABREWER_MAPS = ['discrete-coloring-qiime', 'discrete-coloring',
     'OrRd', 'PuBu', 'BuPu', 'Oranges', 'BuGn', 'YlOrBr', 'YlGn', 'Reds',
     'RdPu', 'Greens', 'YlGnBu', 'Purples', 'GnBu', 'Greys', 'YlOrRd', 'PuRd',
     'Blues', 'PuBuGn', 'Spectral', 'RdYlGn', 'RdBu', 'PiYG', 'PRGn', 'RdYlBu',
     'BrBG', 'RdGy', 'PuOr'];
-var k_CHROMABREWER_MAPNAMES = ['Discrete Coloring (Colorbrewer)',
-    'Discrete Coloring (QIIME Colors)', 'Orange-Red', 'Purple-Blue',
+var k_CHROMABREWER_MAPNAMES = ['Classic QIIME Colors',
+    'Discrete Coloring (Colorbrewer)', 'Orange-Red', 'Purple-Blue',
     'Blue-Purple', 'Oranges', 'Blue-Green', 'Yellow-Orange-Brown',
     'Yellow-Green', 'Reds', 'Red-Purple', 'Greens', 'Yellow-Green-Blue',
     'Purples', 'Green-Blue', 'Greys', 'Yellow-Orange-Red', 'Purple-Red',
