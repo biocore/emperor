@@ -14,7 +14,7 @@ __status__ = "Development"
 from unittest import TestCase, main
 
 from StringIO import StringIO
-from skbio.math.stats.ordination import OrdinationResults
+from skbio.stats.ordination import OrdinationResults
 
 from emperor.core import Emperor
 
@@ -266,7 +266,7 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby" class="emperor-tab-div">
             <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
-            
+
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
