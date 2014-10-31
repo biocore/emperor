@@ -6,7 +6,7 @@ from glob import glob
 __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Antonio Gonzalez Pena", "Meg Pirrung", "Yoshiki Vazquez Baeza",
-               "Jose Antonio Navas Molina"]
+               "Jose Antonio Navas Molina", "Greg Caporaso"]
 __license__ = "BSD"
 __version__ = "0.9.4-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
