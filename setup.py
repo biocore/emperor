@@ -56,7 +56,7 @@ setup(name='emperor',
             'support_files/emperor/js/*.js',]},
         data_files={},
         install_requires=["numpy >= 1.7", "qcli",
-                          "scikit-bio == 0.1.4"],
+                          "scikit-bio == 0.2.1"],
         extras_require={'doc': ["Sphinx >= 1.2.2", "sphinx-bootstrap-theme"]},
         long_description=long_description,
         classifiers=classifiers)
