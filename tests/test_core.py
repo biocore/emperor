@@ -266,7 +266,7 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby" class="emperor-tab-div">
             <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
-
+            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
