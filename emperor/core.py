@@ -68,7 +68,7 @@ class Emperor(object):
     ... ['PC.635', 'Fast', '20080116', 'Fasting_mouse_I.D._635'],
     ... ['PC.636', 'Fast', '20080116', 'Fasting_mouse_I.D._636']]
     >>> headers = ['SampleID', 'Treatment', 'DOB', 'Description']
-    >>> ordination = OrdinationResults.from_file('unweighted_unifrac_pc.txt')
+    >>> ordination = OrdinationResults.read('unweighted_unifrac_pc.txt')
 
     Now import the Emperor object and display it using IPython, note that this
     call will have no effect under an interactive Python session:
