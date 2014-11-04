@@ -14,6 +14,7 @@ __status__ = "Development"
 from unittest import TestCase, main
 from tempfile import mkstemp
 from os import close
+from StringIO import StringIO
 
 import numpy as np
 import numpy.testing as npt
@@ -25,7 +26,7 @@ class ParseTests(TestCase):
 
     def test_parse_coords_ordination_results(self):
         """parse_coords should handle skbio's OrdinationResults file"""
-        coords = ordination_results_file.splitlines()
+        coords = StringIO(ordination_results_file)
 
         obs = parse_coords(coords)
         exp = (['A', 'B', 'C'],
@@ -40,7 +41,7 @@ class ParseTests(TestCase):
 
     def test_parse_coords_qiime(self):
         """parse_coords should handle old qiime PCoA coords format"""
-        coords = qiime_pcoa_file.splitlines()
+        coords = StringIO(qiime_pcoa_file)
         obs = parse_coords(coords)
         exp = (['A', 'B', 'C'],
                np.array([[.11, .09, .23], [.03, .07, -.26], [.12, .06, -.32]]),

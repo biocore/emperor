@@ -14,14 +14,14 @@ __status__ = "Development"
 from unittest import TestCase, main
 
 from StringIO import StringIO
-from skbio.math.stats.ordination import OrdinationResults
+from skbio.stats.ordination import OrdinationResults
 
 from emperor.core import Emperor
 
 class TopLevelTests(TestCase):
     def setUp(self):
         or_f = StringIO(PCOA_STRING)
-        self.ord_res = OrdinationResults.from_file(or_f)
+        self.ord_res = OrdinationResults.read(or_f)
 
         self.data = [['PC.354', 'Control', '20061218', 'Ctrol_mouse_I.D._354'],
             ['PC.355', 'Control', '20061218', 'Control_mouse_I.D._355'],

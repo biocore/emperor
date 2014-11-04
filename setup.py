@@ -6,7 +6,7 @@ from glob import glob
 __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Antonio Gonzalez Pena", "Meg Pirrung", "Yoshiki Vazquez Baeza",
-               "Jose Antonio Navas Molina"]
+               "Jose Antonio Navas Molina", "Greg Caporaso"]
 __license__ = "BSD"
 __version__ = "0.9.4-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
@@ -56,7 +56,7 @@ setup(name='emperor',
             'support_files/emperor/js/*.js',]},
         data_files={},
         install_requires=["numpy >= 1.7", "qcli",
-                          "scikit-bio == 0.1.4"],
+                          "scikit-bio == 0.2.1"],
         extras_require={'doc': ["Sphinx >= 1.2.2", "sphinx-bootstrap-theme"]},
         long_description=long_description,
         classifiers=classifiers)
