@@ -1,6 +1,9 @@
 Emperor ChangeLog
 =================
 
+Emperor 0.9.5-dev (changes since Emperor 0.9.5 go here)
+-------------------------------------------------------
+
 Emperor 0.9.5 (14 Nov 2014)
 ---------------------------
 
