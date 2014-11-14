@@ -1,8 +1,8 @@
 Emperor ChangeLog
 =================
 
-Emperor 0.9.4-dev (changes since Emperor 0.9.4 go here)
--------------------------------------------------------
+Emperor 0.9.5 (14 Nov 2014)
+---------------------------
 
 * Add `make_emperor.py` script auto-generated documentation.
 * Add numpydoc generated documentation setup.
