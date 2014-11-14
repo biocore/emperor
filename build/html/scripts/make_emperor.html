@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>make_emperor.py – Create three dimensional PCoA plots &mdash; Emperor 0.9.5 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.2.0/yeti/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Emperor 0.9.5 documentation" href="../index.html" />
+    <link rel="next" title="Emperor 3D PCoA viewer (emperor.core)" href="../emperor_objects.html" />
+    <link rel="prev" title="Emperor’s Documentation" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+  
+  <a href="https://github.com/biocore/emperor"
+     class="visible-desktop hidden-xs"><img
+    id="gh-banner"
+    style="position: absolute; top: 50px; right: 0; border: 0;"
+    src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+    alt="Fork me on GitHub"></a>
+  <script>
+    // Adjust banner height.
+    $(function () {
+      var navHeight = $(".navbar .container").css("height");
+      $("#gh-banner").css("top", navHeight);
+    });
+  </script>
+
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Emperor</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.9.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href=""><em>make_emperor.py</em> &#8211; Create three dimensional PCoA plots</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../emperor_objects.html">Emperor 3D PCoA viewer (<tt class="docutils literal"><span class="pre">emperor.core</span></tt>)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../formats.html">File Formats</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#"><em>make_emperor.py</em> &#8211; Create three dimensional PCoA plots</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <span class="target" id="make-emperor"></span><div class="section" id="make-emperor-py-create-three-dimensional-pcoa-plots">
+<span id="index-0"></span><h1><em>make_emperor.py</em> &#8211; Create three dimensional PCoA plots<a class="headerlink" href="#make-emperor-py-create-three-dimensional-pcoa-plots" title="Permalink to this headline">¶</a></h1>
+<p><strong>Description:</strong></p>
+<p>This script automates the creation  of three-dimensional PCoA plots to be visualized with Emperor using Google Chrome.</p>
+<p><strong>Usage:</strong> <tt class="file docutils literal"><span class="pre">make_emperor.py</span> <span class="pre">[options]</span></tt></p>
+<p><strong>Input Arguments:</strong></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>[REQUIRED]</strong></p>
+<dl class="docutils">
+<dt>-i, <cite>-</cite>-input_coords</dt>
+<dd>Depending on the plot to be generated, can be one of the following: (1) Filepath of a coordinates file to create a PCoA plot. (2) Directory path to a folder containing coordinates files to create a jackknifed PCoA plot. (3) Directory path to a folder containing coordinates files to compare the coordinates there contained when &#8211;compare_plots is enabled (useful for procustes analysis plots). For directories: hidden files, sub-directories and files suffixed as &#8216;_procrustes_results.txt&#8217;</dd>
+<dt>-m, <cite>-</cite>-map_fp</dt>
+<dd>Path to a metadata mapping file</dd>
+</dl>
+<p><strong>[OPTIONAL]</strong></p>
+<dl class="last docutils">
+<dt><cite>-</cite>-number_of_axes</dt>
+<dd>Number of axes to be incorporated in the plot. Only 3 will be displayed at any given time but this option modifies how many axes you can use for your visualization. Note that Emperor will only use the axes that explain more than 0.5% (this will be shown as 1% in the GUI)of the variability [default: 10]</dd>
+<dt>-a, <cite>-</cite>-custom_axes</dt>
+<dd>Comma-separated list of metadata categories to use as custom axes in the plot. For instance, if there is a time category and you would like to see the samples plotted on that axis instead of PC1, PC2, etc., you would pass time as the value of this option.  Note: if there is any non-numeric data in the metadata column, an error will be presented [default: None]</dd>
+<dt><cite>-</cite>-add_unique_columns</dt>
+<dd>Add to the output categories of the mapping file the columns where all values are different. Note: if the result of one of the concatenated fields in &#8211;color_by is a column where all values are unique, the resulting column will get removed as well [default: False]</dd>
+<dt><cite>-</cite>-add_vectors</dt>
+<dd>Comma-sparated category(ies) used to add connecting lines (vectors) between samples. The first category specifies the samples that will be connected by the vectors, whilst the second category (optionally) determines the order in which the samples will be connected. [default: [None, None]]</dd>
+<dt>-b, <cite>-</cite>-color_by</dt>
+<dd>Comma-separated list of metadata categories (column headers) to color by in the plots. The categories must match the name of a column header in the mapping file exactly. Multiple categories can be listed by comma separating them without spaces. The user can also combine columns in the mapping file by separating the categories by &#8220;&amp;&amp;&#8221; without spaces. [default=color by all categories except ones where all values are different, to disable this behaviour pass &#8211;add_unique_columns]</dd>
+<dt><cite>-</cite>-biplot_fp</dt>
+<dd>Output filepath that will contain the coordinates where each taxonomic sphere is centered. [default: None]</dd>
+<dt>-c, <cite>-</cite>-compare_plots</dt>
+<dd>Passing a directory with the -i (&#8211;input_coords) option in combination with this flag results in a set of bars connecting the replicated samples across all the input files. [default=False]</dd>
+<dt>-e, <cite>-</cite>-ellipsoid_method</dt>
+<dd>Used only when plotting ellipsoids for jackknifed beta diversity (i.e. using a directory of coord files instead of a single coord file). Valid values are &#8220;IQR&#8221; (for inter-quartile ranges) and &#8220;sdev&#8221; (for standard deviation). [default=IQR]</dd>
+<dt><cite>-</cite>-ignore_missing_samples</dt>
+<dd>This will overpass the error raised when the coordinates file contains samples that are not present in the mapping file. Be aware that this is very misleading as the PCoA is accounting for all the samples and removing some samples could lead to  erroneous/skewed interpretations.</dd>
+<dt>-n, <cite>-</cite>-n_taxa_to_keep</dt>
+<dd>Number of taxonomic groups from the &#8220;&#8211;taxa_fp&#8221; file to display. Passing &#8220;-1&#8221; will cause to display all the taxonomic groups, this option is only used when creating BiPlots. [default=10]</dd>
+<dt>-s, <cite>-</cite>-master_pcoa</dt>
+<dd>Used only when the input is a directory of coordinate files i. e. for jackknifed beta diversity plot or for a coordinate comparison plot (procrustes analysis). The coordinates in this file will be the center of each ellipsoid in the case of a jackknifed PCoA plot or the center where the connecting arrows originate from for a comparison plot. [default: arbitrarily selected file from the input directory for a jackknifed plot or None for a comparison plot in this case one file will be connected to the next one and so on]</dd>
+<dt>-t, <cite>-</cite>-taxa_fp</dt>
+<dd>Path to a summarized taxa file (i. e. the output of <a class="reference external" href="./summarize_taxa.html">summarize_taxa.py</a>). This option is only used when creating BiPlots. [default=None]</dd>
+<dt>-x, <cite>-</cite>-missing_custom_axes_values</dt>
+<dd>Option to override the error shown when the catergory used in &#8216;&#8211;custom_axes&#8217; has non-numeric values in the mapping file. The basic format is custom_axis:new_value. For example, if you want to plot in time 0 all the samples that do not have a numeric value in the column Time. you would pass -x &#8220;Time:0&#8221;. Additionally, you can pass this format custom_axis:other_column==value_in_other_column=new_value, with this format you can specify different values (new_value) to use in the substitution based on other column (other_column) value (value_in_other_column); see example above. This option could be used in all explicit axes.</dd>
+<dt>-o, <cite>-</cite>-output_dir</dt>
+<dd>Path to the output directory that will contain the PCoA plot. [default: emperor]</dd>
+<dt><cite>-</cite>-number_of_segments</dt>
+<dd>The number of segments to generate any spheres, this includes the samples, the taxa (biplots), and the confidence intervals (jackknifing). Higher values will result in better quality but can make the plots less responsive, also it will make the resulting SVG images bigger. The value should be between 4 and 14. [default: 8]</dd>
+<dt><cite>-</cite>-pct_variation_below_one</dt>
+<dd>Allow the percent variation explained by the axis to be below one. The default behaivor is to multiply by 100 all values if PC1 is &lt; 1.0 [default: False]</dd>
+</dl>
+</div>
+<p><strong>Output:</strong></p>
+<p>This script creates an output directory with an HTML formated file named &#8216;index.html&#8217; and a complementary folder named &#8216;emperor_required_resources&#8217;. Opening index.html with Google&#8217;s Chrome web browser will display a three dimensional visualization of the processed PCoA data file and the corresponding metadata mapping file.</p>
+<p><strong>Plot PCoA data:</strong></p>
+<p>Visualize the a PCoA file colored using a corresponding mapping file:</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -o emperor_output
+</pre></div>
+</div>
+<p><strong>Plot data generated from non-phylogenetic distance matrices:</strong></p>
+<p>Visualize a PCoA file where the data was computed with a non-phylogenetic distance metric (Euclidian, Bray-Curtis, etc.)</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i euclidian_pc.txt -m Fasting_Map.txt -o euclidian
+</pre></div>
+</div>
+<p><strong>Coloring by metadata mapping file:</strong></p>
+<p>Additionally, using the supplied mapping file and a specific category or any combination of the available categories. When using the -b option, the user can specify the coloring for multiple header names, where each header is separated by a comma. The user can also combine mapping headers and color by the combined headers that are created by inserting an &#8216;&amp;&amp;&#8217; between the input header names. Color by &#8216;Treatment&#8217; and by the result of concatenating the &#8216;DOB&#8217; category and the &#8216;Treatment&#8217; category:</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -b &#39;Treatment&amp;&amp;DOB,Treatment&#39; -o emperor_colored_by
+</pre></div>
+</div>
+<p><strong>PCoA plot with an explicit axis:</strong></p>
+<p>Create a PCoA plot with an axis of the plot representing the &#8216;DOB&#8217; of the samples. This option is useful when presenting a gradient from your metadata e. g. &#8216;Time&#8217; or &#8216;pH&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -a DOB -o pcoa_dob
+</pre></div>
+</div>
+<p><strong>PCoA plot with an explicit axis and using &#8211;missing_custom_axes_values:</strong></p>
+<p>Create a PCoA plot with an axis of the plot representing the &#8216;DOB&#8217; of the samples and define the position over the gradient of those samples missing a numeric value; in this case we are going to plot the samples in the value 20060000. You can select for each explicit axis which value you want to use for the missing values:</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map_modified.txt -a DOB -o pcoa_dob_with_missing_custom_axes_values -x &#39;DOB:20060000&#39;
+</pre></div>
+</div>
+<p><strong>PCoA plot with an explicit axis and using &#8211;missing_custom_axes_values but setting different values based on another column:</strong></p>
+<p>Create a PCoA plot with an axis of the plot representing the &#8216;DOB&#8217; of the samples and defining the position over the gradient of those samples missing a numeric value but using as reference another column of the mapping file. In this case we are going to plot the samples that are Control on the Treatment column on 20080220 and on 20080240 those that are Fast:</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map_modified.txt -a DOB -o pcoa_dob_with_missing_custom_axes_with_multiple_values -x &#39;DOB:Treatment==Control=20080220&#39; -x &#39;DOB:Treatment==Fast=20080240&#39;
+</pre></div>
+</div>
+<p><strong>Jackknifed principal coordinates analysis plot:</strong></p>
+<p>Create a jackknifed PCoA plot (with confidence intervals for each sample) passing as the input a directory of coordinates files (where each file corresponds to a different OTU table) and use the standard deviation method to compute the dimensions of the ellipsoids surrounding each sample:</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc -m Fasting_Map.txt -o jackknifed_pcoa -e sdev
+</pre></div>
+</div>
+<p><strong>Jackknifed PCoA plot with a master coordinates file:</strong></p>
+<p>Passing a master coordinates file (&#8211;master_pcoa) will display the ellipsoids centered by the samples in this file:</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc -s unweighted_unifrac_pc/pcoa_unweighted_unifrac_rarefaction_110_5.txt -m Fasting_Map.txt -o jackknifed_with_master
+</pre></div>
+</div>
+<p><strong>BiPlots:</strong></p>
+<p>To see which taxa are the ten more prevalent in the different areas of the PCoA plot, you need to pass a summarized taxa file i. e. the output of <a class="reference external" href="./summarize_taxa.html">summarize_taxa.py</a>. Note that if the the &#8216;&#8211;taxa_fp&#8217; has fewer than 10 taxa, the script will default to use all.</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -t otu_table_L3.txt -o biplot
+</pre></div>
+</div>
+<p><strong>BiPlots with extra options:</strong></p>
+<p>To see which are the three most prevalent taxa and save the coordinates where these taxa are centered, you can use the -n (number of taxa to keep) and the &#8211;biplot_fp (output biplot file path) options.</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -t otu_table_L3.txt -o biplot_options -n 3 --biplot_fp biplot.txt
+</pre></div>
+</div>
+<p><strong>Drawing connecting lines between samples:</strong></p>
+<p>To draw lines betwen samples within a category use the &#8216;&#8211;add_vectors&#8217; option. For example to connect the lines by the &#8216;Treatment&#8217; category.</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -o vectors --add_vectors Treatment
+</pre></div>
+</div>
+<p><strong>Drawing connecting lines between samples with an explicit axis:</strong></p>
+<p>To draw lines between samples within a category of the mapping file and have them sorted by a category that&#8217;s explicitly represented in the 3D plot use the &#8216;&#8211;add_vectors&#8217; and the &#8216;-a&#8217; option.</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt --add_vectors Treatment,DOB -a DOB -o sorted_by_DOB
+</pre></div>
+</div>
+<p><strong>Compare two coordinate files:</strong></p>
+<p>To draw replicates of the same samples like for a procustes plot.</p>
+<div class="highlight-python"><div class="highlight"><pre>make_emperor.py -i compare -m Fasting_Map.txt --compare_plots -o comparison
+</pre></div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+  
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2014, Emperor Development Team.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.3.<br/>
+    </p>
+  </div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>File Formats &mdash; Emperor 0.9.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.2.0/yeti/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.9.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Emperor 0.9.5 documentation" href="index.html" />
+    <link rel="prev" title="emperor.core.Emperor" href="generated/emperor.core.Emperor.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+  
+  <a href="https://github.com/biocore/emperor"
+     class="visible-desktop hidden-xs"><img
+    id="gh-banner"
+    style="position: absolute; top: 50px; right: 0; border: 0;"
+    src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+    alt="Fork me on GitHub"></a>
+  <script>
+    // Adjust banner height.
+    $(function () {
+      var navHeight = $(".navbar .container").css("height");
+      $("#gh-banner").css("top", navHeight);
+    });
+  </script>
+
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          Emperor</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.9.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="scripts/make_emperor.html"><em>make_emperor.py</em> &#8211; Create three dimensional PCoA plots</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="emperor_objects.html">Emperor 3D PCoA viewer (<tt class="docutils literal"><span class="pre">emperor.core</span></tt>)</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">File Formats</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">File Formats</a><ul>
+<li><a class="reference internal" href="#mapping-file">Mapping File</a></li>
+<li><a class="reference internal" href="#coordinates-file">Coordinates File</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <span class="target" id="formats"></span><div class="section" id="file-formats">
+<span id="index-0"></span><h1>File Formats<a class="headerlink" href="#file-formats" title="Permalink to this headline">¶</a></h1>
+<p>Emperor uses two main files as inputs, a mapping file and a coordinates file,
+here we will describe their structure.</p>
+<div class="section" id="mapping-file">
+<h2>Mapping File<a class="headerlink" href="#mapping-file" title="Permalink to this headline">¶</a></h2>
+<p>A mapping file refers to the additional information collected about your
+samples, some common examples are body site, collection time, pH, latitude,
+longitude, etc. This information is used by Emperor to color and modify visual
+aspects of your plot in a systematic way.</p>
+<p>Mapping files should conform to the format as described by <a class="reference external" href="http://qiime.org/documentation/file_formats.html#metadata-mapping-files">QIIME</a>.
+<strong>Note</strong> that the only required column is <cite>SampleID</cite>, if this column is not
+present the file will not be parsed correctly and the script will bring up an
+error.</p>
+</div>
+<div class="section" id="coordinates-file">
+<h2>Coordinates File<a class="headerlink" href="#coordinates-file" title="Permalink to this headline">¶</a></h2>
+<p>Coordinates files describe the position in which each of the samples should be
+placed in space, as of version <cite>0.9.4-dev</cite> there are two different file
+formats that are accepted by Emperor:</p>
+<p><strong>Classic Format</strong></p>
+<p>This format is tab-delimited and must include the following information (
+versions of QIIME &lt;= 1.8.0 generate this file when you execute
+<cite>principal_coordinates.py</cite>):</p>
+<ul class="simple">
+<li>The first line is the header for each of the dimensions.</li>
+<li>For each of the samples in your dataset you&#8217;ll find a line with a sample
+identifier and its value at each dimension. If you have 7 samples you should
+expect to see 7 lines with coordinates spanning through 7 dimensions.</li>
+<li>Two empty lines.</li>
+<li>A line with an eigenvalue for each dimension.</li>
+<li>A line with the percentages of variation explained at each dimension.</li>
+</ul>
+<p>See the example below that presents a dataset where 5 samples were included.</p>
+<div class="highlight-none"><div class="highlight"><pre>pc vector number    1       2       3       4       5
+PC.636      0.333514620475  0.081687        0.25081 0.103746        2.50106743521e-09
+PC.635      0.258145479886  -0.22437        -0.25446        -0.0290044      2.50106743521e-09
+PC.356      -0.270663791669 -0.23983        0.18965 -0.118931       2.50106743521e-09
+PC.481      -0.0437436047686        0.30751 -0.077078       -0.20627        2.50106743521e-09
+PC.354      -0.277252703922 0.074945        -0.10898        0.245681        2.50106743521e-09
+
+
+eigvals     0.329912543767  0.2147172       0.1815366       0.1261003       -3.127915774e-17
+% variation explained       38.68853        25.18276        21.2717 14.85772        3.667478e-15
+</pre></div>
+</div>
+<p><strong>scikit-bio Ordination Results</strong></p>
+<p>Emperor is also capable of parsing files generated by scikit-bio&#8217;s
+<a class="reference external" href="http://scikit-bio.org/docs/latest/generated/skbio.io.ordination.html">OrdinationResults</a>
+class.</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+  
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2014, Emperor Development Team.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.3.<br/>
+    </p>
+  </div>
+</footer>
+
+  </body>
+</html>

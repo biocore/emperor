@@ -102,6 +102,7 @@
             <div class="container">
               <ul class="nav">
                 <li><a href="index.html">Home</a></li>
+                <li><a href="build/html/index.html">Documentation</a></li>
                 <li><a href="description_index.html">Description</a></li>
                 <li><a href="tutorial_index.html">Tutorial</a></li>
                 <li class="active"><a href="installation_index.html">Installation</a></li>
@@ -148,11 +149,16 @@
           <br>
         </p>
         <p class="lead" align="justify">
-          Alternatively Emperor can be installed from the Python Package Index (<a href="https://pypi.python.org/pypi">PyPi</a>)
+        Alternatively Emperor can be installed from the Python Package Index (<a href="https://pypi.python.org/pypi">PyPi</a>) using either <a href="http://docs.continuum.io/anaconda/install.html">conda</a> (note that this method will be notably faster):
           <br>
-          <pre><code>pip install emperor</code></pre>
+          <pre><code>conda install scikit-bio<br>pip install emperor</code></pre>
+          <br>
         </p>
-        <br>
+        <p class="lead" align="justify">
+        or using <a href="http://pip.readthedocs.org/en/latest/installing.html">pip</a>:
+          <br>
+          <pre><code>pip install numpy<br>pip install emperor<br></code></pre>
+          <br>
         <h2>Verifying your installation</h2>
         <p class="lead" align="justify">
           To test for a correct installation, open a new terminal window and issue the following command to see the help of <code>make_emperor.py</code>:

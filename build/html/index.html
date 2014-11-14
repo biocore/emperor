@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Emperor’s Documentation &mdash; Emperor 0.9.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.2.0/yeti/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.9.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Emperor 0.9.5 documentation" href="#" />
+    <link rel="next" title="make_emperor.py – Create three dimensional PCoA plots" href="scripts/make_emperor.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+  
+  <a href="https://github.com/biocore/emperor"
+     class="visible-desktop hidden-xs"><img
+    id="gh-banner"
+    style="position: absolute; top: 50px; right: 0; border: 0;"
+    src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+    alt="Fork me on GitHub"></a>
+  <script>
+    // Adjust banner height.
+    $(function () {
+      var navHeight = $(".navbar .container").css("height");
+      $("#gh-banner").css("top", navHeight);
+    });
+  </script>
+
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+          Emperor</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.9.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="scripts/make_emperor.html"><em>make_emperor.py</em> &#8211; Create three dimensional PCoA plots</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="emperor_objects.html">Emperor 3D PCoA viewer (<tt class="docutils literal"><span class="pre">emperor.core</span></tt>)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="formats.html">File Formats</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Emperor&#8217;s Documentation</a></li>
+<li><a class="reference internal" href="#citing-emperor">Citing Emperor</a></li>
+<li><a class="reference internal" href="#scripts">Scripts:</a></li>
+<li><a class="reference internal" href="#classes">Classes:</a></li>
+<li><a class="reference internal" href="#format-description">Format Description:</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="emperor-s-documentation">
+<h1>Emperor&#8217;s Documentation<a class="headerlink" href="#emperor-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Emperor is an interactive next generation tool for the analysis, visualization
+and understanding of high throughput microbial ecology datasets.</p>
+<p>This section of the documentation describes the usage of Emperor&#8217;s main command
+line interface <cite>make_emperor.py</cite>.</p>
+<p>The <a class="reference internal" href="genindex.html"><em>Index</em></a> lists the contents of this documentation.</p>
+</div>
+<div class="section" id="citing-emperor">
+<h1>Citing Emperor<a class="headerlink" href="#citing-emperor" title="Permalink to this headline">¶</a></h1>
+<p>Remember to cite Emperor If you use it in any published research, please
+include the following citation:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>EMPeror: a tool for visualizing high-throughput microbial community data</strong>. Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R. Gigascience. 2013 Nov 26;2(1):16.</p>
+</div>
+<p>You can find the <a class="reference external" href="http://www.gigasciencejournal.com/content/2/1/16/">Emperor paper here</a>, and the data presented in this paper can be found <a class="reference external" href="http://gigadb.org/dataset/100068">here</a>.</p>
+</div>
+<div class="section" id="scripts">
+<h1>Scripts:<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="scripts/make_emperor.html"><em>make_emperor.py</em> &#8211; Create three dimensional PCoA plots</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="classes">
+<h1>Classes:<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="emperor_objects.html">Emperor 3D PCoA viewer (<tt class="docutils literal"><span class="pre">emperor.core</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="emperor_objects.html#classes">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/emperor.core.Emperor.html">emperor.core.Emperor</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="format-description">
+<h1>Format Description:<a class="headerlink" href="#format-description" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="formats.html">File Formats</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="formats.html#mapping-file">Mapping File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formats.html#coordinates-file">Coordinates File</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+  
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2014, Emperor Development Team.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.3.<br/>
+    </p>
+  </div>
+</footer>
+
+  </body>
+</html>
