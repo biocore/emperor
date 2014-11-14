@@ -6,10 +6,10 @@ __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Yoshiki Vazquez Baeza"]
 __license__ = "BSD"
-__version__ = "0.9.5"
+__version__ = "0.9.5-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
-__status__ = "Release"
+__status__ = "Development"
 
 from numpy import array
 from emperor.filter import (filter_samples_from_coords,
