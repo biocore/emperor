@@ -432,10 +432,10 @@ def main():
 
     # sample ids must be shared between files
     if number_intersected_sids <= 0:
-        option_parser.error('The sample identifiers in the coordinates file '
-            'must have at least one match with the data contained in mapping '
-            'file. Verify you are using a coordinates file and a mapping file '
-            'that belong to the same dataset.')
+        option_parser.error('None of your sample identifiers match between the'
+                            ' mapping file and the coordinates file. Verify '
+                            'you are using a coordinates file and a mapping '
+                            'file that belong to the same dataset.')
 
     # the intersection of the sample ids in the coords and the sample ids in the
     # mapping file must at the very least include all ids in the coords file
