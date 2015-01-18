@@ -4,6 +4,8 @@ Emperor ChangeLog
 Emperor 0.9.5-dev (changes since Emperor 0.9.5 go here)
 -------------------------------------------------------
 
+* Improved error message when none of the samples match between coordinates and mapping file.
+
 Emperor 0.9.5 (14 Nov 2014)
 ---------------------------
 
