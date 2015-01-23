@@ -5,6 +5,8 @@ Emperor 0.9.5-dev (changes since Emperor 0.9.5 go here)
 -------------------------------------------------------
 
 * Improved error message when none of the samples match between coordinates and mapping file.
+* Removed warning due to NumPy 1.9.x.
+* Added support for NumPy 1.9.x.
 
 Emperor 0.9.5 (14 Nov 2014)
 ---------------------------
