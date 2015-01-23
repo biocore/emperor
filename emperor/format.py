@@ -101,7 +101,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
 
     # write the values for all the ellipses
     js_pcoa_string += '\nvar g_ellipsesDimensions = new Array();\n'
-    if coords_low != None and coords_high != None:
+    if coords_low is not None and coords_high is not None:
         for s_header, s_coord, s_low, s_high in zip(header, coords, coords_low,
             coords_high):
             delta = abs(s_high-s_low)

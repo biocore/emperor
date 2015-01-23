@@ -531,3 +531,4 @@ def sanitize_mapping_file(data, headers):
             for element in line])
 
     return out_lines[1::], out_lines[0]
+
