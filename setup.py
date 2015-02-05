@@ -8,10 +8,10 @@ __copyright__ = "Copyright 2013, The Emperor Project"
 __credits__ = ["Antonio Gonzalez Pena", "Meg Pirrung", "Yoshiki Vazquez Baeza",
                "Jose Antonio Navas Molina", "Greg Caporaso"]
 __license__ = "BSD"
-__version__ = "0.9.51"
+__version__ = "0.9.51-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
-__status__ = "Release"
+__status__ = "Development"
 
 # based on the text found in github.com/qiime/pynast
 classes = """
