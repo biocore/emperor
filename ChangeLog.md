@@ -8,6 +8,10 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 
 * Fix problem where `make_emperor.py` would attempt to parse `Icon?` files when a directory was passed via the `-i` option ([#323](https://github.com/biocore/emperor/issues/323)). 
 
+### Miscellaneous
+
+* Reorganized `emperor/support_files/` to separate Emperor's source code from third-party packages.
+
 Emperor 0.9.51 (5 Feb 2015)
 ---------------------------
 
