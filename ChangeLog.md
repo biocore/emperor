@@ -4,6 +4,12 @@ Emperor ChangeLog
 Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 --------------------------------------------------------
 
+
+### Miscellaneous
+
+* Reorganized `emperor/support_files/` to separate Emperor's source code from third-party packages.
+
+
 Emperor 0.9.51 (5 Feb 2015)
 ---------------------------
 
