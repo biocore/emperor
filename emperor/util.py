@@ -15,8 +15,8 @@ __status__ = "Development"
 from numpy import ndarray, array, ones, zeros, vstack
 from string import strip
 
-from os import makedirs
-from os.path import abspath, dirname, join, exists
+from os import makedirs, listdir
+from os.path import abspath, dirname, join, exists, isdir
 from copy import deepcopy
 
 from qcli.util import qcli_system_call
@@ -532,3 +532,45 @@ def sanitize_mapping_file(data, headers):
 
     return out_lines[1::], out_lines[0]
 
+def guess_coordinates_files(dir_path):
+    """Given a directory return the file paths that can contain coordinates
+
+    Parameters
+    ----------
+    dir_path : str
+        path to the directory where coordinate files are contained
+
+    Returns
+    -------
+    list of str
+        list of filepaths pointing to the coordinates files
+
+    Notes
+    -----
+    If a path inside dir_path meets any of the following criteria, it will be
+    ignored:
+    - Is a hidden file
+    - Is named `Icon?`.
+    - Is folder
+    - Is part of the procrustes results from QIIME, see
+      transform_coordinate_matrices.py
+    """
+    coord_fps = []
+
+    for filepath in listdir(dir_path):
+        if filepath.startswith('.'):
+            continue
+        if filepath.startswith('Icon?') or filepath == 'Icon?':
+            continue
+
+        # we need the full path for the next check
+        filepath = join(abspath(dir_path), filepath)
+
+        if isdir(filepath):
+            continue
+        if filepath.endswith('procrustes_results.txt'):
+            continue
+
+        coord_fps.append(filepath)
+
+    return coord_fps
