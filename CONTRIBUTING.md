@@ -1,7 +1,7 @@
 Contributing to Emperor
 =======================
 
-[Emperor](http://emperor.colorado.edu) is an open source software package, and we welcome community contributions. You can find the source code and test code for Emperor under public revision control in the Emperor git repository on [GitHub](https://github.com/biocore/emperor). We very much welcome contributions.
+[Emperor](http://biocore.github.io/emperor/) is an open source software package, and we welcome community contributions. You can find the source code and test code for Emperor under public revision control in the Emperor git repository on [GitHub](https://github.com/biocore/emperor). We very much welcome contributions.
 
 This document covers what you should do to get started with contributing to Emperor. You should read this whole document before considering submitting code to Emperor. This will save time for both you and the Emperor developers.  
 

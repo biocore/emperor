@@ -5,7 +5,7 @@ This guide contains instructions for building the Emperor documentation, as
 well as guidelines for contributing to the documentation.
 
 **Note:** If you're only interested in viewing the Emperor documentation,
-visit [http://emperor.colorado.edu](http://emperor.colorado.edu).
+visit [http://biocore.github.io/emperor/](http://biocore.github.io/emperor/).
 
 Building the documentation
 --------------------------
