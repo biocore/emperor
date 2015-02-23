@@ -560,7 +560,7 @@ def guess_coordinates_files(dir_path):
     for filepath in listdir(dir_path):
         if filepath.startswith('.'):
             continue
-        if filepath.startswith('Icon?') or filepath == 'Icon?':
+        if filepath.startswith('Icon?'):
             continue
 
         # we need the full path for the next check
