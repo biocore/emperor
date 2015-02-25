@@ -4,6 +4,9 @@ Emperor ChangeLog
 Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 --------------------------------------------------------
 
+### Bug fixes
+
+* Fix bug where Emperor would try to animate trajectories with a single timepoint i.e. a single unique value in the gradient category.
 
 ### Miscellaneous
 
