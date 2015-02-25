@@ -166,7 +166,8 @@ AnimationDirector.prototype.initializeTrajectories = function(){
     // gradient. For example, there's no reason why we should animate a
     // trajectory that has 3 samples at timepoint 0 ([0, 0, 0]) or a trajectory
     // that has just one sample at timepoint 0 ([0])
-    if (_.uniq(gradientPointsBuffer).length <= 1){
+    if (sampleNamesBuffer.length <=1 ||
+        _.uniq(gradientPointsBuffer).length <= 1){
       continue;
     }
 
