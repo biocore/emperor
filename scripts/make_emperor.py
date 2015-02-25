@@ -128,7 +128,8 @@ script_info['required_options'] = [
     'Directory path to a folder containing coordinates files to compare the '
     'coordinates there contained when --compare_plots is enabled (useful '
     'for procustes analysis plots). For directories: hidden files, sub-'
-    'directories and files suffixed as \'_procrustes_results.txt\''),
+    "directories, 'Icon?' and files suffixed by '_procrustes_results.txt' will"
+    " be ignored."),
     make_option('-m','--map_fp',type="existing_filepath",help='path to a '
     'metadata mapping file')
 ]
