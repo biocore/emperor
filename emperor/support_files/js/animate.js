@@ -162,7 +162,7 @@ AnimationDirector.prototype.initializeTrajectories = function(){
                               'z':chewedDataBuffer[index]['z']});
     }
 
-    // Don't add a trajectory unless it has more than one samples in the
+    // Don't add a trajectory unless it has more than one sample in the
     // gradient. For example, there's no reason why we should animate a
     // trajectory that has 3 samples at timepoint 0 ([0, 0, 0]) or a trajectory
     // that has just one sample at timepoint 0 ([0])
