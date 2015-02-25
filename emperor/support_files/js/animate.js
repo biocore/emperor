@@ -162,8 +162,10 @@ AnimationDirector.prototype.initializeTrajectories = function(){
                               'z':chewedDataBuffer[index]['z']});
     }
 
-    // don't add a new trajectory
-    if (sampleNamesBuffer.length <= 1){
+    // Don't add a trajectory unless it has more than one different points
+    // in the gradient. There's no reason why we should animate a trajectory
+    // that has a timepoint in 0, 0 and 0 or one that has a timepoint in 0.
+    if (_.uniq(gradientPointsBuffer).length <= 1){
       continue;
     }
 
