@@ -120,6 +120,10 @@ $(document).ready(function() {
               'category name (C) is assigned correctly');
         equal(director.trajectories[1].metadataCategoryName, 'D', 'The '+
               'category name (D) is assigned correctly');
+        deepEqual(director.trajectories[0].gradientPoints,
+                  ["0", "1", "2"], 'Correct time points (C)')
+        deepEqual(director.trajectories[1].gradientPoints,
+                  ["-9999", "0", "100000"], 'Correct time points (D)')
     });
 
     /**
