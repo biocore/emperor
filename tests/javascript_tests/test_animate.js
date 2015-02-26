@@ -39,6 +39,12 @@ $(document).ready(function() {
             coordinatesDataShort['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136, 'P1': -0.237661, 'P2': 0.046053, 'P3': -0.138136, 'P4': 0.159061, 'P5': -0.247485, 'P6': -0.115211, 'P7': -0.112864, 'P8': 0.064794 };
             coordinatesDataShort['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': 0.228820, 'y': -0.130142, 'z': -0.287149, 'P1': 0.228820, 'P2': -0.130142, 'P3': -0.287149, 'P4': 0.086450, 'P5': 0.044295, 'P6': 0.206043, 'P7': 0.031000, 'P8': 0.071992 };
             coordinatesDataShort['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': 0.042263, 'y': -0.013968, 'z': 0.063531, 'P1': 0.042263, 'P2': -0.013968, 'P3': 0.063531, 'P4': -0.346121, 'P5': -0.127814, 'P6': 0.013935, 'P7': 0.030021, 'P8': 0.140148 };
+
+            // trajectories with only one unique timepoint in different cases
+            // (1) all timepoints with the same value
+            // (2) a single timepoint
+            mappingFileHeadersUnique = ['SampleID','LinkerPrimerSequence','Treatment','DOB'];
+            mappingFileDataUnique = { 'PC.481': ['PC.481','YATGCTGCCTCCCGTAGGAGT','A','0'],'PC.607': ['PC.607','YATGCTGCCTCCCGTAGGAGT','B','0'],'PC.634': ['PC.634','YATGCTGCCTCCCGTAGGAGT','B','0'],'PC.635': ['PC.635','YATGCTGCCTCCCGTAGGAGT','C','0'],'PC.593': ['PC.593','YATGCTGCCTCCCGTAGGAGT','C','1'],'PC.636': ['PC.636','YATGCTGCCTCCCGTAGGAGT','C','2'],'PC.355': ['PC.355','YATGCTGCCTCCCGTAGGAGT','D','-9999'],'PC.354': ['PC.354','YATGCTGCCTCCCGTAGGAGT','D','0'],'PC.356': ['PC.356','YATGCTGCCTCCCGTAGGAGT','D','100000'] };
         },
 
         teardown: function(){
@@ -99,6 +105,25 @@ $(document).ready(function() {
                   {"x": -0.237661, "y": 0.046053, "z": -0.138136},
                   {"x": -0.276542, "y": -0.144964, "z": 0.066647}],
                   'Fast');
+        equal(director.trajectories.length, 2, 'The number of trajectories is '+
+              'correct');
+    });
+
+    test('Test useless trajectories are removed', function(){
+        var director = new AnimationDirector(mappingFileHeadersUnique,
+                                             mappingFileDataUnique,
+                                             coordinatesData, 'DOB',
+                                             'Treatment', 1000, 10);
+        equal(director.trajectories.length, 2, 'The number of trajectories is '+
+              'correct');
+        equal(director.trajectories[0].metadataCategoryName, 'C', 'The '+
+              'category name (C) is assigned correctly');
+        equal(director.trajectories[1].metadataCategoryName, 'D', 'The '+
+              'category name (D) is assigned correctly');
+        deepEqual(director.trajectories[0].gradientPoints,
+                  ["0", "1", "2"], 'Correct time points (C)')
+        deepEqual(director.trajectories[1].gradientPoints,
+                  ["-9999", "0", "100000"], 'Correct time points (D)')
     });
 
     /**
