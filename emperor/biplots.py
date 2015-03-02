@@ -67,7 +67,6 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
     lineages: taxonomic assignments for the OTUs in the otu_table
     coords_data: principal coordinates data where the taxa will be mapped
     N: number of most prevalent taxa to keep, by default will use all
-    composition: indicates if a compositional biplot will be created or not
 
     Output:
     otu_coords: coordinates representing the N most prevalent taxa in otu_table
