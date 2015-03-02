@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# File created on 06 Jul 2012
+# File reated on 06 Jul 2012
 from __future__ import division
 
 __author__ = "Antonio Gonzalez Pena"

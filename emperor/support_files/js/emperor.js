@@ -14,6 +14,7 @@
 var g_plotSpheres = {};
 var g_plotEllipses = {};
 var g_plotTaxa = {};
+var g_plotTaxaArrows = {};
 var g_plotVectors = {};
 var g_plotEdges = {};
 var g_parallelPlots = []
@@ -735,6 +736,7 @@ function colorChanged(catValue,color) {
 function colorChangedForTaxaSpheres(color){
 	for (index in g_plotTaxa){
 		g_plotTaxa[index].material.color.setHex(color)
+
 	}
 }
 
@@ -893,11 +895,14 @@ function toggleBiplotVisibility(){
 	if(!document.biplotsvisibility.elements[0].checked){
 		for (index in g_plotTaxa){
 			g_mainScene.remove(g_plotTaxa[index]);
+		        g_mainScene.remove(g_plotTaxaArrows[index]);
+
 		}
 	}
 	else{
 		for (index in g_plotTaxa){
 			g_mainScene.add(g_plotTaxa[index])
+		        g_mainScene.add(g_plotTaxaArrows[index]);
 		}
 	}
 }
@@ -1436,8 +1441,8 @@ function drawTaxa(){
 
 		// set the position
 		mesh.position.set(g_taxaPositions[key]['x'],
-			g_taxaPositions[key]['y'],
-			g_taxaPositions[key]['z']);
+			          g_taxaPositions[key]['y'],
+			          g_taxaPositions[key]['z']);
 
 		// the legacy color of these spheres is white
 		mesh.material.color = whiteColor;
@@ -1450,6 +1455,16 @@ function drawTaxa(){
 		g_elementsGroup.add(mesh)
 		g_mainScene.add(mesh);
 		g_plotTaxa[key] = mesh;
+
+	        // add the line from the origin to the element
+	        var taxaVector = makeLine([0, 0, 0,],
+					  [g_taxaPositions[key]['x'],
+ 					   g_taxaPositions[key]['y'],
+					   g_taxaPositions[key]['z']],
+					   whiteColor, 2);
+		g_elementsGroup.add(taxaVector)
+		g_mainScene.add(taxaVector);
+		g_plotTaxaArrows[key] = taxaVector
 	}
 }
 
@@ -1699,6 +1714,8 @@ function makeLine(coords_a, coords_b, color, width){
 
 	return line;
 }
+
+
 
 /*Draw each of the lines that represent the X, Y and Z axes in the plot
 

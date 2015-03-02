@@ -18,8 +18,9 @@ from emperor.sort import sort_taxa_table_by_pcoa_coords
 from emperor.qiime_backports.biplots import (get_taxa_prevalence,
     get_taxa_coords, make_biplot_scores_output)
 
+
 def extract_taxa_data(otu_coords, otu_table, lineages, prevalence, N=0):
-    """Extrac the N most prevalent elements according to a prevalence vector
+    """Extract the N most prevalent elements according to a prevalence vector
 
     Inputs:
     otu_coords: coordinates where specific taxa is centered
@@ -57,7 +58,7 @@ def extract_taxa_data(otu_coords, otu_table, lineages, prevalence, N=0):
     return out_otu_coords, out_otu_table, out_otu_lineages, out_prevalence
 
 def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
-                        coords_data, coords_headers, N=0):
+                         coords_data, coords_headers, N=0):
     """Preprocess the OTU table to to generate the required data for the biplots
 
     Input:
@@ -66,6 +67,7 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
     lineages: taxonomic assignments for the OTUs in the otu_table
     coords_data: principal coordinates data where the taxa will be mapped
     N: number of most prevalent taxa to keep, by default will use all
+    composition: indicates if a compositional biplot will be created or not
 
     Output:
     otu_coords: coordinates representing the N most prevalent taxa in otu_table
