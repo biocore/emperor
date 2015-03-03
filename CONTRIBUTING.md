@@ -88,6 +88,8 @@ git push origin my-topic-branch
 
 11. Issue a [pull request](https://help.github.com/articles/using-pull-requests) on the GitHub website to request that we merge your branch's changes into Emperor's master branch. One of the Emperor developers will review your code at this stage. If we request changes (which is very common), *don't issue a new pull request*. You should make changes on your topic branch, and commit and push them to GitHub. Your pull request will update automatically.
 
+12. Once your pull request is submitted and if there are no merge conflicts, you should see an automatic message posted by [@emperor-helper](https://github.com/emperor-helper). The message will include a link to the built script usage examples (the use-cases that are described at the top of `make_emperor.py --help`). The goal is to provide an easy way for reviewers and developers to verify that the GUI is functional and works as expected **with your new changes**. For more information about @emperor-helper, see this [project](https://github.com/eldeveloper/worker).
+
 
 Coding Guidelines
 -----------------
