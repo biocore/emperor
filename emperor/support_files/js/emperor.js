@@ -2,7 +2,7 @@
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2013, Emperor"
  * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza",
- *                "Jackson Chen", "Emily TerAvest"]
+ *                "Jackson Chen", "Emily TerAvest", "Jamie Morton"]
  * __license__ = "BSD"
  * __version__ = "0.9.51-dev"
  * __maintainer__ = "Meg Pirrung"
@@ -889,19 +889,33 @@ function toggleTaxaLabels(){
 }
 
 /* Turn on and off the spheres representing the biplots on screen */
-function toggleBiplotVisibility(){
+function toggleSphereBiplotVisibility(){
 	// reduce the opacity to zero if the element should be off or to 0.5
 	// if the element is supposed to be present; 0.5 is the default value
 	if(!document.biplotsvisibility.elements[0].checked){
 		for (index in g_plotTaxa){
 			g_mainScene.remove(g_plotTaxa[index]);
+		}
+	}
+	else{
+		for (index in g_plotTaxa){
+			g_mainScene.add(g_plotTaxa[index])
+		}
+	}
+}
+
+/* Turn on and off the spheres representing the biplots on screen */
+function toggleArrowBiplotVisibility(){
+	// reduce the opacity to zero if the element should be off or to 0.5
+	// if the element is supposed to be present; 0.5 is the default value
+	if(!document.biplotsvisibility.elements[1].checked){
+		for (index in g_plotTaxa){
 		        g_mainScene.remove(g_plotTaxaArrows[index]);
 
 		}
 	}
 	else{
 		for (index in g_plotTaxa){
-			g_mainScene.add(g_plotTaxa[index])
 		        g_mainScene.add(g_plotTaxaArrows[index]);
 		}
 	}

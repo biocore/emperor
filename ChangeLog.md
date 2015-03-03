@@ -12,6 +12,9 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 
 * Reorganized `emperor/support_files/` to separate Emperor's source code from third-party packages.
 
+### New features
+
+* Adding toggle button to display vectors from the origin to each of the taxa
 
 Emperor 0.9.51 (5 Feb 2015)
 ---------------------------
@@ -51,7 +54,7 @@ Emperor 0.9.4 (10 Sept 2014)
 * Supports both NumPy 1.7 and 1.8.
 * Depends on scikit-bio 0.1.4.
 * Emperor provides a Python object that is IPython aware (emperor.Emperor) that will display a usable plot from within the IPython notebook.
-* Each of the categories in the Colors tab displays the # of samples. Also, the labels svg has this information.  
+* Each of the categories in the Colors tab displays the # of samples. Also, the labels svg has this information.
 * Emperor will multiply by 100 the percentages explained in the input file if PC1 is lower than 1. This behavior can be stopped using --pct_variation_below_one.
 
 *Bug Fixes*

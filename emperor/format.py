@@ -553,7 +553,8 @@ _TAXA_LABELS_COLOR_SELECTOR = """
 _BIPLOT_VISIBILITY_SELECTOR = """
             <br>
             <form name="biplotsvisibility">
-            <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
+            <input type="checkbox" onClick="toggleSphereBiplotVisibility()" checked>Biplots Sphere Visibility</input>
+            <input type="checkbox" onClick="toggleArrowBiplotVisibility()" checked>Biplots Arrow Visibility</input>
             </form>
             <br>"""
 
