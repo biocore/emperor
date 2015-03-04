@@ -14,7 +14,7 @@ __status__ = "Development"
 
 from unittest import TestCase, main
 from shutil import rmtree
-from os.path import exists, join
+from os.path import exists, join, abspath, dirname
 from tempfile import gettempdir
 
 from numpy import array
@@ -22,7 +22,8 @@ from numpy.testing import assert_almost_equal
 
 from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
     preprocess_mapping_file, preprocess_coords_file, EmperorInputFilesError,
-    fill_mapping_field_from_mapping_file, sanitize_mapping_file)
+    fill_mapping_field_from_mapping_file, sanitize_mapping_file,
+    guess_coordinates_files)
 
 class TopLevelTests(TestCase):
 
@@ -395,6 +396,22 @@ class TopLevelTests(TestCase):
 ["PC356", 'ACAGACCACTCA', 'Control', '20061126', 'Control_mouse_I.D._356'],
 ['PC.481', 'ACAGCACTAG', 'Control', '20070314', 'Control_mouse_I.D._481'],
 ['PC.593', 'AGCAGCACTTGT', 'Control', '20071210', 'Control_mouse_I.D._593']])
+
+    def test_guess_coordinates_files(self):
+        dir_path = join(abspath(dirname(__file__)), 'test_data')
+
+        fps = guess_coordinates_files(dir_path)
+        # get a list of the files we expect
+        exp = [join(dir_path,
+                    'unweighted_unifrac_pc_transformed_reference.txt'),
+               join(dir_path, 'weighted_unifrac_pc_transformed_q1.txt')]
+        self.assertItemsEqual(fps, exp)
+
+        # testing a directory with only files that should be ignored
+        dir_path = join(abspath(dirname(__file__)), 'test_data',
+                        'dir-with-only-hidden-files')
+        fps = guess_coordinates_files(dir_path)
+        self.assertItemsEqual(fps, [])
 
 
 MAPPING_FILE_DATA = [
