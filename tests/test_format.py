@@ -225,26 +225,27 @@ class TopLevelTests(TestCase):
             self.comparison_coords_headers, self.comparison_coords_data, 11)
 
     def test_format_emperor_html_footer_string(self):
+        self.maxDiff=5000
         """Test correct formatting of the footer string"""
         # footer for a jackknifed pcoa plot without biplots
         out_string = format_emperor_html_footer_string(False, True)
-        self.assertEqual(out_string, EXPECTED_FOOTER_A)
+        self.assertItemsEqual(out_string.split('/'), EXPECTED_FOOTER_A.split('/'))
 
         # footer for biplots without jackknifing
         out_string = format_emperor_html_footer_string(True, False)
-        self.assertEqual(out_string, EXPECTED_FOOTER_B)
+        self.assertItemsEqual(out_string.split('/'), EXPECTED_FOOTER_B.split('/'))
 
         # no biplots nor jackknifing
         out_string = format_emperor_html_footer_string(False, False)
-        self.assertEqual(out_string, EXPECTED_FOOTER_C)
+        self.assertItemsEqual(out_string.split('/'), EXPECTED_FOOTER_C.split('/'))
 
         #  no biplots no jackknifing but with vectors
         out_string = format_emperor_html_footer_string(False, False, True)
-        self.assertEqual(out_string, EXPECTED_FOOTER_D)
+        self.assertItemsEqual(out_string.split('/'), EXPECTED_FOOTER_D.split('/'))
 
         # comparison plot
         out_string = format_emperor_html_footer_string(False, False, False,True)
-        self.assertEqual(out_string, EXPECTED_FOOTER_E)
+        self.assertItemsEqual(out_string.split('/'), EXPECTED_FOOTER_E.split('/'))
 
     def test_format_emperor_autograph(self):
         """Test signatures are created correctly for each of language"""
@@ -624,7 +625,6 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby" class="emperor-tab-div">
             <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
-            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
@@ -874,7 +874,6 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby" class="emperor-tab-div">
             <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
-            
             <br>
             <table>
                 <tr><td><div id="taxaspherescolor" class="colorbox" name="taxaspherescolor"></div></td><td title="taxacolor">Taxa Spheres Color</td></tr>
@@ -889,7 +888,8 @@ document.getElementById("logotable").style.display = 'none';
         <div id="showby" class="emperor-tab-div">
             <br>
             <form name="biplotsvisibility">
-            <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
+            <input type="checkbox" onClick="toggleBiplotVisibility(false)" checked>Taxa Sphere Visibility</input>
+            <input type="checkbox" onClick="toggleBiplotVisibility(true)" checked>Taxa Arrow Visibility</input>
             </form>
             <br>
             <table class="emperor-tab-table">
@@ -1135,7 +1135,6 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby" class="emperor-tab-div">
             <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
-            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
@@ -1381,7 +1380,6 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby" class="emperor-tab-div">
             <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
-            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
@@ -1631,7 +1629,6 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby" class="emperor-tab-div">
             <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
-            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>

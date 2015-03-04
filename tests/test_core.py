@@ -36,7 +36,7 @@ class TopLevelTests(TestCase):
 
     def test_str(self):
         emp = Emperor(self.ord_res, self.data, self.headers)
-        self.assertEqual(HTML_STRING, str(emp))
+        self.assertItemsEqual(HTML_STRING.split('/'), str(emp).split('/'))
 
     def test_ids(self):
         emp = Emperor(self.ord_res, self.data, self.headers)
@@ -266,7 +266,6 @@ document.getElementById("logotable").style.display = 'none';
         </div>
         <div id="colorby" class="emperor-tab-div">
             <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
-            
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>

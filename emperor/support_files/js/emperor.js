@@ -889,34 +889,27 @@ function toggleTaxaLabels(){
 }
 
 /* Turn on and off the spheres representing the biplots on screen */
-function toggleSphereBiplotVisibility(){
+function toggleBiplotVisibility(toggleArrow){
 	// reduce the opacity to zero if the element should be off or to 0.5
 	// if the element is supposed to be present; 0.5 is the default value
-	if(!document.biplotsvisibility.elements[0].checked){
+        toggleArrow = typeof toggleArrow !== 'undefined' ? toggleArrow : false
+        arrowBox = toggleArrow ? 1 : 0
+	if(!document.biplotsvisibility.elements[arrowBox].checked){
 		for (index in g_plotTaxa){
-			g_mainScene.remove(g_plotTaxa[index]);
+		        if(toggleArrow){
+			      g_mainScene.remove(g_plotTaxaArrows[index]);
+                        }else{
+                              g_mainScene.remove(g_plotTaxa[index]);
+                        }
 		}
 	}
 	else{
 		for (index in g_plotTaxa){
-			g_mainScene.add(g_plotTaxa[index])
-		}
-	}
-}
-
-/* Turn on and off the spheres representing the biplots on screen */
-function toggleArrowBiplotVisibility(){
-	// reduce the opacity to zero if the element should be off or to 0.5
-	// if the element is supposed to be present; 0.5 is the default value
-	if(!document.biplotsvisibility.elements[1].checked){
-		for (index in g_plotTaxa){
-		        g_mainScene.remove(g_plotTaxaArrows[index]);
-
-		}
-	}
-	else{
-		for (index in g_plotTaxa){
-		        g_mainScene.add(g_plotTaxaArrows[index]);
+		        if(toggleArrow){
+			      g_mainScene.add(g_plotTaxaArrows[index]);
+                        }else{
+                              g_mainScene.add(g_plotTaxa[index]);
+                        }
 		}
 	}
 }
