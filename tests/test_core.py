@@ -36,7 +36,8 @@ class TopLevelTests(TestCase):
 
     def test_str(self):
         emp = Emperor(self.ord_res, self.data, self.headers)
-        self.assertItemsEqual(HTML_STRING.split('/'), str(emp).split('/'))
+        self.assertItemsEqual(HTML_STRING.split('\n'), str(emp).split('\n'))
+        self.assertEqual(HTML_STRING, str(emp))
 
     def test_ids(self):
         emp = Emperor(self.ord_res, self.data, self.headers)
