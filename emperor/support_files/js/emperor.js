@@ -889,6 +889,7 @@ function toggleTaxaLabels(){
 }
 
 /* Turn on and off the spheres representing the biplots on screen
+
 If the toggleArrow variable is true, then only the visibility of the taxa vectors will be altered
 Otherwise, only the visibility of the */
 function toggleBiplotVisibility(toggleArrow){
