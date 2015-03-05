@@ -6,7 +6,7 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 
 ### Bug Fixes
 
-* Fix problem where `make_emperor.py` would attempt to parse `Icon?` files when a directory was passed via the `-i` option ([#323](https://github.com/biocore/emperor/issues/323)). 
+* Fix problem where `make_emperor.py` would attempt to parse `Icon?` files when a directory was passed via the `-i` option ([#323](https://github.com/biocore/emperor/issues/323)).
 * Fix bug where Emperor would try to animate trajectories with a single timepoint i.e. a single unique value in the gradient category.
 
 ### Miscellaneous
@@ -15,7 +15,7 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 
 ### New features
 
-* Adding toggle button to display vectors from the origin to each of the taxa
+* Biplots now include arrows, which represent taxa variances. These can be turned off using the `Taxa arrow visibility` checkbox.
 
 Emperor 0.9.51 (5 Feb 2015)
 ---------------------------

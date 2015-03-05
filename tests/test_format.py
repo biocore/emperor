@@ -229,23 +229,28 @@ class TopLevelTests(TestCase):
         """Test correct formatting of the footer string"""
         # footer for a jackknifed pcoa plot without biplots
         out_string = format_emperor_html_footer_string(False, True)
-        self.assertItemsEqual(out_string.split('/'), EXPECTED_FOOTER_A.split('/'))
+        self.assertItemsEqual(out_string.split('\n'), EXPECTED_FOOTER_A.split('\n'))
+        self.assertEqual(out_string, EXPECTED_FOOTER_A)
 
         # footer for biplots without jackknifing
         out_string = format_emperor_html_footer_string(True, False)
-        self.assertItemsEqual(out_string.split('/'), EXPECTED_FOOTER_B.split('/'))
+        self.assertItemsEqual(out_string.split('\n'), EXPECTED_FOOTER_B.split('\n'))
+        self.assertEqual(out_string, EXPECTED_FOOTER_B)
 
         # no biplots nor jackknifing
         out_string = format_emperor_html_footer_string(False, False)
-        self.assertItemsEqual(out_string.split('/'), EXPECTED_FOOTER_C.split('/'))
+        self.assertItemsEqual(out_string.split('\n'), EXPECTED_FOOTER_C.split('\n'))
+        self.assertEqual(out_string, EXPECTED_FOOTER_C)
 
         #  no biplots no jackknifing but with vectors
         out_string = format_emperor_html_footer_string(False, False, True)
-        self.assertItemsEqual(out_string.split('/'), EXPECTED_FOOTER_D.split('/'))
+        self.assertItemsEqual(out_string.split('\n'), EXPECTED_FOOTER_D.split('\n'))
+        self.assertEqual(out_string, EXPECTED_FOOTER_D)
 
         # comparison plot
         out_string = format_emperor_html_footer_string(False, False, False,True)
-        self.assertItemsEqual(out_string.split('/'), EXPECTED_FOOTER_E.split('/'))
+        self.assertItemsEqual(out_string.split('\n'), EXPECTED_FOOTER_E.split('\n'))
+        self.assertEqual(out_string, EXPECTED_FOOTER_E)
 
     def test_format_emperor_autograph(self):
         """Test signatures are created correctly for each of language"""

@@ -888,30 +888,22 @@ function toggleTaxaLabels(){
 	}
 }
 
-/* Turn on and off the spheres representing the biplots on screen */
+/* Turn on and off the spheres representing the biplots on screen
+If the toggleArrow variable is true, then only the visibility of the taxa vectors will be altered
+Otherwise, only the visibility of the */
 function toggleBiplotVisibility(toggleArrow){
 	// reduce the opacity to zero if the element should be off or to 0.5
 	// if the element is supposed to be present; 0.5 is the default value
-        toggleArrow = typeof toggleArrow !== 'undefined' ? toggleArrow : false
-        arrowBox = toggleArrow ? 1 : 0
-	if(!document.biplotsvisibility.elements[arrowBox].checked){
-		for (index in g_plotTaxa){
-		        if(toggleArrow){
-			      g_mainScene.remove(g_plotTaxaArrows[index]);
-                        }else{
-                              g_mainScene.remove(g_plotTaxa[index]);
-                        }
-		}
-	}
-	else{
-		for (index in g_plotTaxa){
-		        if(toggleArrow){
-			      g_mainScene.add(g_plotTaxaArrows[index]);
-                        }else{
-                              g_mainScene.add(g_plotTaxa[index]);
-                        }
-		}
-	}
+    toggleArrow = typeof toggleArrow !== 'undefined' ? toggleArrow : false;
+    arrowBox = toggleArrow ? 1 : 0
+    updater = document.biplotsvisibility.elements[arrowBox].checked ?
+                 function(data, index) {g_mainScene.add(data[index]);} :
+                 function(data, index) {g_mainScene.remove(data[index]);};
+    data_to_update = toggleArrow ? g_plotTaxaArrows : g_plotTaxa;
+
+    for (index in g_plotTaxa) {
+	updater(data_to_update, index);
+    }
 }
 
 /* Turn on and off the lines connecting the samples being compared */
@@ -1469,9 +1461,9 @@ function drawTaxa(){
  					   g_taxaPositions[key]['y'],
 					   g_taxaPositions[key]['z']],
 					   whiteColor, 2);
-		g_elementsGroup.add(taxaVector)
+		g_elementsGroup.add(taxaVector);
 		g_mainScene.add(taxaVector);
-		g_plotTaxaArrows[key] = taxaVector
+		g_plotTaxaArrows[key] = taxaVector;
 	}
 }
 
@@ -1721,8 +1713,6 @@ function makeLine(coords_a, coords_b, color, width){
 
 	return line;
 }
-
-
 
 /*Draw each of the lines that represent the X, Y and Z axes in the plot
 
