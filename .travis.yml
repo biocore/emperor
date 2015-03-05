@@ -21,7 +21,7 @@ script:
   # execute the full test suite
   - python tests/all_tests.py --emperor_scripts_dir scripts
   # we just check coverage in the latest version of NumPy
-  - if [ ${WITH_COVERAGE} ]; nosetests emperor --with-coverage --cover-package=emperor --cover-inclusive; fi
+  - if [ ${WITH_COVERAGE} ]; then nosetests emperor --with-coverage --cover-package=emperor --cover-inclusive; fi
   - make -C doc html
 after_success:
   - coveralls
