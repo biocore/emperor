@@ -6,13 +6,17 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 
 ### Bug Fixes
 
-* Fix problem where `make_emperor.py` would attempt to parse `Icon?` files when a directory was passed via the `-i` option ([#323](https://github.com/biocore/emperor/issues/323)). 
+* Fix problem where `make_emperor.py` would attempt to parse `Icon?` files when a directory was passed via the `-i` option ([#323](https://github.com/biocore/emperor/issues/323)).
 * Fix bug where Emperor would try to animate trajectories with a single timepoint i.e. a single unique value in the gradient category.
 
 ### Miscellaneous
 
 * Reorganized `emperor/support_files/` to separate Emperor's source code from third-party packages.
 * Add code coverage support through [Coveralls](https://coveralls.io/r/biocore/emperor).
+
+### New features
+
+* Biplots now include arrows, which represent taxa variances. These can be turned off using the `Taxa arrow visibility` checkbox.
 
 Emperor 0.9.51 (5 Feb 2015)
 ---------------------------
@@ -52,7 +56,7 @@ Emperor 0.9.4 (10 Sept 2014)
 * Supports both NumPy 1.7 and 1.8.
 * Depends on scikit-bio 0.1.4.
 * Emperor provides a Python object that is IPython aware (emperor.Emperor) that will display a usable plot from within the IPython notebook.
-* Each of the categories in the Colors tab displays the # of samples. Also, the labels svg has this information.  
+* Each of the categories in the Colors tab displays the # of samples. Also, the labels svg has this information.
 * Emperor will multiply by 100 the percentages explained in the input file if PC1 is lower than 1. This behavior can be stopped using --pct_variation_below_one.
 
 *Bug Fixes*

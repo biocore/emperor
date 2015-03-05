@@ -2,7 +2,7 @@
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2013, Emperor"
  * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza",
- *                "Jackson Chen", "Emily TerAvest"]
+ *                "Jackson Chen", "Emily TerAvest", "Jamie Morton"]
  * __license__ = "BSD"
  * __version__ = "0.9.51-dev"
  * __maintainer__ = "Meg Pirrung"
@@ -14,6 +14,7 @@
 var g_plotSpheres = {};
 var g_plotEllipses = {};
 var g_plotTaxa = {};
+var g_plotTaxaArrows = {};
 var g_plotVectors = {};
 var g_plotEdges = {};
 var g_parallelPlots = []
@@ -886,20 +887,23 @@ function toggleTaxaLabels(){
 	}
 }
 
-/* Turn on and off the spheres representing the biplots on screen */
-function toggleBiplotVisibility(){
+/* Turn on and off the spheres representing the biplots on screen
+
+   If the toggleArrow variable is true, then only the visibility of the taxa vectors will be altered
+ */
+function toggleBiplotVisibility(toggleArrow){
 	// reduce the opacity to zero if the element should be off or to 0.5
 	// if the element is supposed to be present; 0.5 is the default value
-	if(!document.biplotsvisibility.elements[0].checked){
-		for (index in g_plotTaxa){
-			g_mainScene.remove(g_plotTaxa[index]);
-		}
-	}
-	else{
-		for (index in g_plotTaxa){
-			g_mainScene.add(g_plotTaxa[index])
-		}
-	}
+    toggleArrow = typeof toggleArrow !== 'undefined' ? toggleArrow : false;
+    arrowBox = toggleArrow ? 1 : 0
+    updater = document.biplotsvisibility.elements[arrowBox].checked ?
+                 function(data, index) {g_mainScene.add(data[index]);} :
+                 function(data, index) {g_mainScene.remove(data[index]);};
+    data_to_update = toggleArrow ? g_plotTaxaArrows : g_plotTaxa;
+
+    for (index in g_plotTaxa) {
+	updater(data_to_update, index);
+    }
 }
 
 /* Turn on and off the lines connecting the samples being compared */
@@ -1436,8 +1440,8 @@ function drawTaxa(){
 
 		// set the position
 		mesh.position.set(g_taxaPositions[key]['x'],
-			g_taxaPositions[key]['y'],
-			g_taxaPositions[key]['z']);
+			          g_taxaPositions[key]['y'],
+			          g_taxaPositions[key]['z']);
 
 		// the legacy color of these spheres is white
 		mesh.material.color = whiteColor;
@@ -1450,6 +1454,16 @@ function drawTaxa(){
 		g_elementsGroup.add(mesh)
 		g_mainScene.add(mesh);
 		g_plotTaxa[key] = mesh;
+
+	        // add the line from the origin to the element
+	        var taxaVector = makeLine([0, 0, 0,],
+					  [g_taxaPositions[key]['x'],
+ 					   g_taxaPositions[key]['y'],
+					   g_taxaPositions[key]['z']],
+					   whiteColor, 2);
+		g_elementsGroup.add(taxaVector);
+		g_mainScene.add(taxaVector);
+		g_plotTaxaArrows[key] = taxaVector;
 	}
 }
 

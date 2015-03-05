@@ -553,7 +553,9 @@ _TAXA_LABELS_COLOR_SELECTOR = """
 _BIPLOT_VISIBILITY_SELECTOR = """
             <br>
             <form name="biplotsvisibility">
-            <input type="checkbox" onClick="toggleBiplotVisibility()" checked>Biplots Visibility</input>
+            <input type="checkbox" onClick="toggleBiplotVisibility(false)" checked>Taxa Sphere Visibility</input>
+            <br><br>
+            <input type="checkbox" onClick="toggleBiplotVisibility(true)" checked>Taxa Arrow Visibility</input>
             </form>
             <br>"""
 
@@ -651,8 +653,7 @@ document.getElementById("logotable").style.display = 'none';
             </div>
         </div>
         <div id="colorby" class="emperor-tab-div">
-            <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>
-            {biplot_spheres_color_selector}
+            <select id="colormap-drop-down" class="emperor-tab-drop-down" onchange="colorByMenuChanged()"></select>{biplot_spheres_color_selector}
             <br><br>
             <select id="colorbycombo" onchange="colorByMenuChanged()" class="emperor-tab-drop-down">
             </select>
