@@ -736,7 +736,6 @@ function colorChanged(catValue,color) {
 function colorChangedForTaxaSpheres(color){
 	for (index in g_plotTaxa){
 		g_plotTaxa[index].material.color.setHex(color)
-
 	}
 }
 
