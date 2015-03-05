@@ -12,6 +12,7 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 ### Miscellaneous
 
 * Reorganized `emperor/support_files/` to separate Emperor's source code from third-party packages.
+* Add code coverage support through [Coveralls](https://coveralls.io/r/biocore/emperor).
 
 ### New features
 
