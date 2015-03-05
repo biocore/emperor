@@ -894,6 +894,7 @@ document.getElementById("logotable").style.display = 'none';
             <br>
             <form name="biplotsvisibility">
             <input type="checkbox" onClick="toggleBiplotVisibility(false)" checked>Taxa Sphere Visibility</input>
+            <br><br>
             <input type="checkbox" onClick="toggleBiplotVisibility(true)" checked>Taxa Arrow Visibility</input>
             </form>
             <br>
