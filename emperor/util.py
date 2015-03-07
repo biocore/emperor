@@ -1,16 +1,4 @@
-#!/usr/bin/env python
-# File created on 25 Jan 2013
 from __future__ import division
-
-__author__ = "Yoshiki Vazquez Baeza"
-__copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Yoshiki Vazquez Baeza", "Antonio Gonzalez Pena"]
-__license__ = "BSD"
-__version__ = "0.9.51-dev"
-__maintainer__ = "Yoshiki Vazquez Baeza"
-__email__ = "yoshiki89@gmail.com"
-__status__ = "Development"
-
 
 from numpy import ndarray, array, ones, zeros, vstack
 from string import strip
@@ -24,25 +12,30 @@ from qcli.util import qcli_system_call
 from emperor.qiime_backports.format import format_mapping_file
 from emperor.qiime_backports.filter import filter_mapping_file
 from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
-    remove_nans, scale_custom_coords)
+                                                   remove_nans,
+                                                   scale_custom_coords)
 from emperor.qiime_backports.parse import (mapping_file_to_dict,
-    parse_metadata_state_descriptions)
+                                           parse_metadata_state_descriptions)
 from emperor.qiime_backports.util import (MetadataMap, is_valid_git_refname,
-    is_valid_git_sha1, summarize_pcoas)
+                                          is_valid_git_sha1, summarize_pcoas)
 
 from emperor import __version__ as emperor_library_version
+
 
 class EmperorSupportFilesError(IOError):
     """Exception for missing support files"""
     pass
 
+
 class EmperorInputFilesError(IOError):
     """Exception for missing support files"""
     pass
 
+
 class EmperorUnsupportedComputation(ValueError):
     """Exception for computations that lack a meaning"""
     pass
+
 
 # Based on qiime/qiime/util.py
 def get_emperor_library_version():
@@ -66,6 +59,7 @@ def get_emperor_library_version():
     else:
         return '%s' % emperor_version
 
+
 def get_emperor_project_dir():
     """ Returns the top-level Emperor directory
 
@@ -78,9 +72,11 @@ def get_emperor_project_dir():
     # Return the directory containing the directory containing util.py
     return dirname(current_dir_path)
 
+
 def get_emperor_support_files_dir():
     """Returns the path for the support files of the project """
     return join(get_emperor_project_dir(), 'emperor/support_files/')
+
 
 def copy_support_files(file_path):
     """Copy the support files to a named destination
@@ -99,14 +95,16 @@ def copy_support_files(file_path):
     # directory into another existing directory, hence the system call.
     # use double quotes for the paths to escape any invalid chracter(s)/spaces
     cmd = 'cp -R "%s/"* "%s"' % (get_emperor_support_files_dir(),
-        abspath(file_path))
+                                 abspath(file_path))
     cmd_o, cmd_e, cmd_r = qcli_system_call(cmd)
 
     if cmd_e:
-        raise EmperorSupportFilesError, "Error found whilst trying to copy " +\
-            "the support files:\n%s\n Could not execute: %s" % (cmd_e, cmd)
+        raise EmperorSupportFilesError(("Error found whilst trying to copy ",
+                                       " the support files:\n{}".format(cmd_e),
+                                        "\nCould not execute: {}".format(cmd)))
 
     return
+
 
 def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
                             clones=0):
@@ -140,7 +138,7 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
     # each element needs several columns to be merged
     for new_column in merge:
         indices = [headers.index(header_name) for header_name in
-            new_column.split('&&')]
+                   new_column.split('&&')]
 
         # join all the fields of the metadata that are listed in indices
         for line in data:
@@ -171,10 +169,11 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
             f_unique = metadata.hasUniqueCategoryValues
             f_single = metadata.hasSingleCategoryValue
         else:
-            f_unique = lambda x: metadata.hasUniqueCategoryValues(x) and\
-                                 x not in columns
-            f_single = lambda x: metadata.hasSingleCategoryValue(x) and\
-                                 x not in columns
+            def f_unique(x):
+                metadata.hasUniqueCategoryValues(x) and x not in columns
+
+            def f_single(x):
+                metadata.hasSingleCategoryValue(x) and x not in columns
 
         # find columns that have values that are all unique
         if unique:
@@ -190,7 +189,8 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
 
         # remove the single or unique columns
         data, headers = keep_columns_from_mapping_file(data, headers,
-            columns_to_remove, negate=True)
+                                                       columns_to_remove,
+                                                       negate=True)
     else:
         # when a None is contained in columns, we imply we want to use all the
         # available categories in the mapping file, thus just overwrite the
@@ -198,19 +198,19 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
         if None in columns:
             columns = headers[:]
 
-
     # remove anything not specified in the input
     data, headers = keep_columns_from_mapping_file(data, headers, columns)
 
     # sanitize the mapping file data and headers
     data, headers = sanitize_mapping_file(data, headers)
 
-    # clones mean: replicate the metadata retagging the sample ids with a suffix
+    # clones mean: replicate the metadata retagging the sample ids with a
+    # suffix
     if clones:
         out_data = []
         for index in range(0, clones):
             out_data.extend([[element[0]+'_%d' % index]+element[1::]
-                for element in data])
+                             for element in data])
         data = out_data
 
     return data, headers
@@ -250,29 +250,30 @@ def keep_columns_from_mapping_file(data, headers, columns, negate=False):
             continue
 
     # keep the elements at the positions indices
-    keep_elements = lambda elements, indices :[element for i, element in
-        enumerate(elements) if i in indices]
+    def keep_elements(elements, indices):
+        [element for i, element in enumerate(elements) if i in indices]
 
     headers = keep_elements(headers, indices_of_interest)
     data = [keep_elements(row, indices_of_interest) for row in data]
 
     return data, headers
 
+
 def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
-                        coords_pct, mapping_header, mapping_data,
-                        custom_axes=None, jackknifing_method=None,
-                        is_comparison=False,
-                        pct_variation_below_one=False):
+                           coords_pct, mapping_header, mapping_data,
+                           custom_axes=None, jackknifing_method=None,
+                           is_comparison=False,
+                           pct_variation_below_one=False):
     """Process a PCoA data and handle customizations in the contents
 
     Inputs:
     coords_header: list of sample identifiers in the PCoA file _or_ list of
     lists with sample identifiers for each coordinate file (if jackknifing or
-    comparing plots)
-    coords_data: matrix of coordinates in the PCoA file _or_ list of numpy
-    arrays with coordinates for each file (if jackknifing or comparing plots)
-    coords_eigenvals: numpy array with eigenvalues for the coordinates file _or_
-    list of numpy arrays with the eigenvalues (if jackknifing or comparing plots
+    comparing plots) coords_data: matrix of coordinates in the PCoA file _or_
+    list of numpy arrays with coordinates for each file (if jackknifing or
+    comparing plots) coords_eigenvals: numpy array with eigenvalues for the
+    coordinates file _or_ list of numpy arrays with the eigenvalues (if
+    jackknifing or comparing plots
     )
     coords_pct: numpy array with a the percent explained by each principal
     coordinates axis _or_ a list of lists with numpy arrays (if jackknifing or
@@ -303,8 +304,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
 
     This controller function handles any customization that has to be done to
     the PCoA data prior to the formatting. Note that the first element in each
-    list (coords, headers, eigenvalues & percents) will be considered the master
-    set of coordinates.
+    list (coords, headers, eigenvalues & percents) will be considered the
+    master set of coordinates.
 
     Raises: AssertionError if a comparison plot is requested but a list of data
     is not passed as input
@@ -312,8 +313,9 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
 
     # prevent obscure and obfuscated errors
     if is_comparison:
-        assert type(coords_data) == list, "Cannot process a comparison with "+\
-            "the data from a single coordinates file"
+        assert type(coords_data) == list, ("Cannot process a comparison with ",
+                                           "the data from a single ",
+                                           "coordinates file")
 
     mapping_file = [mapping_header] + mapping_data
     coords_file = [coords_header, coords_data]
@@ -326,20 +328,21 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             get_custom_coords(custom_axes, mapping_file, coords_file)
             remove_nans(coords_file)
             scale_custom_coords(custom_axes, coords_file)
-    elif type(coords_data) == list and is_comparison == False:
+    elif type(coords_data) == list and not is_comparison:
         # take the first pcoa file as the master set of coordinates
         master_pcoa = [coords_header[0], coords_data[0],
-            coords_eigenvals[0], coords_pct[0]]
+                       coords_eigenvals[0], coords_pct[0]]
 
         # support pcoas must be a list of lists where each list contain
         # all the elements that compose a coordinates file
         support_pcoas = [[h, d, e, p] for h, d, e, p in zip(coords_header,
-            coords_data, coords_eigenvals, coords_pct)]
+                         coords_data, coords_eigenvals, coords_pct)]
 
         # do not apply procrustes, at least not for now
         coords_data, coords_low, coords_high, eigenvalues_average,\
             identifiers = summarize_pcoas(master_pcoa, support_pcoas,
-                method=jackknifing_method, apply_procrustes=False)
+                                          method=jackknifing_method,
+                                          apply_procrustes=False)
 
         # custom axes and jackknifing is a tricky thing to do, you only have to
         # add the custom values to the master file which is represented as the
@@ -358,7 +361,7 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             coords_high[:, 0:axes] = ones([coords_high.shape[0], axes])*0.00001
             coords_data = coords_file[1]
 
-        if master_pcoa[3][0]<1.0 and not pct_variation_below_one:
+        if master_pcoa[3][0] < 1.0 and not pct_variation_below_one:
             master_pcoa[3] = master_pcoa[3]*100
 
         # return a value containing coords_low and coords_high
@@ -377,7 +380,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             coords_i = coords_data[index]
 
             # tag each header with the the number in which those coords came in
-            out_headers.extend([element+'_%d' % index for element in headers_i])
+            out_headers.extend([element+'_%d' % index for element in
+                                headers_i])
 
             if index == 0:
                 # numpy can only stack things if they have the same shape
@@ -394,13 +398,13 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
 
         if custom_axes:
             # this condition deals with the fact that in order for the custom
-            # axes to be added into the original coordinates, we have to add the
-            # suffix for the sample identifiers that the coordinates have
+            # axes to be added into the original coordinates, we have to add
+            # the suffix for the sample identifiers that the coordinates have
             if clones:
                 out_data = []
                 for index in range(0, clones):
                     out_data.extend([[element[0]+'_%d' % index]+element[1::]
-                        for element in mapping_data])
+                                     for element in mapping_data])
                 mapping_file = [mapping_header] + out_data
 
             # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
@@ -408,13 +412,14 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             remove_nans(coords_file)
             scale_custom_coords(custom_axes, coords_file)
 
-    if coords_pct[0]<1.0 and not pct_variation_below_one:
+    if coords_pct[0] < 1.0 and not pct_variation_below_one:
         coords_pct = coords_pct*100
 
     # if no coords summary is applied, return None in the corresponding values
     # note that the value of clones will be != 0 for a comparison plot
     return coords_file[0], coords_file[1], coords_eigenvals, coords_pct, None,\
         None, clones
+
 
 def _is_numeric(x):
     """Return true if x is a numeric value, return false else
@@ -428,8 +433,9 @@ def _is_numeric(x):
         return False
     return True
 
+
 def fill_mapping_field_from_mapping_file(data, headers, values,
-                                        criteria=_is_numeric):
+                                         criteria=_is_numeric):
     """
     Inputs:
     data: mapping file data
@@ -453,15 +459,16 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     for v in values:
         colname, vals = map(strip, v.split(':', 1))
         vals = map(strip, vals.split(','))
-        assert len(vals)==1,  "You can only pass 1 replacement value: %s" % vals
+        assert len(vals) == 1, ("You can only pass 1 replacement value:",
+                                " {}".format(vals))
         if colname not in values_dict:
             values_dict[colname] = []
         values_dict[colname].extend(vals)
 
     for key, v in values_dict.items():
         for value in v:
-            # variable that is going to contain the name of the column for multiple
-            # subtitutions
+            # variable that is going to contain the name of the column for
+            # multiple subtitutions
             column = None
             # variable to control if the values with in a column exist
             used_column_index = False
@@ -469,15 +476,17 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
             try:
                 header_index = headers.index(key)
             except ValueError:
-                raise EmperorInputFilesError, ("The header %s does not exist in the "
-                    "mapping file" % key)
+                raise EmperorInputFilesError(("The header {}".format(key),
+                                              "does not exist in the ",
+                                              "mapping file"))
 
             # for the special case of multiple entries
             if '==' in value and '=' in value:
                 arrow_index = value.index('==')
                 equal_index = value.rindex('=')
-                assert ((arrow_index+2)!=equal_index and (arrow_index+1)!=equal_index), \
-                    "Not properly formatted: %s" % value
+                assert(arrow_index+2) != equal_index and\
+                      (arrow_index+1) != equal_index,\
+                    "Not properly formatted: {}".format(value)
 
                 column = value[:arrow_index]
                 column_value = value[arrow_index+2:equal_index]
@@ -486,8 +495,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                 try:
                     column_index = headers.index(column)
                 except ValueError:
-                    raise EmperorInputFilesError, ("The header %s does not exist in the "
-                        "mapping file" % column)
+                    raise EmperorInputFilesError(("The header ",
+                                                  "%s does not".format(column),
+                                                  "exist in the mapping file"))
 
             # fill in the data
             fill_the_data = False
@@ -504,10 +514,14 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                             fill_the_data = True
 
             if not used_column_index and fill_the_data:
-                raise EmperorInputFilesError, ("This value '%s' doesn't exist in '%s' or "
-                "it wasn't used in for processing" % (column_value, column))
+                raise EmperorInputFilesError(("This value ",
+                                              "'{}' does".format(column_value),
+                                              " not exist in",
+                                              "'{}' or it ".format(column),
+                                              "wasn't used in for processing"))
 
     return out_data
+
 
 def sanitize_mapping_file(data, headers):
     """Clean the strings in the mapping file for use with javascript
@@ -527,10 +541,11 @@ def sanitize_mapping_file(data, headers):
 
     # replace single and double quotes with escaped versions of them
     for line in all_lines:
-        out_lines.append([element.replace("'","").replace('"','')
-            for element in line])
+        out_lines.append([element.replace("'", "").replace('"', '')
+                          for element in line])
 
     return out_lines[1::], out_lines[0]
+
 
 def guess_coordinates_files(dir_path):
     """Given a directory return the file paths that can contain coordinates
