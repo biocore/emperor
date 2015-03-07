@@ -99,9 +99,9 @@ def copy_support_files(file_path):
     cmd_o, cmd_e, cmd_r = qcli_system_call(cmd)
 
     if cmd_e:
-        raise EmperorSupportFilesError(("Error found whilst trying to copy ",
-                                       " the support files:\n{}".format(cmd_e),
-                                        "\nCould not execute: {}".format(cmd)))
+        raise EmperorSupportFilesError(("Error found whilst trying to copy"
+                                        " the support files:\n{}\nCould not"
+                                        "execute: {}".format(cmd_e, cmd)))
 
     return
 
@@ -269,12 +269,13 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
     Inputs:
     coords_header: list of sample identifiers in the PCoA file _or_ list of
     lists with sample identifiers for each coordinate file (if jackknifing or
-    comparing plots) coords_data: matrix of coordinates in the PCoA file _or_
+    comparing plots)
+    coords_data: matrix of coordinates in the PCoA file _or_
     list of numpy arrays with coordinates for each file (if jackknifing or
-    comparing plots) coords_eigenvals: numpy array with eigenvalues for the
+    comparing plots)
+    coords_eigenvals: numpy array with eigenvalues for the
     coordinates file _or_ list of numpy arrays with the eigenvalues (if
-    jackknifing or comparing plots
-    )
+    jackknifing or comparing plots)
     coords_pct: numpy array with a the percent explained by each principal
     coordinates axis _or_ a list of lists with numpy arrays (if jackknifing or
     comparing plots)
@@ -313,8 +314,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
 
     # prevent obscure and obfuscated errors
     if is_comparison:
-        assert type(coords_data) == list, ("Cannot process a comparison with ",
-                                           "the data from a single ",
+        assert type(coords_data) == list, ("Cannot process a comparison with "
+                                           "the data from a single "
                                            "coordinates file")
 
     mapping_file = [mapping_header] + mapping_data
@@ -459,7 +460,7 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     for v in values:
         colname, vals = map(strip, v.split(':', 1))
         vals = map(strip, vals.split(','))
-        assert len(vals) == 1, ("You can only pass 1 replacement value:",
+        assert len(vals) == 1, ("You can only pass 1 replacement value:"
                                 " {}".format(vals))
         if colname not in values_dict:
             values_dict[colname] = []
@@ -476,9 +477,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
             try:
                 header_index = headers.index(key)
             except ValueError:
-                raise EmperorInputFilesError(("The header {}".format(key),
-                                              "does not exist in the ",
-                                              "mapping file"))
+                raise EmperorInputFilesError(("The header {} does not exist"
+                                              "in the mapping file"
+                                              "".format(key)))
 
             # for the special case of multiple entries
             if '==' in value and '=' in value:
@@ -495,9 +496,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                 try:
                     column_index = headers.index(column)
                 except ValueError:
-                    raise EmperorInputFilesError(("The header ",
-                                                  "%s does not".format(column),
-                                                  "exist in the mapping file"))
+                    raise EmperorInputFilesError(("The header {} does not"
+                                                  "exist in the mapping file"
+                                                  "".format(column)))
 
             # fill in the data
             fill_the_data = False
@@ -514,11 +515,10 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                             fill_the_data = True
 
             if not used_column_index and fill_the_data:
-                raise EmperorInputFilesError(("This value ",
-                                              "'{}' does".format(column_value),
-                                              " not exist in",
-                                              "'{}' or it ".format(column),
-                                              "wasn't used in for processing"))
+                raise EmperorInputFilesError(("This value '{}' does not exist"
+                                              "in '{}' or it wasn't used for"
+                                              "processing"
+                                              "".format(column_value, column)))
 
     return out_data
 
