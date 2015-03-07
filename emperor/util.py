@@ -170,10 +170,10 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
             f_single = metadata.hasSingleCategoryValue
         else:
             def f_unique(x):
-                metadata.hasUniqueCategoryValues(x) and x not in columns
+                return metadata.hasUniqueCategoryValues(x) and x not in columns
 
             def f_single(x):
-                metadata.hasSingleCategoryValue(x) and x not in columns
+                return metadata.hasSingleCategoryValue(x) and x not in columns
 
         # find columns that have values that are all unique
         if unique:
@@ -251,7 +251,7 @@ def keep_columns_from_mapping_file(data, headers, columns, negate=False):
 
     # keep the elements at the positions indices
     def keep_elements(elements, indices):
-        [element for i, element in enumerate(elements) if i in indices]
+        return [element for i, element in enumerate(elements) if i in indices]
 
     headers = keep_elements(headers, indices_of_interest)
     data = [keep_elements(row, indices_of_interest) for row in data]
