@@ -544,6 +544,8 @@ _VECTORS_OPACITY_SLIDER = """
 _TAXA_LABELS_SELECTOR = """
             <form name="biplotoptions">
             <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
+            <br>
+            <input type="checkbox" onClick="toggleTaxaLabels()">Truncate Taxa Names</input>
             </form>"""
 
 _TAXA_LABELS_COLOR_SELECTOR = """

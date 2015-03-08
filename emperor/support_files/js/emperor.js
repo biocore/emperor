@@ -870,17 +870,44 @@ function toggleLabels() {
 	}
 }
 
+/*Retrieves the last level (e.g. kingdom, phylum,...,genus,species
+that has been estimated*/
+function getLastKnownLevel(lineage){
+    var levels = lineage.split(';');
+    var taxa_label = '';
+    for( var i = levels.length-1; i>=0; i--){
+	var level = levels[i];
+	if(level[level.length-1]!='_'){
+            taxa_label = level;
+	    break;
+	}
+    }
+    return taxa_label;
+}
+
 /*This function turns the labels with the lineages on and off*/
 function toggleTaxaLabels(){
+        var g_truncate_taxa = document.biplotoptions.elements[1].checked;
+        console.log("taxa truncate checkbox: "+g_truncate_taxa)
+        var labelshtml = "";
 	// present labels if the visibility checkbox is marked
 	if(document.biplotoptions.elements[0].checked){
 		$('#taxalabels').css('display','block');
-
 		for(var key in g_taxaPositions){
-			var taxa_label = g_taxaPositions[key]['lineage'];
-			var divid = taxa_label.replace(/\./g,'');
-			$('#'+key+"_taxalabel").css('display', 'block');
+                       	// get the coordinate of this taxa sphere
+			var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
+
+			// labels are identified by the key they have in g_taxaPositions
+			labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
+                        if(g_truncate_taxa){
+                                labelshtml += getLastKnownLevel(g_taxaPositions[key]['lineage']);
+                        }else{
+                                labelshtml += g_taxaPositions[key]['lineage'];
+                        }
+			labelshtml += "</label>";
 		}
+		document.getElementById("taxalabels").innerHTML = labelshtml
+		$('#'+key+"_taxalabel").css('display', 'block');
 	}
 	else{
 		$('#taxalabels').css('display','none');
@@ -2240,8 +2267,8 @@ $(document).ready(function() {
 		// renderer, the default background color is black
 		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 
-        // adding 'ctrl+p' to print screenshot
-        g_screenshotBind = THREEx.Screenshot.bindKey(g_mainRenderer, {charCode: 16});
+                // adding 'ctrl+p' to print screenshot
+                g_screenshotBind = THREEx.Screenshot.bindKey(g_mainRenderer, {charCode: 16});
 
 		g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
@@ -2264,13 +2291,13 @@ $(document).ready(function() {
 		labelshtml = "";
 		// add the labels with the taxonomic lineages to the taxalabels div
 		for(var key in g_taxaPositions){
-
+                        // initialize lineage variables
 			// get the coordinate of this taxa sphere
 			var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
 
 			// labels are identified by the key they have in g_taxaPositions
 			labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
-			labelshtml += g_taxaPositions[key]['lineage'];
+		        labelshtml += g_taxaPositions[key]['lineage'];
 			labelshtml += "</label>";
 		}
 		document.getElementById("taxalabels").innerHTML = labelshtml

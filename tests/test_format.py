@@ -959,6 +959,8 @@ document.getElementById("logotable").style.display = 'none';
                 </form>
             <form name="biplotoptions">
             <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
+            <br>
+            <input type="checkbox" onClick="toggleTaxaLabels()">Truncate Taxa Names</input>
             </form>
                 <br>
                 <label for="labelopacity" class="text">Label Opacity</label>
