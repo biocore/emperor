@@ -99,9 +99,9 @@ def copy_support_files(file_path):
     cmd_o, cmd_e, cmd_r = qcli_system_call(cmd)
 
     if cmd_e:
-        raise EmperorSupportFilesError(("Error found whilst trying to copy"
+        raise EmperorSupportFilesError("Error found whilst trying to copy"
                                         " the support files:\n{}\nCould not"
-                                        "execute: {}".format(cmd_e, cmd)))
+                                        "execute: {}".format(cmd_e, cmd))
 
     return
 
@@ -477,9 +477,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
             try:
                 header_index = headers.index(key)
             except ValueError:
-                raise EmperorInputFilesError(("The header {} does not exist"
+                raise EmperorInputFilesError("The header {} does not exist"
                                               "in the mapping file"
-                                              "".format(key)))
+                                              "".format(key))
 
             # for the special case of multiple entries
             if '==' in value and '=' in value:
@@ -496,9 +496,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                 try:
                     column_index = headers.index(column)
                 except ValueError:
-                    raise EmperorInputFilesError(("The header {} does not"
+                    raise EmperorInputFilesError("The header {} does not"
                                                   "exist in the mapping file"
-                                                  "".format(column)))
+                                                  "".format(column))
 
             # fill in the data
             fill_the_data = False
@@ -515,10 +515,10 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                             fill_the_data = True
 
             if not used_column_index and fill_the_data:
-                raise EmperorInputFilesError(("This value '{}' does not exist"
+                raise EmperorInputFilesError("This value '{}' does not exist"
                                               "in '{}' or it wasn't used for"
                                               "processing"
-                                              "".format(column_value, column)))
+                                              "".format(column_value, column))
 
     return out_data
 
