@@ -48,7 +48,7 @@ var g_keyBuilt = false;
 var g_screenshotBind;
 var g_separator_left;
 var g_separator_history;
-
+var g_taxaLabelColor;
 // valid ascii codes for filename
 var g_validAsciiCodes = new Array();
 // adding: .-_
@@ -294,7 +294,7 @@ function colorByMenuChanged(categoryName) {
 		vals.push(g_mappingFileData[g_plotIds[i]][g_categoryIndex]);
 	}
 
-  uniq_counts = _.groupBy(vals)
+        uniq_counts = _.groupBy(vals)
 	vals = naturalSort(_.keys(uniq_counts));
 	colors = getColorList(vals, colormap);
 
@@ -739,6 +739,14 @@ function colorChangedForTaxaSpheres(color){
 	}
 }
 
+function colorChangedForTaxaLabels(color){
+        // get the taxonomic assignments and append '_taxalabel' to
+        // retrieve all the labels belonging to a sphere in the plot
+        for(var key in g_taxaPositions) {
+       	        $('#'+key+"_taxalabel").css('color', color);
+        }
+}
+
 /* This function is called when a new color is selected for the edges
 
  The two input parameters are a hexadecimal formatted color and an index, the
@@ -870,44 +878,34 @@ function toggleLabels() {
 	}
 }
 
-/*Retrieves the last level (e.g. kingdom, phylum,...,genus,species
-that has been estimated*/
-function getLastKnownLevel(lineage){
-    var levels = lineage.split(';');
-    var taxa_label = '';
-    for( var i = levels.length-1; i>=0; i--){
-	var level = levels[i];
-	if(level[level.length-1]!='_'){
-            taxa_label = level;
-	    break;
-	}
-    }
-    return taxa_label;
+/*This functions handles the display of taxonomic labels*/
+function displayTaxaLabels(taxaLevel){
+        var labelshtml = "";
+        var taxonomy = ["Full","Kingdom","Phylum","Class","Order","Family","Genus","Species"];
+
+        $('#taxalabels').css('display','block');
+        $("#taxaLevel" ).html(taxonomy[taxaLevel]);
+        for(var key in g_taxaPositions){
+                // get the coordinate of this taxa sphere
+            	var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
+
+            	// labels are identified by the key they have in g_taxaPositions
+            	labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
+               labelshtml += truncateLevel(g_taxaPositions[key]['lineage'], taxaLevel);
+            	labelshtml += "</label>";
+        }
+        document.getElementById("taxalabels").innerHTML = labelshtml;
+        var taxaLabelColor = $('#taxalabelcolor').spectrum('get').toHexString();
+        colorChangedForTaxaLabels(taxaLabelColor);
 }
 
 /*This function turns the labels with the lineages on and off*/
 function toggleTaxaLabels(){
-        var g_truncate_taxa = document.biplotoptions.elements[1].checked;
-        console.log("taxa truncate checkbox: "+g_truncate_taxa)
         var labelshtml = "";
 	// present labels if the visibility checkbox is marked
 	if(document.biplotoptions.elements[0].checked){
-		$('#taxalabels').css('display','block');
-		for(var key in g_taxaPositions){
-                       	// get the coordinate of this taxa sphere
-			var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
-
-			// labels are identified by the key they have in g_taxaPositions
-			labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
-                        if(g_truncate_taxa){
-                                labelshtml += getLastKnownLevel(g_taxaPositions[key]['lineage']);
-                        }else{
-                                labelshtml += g_taxaPositions[key]['lineage'];
-                        }
-			labelshtml += "</label>";
-		}
-		document.getElementById("taxalabels").innerHTML = labelshtml
-		$('#'+key+"_taxalabel").css('display', 'block');
+                var taxaLevel = $('#selectTaxaLevel').slider('value')
+                displayTaxaLabels(taxaLevel);
 	}
 	else{
 		$('#taxalabels').css('display','none');
@@ -919,8 +917,8 @@ function toggleTaxaLabels(){
    If the toggleArrow variable is true, then only the visibility of the taxa vectors will be altered
  */
 function toggleBiplotVisibility(toggleArrow){
-	// reduce the opacity to zero if the element should be off or to 0.5
-	// if the element is supposed to be present; 0.5 is the default value
+    // reduce the opacity to zero if the element should be off or to 0.5
+    // if the element is supposed to be present; 0.5 is the default value
     toggleArrow = typeof toggleArrow !== 'undefined' ? toggleArrow : false;
     arrowBox = toggleArrow ? 1 : 0
     updater = document.biplotsvisibility.elements[arrowBox].checked ?
@@ -1204,18 +1202,12 @@ function setJqueryUi() {
 			showInitial: true,
 			showInput: true,
 			change:
-				function(color) {
-				// pass a boolean flag to convert to hex6 string
-				var c = color.toHexString(true);
-
-				// set the color for the box and for the renderer
-				$(this).css('backgroundColor', c);
-
-				// get the taxonomic assignments and append '_taxalabel' to
-				// retrieve all the labels belonging to a sphere in the plot
-				for(var key in g_taxaPositions) {
-					$('#'+key+"_taxalabel").css('color', c);
-				}
+				function(col) {
+				    // pass a boolean flag to convert to hex6 string
+				    var c = col.toHexString(true);
+				    // set the color for the box and for the renderer
+				    $(this).css('backgroundColor', c);
+				    colorChangedForTaxaLabels(c);
 			}// on-change callback
 		});
 	}
@@ -2288,25 +2280,24 @@ $(document).ready(function() {
 		}
 		document.getElementById("labels").innerHTML = labelshtml;
 
-		labelshtml = "";
-		// add the labels with the taxonomic lineages to the taxalabels div
-		for(var key in g_taxaPositions){
-                        // initialize lineage variables
-			// get the coordinate of this taxa sphere
-			var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
-
-			// labels are identified by the key they have in g_taxaPositions
-			labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
-		        labelshtml += g_taxaPositions[key]['lineage'];
-			labelshtml += "</label>";
-		}
-		document.getElementById("taxalabels").innerHTML = labelshtml
-
+                displayTaxaLabels(0);
+	        var numTaxaLevels = g_taxaPositions[Object.keys(g_taxaPositions)[0]]['lineage'].split(';').length;
+	        //add sliding bar to specify taxonomic labeling
+                $("#selectTaxaLevel").slider(
+                {
+                            value:0,
+                            min: 0,
+                            max: numTaxaLevels,
+                            step: 1,
+                            slide: function( event, ui ) {
+				displayTaxaLabels(ui.value);
+                           }
+                }
+                );
 		// adding values for axes to display
 		drawMenuAxesDisplayed();
 		changeAxesDisplayed();
 		drawAxisLines();
-
 		buildAxisLabels();
 	}
 

@@ -141,7 +141,6 @@ HTML_STRING = """<!doctype html>
     <script type="text/javascript" src="emperor_required_resources/js/trajectory.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/ui.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/util.js"></script>
-
     <script type="text/javascript">
 
 

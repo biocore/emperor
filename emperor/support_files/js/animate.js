@@ -70,7 +70,7 @@
  *
  */
 function AnimationDirector(mappingFileHeaders, mappingFileData, coordinatesData,
-                         gradientCategory, trajectoryCategory){
+                           gradientCategory, trajectoryCategory){
 
   // all arguments are required
   if (mappingFileHeaders === undefined || mappingFileData === undefined ||
