@@ -48,7 +48,6 @@ var g_keyBuilt = false;
 var g_screenshotBind;
 var g_separator_left;
 var g_separator_history;
-var g_taxaLabelColor;
 // valid ascii codes for filename
 var g_validAsciiCodes = new Array();
 // adding: .-_
@@ -2285,6 +2284,7 @@ $(document).ready(function() {
 	        //add sliding bar to specify taxonomic labeling
                 $("#selectTaxaLevel").slider(
                 {
+                            range:'max',
                             value:0,
                             min: 0,
                             max: numTaxaLevels,
