@@ -2289,7 +2289,7 @@ $(document).ready(function() {
                             min: 0,
                             max: numTaxaLevels,
                             step: 1,
-                            slide: function( event, ui ) {
+                            change: function( event, ui ) {
 				displayTaxaLabels(ui.value);
                            }
                 }
