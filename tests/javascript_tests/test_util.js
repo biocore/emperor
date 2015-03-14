@@ -35,7 +35,7 @@ $(document).ready(function() {
     elements = ['foo', 'Bar', 'BAZ', 'duck', 'duck', 'go'];
     res = naturalSort(elements);
     deepEqual(res, ['Bar', 'BAZ', 'duck', 'duck', 'foo', 'go'], 'Arrays is '+
-              'sorted correctly'); 
+              'sorted correctly');
 
     elements = ['foo', 'foo', 'FOO', 'FoO', 'FOOOO', 'fOO']
     res = naturalSort(elements);
@@ -61,7 +61,7 @@ $(document).ready(function() {
     elements = ['8', '7', '3', '2', '1', '0'];
     res = naturalSort(elements);
     deepEqual(res, ['0', '1', '2', '3', '7', '8'], 'Arrays is '+
-              'sorted correctly'); 
+              'sorted correctly');
 
     elements = ['1', '2', '3', '4', '5', '0']
     res = naturalSort(elements);
@@ -72,6 +72,31 @@ $(document).ready(function() {
     res = naturalSort(elements);
     deepEqual(res, ['-200', '-100', '0', '-0', '100', '100.001'], 'Arrays is '+
               'sorted correctly');
+
+  });
+
+  test('Test Taxonomy Truncation', function() {
+     lineage = 'k__qwerf;p__asdfjkj;c__'
+
+     //Test if default string works
+     res = truncateLevel(lineage, 0);
+     equal(res,lineage);
+
+     //Test if first taxonomy works
+     res = truncateLevel(lineage, 1);
+     equal(res,"k__qwerf");
+
+     //Test if second taxonomy works
+     res = truncateLevel(lineage, 2);
+     equal(res,"p__asdfjkj");
+
+     //Make sure that last known taxonomy is displayed
+     res = truncateLevel(lineage, 3);
+     equal(res,"p__asdfjkj;c__");
+
+     //Make sure that second taxonomy doesn't change
+     res = truncateLevel(lineage, 4);
+     equal(res,"p__asdfjkj;c__");
 
   });
 
@@ -87,7 +112,7 @@ $(document).ready(function() {
     elements = ['foo', '7', 'bar', '2', 'baz', '0'];
     res = naturalSort(elements);
     deepEqual(res, ['bar', 'baz', 'foo', '0', '2', '7'],'Arrays is sorted '+
-              'correctly'); 
+              'correctly');
 
     elements = ['Foo', 'floo', 'BAAARR', '-1', '2', '0']
     res = naturalSort(elements);

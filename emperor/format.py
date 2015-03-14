@@ -524,7 +524,6 @@ EMPEROR_HEADER_HTML_STRING =\
     <script type="text/javascript" src="emperor_required_resources/js/trajectory.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/ui.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/util.js"></script>
-
     <script type="text/javascript">
 
 """
@@ -544,7 +543,10 @@ _VECTORS_OPACITY_SLIDER = """
 _TAXA_LABELS_SELECTOR = """
             <form name="biplotoptions">
             <input type="checkbox" onClick="toggleTaxaLabels()">Biplots Label Visibility</input>
-            </form>"""
+            </form>
+            <br>
+            <p>Visible Taxonomy Level: <span id="taxaLevel"></span></p>
+            <div id="selectTaxaLevel"></div>"""
 
 _TAXA_LABELS_COLOR_SELECTOR = """
             <tr><td><div id="taxalabelcolor" class="colorbox"></div></td><td><label>Taxa Label Color</label></td></tr>

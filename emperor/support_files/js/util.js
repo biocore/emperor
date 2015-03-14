@@ -48,14 +48,13 @@ var k_CHROMABREWER_MAPNAMES = ['Classic QIIME Colors',
 /**
  *
  * Sorting function that deals with alpha and numeric elements
- * 
+ *
  * This function takes a list of strings, divides it into two new lists, one
  * that's alpha-only and one that's numeric only.
  *
- * @param {list} an Array of strings.
+ * @param {string}  string of taxonomies
  *
- * @return a sorted Array where all alpha elements at the beginning & all
- * numeric elements at the end.
+ * @return a truncated string of taxonomies
  *
  */
 function naturalSort(list){
@@ -81,6 +80,34 @@ function naturalSort(list){
   numericPart.sort(function(a,b){return parseFloat(a)-parseFloat(b)})
 
   return result.concat(alphaPart, numericPart);
+}
+
+
+/**
+ *
+ * Utility function that splits the lineage into taxonomic levels
+ * and returns the taxonomic level specified
+ *
+ * @param {node} XML DOM object, usually as created by the document object.
+ *
+ * @return string representation of the node object.
+ *
+*/
+function truncateLevel(lineage, levelIndex){
+  if (levelIndex===0){
+    return lineage;
+  }
+  var levels = lineage.split(';');
+  var taxaLabel = '';
+  for( var i = 0; (i<levelIndex && i<levels.length); i++){
+    var level = levels[i];
+      if(level[level.length-1]=='_'){
+	taxaLabel += ";"+level;
+      }else{
+        taxaLabel = level;
+      }
+  }
+  return taxaLabel;
 }
 
 /**
@@ -215,4 +242,3 @@ function escapeRegularExpression(regex){
 function cleanHTML(htmlString){
     return htmlString.replace(' xmlns="http://www.w3.org/1999/xhtml"', '')
 }
-
