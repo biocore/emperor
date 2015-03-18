@@ -728,9 +728,10 @@ function colorChangedForTaxaSpheres(color){
 function colorChangedForTaxaLabels(color){
         // get the taxonomic assignments and append '_taxalabel' to
         // retrieve all the labels belonging to a sphere in the plot
-        for(var key in g_taxaPositions) {
+        _.each(_.range(g_taxaPositions.length),function(key){
+        //for(var key in g_taxaPositions) {
        	        $('#'+key+"_taxalabel").css('color', color);
-        }
+        });
 }
 
 /* This function is called when a new color is selected for the edges
@@ -873,7 +874,7 @@ function displayTaxaLabels(taxaLevel){
 
         $('#taxalabels').css('display','block');
         $("#taxaLevel" ).html(taxonomy[taxaLevel]);
-        for(var key in g_taxaPositions){
+        _.each(_.range(g_taxaPositions.length),function(key){
             // get the coordinate of this taxa sphere
             var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
 
@@ -881,7 +882,7 @@ function displayTaxaLabels(taxaLevel){
             labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
             labelshtml += truncateLevel(g_taxaPositions[key]['lineage'], taxaLevel);
             labelshtml += "</label>";
-        }
+        });
         document.getElementById("taxalabels").innerHTML = labelshtml;
         var taxaLabelColor = $('#taxalabelcolor').spectrum('get').toHexString();
         colorChangedForTaxaLabels(taxaLabelColor);
@@ -1390,6 +1391,7 @@ function setJqueryUi() {
   only happen when plotting a jaccknifed principal coordinates analysis
 */
 function drawEllipses() {
+
 	for(var sid in g_ellipsesDimensions) {
 		//draw ellipsoid
 		var emesh = new THREE.Mesh( g_genericSphere,new THREE.MeshPhongMaterial() );
@@ -1414,20 +1416,20 @@ function drawEllipses() {
 function drawSpheres() {
   //draw ball
   _.each(g_spherePositions, function(spherePositions){
-    var sid = spherePositions['name']
-		var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshPhongMaterial() );
-		mesh.material.color = new THREE.Color()
-		mesh.material.transparent = true;
-		mesh.material.depthWrite = false;
-		mesh.material.opacity = 1;
-		mesh.position.set(spherePositions['x'], spherePositions['y'], spherePositions['z']);
-		mesh.updateMatrix();
-		mesh.matrixAutoUpdate = true;
-		if(g_mappingFileData[sid] != undefined){
-			g_elementsGroup.add( mesh );
-			g_plotSpheres[sid] = mesh;
-			g_plotIds.push(sid);
-		}
+      var sid = spherePositions['name']
+      var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshPhongMaterial() );
+      mesh.material.color = new THREE.Color()
+      mesh.material.transparent = true;
+      mesh.material.depthWrite = false;
+      mesh.material.opacity = 1;
+      mesh.position.set(spherePositions['x'], spherePositions['y'], spherePositions['z']);
+      mesh.updateMatrix();
+      mesh.matrixAutoUpdate = true;
+      if(g_mappingFileData[sid] != undefined){
+	  g_elementsGroup.add( mesh );
+	  g_plotSpheres[sid] = mesh;
+	  g_plotIds.push(sid);
+      }
   });
 }
 
@@ -1441,7 +1443,8 @@ function drawTaxa(){
 	var whiteColor = new THREE.Color();
 	whiteColor.setHex("0xFFFFFF");
 
-	for (var key in g_taxaPositions){
+	//for (var key in g_taxaPositions){
+        _.each(_.range(g_taxaPositions.length),function(key){
 		var mesh = new THREE.Mesh(g_genericSphere,
 			new THREE.MeshPhongMaterial());
 
@@ -1476,7 +1479,7 @@ function drawTaxa(){
 		g_elementsGroup.add(taxaVector);
 		g_mainScene.add(taxaVector);
 		g_plotTaxaArrows[key] = taxaVector;
-	}
+	});
 }
 
 /*Draw the lines for the plot as described in the g_vectorPositions array
@@ -2393,7 +2396,8 @@ $(document).ready(function() {
 		// this is something that will only happen when drawing biplots
 		if(document.biplotoptions){
 			if(document.biplotoptions.elements[0].checked){
-				for(var key in g_taxaPositions) {
+				//for(var key in g_taxaPositions) {
+				_.each(_.range(g_taxaPositions.length),function(key){
 					// retrieve the position of the taxa on screen
 					var coords = toScreenXY(g_plotTaxa[key].position,
 						g_sceneCamera, $('#main-plot'));
@@ -2401,7 +2405,7 @@ $(document).ready(function() {
 					// add the label at the appropriate position
 					$('#'+key+"_taxalabel").css('left',coords['x']);
 					$('#'+key+"_taxalabel").css('top',coords['y']);
-				}
+				});
 			}
 		}
 		if(g_foundId) {
