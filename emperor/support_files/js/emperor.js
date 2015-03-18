@@ -879,26 +879,26 @@ function toggleLabels() {
 
 /*This functions handles the display of taxonomic labels*/
 function displayTaxaLabels(taxaLevel){
-        if(!jQuery.isEmptyObject()){
+    if(!jQuery.isEmptyObject(g_taxaPositions)){
 
-                var labelshtml = "";
-                var taxonomy = ["Full","Kingdom","Phylum","Class","Order","Family","Genus","Species"];
+        var labelshtml = "";
+        var taxonomy = ["Full","Kingdom","Phylum","Class","Order","Family","Genus","Species"];
 
-                $('#taxalabels').css('display','block');
-                $("#taxaLevel" ).html(taxonomy[taxaLevel]);
-                for(var key in g_taxaPositions){
-                        // get the coordinate of this taxa sphere
-                    	var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
+        $('#taxalabels').css('display','block');
+        $("#taxaLevel" ).html(taxonomy[taxaLevel]);
+        for(var key in g_taxaPositions){
+            // get the coordinate of this taxa sphere
+            var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
 
-                    	// labels are identified by the key they have in g_taxaPositions
-                    	labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
-                       labelshtml += truncateLevel(g_taxaPositions[key]['lineage'], taxaLevel);
-                    	labelshtml += "</label>";
-                }
-                document.getElementById("taxalabels").innerHTML = labelshtml;
-                var taxaLabelColor = $('#taxalabelcolor').spectrum('get').toHexString();
-                colorChangedForTaxaLabels(taxaLabelColor);
+            // labels are identified by the key they have in g_taxaPositions
+            labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
+            labelshtml += truncateLevel(g_taxaPositions[key]['lineage'], taxaLevel);
+            labelshtml += "</label>";
         }
+        document.getElementById("taxalabels").innerHTML = labelshtml;
+        var taxaLabelColor = $('#taxalabelcolor').spectrum('get').toHexString();
+        colorChangedForTaxaLabels(taxaLabelColor);
+    }
 }
 
 /*This function turns the labels with the lineages on and off*/
@@ -2282,7 +2282,7 @@ $(document).ready(function() {
 		}
 		document.getElementById("labels").innerHTML = labelshtml;
 
-	        if(!jQuery.isEmptyObject()){
+	        if(!jQuery.isEmptyObject(g_taxaPositions)){
                         displayTaxaLabels(0);
 	                var numTaxaLevels = g_taxaPositions[Object.keys(g_taxaPositions)[0]]['lineage'].split(';').length;
 	                //add sliding bar to specify taxonomic labeling
