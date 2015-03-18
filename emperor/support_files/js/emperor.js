@@ -48,7 +48,6 @@ var g_keyBuilt = false;
 var g_screenshotBind;
 var g_separator_left;
 var g_separator_history;
-
 // valid ascii codes for filename
 var g_validAsciiCodes = new Array();
 // adding: .-_
@@ -294,7 +293,7 @@ function colorByMenuChanged(categoryName) {
     vals.push(g_mappingFileData[plotId][g_categoryIndex]);
   });
 
-  uniq_counts = _.groupBy(vals)
+        uniq_counts = _.groupBy(vals)
 	vals = naturalSort(_.keys(uniq_counts));
 	colors = getColorList(vals, colormap);
 
@@ -726,6 +725,14 @@ function colorChangedForTaxaSpheres(color){
   });
 }
 
+function colorChangedForTaxaLabels(color){
+        // get the taxonomic assignments and append '_taxalabel' to
+        // retrieve all the labels belonging to a sphere in the plot
+        for(var key in g_taxaPositions) {
+       	        $('#'+key+"_taxalabel").css('color', color);
+        }
+}
+
 /* This function is called when a new color is selected for the edges
 
  The two input parameters are a hexadecimal formatted color and an index, the
@@ -857,18 +864,35 @@ function toggleLabels() {
 	}
 }
 
+/*This functions handles the display of taxonomic labels*/
+function displayTaxaLabels(taxaLevel){
+        var labelshtml = "";
+        var taxonomy = ["Full","Kingdom","Phylum","Class","Order","Family","Genus","Species"];
+
+        $('#taxalabels').css('display','block');
+        $("#taxaLevel" ).html(taxonomy[taxaLevel]);
+        for(var key in g_taxaPositions){
+                // get the coordinate of this taxa sphere
+            	var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
+
+            	// labels are identified by the key they have in g_taxaPositions
+            	labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
+               labelshtml += truncateLevel(g_taxaPositions[key]['lineage'], taxaLevel);
+            	labelshtml += "</label>";
+        }
+        document.getElementById("taxalabels").innerHTML = labelshtml;
+        var taxaLabelColor = $('#taxalabelcolor').spectrum('get').toHexString();
+        colorChangedForTaxaLabels(taxaLabelColor);
+}
+
 /*This function turns the labels with the lineages on and off*/
 function toggleTaxaLabels(){
   // ==============> Needs work
+  var labelshtml = "";
 	// present labels if the visibility checkbox is marked
 	if(document.biplotoptions.elements[0].checked){
-		$('#taxalabels').css('display','block');
-
-		for(var key in g_taxaPositions){
-			var taxa_label = g_taxaPositions[key]['lineage'];
-			var divid = taxa_label.replace(/\./g,'');
-			$('#'+key+"_taxalabel").css('display', 'block');
-		}
+                var taxaLevel = $('#selectTaxaLevel').slider('value')
+                displayTaxaLabels(taxaLevel);
 	}
 	else{
 		$('#taxalabels').css('display','none');
@@ -1167,18 +1191,12 @@ function setJqueryUi() {
 			showInitial: true,
 			showInput: true,
 			change:
-				function(color) {
-				// pass a boolean flag to convert to hex6 string
-				var c = color.toHexString(true);
-
-				// set the color for the box and for the renderer
-				$(this).css('backgroundColor', c);
-
-				// get the taxonomic assignments and append '_taxalabel' to
-				// retrieve all the labels belonging to a sphere in the plot
-				for(var key in g_taxaPositions) {
-					$('#'+key+"_taxalabel").css('color', c);
-				}
+				function(col) {
+				    // pass a boolean flag to convert to hex6 string
+				    var c = col.toHexString(true);
+				    // set the color for the box and for the renderer
+				    $(this).css('backgroundColor', c);
+				    colorChangedForTaxaLabels(c);
 			}// on-change callback
 		});
 	}
@@ -2226,8 +2244,8 @@ $(document).ready(function() {
 		// renderer, the default background color is black
 		g_mainRenderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 
-        // adding 'ctrl+p' to print screenshot
-        g_screenshotBind = THREEx.Screenshot.bindKey(g_mainRenderer, {charCode: 16});
+                // adding 'ctrl+p' to print screenshot
+                g_screenshotBind = THREEx.Screenshot.bindKey(g_mainRenderer, {charCode: 16});
 
 		g_mainRenderer.setClearColor(rendererBackgroundColor, 1);
 		g_mainRenderer.setSize( document.getElementById('pcoaPlotWrapper').offsetWidth, document.getElementById('pcoaPlotWrapper').offsetHeight );
@@ -2247,25 +2265,25 @@ $(document).ready(function() {
 		}
 		document.getElementById("labels").innerHTML = labelshtml;
 
-		labelshtml = "";
-		// add the labels with the taxonomic lineages to the taxalabels div
-		for(var key in g_taxaPositions){
-
-			// get the coordinate of this taxa sphere
-			var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
-
-			// labels are identified by the key they have in g_taxaPositions
-			labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
-			labelshtml += g_taxaPositions[key]['lineage'];
-			labelshtml += "</label>";
-		}
-		document.getElementById("taxalabels").innerHTML = labelshtml
-
+                displayTaxaLabels(0);
+	        var numTaxaLevels = g_taxaPositions[Object.keys(g_taxaPositions)[0]]['lineage'].split(';').length;
+	        //add sliding bar to specify taxonomic labeling
+                $("#selectTaxaLevel").slider(
+                {
+                            range:'max',
+                            value:0,
+                            min: 0,
+                            max: numTaxaLevels,
+                            step: 1,
+                            change: function( event, ui ) {
+				displayTaxaLabels(ui.value);
+                           }
+                }
+                );
 		// adding values for axes to display
 		drawMenuAxesDisplayed();
 		changeAxesDisplayed();
 		drawAxisLines();
-
 		buildAxisLabels();
 	}
 
