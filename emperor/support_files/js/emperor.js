@@ -2,7 +2,8 @@
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2013, Emperor"
  * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza",
- *                "Jackson Chen", "Emily TerAvest", "Jamie Morton"]
+ *                "Jackson Chen", "Emily TerAvest", "Jamie Morton", 
+ *                "Daniel McDonald"]
  * __license__ = "BSD"
  * __version__ = "0.9.51-dev"
  * __maintainer__ = "Antonio Gonzalez Pena"
@@ -95,18 +96,21 @@ function resetCamera() {
 function toggleScaleCoordinates(element){
 	var axesLen;
 	var operation;
+    var ax0 = g_viewingAxes[0];
+    var ax1 = g_viewingAxes[1];
+    var ax2 = g_viewingAxes[2];
 
 	// used only for vector and edges re-drawing
 	var currentPosition = [], currentColor = 0x000000;
 
-	if (!isNumeric(g_fractionExplained[g_viewingAxes[0]])) {
-		alert("PC" + (g_viewingAxes[0]+1) + " is too small for this feature, change your selection.");
+	if (!isNumeric(g_fractionExplained[ax0])) {
+		alert("PC" + (ax0+1) + " is too small for this feature, change your selection.");
 		return;
-	} else if (!isNumeric(g_fractionExplained[g_viewingAxes[1]])) {
-		alert("PC" + (g_viewingAxes[1]+1) + " is too small for this feature, change your selection.");
+	} else if (!isNumeric(g_fractionExplained[ax1])) {
+		alert("PC" + (ax1+1) + " is too small for this feature, change your selection.");
 		return;
-	} else if (!isNumeric(g_fractionExplained[g_viewingAxes[2]])) {
-		alert("PC" + (g_viewingAxes[2]+1) + " is too small for this feature, change your selection.");
+	} else if (!isNumeric(g_fractionExplained[ax2])) {
+		alert("PC" + (ax2+1) + " is too small for this feature, change your selection.");
 		return;
 	}
 
@@ -114,7 +118,7 @@ function toggleScaleCoordinates(element){
 	// to perform over various properties, either a multiplication or a division
 	if(element.checked == true){
 		operation = function(a, b){ return a*b };
-		g_sphereScaler = g_fractionExplained[g_viewingAxes[0]];
+		g_sphereScaler = g_fractionExplained[ax0];
 	}
 	else{
 		operation = function(a, b){ return a/b };
@@ -125,26 +129,26 @@ function toggleScaleCoordinates(element){
 	$("#sradiusslider").slider("value",$("#sradiusslider").slider("value"));
 
 	// scale other properties
-	g_xMaximumValue = operation(g_xMaximumValue, g_fractionExplained[g_viewingAxes[0]]);
-	g_yMaximumValue = operation(g_yMaximumValue, g_fractionExplained[g_viewingAxes[1]]);
-	g_zMaximumValue = operation(g_zMaximumValue, g_fractionExplained[g_viewingAxes[2]]);
-	g_xMinimumValue = operation(g_xMinimumValue, g_fractionExplained[g_viewingAxes[0]]);
-	g_yMinimumValue = operation(g_yMinimumValue, g_fractionExplained[g_viewingAxes[1]]);
-	g_zMinimumValue = operation(g_zMinimumValue, g_fractionExplained[g_viewingAxes[2]]);
-	g_maximum = operation(g_maximum, g_fractionExplained[g_viewingAxes[0]])
+	g_xMaximumValue = operation(g_xMaximumValue, g_fractionExplained[ax0]);
+	g_yMaximumValue = operation(g_yMaximumValue, g_fractionExplained[ax1]);
+	g_zMaximumValue = operation(g_zMaximumValue, g_fractionExplained[ax2]);
+	g_xMinimumValue = operation(g_xMinimumValue, g_fractionExplained[ax0]);
+	g_yMinimumValue = operation(g_yMinimumValue, g_fractionExplained[ax1]);
+	g_zMinimumValue = operation(g_zMinimumValue, g_fractionExplained[ax2]);
+	g_maximum = operation(g_maximum, g_fractionExplained[ax0])
 
 	// scale the position of the light
 	g_sceneLight.position.set(
-		operation(g_sceneLight.position.x, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneLight.position.y, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneLight.position.z, g_fractionExplained[g_viewingAxes[0]])
+		operation(g_sceneLight.position.x, g_fractionExplained[ax0]),
+		operation(g_sceneLight.position.y, g_fractionExplained[ax0]),
+		operation(g_sceneLight.position.z, g_fractionExplained[ax0])
   );
 
 	// scale the position of the camera according to pc1
 	g_sceneCamera.position.set(
-		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneCamera.position.y, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneCamera.position.z, g_fractionExplained[g_viewingAxes[0]])
+		operation(g_sceneCamera.position.x, g_fractionExplained[ax0]),
+		operation(g_sceneCamera.position.y, g_fractionExplained[ax0]),
+		operation(g_sceneCamera.position.z, g_fractionExplained[ax0])
   );
 	// scale the axis lines
 	drawAxisLines();
@@ -153,9 +157,9 @@ function toggleScaleCoordinates(element){
   _.each(g_plotSpheres, function(sphere){
     // scale the position of the spheres
     sphere.position.set(
-			operation(sphere.position.x, g_fractionExplained[g_viewingAxes[0]]),
-			operation(sphere.position.y, g_fractionExplained[g_viewingAxes[1]]),
-			operation(sphere.position.z, g_fractionExplained[g_viewingAxes[2]])
+			operation(sphere.position.x, g_fractionExplained[ax0]),
+			operation(sphere.position.y, g_fractionExplained[ax1]),
+			operation(sphere.position.z, g_fractionExplained[ax2])
     );
   });
 
@@ -163,32 +167,32 @@ function toggleScaleCoordinates(element){
   _.each(g_plotEllipses, function(ellipse){
   		// scale the dimensions of the positions of each ellipse
       ellipse.position.set(
-  			operation(ellipse.position.x, g_fractionExplained[g_viewingAxes[0]]),
-  			operation(ellipse.position.y, g_fractionExplained[g_viewingAxes[1]]),
-  			operation(ellipse.position.z, g_fractionExplained[g_viewingAxes[2]])
+  			operation(ellipse.position.x, g_fractionExplained[ax0]),
+  			operation(ellipse.position.y, g_fractionExplained[ax1]),
+  			operation(ellipse.position.z, g_fractionExplained[ax2])
       );
 
   		// scale the dimensions of the ellipse
       ellipse.scale.set(
-  			operation(ellipse.scale.x, g_fractionExplained[g_viewingAxes[0]]),
-  			operation(ellipse.scale.y, g_fractionExplained[g_viewingAxes[1]]),
-  			operation(ellipse.scale.z, g_fractionExplained[g_viewingAxes[2]])
+  			operation(ellipse.scale.x, g_fractionExplained[ax0]),
+  			operation(ellipse.scale.y, g_fractionExplained[ax1]),
+  			operation(ellipse.scale.z, g_fractionExplained[ax2])
       );
   });
 
   _.each(g_plotTaxa, function (taxa){
     //scale the dimensions of the positions of each taxa-sphere
 		taxa.position.set(
-			operation(taxa.position.x, g_fractionExplained[g_viewingAxes[0]]),
-			operation(taxa.position.y, g_fractionExplained[g_viewingAxes[1]]),
-			operation(taxa.position.z, g_fractionExplained[g_viewingAxes[2]])
+			operation(taxa.position.x, g_fractionExplained[ax0]),
+			operation(taxa.position.y, g_fractionExplained[ax1]),
+			operation(taxa.position.z, g_fractionExplained[ax2])
     );
 
 		//scale the dimensions of each taxa-sphere
 		taxa.scale.set(
-			operation(g_plotTaxa[index].scale.x, g_fractionExplained[g_viewingAxes[0]]),
-			operation(g_plotTaxa[index].scale.y, g_fractionExplained[g_viewingAxes[0]]),
-			operation(g_plotTaxa[index].scale.z, g_fractionExplained[g_viewingAxes[0]])
+			operation(g_plotTaxa[index].scale.x, g_fractionExplained[ax0]),
+			operation(g_plotTaxa[index].scale.y, g_fractionExplained[ax0]),
+			operation(g_plotTaxa[index].scale.z, g_fractionExplained[ax0])
     );
   });
 
@@ -205,9 +209,9 @@ function toggleScaleCoordinates(element){
       cPosition = vector.geometry.vertices[vertex];
 
       // scale the position of each of the vertices
-      cPosition.x = operation(cPosition.x, g_fractionExplained[g_viewingAxes[0]])
-      cPosition.y = operation(cPosition.y, g_fractionExplained[g_viewingAxes[1]])
-      cPosition.z = operation(cPosition.z, g_fractionExplained[g_viewingAxes[2]])
+      cPosition.x = operation(cPosition.x, g_fractionExplained[ax0])
+      cPosition.y = operation(cPosition.y, g_fractionExplained[ax1])
+      cPosition.z = operation(cPosition.z, g_fractionExplained[ax2])
 
       // create an array we can pass to makeLine
       currentPosition[vertex] = [cPosition.x, cPosition.y, cPosition.z]
@@ -236,11 +240,11 @@ function toggleScaleCoordinates(element){
 
         // scale the position of each of the vertices
         currentPosition[vertex].x = operation(currentPosition[vertex].x,
-          g_fractionExplained[g_viewingAxes[0]])
+          g_fractionExplained[ax0])
         currentPosition[vertex].y = operation(currentPosition[vertex].y,
-          g_fractionExplained[g_viewingAxes[1]])
+          g_fractionExplained[ax1])
         currentPosition[vertex].z = operation(currentPosition[vertex].z,
-          g_fractionExplained[g_viewingAxes[2]])
+          g_fractionExplained[ax2])
 
         // create an array we can pass to makeLine
         currentPosition[vertex] = [
