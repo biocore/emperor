@@ -154,112 +154,111 @@ function toggleScaleCoordinates(element){
 	drawAxisLines();
 
 	// set the new position of each of the sphere objects
-  _.each(g_plotSpheres, function(sphere){
-    // scale the position of the spheres
-    sphere.position.set(
-			operation(sphere.position.x, g_fractionExplained[ax0]),
-			operation(sphere.position.y, g_fractionExplained[ax1]),
-			operation(sphere.position.z, g_fractionExplained[ax2])
-    );
-  });
-
-	// ellipses won't always be available hence the two separate loops
-  _.each(g_plotEllipses, function(ellipse){
-  		// scale the dimensions of the positions of each ellipse
-      ellipse.position.set(
-  			operation(ellipse.position.x, g_fractionExplained[ax0]),
-  			operation(ellipse.position.y, g_fractionExplained[ax1]),
-  			operation(ellipse.position.z, g_fractionExplained[ax2])
-      );
-
-  		// scale the dimensions of the ellipse
-      ellipse.scale.set(
-  			operation(ellipse.scale.x, g_fractionExplained[ax0]),
-  			operation(ellipse.scale.y, g_fractionExplained[ax1]),
-  			operation(ellipse.scale.z, g_fractionExplained[ax2])
-      );
-  });
-
-  _.each(g_plotTaxa, function (taxa){
-    //scale the dimensions of the positions of each taxa-sphere
-		taxa.position.set(
-			operation(taxa.position.x, g_fractionExplained[ax0]),
-			operation(taxa.position.y, g_fractionExplained[ax1]),
-			operation(taxa.position.z, g_fractionExplained[ax2])
-    );
-
-		//scale the dimensions of each taxa-sphere
-		taxa.scale.set(
-			operation(g_plotTaxa[index].scale.x, g_fractionExplained[ax0]),
-			operation(g_plotTaxa[index].scale.y, g_fractionExplained[ax0]),
-			operation(g_plotTaxa[index].scale.z, g_fractionExplained[ax0])
-    );
-  });
-
-	// each line is indexed by a sample, creating in turn TOTAL_SAMPLES-1 lines
-  _.each(g_plotVectors, function(vector){
-    // the color has to be formatted as an hex number for makeLine to work
-    currentColor = vector.material.color.getHex();
-
-    // updating the position of a vertex in a line is a really expensive
-    // operation, hence we just remove it from the group and create it again
-    g_elementsGroup.remove(vector);
-
-    for (var vertex in vector.geometry.vertices){
-      cPosition = vector.geometry.vertices[vertex];
-
-      // scale the position of each of the vertices
-      cPosition.x = operation(cPosition.x, g_fractionExplained[ax0])
-      cPosition.y = operation(cPosition.y, g_fractionExplained[ax1])
-      cPosition.z = operation(cPosition.z, g_fractionExplained[ax2])
-
-      // create an array we can pass to makeLine
-      currentPosition[vertex] = [cPosition.x, cPosition.y, cPosition.z]
+    for(i = 0; i < g_plotSpheres.length; i++) {
+        // scale the position of the spheres
+        pos = g_plotSpheres[i].position;
+        pos.set(operation(pos.x, g_fractionExplained[ax0]),
+                operation(pos.y, g_fractionExplained[ax1]),
+                operation(pos.z, g_fractionExplained[ax2])
+        );
     }
 
-    // add the element to the main vector array and to the group
-    vector = makeLine(currentPosition[0], currentPosition[1], currentColor, 2);
-    g_elementsGroup.add(vector);
-  });
+	// ellipses won't always be available hence the two separate loops
+    for(i = 0; i < g_plotEllipses.length; i++) {
+  		// scale the dimensions of the positions of each ellipse
+        ellipsis = g_plotEllipses[i];
+        pos = ellipsis.position;
+        scale = ellipsis.scale;
+
+        pos.set(operation(pos.x, g_fractionExplained[ax0]),
+  			    operation(pos.y, g_fractionExplained[ax1]),
+  			    operation(pos.z, g_fractionExplained[ax2])
+        );
+
+  		// scale the dimensions of the ellipse
+        scale.set(operation(scale.x, g_fractionExplained[ax0]),
+  			      operation(scale.y, g_fractionExplained[ax1]),
+  			      operation(scale.z, g_fractionExplained[ax2])
+      );
+    }
+
+    for(i = 0; i < g_plotTaxa.length; i++) {
+        taxa = g_plotTaxa[i];
+        pos = taxa.position;
+        scale = taxa.scale;
+
+        //scale the dimensions of the positions of each taxa-sphere
+		pos.set(operation(pos.x, g_fractionExplained[ax0]),
+			    operation(pos.y, g_fractionExplained[ax1]),
+			    operation(pos.z, g_fractionExplained[ax2])
+        );
+
+		//scale the dimensions of each taxa-sphere
+		scale.set(operation(scale.x, g_fractionExplained[ax0]),
+			      operation(scale.y, g_fractionExplained[ax0]),
+			      operation(scale.z, g_fractionExplained[ax0])
+        );
+    }
+
+	// each line is indexed by a sample, creating in turn TOTAL_SAMPLES-1 lines
+    for(i = 0; i < g_plotVectors.length; i++) {
+        vector = g_plotVectors[i];
+        // the color has to be formatted as an hex number for makeLine to work
+        currentColor = vector.material.color.getHex();
+
+        // updating the position of a vertex in a line is a really expensive
+        // operation, hence we just remove it from the group and create it again
+        g_elementsGroup.remove(vector);
+
+        for(j = 0; j < vector.geometry.vertices.length; j++) {
+            cPosition = vector.geometry.vertices[i];
+
+            // scale the position of each of the vertices
+            cPosition.x = operation(cPosition.x, g_fractionExplained[ax0])
+            cPosition.y = operation(cPosition.y, g_fractionExplained[ax1])
+            cPosition.z = operation(cPosition.z, g_fractionExplained[ax2])
+
+            // create an array we can pass to makeLine
+            currentPosition[vertex] = [cPosition.x, cPosition.y, cPosition.z]
+        }
+
+        // add the element to the main vector array and to the group
+        vector = makeLine(currentPosition[0], currentPosition[1], currentColor, 2);
+        g_elementsGroup.add(vector);
+    }
 
 	// support scaling of edges in plot comparisons
-  _.each(g_plotEdges, function(edge){
-    // each edge is composed of two separate lines
-    _.each(edge, function(section){
-      // the color has to be formatted as an hex number for makeLine to work
-      currentColor = section.material.color.getHex();
+    for(i = 0; i < g_plotEdges.length; i++) {
+        edge = g_plotEdges[i];
+        for(j = 0; j < edge.length; j++) {
+            section = edge[j];
+            // the color has to be formatted as an hex number for makeLine to work
+            currentColor = section.material.color.getHex();
 
-      // remove them completely from the group and scene we no longer need
-      // these objects as re-creating them is as expensive as modifying
-      // most of their features
-      g_elementsGroup.remove(section)
-      g_mainScene.remove(section)
+            // remove them completely from the group and scene we no longer need
+            // these objects as re-creating them is as expensive as modifying
+            // most of their features
+            g_elementsGroup.remove(section)
+            g_mainScene.remove(section)
 
-      for (vertex in section.geometry.vertices){
-        currentPosition[vertex] = section.geometry.vertices[vertex];
+            for(k = 0; k < section.geometry.vertices.length; k++) {
+                vertex = section.geometry.vertices[k];
 
-        // scale the position of each of the vertices
-        currentPosition[vertex].x = operation(currentPosition[vertex].x,
-          g_fractionExplained[ax0])
-        currentPosition[vertex].y = operation(currentPosition[vertex].y,
-          g_fractionExplained[ax1])
-        currentPosition[vertex].z = operation(currentPosition[vertex].z,
-          g_fractionExplained[ax2])
+                // scale the position of each of the vertices
+                vertex.x = operation(vertex.x, g_fractionExplained[ax0])
+                vertex.y = operation(vertex.y, g_fractionExplained[ax1])
+                vertex.z = operation(vertex.z, g_fractionExplained[ax2])
 
-        // create an array we can pass to makeLine
-        currentPosition[vertex] = [
-          currentPosition[vertex].x,
-          currentPosition[vertex].y,
-          currentPosition[vertex].z
-        ]
-      }
+                // create an array we can pass to makeLine
+                currentPosition[k] = [vertex.x, vertex.y, vertex.z]
+            }
 
-      // add the element to the main vector array and to the group
-      section = makeLine(currentPosition[0], currentPosition[1], currentColor, 2);
-      g_elementsGroup.add(section);
-      g_mainScene.add(section);
-    });
-  });
+            // add the element to the main vector array and to the group
+            section = makeLine(currentPosition[0], currentPosition[1], currentColor, 2);
+            g_elementsGroup.add(section);
+            g_mainScene.add(section);
+        }
+    }
 }
 
 /**
