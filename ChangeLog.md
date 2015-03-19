@@ -16,6 +16,7 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 
 ### New features
 
+* Add a slider bar under the `Labels` tab to select different taxonomies for display.
 * Biplots now include arrows, which represent taxa variances. These can be turned off using the `Taxa arrow visibility` checkbox.
 
 Emperor 0.9.51 (5 Feb 2015)
