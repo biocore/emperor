@@ -29,15 +29,7 @@ from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
 from emperor.parse import parse_coords
 
 
-__author__ = "Antonio Gonzalez Pena"
-__copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Antonio Gonzalez Pena", "Yoshiki Vazquez Baeza",
-               "Jose Antonio Navas Molina"]
-__license__ = "BSD"
 __version__ = "0.9.51-dev"
-__maintainer__ = "Yoshiki Vazquez Baeza"
-__email__ = "antgonza@gmail.com"
-__status__ = "Development"
 
 
 script_info = {}
