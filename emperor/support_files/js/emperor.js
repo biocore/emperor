@@ -99,17 +99,20 @@ function toggleScaleCoordinates(element){
     var ax0 = g_viewingAxes[0];
     var ax1 = g_viewingAxes[1];
     var ax2 = g_viewingAxes[2];
+    var ax0_explained = g_fractionExplained[ax0];
+    var ax1_explained = g_fractionExplained[ax1];
+    var ax2_explained = g_fractionExplained[ax2];
 
 	// used only for vector and edges re-drawing
 	var currentPosition = [], currentColor = 0x000000;
 
-	if (!isNumeric(g_fractionExplained[ax0])) {
+	if (!isNumeric(ax0_explained)) {
 		alert("PC" + (ax0+1) + " is too small for this feature, change your selection.");
 		return;
-	} else if (!isNumeric(g_fractionExplained[ax1])) {
+	} else if (!isNumeric(ax1_explained)) {
 		alert("PC" + (ax1+1) + " is too small for this feature, change your selection.");
 		return;
-	} else if (!isNumeric(g_fractionExplained[ax2])) {
+	} else if (!isNumeric(ax2_explained)) {
 		alert("PC" + (ax2+1) + " is too small for this feature, change your selection.");
 		return;
 	}
@@ -118,7 +121,7 @@ function toggleScaleCoordinates(element){
 	// to perform over various properties, either a multiplication or a division
 	if(element.checked == true){
 		operation = function(a, b){ return a*b };
-		g_sphereScaler = g_fractionExplained[ax0];
+		g_sphereScaler = ax0_explained;
 	}
 	else{
 		operation = function(a, b){ return a/b };
@@ -129,26 +132,26 @@ function toggleScaleCoordinates(element){
 	$("#sradiusslider").slider("value",$("#sradiusslider").slider("value"));
 
 	// scale other properties
-	g_xMaximumValue = operation(g_xMaximumValue, g_fractionExplained[ax0]);
-	g_yMaximumValue = operation(g_yMaximumValue, g_fractionExplained[ax1]);
-	g_zMaximumValue = operation(g_zMaximumValue, g_fractionExplained[ax2]);
-	g_xMinimumValue = operation(g_xMinimumValue, g_fractionExplained[ax0]);
-	g_yMinimumValue = operation(g_yMinimumValue, g_fractionExplained[ax1]);
-	g_zMinimumValue = operation(g_zMinimumValue, g_fractionExplained[ax2]);
-	g_maximum = operation(g_maximum, g_fractionExplained[ax0])
+	g_xMaximumValue = operation(g_xMaximumValue, ax0_explained);
+	g_yMaximumValue = operation(g_yMaximumValue, ax1_explained);
+	g_zMaximumValue = operation(g_zMaximumValue, ax2_explained);
+	g_xMinimumValue = operation(g_xMinimumValue, ax0_explained);
+	g_yMinimumValue = operation(g_yMinimumValue, ax1_explained);
+	g_zMinimumValue = operation(g_zMinimumValue, ax2_explained);
+	g_maximum = operation(g_maximum, ax0_explained)
 
 	// scale the position of the light
 	g_sceneLight.position.set(
-		operation(g_sceneLight.position.x, g_fractionExplained[ax0]),
-		operation(g_sceneLight.position.y, g_fractionExplained[ax0]),
-		operation(g_sceneLight.position.z, g_fractionExplained[ax0])
+		operation(g_sceneLight.position.x, ax0_explained),
+		operation(g_sceneLight.position.y, ax0_explained),
+		operation(g_sceneLight.position.z, ax0_explained)
   );
 
 	// scale the position of the camera according to pc1
 	g_sceneCamera.position.set(
-		operation(g_sceneCamera.position.x, g_fractionExplained[ax0]),
-		operation(g_sceneCamera.position.y, g_fractionExplained[ax0]),
-		operation(g_sceneCamera.position.z, g_fractionExplained[ax0])
+		operation(g_sceneCamera.position.x, ax0_explained),
+		operation(g_sceneCamera.position.y, ax0_explained),
+		operation(g_sceneCamera.position.z, ax0_explained)
   );
 	// scale the axis lines
 	drawAxisLines();
@@ -157,9 +160,9 @@ function toggleScaleCoordinates(element){
     for(i = 0; i < g_plotSpheres.length; i++) {
         // scale the position of the spheres
         pos = g_plotSpheres[i].position;
-        pos.set(operation(pos.x, g_fractionExplained[ax0]),
-                operation(pos.y, g_fractionExplained[ax1]),
-                operation(pos.z, g_fractionExplained[ax2])
+        pos.set(operation(pos.x, ax0_explained),
+                operation(pos.y, ax1_explained),
+                operation(pos.z, ax2_explained)
         );
     }
 
@@ -170,15 +173,15 @@ function toggleScaleCoordinates(element){
         pos = ellipsis.position;
         scale = ellipsis.scale;
 
-        pos.set(operation(pos.x, g_fractionExplained[ax0]),
-  			    operation(pos.y, g_fractionExplained[ax1]),
-  			    operation(pos.z, g_fractionExplained[ax2])
+        pos.set(operation(pos.x, ax0_explained),
+  			    operation(pos.y, ax1_explained),
+  			    operation(pos.z, ax2_explained)
         );
 
   		// scale the dimensions of the ellipse
-        scale.set(operation(scale.x, g_fractionExplained[ax0]),
-  			      operation(scale.y, g_fractionExplained[ax1]),
-  			      operation(scale.z, g_fractionExplained[ax2])
+        scale.set(operation(scale.x, ax0_explained),
+  			      operation(scale.y, ax1_explained),
+  			      operation(scale.z, ax2_explained)
       );
     }
 
@@ -188,15 +191,15 @@ function toggleScaleCoordinates(element){
         scale = taxa.scale;
 
         //scale the dimensions of the positions of each taxa-sphere
-		pos.set(operation(pos.x, g_fractionExplained[ax0]),
-			    operation(pos.y, g_fractionExplained[ax1]),
-			    operation(pos.z, g_fractionExplained[ax2])
+		pos.set(operation(pos.x, ax0_explained),
+			    operation(pos.y, ax1_explained),
+			    operation(pos.z, ax2_explained)
         );
 
 		//scale the dimensions of each taxa-sphere
-		scale.set(operation(scale.x, g_fractionExplained[ax0]),
-			      operation(scale.y, g_fractionExplained[ax0]),
-			      operation(scale.z, g_fractionExplained[ax0])
+		scale.set(operation(scale.x, ax0_explained),
+			      operation(scale.y, ax0_explained),
+			      operation(scale.z, ax0_explained)
         );
     }
 
@@ -214,9 +217,9 @@ function toggleScaleCoordinates(element){
             cPosition = vector.geometry.vertices[i];
 
             // scale the position of each of the vertices
-            cPosition.x = operation(cPosition.x, g_fractionExplained[ax0])
-            cPosition.y = operation(cPosition.y, g_fractionExplained[ax1])
-            cPosition.z = operation(cPosition.z, g_fractionExplained[ax2])
+            cPosition.x = operation(cPosition.x, ax0_explained)
+            cPosition.y = operation(cPosition.y, ax1_explained)
+            cPosition.z = operation(cPosition.z, ax2_explained)
 
             // create an array we can pass to makeLine
             currentPosition[vertex] = [cPosition.x, cPosition.y, cPosition.z]
@@ -245,9 +248,9 @@ function toggleScaleCoordinates(element){
                 vertex = section.geometry.vertices[k];
 
                 // scale the position of each of the vertices
-                vertex.x = operation(vertex.x, g_fractionExplained[ax0])
-                vertex.y = operation(vertex.y, g_fractionExplained[ax1])
-                vertex.z = operation(vertex.z, g_fractionExplained[ax2])
+                vertex.x = operation(vertex.x, ax0_explained)
+                vertex.y = operation(vertex.y, ax1_explained)
+                vertex.z = operation(vertex.z, ax2_explained)
 
                 // create an array we can pass to makeLine
                 currentPosition[k] = [vertex.x, vertex.y, vertex.z]
