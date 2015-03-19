@@ -873,16 +873,19 @@ function displayTaxaLabels(taxaLevel){
 
         $('#taxalabels').css('display','block');
         $("#taxaLevel" ).html(taxonomy[taxaLevel]);
+	document.getElementById("taxalabels").innerHTML = "";
         _.each(g_taxaPositions, function(taxaPos, key){
             // get the coordinate of this taxa sphere
             var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
 
             // labels are identified by the key they have in taxaPos
-            labelshtml += "<label id=\"" + key + "_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:" + parseInt(coords['x']) + "px; top:" + parseInt(coords['y']) + "px;\">";
-            labelshtml += truncateLevel(taxaPos['lineage'], taxaLevel);
-            labelshtml += "</label>";
+	    $("#taxalabels").append(
+		'<label id="' + key + '_taxalabel"'+
+		    'class="unselectable labels" '+
+		    'style="position:absolute; left:' + parseInt(coords['x']) + 'px; top:' + parseInt(coords['y']) + 'px;">' +
+		    truncateLevel(taxaPos['lineage'], taxaLevel)+
+		    '</label>');
         });
-        document.getElementById("taxalabels").innerHTML = labelshtml;
         var taxaLabelColor = $('#taxalabelcolor').spectrum('get').toHexString();
         colorChangedForTaxaLabels(taxaLabelColor);
     }
@@ -2175,20 +2178,16 @@ $(document).ready(function() {
                 _.each(sortedMappingFileHeaders, function(sortedMapHeaders, i){
 			var temp = [];
                         _.each(g_plotIds, function(pltIds){
-			    if(g_mappingFileData[pltIds] == undefined){
-				console.warning(pltIds +" not in mapping")
-			    }else{
-				temp.push(g_mappingFileData[pltIds][i]);
-			    }
+			    temp.push(g_mappingFileData[pltIds][i]);
 			});
 			temp = _.uniq(temp, false);
 
 			// note that each category is added to all the dropdown menus in the
 			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
 			if (i==0) {
-			    line = "<option selected value=\""+sortedMapHeaders+"\">"+sortedMapHeaders+"</option>"
+			    line = "<option selected value=\"" + sortedMapHeaders+"\">" + sortedMapHeaders + "</option>"
 			} else {
-			    line = "<option value=\""+sortedMapHeaders+"\">"+sortedMapHeaders+"</option>"
+			    line = "<option value=\"" + sortedMapHeaders+"\">" + sortedMapHeaders+"</option>"
 			}
 			$("#colorbycombo").append(line);
 			$("#scalingbycombo").append(line);
@@ -2221,7 +2220,7 @@ $(document).ready(function() {
 		}
 
 	_.each(k_CHROMABREWER_MAPS, function(map){
-	    line = '<option value="'+ map +'">'+ map +'</option>';
+	    line = '<option value="' + map + '">'+ map + '</option>';
             $("#colormap-drop-down").append(line);
         });
 
@@ -2270,16 +2269,20 @@ $(document).ready(function() {
 		main_plot.append(g_mainRenderer.domElement);
 
 		// build divs to hold point labels and position them
-		var labelshtml = "";
-	        _.each(g_plotIds, function(sid){
-			var divid = sid.replace(/\./g,'');
-			mesh = g_plotSpheres[sid];
-			var coords = toScreenXY(mesh.position,g_sceneCamera,$('#main-plot'));
-			labelshtml += "<label id=\""+divid+"_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
-			labelshtml += sid;
-			labelshtml += "</label>";
-		});
-		document.getElementById("labels").innerHTML = labelshtml;
+    	        var labelshtml = "";
+    	        document.getElementById("labels").innerHTML = "";
+    	        _.each(g_plotIds, function(sid){
+    	        	var divid = sid.replace(/\./g,'');
+    	        	mesh = g_plotSpheres[sid];
+    	        	var coords = toScreenXY(mesh.position,g_sceneCamera,$('#main-plot'));
+    	        	$("#labels").append(
+    	        	    '<label id="'+divid+'_label"'+
+    	        		'class="unselectable labels"'+
+    	        		'style="position:absolute; left:'
+    	        		+parseInt(coords['x'])+'px; top:'+parseInt(coords['y'])+'px;">'+
+    	        		sid + '</label>');
+    	        });
+
 
 	        if(!jQuery.isEmptyObject(g_taxaPositions)){
                         displayTaxaLabels(0);
