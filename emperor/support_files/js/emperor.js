@@ -2,7 +2,8 @@
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2013, Emperor"
  * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza",
- *                "Jackson Chen", "Emily TerAvest", "Jamie Morton"]
+ *                "Jackson Chen", "Emily TerAvest", "Jamie Morton", 
+ *                "Daniel McDonald"]
  * __license__ = "BSD"
  * __version__ = "0.9.51-dev"
  * __maintainer__ = "Antonio Gonzalez Pena"
@@ -95,18 +96,24 @@ function resetCamera() {
 function toggleScaleCoordinates(element){
 	var axesLen;
 	var operation;
+    var ax0 = g_viewingAxes[0];
+    var ax1 = g_viewingAxes[1];
+    var ax2 = g_viewingAxes[2];
+    var ax0_explained = g_fractionExplained[ax0];
+    var ax1_explained = g_fractionExplained[ax1];
+    var ax2_explained = g_fractionExplained[ax2];
 
 	// used only for vector and edges re-drawing
 	var currentPosition = [], currentColor = 0x000000;
 
-	if (!isNumeric(g_fractionExplained[g_viewingAxes[0]])) {
-		alert("PC" + (g_viewingAxes[0]+1) + " is too small for this feature, change your selection.");
+	if (!isNumeric(ax0_explained)) {
+		alert("PC" + (ax0+1) + " is too small for this feature, change your selection.");
 		return;
-	} else if (!isNumeric(g_fractionExplained[g_viewingAxes[1]])) {
-		alert("PC" + (g_viewingAxes[1]+1) + " is too small for this feature, change your selection.");
+	} else if (!isNumeric(ax1_explained)) {
+		alert("PC" + (ax1+1) + " is too small for this feature, change your selection.");
 		return;
-	} else if (!isNumeric(g_fractionExplained[g_viewingAxes[2]])) {
-		alert("PC" + (g_viewingAxes[2]+1) + " is too small for this feature, change your selection.");
+	} else if (!isNumeric(ax2_explained)) {
+		alert("PC" + (ax2+1) + " is too small for this feature, change your selection.");
 		return;
 	}
 
@@ -114,7 +121,7 @@ function toggleScaleCoordinates(element){
 	// to perform over various properties, either a multiplication or a division
 	if(element.checked == true){
 		operation = function(a, b){ return a*b };
-		g_sphereScaler = g_fractionExplained[g_viewingAxes[0]];
+		g_sphereScaler = ax0_explained;
 	}
 	else{
 		operation = function(a, b){ return a/b };
@@ -125,137 +132,136 @@ function toggleScaleCoordinates(element){
 	$("#sradiusslider").slider("value",$("#sradiusslider").slider("value"));
 
 	// scale other properties
-	g_xMaximumValue = operation(g_xMaximumValue, g_fractionExplained[g_viewingAxes[0]]);
-	g_yMaximumValue = operation(g_yMaximumValue, g_fractionExplained[g_viewingAxes[1]]);
-	g_zMaximumValue = operation(g_zMaximumValue, g_fractionExplained[g_viewingAxes[2]]);
-	g_xMinimumValue = operation(g_xMinimumValue, g_fractionExplained[g_viewingAxes[0]]);
-	g_yMinimumValue = operation(g_yMinimumValue, g_fractionExplained[g_viewingAxes[1]]);
-	g_zMinimumValue = operation(g_zMinimumValue, g_fractionExplained[g_viewingAxes[2]]);
-	g_maximum = operation(g_maximum, g_fractionExplained[g_viewingAxes[0]])
+	g_xMaximumValue = operation(g_xMaximumValue, ax0_explained);
+	g_yMaximumValue = operation(g_yMaximumValue, ax1_explained);
+	g_zMaximumValue = operation(g_zMaximumValue, ax2_explained);
+	g_xMinimumValue = operation(g_xMinimumValue, ax0_explained);
+	g_yMinimumValue = operation(g_yMinimumValue, ax1_explained);
+	g_zMinimumValue = operation(g_zMinimumValue, ax2_explained);
+	g_maximum = operation(g_maximum, ax0_explained)
 
 	// scale the position of the light
 	g_sceneLight.position.set(
-		operation(g_sceneLight.position.x, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneLight.position.y, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneLight.position.z, g_fractionExplained[g_viewingAxes[0]])
+		operation(g_sceneLight.position.x, ax0_explained),
+		operation(g_sceneLight.position.y, ax0_explained),
+		operation(g_sceneLight.position.z, ax0_explained)
   );
 
 	// scale the position of the camera according to pc1
 	g_sceneCamera.position.set(
-		operation(g_sceneCamera.position.x, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneCamera.position.y, g_fractionExplained[g_viewingAxes[0]]),
-		operation(g_sceneCamera.position.z, g_fractionExplained[g_viewingAxes[0]])
+		operation(g_sceneCamera.position.x, ax0_explained),
+		operation(g_sceneCamera.position.y, ax0_explained),
+		operation(g_sceneCamera.position.z, ax0_explained)
   );
 	// scale the axis lines
 	drawAxisLines();
 
 	// set the new position of each of the sphere objects
-  _.each(g_plotSpheres, function(sphere){
-    // scale the position of the spheres
-    sphere.position.set(
-			operation(sphere.position.x, g_fractionExplained[g_viewingAxes[0]]),
-			operation(sphere.position.y, g_fractionExplained[g_viewingAxes[1]]),
-			operation(sphere.position.z, g_fractionExplained[g_viewingAxes[2]])
-    );
-  });
-
-	// ellipses won't always be available hence the two separate loops
-  _.each(g_plotEllipses, function(ellipse){
-  		// scale the dimensions of the positions of each ellipse
-      ellipse.position.set(
-  			operation(ellipse.position.x, g_fractionExplained[g_viewingAxes[0]]),
-  			operation(ellipse.position.y, g_fractionExplained[g_viewingAxes[1]]),
-  			operation(ellipse.position.z, g_fractionExplained[g_viewingAxes[2]])
-      );
-
-  		// scale the dimensions of the ellipse
-      ellipse.scale.set(
-  			operation(ellipse.scale.x, g_fractionExplained[g_viewingAxes[0]]),
-  			operation(ellipse.scale.y, g_fractionExplained[g_viewingAxes[1]]),
-  			operation(ellipse.scale.z, g_fractionExplained[g_viewingAxes[2]])
-      );
-  });
-
-  _.each(g_plotTaxa, function (taxa){
-    //scale the dimensions of the positions of each taxa-sphere
-		taxa.position.set(
-			operation(taxa.position.x, g_fractionExplained[g_viewingAxes[0]]),
-			operation(taxa.position.y, g_fractionExplained[g_viewingAxes[1]]),
-			operation(taxa.position.z, g_fractionExplained[g_viewingAxes[2]])
-    );
-
-		//scale the dimensions of each taxa-sphere
-		taxa.scale.set(
-			operation(g_plotTaxa[index].scale.x, g_fractionExplained[g_viewingAxes[0]]),
-			operation(g_plotTaxa[index].scale.y, g_fractionExplained[g_viewingAxes[0]]),
-			operation(g_plotTaxa[index].scale.z, g_fractionExplained[g_viewingAxes[0]])
-    );
-  });
-
-	// each line is indexed by a sample, creating in turn TOTAL_SAMPLES-1 lines
-  _.each(g_plotVectors, function(vector){
-    // the color has to be formatted as an hex number for makeLine to work
-    currentColor = vector.material.color.getHex();
-
-    // updating the position of a vertex in a line is a really expensive
-    // operation, hence we just remove it from the group and create it again
-    g_elementsGroup.remove(vector);
-
-    for (var vertex in vector.geometry.vertices){
-      cPosition = vector.geometry.vertices[vertex];
-
-      // scale the position of each of the vertices
-      cPosition.x = operation(cPosition.x, g_fractionExplained[g_viewingAxes[0]])
-      cPosition.y = operation(cPosition.y, g_fractionExplained[g_viewingAxes[1]])
-      cPosition.z = operation(cPosition.z, g_fractionExplained[g_viewingAxes[2]])
-
-      // create an array we can pass to makeLine
-      currentPosition[vertex] = [cPosition.x, cPosition.y, cPosition.z]
+    for(i = 0; i < g_plotSpheres.length; i++) {
+        // scale the position of the spheres
+        pos = g_plotSpheres[i].position;
+        pos.set(operation(pos.x, ax0_explained),
+                operation(pos.y, ax1_explained),
+                operation(pos.z, ax2_explained)
+        );
     }
 
-    // add the element to the main vector array and to the group
-    vector = makeLine(currentPosition[0], currentPosition[1], currentColor, 2);
-    g_elementsGroup.add(vector);
-  });
+	// ellipses won't always be available hence the two separate loops
+    for(i = 0; i < g_plotEllipses.length; i++) {
+  		// scale the dimensions of the positions of each ellipse
+        ellipsis = g_plotEllipses[i];
+        pos = ellipsis.position;
+        scale = ellipsis.scale;
+
+        pos.set(operation(pos.x, ax0_explained),
+  			    operation(pos.y, ax1_explained),
+  			    operation(pos.z, ax2_explained)
+        );
+
+  		// scale the dimensions of the ellipse
+        scale.set(operation(scale.x, ax0_explained),
+  			      operation(scale.y, ax1_explained),
+  			      operation(scale.z, ax2_explained)
+      );
+    }
+
+    for(i = 0; i < g_plotTaxa.length; i++) {
+        taxa = g_plotTaxa[i];
+        pos = taxa.position;
+        scale = taxa.scale;
+
+        //scale the dimensions of the positions of each taxa-sphere
+		pos.set(operation(pos.x, ax0_explained),
+			    operation(pos.y, ax1_explained),
+			    operation(pos.z, ax2_explained)
+        );
+
+		//scale the dimensions of each taxa-sphere
+		scale.set(operation(scale.x, ax0_explained),
+			      operation(scale.y, ax0_explained),
+			      operation(scale.z, ax0_explained)
+        );
+    }
+
+	// each line is indexed by a sample, creating in turn TOTAL_SAMPLES-1 lines
+    for(i = 0; i < g_plotVectors.length; i++) {
+        vector = g_plotVectors[i];
+        // the color has to be formatted as an hex number for makeLine to work
+        currentColor = vector.material.color.getHex();
+
+        // updating the position of a vertex in a line is a really expensive
+        // operation, hence we just remove it from the group and create it again
+        g_elementsGroup.remove(vector);
+
+        for(j = 0; j < vector.geometry.vertices.length; j++) {
+            cPosition = vector.geometry.vertices[i];
+
+            // scale the position of each of the vertices
+            cPosition.x = operation(cPosition.x, ax0_explained)
+            cPosition.y = operation(cPosition.y, ax1_explained)
+            cPosition.z = operation(cPosition.z, ax2_explained)
+
+            // create an array we can pass to makeLine
+            currentPosition[vertex] = [cPosition.x, cPosition.y, cPosition.z]
+        }
+
+        // add the element to the main vector array and to the group
+        vector = makeLine(currentPosition[0], currentPosition[1], currentColor, 2);
+        g_elementsGroup.add(vector);
+    }
 
 	// support scaling of edges in plot comparisons
-  _.each(g_plotEdges, function(edge){
-    // each edge is composed of two separate lines
-    _.each(edge, function(section){
-      // the color has to be formatted as an hex number for makeLine to work
-      currentColor = section.material.color.getHex();
+    for(i = 0; i < g_plotEdges.length; i++) {
+        edge = g_plotEdges[i];
+        for(j = 0; j < edge.length; j++) {
+            section = edge[j];
+            // the color has to be formatted as an hex number for makeLine to work
+            currentColor = section.material.color.getHex();
 
-      // remove them completely from the group and scene we no longer need
-      // these objects as re-creating them is as expensive as modifying
-      // most of their features
-      g_elementsGroup.remove(section)
-      g_mainScene.remove(section)
+            // remove them completely from the group and scene we no longer need
+            // these objects as re-creating them is as expensive as modifying
+            // most of their features
+            g_elementsGroup.remove(section)
+            g_mainScene.remove(section)
 
-      for (vertex in section.geometry.vertices){
-        currentPosition[vertex] = section.geometry.vertices[vertex];
+            for(k = 0; k < section.geometry.vertices.length; k++) {
+                vertex = section.geometry.vertices[k];
 
-        // scale the position of each of the vertices
-        currentPosition[vertex].x = operation(currentPosition[vertex].x,
-          g_fractionExplained[g_viewingAxes[0]])
-        currentPosition[vertex].y = operation(currentPosition[vertex].y,
-          g_fractionExplained[g_viewingAxes[1]])
-        currentPosition[vertex].z = operation(currentPosition[vertex].z,
-          g_fractionExplained[g_viewingAxes[2]])
+                // scale the position of each of the vertices
+                vertex.x = operation(vertex.x, ax0_explained)
+                vertex.y = operation(vertex.y, ax1_explained)
+                vertex.z = operation(vertex.z, ax2_explained)
 
-        // create an array we can pass to makeLine
-        currentPosition[vertex] = [
-          currentPosition[vertex].x,
-          currentPosition[vertex].y,
-          currentPosition[vertex].z
-        ]
-      }
+                // create an array we can pass to makeLine
+                currentPosition[k] = [vertex.x, vertex.y, vertex.z]
+            }
 
-      // add the element to the main vector array and to the group
-      section = makeLine(currentPosition[0], currentPosition[1], currentColor, 2);
-      g_elementsGroup.add(section);
-      g_mainScene.add(section);
-    });
-  });
+            // add the element to the main vector array and to the group
+            section = makeLine(currentPosition[0], currentPosition[1], currentColor, 2);
+            g_elementsGroup.add(section);
+            g_mainScene.add(section);
+        }
+    }
 }
 
 /**
