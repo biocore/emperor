@@ -284,8 +284,8 @@ function colorByMenuChanged(categoryName) {
   var colormap = $("#colormap-drop-down").val();
 
 	// set the new current category and index
-	g_categoryName = categoryName || document.getElementById('colorbycombo')[document.getElementById('colorbycombo').selectedIndex].value;
-	g_categoryIndex = g_mappingFileHeaders.indexOf(g_categoryName);
+	g_categoryName = categoryName || $('#colorbycombo').val();
+    g_categoryIndex = g_mappingFileHeaders.indexOf(g_categoryName);
 
 	// get all values of this category from the mapping
 	var vals = [];
@@ -400,7 +400,10 @@ function colorParallelPlots(vals,colors)
 	pwidth = document.getElementById('parallelPlotWrapper').offsetWidth
 	pheight = document.getElementById('parallelPlotWrapper').offsetHeight
 
-	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
+	$('#parallelPlotWrapper').html(
+    '<div id="parallelPlot" class="parcoords" style="width:' + pwidth + 'px;height:' + pheight + 'px">' +
+    '</div>'
+  );
 
   // ==============> Needs work
 	var color = function(d) {
@@ -454,8 +457,8 @@ function colorParallelPlots(vals,colors)
   This function will create one slider and a label for each category.
 */
 function scalingByMenuChanged(){
-	var scalingByCategoryName = document.getElementById('scalingbycombo')[document.getElementById('scalingbycombo').selectedIndex].value;
-	var scalingByCategoryIndex = g_mappingFileHeaders.indexOf(scalingByCategoryName);
+	var scalingByCategoryName = $('#scalingbycombo').val();
+  var scalingByCategoryIndex = g_mappingFileHeaders.indexOf(scalingByCategoryName);
 	var values = [], lines, idString;
 
 	// get all values of this category from the mapping
@@ -583,7 +586,7 @@ function showByMenuChanged() {
 function toggleVisible(value) {
 
 	var hidden = !document.showbyform.elements[value+'_show'].checked;
-	g_categoryName = document.getElementById('showbycombo')[document.getElementById('showbycombo').selectedIndex].value;
+	g_categoryName = $('#showbycombo').val();
 
 	//change visibility of points depending on metadata category
   _.each(g_plotIds, function(sid){
@@ -831,7 +834,7 @@ function toggleLabels() {
 		$('#labels').css('display','block');
 		$("#lopacityslider").slider('enable');
 		$("#labelColor").spectrum('enable');
-		document.getElementById('labelcombo').disabled = false;
+    $("#labelcombo").prop('disabled', false);
 
 		if(document.labels == null){
 			return;
@@ -873,7 +876,7 @@ function displayTaxaLabels(taxaLevel){
 
         $('#taxalabels').css('display','block');
         $("#taxaLevel" ).html(taxonomy[taxaLevel]);
-	document.getElementById("taxalabels").innerHTML = "";
+	      $("#taxalabels").empty();
         _.each(g_taxaPositions, function(taxaPos, key){
             // get the coordinate of this taxa sphere
             var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
@@ -1004,8 +1007,8 @@ function ellipseOpeacityChange(ui) {
 */
 function sphereOpacityChange(ui, category) {
 	var sphereOpacity = ui.value/100;
-	var showByCategoryName = document.getElementById('showbycombo')[document.getElementById('showbycombo').selectedIndex].value;
-	var showByCategoryIndex = g_mappingFileHeaders.indexOf(showByCategoryName);
+	var showByCategoryName = $('#showbycombo').val();
+  var showByCategoryIndex = g_mappingFileHeaders.indexOf(showByCategoryName);
 	var vals = [], idString, newValue;
 
 	// get all values of this category from the mapping
@@ -1033,14 +1036,14 @@ function sphereOpacityChange(ui, category) {
 			if(g_mappingFileData[g_plotIds[i]][showByCategoryIndex] == category){
 				g_plotSpheres[g_plotIds[i]].material.opacity = sphereOpacity;
 			}
-			document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%";
+			$('#' + idString + "opacityvalue").html( $("#" + idString + "opacityslider").slider("value") + "%" );
 		}
 	}
 }
 
 /*This function handles events from the vectors opacity slider*/
 function vectorsOpacityChange(ui) {
-	document.getElementById('vectorsopacity').innerHTML = ui.value + "%";
+	$('#vectorsopacity').html(ui.value + "%");
 	var vectorsOpacity = ui.value/100;
 
 	for(var sample_id in g_plotVectors){
@@ -1050,7 +1053,7 @@ function vectorsOpacityChange(ui) {
 
 /*This function handles events from the label opacity slider*/
 function labelOpacityChange(ui) {
-	document.getElementById('labelopacity').innerHTML = ui.value + "%";
+	$('#labelopacity').html(ui.value + "%");
 	labelOpacity = ui.value/100;
 
 	$('#labels').css('opacity', labelOpacity);
@@ -1066,8 +1069,8 @@ function labelOpacityChange(ui) {
 */
 function sphereRadiusChange(ui, category) {
 	var scale = (ui.value/5.0)*g_sphereScaler;
-	var scalingByCategoryName = document.getElementById('scalingbycombo')[document.getElementById('scalingbycombo').selectedIndex].value;
-	var scalingByCategoryIndex = g_mappingFileHeaders.indexOf(scalingByCategoryName);
+	var scalingByCategoryName = ('#scalingbycombo').val();
+  var scalingByCategoryIndex = g_mappingFileHeaders.indexOf(scalingByCategoryName);
 	var values = [], idString;
 
 	// get all values of this category from the mapping
@@ -1079,12 +1082,12 @@ function sphereRadiusChange(ui, category) {
 	if (category == null){
 		for (index in values){
 			idString = "r"+index+"c"+scalingByCategoryIndex;
-			$("#"+idString+"scalingslider").slider("value", ui.value);
-			document.getElementById(idString+"scalingvalue").innerHTML = $("#"+idString+"scalingslider").slider("value")/5;
+			$('#' + idString + "scalingslider").slider("value", ui.value);
+			$('#' + idString + "scalingvalue").html( $("#" + idString + "scalingslider").slider("value") / 5 );
 		}
 
 		// set the value for the master scaling slider
-		document.getElementById('sphereradius').innerHTML = ui.value/5;
+		$('sphereradius').html(ui.value / 5);
 	}
 	else{
 		// each field is identified by the value it has in the deduplicated
@@ -1096,14 +1099,14 @@ function sphereRadiusChange(ui, category) {
 			if(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex] == category){
 				g_plotSpheres[g_plotIds[i]].scale.set(scale, scale, scale);
 			}
-			document.getElementById(idString+"scalingvalue").innerHTML = $("#"+idString+"scalingslider").slider("value")/5;
+			$('#' + idString + "scalingvalue").html( $("#" + idString + "scalingslider").slider("value") / 5);
 		}
 	}
 }
 
 /*Add a clear description of what the hell happens when this gets executed*/
 function animationSpeedChanged(ui){
-	document.getElementById("animation-speed").innerHTML = ui.value+"x";
+	$("#animation-speed").html(ui.value + "x");
 }
 
 /*Setup the interface elements required for the sidebar of the main interface*/
@@ -1129,13 +1132,13 @@ function setJqueryUi() {
 					var divid = sid.replace(/\./g,'');
 					$('#'+divid+"_label").css('color', color.toHexString());
 				}
-				document.getElementById('labelcombo').selectedIndex = 0;
+				$('#labelcombo').prop("selectedIndex", 0);
 				labelMenuChanged();
 			}
 	});
 
 	// check whether or not there is an ellipse opacity slider in the plot
-	if (document.getElementById('ellipseopacity')){
+	if ($('#ellipseopacity')){
 		$("#eopacityslider").slider({
 			range: "max",
 			min: 0,
@@ -1148,11 +1151,11 @@ function setJqueryUi() {
 				ellipseOpacityChange(ui);
 			}
 		});
-		document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
+		$('#ellipseopacity').html( $("#eopacityslider").slider("value") + "%" );
 	}
 
 	// check whether or not there is a vectors opacity slider in the plot
-	if (document.getElementById('vectorsopacity')){
+	if ($('#vectorsopacity')){
 		$("#vopacityslider").slider({
 			range: "max",
 			min: 0,
@@ -1165,12 +1168,12 @@ function setJqueryUi() {
 				vectorsOpacityChange(ui);
 			}
 		});
-		document.getElementById('vectorsopacity').innerHTML = $( "#vopacityslider" ).slider( "value")+"%";
+		$('#vectorsopacity').html( $("#vopacityslider").slider( "value") + "%" );
 	}
 
 	// check if we are presenting biplots, to decide whether or not we should
 	// show the color picker for the biplot spheres, white is the default color
-	if(document.getElementById('taxaspherescolor')){
+	if($('#taxaspherescolor')){
 		$('#taxaspherescolor').css('backgroundColor',"#FFFFFF");
 		$("#taxaspherescolor").spectrum({
 			localStorageKey: 'key',
@@ -1188,7 +1191,7 @@ function setJqueryUi() {
 		});
 	}
 	// set up the color selector for the taxa labels
-	if(document.getElementById('taxalabelcolor')){
+	if($('#taxalabelcolor')){
 		$('#taxalabelcolor').css('backgroundColor',"#FFFFFF");
 		$("#taxalabelcolor").spectrum({
 			localStorageKey: 'key',
@@ -1209,7 +1212,7 @@ function setJqueryUi() {
 
 	// check if the plot is a comparison plot if so, setup the elements that
 	// will allow the user to change the color of the two sides of the edges
-	if(document.getElementById('edgecolorselector_a')){
+	if($('#edgecolorselector_a')){
 		$('#edgecolorselector_a').css('backgroundColor',"#FFFFFF");
 		$("#edgecolorselector_a").spectrum({
 			localStorageKey: 'key',
@@ -1226,7 +1229,7 @@ function setJqueryUi() {
 				}
 		});
 	}
-	if(document.getElementById('edgecolorselector_b')){
+	if($('#edgecolorselector_b')){
 		$('#edgecolorselector_b').css('backgroundColor',"#FF0000");
 		$("#edgecolorselector_b").spectrum({
 			localStorageKey: 'key',
@@ -1256,7 +1259,7 @@ function setJqueryUi() {
 			sphereOpacityChange(ui, null);
 		}
 	});
-	document.getElementById('sphereopacity').innerHTML = $( "#sopacityslider" ).slider( "value").toString()+"%";
+	$('#sphereopacity').html($("#sopacityslider").slider("value").toString() + "%");
 
 	$("#sradiusslider" ).slider({
 		range: "max",
@@ -1270,7 +1273,7 @@ function setJqueryUi() {
 			sphereRadiusChange(ui, null);
 		}
 	});
-	document.getElementById('sphereradius').innerHTML = $( "#sradiusslider" ).slider( "value")/5;
+	$('#sphereradius').html($("#sradiusslider").slider( "value")/5);
 
 	$("#lopacityslider").slider({
 		range: "max",
@@ -1284,7 +1287,7 @@ function setJqueryUi() {
 			labelOpacityChange(ui);
 		}
 	});
-	document.getElementById('labelopacity').innerHTML = $( "#lopacityslider" ).slider( "value")+"%"
+	$('#labelopacity').html($("#lopacityslider").slider("value") + "%")
 
 	$("#animation-speed-slider").slider({
 		range: "max",
@@ -1298,7 +1301,7 @@ function setJqueryUi() {
 			animationSpeedChanged(ui);
 		}
 	});
-	document.getElementById('animation-speed').innerHTML = $("#animation-speed-slider").slider("value")+"x"
+	$('#animation-speed').html($("#animation-speed-slider").slider("value") + "x");
 
 	//default color for axes labels is white
 	$('#axeslabelscolor').css('backgroundColor',"#FFFFFF");
@@ -1768,7 +1771,7 @@ function drawAxisLines() {
 
 /* update point count label */
 function changePointCount() {
-	document.getElementById('pointCount').innerHTML = g_visiblePoints+'/'+g_plotIds.length+' points'
+	$('#pointCount').html(g_visiblePoints + '/' + g_plotIds.length + ' points')
 }
 
 /* Validating and modifying the view axes */
@@ -1932,8 +1935,7 @@ function clean_label_refresh_axes() {
 function togglePlots() {
 
 	// set some interface changes for 3D visualizations
-	if(document.getElementById('pcoa').checked)
-	{
+	if($('#pcoa').is(':checked')) {
 		document.getElementById('pcoaPlotWrapper').className = 'emperor-plot-wrapper';
 		document.getElementById('pcoaoptions').className = '';
 		document.getElementById('pcoaviewoptions').className = '';
@@ -1992,7 +1994,9 @@ function setParallelPlots() {
 	pwidth = document.getElementById('pcoaPlotWrapper').offsetWidth
 	pheight = document.getElementById('pcoaPlotWrapper').offsetHeight
 
-	document.getElementById('parallelPlotWrapper').innerHTML = '<div id="parallelPlot" class="parcoords" style="width:'+pwidth+'px;height:'+pheight+'px"></div>'
+	$('#parallelPlotWrapper').html(
+    '<div id="parallelPlot" class="parcoords" style="width:' + pwidth + 'px;height:' + pheight + 'px">' +
+    '</div>')
 }
 
 // Resets the aspect ratio after dragging and window resize
@@ -2046,20 +2050,21 @@ function resetDivSizes(width_left) {
 /*Builds the axes labels from ground up after changing the axes*/
 function buildAxisLabels() {
 	//build axis labels
-	var axislabelhtml = "";
-	var xcoords = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main-plot'));
-	axislabelhtml += "<label id=\"pc1_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(xcoords['x'])+"px; top:"+parseInt(xcoords['y'])+"px;\">";
-	axislabelhtml += g_pc1Label;
-	axislabelhtml += "</label>";
-	var ycoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue),g_sceneCamera,$('#main-plot'));
-	axislabelhtml += "<label id=\"pc2_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(ycoords['x'])+"px; top:"+parseInt(ycoords['y'])+"px;\">";
-	axislabelhtml += g_pc2Label;
-	axislabelhtml += "</label>";
-	var zcoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue),g_sceneCamera,$('#main-plot'));
-	axislabelhtml += "<label id=\"pc3_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(zcoords['x'])+"px; top:"+parseInt(zcoords['y'])+"px;\">";
-	axislabelhtml += g_pc3Label;
-	axislabelhtml += "</label>";
-	document.getElementById("axislabels").innerHTML = axislabelhtml;
+  var xcoords = toScreenXY(new THREE.Vector3(g_xMaximumValue, g_yMinimumValue, g_zMinimumValue),g_sceneCamera,$('#main-plot'));
+  var ycoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMaximumValue, g_zMinimumValue),g_sceneCamera,$('#main-plot'));
+  var zcoords = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue),g_sceneCamera,$('#main-plot'));
+
+  $("#axislabels").html(
+  	'<label id="pc1_label" class="unselectable labels" style="position:absolute; left:' + parseInt(xcoords['x']) + "px; top:" + parseInt(xcoords['y']) + 'px;">' +
+      g_pc1Label +
+  	"</label>" +
+    '<label id="pc2_label" class="unselectable labels" style="position:absolute; left:' + parseInt(ycoords['x']) + "px; top:" + parseInt(ycoords['y']) + 'px;">' +
+      g_pc2Label +
+    "</label>" +
+  	'<label id="pc3_label" class="unselectable labels" style="position:absolute; left:' + parseInt(zcoords['x']) + "px; top:" + parseInt(zcoords['y']) + 'px;">' +
+      g_pc3Label +
+    "</label>"
+  );
 }
 
 //Unhides the info box if WebGL is disabled
