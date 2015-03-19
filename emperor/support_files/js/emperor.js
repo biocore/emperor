@@ -1442,7 +1442,6 @@ function drawTaxa(){
 	var whiteColor = new THREE.Color();
 	whiteColor.setHex("0xFFFFFF");
 
-	//for (var key in g_taxaPositions){
         _.each(g_taxaPositions, function(taxaPos, key){
 		var mesh = new THREE.Mesh(g_genericSphere,
 			new THREE.MeshPhongMaterial());
@@ -2171,31 +2170,32 @@ $(document).ready(function() {
 
 		// this sorted list of headers is only used in the following loop
 		// to create the 'color by', 'show by' and 'label by' drop-down menus
-		sortedMappingFileHeaders = naturalSort(g_mappingFileHeaders)
-		for(var i in sortedMappingFileHeaders){
+            	sortedMappingFileHeaders = naturalSort(g_mappingFileHeaders)
+
+                _.each(sortedMappingFileHeaders, function(sortedMapHeaders, i){
 			var temp = [];
-			for(var j in g_plotIds) {
-				if(g_mappingFileData[g_plotIds[j]] == undefined){
-					console.warning(g_plotIds[j] +" not in mapping")
-					continue
-				}
-				temp.push(g_mappingFileData[g_plotIds[j]][i])
-			}
+                        _.each(g_plotIds, function(pltIds){
+			    if(g_mappingFileData[pltIds] == undefined){
+				console.warning(pltIds +" not in mapping")
+			    }else{
+				temp.push(g_mappingFileData[pltIds][i]);
+			    }
+			});
 			temp = _.uniq(temp, false);
 
 			// note that each category is added to all the dropdown menus in the
 			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
 			if (i==0) {
-			    line = "<option selected value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+			    line = "<option selected value=\""+sortedMapHeaders+"\">"+sortedMapHeaders+"</option>"
 			} else {
-			    line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+			    line = "<option value=\""+sortedMapHeaders+"\">"+sortedMapHeaders+"</option>"
 			}
 			$("#colorbycombo").append(line);
 			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
 			$("#trajectory-category-drop-down").append(line);
-		}
+		});
     $("#colorbycombo").chosen({width: "100%", search_contains: true});
     // adding event in case the user press esc
     $("#colorbycombo").on('chosen:hiding_dropdown', function(evt, params) {
@@ -2220,10 +2220,10 @@ $(document).ready(function() {
 			$("#gradient-category-drop-down").append(line);
 		}
 
-        for (var i in k_CHROMABREWER_MAPS){
-			line = '<option value="'+k_CHROMABREWER_MAPS[i]+'">'+k_CHROMABREWER_MAPNAMES[i]+'</option>';
+	_.each(k_CHROMABREWER_MAPS, function(map){
+	    line = '<option value="'+ map +'">'+ map +'</option>';
             $("#colormap-drop-down").append(line);
-        }
+        });
 
 
     // initialize the dropdowns after inserting the options
@@ -2271,15 +2271,15 @@ $(document).ready(function() {
 
 		// build divs to hold point labels and position them
 		var labelshtml = "";
-		for(var i in g_plotIds) {
-			var sid = g_plotIds[i];
+	        _.each(g_plotIds, function(pltID){
+			var sid = pltID;
 			var divid = sid.replace(/\./g,'');
 			mesh = g_plotSpheres[sid];
 			var coords = toScreenXY(mesh.position,g_sceneCamera,$('#main-plot'));
 			labelshtml += "<label id=\""+divid+"_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
 			labelshtml += sid;
 			labelshtml += "</label>";
-		}
+		});
 		document.getElementById("labels").innerHTML = labelshtml;
 
 	        if(!jQuery.isEmptyObject(g_taxaPositions)){
@@ -2394,14 +2394,14 @@ $(document).ready(function() {
 
 		// move labels when the plot is moved
 		if(document.plotoptions.elements[0].checked){
-			for(var i in g_plotIds) {
-				var sid = g_plotIds[i];
+                        _.each(g_plotIds, function(pltID){
+				var sid = pltID;
 				mesh = g_plotSpheres[sid];
 				var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main-plot'));
 				var divid = sid.replace(/\./g,'');
 				$('#'+divid+"_label").css('left',coords['x']);
 				$('#'+divid+"_label").css('top',coords['y']);
-			}
+			});
 		}
 		// check if you have to reposition the taxa labels for each frame
 		// this is something that will only happen when drawing biplots
