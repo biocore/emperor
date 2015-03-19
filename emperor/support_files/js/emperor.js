@@ -2393,8 +2393,7 @@ $(document).ready(function() {
 
 		// move labels when the plot is moved
 		if(document.plotoptions.elements[0].checked){
-                        _.each(g_plotIds, function(pltID){
-				var sid = pltID;
+                        _.each(g_plotIds, function(sid){
 				mesh = g_plotSpheres[sid];
 				var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main-plot'));
 				var divid = sid.replace(/\./g,'');
