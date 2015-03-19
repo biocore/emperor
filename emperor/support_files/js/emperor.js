@@ -728,9 +728,9 @@ function colorChangedForTaxaSpheres(color){
 function colorChangedForTaxaLabels(color){
         // get the taxonomic assignments and append '_taxalabel' to
         // retrieve all the labels belonging to a sphere in the plot
-        for(var key in g_taxaPositions) {
-       	        $('#'+key+"_taxalabel").css('color', color);
-        }
+        _.each(g_taxaPositions, function(taxaPos, key){
+       	        $('#' + key + "_taxalabel").css('color', color);
+        });
 }
 
 /* This function is called when a new color is selected for the edges
@@ -873,16 +873,19 @@ function displayTaxaLabels(taxaLevel){
 
         $('#taxalabels').css('display','block');
         $("#taxaLevel" ).html(taxonomy[taxaLevel]);
-        for(var key in g_taxaPositions){
+	document.getElementById("taxalabels").innerHTML = "";
+        _.each(g_taxaPositions, function(taxaPos, key){
             // get the coordinate of this taxa sphere
             var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
 
-            // labels are identified by the key they have in g_taxaPositions
-            labelshtml += "<label id=\""+key+"_taxalabel\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
-            labelshtml += truncateLevel(g_taxaPositions[key]['lineage'], taxaLevel);
-            labelshtml += "</label>";
-        }
-        document.getElementById("taxalabels").innerHTML = labelshtml;
+            // labels are identified by the key they have in taxaPos
+	    $("#taxalabels").append(
+		'<label id="' + key + '_taxalabel"'+
+		    'class="unselectable labels" '+
+		    'style="position:absolute; left:' + parseInt(coords['x']) + 'px; top:' + parseInt(coords['y']) + 'px;">' +
+		    truncateLevel(taxaPos['lineage'], taxaLevel)+
+		    '</label>');
+        });
         var taxaLabelColor = $('#taxalabelcolor').spectrum('get').toHexString();
         colorChangedForTaxaLabels(taxaLabelColor);
     }
@@ -1390,6 +1393,7 @@ function setJqueryUi() {
   only happen when plotting a jaccknifed principal coordinates analysis
 */
 function drawEllipses() {
+
 	for(var sid in g_ellipsesDimensions) {
 		//draw ellipsoid
 		var emesh = new THREE.Mesh( g_genericSphere,new THREE.MeshPhongMaterial() );
@@ -1414,20 +1418,20 @@ function drawEllipses() {
 function drawSpheres() {
   //draw ball
   _.each(g_spherePositions, function(spherePositions){
-    var sid = spherePositions['name']
-		var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshPhongMaterial() );
-		mesh.material.color = new THREE.Color()
-		mesh.material.transparent = true;
-		mesh.material.depthWrite = false;
-		mesh.material.opacity = 1;
-		mesh.position.set(spherePositions['x'], spherePositions['y'], spherePositions['z']);
-		mesh.updateMatrix();
-		mesh.matrixAutoUpdate = true;
-		if(g_mappingFileData[sid] != undefined){
-			g_elementsGroup.add( mesh );
-			g_plotSpheres[sid] = mesh;
-			g_plotIds.push(sid);
-		}
+      var sid = spherePositions['name']
+      var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshPhongMaterial() );
+      mesh.material.color = new THREE.Color()
+      mesh.material.transparent = true;
+      mesh.material.depthWrite = false;
+      mesh.material.opacity = 1;
+      mesh.position.set(spherePositions['x'], spherePositions['y'], spherePositions['z']);
+      mesh.updateMatrix();
+      mesh.matrixAutoUpdate = true;
+      if(g_mappingFileData[sid] != undefined){
+	  g_elementsGroup.add( mesh );
+	  g_plotSpheres[sid] = mesh;
+	  g_plotIds.push(sid);
+      }
   });
 }
 
@@ -1441,19 +1445,19 @@ function drawTaxa(){
 	var whiteColor = new THREE.Color();
 	whiteColor.setHex("0xFFFFFF");
 
-	for (var key in g_taxaPositions){
+        _.each(g_taxaPositions, function(taxaPos, key){
 		var mesh = new THREE.Mesh(g_genericSphere,
 			new THREE.MeshPhongMaterial());
 
 		// set the volume of the sphere
-		mesh.scale.x = g_taxaPositions[key]['radius'];
-		mesh.scale.y = g_taxaPositions[key]['radius'];
-		mesh.scale.z = g_taxaPositions[key]['radius'];
+		mesh.scale.x = taxaPos['radius'];
+		mesh.scale.y = taxaPos['radius'];
+		mesh.scale.z = taxaPos['radius'];
 
 		// set the position
-		mesh.position.set(g_taxaPositions[key]['x'],
-			          g_taxaPositions[key]['y'],
-			          g_taxaPositions[key]['z']);
+		mesh.position.set(taxaPos['x'],
+			          taxaPos['y'],
+			          taxaPos['z']);
 
 		// the legacy color of these spheres is white
 		mesh.material.color = whiteColor;
@@ -1469,14 +1473,14 @@ function drawTaxa(){
 
 	        // add the line from the origin to the element
 	        var taxaVector = makeLine([0, 0, 0,],
-					  [g_taxaPositions[key]['x'],
- 					   g_taxaPositions[key]['y'],
-					   g_taxaPositions[key]['z']],
+					  [taxaPos['x'],
+ 					   taxaPos['y'],
+					   taxaPos['z']],
 					   whiteColor, 2);
 		g_elementsGroup.add(taxaVector);
 		g_mainScene.add(taxaVector);
 		g_plotTaxaArrows[key] = taxaVector;
-	}
+	});
 }
 
 /*Draw the lines for the plot as described in the g_vectorPositions array
@@ -1815,7 +1819,19 @@ function changeAxesDisplayed() {
   // 		}
 	// }
 
-	var checkedboxes = [];
+    // comparisonPositionlength = Object.keys(g_comparisonPositions).length
+    // spherePositionslength = Object.keys(g_spherePositions).length/comparisonPositionlength
+    // _.each(g_comparisonPositions, function(sampleKey){
+    // 	_.each(_.range(spherePositionslength), function(j){
+    // 	    var sid = sampleKey + "_" + j
+    // 	    g_comparisonPositions[sampleKey][j][0] = g_spherePositions[sid]['x']
+    // 	    g_comparisonPositions[sampleKey][j][1] = g_spherePositions[sid]['y']
+    // 	    g_comparisonPositions[sampleKey][j][2] = g_spherePositions[sid]['z']
+    // 	});
+    // });
+
+
+  var checkedboxes = [];
   var xArray = [];
   var yArray = [];
   var zArray = [];
@@ -1843,7 +1859,7 @@ function changeAxesDisplayed() {
     zArray.push(z)
     g_plotSpheres[spherePositions.name].position.set(x, y, z);
   });
-	flipEdges(checkedboxes);
+  flipEdges(checkedboxes);
 
   min_x = _.min(xArray)
   max_x = _.max(xArray)
@@ -2157,31 +2173,28 @@ $(document).ready(function() {
 
 		// this sorted list of headers is only used in the following loop
 		// to create the 'color by', 'show by' and 'label by' drop-down menus
-		sortedMappingFileHeaders = naturalSort(g_mappingFileHeaders)
-		for(var i in sortedMappingFileHeaders){
+            	sortedMappingFileHeaders = naturalSort(g_mappingFileHeaders)
+
+                _.each(sortedMappingFileHeaders, function(sortedMapHeaders, i){
 			var temp = [];
-			for(var j in g_plotIds) {
-				if(g_mappingFileData[g_plotIds[j]] == undefined){
-					console.warning(g_plotIds[j] +" not in mapping")
-					continue
-				}
-				temp.push(g_mappingFileData[g_plotIds[j]][i])
-			}
+                        _.each(g_plotIds, function(pltIds){
+			    temp.push(g_mappingFileData[pltIds][i]);
+			});
 			temp = _.uniq(temp, false);
 
 			// note that each category is added to all the dropdown menus in the
 			// user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
 			if (i==0) {
-			    line = "<option selected value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+			    line = "<option selected value=\"" + sortedMapHeaders+"\">" + sortedMapHeaders + "</option>"
 			} else {
-			    line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+			    line = "<option value=\"" + sortedMapHeaders+"\">" + sortedMapHeaders+"</option>"
 			}
 			$("#colorbycombo").append(line);
 			$("#scalingbycombo").append(line);
 			$("#showbycombo").append(line);
 			$("#labelcombo").append(line);
 			$("#trajectory-category-drop-down").append(line);
-		}
+		});
     $("#colorbycombo").chosen({width: "100%", search_contains: true});
     // adding event in case the user press esc
     $("#colorbycombo").on('chosen:hiding_dropdown', function(evt, params) {
@@ -2206,10 +2219,10 @@ $(document).ready(function() {
 			$("#gradient-category-drop-down").append(line);
 		}
 
-        for (var i in k_CHROMABREWER_MAPS){
-			line = '<option value="'+k_CHROMABREWER_MAPS[i]+'">'+k_CHROMABREWER_MAPNAMES[i]+'</option>';
+	_.each(k_CHROMABREWER_MAPS, function(map){
+	    line = '<option value="' + map + '">'+ map + '</option>';
             $("#colormap-drop-down").append(line);
-        }
+        });
 
 
     // initialize the dropdowns after inserting the options
@@ -2256,17 +2269,20 @@ $(document).ready(function() {
 		main_plot.append(g_mainRenderer.domElement);
 
 		// build divs to hold point labels and position them
-		var labelshtml = "";
-		for(var i in g_plotIds) {
-			var sid = g_plotIds[i];
-			var divid = sid.replace(/\./g,'');
-			mesh = g_plotSpheres[sid];
-			var coords = toScreenXY(mesh.position,g_sceneCamera,$('#main-plot'));
-			labelshtml += "<label id=\""+divid+"_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
-			labelshtml += sid;
-			labelshtml += "</label>";
-		}
-		document.getElementById("labels").innerHTML = labelshtml;
+    	        var labelshtml = "";
+    	        document.getElementById("labels").innerHTML = "";
+    	        _.each(g_plotIds, function(sid){
+    	        	var divid = sid.replace(/\./g,'');
+    	        	mesh = g_plotSpheres[sid];
+    	        	var coords = toScreenXY(mesh.position,g_sceneCamera,$('#main-plot'));
+    	        	$("#labels").append(
+    	        	    '<label id="'+divid+'_label"'+
+    	        		'class="unselectable labels"'+
+    	        		'style="position:absolute; left:'
+    	        		+parseInt(coords['x'])+'px; top:'+parseInt(coords['y'])+'px;">'+
+    	        		sid + '</label>');
+    	        });
+
 
 	        if(!jQuery.isEmptyObject(g_taxaPositions)){
                         displayTaxaLabels(0);
@@ -2380,34 +2396,33 @@ $(document).ready(function() {
 
 		// move labels when the plot is moved
 		if(document.plotoptions.elements[0].checked){
-			for(var i in g_plotIds) {
-				var sid = g_plotIds[i];
+                        _.each(g_plotIds, function(sid){
 				mesh = g_plotSpheres[sid];
 				var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main-plot'));
 				var divid = sid.replace(/\./g,'');
 				$('#'+divid+"_label").css('left',coords['x']);
 				$('#'+divid+"_label").css('top',coords['y']);
-			}
+			});
 		}
 		// check if you have to reposition the taxa labels for each frame
 		// this is something that will only happen when drawing biplots
 		if(document.biplotoptions){
 			if(document.biplotoptions.elements[0].checked){
-				for(var key in g_taxaPositions) {
+				_.each(g_taxaPositions, function(taxaPos, key){
 					// retrieve the position of the taxa on screen
 					var coords = toScreenXY(g_plotTaxa[key].position,
 						g_sceneCamera, $('#main-plot'));
 
 					// add the label at the appropriate position
-					$('#'+key+"_taxalabel").css('left',coords['x']);
-					$('#'+key+"_taxalabel").css('top',coords['y']);
-				}
+					$('#' + key + "_taxalabel").css('left', coords['x']);
+					$('#' + key + "_taxalabel").css('top', coords['y']);
+				});
 			}
 		}
 		if(g_foundId) {
 			var coords = toScreenXY(g_plotSpheres[g_foundId].position, g_sceneCamera, $('#main-plot'));
-			$('#finder').css('left',coords['x']-15);
-			$('#finder').css('top',coords['y']-5);
+			$('#finder').css('left', coords['x']-15);
+			$('#finder').css('top', coords['y']-5);
 		}
 	}
 

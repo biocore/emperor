@@ -8,3 +8,4 @@ make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -t otu_table_L3.
 make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -t otu_table_L3.txt -o biplot_options -n 3 --biplot_fp biplot.txt
 make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt -o vectors --add_vectors Treatment
 make_emperor.py -i unweighted_unifrac_pc.txt -m Fasting_Map.txt --add_vectors Treatment,DOB -a DOB -o sorted_by_DOB
+make_emperor.py -i compare --compare_plots -m Fasting_Map.txt -o comparison_output
