@@ -2271,8 +2271,7 @@ $(document).ready(function() {
 
 		// build divs to hold point labels and position them
 		var labelshtml = "";
-	        _.each(g_plotIds, function(pltID){
-			var sid = pltID;
+	        _.each(g_plotIds, function(sid){
 			var divid = sid.replace(/\./g,'');
 			mesh = g_plotSpheres[sid];
 			var coords = toScreenXY(mesh.position,g_sceneCamera,$('#main-plot'));
