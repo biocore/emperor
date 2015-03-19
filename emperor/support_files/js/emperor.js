@@ -1075,7 +1075,7 @@ function labelOpacityChange(ui) {
 */
 function sphereRadiusChange(ui, category) {
 	var scale = (ui.value/5.0)*g_sphereScaler;
-	var scalingByCategoryName = ('#scalingbycombo').val();
+	var scalingByCategoryName = $('#scalingbycombo').val();
   var scalingByCategoryIndex = g_mappingFileHeaders.indexOf(scalingByCategoryName);
 	var values = [], idString;
 
