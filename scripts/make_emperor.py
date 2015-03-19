@@ -97,7 +97,7 @@ script_info['script_usage'] = [
      "value you want to use for the missing values: ",
 
      "%prog -i unweighted_unifrac_pc.txt -m Fasting_Map_modified.txt -a DOB "
-     "-o pcoa_dob_with_missing_custom_axes_value s -x 'DOB:20060000'"
+     "-o pcoa_dob_with_missing_custom_axes_values -x 'DOB:20060000'"
      ),
 
     ("PCoA plot with an explicit axis and using --missing_custom_axes_values "
