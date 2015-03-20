@@ -14,8 +14,8 @@
 // spheres and ellipses that are being displayed on screen
 var g_plotSpheres = {};
 var g_plotEllipses = {};
-var g_plotTaxa = {};
-var g_plotTaxaArrows = {};
+var g_plotTaxa = [];
+var g_plotTaxaArrows = [];
 var g_plotVectors = {};
 var g_plotEdges = {};
 var g_parallelPlots = []
@@ -185,7 +185,7 @@ function toggleScaleCoordinates(element){
       );
     }
 
-    for(i = 0; i < g_plotTaxa.length; i++) {
+    for(var i = 0; i < g_plotTaxa.length; i++) {
         taxa = g_plotTaxa[i];
         pos = taxa.position;
         scale = taxa.scale;
@@ -737,9 +737,9 @@ function colorChangedForTaxaSpheres(color){
 function colorChangedForTaxaLabels(color){
         // get the taxonomic assignments and append '_taxalabel' to
         // retrieve all the labels belonging to a sphere in the plot
-        _.each(g_taxaPositions, function(taxaPos, key){
-       	        $('#' + key + "_taxalabel").css('color', color);
-        });
+        for( var i = 0 ; i < g_taxaPositions.length; i++){
+       	        $('#' + i + "_taxalabel").css('color', color);
+        }
 }
 
 /* This function is called when a new color is selected for the edges
@@ -826,7 +826,7 @@ function labelColorChanged(value, color) {
     g_categoryName = $('#labelcombo').val();
     value = value.replace('_','');
 
-    for(i = 0; i < g_plotIds.length; i++){
+    for(var i = 0; i < g_plotIds.length; i++){
 	var sid = g_plotIds[i];
 	var divid = sid.replace(/\./g,'');
 	if(g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)] == value){
@@ -885,19 +885,19 @@ function displayTaxaLabels(taxaLevel){
 
         $('#taxalabels').css('display','block');
         $("#taxaLevel" ).html(taxonomy[taxaLevel]);
-	      $("#taxalabels").empty();
-        _.each(g_taxaPositions, function(taxaPos, key){
+	$("#taxalabels").empty();
+	for( var i = 0; i < g_taxaPositions.length; i++){
+	    var taxaPos = g_taxaPositions[i];
             // get the coordinate of this taxa sphere
-            var coords = toScreenXY(g_plotTaxa[key].position,g_sceneCamera,$('#main-plot'));
-
+            var coords = toScreenXY(g_plotTaxa[i].position,g_sceneCamera,$('#main-plot'));
             // labels are identified by the key they have in taxaPos
 	    $("#taxalabels").append(
-		'<label id="' + key + '_taxalabel"'+
+		'<label id="' + i + '_taxalabel"'+
 		    'class="unselectable labels" '+
 		    'style="position:absolute; left:' + parseInt(coords['x']) + 'px; top:' + parseInt(coords['y']) + 'px;">' +
 		    truncateLevel(taxaPos['lineage'], taxaLevel)+
 		    '</label>');
-        });
+        }
         var taxaLabelColor = $('#taxalabelcolor').spectrum('get').toHexString();
         colorChangedForTaxaLabels(taxaLabelColor);
     }
@@ -905,8 +905,7 @@ function displayTaxaLabels(taxaLevel){
 
 /*This function turns the labels with the lineages on and off*/
 function toggleTaxaLabels(){
-  // ==============> Needs work
-  var labelshtml = "";
+
 	// present labels if the visibility checkbox is marked
 	if(document.biplotoptions.elements[0].checked){
                 var taxaLevel = $('#selectTaxaLevel').slider('value')
@@ -931,8 +930,8 @@ function toggleBiplotVisibility(toggleArrow){
                function(data, index) {g_mainScene.remove(data[index]);};
   data_to_update = toggleArrow ? g_plotTaxaArrows : g_plotTaxa;
 
-  for (index in g_plotTaxa) {
-     updater(data_to_update, index);
+  for ( var i = 0 ; i < g_plotTaxa.length; i++){
+     updater(data_to_update, i);
   }
 }
 
@@ -1457,9 +1456,10 @@ function drawTaxa(){
 	var whiteColor = new THREE.Color();
 	whiteColor.setHex("0xFFFFFF");
 
-        _.each(g_taxaPositions, function(taxaPos, key){
+        for(var i = 0; i < g_taxaPositions.length; i++){
 		var mesh = new THREE.Mesh(g_genericSphere,
 			new THREE.MeshPhongMaterial());
+                var taxaPos = g_taxaPositions[i];
 
 		// set the volume of the sphere
 		mesh.scale.x = taxaPos['radius'];
@@ -1481,7 +1481,8 @@ function drawTaxa(){
 		// add the element to the scene and to the g_plotTaxa dictionary
 		g_elementsGroup.add(mesh)
 		g_mainScene.add(mesh);
-		g_plotTaxa[key] = mesh;
+
+	        g_plotTaxa[i] = mesh;
 
 	        // add the line from the origin to the element
 	        var taxaVector = makeLine([0, 0, 0,],
@@ -1491,8 +1492,8 @@ function drawTaxa(){
 					   whiteColor, 2);
 		g_elementsGroup.add(taxaVector);
 		g_mainScene.add(taxaVector);
-		g_plotTaxaArrows[key] = taxaVector;
-	});
+		g_plotTaxaArrows[i] = taxaVector;
+	}
 }
 
 /*Draw the lines for the plot as described in the g_vectorPositions array
@@ -2300,7 +2301,7 @@ $(document).ready(function() {
 
 	        if(!jQuery.isEmptyObject(g_taxaPositions)){
                         displayTaxaLabels(0);
-	                var numTaxaLevels = g_taxaPositions[Object.keys(g_taxaPositions)[0]]['lineage'].split(';').length;
+		        var numTaxaLevels = g_taxaPositions[0]['lineage'].split(';').length;
 	                //add sliding bar to specify taxonomic labeling
                         $("#selectTaxaLevel").slider(
                         {
@@ -2422,15 +2423,15 @@ $(document).ready(function() {
 		// this is something that will only happen when drawing biplots
 		if(document.biplotoptions){
 			if(document.biplotoptions.elements[0].checked){
-				_.each(g_taxaPositions, function(taxaPos, key){
+			       for( var i = 0 ; i < g_taxaPositions.length; i++){
 					// retrieve the position of the taxa on screen
-					var coords = toScreenXY(g_plotTaxa[key].position,
+					var coords = toScreenXY(g_plotTaxa[i].position,
 						g_sceneCamera, $('#main-plot'));
 
 					// add the label at the appropriate position
-					$('#' + key + "_taxalabel").css('left', coords['x']);
-					$('#' + key + "_taxalabel").css('top', coords['y']);
-				});
+				        $('#' + i + "_taxalabel").css('left', coords['x']);
+				        $('#' + i + "_taxalabel").css('top', coords['y']);
+				}
 			}
 		}
 		if(g_foundId) {
