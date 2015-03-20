@@ -2,7 +2,7 @@
  * __author__ = "Meg Pirrung"
  * __copyright__ = "Copyright 2013, Emperor"
  * __credits__ = ["Meg Pirrung","Antonio Gonzalez Pena","Yoshiki Vazquez Baeza",
- *                "Jackson Chen", "Emily TerAvest", "Jamie Morton", 
+ *                "Jackson Chen", "Emily TerAvest", "Jamie Morton",
  *                "Daniel McDonald"]
  * __license__ = "BSD"
  * __version__ = "0.9.51-dev"
@@ -991,12 +991,12 @@ function filterKey() {
 }
 
 /*This function handles events from the ellipse opacity slider*/
-function ellipseOpeacityChange(ui) {
+function ellipseOpacityChange(ui) {
   $('#ellipseopacity').html(ui.value + "%");
 	ellipseOpacity = ui.value/100;
 
   _.each(g_plotEllipses, function(plotEllipses){
-    plotEllipses = material.opacity = ellipseOpacity;
+    plotEllipses.material.opacity = ellipseOpacity;
   });
 }
 
