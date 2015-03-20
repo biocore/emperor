@@ -886,7 +886,7 @@ function displayTaxaLabels(taxaLevel){
         $('#taxalabels').css('display','block');
         $("#taxaLevel" ).html(taxonomy[taxaLevel]);
 	$("#taxalabels").empty();
-	for( i = 0; i < g_taxaPositions.length; i++){
+	for( var i = 0; i < g_taxaPositions.length; i++){
 	    var taxaPos = g_taxaPositions[i];
             // get the coordinate of this taxa sphere
             var coords = toScreenXY(g_plotTaxa[i].position,g_sceneCamera,$('#main-plot'));
