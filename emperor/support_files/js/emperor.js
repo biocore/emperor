@@ -819,19 +819,22 @@ function labelMenuChanged() {
   );
 }
 
+
 /*This function is called when a label color is changed*/
 function labelColorChanged(value, color) {
-	g_categoryName = $('#labelcombo').val();
-  g_category_index = g_mappingFileHeaders.indexOf(g_categoryName);
-  value = value.replace('_','');
 
-  _.each(g_plotIds, function(sid){
-    var divid = sid.replace(/\./g,'');
-    if(g_mappingFileData[sid][g_categoryName] == value){
-      $('#' + divid + "_label").css('color', color);
+    g_categoryName = $('#labelcombo').val();
+    value = value.replace('_','');
+
+    for(i = 0; i < g_plotIds.length; i++){
+	var sid = g_plotIds[i];
+	var divid = sid.replace(/\./g,'');
+	if(g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)] == value){
+	    $('#'+divid+"_label").css('color', color);
+	}
     }
-  });
 }
+
 
 /*This function turns the labels on and off*/
 function toggleLabels() {
