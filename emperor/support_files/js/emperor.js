@@ -994,7 +994,6 @@ function filterKey() {
 function ellipseOpacityChange(ui) {
   $('#ellipseopacity').html(ui.value + "%");
 	ellipseOpacity = ui.value/100;
-        console.log("ellipse opacity" + ellipseOpacity);
 
   _.each(g_plotEllipses, function(plotEllipses){
     plotEllipses.material.opacity = ellipseOpacity;
