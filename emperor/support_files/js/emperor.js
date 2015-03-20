@@ -185,7 +185,7 @@ function toggleScaleCoordinates(element){
       );
     }
 
-    for(i = 0; i < g_plotTaxa.length; i++) {
+    for(var i = 0; i < g_plotTaxa.length; i++) {
         taxa = g_plotTaxa[i];
         pos = taxa.position;
         scale = taxa.scale;
@@ -737,7 +737,7 @@ function colorChangedForTaxaSpheres(color){
 function colorChangedForTaxaLabels(color){
         // get the taxonomic assignments and append '_taxalabel' to
         // retrieve all the labels belonging to a sphere in the plot
-        for( i = 0 ; i < g_taxaPositions.length; i++){
+        for( var i = 0 ; i < g_taxaPositions.length; i++){
        	        $('#' + i + "_taxalabel").css('color', color);
         }
 }
@@ -826,7 +826,7 @@ function labelColorChanged(value, color) {
     g_categoryName = $('#labelcombo').val();
     value = value.replace('_','');
 
-    for(i = 0; i < g_plotIds.length; i++){
+    for(var i = 0; i < g_plotIds.length; i++){
 	var sid = g_plotIds[i];
 	var divid = sid.replace(/\./g,'');
 	if(g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)] == value){
@@ -930,7 +930,7 @@ function toggleBiplotVisibility(toggleArrow){
                function(data, index) {g_mainScene.remove(data[index]);};
   data_to_update = toggleArrow ? g_plotTaxaArrows : g_plotTaxa;
 
-  for ( i = 0 ; i < g_plotTaxa.length; i++){
+  for ( var i = 0 ; i < g_plotTaxa.length; i++){
      updater(data_to_update, i);
   }
 }
@@ -1456,7 +1456,7 @@ function drawTaxa(){
 	var whiteColor = new THREE.Color();
 	whiteColor.setHex("0xFFFFFF");
 
-        for(i = 0; i < g_taxaPositions.length; i++){
+        for(var i = 0; i < g_taxaPositions.length; i++){
 		var mesh = new THREE.Mesh(g_genericSphere,
 			new THREE.MeshPhongMaterial());
                 var taxaPos = g_taxaPositions[i];
@@ -2423,7 +2423,7 @@ $(document).ready(function() {
 		// this is something that will only happen when drawing biplots
 		if(document.biplotoptions){
 			if(document.biplotoptions.elements[0].checked){
-			       for( i = 0 ; i < g_taxaPositions.length; i++){
+			       for( var i = 0 ; i < g_taxaPositions.length; i++){
 					// retrieve the position of the taxa on screen
 					var coords = toScreenXY(g_plotTaxa[i].position,
 						g_sceneCamera, $('#main-plot'));
