@@ -1456,7 +1456,6 @@ function drawTaxa(){
 	var whiteColor = new THREE.Color();
 	whiteColor.setHex("0xFFFFFF");
 
-        //_.each(g_taxaPositions, function(taxaPos, key){
         for(i = 0; i < g_taxaPositions.length; i++){
 		var mesh = new THREE.Mesh(g_genericSphere,
 			new THREE.MeshPhongMaterial());
@@ -1483,7 +1482,6 @@ function drawTaxa(){
 		g_elementsGroup.add(mesh)
 		g_mainScene.add(mesh);
 
-		//g_plotTaxa[key] = mesh;
 	        g_plotTaxa[i] = mesh;
 
 	        // add the line from the origin to the element
@@ -2303,7 +2301,6 @@ $(document).ready(function() {
 
 	        if(!jQuery.isEmptyObject(g_taxaPositions)){
                         displayTaxaLabels(0);
-	                //var numTaxaLevels = g_taxaPositions[Object.keys(g_taxaPositions)[0]]['lineage'].split(';').length;
 		        var numTaxaLevels = g_taxaPositions[0]['lineage'].split(';').length;
 	                //add sliding bar to specify taxonomic labeling
                         $("#selectTaxaLevel").slider(
