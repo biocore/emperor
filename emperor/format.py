@@ -100,7 +100,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
 
     # write the values for all the spheres
     js_pcoa_string += '\nvar g_spherePositions = new Array();\n'
-    for point, coord in zip(header, coords):
+    for point, coord in keyvals:
         all_coords = ', '.join(["'P%d': %f" % (i+1, coord[i]) for i in
                                range(number_of_axes)])
         js_pcoa_string += ("g_spherePositions.push({ 'name': '%s', 'color': "
