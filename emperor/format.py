@@ -22,23 +22,26 @@ from socket import gethostname
 from numpy import max, min, abs, argsort, array
 
 from emperor.util import (keep_columns_from_mapping_file,
-    get_emperor_library_version)
+                          get_emperor_library_version)
 
 from emperor.qiime_backports.format import format_mapping_file
 from emperor.qiime_backports.parse import (mapping_file_to_dict,
-    parse_mapping_file)
+                                           parse_mapping_file)
 from emperor.qiime_backports.filter import (
-    filter_mapping_file_by_metadata_states,sample_ids_from_metadata_description)
+    filter_mapping_file_by_metadata_states,
+    sample_ids_from_metadata_description)
 from emperor.qiime_backports.util import MetadataMap
 from emperor.qiime_backports import __version__ as qiime_backports_version
+
 
 class EmperorLogicError(ValueError):
     """Exception raised when a requirement for the Emperor GUI is not met"""
     pass
 
+
 def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
-                    coords_low=None, coords_high=None, number_of_axes=10,
-                    number_of_segments=8):
+                      coords_low=None, coords_high=None, number_of_axes=10,
+                      number_of_segments=8):
     """Write the javascript necessary to represent a pcoa file in emperor
 
     Inputs:
@@ -54,23 +57,23 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
 
     Output:
     string: javascript representation of the PCoA data inputed, contains a list
-    of spheres, list of ellipses (if coords_low and coords_high are present) and
-    several setup variables.
+    of spheres, list of ellipses (if coords_low and coords_high are present)
+    and several setup variables.
 
-    Formats the output of qiime.parse.parse_coords_file into javascript variable
-    declarations.
+    Formats the output of qiime.parse.parse_coords_file into javascript
+    variable declarations.
     """
     js_pcoa_string = ''
 
     # validating that the number of coords in coords
-    if number_of_axes>len(coords[0]):
+    if number_of_axes > len(coords[0]):
         number_of_axes = len(coords[0])
 
     # validating that all the axes are above 0.01%, this accounts for really
     # small variations explained in some axes that end up being not practical
     # as the GUI has some problems when presenting those values on screen
-    valid_pcoalabels = len([i for i in pct_var if i>0.01])
-    if number_of_axes>valid_pcoalabels:
+    valid_pcoalabels = len([i for i in pct_var if i > 0.01])
+    if number_of_axes > valid_pcoalabels:
         number_of_axes = valid_pcoalabels
     if number_of_axes < 3:
         raise EmperorLogicError("Due to the variation explained, Emperor "
@@ -80,13 +83,13 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
                                 "three axes.")
 
     # ranges for the PCoA space
-    max_x = max(coords[:,0:1])
-    max_y = max(coords[:,1:2])
-    max_z = max(coords[:,2:3])
-    min_x = min(coords[:,0:1])
-    min_y = min(coords[:,1:2])
-    min_z = min(coords[:,2:3])
-    maximum = max(abs(coords[:,:number_of_axes]))
+    max_x = max(coords[:, 0:1])
+    max_y = max(coords[:, 1:2])
+    max_z = max(coords[:, 2:3])
+    min_x = min(coords[:, 0:1])
+    min_y = min(coords[:, 1:2])
+    min_z = min(coords[:, 2:3])
+    maximum = max(abs(coords[:, :number_of_axes]))
     pcoalabels = pct_var[:number_of_axes]
 
     radius = (max_x-min_x)*.012
@@ -94,18 +97,20 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     # write the values for all the spheres
     js_pcoa_string += '\nvar g_spherePositions = new Array();\n'
     for point, coord in zip(header, coords):
-        all_coords = ', '.join(["'P%d': %f" % (i+1,coord[i]) for i in range(number_of_axes)])
-        js_pcoa_string += ("g_spherePositions['%s'] = { 'name': '%s', 'color': "
-            "0, 'x': %f, 'y': %f, 'z': %f, %s };\n" % (point, point, coord[0],
-            coord[1],coord[2], all_coords))
+        all_coords = ', '.join(["'P%d': %f" % (i+1, coord[i]) for i in
+                               range(number_of_axes)])
+        js_pcoa_string += ("g_spherePositions.push({ 'name': '%s', 'color': "
+                           "0, 'x': %f, 'y': %f, 'z': %f, %s });\n" %
+                           (point, coord[0], coord[1], coord[2], all_coords))
 
     # write the values for all the ellipses
     js_pcoa_string += '\nvar g_ellipsesDimensions = new Array();\n'
     if coords_low is not None and coords_high is not None:
         for s_header, s_coord, s_low, s_high in zip(header, coords, coords_low,
-            coords_high):
+                                                    coords_high):
             delta = abs(s_high-s_low)
-            all_coords = ', '.join(["'P%d': %f" % (i+1,s_coord[i]) for i in range(number_of_axes)])
+            all_coords = ', '.join(["'P%d': %f" % (i+1, s_coord[i]) for i in
+                                   range(number_of_axes)])
             js_pcoa_string += ("g_ellipsesDimensions['%s'] = { 'name': '%s', "
                 "'color': 0, 'width': %f, 'height': %f, 'length': %f , 'x': %f,"
                 " 'y': %f, 'z': %f, %s }\n" % (s_header, s_header,delta[0], delta[1],
