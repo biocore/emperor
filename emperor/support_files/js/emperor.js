@@ -120,7 +120,7 @@ function toggleScaleCoordinates(element){
 	// XOR operation for the checkbox widget, this will select an operation
 	// to perform over various properties, either a multiplication or a division
 	if(element.checked == true){
-		var operation = function(a, b){ return a*b };
+		operation = function(a, b){ return a*b };
 		g_sphereScaler = ax0_explained;
 	}
 	else{
