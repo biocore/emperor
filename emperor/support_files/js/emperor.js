@@ -120,7 +120,7 @@ function toggleScaleCoordinates(element){
 	// XOR operation for the checkbox widget, this will select an operation
 	// to perform over various properties, either a multiplication or a division
 	if(element.checked == true){
-		operation = function(a, b){ return a*b };
+		var operation = function(a, b){ return a*b };
 		g_sphereScaler = ax0_explained;
 	}
 	else{
@@ -185,23 +185,14 @@ function toggleScaleCoordinates(element){
       );
     }
 
-    for(var i = 0; i < g_plotTaxa.length; i++) {
-        taxa = g_plotTaxa[i];
-        pos = taxa.position;
-        scale = taxa.scale;
-
-        //scale the dimensions of the positions of each taxa-sphere
-		pos.set(operation(pos.x, ax0_explained),
-			    operation(pos.y, ax1_explained),
-			    operation(pos.z, ax2_explained)
-        );
-
-		//scale the dimensions of each taxa-sphere
-		scale.set(operation(scale.x, ax0_explained),
-			      operation(scale.y, ax0_explained),
-			      operation(scale.z, ax0_explained)
-        );
+    for(var i = 0; i < g_taxaPositions.length; i++) {
+        taxaPos = g_taxaPositions[i];
+	taxaPos['radius'] = operation(taxaPos['radius'], ax0_explained);
+	taxaPos['x'] = operation(taxaPos['x'], ax0_explained);
+	taxaPos['y'] = operation(taxaPos['y'], ax1_explained);
+	taxaPos['z'] = operation(taxaPos['z'], ax2_explained);
     }
+    drawTaxa();
 
 	// each line is indexed by a sample, creating in turn TOTAL_SAMPLES-1 lines
     for(i = 0; i < g_plotVectors.length; i++) {
@@ -891,7 +882,9 @@ function displayTaxaLabels(taxaLevel){
 	for( var i = 0; i < g_taxaPositions.length; i++){
 	    var taxaPos = g_taxaPositions[i];
             // get the coordinate of this taxa sphere
-            var coords = toScreenXY(g_plotTaxa[i].position,g_sceneCamera,$('#main-plot'));
+            var coords = toScreenXY(g_plotTaxa[i].position,
+				    g_sceneCamera,
+				    $('#main-plot'));
             // labels are identified by the key they have in taxaPos
 	    $("#taxalabels").append(
 		'<label id="' + i + '_taxalabel"'+
@@ -1483,6 +1476,10 @@ function drawTaxa(){
 		mesh.updateMatrix();
 		mesh.matrixAutoUpdate = true;
 
+	        // first remove from scene if the mesh is already present
+		g_elementsGroup.remove(mesh)
+		g_mainScene.remove(mesh);
+
 		// add the element to the scene and to the g_plotTaxa dictionary
 		g_elementsGroup.add(mesh)
 		g_mainScene.add(mesh);
@@ -1495,6 +1492,8 @@ function drawTaxa(){
  					   taxaPos['y'],
 					   taxaPos['z']],
 					   whiteColor, 2);
+		g_elementsGroup.remove(taxaVector);
+		g_mainScene.remove(taxaVector);
 		g_elementsGroup.add(taxaVector);
 		g_mainScene.add(taxaVector);
 		g_plotTaxaArrows[i] = taxaVector;
