@@ -94,9 +94,13 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
 
     radius = (max_x-min_x)*.012
 
+    # Sort mapping file by sample ids
+    keyvals = zip(header, coords)
+    keyvals = sorted(keyvals, key=lambda x: x[0])
+
     # write the values for all the spheres
     js_pcoa_string += '\nvar g_spherePositions = new Array();\n'
-    for point, coord in zip(header, coords):
+    for point, coord in keyvals:
         all_coords = ', '.join(["'P%d': %f" % (i+1, coord[i]) for i in
                                range(number_of_axes)])
         js_pcoa_string += ("g_spherePositions.push({ 'name': '%s', 'color': "
@@ -178,7 +182,12 @@ def format_mapping_file_to_js(mapping_file_data, mapping_file_headers, columns):
         mapping_file_headers)
 
     map_values = []
-    for k,v in mapping_file_dict.items():
+
+    # Sort mapping file by sample ids
+    keyvals = mapping_file_dict.items()
+    keyvals = sorted(keyvals, key=lambda x: x[0])
+
+    for k,v in keyvals:
         if 'SampleID' in columns:
             vals = ["'%s'" % k] + ["'%s'" % v[col]\
                 for col in mapping_file_headers[1:]]
