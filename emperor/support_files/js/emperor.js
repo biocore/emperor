@@ -649,7 +649,7 @@ function setKey(values, colors) {
 
       $('#' + divid).attr('name', sid);
       $('#' + divid).dblclick(function () {
-           toggleFinder($(this), $(this).attr('name'));
+           toggleFinder($(this), g_plotIds.indexOf($(this).attr('name')));
       });
 
       ellipse = g_plotEllipses[i];
