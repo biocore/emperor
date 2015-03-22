@@ -12,12 +12,12 @@
  */
 
 // spheres and ellipses that are being displayed on screen
-var g_plotSpheres = {};
-var g_plotEllipses = {};
+var g_plotSpheres = [];
+var g_plotEllipses = [];
 var g_plotTaxa = [];
 var g_plotTaxaArrows = [];
-var g_plotVectors = {};
-var g_plotEdges = {};
+var g_plotVectors = [];
+var g_plotEdges = [];
 var g_parallelPlots = []
 
 // sample identifiers of all items that are plotted
@@ -185,23 +185,14 @@ function toggleScaleCoordinates(element){
       );
     }
 
-    for(var i = 0; i < g_plotTaxa.length; i++) {
-        taxa = g_plotTaxa[i];
-        pos = taxa.position;
-        scale = taxa.scale;
-
-        //scale the dimensions of the positions of each taxa-sphere
-		pos.set(operation(pos.x, ax0_explained),
-			    operation(pos.y, ax1_explained),
-			    operation(pos.z, ax2_explained)
-        );
-
-		//scale the dimensions of each taxa-sphere
-		scale.set(operation(scale.x, ax0_explained),
-			      operation(scale.y, ax0_explained),
-			      operation(scale.z, ax0_explained)
-        );
+    for(var i = 0; i < g_taxaPositions.length; i++) {
+        taxaPos = g_taxaPositions[i];
+	taxaPos['radius'] = operation(taxaPos['radius'], ax0_explained);
+	taxaPos['x'] = operation(taxaPos['x'], ax0_explained);
+	taxaPos['y'] = operation(taxaPos['y'], ax1_explained);
+	taxaPos['z'] = operation(taxaPos['z'], ax2_explained);
     }
+    drawTaxa();
 
 	// each line is indexed by a sample, creating in turn TOTAL_SAMPLES-1 lines
     for(i = 0; i < g_plotVectors.length; i++) {
@@ -512,23 +503,22 @@ function showByMenuChanged() {
 
   var showByMenuIndex = g_mappingFileHeaders.indexOf(g_categoryName);
 	var vals = [];
-
-  _.each(g_plotIds, function(sid){
-		var divid = sid.replace(/\./g,'');
-
-		// get all of the values for the selected category
-		vals.push(g_mappingFileData[sid][showByMenuIndex]);
+  for(var i = 0; i < g_plotIds.length; i++){
+    var sid = g_plotIds[i];
+    var divid = sid.replace(/\./g,'');
+    // get all of the values for the selected category
+    vals.push(g_mappingFileData[sid][showByMenuIndex]);
 
 		// set everything to visible
-    if (typeof g_plotEllipses[sid] != 'undefined')
-      g_elementsGroup.add(g_plotEllipses[sid])
-    if (typeof g_plotSpheres[sid] != 'undefined')
-      g_elementsGroup.add(g_plotSpheres[sid])
-    if (typeof g_plotVectors[sid] != 'undefined')
-      g_elementsGroup.add(g_plotVectors[sid])
+    if (typeof g_plotEllipses[i] != 'undefined')
+      g_elementsGroup.add(g_plotEllipses[i])
+    if (typeof g_plotSpheres[i] != 'undefined')
+      g_elementsGroup.add(g_plotSpheres[i])
+    if (typeof g_plotVectors[i] != 'undefined')
+      g_elementsGroup.add(g_plotVectors[i])
 
 		$('#' + divid + "_label").css('display', 'block');
-  });
+  }
 
 	g_visiblePoints = g_plotIds.length;
 	changePointCount();
@@ -595,41 +585,42 @@ function toggleVisible(value) {
 	g_categoryName = $('#showbycombo').val();
 
 	//change visibility of points depending on metadata category
-  _.each(g_plotIds, function(sid){
+  for( var i = 0 ; i < g_plotIds.length; i++){
+    var sid = g_plotIds[i];
     var divid = sid.replace(/\./g,'');
   	var mappingVal = g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)]
     if(mappingVal == value && hidden){
-      ellipse = g_plotEllipses[sid];
+      ellipse = g_plotEllipses[i];
       if (typeof ellipse != 'undefined') {
         g_elementsGroup.remove(ellipse);
       }
-      sphere = g_plotSpheres[sid];
+      sphere = g_plotSpheres[i];
       if (typeof sphere != 'undefined') {
         g_elementsGroup.remove(sphere);
         g_visiblePoints--;
       }
-      vector = g_plotVectors[sid];
+      vector = g_plotVectors[i];
       if (typeof vector != 'undefined') {
         g_elementsGroup.remove(vector);
       }
       $('#' + divid + "_label").css('display', 'none');
   	} else if(mappingVal == value && !hidden) {
-      ellipse = g_plotEllipses[sid];
+      ellipse = g_plotEllipses[i];
       if (typeof ellipse != 'undefined') {
         g_elementsGroup.add(ellipse);
       }
-      sphere = g_plotSpheres[sid];
+      sphere = g_plotSpheres[i];
       if (typeof sphere != 'undefined') {
         g_elementsGroup.add(sphere);
         g_visiblePoints++;
       }
-      vector = g_plotVectors[sid];
+      vector = g_plotVectors[i];
       if (typeof vector != 'undefined') {
         g_elementsGroup.add(vector);
       }
       $('#' + divid + "_label").css('display', 'block');
   	}
-  });
+  }
 	changePointCount()
 }
 
@@ -640,8 +631,9 @@ function setKey(values, colors) {
       colorChanged(value, colors[value]);
     });
 	} else {
-    $("#key").append('<table id="key-table" class="key">')
-    _.each(g_plotIds, function(sid){
+    $("#key").append('<table id="key-table" class="key">');
+    for( var i = 0 ; i < g_plotIds.length; i++ ){
+      var sid = g_plotIds[i];
       var divid = sid.replace(/\./g,'')+"_key";
       var catValue = g_mappingFileData[sid][g_categoryIndex];
       var catColor = colors[catValue];
@@ -661,19 +653,19 @@ function setKey(values, colors) {
 			     toggleFinder($(this), $(this).attr('name'));
       });
 
-      ellipse = g_plotEllipses[sid];
+      ellipse = g_plotEllipses[i];
       if (typeof ellipse != 'undefined') {
         ellipse.material.color.setStyle(catColor);
       }
-      sphere = g_plotSpheres[sid];
+      sphere = g_plotSpheres[i];
       if (typeof sphere != 'undefined') {
         sphere.material.color.setStyle(catColor);
       }
-      vector = g_plotVectors[sid];
+      vector = g_plotVectors[i];
       if (typeof vector != 'undefined') {
         vector.material.color.setStyle(catColor);
       }
-    });
+    }
     $("#key-table").append("</table>");
 		g_keyBuilt = true;
 	}
@@ -706,25 +698,26 @@ function toggleFinder(div, divName) {
 /*Callback for the colorChanged event as triggered by the color picker*/
 function colorChanged(catValue, color) {
   color = color.replace('#','0x');
-  _.each(g_plotIds, function(sid){
+  for( var i = 0; i < g_plotIds.length; i++){
+    var sid = g_plotIds[i];
     if(g_mappingFileData[sid][g_categoryIndex] == catValue){
       // get the valid divId for the key and set its color
       $("#"+sid.replace(/\./g,'')+"_key").css('backgroundColor',color);
 
-      ellipse = g_plotEllipses[sid];
+      ellipse = g_plotEllipses[i];
       if (typeof ellipse != 'undefined') {
         ellipse.material.color.setHex(color);
       }
-      sphere = g_plotSpheres[sid];
+      sphere = g_plotSpheres[i];
       if (typeof sphere != 'undefined') {
         sphere.material.color.setHex(color);
       }
-      vector = g_plotVectors[sid];
+      vector = g_plotVectors[i];
       if (typeof vector != 'undefined') {
         vector.material.color.setHex(color);
       }
     }
-  });
+  }
 }
 
 /* This function is called when q new color is selected for #taxaspherescolor */
@@ -889,7 +882,9 @@ function displayTaxaLabels(taxaLevel){
 	for( var i = 0; i < g_taxaPositions.length; i++){
 	    var taxaPos = g_taxaPositions[i];
             // get the coordinate of this taxa sphere
-            var coords = toScreenXY(g_plotTaxa[i].position,g_sceneCamera,$('#main-plot'));
+            var coords = toScreenXY(g_plotTaxa[i].position,
+				    g_sceneCamera,
+				    $('#main-plot'));
             // labels are identified by the key they have in taxaPos
 	    $("#taxalabels").append(
 		'<label id="' + i + '_taxalabel"'+
@@ -1042,7 +1037,7 @@ function sphereOpacityChange(ui, category) {
 
 		for(var i in g_plotIds){
 			if(g_mappingFileData[g_plotIds[i]][showByCategoryIndex] == category){
-				g_plotSpheres[g_plotIds[i]].material.opacity = sphereOpacity;
+				g_plotSpheres[i].material.opacity = sphereOpacity;
 			}
 			$('#' + idString + "opacityvalue").html( $("#" + idString + "opacityslider").slider("value") + "%" );
 		}
@@ -1105,7 +1100,7 @@ function sphereRadiusChange(ui, category) {
 
 		for(var i in g_plotIds){
 			if(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex] == category){
-				g_plotSpheres[g_plotIds[i]].scale.set(scale, scale, scale);
+				g_plotSpheres[i].scale.set(scale, scale, scale);
 			}
 			$('#' + idString + "scalingvalue").html( $("#" + idString + "scalingslider").slider("value") / 5);
 		}
@@ -1398,6 +1393,8 @@ function setJqueryUi() {
 	});
 }
 
+/*THIS IS BROKEN !!!!!!!*/
+
 /*Draw the ellipses in the plot as described by the g_ellipsesDimensions array
 
   Note that this is a function that won't always get executed since this should
@@ -1428,7 +1425,8 @@ function drawEllipses() {
 /*Draw the spheres in the plot as described by the g_spherePositions array*/
 function drawSpheres() {
   //draw ball
-  _.each(g_spherePositions, function(spherePositions){
+  for( var i = 0 ; i < g_spherePositions.length; i++){
+      var spherePositions = g_spherePositions[i];
       var sid = spherePositions['name']
       var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshPhongMaterial() );
       mesh.material.color = new THREE.Color()
@@ -1440,10 +1438,10 @@ function drawSpheres() {
       mesh.matrixAutoUpdate = true;
       if(g_mappingFileData[sid] != undefined){
 	  g_elementsGroup.add( mesh );
-	  g_plotSpheres[sid] = mesh;
+	  g_plotSpheres[i] = mesh;
 	  g_plotIds.push(sid);
       }
-  });
+  }
 }
 
 /*Draw the taxa spheres in the plot as described by the g_taxaPositions array
@@ -1478,6 +1476,10 @@ function drawTaxa(){
 		mesh.updateMatrix();
 		mesh.matrixAutoUpdate = true;
 
+	        // first remove from scene if the mesh is already present
+		g_elementsGroup.remove(mesh)
+		g_mainScene.remove(mesh);
+
 		// add the element to the scene and to the g_plotTaxa dictionary
 		g_elementsGroup.add(mesh)
 		g_mainScene.add(mesh);
@@ -1490,6 +1492,8 @@ function drawTaxa(){
  					   taxaPos['y'],
 					   taxaPos['z']],
 					   whiteColor, 2);
+		g_elementsGroup.remove(taxaVector);
+		g_mainScene.remove(taxaVector);
 		g_elementsGroup.add(taxaVector);
 		g_mainScene.add(taxaVector);
 		g_plotTaxaArrows[i] = taxaVector;
@@ -1848,7 +1852,8 @@ function changeAxesDisplayed() {
   var xArray = [];
   var yArray = [];
   var zArray = [];
-  _.each(g_spherePositions, function(spherePositions){
+  for( var i = 0 ; i < g_spherePositions.length ; i++){
+    var spherePositions = g_spherePositions[i];
     var x = spherePositions[pc1_axis];
     var y = spherePositions[pc2_axis];
     var z = spherePositions[pc3_axis];
@@ -1870,8 +1875,8 @@ function changeAxesDisplayed() {
     xArray.push(x)
     yArray.push(y)
     zArray.push(z)
-    g_plotSpheres[spherePositions.name].position.set(x, y, z);
-  });
+    g_plotSpheres[i].position.set(x, y, z);
+  }
   flipEdges(checkedboxes);
 
   min_x = _.min(xArray)
@@ -2286,9 +2291,10 @@ $(document).ready(function() {
 		// build divs to hold point labels and position them
     	        var labelshtml = "";
     	        document.getElementById("labels").innerHTML = "";
-    	        _.each(g_plotIds, function(sid){
+	        for(var i = 0 ; i < g_plotIds.length; i++){
+                        var sid = g_plotIds[i];
     	        	var divid = sid.replace(/\./g,'');
-    	        	mesh = g_plotSpheres[sid];
+    	        	mesh = g_plotSpheres[i];
     	        	var coords = toScreenXY(mesh.position,g_sceneCamera,$('#main-plot'));
     	        	$("#labels").append(
     	        	    '<label id="'+divid+'_label"'+
@@ -2296,7 +2302,7 @@ $(document).ready(function() {
     	        		'style="position:absolute; left:'
     	        		+parseInt(coords['x'])+'px; top:'+parseInt(coords['y'])+'px;">'+
     	        		sid + '</label>');
-    	        });
+    	        }
 
 
 	        if(!jQuery.isEmptyObject(g_taxaPositions)){
@@ -2411,13 +2417,14 @@ $(document).ready(function() {
 
 		// move labels when the plot is moved
 		if(document.plotoptions.elements[0].checked){
-                        _.each(g_plotIds, function(sid){
-				mesh = g_plotSpheres[sid];
+                        for( var i = 0 ; i<g_plotIds.length; i++){
+			        var sid = g_plotIds[i];
+				var mesh = g_plotSpheres[i];
 				var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main-plot'));
 				var divid = sid.replace(/\./g,'');
 				$('#'+divid+"_label").css('left',coords['x']);
 				$('#'+divid+"_label").css('top',coords['y']);
-			});
+			}
 		}
 		// check if you have to reposition the taxa labels for each frame
 		// this is something that will only happen when drawing biplots
