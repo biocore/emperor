@@ -2282,29 +2282,31 @@ $(document).ready(function() {
     }
     document.getElementById("labels").innerHTML = labelshtml;
 
-    if(!jQuery.isEmptyObject(g_taxaPositions)){
-      displayTaxaLabels(0);
-      var numTaxaLevels = g_taxaPositions[Object.keys(g_taxaPositions)[0]]['lineage'].split(';').length;
-      //add sliding bar to specify taxonomic labeling
-      $("#selectTaxaLevel").slider(
-        {
-          range:'max',
-          value:0,
-          min: 0,
-          max: numTaxaLevels,
-          step: 1,
-          change: function( event, ui ) {
-	    displayTaxaLabels(ui.value);
-          }
-        }
-      );
-    }
-    // adding values for axes to display
-    drawMenuAxesDisplayed();
-    changeAxesDisplayed();
-    drawAxisLines();
-    buildAxisLabels();
-  }
+	        if(!jQuery.isEmptyObject(g_taxaPositions)){
+                        displayTaxaLabels(0);
+	                var numTaxaLevels = g_taxaPositions[Object.keys(g_taxaPositions)[0]]['lineage'].split(';').length;
+	                //add sliding bar to specify taxonomic labeling
+                        $("#selectTaxaLevel").slider(
+                        {
+                                    range:'max',
+                                    value:0,
+                                    min: 0,
+                                    max: numTaxaLevels,
+                                    step: 1,
+                                    change: function( event, ui ) {
+					if(document.biplotoptions.elements[0].checked){
+		        		    displayTaxaLabels(ui.value);
+					}
+                                   }
+                        }
+                        );
+                }
+		// adding values for axes to display
+		drawMenuAxesDisplayed();
+		changeAxesDisplayed();
+		drawAxisLines();
+		buildAxisLabels();
+	}
 
   function drawMenuAxesDisplayed() {
     if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
