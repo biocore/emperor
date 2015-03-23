@@ -1,6 +1,6 @@
 from __future__ import division
 
-from numpy import ndarray, array, ones, zeros, vstack
+from numpy import ndarray, ones, zeros, vstack
 from string import strip
 
 from os import makedirs, listdir
@@ -9,13 +9,10 @@ from copy import deepcopy
 
 from qcli.util import qcli_system_call
 
-from emperor.qiime_backports.format import format_mapping_file
-from emperor.qiime_backports.filter import filter_mapping_file
 from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
                                                    remove_nans,
                                                    scale_custom_coords)
-from emperor.qiime_backports.parse import (mapping_file_to_dict,
-                                           parse_metadata_state_descriptions)
+from emperor.qiime_backports.parse import mapping_file_to_dict
 from emperor.qiime_backports.util import (MetadataMap, is_valid_git_refname,
                                           is_valid_git_sha1, summarize_pcoas)
 
@@ -99,9 +96,9 @@ def copy_support_files(file_path):
     cmd_o, cmd_e, cmd_r = qcli_system_call(cmd)
 
     if cmd_e:
-        raise EmperorSupportFilesError("Error found whilst trying to copy"
-                                        " the support files:\n{}\nCould not"
-                                        "execute: {}".format(cmd_e, cmd))
+        raise EmperorSupportFilesError(
+            "Error found whilst trying to copy the support files:\n{}\n"
+            "Could not execute: {}".format(cmd_e, cmd))
 
     return
 
@@ -477,9 +474,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
             try:
                 header_index = headers.index(key)
             except ValueError:
-                raise EmperorInputFilesError("The header {} does not exist"
-                                              "in the mapping file"
-                                              "".format(key))
+                raise EmperorInputFilesError(
+                    "The header {} does not exist in the mapping "
+                    "file".format(key))
 
             # for the special case of multiple entries
             if '==' in value and '=' in value:
@@ -496,14 +493,14 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                 try:
                     column_index = headers.index(column)
                 except ValueError:
-                    raise EmperorInputFilesError("The header {} does not"
-                                                  "exist in the mapping file"
-                                                  "".format(column))
+                    raise EmperorInputFilesError(
+                        "The header {} does not exist in the mapping "
+                        "file".format(column))
 
             # fill in the data
             fill_the_data = False
             for line in out_data:
-                if criteria(line[header_index]) == False:
+                if criteria(line[header_index]) is False:
                     if not column:
                         line[header_index] = value
                         used_column_index = True
@@ -515,10 +512,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                             fill_the_data = True
 
             if not used_column_index and fill_the_data:
-                raise EmperorInputFilesError("This value '{}' does not exist"
-                                              "in '{}' or it wasn't used for"
-                                              "processing"
-                                              "".format(column_value, column))
+                raise EmperorInputFilesError(
+                    "This value '{}' does not exist in '{}' or it wasn't used "
+                    "forprocessing".format(column_value, column))
 
     return out_data
 
