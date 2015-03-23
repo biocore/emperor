@@ -312,7 +312,7 @@ function colorByMenuChanged(categoryName) {
 
     // add the category names
     lines += '('+ uniq_counts[vals[i]].length + ') ' + vals[i];
-    lines+= "</td></tr>";
+    lines += "</td></tr>";
   }
   lines += "</table>";
   document.getElementById("colorbylist").innerHTML = lines;
@@ -348,10 +348,6 @@ function colorByMenuChanged(categoryName) {
   setKey(vals, colors);
 }
 
-/**
- *
- *
- */
 function colorAnimationsByCategoryChanged() {
   // set the new current category and index
   var gradient, trajectory, table, values, idString, hexString, colorIndex=0;
@@ -2282,31 +2278,31 @@ $(document).ready(function() {
     }
     document.getElementById("labels").innerHTML = labelshtml;
 
-	        if(!jQuery.isEmptyObject(g_taxaPositions)){
-                        displayTaxaLabels(0);
-	                var numTaxaLevels = g_taxaPositions[Object.keys(g_taxaPositions)[0]]['lineage'].split(';').length;
-	                //add sliding bar to specify taxonomic labeling
-                        $("#selectTaxaLevel").slider(
-                        {
-                                    range:'max',
-                                    value:0,
-                                    min: 0,
-                                    max: numTaxaLevels,
-                                    step: 1,
-                                    change: function( event, ui ) {
-					if(document.biplotoptions.elements[0].checked){
-		        		    displayTaxaLabels(ui.value);
-					}
-                                   }
-                        }
-                        );
-                }
-		// adding values for axes to display
-		drawMenuAxesDisplayed();
-		changeAxesDisplayed();
-		drawAxisLines();
-		buildAxisLabels();
-	}
+    if(!jQuery.isEmptyObject(g_taxaPositions)){
+      displayTaxaLabels(0);
+      var numTaxaLevels = g_taxaPositions[Object.keys(g_taxaPositions)[0]]['lineage'].split(';').length;
+      //add sliding bar to specify taxonomic labeling
+      $("#selectTaxaLevel").slider(
+        {
+          range:'max',
+          value:0,
+          min: 0,
+          max: numTaxaLevels,
+          step: 1,
+          change: function( event, ui ) {
+	    if(document.biplotoptions.elements[0].checked){
+	      displayTaxaLabels(ui.value);
+	    }
+          }
+        }
+      );
+    }
+    // adding values for axes to display
+    drawMenuAxesDisplayed();
+    changeAxesDisplayed();
+    drawAxisLines();
+    buildAxisLabels();
+  }
 
   function drawMenuAxesDisplayed() {
     if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
@@ -2392,7 +2388,6 @@ $(document).ready(function() {
     labelCoordinates = toScreenXY(new THREE.Vector3(g_xMinimumValue, g_yMinimumValue, g_zMaximumValue), g_sceneCamera,$('#main-plot'));
     $("#pc3_label").css('left', labelCoordinates['x'])
     $("#pc3_label").css('top', labelCoordinates['y'])
-
 
     // move labels when the plot is moved
     if(document.plotoptions.elements[0].checked){
