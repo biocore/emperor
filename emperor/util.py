@@ -1,6 +1,6 @@
 from __future__ import division
 
-from numpy import ndarray, array, ones, zeros, vstack
+from numpy import ndarray, ones, zeros, vstack
 from string import strip
 
 from os import makedirs, listdir
@@ -9,13 +9,10 @@ from copy import deepcopy
 
 from qcli.util import qcli_system_call
 
-from emperor.qiime_backports.format import format_mapping_file
-from emperor.qiime_backports.filter import filter_mapping_file
 from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
                                                    remove_nans,
                                                    scale_custom_coords)
-from emperor.qiime_backports.parse import (mapping_file_to_dict,
-                                           parse_metadata_state_descriptions)
+from emperor.qiime_backports.parse import mapping_file_to_dict
 from emperor.qiime_backports.util import (MetadataMap, is_valid_git_refname,
                                           is_valid_git_sha1, summarize_pcoas)
 
@@ -81,10 +78,15 @@ def get_emperor_support_files_dir():
 def copy_support_files(file_path):
     """Copy the support files to a named destination
 
-    file_path: path where you want the support files to be copied to
+    Parameters
+    ----------
+    file_path: str
+        path where you want the support files to be copied to
 
-    Will raise EmperorSupportFilesError if a problem is found whilst trying to
-    copy the files.
+    Raises
+    ------
+    EmperorSupportFilesError
+        if a problem is found whilst trying to copy the files.
     """
     file_path = join(file_path, 'emperor_required_resources')
 
@@ -99,9 +101,9 @@ def copy_support_files(file_path):
     cmd_o, cmd_e, cmd_r = qcli_system_call(cmd)
 
     if cmd_e:
-        raise EmperorSupportFilesError("Error found whilst trying to copy"
-                                        " the support files:\n{}\nCould not"
-                                        "execute: {}".format(cmd_e, cmd))
+        raise EmperorSupportFilesError(
+            "Error found whilst trying to copy the support files:\n{}\n"
+            "Could not execute: {}".format(cmd_e, cmd))
 
     return
 
@@ -110,19 +112,28 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
                             clones=0):
     """Process a mapping file to expand the data or remove unuseful fields
 
-    Inputs:
-    data: mapping file data
-    headers: mapping file headers
-    columns: list of headers to keep, if one of these headers includes two
-    ampersands, this function will create a new column by merging the delimited
-    columns.
-    unique: keep columns where all values are unique
-    single: keep columns where all values are the same
-    clones: number of times to replicate the metadata
+    Parameters
+    ----------
+    data: list of list of str
+        mapping file data
+    headers: list of str
+        mapping file headers
+    columns: list of str
+        headers to keep, if one of these headers includes two ampersands,
+        this function will create a new column by merging the delimited columns
+    unique: bool, optional
+        keep columns where all values are unique. Default: false.
+    single: bool, optional
+        keep columns where all values are the same. Default: false
+    clones: int, optional
+        number of times to replicate the metadata. Default: 0
 
-    Outputs:
-    data: processed mapping file data
-    headers: processed mapping file headers
+    Returns
+    -------
+    data: list of list of str
+        processed mapping file data
+    headers: list of str
+        processed mapping file headers
     """
 
     # The sample ID must always be there, else it's meaningless data
@@ -219,15 +230,24 @@ def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
 def keep_columns_from_mapping_file(data, headers, columns, negate=False):
     """Select the header names to remove/keep from the mapping file
 
-    Inputs:
-    data: mapping file data
-    headers: mapping file headers names
-    columns: header names to keep/remove, see negate
-    negate: False will _keep_ the listed columns; True will _remove_ them
+    Parameters
+    ----------
+    data: list of list of str
+        mapping file data
+    headers: list of str
+        mapping file headers names
+    columns: list of str
+        header names to keep/remove, see negate
+    negate: bool, optional
+        False will _keep_ the listed columns; True will _remove_ them.
+        Default: False
 
-    Outputs:
-    data: filtered mapping file data
-    headers: filtered mapping file headers
+    Returns
+    -------
+    data: list of list of str
+        filtered mapping file data
+    headers: list of str
+        filtered mapping file headers
     """
     data = deepcopy(data)
     headers = deepcopy(headers)
@@ -266,50 +286,70 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
                            pct_variation_below_one=False):
     """Process a PCoA data and handle customizations in the contents
 
-    Inputs:
-    coords_header: list of sample identifiers in the PCoA file _or_ list of
-    lists with sample identifiers for each coordinate file (if jackknifing or
-    comparing plots)
-    coords_data: matrix of coordinates in the PCoA file _or_
-    list of numpy arrays with coordinates for each file (if jackknifing or
-    comparing plots)
-    coords_eigenvals: numpy array with eigenvalues for the
-    coordinates file _or_ list of numpy arrays with the eigenvalues (if
-    jackknifing or comparing plots)
-    coords_pct: numpy array with a the percent explained by each principal
-    coordinates axis _or_ a list of lists with numpy arrays (if jackknifing or
-    comparing plots)
-    mapping_header: mapping file headers names
-    mapping_data: mapping file data
-    custom_axes: name of the mapping data fields to add to coords_data
-    jackknifing_method: one of 'sdev' or 'IRQ', defaults to None, for more info
-    see qiime.util.summarize_pcoas
-    is_comparison: whether or not the inputs should be considered as the ones
-    for a comparison plot
-    pct_variation_below_one: boolean to allow percet variation of the axes
-    be under one
-
-    Outputs:
-    coords_header: list of sample identifiers in the PCoA file
-    coords_data: matrix of coordinates in the PCoA file with custom_axes if
-    provided
-    coords_eigenvalues: either the eigenvalues of the input coordinates or the
-    average eigenvalues of the multiple coords that were passed in
-    coords_pct: list of percents explained by each axis as given by the master
-    coordinates i. e. the center around where the values revolve
-    coords_low: coordinates representing the lower edges of an ellipse; None if
-    no jackknifing is applied
-    coords_high: coordinates representing the highere edges of an ellipse; None
-    if no jackknifing is applied
-    clones: total number of input files
-
     This controller function handles any customization that has to be done to
     the PCoA data prior to the formatting. Note that the first element in each
     list (coords, headers, eigenvalues & percents) will be considered the
     master set of coordinates.
 
-    Raises: AssertionError if a comparison plot is requested but a list of data
-    is not passed as input
+    Parameters
+    ----------
+    coords_header: 1d or 2d array of str
+        If 1d array of str, the sample identifiers in the PCoA file
+        If 2d array of str, the sample identifiers for each coordinate
+        file (if jackknifing or comparing plots)
+    coords_data: 2d array of float or list of 2d array of float
+        If 2d array of float, matrix of coordinates in the PCoA file
+        If list of 2d array of float,  with coordinates for each file
+        (if jackknifing or comparing plots)
+    coords_eigenvals: 1d or 2d array of float
+        If 1d array, eigenvalues for the coordinates file
+        If 2d array, list of  arrays with the eigenvalues
+        (if jackknifing or comparing plots)
+    coords_pct: 1d or 2d array of float
+        If 1d array, the percent explained by each principal coordinates axis
+        If 2d array, a list of lists with numpy arrays (if jackknifing or
+        comparing plots)
+    mapping_header: list of str
+        mapping file headers names
+    mapping_data: list of lists of str
+        mapping file data
+    custom_axes: str, optional
+        name of the mapping data fields to add to coords_data. Default: None
+    jackknifing_method: {'sdev', 'IRQ', None}, optional
+        For more info see qiime.util.summarize_pcoas. Default: None
+    is_comparison: bool, optional
+        whether or not the inputs should be considered as the ones for a
+        comparison plot. Default: false
+    pct_variation_below_one: bool, optional
+        boolean to allow percet variation of the axes be under one.
+        Default: false
+
+    Returns
+    -------
+    coords_header: list of str
+        Sample identifiers in the PCoA file
+    coords_data: 2d array of float
+        matrix of coordinates in the PCoA file with custom_axes if provided
+    coords_eigenvals: array of float
+        either the eigenvalues of the input coordinates or the average
+        eigenvalues of the multiple coords that were passed in
+    coords_pct: array of float
+        list of percents explained by each axis as given by the master
+        coordinates i. e. the center around where the values revolve
+    coords_low: 2d array of float
+        coordinates representing the lower edges of an ellipse; None if no
+        jackknifing is applied
+    coords_high: 2d array of float
+        coordinates representing the highere edges of an ellipse; None if no
+        jackknifing is applied
+    clones: int
+        total number of input files
+
+    Raises
+    ------
+    AssertionError
+        if a comparison plot is requested but a list of data is not passed
+        as input
     """
 
     # prevent obscure and obfuscated errors
@@ -425,8 +465,15 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
 def _is_numeric(x):
     """Return true if x is a numeric value, return false else
 
-    Inputs:
-    x: string to test whether something is or not a number
+    Parameters
+    ----------
+    x : str
+        string to test whether something is or not a number
+
+    Returns
+    -------
+    bool
+        whether something is or not a number
     """
     try:
         float(x)
@@ -438,19 +485,25 @@ def _is_numeric(x):
 def fill_mapping_field_from_mapping_file(data, headers, values,
                                          criteria=_is_numeric):
     """
-    Inputs:
-    data: mapping file data
-    headers: mapping file headers
-    values: string with the format a format of
-            Category:ValueToFill;Category:ValueToFill ...
-            or
-            Category:ColumnToSearch==ValueWithinTheColumnToSearch=ValueToFill
-    criteria: function that takes a value and returns true or false, default is
-    to check if the inputed value is numeric or not.
+    Parameters
+    ----------
+    data : list of list of str
+        mapping file data
+    headers : list of str
+        mapping file headers
+    values : str
+        string with the format a format of
+        Category:ValueToFill;Category:ValueToFill ...
+        or
+        Category:ColumnToSearch==ValueWithinTheColumnToSearch=ValueToFill
+    criteria : function, optional
+        function that takes a value and returns true or false, default is
+        to check if the inputed value is numeric or not (_is_numeric).
 
-    Output:
-    data: Filled in mapping file data
-
+    Returns
+    -------
+    data: list of list of str
+        Filled in mapping file data
     """
     out_data = deepcopy(data)
 
@@ -477,9 +530,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
             try:
                 header_index = headers.index(key)
             except ValueError:
-                raise EmperorInputFilesError("The header {} does not exist"
-                                              "in the mapping file"
-                                              "".format(key))
+                raise EmperorInputFilesError(
+                    "The header {} does not exist in the mapping "
+                    "file".format(key))
 
             # for the special case of multiple entries
             if '==' in value and '=' in value:
@@ -496,14 +549,14 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                 try:
                     column_index = headers.index(column)
                 except ValueError:
-                    raise EmperorInputFilesError("The header {} does not"
-                                                  "exist in the mapping file"
-                                                  "".format(column))
+                    raise EmperorInputFilesError(
+                        "The header {} does not exist in the mapping "
+                        "file".format(column))
 
             # fill in the data
             fill_the_data = False
             for line in out_data:
-                if criteria(line[header_index]) == False:
+                if criteria(line[header_index]) is False:
                     if not column:
                         line[header_index] = value
                         used_column_index = True
@@ -515,10 +568,9 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
                             fill_the_data = True
 
             if not used_column_index and fill_the_data:
-                raise EmperorInputFilesError("This value '{}' does not exist"
-                                              "in '{}' or it wasn't used for"
-                                              "processing"
-                                              "".format(column_value, column))
+                raise EmperorInputFilesError(
+                    "This value '{}' does not exist in '{}' or it wasn't used "
+                    "forprocessing".format(column_value, column))
 
     return out_data
 
@@ -526,15 +578,21 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
 def sanitize_mapping_file(data, headers):
     """Clean the strings in the mapping file for use with javascript
 
-    Inputs:
-    data: list of lists with the mapping file data
-    headers: list of strings with the mapping file headers
-
-    Outputs:
-    s_data: sanitized version of the input mapping file data
-    s_headers: sanitized version of the input mapping file headers
-
     This function will remove all the ocurrences of characters like ' or ".
+
+    Parameters
+    ----------
+    data : list of lists of str
+        the mapping file data
+    headers : list of str
+        the mapping file headers
+
+    Returns
+    -------
+    s_data : list of lists of str
+        sanitized version of the input mapping file data
+    s_headers : list of str
+        sanitized version of the input mapping file headers
     """
     all_lines = [headers] + data
     out_lines = []

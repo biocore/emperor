@@ -1,17 +1,4 @@
-#!/usr/bin/env python
-
 from __future__ import division
-
-__author__ = "Jose Antonio Navas Molina"
-__copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Jose Antonio Navas Molina"]
-__license__ = "BSD"
-__version__ = "0.9.51-dev"
-__maintainer__ = "Jose Antonio Navas Molina"
-__email__ = "josenavasmolina@gmail.com"
-__status__ = "Development"
-
-from StringIO import StringIO
 
 from skbio.stats.ordination import OrdinationResults
 from skbio.io import FileFormatError
