@@ -11,13 +11,15 @@ import numpy as np
 
 from emperor.util import (keep_columns_from_mapping_file,
                           get_emperor_library_version)
-from emperor._format import (_ELLIPSE_OPACITY_SLIDER, _VECTORS_OPACITY_SLIDER,
-                             _TAXA_LABELS_SELECTOR,
-                             _TAXA_LABELS_COLOR_SELECTOR,
-                             _BIPLOT_VISIBILITY_SELECTOR,
-                             _BIPLOT_SPHERES_COLOR_SELECTOR,
-                             _EDGES_VISIBILITY_SELECTOR, _EDGES_COLOR_SELECTOR,
-                             _EMPEROR_FOOTER_HTML_STRING)
+from emperor._format_strings import (_ELLIPSE_OPACITY_SLIDER,
+                                     _VECTORS_OPACITY_SLIDER,
+                                     _TAXA_LABELS_SELECTOR,
+                                     _TAXA_LABELS_COLOR_SELECTOR,
+                                     _BIPLOT_VISIBILITY_SELECTOR,
+                                     _BIPLOT_SPHERES_COLOR_SELECTOR,
+                                     _EDGES_VISIBILITY_SELECTOR,
+                                     _EDGES_COLOR_SELECTOR,
+                                     _EMPEROR_FOOTER_HTML_STRING)
 from emperor.qiime_backports.format import format_mapping_file
 from emperor.qiime_backports.parse import mapping_file_to_dict
 from emperor.qiime_backports.filter import (

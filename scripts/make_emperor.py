@@ -25,7 +25,7 @@ from emperor.format import (format_taxa_to_js, format_vectors_to_js,
                             format_comparison_bars_to_js,
                             EmperorLogicError,
                             format_emperor_autograph)
-from emperor._format import EMPEROR_HEADER_HTML_STRING
+from emperor._format_strings import EMPEROR_HEADER_HTML_STRING
 from emperor.parse import parse_coords
 
 
