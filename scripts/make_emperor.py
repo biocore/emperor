@@ -22,6 +22,8 @@ from emperor.util import (copy_support_files, preprocess_mapping_file,
                           EmperorInputFilesError, guess_coordinates_files)
 from emperor.format import (format_taxa_to_js, format_vectors_to_js,
                             format_emperor_html_footer_string,
+                            format_mapping_file_to_js,
+                            format_pcoa_to_js,
                             format_comparison_bars_to_js,
                             EmperorLogicError,
                             format_emperor_autograph)
