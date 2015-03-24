@@ -13,23 +13,35 @@ from emperor.qiime_backports.biplots import (get_taxa_prevalence,
 def extract_taxa_data(otu_coords, otu_table, lineages, prevalence, N=0):
     """Extract the N most prevalent elements according to a prevalence vector
 
-    Inputs:
-    otu_coords: coordinates where specific taxa is centered
-    otu_table: contingency table
-    lineages: taxonomic assignments for each row in the otu_table
-    prevalence: vector with prevalnce from 0 to 1 for each row of the otu_table
-    as returned from qiime.biplots.get_taxa_prevalence
-    N: number of most prevalent elements to retain, if zero is passed, will
-    reatain all available
+    Parameters
+    ----------
+    otu_coords : array_like
+         coordinates where specific taxa is centered
+    otu_table : array_like
+         contingency table
+    lineages : list, str
+         taxonomic assignments for each row in the otu_table
+    prevalence : list, float
+         vector with prevalnce from 0 to 1 for each row of the otu_table
+         as returned from qiime.biplots.get_taxa_prevalence
+    N : inst
+         number of most prevalent elements to retain, if zero is passed, will
+         retain all available
 
-    Outputs:
-    otu_coords: N most prevalent coords
-    out_otu_table: N most prevalent rows of the otu_table
-    out_otu_lineages: N most prevalent taxonomic assignments
-                      for each row of the
-    otu_table
-    out_prevalence: first N values of prevalence
+    Returns
+    -------
+    otu_coords : np.ndarray
+         N most prevalent coords
+    out_otu_table : np.ndarray
+         N most prevalent rows of the otu_table
+    out_otu_lineages : np.ndarray
+         N most prevalent taxonomic assignments for each row of the
+         otu_table
+    out_prevalence : np.ndarray
+         first N values of prevalence
 
+    Note
+    ----
     Based on qiime.biplots.remove_rare_taxa; though this function opperates on
     generic data that's not in dict forma and returns the appropriate result.
     """
@@ -54,21 +66,35 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
                          coords_data, coords_headers, N=0):
     """Preprocess the OTU table to to generate the required data for the biplots
 
-    Input:
-    otu_sample_ids: sample identifiers for the otu_table
-    otu_table: contingency table
-    lineages: taxonomic assignments for the OTUs in the otu_table
-    coords_data: principal coordinates data where the taxa will be mapped
-    N: number of most prevalent taxa to keep, by default will use all
+    Parameters
+    ----------
+    otu_sample_ids : np.ndarray
+         sample identifiers for the otu_table
+    otu_table : np.ndarray
+         contingency table
+    lineages : list, str
+         taxonomic assignments for the OTUs in the otu_table
+    coords_data : array_like
+         principal coordinates data where the taxa will be mapped
+    coords_data : array_like
+         principal coordinates data where the taxa will be mapped
+    N : int
+         number of most prevalent taxa to keep, by default will use all
 
-    Output:
-    otu_coords: coordinates representing the N most prevalent taxa in otu_table
-    otu_table: N most prevalent OTUs from the input otu_table
-    otu_lineages: taxonomic assignments corresponding to the N most prevalent
-    OTUs
-    otu_prevalence: vector with the prevalence scores of the N highest values
-    lines: coords where the N most prevalent taxa will be positioned in the
-    biplot
+    Returns
+    -------
+    otu_coords : np.ndarray
+         coordinates representing the N most prevalent taxa in otu_table
+    otu_table : np.ndarray
+         N most prevalent OTUs from the input otu_table
+    otu_lineages : np.ndarray
+         taxonomic assignments corresponding to the N most prevalent
+         OTUs
+    otu_prevalence : np.ndarray
+         vector with the prevalence scores of the N highest values
+    lines : np.ndarray
+         coords where the N most prevalent taxa will be positioned in the
+         biplot
     """
 
     # return empty values if any of the taxa data is empty
