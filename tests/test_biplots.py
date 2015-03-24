@@ -1,10 +1,17 @@
+# ----------------------------------------------------------------------------
+# Copyright (c) 2013--, emperor development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE.md, distributed with this software.
+# ----------------------------------------------------------------------------
 from __future__ import division
+
 from unittest import TestCase, main
 
 from numpy import array
 from numpy.testing import assert_almost_equal
 
-from emperor.qiime_backports.parse import parse_classic_otu_table
 from emperor.util import EmperorUnsupportedComputation
 from emperor.biplots import extract_taxa_data, preprocess_otu_table
 

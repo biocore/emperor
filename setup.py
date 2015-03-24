@@ -1,17 +1,18 @@
 #!/usr/bin/env python
+# ----------------------------------------------------------------------------
+# Copyright (c) 2013--, emperor development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE.md, distributed with this software.
+# ----------------------------------------------------------------------------
 
 from distutils.core import setup
 from glob import glob
 
-__author__ = "Yoshiki Vazquez Baeza"
-__copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Antonio Gonzalez Pena", "Meg Pirrung", "Yoshiki Vazquez Baeza",
-               "Jose Antonio Navas Molina", "Greg Caporaso"]
-__license__ = "BSD"
 __version__ = "0.9.51-dev"
-__maintainer__ = "Yoshiki Vazquez Baeza"
+__maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
-__status__ = "Development"
 
 # based on the text found in github.com/qiime/pynast
 classes = """
@@ -36,6 +37,11 @@ Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.
 Gigascience. 2013 Nov 26;2(1):16.
 """
 
+base = {"numpy >= 1.7", "qcli", "scikit-bio >= 0.2.1, < 0.3.0"}
+doc = {"Sphinx >= 1.2.2", "sphinx-bootstrap-theme"}
+test = {"nose >= 0.10.1", "pep8", "flake8"}
+all_deps = base | doc | test
+
 setup(
     name='emperor',
     version=__version__,
@@ -58,8 +64,7 @@ setup(
                     'support_files/css/*.css',
                     'support_files/js/*.js']},
     data_files={},
-    install_requires=["numpy >= 1.7", "qcli",
-                      "scikit-bio >= 0.2.1, < 0.3.0"],
-    extras_require={'doc': ["Sphinx >= 1.2.2", "sphinx-bootstrap-theme"]},
+    install_requires=base,
+    extras_require={'doc': doc, 'test': test, 'all': all_deps},
     long_description=long_description,
     classifiers=classifiers)

@@ -13,6 +13,8 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 
 * Reorganized `emperor/support_files/` to separate Emperor's source code from third-party packages.
 * Add code coverage support through [Coveralls](https://coveralls.io/r/biocore/emperor).
+* Add [flake8](http://flake8.readthedocs.org/en/2.3.0/) to enforce the PEP-8 coding guidelines in every Travis build ([#342](https://github.com/biocore/emperor/issues/342)).
+* Add an `all` target to get all the needed dependencies for emperor development (`pip install emperor[all]`).
 
 ### New features
 

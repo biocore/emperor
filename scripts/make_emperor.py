@@ -1,5 +1,11 @@
 #!/usr/bin/env python
-# File created on 06 Jul 2012
+# ----------------------------------------------------------------------------
+# Copyright (c) 2013--, emperor development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE.md, distributed with this software.
+# ----------------------------------------------------------------------------
 from __future__ import division
 
 from os import makedirs
@@ -20,16 +26,16 @@ from emperor.util import (copy_support_files, preprocess_mapping_file,
                           preprocess_coords_file,
                           fill_mapping_field_from_mapping_file,
                           EmperorInputFilesError, guess_coordinates_files)
-from emperor.format import (format_pcoa_to_js, format_mapping_file_to_js,
-                            format_taxa_to_js, format_vectors_to_js,
+from emperor.format import (format_taxa_to_js, format_vectors_to_js,
                             format_emperor_html_footer_string,
+                            format_mapping_file_to_js,
+                            format_pcoa_to_js,
                             format_comparison_bars_to_js,
-                            EMPEROR_HEADER_HTML_STRING, EmperorLogicError,
+                            EmperorLogicError,
                             format_emperor_autograph)
+from emperor._format_strings import EMPEROR_HEADER_HTML_STRING
 from emperor.parse import parse_coords
-
-
-__version__ = "0.9.51-dev"
+from emperor import __version__
 
 
 script_info = {}
@@ -752,8 +758,8 @@ def main():
     # certain percents being explained cannot be displayed in the GUI
     try:
         fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
-                                       coords_eigenvalues, coords_pct,
-                                       custom_axes, coords_low, coords_high,
+                                       coords_pct, custom_axes, coords_low,
+                                       coords_high,
                                        number_of_axes=number_of_axes,
                                        number_of_segments=number_of_segments))
     except EmperorLogicError, e:

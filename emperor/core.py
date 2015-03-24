@@ -14,26 +14,25 @@ Classes
 
     Emperor
 """
+# ----------------------------------------------------------------------------
+# Copyright (c) 2013--, emperor development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE.md, distributed with this software.
+# ----------------------------------------------------------------------------
 from __future__ import division
 
 from emperor.format import (format_mapping_file_to_js, format_pcoa_to_js,
                             format_taxa_to_js, format_vectors_to_js,
                             format_comparison_bars_to_js,
-                            EMPEROR_HEADER_HTML_STRING,
                             format_emperor_html_footer_string)
+from emperor._format_strings import EMPEROR_HEADER_HTML_STRING
 
 # we are going to use this remote location to load external resources
 RESOURCES_URL = 'http://emperor.colorado.edu/master/make_emperor/emperor_outpu\
 t/emperor_required_resources'
 
-__author__ = "Yoshiki Vazquez Baeza"
-__copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Yoshiki Vazquez Baeza"]
-__license__ = "BSD"
-__version__ = "0.9.51-dev"
-__maintainer__ = "Yoshiki Vazquez Baeza"
-__email__ = "yoshiki89@gmail.com"
-__status__ = "Development"
 
 class Emperor(object):
     """Display principal coordinates analysis plots
@@ -120,7 +119,6 @@ class Emperor(object):
         """Private method to build an Emperor HTML string"""
         pcoa_string = format_pcoa_to_js(self.ids,
                                         self.ordination.site,
-                                        self.ordination.eigvals,
                                         self.ordination.proportion_explained)
 
         # we pass the mapping file headers twice so nothing is filtered out
@@ -143,4 +141,3 @@ class Emperor(object):
         _emperor = '\n'.join(output)
 
         self._html = _emperor
-

@@ -103,6 +103,7 @@ Testing Guidelines
 All code that is added to Emperor must be unit tested, and the unit test code must be submitted in the same pull request as the library code that you are submitting. We will only merge code that is unit tested and that passes the [continuous integration build](https://github.com/biocore/emperor/blob/master/.travis.yml), this build verifies that the:
 
 - Full test suite executes without errors (including JavaScript and script usage tests).
+- All the code in Emperor is PEP8-compliant.
 - All code is valid in Python 2.7.x.
 - The documentation can be built correctly.
 
