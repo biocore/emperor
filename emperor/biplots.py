@@ -68,9 +68,9 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
 
     Parameters
     ----------
-    otu_sample_ids : np.ndarray
+    otu_sample_ids : array_like
          sample identifiers for the otu_table
-    otu_table : np.ndarray
+    otu_table : array_like
          contingency table
     lineages : list, str
          taxonomic assignments for the OTUs in the otu_table
