@@ -100,7 +100,7 @@ def format_pcoa_to_js(header, coords, pct_var, custom_axes=[],
     min_x = np.min(coords[:, 0:1])
     min_y = np.min(coords[:, 1:2])
     min_z = np.min(coords[:, 2:3])
-    maximum = np.max(abs(coords[:, :number_of_axes]))
+    maximum = np.max(np.abs(coords[:, :number_of_axes]))
     pcoalabels = pct_var[:number_of_axes]
 
     radius = (max_x-min_x)*.012
@@ -121,8 +121,8 @@ def format_pcoa_to_js(header, coords, pct_var, custom_axes=[],
     if coords_low is not None and coords_high is not None:
         for s_header, s_coord, s_low, s_high in zip(header, coords, coords_low,
                                                     coords_high):
-            delta = abs(s_high-s_low)
-            pcnts = ["'P%d': %f" % (i+1, s_coord[i]) for i in
+            delta = np.abs(s_high - s_low)
+            pcnts = ["'P%d': %f" % (i + 1, s_coord[i]) for i in
                      range(number_of_axes)]
             all_coords = ', '.join(pcnts)
 
@@ -156,14 +156,14 @@ def format_pcoa_to_js(header, coords, pct_var, custom_axes=[],
     # 3])
     for i in range(0, 3):
         try:
-            pcoa_str.append('var g_pc%dLabel = \"%s\";\n' % (i+1,
+            pcoa_str.append('var g_pc%dLabel = \"%s\";\n' % (i + 1,
                                                              custom_axes[i]))
             # offset will help us retrieve the correct pcoalabels val
             offset += 1
         except:
             # if there are custom axes then subtract the number of custom axes
             pcoa_str.append('var g_pc%dLabel = \"PC%d (%.2f %%)\";\n' %
-                            (i+1, i+1-offset, pcoalabels[i-offset]))
+                            (i + 1, i + 1 - offset, pcoalabels[i - offset]))
     pcoa_str.append('var g_number_of_custom_axes = %d;\n' % offset)
 
     js_pcts = []
