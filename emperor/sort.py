@@ -8,7 +8,7 @@
 from __future__ import division
 
 from numpy import zeros
-from re import compile, search
+import re
 
 
 def sort_taxa_table_by_pcoa_coords(coords_header, otu_table, otu_header):
@@ -79,8 +79,8 @@ def sort_comparison_filenames(coord_fps):
         # any alphanumeric set of characters proceeded by a 'q', a number,
         # a dot & a txt extension at the end of the line. Take for example
         # bray_curtis_q1.txt or unifrac_q11.txt
-        re = compile(r'(\w+)_q([0-9]+).txt$')
-        tmatch = search(re, fp)
+        regex = re.compile(r'(\w+)_q([0-9]+).txt$')
+        tmatch = re.search(regex, fp)
 
         try:
             number = tmatch.group(2)
