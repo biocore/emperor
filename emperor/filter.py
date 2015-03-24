@@ -2,18 +2,20 @@
 # File created on 12 May 2013
 from __future__ import division
 
+from numpy import array
+
 __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Yoshiki Vazquez Baeza"]
+__credits__ = ["Yoshiki Vazquez Baeza", "Daniel McDonald"]
 __license__ = "BSD"
 __version__ = "0.9.51-dev"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
-from numpy import array
 
-def filter_samples_from_coords(headers, coords, valid_sample_ids, negate=False):
+def filter_samples_from_coords(headers, coords, valid_sample_ids,
+                               negate=False):
     """Filter samples from a pair of headers and coordinates
 
     headers: list of sample ids corresponding to the coordinates data
@@ -42,9 +44,10 @@ def filter_samples_from_coords(headers, coords, valid_sample_ids, negate=False):
 
     # do not allow empty sets as return values, raise an exception
     if len(out_coord_ids) < 1:
-        raise ValueError, "All samples have been filtered out"
+        raise ValueError("All samples have been filtered out")
 
     return out_coord_ids, array(out_coords)
+
 
 def keep_samples_from_pcoa_data(headers, coords, sample_ids):
     """Controller function to filter coordinates data according to a list
@@ -62,7 +65,7 @@ def keep_samples_from_pcoa_data(headers, coords, sample_ids):
 
         for single_headers, single_coords in zip(headers, coords):
             a, b = filter_samples_from_coords(single_headers, single_coords,
-                sample_ids)
+                                              sample_ids)
 
             out_headers.append(a)
             out_coords.append(b)
