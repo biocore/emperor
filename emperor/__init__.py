@@ -5,8 +5,8 @@
 #
 # The full license is in the file LICENSE.md, distributed with this software.
 # ----------------------------------------------------------------------------
-from emperor.core import Emperor
+__version__ = "0.9.51-dev"  # noqa
 
-__version__ = "0.9.51-dev"
+from emperor.core import Emperor
 
 __all__ = ['Emperor', 'biplots', 'format', 'filter', 'parse', 'sort', 'util']
