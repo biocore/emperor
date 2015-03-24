@@ -61,7 +61,7 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
 
     Returns
     -------
-    string
+    str
         javascript representation of the PCoA data inputed, contains a list of
         spheres, list of ellipses (if coords_low and coords_high are present)
         and several setup variables.
@@ -195,7 +195,7 @@ def format_mapping_file_to_js(mapping_file_data, mapping_file_headers,
 
     Returns
     -------
-    string
+    str
         JavaScript representation of the mapping file
     """
     map_str = []
@@ -396,7 +396,7 @@ def format_comparison_bars_to_js(coords_data, coords_headers, clones,
     ----------
     coords_data : array_like
         numpy array with the replicated coordinates
-    cooreds_headers : list of str
+    coords_headers : list of str
         list with the headers for each of replicated coordinates
     clones : int
         number of replicates in the coords_data and coords_headers
@@ -491,7 +491,7 @@ def format_emperor_html_footer_string(has_biplots=False, has_ellipses=False,
     Returns
     -------
     str
-        Fromatted footer string
+        Formatted footer string
     """
 
     # we use python's built-in ternary operator to add or not a string
