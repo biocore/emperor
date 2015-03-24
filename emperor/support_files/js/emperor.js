@@ -2294,7 +2294,9 @@ $(document).ready(function() {
                                     max: numTaxaLevels,
                                     step: 1,
                                     change: function( event, ui ) {
-		        		displayTaxaLabels(ui.value);
+					if(document.biplotoptions.elements[0].checked){
+		        		    displayTaxaLabels(ui.value);
+					}
                                    }
                         }
                         );

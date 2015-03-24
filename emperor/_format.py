@@ -1,3 +1,10 @@
+# flake8: noqa
+"""
+These are intended to be HTML formatted strings that are used throughout the
+codebase and not included in for example format.py, because the length would
+violate PEP-8 rules.
+"""
+
 EMPEROR_HEADER_HTML_STRING =\
 """<!doctype html>
 <html lang="en">
