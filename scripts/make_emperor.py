@@ -752,8 +752,8 @@ def main():
     # certain percents being explained cannot be displayed in the GUI
     try:
         fp_out.write(format_pcoa_to_js(coords_headers, coords_data,
-                                       coords_eigenvalues, coords_pct,
-                                       custom_axes, coords_low, coords_high,
+                                       coords_pct, custom_axes, coords_low,
+                                       coords_high,
                                        number_of_axes=number_of_axes,
                                        number_of_segments=number_of_segments))
     except EmperorLogicError, e:

@@ -112,7 +112,6 @@ class Emperor(object):
         """Private method to build an Emperor HTML string"""
         pcoa_string = format_pcoa_to_js(self.ids,
                                         self.ordination.site,
-                                        self.ordination.eigvals,
                                         self.ordination.proportion_explained)
 
         # we pass the mapping file headers twice so nothing is filtered out

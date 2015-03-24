@@ -133,20 +133,20 @@ class TopLevelTests(TestCase):
         # test the case with only points and nothing else
         out_js_pcoa_string = \
             format_pcoa_to_js(self.pcoa_headers, self.pcoa_coords,
-                              self.pcoa_eigen_values, self.pcoa_pct_var)
+                              self.pcoa_pct_var)
         self.assertEquals(out_js_pcoa_string, PCOA_JS)
 
         # test custom axes and the labels
         out_js_pcoa_string = \
             format_pcoa_to_js(self.pcoa_headers, self.pcoa_coords,
-                              self.pcoa_eigen_values, self.pcoa_pct_var,
+                              self.pcoa_pct_var,
                               custom_axes=['Instant'])
         self.assertEquals(out_js_pcoa_string, PCOA_JS_CUSTOM_AXES)
 
         # test jackknifed pcoa plots
         out_js_pcoa_string = \
             format_pcoa_to_js(self.pcoa_jk_headers, self.pcoa_jk_coords,
-                              self.pcoa_jk_eigen_values, self.pcoa_jk_pct_var,
+                              self.pcoa_jk_pct_var,
                               coords_low=self.pcoa_jk_coords_low,
                               coords_high=self.pcoa_jk_coords_high)
         self.assertEquals(out_js_pcoa_string, PCOA_JS_JACKKNIFED)
@@ -155,12 +155,12 @@ class TopLevelTests(TestCase):
         # axes is not greater than 0.01 for at least three of them
         self.assertRaises(EmperorLogicError, format_pcoa_to_js,
                           self.pcoa_headers, self.pcoa_coords,
-                          self.pcoa_eigen_values, self.pcoa_pct_var_really_low)
+                          self.pcoa_pct_var_really_low)
 
         # test segments
         out_js_pcoa_string = \
             format_pcoa_to_js(self.pcoa_jk_headers, self.pcoa_jk_coords,
-                              self.pcoa_jk_eigen_values, self.pcoa_jk_pct_var,
+                              self.pcoa_jk_pct_var,
                               coords_low=self.pcoa_jk_coords_low,
                               coords_high=self.pcoa_jk_coords_high,
                               number_of_segments=14)

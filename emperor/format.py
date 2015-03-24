@@ -33,7 +33,7 @@ class EmperorLogicError(ValueError):
     pass
 
 
-def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
+def format_pcoa_to_js(header, coords, pct_var, custom_axes=[],
                       coords_low=None, coords_high=None, number_of_axes=10,
                       number_of_segments=8):
     """Write the javascript necessary to represent a pcoa file in emperor
@@ -44,8 +44,6 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
         sample names for the pcoa file 1-D array
     coords : array_like
         coordinates of the PCoA file, 2-D array
-    eigvals : array_like
-        eigen-values of the PCoA file, 1-D array
     pct_var : array_like
         percentage of variation of the PCoA file, 1-D array
     custom_axes : list of str, optional
@@ -69,7 +67,6 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     Formats the output of qiime_backports.parse.parse_coords_file into
     javascript variable declarations.
     """
-    eigvals *= 1
 
     # validating that the number of coords in coords
     if number_of_axes > len(coords[0]):
