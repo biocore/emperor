@@ -42,17 +42,17 @@ def format_pcoa_to_js(header, coords, eigvals, pct_var, custom_axes=[],
     ----------
     header : list of str
         sample names for the pcoa file 1-D array
-    coords : array-like
+    coords : array_like
         coordinates of the PCoA file, 2-D array
-    eigvals : array-like
+    eigvals : array_like
         eigen-values of the PCoA file, 1-D array
-    pct_var : array-like
+    pct_var : array_like
         percentage of variation of the PCoA file, 1-D array
     custom_axes : list of str, optional
         list of category names for the custom axes
-    coords_low : array-like, optional
+    coords_low : array_like, optional
         coordinates representing the lower edges of an ellipse
-    coords_high : array-like, optional
+    coords_high : array_like, optional
         coordinates representing the highere edges of an ellipse
     number_of_axes : int, optional
         number of axes to be returned
@@ -238,11 +238,11 @@ def format_taxa_to_js(otu_coords, lineages, prevalence, min_taxon_radius=0.5,
 
     Parameters
     ----------
-    otu_coords : array-like
+    otu_coords : array_like
         Numpy array where the taxa is positioned
-    lineages : array-like
+    lineages : array_like
         Label for each of these lineages
-    prevalence : array-like
+    prevalence : array_like
         Score of prevalence for each of the taxa that is drawn
     min_taxon_radius : float, optional
         Smallest radius for a sphere.
@@ -304,7 +304,7 @@ def format_vectors_to_js(mapping_file_data, mapping_file_headers, coords_data,
         contents of the mapping file
     mapping_file_headers : list of str
         headers of the mapping file
-    coords_data : array-like
+    coords_data : array_like
         coordinates of the PCoA plot in a numpy 2-D array or a list of numpy
         2-D arrays for jackknifed input
     coords_headers : list of str
@@ -394,7 +394,7 @@ def format_comparison_bars_to_js(coords_data, coords_headers, clones,
 
     Parameters
     ----------
-    coords_data : array-like
+    coords_data : array_like
         numpy array with the replicated coordinates
     cooreds_headers : list of str
         list with the headers for each of replicated coordinates
