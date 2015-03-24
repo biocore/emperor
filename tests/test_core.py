@@ -2,7 +2,7 @@ from __future__ import division
 
 from unittest import TestCase, main
 from StringIO import StringIO
-from skbio.stats.ordination import OrdinationResults 
+from skbio.stats.ordination import OrdinationResults
 
 from emperor.core import Emperor
 from _test_core_strings import PCOA_STRING, HTML_STRING
@@ -34,7 +34,7 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.ord_res, self.data, self.headers)
         self.assertEqual(['PC.354', 'PC.355', 'PC.356', 'PC.481', 'PC.593',
                           'PC.607', 'PC.634', 'PC.635', 'PC.636'],
-                          emp.ids)
+                         emp.ids)
 
 
 if __name__ == "__main__":
