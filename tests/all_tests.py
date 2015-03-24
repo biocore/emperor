@@ -135,7 +135,7 @@ def main():
     # choose to run some of the script usage tests or all the available ones
     if (not suppress_script_usage_tests and exists(emperor_test_data_dir)
        and exists(emperor_scripts_dir)):
-        if script_usage_tests is None:
+        if script_usage_tests is not None:
             script_tests = script_usage_tests.split(',')
         else:
             script_tests = None
