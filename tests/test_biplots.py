@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# File created on 16 Apr 2013
 from __future__ import division
 from unittest import TestCase, main
 

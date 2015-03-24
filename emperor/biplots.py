@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# File created on 14 Apr 2013
 from __future__ import division
 from numpy import argsort, array
 
@@ -24,7 +22,7 @@ def extract_taxa_data(otu_coords, otu_table, lineages, prevalence, N=0):
     prevalence : list, float
          vector with prevalnce from 0 to 1 for each row of the otu_table
          as returned from qiime.biplots.get_taxa_prevalence
-    N : inst
+    N : int, optional
          number of most prevalent elements to retain, if zero is passed, will
          retain all available
 
@@ -40,8 +38,8 @@ def extract_taxa_data(otu_coords, otu_table, lineages, prevalence, N=0):
     out_prevalence : np.ndarray
          first N values of prevalence
 
-    Note
-    ----
+    Notes
+    -----
     Based on qiime.biplots.remove_rare_taxa; though this function opperates on
     generic data that's not in dict forma and returns the appropriate result.
     """
@@ -78,7 +76,7 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
          principal coordinates data where the taxa will be mapped
     coords_data : array_like
          principal coordinates data where the taxa will be mapped
-    N : int
+    N : int, optional
          number of most prevalent taxa to keep, by default will use all
 
     Returns
@@ -104,7 +102,7 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
     # this means there's only one or fewer rows in the contingency table
     if len(otu_table) <= 1 or len(lineages) <= 1:
         raise EmperorUnsupportedComputation(
-            "Biplots are not supported for " +
+            "Biplots are not supported for "
             "contingency tables with one or fewer rows")
 
     # if this element is a list take the first headers and coordinates
