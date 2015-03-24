@@ -1,17 +1,18 @@
 #!/usr/bin/env python
+# ----------------------------------------------------------------------------
+# Copyright (c) 2013--, emperor development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE.md, distributed with this software.
+# ----------------------------------------------------------------------------
 
 from distutils.core import setup
 from glob import glob
 
-__author__ = "Yoshiki Vazquez Baeza"
-__copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Antonio Gonzalez Pena", "Meg Pirrung", "Yoshiki Vazquez Baeza",
-               "Jose Antonio Navas Molina", "Greg Caporaso"]
-__license__ = "BSD"
 __version__ = "0.9.51-dev"
-__maintainer__ = "Yoshiki Vazquez Baeza"
+__maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
-__status__ = "Development"
 
 # based on the text found in github.com/qiime/pynast
 classes = """

@@ -1,14 +1,12 @@
-#!/usr/bin/env python
-# File created on 24 Jan 2013
+# ----------------------------------------------------------------------------
+# Copyright (c) 2013--, emperor development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE.md, distributed with this software.
+# ----------------------------------------------------------------------------
 
-__author__ = "Emperor Development Team"
-__copyright__ = "Copyright 2013, The Emperor Project"
-__credits__ = ["Antonio Gonzalez Pena", "Meg Pirrung", "Yoshiki Vazquez Baeza"]
-__license__ = "BSD"
 __version__ = "0.9.51-dev"
-__maintainer__ = "Antonio Gonzalez Pena"
-__email__ = "antgonza@gmail.com"
-__status__ = "Development"
 
 from emperor.core import Emperor
 

@@ -1,5 +1,11 @@
 #!/usr/bin/env python
-# File created on 06 Jul 2012
+# ----------------------------------------------------------------------------
+# Copyright (c) 2013--, emperor development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE.md, distributed with this software.
+# ----------------------------------------------------------------------------
 from __future__ import division
 
 from os import makedirs
@@ -29,9 +35,7 @@ from emperor.format import (format_taxa_to_js, format_vectors_to_js,
                             format_emperor_autograph)
 from emperor._format_strings import EMPEROR_HEADER_HTML_STRING
 from emperor.parse import parse_coords
-
-
-__version__ = "0.9.51-dev"
+from emperor import __version__
 
 
 script_info = {}
