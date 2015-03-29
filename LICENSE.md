@@ -277,7 +277,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### FileSaver.js [283e78fd3c](https://github.com/eligrey/FileSaver.js/)
+### FileSaver.js [239f3c427f68809e17a9c747e4cb31376782efca](https://github.com/eligrey/FileSaver.js/)
 
 Copyright (c) 2011 [Eli Grey](http://eligrey.com).
 
