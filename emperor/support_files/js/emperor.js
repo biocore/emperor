@@ -183,6 +183,23 @@ function toggleScaleCoordinates(element) {
       operation(g_plotTaxa[index].scale.x, g_fractionExplained[g_viewingAxes[0]]),
       operation(g_plotTaxa[index].scale.y, g_fractionExplained[g_viewingAxes[0]]),
       operation(g_plotTaxa[index].scale.z, g_fractionExplained[g_viewingAxes[0]]));
+
+    //scale the dimensions of the taxa vectors
+    g_elementsGroup.remove(g_plotTaxaArrows[index])
+    g_mainScene.remove(g_plotTaxaArrows[index]);
+
+    var whiteColor = new THREE.Color();
+    whiteColor.setHex("0xFFFFFF");
+    var taxaVector = makeLine([0, 0, 0,],
+			      [g_plotTaxa[index].position.x,
+			       g_plotTaxa[index].position.y,
+			       g_plotTaxa[index].position.z],
+			      whiteColor, 2);
+
+
+    g_plotTaxaArrows[index] = taxaVector;
+    g_elementsGroup.add(g_plotTaxaArrows[index])
+    g_mainScene.add(g_plotTaxaArrows[index]);
   }
 
   // each line is indexed by a sample, creating in turn TOTAL_SAMPLES-1 lines
