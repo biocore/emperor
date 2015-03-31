@@ -196,7 +196,6 @@ function toggleScaleCoordinates(element) {
 			       g_plotTaxa[index].position.z],
 			      whiteColor, 2);
 
-
     g_plotTaxaArrows[index] = taxaVector;
     g_elementsGroup.add(g_plotTaxaArrows[index]);
     g_mainScene.add(g_plotTaxaArrows[index]);
