@@ -185,7 +185,7 @@ function toggleScaleCoordinates(element) {
       operation(g_plotTaxa[index].scale.z, g_fractionExplained[g_viewingAxes[0]]));
 
     //scale the dimensions of the taxa vectors
-    g_elementsGroup.remove(g_plotTaxaArrows[index])
+    g_elementsGroup.remove(g_plotTaxaArrows[index]);
     g_mainScene.remove(g_plotTaxaArrows[index]);
 
     var whiteColor = new THREE.Color();
@@ -198,7 +198,7 @@ function toggleScaleCoordinates(element) {
 
 
     g_plotTaxaArrows[index] = taxaVector;
-    g_elementsGroup.add(g_plotTaxaArrows[index])
+    g_elementsGroup.add(g_plotTaxaArrows[index]);
     g_mainScene.add(g_plotTaxaArrows[index]);
   }
 
