@@ -5,7 +5,7 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 --------------------------------------------------------
 
 ### Bug Fixes
-
+* Fix problem where the taxonomic vectors weren't scaled properly when the scale coordinates button was toggled  ([#386](https://github.com/biocore/emperor/issues/373).
 * Fix problem where `make_emperor.py` would attempt to parse `Icon?` files when a directory was passed via the `-i` option ([#323](https://github.com/biocore/emperor/issues/323)).
 * Fix bug where Emperor would try to animate trajectories with a single timepoint i.e. a single unique value in the gradient category.
 
