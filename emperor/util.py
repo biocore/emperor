@@ -511,6 +511,12 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     -------
     data: list of list of str
         Filled in mapping file data
+
+    Raises
+    ------
+    EmperorInputFilesError
+        If a header is not found in the mapping file or it wasn't used for
+        processing.
     """
     out_data = deepcopy(data)
 

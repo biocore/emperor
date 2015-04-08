@@ -100,6 +100,11 @@ def preprocess_otu_table(otu_sample_ids, otu_table, lineages,
     lines : np.ndarray
          coords where the N most prevalent taxa will be positioned in the
          biplot
+
+    Raises
+    ------
+    EmperorUnsupportedComputation
+        If the contingency table contains one or fewer rows.
     """
 
     # return empty values if any of the taxa data is empty
