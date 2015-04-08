@@ -67,42 +67,13 @@ class BiplotTests(TestCase):
                                  [1.1,1.2,1.3,1.5],
                                  [-.3,-2,2.5,1.9]],float)
         res = bp.make_biplot_scores_output(taxa)
-        exp = ['#Taxon\tpc0\tpc1\tpc2\tpc3',
+        exp = ['#Taxon\tpc1\tpc2\tpc3\tpc4',
                'A\t2.1\t0.2\t0.2\t1.4',
                'B\t1.1\t1.2\t1.3\t1.5',
                'C\t-0.3\t-2.0\t2.5\t1.9',
               ]
         self.assertEqual(res, exp)
-    
-taxa_mage_no_scale = [\
-'@group {Taxa (n=3)} collapsible', \
-'@balllist color=white radius=10.0 alpha=0.7 dimension=3 master={taxa_points} nobutton', \
-'{A} 1.0 4.0 7.0', \
-'@labellist color=white radius=10.0 alpha=0.7 dimension=3 master={taxa_labels} nobutton', \
-'{A} 1.0 4.0 7.0', \
-'@balllist color=white radius=15.0 alpha=0.7 dimension=3 master={taxa_points} nobutton', \
-'{B} 2.0 5.0 8.0', \
-'@labellist color=white radius=15.0 alpha=0.7 dimension=3 master={taxa_labels} nobutton', \
-'{B} 2.0 5.0 8.0', \
-'@balllist color=white radius=20.0 alpha=0.7 dimension=3 master={taxa_points} nobutton', \
-'{C} 3.0 6.0 9.0', \
-'@labellist color=white radius=20.0 alpha=0.7 dimension=3 master={taxa_labels} nobutton', \
-'{C} 3.0 6.0 9.0']
 
-taxa_mage_scale = [\
-'@group {Taxa (n=3)} collapsible', \
-'@balllist color=white radius=10.0 alpha=0.7 dimension=3 master={taxa_points} nobutton', \
-'{A} 1.0 0.4 0.07', \
-'@labellist color=white radius=10.0 alpha=0.7 dimension=3 master={taxa_labels} nobutton', \
-'{A} 1.0 0.4 0.07', \
-'@balllist color=white radius=15.0 alpha=0.7 dimension=3 master={taxa_points} nobutton', \
-'{B} 2.0 0.5 0.08', \
-'@labellist color=white radius=15.0 alpha=0.7 dimension=3 master={taxa_labels} nobutton', \
-'{B} 2.0 0.5 0.08', \
-'@balllist color=white radius=20.0 alpha=0.7 dimension=3 master={taxa_points} nobutton', \
-'{C} 3.0 0.6 0.09', \
-'@labellist color=white radius=20.0 alpha=0.7 dimension=3 master={taxa_labels} nobutton', \
-'{C} 3.0 0.6 0.09']
 
 if __name__ == "__main__":
     main()

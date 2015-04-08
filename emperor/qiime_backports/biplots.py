@@ -39,14 +39,14 @@ def get_taxa_prevalence(tax_counts):
 
 def make_biplot_scores_output(taxa):
     """Create convenient output format of taxon biplot coordinates
-       
+
        taxa is a dict containing 'lineages' and a coord matrix 'coord'
-       
+
        output is a list of lines, each containing coords for one taxon
     """
     output = []
     ndims = len(taxa['coord'][1])
-    header = '#Taxon\t' + '\t'.join(['pc%d' %(i) for i in xrange(ndims)])
+    header = '#Taxon\t' + '\t'.join(['pc%d' %(i+1) for i in xrange(ndims)])
     output.append(header)
     for i, taxon in enumerate(taxa['lineages']):
         line = taxon + '\t'
