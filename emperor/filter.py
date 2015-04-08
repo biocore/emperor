@@ -32,9 +32,10 @@ def filter_samples_from_coords(headers, coords,
     out_coords : list, np.array
          Filtered list of coordinates
 
-    Notes
-    -----
-    Raises ValueError when all the samples are filtered out
+    Raises
+    ------
+    ValueError
+        If all the samples are filtered out
     """
     out_coord_ids, out_coords = [], []
 

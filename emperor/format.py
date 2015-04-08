@@ -72,6 +72,14 @@ def format_pcoa_to_js(header, coords, pct_var, custom_axes=[],
         spheres, list of ellipses (if coords_low and coords_high are present)
         and several setup variables.
 
+    Raises
+    ------
+    EmperorLogicError
+        If the variation explained by at least three axes is not greater than
+        0.01.
+
+    Notes
+    -----
     Formats the output of qiime_backports.parse.parse_coords_file into
     javascript variable declarations.
     """
