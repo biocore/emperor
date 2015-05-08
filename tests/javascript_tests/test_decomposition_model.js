@@ -192,9 +192,37 @@ $(document).ready(function() {
    */
   test("Test constructor")
 
-
-
   /* Jamie starts here */
+  test('Test get plottables by ids', function(){
+    var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                    metadata);
+
+    var exp = [
+      new Plottable(
+        'PC.636',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+        [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+         -0.229889, -0.046599],
+         0),
+      new Plottable(
+        'PC.354',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
+        [0.280399, -0.006013, 0.023485, -0.046811, -0.146624, 0.005670,
+         -0.035430, -0.255786],
+         4),
+      new Plottable(
+        'PC.355',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+        [0.170518, -0.194113, -0.030897, 0.019809, 0.155100, -0.279924,
+         0.057609, 0.024248],
+         6)];
+
+    var obs = dm.getPlottableByIDs(['PC.636', 'PC.354', 'PC.355']);
+
+    deepEqual(obs, exp,
+	      "Metadata groups retrieved successfully");
+
+  }
 
   test('Test get plottables by metadata category', function(){
     var exp;
@@ -230,24 +258,24 @@ $(document).ready(function() {
          0.244448, -0.059883],
          8)];
 
-    dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-                                metadata);
-    var controls = dm.getPlottablesByMetadataCategoryValue('Treatment', 'Control');
+    var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                    metadata);
+    var obs = dm.getPlottablesByMetadataCategoryValue('Treatment', 'Control');
 
-    deepEqual(controls, control_exp,
+    deepEqual(obs, control_exp,
 	      "Metadata groups retrieved successfully");
 
   }
 
   test('Test get unique values by category', function(){
-    var decompositionModel;
+    var dm;
 
     dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                 metadata);
-    var trt_values = dm.getUniqueValuesByCategory('Treatment');
+    var obs = dm.getUniqueValuesByCategory('Treatment');
 
 
-    deepEqual(trt_values, ['Fast', 'Control'],
+    deepEqual(obs, ['Fast', 'Control'],
 	      "Unique metadata values retrieved successfully");
   }
 
