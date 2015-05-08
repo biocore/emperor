@@ -155,7 +155,7 @@ $(document).ready(function() {
    * not the same as the number of ids
    *
    */
-  test("Test constructor num rows coord != num ids", function(){
+  test("Test constructor excepts num rows coord != num ids", function(){
     var result;
 
     throws(
@@ -190,6 +190,10 @@ $(document).ready(function() {
    * the same number of elements
    *
    */
-  test("Test")
+  test("Test constructor")
+
+
+
+  /* Jamie starts here */
 
 });
