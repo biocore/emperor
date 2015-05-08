@@ -193,7 +193,7 @@ $(document).ready(function() {
   test("Test constructor")
 
   /* Jamie starts here */
-  test('Test get plottable  id', function(){
+  test('Test get plottable by id', function(){
     var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                     metadata);
     var exp =
