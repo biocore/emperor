@@ -193,10 +193,27 @@ $(document).ready(function() {
   test("Test constructor")
 
   /* Jamie starts here */
+  test('Test get plottable  id', function(){
+    var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                    metadata);
+    var exp =
+      new Plottable(
+        'PC.636',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+        [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+         -0.229889, -0.046599],
+         0);
+
+    var obs = dm.getPlottableByIDs('PC.636');
+
+    deepEqual(obs, exp,
+	      "Metadata groups retrieved successfully");
+
+  }
+
   test('Test get plottables by ids', function(){
     var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                     metadata);
-
     var exp = [
       new Plottable(
         'PC.636',
@@ -225,8 +242,7 @@ $(document).ready(function() {
   }
 
   test('Test get plottables by metadata category', function(){
-    var exp;
-    control_exp = [
+    var exp = [
       new Plottable(
         'PC.636',
         ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
@@ -262,7 +278,7 @@ $(document).ready(function() {
                                     metadata);
     var obs = dm.getPlottablesByMetadataCategoryValue('Treatment', 'Control');
 
-    deepEqual(obs, control_exp,
+    deepEqual(obs, exp,
 	      "Metadata groups retrieved successfully");
 
   }
@@ -273,9 +289,9 @@ $(document).ready(function() {
     dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                 metadata);
     var obs = dm.getUniqueValuesByCategory('Treatment');
+    var exp = ['Fast', 'Control'];
 
-
-    deepEqual(obs, ['Fast', 'Control'],
+    deepEqual(obs, exp,
 	      "Unique metadata values retrieved successfully");
   }
 
