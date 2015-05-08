@@ -1,8 +1,10 @@
 /**
  *
- * @author Jose Antonio Navas Molina, Jamie Morton
- * @copyright Copyright 2013, The Emperor Project
- * @credits Jose Antonio Navas Molina, Jamie Morton
+ * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
+ *         Vazquez-Baeza
+ * @copyright Copyright 2013--, The Emperor Project
+ * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
+ *          Vazquez-Baeza
  * @license BSD
  * @version 0.9.51-dev
  * @maintainer Jose Antonio Navas Molina
@@ -190,7 +192,112 @@ $(document).ready(function() {
    * the same number of elements
    *
    */
-  test("Test constructor")
+  test("Test constructor excepts rows in coord different lengths", function(){
+    var result;
+
+    throws(
+      function(){
+        err_coords = [
+          [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+           -0.229889, -0.046599],
+          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
+           -0.112864, 0.064794],
+          [0.228820, -0.130142, -0.287149, 0.086450, 0.044295, 0.206043,
+           0.031000, 0.071992],
+          [0.042263, -0.013968, 0.063531, -0.346121, -0.127814, 0.013935,
+           0.030021, 0.140148],
+          [0.280399, -0.006013, 0.023485, -0.046811, -0.146624, 0.005670,
+           -0.035430, -0.255786],
+          [0.232873, 0.139788, 0.322871, 0.183347, 0.020466, 0.054059,
+           -0.036625, 0.099824],
+          [0.170518, -0.194113, -0.030897, 0.019809, 0.155100, -0.279924,
+           0.057609, 0.024248],
+          [-0.091330, 0.424147, -0.135627, -0.057519, 0.151363, -0.025394,
+           0.051731, -0.038738],
+          [-0.349339, -0.120788]];
+        result = new DecompositionModel(name, ids, err_coords, pct_var,
+                                          md_headers, metadata);
+      },
+      Error,
+      'An error is raised if all rows in coords does not have the same length'
+      );
+  });
+
+  /**
+   *
+   * Test the initializer raises an error if the number of elements in pct_var
+   * does not correspond to the number of coords.
+   *
+   */
+  test("Test constructor excepts num pct_var != num coords", function(){
+    var result;
+    throws(
+      function(){
+        err_pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
+                       11.217215823, 10.024774995, 8.22835130237];
+        result = new DecompositionModel(name, ids, coords, err_pct_var,
+                                        md_headers, metadata);
+      },
+      Error,
+      'An error is raised if the number of percentage explained does not '+
+      'correspond to the number of coords'
+      );
+  });
+
+  /**
+   *
+   * Test the initializer raises an error if the number of rows in metadata is
+   * not the same as the number of ids
+   *
+   */
+  test("Test constructor excepts num rows metadata != num ids", function(){
+    var result;
+
+    throws(
+      function(){
+        err_metadata = [['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+                        ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
+                        ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+                        ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+                        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
+                        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126']];
+        result = new DecompositionModel(name, ids, coords, pct_var,
+                                        md_headers, err_metadata);
+      },
+      Error,
+      'An error is raised if the number of rows in the metadata parameter '+
+      'does not correspond to the number of ids'
+    );
+  });
+
+  /**
+   *
+   * Test the initializer raises an error if the number of columns in metadata
+   * is not the same as the number of metadata headers
+   *
+   */
+  test("Test constructor excepts metadata cols != num headers", function(){
+    var result;
+
+    throws(
+      function(){
+        err_metadata = [['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20071112'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20080116'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20080116'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20071210'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20080116'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20061218'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20061218'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20061126']];
+        result = new DecompositionModel(name, ids, coords, pct_var,
+                                        md_headers, err_metadata);
+      },
+      Error,
+      'An error is raised if the number of elements in each row in the '+
+      'metadata parameter does not match the number of metadata columns'
+    )
+  });
 
   /* Jamie starts here */
   test('Test get plottable by id', function(){
