@@ -245,5 +245,15 @@ $(document).ready(function() {
 
 
   /* Jamie starts here */
+  test('Test get unique values by category', function(){
+    var decompositionModel;
+
+    dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                metadata);
+    var trt_values = dm.getUniqueValuesBYCategory('Treatment');
+
+    deepEqual(trt_values, ['Fast', 'Control'],
+	      "Unique metadata values retrieved successfully");
+  }
 
 });
