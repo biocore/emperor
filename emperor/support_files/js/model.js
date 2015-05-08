@@ -1,15 +1,94 @@
-/* Represents an object that can be drawn (i.e. a sample or taxa)
-*/
-function Plottable(params){
-  this.name = "PC.354";
-  this.idx = 0;
-  this.metadata = ["AGCACGAGCCTA", "YATGCTGCCTCCCGTAGGAGT", "Control",
-                   "20061218", "Control_mouse_I.D._354"];
-  this.coordinates = [0.280399117569, -0.0060128286014, 0.0234854344148,
-                      -0.0468109474823, -0.146624450094, 0.00566979124596,
-                      -0.0354299634191, -0.255785794275, -4.84141986706e-09];
-  this.confidenceInterval = [];
-}
+/**
+ *
+ * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
+ *         Vazquez-Baeza
+ * @copyright Copyright 2013--, The Emperor Project
+ * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
+ *          Vazquez-Baeza
+ * @license BSD
+ * @version 0.9.51-dev
+ * @maintainer Yoshiki Vazquez Baeza
+ * @email yoshiki89@gmail.com
+ * @status Development
+ *
+ */
+
+
+/**
+ *
+ * @name Plottable
+ *
+ * @class Represents a sample and the associated metadata in the ordination
+ * space.
+ *
+ */
+
+
+/**
+ *
+ * @name Plottable
+ *
+ * @class Represents a sample and the associated metadata in the ordination
+ * space.
+ *
+ * @param {name} a string indicating the name of the sample.
+ * @param {idx} the index where the object is located in a decomposition model.
+ * @param {metadata} an Array of strings with the metadata values.
+ * @param {coordinates} an Array of floats indicating the position in space
+ *                      where this sample is located.
+ * @param {idx} an *optional* integer representing the index where the object
+ *              is located in a DecompositionModel.
+ * @param {ci} an *optional* Array of floats indicating the confidence
+ *             intervals in each dimension.
+ *
+ **/
+function Plottable(name, metadata, coordinates, idx, ci) {
+  this.name = name;
+  this.metadata = metadata;
+  this.coordinates = coordinates;
+
+  this.idx = idx === undefined ? -1 : idx;
+  this.ci = ci === undefined ? [] : ci;
+
+  if (this.ci.length !== 0){
+    if (this.ci.length !== this.coordinates.length){
+      throw new Error("The number of confidence intervals doesn't match with"+
+                      " the number of dimensions in the coordinates "+
+                      "attribute. coords: " + this.coordinates.length +
+                      " ci: " + this.ci.length);
+    }
+  }
+};
+
+/**
+ *
+ * Helper method to convert a Plottable into a string.
+ *
+ * @return a string describing the Plottable object.
+ *
+ */
+Plottable.prototype.toString = function(){
+  var ret = 'Sample: ' + this.name + ' located at: (' +
+            this.coordinates.join(', ') + ') metadata: [' +
+            this.metadata.join(', ')+']';
+
+  if (this.idx === -1){
+    ret = ret + ' without index';
+  }
+  else{
+    ret = ret + ' at index: ' + this.idx;
+  }
+
+  if (this.ci.length === 0){
+    ret = ret + ' and without confidence intervals.';
+  }
+  else{
+    ret = ret + ' and with confidence intervals at (' + this.ci.join(', ') +
+      ').';
+  }
+
+  return ret;
+};
 
 /* Models all the data loaded to be drawn (i.e. all samples, taxa, vectors...)
   Params: representation of the PC and the MetadataMap
