@@ -296,16 +296,43 @@ $(document).ready(function() {
 
   }
 
+  test("Test getPlottablesByMetadataCategoryValue category not found in metadata headers", function(){
+    var result;
+    throws(
+      function(){
+	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+					metadata);
+	result = dm.getPlottableByID('PC.637');
+      },
+        Error,
+        'An error is raised if the metadata category is not found in the metadata headers';
+    );
+  }
+
+
   test('Test get unique values by category', function(){
     var dm;
 
     dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                 metadata);
-    var obs = dm.getUniqueValuesByCategory('Treatment');
+    var obs = dm.getUniqueValuesByCategory('foo');
     var exp = ['Fast', 'Control'];
 
     deepEqual(obs, exp,
 	      "Unique metadata values retrieved successfully");
+  }
+
+  test("Test getUniqueValuesByCategory category not found in metadata headers", function(){
+    var result;
+    throws(
+      function(){
+	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+					metadata);
+	result = dm.getUniqueValuesByCategory('foo');
+      },
+        Error,
+        'An error is raised if the metadata category is not found in the metadata headers';
+    );
   }
 
 });
