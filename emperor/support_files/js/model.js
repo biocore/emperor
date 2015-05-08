@@ -32,9 +32,17 @@ function Plottable(params){
 **/
 function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata){
   this.abbreviatedName = name;
+  this.ids = ids;
   this.percExpl = pct_var;
   this.md_headers = md_headers;
-  this.ids = ids;
+
+  if(this.ids.length !== coords.length){
+    throw new Error("The number of coordinates differs from the number of " +
+                    "smples. Coords: " + coords.length + " samples: " +
+                    this.ids.length);
+  }
+
+  // num_coords = coords[0].length
 
   this.plottable = new Array(ids.length)
   for (var i = 0; i < ids.length; i++){
