@@ -221,6 +221,27 @@ $(document).ready(function() {
       );
   });
 
+  /**
+   *
+   * Test the initializer raises an error if the number of elements in pct_var
+   * does not correspond to the number of coords.
+   *
+   */
+  test("Test constructor excepts num pct_var != num coords", function(){
+    var result;
+    throws(
+      function(){
+        err_pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
+                       11.217215823, 10.024774995, 8.22835130237];
+        result = new DecompositionModel(name, ids, coords, err_pct_var,
+                                        md_headers, metadata);
+      },
+      Error,
+      'An error is raised if the number of percentage explained does not '+
+      'correspond to the number of coords'
+      );
+  });
+
 
 
   /* Jamie starts here */
