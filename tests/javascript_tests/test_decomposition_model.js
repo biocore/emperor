@@ -204,11 +204,24 @@ $(document).ready(function() {
          -0.229889, -0.046599],
          0);
 
-    var obs = dm.getPlottableByIDs('PC.636');
+    var obs = dm.getPlottableByID('PC.636');
 
     deepEqual(obs, exp,
 	      "Metadata groups retrieved successfully");
 
+  }
+
+  test("Test getPlottableByID id not in DecompositionModel ids", function(){
+    var result;
+    throws(
+      function(){
+	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+					metadata);
+	result = dm.getPlottableByID('PC.637');
+      },
+        Error,
+        'An error is raised if the id is not found in the Decomposition Model ids';
+    );
   }
 
   test('Test get plottables by ids', function(){

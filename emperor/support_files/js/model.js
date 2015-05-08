@@ -40,6 +40,7 @@ function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata){
   for (var i = 0; i < ids.length; i++){
     this.plottable[i] = new Plottable(ids[i], metadata[i], coords[i], i)
   }
+  // TODO:
   // this.edges = [];
   // this.plotEdge = false;
   // this.serialComparison = false;
@@ -55,6 +56,10 @@ function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata){
 **/
 DecompositionModel.prototype.getPlottableByID = function(id) {
   idx = this.ids.indexOf(id);
+  if(idx === -1){
+    throw new Error('An error is raised if the number of rows in the coords parameter '+
+		    'does not correspond to the number of ids');
+  }
   return this.plottable[idx];
 };
 
@@ -81,7 +86,7 @@ DecompositionModel.prototype.getPlottableByIDs = function(idArray){
  *
  * @return an Array of plottable object for the given category value pair
  *
-*/
+**/
 DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
     category, value){
   md_idx = this.md_headers.indexOf(category);
