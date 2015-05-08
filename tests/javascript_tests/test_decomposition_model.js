@@ -174,7 +174,7 @@ $(document).ready(function() {
             [0.232873, 0.139788, 0.322871, 0.183347, 0.020466, 0.054059,
              -0.036625, 0.099824],
             [0.170518, -0.194113, -0.030897, 0.019809, 0.155100, -0.279924,
-             0.057609, 0.024248]]; 
+             0.057609, 0.024248]];
           result = new DecompositionModel(name, ids, err_coords, pct_var,
                                           md_headers, metadata);
         },
@@ -195,5 +195,15 @@ $(document).ready(function() {
 
 
   /* Jamie starts here */
+  test('Test get unique values by category', function(){
+    var decompositionModel;
+
+    dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                metadata);
+    var trt_values = dm.getUniqueValuesBYCategory('Treatment');
+
+    deepEqual(trt_values, ['Fast', 'Control'],
+	      "Unique metadata values retrieved successfully");
+  }
 
 });
