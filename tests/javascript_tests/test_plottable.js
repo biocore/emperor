@@ -57,7 +57,6 @@ $(document).ready(function() {
     deepEqual(plot.coordinates, [0.2, 0.3, 0.5, 0.2], "The coordinates "+
               "match!");
 
-    // optional arguments get default values
     equal(plot.idx, 1, "The index value was set correctly!");
     deepEqual(plot.ci, [], "The confidence intervals were set correctly!");
 
@@ -69,7 +68,6 @@ $(document).ready(function() {
     deepEqual(plot.coordinates, [0.2, 0.3, 0.5, 0.2], "The coordinates "+
               "match!");
 
-    // optional properties get default values
     equal(plot.idx, 1, "The index value was set correctly");
     deepEqual(plot.ci, [3, 2, 3, 4], "The confidence intervals were set "+
               "correctly");
