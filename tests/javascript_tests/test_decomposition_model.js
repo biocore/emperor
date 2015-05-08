@@ -195,12 +195,113 @@ $(document).ready(function() {
 
 
   /* Jamie starts here */
+
+
+  test('Test get plottables by metadata category', function(){
+    var exp;
+    exp = [
+      new Plottable(
+        'PC.636',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+        [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+         -0.229889, -0.046599],
+         0),
+      new Plottable(
+        'PC.635',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
+        [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
+         -0.112864, 0.064794],
+         1),
+      new Plottable(
+        'PC.356',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+        [0.228820, -0.130142, -0.287149, 0.086450, 0.044295, 0.206043,
+         0.031000, 0.071992],
+         2),
+      new Plottable(
+        'PC.481',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+        [0.042263, -0.013968, 0.063531, -0.346121, -0.127814, 0.013935,
+         0.030021, 0.140148],
+         3),
+      new Plottable(
+        'PC.354',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
+        [0.280399, -0.006013, 0.023485, -0.046811, -0.146624, 0.005670,
+         -0.035430, -0.255786],
+         4),
+      new Plottable(
+        'PC.593',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+        [0.232873, 0.139788, 0.322871, 0.183347, 0.020466, 0.054059,
+         -0.036625, 0.099824],
+         5),
+      new Plottable(
+        'PC.355',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+        [0.170518, -0.194113, -0.030897, 0.019809, 0.155100, -0.279924,
+         0.057609, 0.024248],
+         6),
+      new Plottable(
+        'PC.607',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+        [-0.091330, 0.424147, -0.135627, -0.057519, 0.151363, -0.025394,
+         0.051731, -0.038738],
+         7),
+      new Plottable(
+        'PC.634',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126'],
+        [-0.349339, -0.120788, 0.115275, 0.069495, -0.025372, 0.067853,
+         0.244448, -0.059883],
+         8)];
+    control_exp = [
+      new Plottable(
+        'PC.636',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+        [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+         -0.229889, -0.046599],
+         0),
+      new Plottable(
+        'PC.354',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
+        [0.280399, -0.006013, 0.023485, -0.046811, -0.146624, 0.005670,
+         -0.035430, -0.255786],
+         4),
+      new Plottable(
+        'PC.355',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+        [0.170518, -0.194113, -0.030897, 0.019809, 0.155100, -0.279924,
+         0.057609, 0.024248],
+         6),
+      new Plottable(
+        'PC.607',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+        [-0.091330, 0.424147, -0.135627, -0.057519, 0.151363, -0.025394,
+         0.051731, -0.038738],
+         7),
+      new Plottable(
+        'PC.634',
+        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126'],
+        [-0.349339, -0.120788, 0.115275, 0.069495, -0.025372, 0.067853,
+         0.244448, -0.059883],
+         8)];
+
+    dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                metadata);
+    var controls = dm.getPlottablesByMetadataCategoryValue('Treatment', 'Control');
+
+    deepEqual(controls, control_exp,
+	      "Metadata groups retrieved successfully");
+
+  }
+
   test('Test get unique values by category', function(){
     var decompositionModel;
 
     dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                 metadata);
-    var trt_values = dm.getUniqueValuesBYCategory('Treatment');
+    var trt_values = dm.getUniqueValuesByCategory('Treatment');
+
 
     deepEqual(trt_values, ['Fast', 'Control'],
 	      "Unique metadata values retrieved successfully");
