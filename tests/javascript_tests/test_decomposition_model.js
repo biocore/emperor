@@ -1,8 +1,10 @@
 /**
  *
- * @author Jose Antonio Navas Molina, Jamie Morton
- * @copyright Copyright 2013, The Emperor Project
- * @credits Jose Antonio Navas Molina, Jamie Morton
+ * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
+ *         Vazquez-Baeza
+ * @copyright Copyright 2013--, The Emperor Project
+ * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
+ *          Vazquez-Baeza
  * @license BSD
  * @version 0.9.51-dev
  * @maintainer Jose Antonio Navas Molina
