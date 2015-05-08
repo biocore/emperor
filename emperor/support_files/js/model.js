@@ -11,46 +11,92 @@ function Plottable(params){
   this.confidenceInterval = [];
 }
 
-/* Models all the data loaded to be drawn (i.e. all samples, taxa, vectors...)
-  Params: representation of the PC and the MetadataMap
+/**
+ * @name DecompositionModel
+ *
+ * @class Models all the ordination method data to be plotted
+ *
+ * @param {name} a string containing the abbreviated name of the ordination
+ * method
+ * @param {ids} an Array of strings where each string is a sample identifier
+ * @param {coords} a 2D Array of floats where each row contains the coordinates
+ * of a sample. The rows are in ids order.
+ * @param {pct_var} an Array of floats where each position contains the
+ * percentage explained by that axis
+ * @param {md_headers} an Array of string where each string is a metadata
+ * column header
+ * @param {metadata} a 2D Array of strings where each row contains the metadata
+ * values for a given sample. The rows are in ids order. The columns are in
+ * md_headers order.
+ *
+**/
+function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata){
+  this.abbreviatedName = name;
+  this.percExpl = pct_var;
+  this.md_headers = md_headers;
+  this.ids = ids;
+
+  this.plottable = new Array(ids.length)
+  for (var i = 0; i < ids.length; i++){
+    this.plottable[i] = new Plottable(ids[i], metadata[i], coords[i], i)
+  }
+  // this.edges = [];
+  // this.plotEdge = false;
+  // this.serialComparison = false;
+};
+
+/**
+ * Retrieve the plottable object with the given id
+ *
+ * @param {id} a string with the plottable
+ *
+ * @return the plottable object for the given id
+ *
+**/
+DecompositionModel.prototype.getPlottableByID = function(id) {
+  idx = this.ids.indexOf(id);
+  return this.plottable[idx];
+};
+
+
+/**
+ *
+ * Retrieve all the plottable object with the given ids
+ *
+ * @param {idArray} an Array of strings where each string is a plottable id
+ *
+ * @return an Array of plottable objects for the given ids
+ *
+**/
+DecompositionModel.prototype.getPlottableByIDs = function(idArray){
+  return _.map(idArray, this.getPlottableByID);
+};
+
+/**
+ *
+ * Retrieve all the plottable object under the metadata header value
+ *
+ * @param {category} a string with the metadata header
+ * @param {value} a string with the value under the metadata category
+ *
+ * @return an Array of plottable object for the given category value pair
+ *
 */
-function DecompositionModel(params){
-  this.abbreviatedName = "pcoa";
-  this.percExpl = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-                   10.024774995, 8.22835130237, 7.55971173665, 6.24945796136,
-                   1.17437418531e-14];
-  this.serialComparison = false;
-  this.headers = ["BarcodeSequence", "LinkerPrimerSequence", "Treatment",
-                  "DOB", "Description"];
-  this.ids = ["PC.354", "PC.355", "PC.356", "PC.481", "PC.593", "PC.607",
-              "PC.634", "PC.635", "PC.636"];
-  this.plottable = [new Plottable(), new Plottable(), new Plottable(),
-                    new Plottable(), new Plottable(), new Plottable(),
-                    new Plottable(), new Plottable(), new Plottable()];
-  this.plottableGroup = [];
-  this.plotEdge = false;
+DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
+    category, value){
+  md_idx = this.md_headers.indexOf(category);
+  return _.find(this.plottable, function(pl){
+    return pl.metadata[md_idx] === value; });
+};
 
-  /* Get's a string with the plottable id and returns the plottable */
-  this.getPlottableByID = function(id){
-    return this.getPlottableByIDs([id])[0];
-  };
-
-  /* Get's a metadata category and a value and returns a list of 
-  plottable objects that match that search
-  */
-  this.getPlottablesByMetadataCategoryValue = function(category, value){
-    return [this.plottable[0], this.plottable[1]];
-  };
-
-  /* Get's a metadata category and returns the unique values on that category
-  */
-  this.getUniqueValuesByCategory = function(category){
-    return ["Control", "Fast"];
-  };
-
-  /* Get's a list of strings with the plottable ids and returns a list of
-  plottable */
-  this.getPlottableByIDs = function(idArray){
-    return [this.plottable[0], this.plottable[1]];
-  };
-}
+/**
+ * Get's a metadata category and returns the unique values on that category
+ * @ param {category} a string with the metadata header
+ *
+ * @ return an Array of meta values under the metadata header
+**/
+DecompositionModel.prototype.getUniqueValuesByCategory = function(category){
+  md_idx = this.md_headers.indexOf(category);
+  return _.uniq(
+    _.map(this.plottable, function(pl){return pl.metadata[md_idx];}));
+};
