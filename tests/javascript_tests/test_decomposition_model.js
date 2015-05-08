@@ -242,6 +242,33 @@ $(document).ready(function() {
       );
   });
 
+  /**
+   *
+   * Test the initializer raises an error if the number of rows in metadata is
+   * not the same as the number of ids
+   *
+   */
+  test("Test constructor excepts num rows metadata != num ids", function(){
+    var result;
+
+    throws(
+        function(){
+          err_metadata = [
+                  ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+                  ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
+                  ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+                  ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+                  ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
+                  ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126']];
+          result = new DecompositionModel(name, ids, coords, pct_var,
+                                          md_headers, err_metadata);
+        },
+        Error,
+        'An error is raised if the number of rows in the metadata parameter '+
+        'does not correspond to the number of ids'
+      );
+  });
+
 
 
   /* Jamie starts here */
