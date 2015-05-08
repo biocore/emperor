@@ -1,6 +1,8 @@
 /* Represents an object that can be drawn (i.e. a sample or taxa)
 */
 function Plottable(params){
+  this.name = "PC.354";
+  this.idx = 0;
   this.metadata = ["AGCACGAGCCTA", "YATGCTGCCTCCCGTAGGAGT", "Control",
                    "20061218", "Control_mouse_I.D._354"];
   this.coordinates = [0.280399117569, -0.0060128286014, 0.0234854344148,
@@ -10,6 +12,7 @@ function Plottable(params){
 }
 
 /* Models all the data loaded to be drawn (i.e. all samples, taxa, vectors...)
+  Params: representation of the PC and the MetadataMap
 */
 function DecompositionModel(params){
   this.abbreviatedName = "pcoa";
@@ -49,10 +52,5 @@ function DecompositionModel(params){
   plottable */
   this.getPlottableByIDs = function(idArray){
     return [this.plottable[0], this.plottable[1]];
-  };
-
-  /**/
-  this.applyByMetadataCategoryValue = function(func, category, value){
-
   };
 }
