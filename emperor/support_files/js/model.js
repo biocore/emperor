@@ -23,9 +23,6 @@
  *
  */
 
-/* Represents an object that can be drawn (i.e. a sample or taxa)
-*/
-
 
 /**
  *
@@ -39,7 +36,6 @@
  * @param {metadata} an Array of strings with the metadata values.
  * @param {coordinates} an Array of floats indicating the position in space
  *                      where this sample is located.
- *
  * @param {idx} an *optional* integer representing the index where the object
  *              is located in a DecompositionModel.
  * @param {ci} an *optional* Array of floats indicating the confidence
@@ -62,7 +58,7 @@ function Plottable(name, metadata, coordinates, idx, ci) {
                       " ci: " + this.ci.length);
     }
   }
-}
+};
 
 /**
  *
@@ -73,8 +69,8 @@ function Plottable(name, metadata, coordinates, idx, ci) {
  */
 Plottable.prototype.toString = function(){
   var ret = 'Sample: ' + this.name + ' located at: (' +
-            this.coordinates.join(', ') + ') metadata: ' +
-            this.metadata.join(', ');
+            this.coordinates.join(', ') + ') metadata: [' +
+            this.metadata.join(', ')+']';
 
   if (this.idx === -1){
     ret = ret + ' without index';
@@ -92,7 +88,7 @@ Plottable.prototype.toString = function(){
   }
 
   return ret;
-}
+};
 
 /* Models all the data loaded to be drawn (i.e. all samples, taxa, vectors...)
   Params: representation of the PC and the MetadataMap

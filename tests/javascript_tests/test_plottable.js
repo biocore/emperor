@@ -69,7 +69,7 @@ $(document).ready(function() {
     deepEqual(plot.coordinates, [0.2, 0.3, 0.5, 0.2], "The coordinates "+
               "match!");
 
-    // optional arguments get default values
+    // optional properties get default values
     equal(plot.idx, 1, "The index value was set correctly");
     deepEqual(plot.ci, [3, 2, 3, 4], "The confidence intervals were set "+
               "correctly");
@@ -99,20 +99,20 @@ $(document).ready(function() {
     //check what happens with toString
     var plot = new Plottable('foo', ['a', 'b', 'c'], [0.2, 0.3, 0.5, 0.2], 1);
     equal(plot.toString(), 'Sample: foo located at: (0.2, 0.3, 0.5, 0.2) '+
-      'metadata: a, b, c at index: 1 and without confidence intervals.', 
+      'metadata: [a, b, c] at index: 1 and without confidence intervals.',
       'Test correctly converted Plottable to string type.');
 
     plot = new Plottable('foo', ['a', 'b', 'c'], [0.2, 0.3, 0.5, 0.2], 1, 
                          [0.2, 0.05, 0.01, 0.2]);
     equal(plot.toString(), 'Sample: foo located at: (0.2, 0.3, 0.5, 0.2) '+
-      'metadata: a, b, c at index: 1 and with confidence intervals at '+
+      'metadata: [a, b, c] at index: 1 and with confidence intervals at '+
       '(0.2, 0.05, 0.01, 0.2).',
       'Test correctly converted Plottable to string type with confidence'+
       ' intervals.');
 
     var plot = new Plottable('foo', ['a', 'b', 'c'], [0.2, 0.3, 0.5, 0.2]);
     equal(plot.toString(), 'Sample: foo located at: (0.2, 0.3, 0.5, 0.2) '+
-      'metadata: a, b, c without index and without confidence intervals.', 
+      'metadata: [a, b, c] without index and without confidence intervals.',
       'Test correctly converted Plottable to string type without index.');
 
   });
