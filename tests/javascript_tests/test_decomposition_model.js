@@ -252,21 +252,49 @@ $(document).ready(function() {
     var result;
 
     throws(
-        function(){
-          err_metadata = [
-                  ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-                  ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
-                  ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
-                  ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
-                  ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
-                  ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126']];
-          result = new DecompositionModel(name, ids, coords, pct_var,
-                                          md_headers, err_metadata);
-        },
-        Error,
-        'An error is raised if the number of rows in the metadata parameter '+
-        'does not correspond to the number of ids'
-      );
+      function(){
+        err_metadata = [['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+                        ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
+                        ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+                        ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+                        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
+                        ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126']];
+        result = new DecompositionModel(name, ids, coords, pct_var,
+                                        md_headers, err_metadata);
+      },
+      Error,
+      'An error is raised if the number of rows in the metadata parameter '+
+      'does not correspond to the number of ids'
+    );
+  });
+
+  /**
+   *
+   * Test the initializer raises an error if the number of columns in metadata
+   * is not the same as the number of metadata headers
+   *
+   */
+  test("Test constructor excepts metadata cols != num headers", function(){
+    var result;
+
+    throws(
+      function(){
+        err_metadata = [['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20071112'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20080116'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20080116'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20071210'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20080116'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20061218'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20061218'],
+                        ['YATGCTGCCTCCCGTAGGAGT', '20061126']];
+        result = new DecompositionModel(name, ids, coords, pct_var,
+                                        md_headers, err_metadata);
+      },
+      Error,
+      'An error is raised if the number of elements in each row in the '+
+      'metadata parameter does not match the number of metadata columns'
+    )
   });
 
 
