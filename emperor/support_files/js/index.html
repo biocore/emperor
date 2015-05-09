@@ -22,6 +22,7 @@
     <script src="model.js"></script>
     <script src="view.js"></script>
     <script src="sceneplotview3d.js"></script>
+    <script src="controller.js"></script>
 
     <script>
 
@@ -63,7 +64,7 @@
         ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
         ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126']];
 
-      var dm, dv, spv;
+      var dm, ec;
 
       init();
       animate();
@@ -72,24 +73,22 @@
         // Initialize the DecompositionModel
         dm = new DecompositionModel(name, ids, coords, pct_var,
                                     md_headers, metadata);
-        // Initialize the DecompositionView
-        dv = new DecompositionView(dm);
-        // Initialize the ScenePlotView3D
-        spv = new ScenePlotView3D(window.innerWidth, window.innerHeight, [dv]);
+        // Initialize the EmperorController
+        ec = new EmperorController(window.innerWidth, window.innerHeight, dm)
 
-        document.body.appendChild(spv.renderer.domElement);
+        document.body.appendChild(ec.renderer.domElement);
 
         window.addEventListener( 'resize', onWindowResize, false );
 
       }
 
       function onWindowResize() {
-        spv.resize(window.innerWidth, window.innerHeight);
+        ec.resize(window.innerWidth, window.innerHeight);
       }
 
       function animate() {
         requestAnimationFrame(animate);
-        spv.render();
+        ec.render();
       }
 
     </script>
