@@ -10,20 +10,23 @@
         overflow: hidden;
       }
     </style>
-  </head>
-  <body>
-
-      <!-- Libraries the code depends on -->
+    <!-- Libraries the code depends on -->
     <script src="../vendor/js/underscore-min.js"></script>
+    <script src="../vendor/js/jquery-1.7.1.min.js"></script>
     <script src="../vendor/js/chroma.min.js"></script>
-    <script src="../vendor/js/three.min.js"></script>>
+    <script src="../vendor/js/three.min.js"></script>
+    <script src="../vendor/js/three.js-plugins/OrbitControls.js"></script>>
 
     <!--Source files to test-->
     <script src="model.js"></script>
     <script src="view.js"></script>
     <script src="sceneplotview3d.js"></script>
+    <script src="controller.js"></script>
 
     <script>
+
+      $("<div id='plots' width='100px' height='100px'></div>").appendTo(document.body)
+      var div = $('#plots');
 
       var name = "pcoa";
       var ids = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593',
@@ -63,7 +66,7 @@
         ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
         ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126']];
 
-      var dm, dv, spv;
+      var dm, ec;
 
       init();
       animate();
@@ -72,27 +75,26 @@
         // Initialize the DecompositionModel
         dm = new DecompositionModel(name, ids, coords, pct_var,
                                     md_headers, metadata);
-        // Initialize the DecompositionView
-        dv = new DecompositionView(dm);
-        // Initialize the ScenePlotView3D
-        spv = new ScenePlotView3D(window.innerWidth, window.innerHeight, [dv]);
+        // Initialize the EmperorController
+        ec = new EmperorController(window.innerWidth, window.innerHeight, dm, 'plots');
 
-        document.body.appendChild(spv.renderer.domElement);
+        div.append(ec.renderer.domElement);
 
         window.addEventListener( 'resize', onWindowResize, false );
 
       }
 
       function onWindowResize() {
-        spv.resize(window.innerWidth, window.innerHeight);
+        ec.resize(window.innerWidth, window.innerHeight);
       }
 
       function animate() {
         requestAnimationFrame(animate);
-        spv.render();
+        ec.render();
       }
 
     </script>
-
+  </head>
+  <body>
   </body>
 </html>
