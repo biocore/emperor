@@ -477,8 +477,8 @@ $(document).ready(function() {
 					metadata);
 	result = dm.getUniqueValuesByCategory('foo');
       },
-        Error,
-        'An error is raised if the metadata category is not found in the metadata headers';
+      Error,
+      'An error is raised if the metadata category is not found in the metadata headers';
     );
   }
 
