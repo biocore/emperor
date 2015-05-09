@@ -86,6 +86,7 @@ DecompositionView.prototype._initBaseView = function(){
   var mesh, x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2];
 
+  dv = this;
   this.decomp.apply(function(plottable){
     mesh = new THREE.Mesh(this._genericSphere, new THREE.MeshPhongMaterial());
 
@@ -100,7 +101,7 @@ DecompositionView.prototype._initBaseView = function(){
 
     mesh.updateMatrix();
 
-    this.markers.push(mesh);
+    dv.markers.push(mesh);
   });
 
   // apply but to the adjacency list NOT IMPLEMENTED
