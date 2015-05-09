@@ -224,34 +224,35 @@ DecompositionModel.prototype.getPlottableByIDs = function(idArray){
 DecompositionModel.prototype._getMetadataIndex = function(category){
   var md_idx = this.md_headers.indexOf(category);
   if(md_idx === -1){
-    throw new Error(category + ' is not found in the metadata headers');
+    throw new Error('The header ' + category +
+                    ' is not found in the metadata categories');
   }
   return md_idx;
 };
 
-// /**
-//  *
-//  * Retrieve all the plottable object under the metadata header value
-//  *
-//  * @param {category} a string with the metadata header
-//  * @param {value} a string with the value under the metadata category
-//  *
-//  * @return an Array of plottable object for the given category value pair
-//  *
-// **/
-// DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
-//     category, value){
+/**
+ *
+ * Retrieve all the plottable object under the metadata header value
+ *
+ * @param {category} a string with the metadata header
+ * @param {value} a string with the value under the metadata category
+ *
+ * @return an Array of plottable object for the given category value pair
+ *
+**/
+DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
+    category, value){
 
-//   var md_idx = this._getMetadataIndex(category);
-//   var res = _.filter(this.plottable, function(pl){
-//     return pl.metadata[md_idx] === value; });
+  var md_idx = this._getMetadataIndex(category);
+  var res = _.filter(this.plottable, function(pl){
+    return pl.metadata[md_idx] === value; });
 
-//   if(res === undefined){
-//     throw new Error(value + ' is '+
-//                     'not found in ' + category + ' metadata values');
-//   }
-//   return res;
-// };
+  if(res.length === 0){
+    throw new Error('The value ' +  value +
+                    ' is not found in the metadata category ' + category);
+  }
+  return res;
+};
 
 // /**
 //  * Get's a metadata category and returns the unique values on that category

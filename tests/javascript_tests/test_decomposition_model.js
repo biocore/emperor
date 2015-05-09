@@ -390,7 +390,7 @@ $(document).ready(function() {
       Error,
       "An error is raised if one of the ids is not present in the " +
       "Decomposition Model object"
-    )
+    );
    });
 
    /**
@@ -421,74 +421,97 @@ $(document).ready(function() {
       Error,
       "An error is raised if the metadata header does not exist in the " +
       "Decomposition Model object"
-    )
+    );
   });
 
-  // /**
-  //  *
-  //  * Test getPlottablesByMetadataCategoryValue retrieves all the plottables
-  //  * with the metadata category value associated.
-  //  *
-  //  */
-  // test('Test getPlottablesByMetadataCategoryValue', function(){
-  //   var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-  //                                   metadata);
-  //   var obs = dm.getPlottablesByMetadataCategoryValue('Treatment', 'Control');
-  //   var exp = [
-  //     new Plottable(
-  //       'PC.636',
-  //       ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-  //       [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
-  //        -0.229889, -0.046599],
-  //        0),
-  //     new Plottable(
-  //       'PC.354',
-  //       ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
-  //       [0.280399, -0.006013, 0.023485, -0.046811, -0.146624, 0.005670,
-  //        -0.035430, -0.255786],
-  //        4),
-  //     new Plottable(
-  //       'PC.355',
-  //       ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
-  //       [0.170518, -0.194113, -0.030897, 0.019809, 0.155100, -0.279924,
-  //        0.057609, 0.024248],
-  //        6),
-  //     new Plottable(
-  //       'PC.607',
-  //       ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
-  //       [-0.091330, 0.424147, -0.135627, -0.057519, 0.151363, -0.025394,
-  //        0.051731, -0.038738],
-  //        7),
-  //     new Plottable(
-  //       'PC.634',
-  //       ['YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126'],
-  //       [-0.349339, -0.120788, 0.115275, 0.069495, -0.025372, 0.067853,
-  //        0.244448, -0.059883],
-  //        8)];
+  /**
+   *
+   * Test getPlottablesByMetadataCategoryValue retrieves all the plottables
+   * with the metadata category value associated.
+   *
+   */
+  test('Test getPlottablesByMetadataCategoryValue', function(){
+    var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                    metadata);
+    var obs = dm.getPlottablesByMetadataCategoryValue('Treatment', 'Control');
+    var exp = [
+      new Plottable(
+        'PC.636',
+        ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+        [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+         -0.229889, -0.046599],
+         0),
+      new Plottable(
+        'PC.354',
+        ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
+        [0.280399, -0.006013, 0.023485, -0.046811, -0.146624, 0.005670,
+         -0.035430, -0.255786],
+         4),
+      new Plottable(
+        'PC.355',
+        ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+        [0.170518, -0.194113, -0.030897, 0.019809, 0.155100, -0.279924,
+         0.057609, 0.024248],
+         6),
+      new Plottable(
+        'PC.607',
+        ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+        [-0.091330, 0.424147, -0.135627, -0.057519, 0.151363, -0.025394,
+         0.051731, -0.038738],
+         7),
+      new Plottable(
+        'PC.634',
+        ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126'],
+        [-0.349339, -0.120788, 0.115275, 0.069495, -0.025372, 0.067853,
+         0.244448, -0.059883],
+         8)];
 
-  //   deepEqual(obs, exp, 
-  //             "Plottables for the given metadata category value retrieved " +
-  //             "successfully");
-  // });
+    deepEqual(obs, exp, 
+              "Plottables for the given metadata category value retrieved " +
+              "successfully");
+  });
 
- //  /**
- //   *
- //   * Tests if an error will be thrown if a metadata category isn't found in the
- //   * metadata headers
- //   *
- //   */
- //  test("Test getPlottablesByMetadataCategoryValue category not found in metadata headers", function(){
- //    var result;
- //    throws(
- //      function(){
-  // var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-  //        metadata);
-  // result = dm.getPlottablesByMetadataCategoryValue('foo');
- //      },
- //      Error,
- //      'An error is raised if the metadata category is not found in the metadata headers'
- //    );
- //  });
+  /**
+   *
+   * Test getPlottablesByMetadataCategoryValue throws an error if the metadata
+   * header does not exist in the Decomposition Model object
+   *
+   */
+  test("Test getPlottablesByMetadataCategoryValue excepts unrecognized " +
+       "header", function(){
+    var result;
+    throws(
+      function(){
+        var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                        metadata);
+        result = dm.getPlottablesByMetadataCategoryValue("foo", "Control");
+      },
+      Error,
+      "An error is raised if the metadata header does not exist in the " +
+      "Decomposition Model object"
+    );
+  });
+
+  /**
+   *
+   * Test getPlottablesByMetadataCategoryValue throws an error if the metadata
+   * values is not found in the given category
+   *
+   */
+  test("Tests getPlottablesByMetadataCategoryValue excepts unrecognized "+
+       "metadata category value", function(){
+    var result;
+    throws(
+      function(){
+        var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                        metadata);
+        result = dm.getPlottablesByMetadataCategoryValue("Treatment", "foo");
+      },
+      Error,
+      "An error is raised if the metadata category value does not exist in " + 
+      "the Decomposition Model object"
+    );
+  });
 
  //  /**
  //   *
