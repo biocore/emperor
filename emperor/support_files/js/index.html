@@ -75,7 +75,7 @@
         // Initialize the DecompositionView
         dv = new DecompositionView(dm);
         // Initialize the ScenePlotView3D
-        spv = new ScenePlotView3D(window.innerWidth, window.innerHeight, dv);
+        spv = new ScenePlotView3D(window.innerWidth, window.innerHeight, [dv]);
 
         document.body.appendChild(spv.renderer.domElement);
 
@@ -84,7 +84,7 @@
       }
 
       function onWindowResize() {
-        spv.resize(width, height);
+        spv.resize(window.innerWidth, window.innerHeight);
       }
 
       function animate() {

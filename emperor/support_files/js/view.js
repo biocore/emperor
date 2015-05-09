@@ -39,12 +39,12 @@ function DecompositionView(decomp){
   this.markers = []; // Three.meshes
   this.lines = []; // Three.lines
 
+  // these sizes should likely be changed but, they should be modified here
+  this._genericSphere = new THREE.SphereGeometry(0.1, 8, 8);
+
   // setup this.markers and this.lines
   this._initBaseView();
   // this.elementOrdering = []; // list of ints - Not sure if needed
-
-  // these sizes should likely be changed but, they should be modified here
-  this._genericSphere = new THREE.SphereGeometry(1, 8, 8);
 };
 
 /*
@@ -58,9 +58,9 @@ DecompositionView.prototype._initBaseView = function(){
 
   var dv = this;
   this.decomp.apply(function(plottable){
-    mesh = new THREE.Mesh(this._genericSphere, new THREE.MeshPhongMaterial());
+    mesh = new THREE.Mesh(dv._genericSphere, new THREE.MeshPhongMaterial());
 
-    mesh.material.color = new THREE.Color()
+    mesh.material.color = new THREE.Color(0xff0000)
     mesh.material.transparent = true;
     mesh.material.depthWrite = true;
     mesh.material.opacity = 1;
