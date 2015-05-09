@@ -184,8 +184,14 @@ DecompositionModel.prototype.getPlottableByIDs = function(idArray){
 DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
     category, value){
   var md_idx = this._getMetadataIndex(category);
-  return _.find(this.plottable, function(pl){
+  var res = _.filter(this.plottable, function(pl){
     return pl.metadata[md_idx] === value; });
+
+  if(res === undefined){
+    throw new Error(value + ' is '+
+                    'not found in ' + category + ' metadata values');
+  }
+  return res;
 };
 
 /**
