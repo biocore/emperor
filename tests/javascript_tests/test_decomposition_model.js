@@ -522,8 +522,8 @@ $(document).ready(function() {
   test('Test getUniqueValuesByCategory', function(){
     var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                     metadata);
-    var obs = new Set(dm.getUniqueValuesByCategory('Treatment'));
-    var exp = new Set(['Fast', 'Control']);
+    var obs = dm.getUniqueValuesByCategory('Treatment').sort();
+    var exp = ['Control', 'Fast'];
 
     deepEqual(obs, exp, "Unique metadata values retrieved successfully");
   });
