@@ -36,7 +36,7 @@
  * @param {decViews} an Array of DecompositionViews shown in this scene
  *
  **/
-ScenePlotView3D = function(renderer, decViews, xView, yView, width, height){
+ScenePlotView3D = function(renderer, decViews, div_id, xView, yView, width, height){
   this.decViews = decViews;
   this.renderer = renderer;
 
@@ -62,6 +62,15 @@ ScenePlotView3D = function(renderer, decViews, xView, yView, width, height){
       this.scene.add(this.decViews[i].markers[j]);
     };
   };
+
+  this.control = new THREE.OrbitControls(this.camera, document.getElementById(div_id));
+  this.control.rotateSpeed = 1.0;
+  this.control.zoomSpeed = 1.2;
+  this.control.panSpeed = 0.8;
+  this.control.noZoom = false;
+  this.control.noPan = false;
+  this.control.staticMoving = true;
+  this.control.dynamicDampingFactor = 0.3;
 };
 
 ScenePlotView3D.prototype.setCameraAspectRatio = function(winAspect){

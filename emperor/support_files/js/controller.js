@@ -1,4 +1,4 @@
-EmperorController = function(width, height, dm){
+EmperorController = function(width, height, dm, div_id){
   this.width = width;
   this.height = height;
 
@@ -10,12 +10,13 @@ EmperorController = function(width, height, dm){
   this.renderer.setSize(width, height);
   this.renderer.setClearColor(this.rendererBackgroundColor);
   this.renderer.autoClear = false;
+  this.renderer.sortObjects = true;
 
   this.sceneViews = [
-    new ScenePlotView3D(this.renderer, [new DecompositionView(dm)], 0, 0, 0.5 * this.width, 0.5 * this.height),
-    new ScenePlotView3D(this.renderer, [new DecompositionView(dm)], 0.5 * this.width, 0, 0.5 * this.width, 0.5 * this.height),
-    new ScenePlotView3D(this.renderer, [new DecompositionView(dm)], 0, 0.5 * this.height, 0.5 * this.width, 0.5 * this.height),
-    new ScenePlotView3D(this.renderer, [new DecompositionView(dm)], 0.5 * this.width, 0.5 * this.height, 0.5 * this.width, 0.5 * this.height)];
+    new ScenePlotView3D(this.renderer, [new DecompositionView(dm)], div_id, 0, 0, 0.5 * this.width, 0.5 * this.height),
+    new ScenePlotView3D(this.renderer, [new DecompositionView(dm)], div_id, 0.5 * this.width, 0, 0.5 * this.width, 0.5 * this.height),
+    new ScenePlotView3D(this.renderer, [new DecompositionView(dm)], div_id, 0, 0.5 * this.height, 0.5 * this.width, 0.5 * this.height),
+    new ScenePlotView3D(this.renderer, [new DecompositionView(dm)], div_id, 0.5 * this.width, 0.5 * this.height, 0.5 * this.width, 0.5 * this.height)];
 };
 
 EmperorController.prototype.resize = function(width, height){
@@ -33,6 +34,4 @@ EmperorController.prototype.render = function(){
   for (var i = 0; i < this.sceneViews.length; i++) {
     this.sceneViews[i].render();
   };
-  // this.sceneViews[0].render();
-  // this.sceneViews[1].render();
 };
