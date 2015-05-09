@@ -1,3 +1,18 @@
+/**
+ *
+ * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
+ *         Vazquez-Baeza
+ * @copyright Copyright 2013--, The Emperor Project
+ * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
+ *          Vazquez-Baeza
+ * @license BSD
+ * @version 0.9.51-dev
+ * @maintainer Yoshiki Vazquez Baeza
+ * @email yoshiki89@gmail.com
+ * @status Development
+ *
+ */
+
 /* Models axes */
 function Axes(params){
   this.labels = []; // list, len == num of axes
@@ -46,7 +61,7 @@ function DecompositionView(decomp){
 
   this.count = decomp.length;
   this.visibleCount = this.count;
-  this.visibleDimensions = [0, 1, 2]; // really? :O
+  this.visibleDimensions = [0, 1, 2]; // We default to the first three PCs
 
   this.tubes = []; // Three.meshes
   this.labels = []; // Three.text
@@ -55,7 +70,7 @@ function DecompositionView(decomp){
   this.lines = []; // Three.lines
 
   // setup this.markers and this.lines
-  this._initBaseScene();
+  this._initBaseView();
   // this.elementOrdering = []; // list of ints - Not sure if needed
 
   // these sizes should likely be changed but, they should be modified here
@@ -67,7 +82,7 @@ function DecompositionView(decomp){
  * Helper method to initialize the base THREE.js objects.
  *
  **/
-DecompositionView.prototype._initBaseScene = function(){
+DecompositionView.prototype._initBaseView = function(){
   var mesh, x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2];
 
