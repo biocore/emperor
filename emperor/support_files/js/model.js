@@ -135,10 +135,27 @@ function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata){
   for (var i = 0; i < ids.length; i++){
     this.plottable[i] = new Plottable(ids[i], metadata[i], coords[i], i)
   }
+
+  this.length = this.plottable.length;
   // TODO:
   // this.edges = [];
   // this.plotEdge = false;
   // this.serialComparison = false;
+};
+
+
+/**
+ * Obtain a string representation of the decomposition model
+ *
+ * @return string representaiton of decomposition model
+ *
+**/
+DecompositionModel.prototype.toString = function(){
+  return 'name: ' + this.abbreviatedName + '\n' +
+    'Metadata headers: [' + this.md_headers.join(', ') + ']\n'+
+    'Plottables:\n' +  _.map(this.plottable, function(plt){
+      return plt.toString();
+    }).join('\n');
 };
 
 /**
@@ -206,6 +223,7 @@ DecompositionModel.prototype.getUniqueValuesByCategory = function(category){
     _.map(this.plottable, function(pl){return pl.metadata[md_idx];}));
 };
 
+
 /**
  * Get's the index of the metadata category found in the
  * metadata headers
@@ -220,4 +238,4 @@ DecompositionModel.prototype._getMetadataIndex = function(category){
                     'not found in the metadata headers');
   }
   return md_idx;
-}
+};
