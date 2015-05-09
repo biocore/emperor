@@ -172,9 +172,27 @@ function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata){
   for (var i = 0; i < ids.length; i++){
     this.plottable[i] = new Plottable(ids[i], metadata[i], coords[i], i)
   }
+
+  this.length = this.plottable.length;
+  // TODO:
   // this.edges = [];
   // this.plotEdge = false;
   // this.serialComparison = false;
+};
+
+
+/**
+ * Obtain a string representation of the decomposition model
+ *
+ * @return string representaiton of decomposition model
+ *
+**/
+DecompositionModel.prototype.toString = function(){
+  return 'name: ' + this.abbreviatedName + '\n' +
+    'Metadata headers: [' + this.md_headers.join(', ') + ']\n'+
+    'Plottables:\n' +  _.map(this.plottable, function(plt){
+      return plt.toString();
+    }).join('\n');
 };
 
 /**
@@ -187,6 +205,9 @@ function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata){
 **/
 DecompositionModel.prototype.getPlottableByID = function(id) {
   idx = this.ids.indexOf(id);
+  if(idx === -1){
+    throw new Error(id + ' is not found in the Decomposition Model ids');
+  }
   return this.plottable[idx];
 };
 
@@ -213,12 +234,20 @@ DecompositionModel.prototype.getPlottableByIDs = function(idArray){
  *
  * @return an Array of plottable object for the given category value pair
  *
-*/
+**/
 DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
     category, value){
-  md_idx = this.md_headers.indexOf(category);
-  return _.filter(this.plottable, function(pl){
+
+  var md_idx = this._getMetadataIndex(category);
+  var res = _.filter(this.plottable, function(pl){
+
     return pl.metadata[md_idx] === value; });
+
+  if(res === undefined){
+    throw new Error(value + ' is '+
+                    'not found in ' + category + ' metadata values');
+  }
+  return res;
 };
 
 /**
@@ -228,7 +257,24 @@ DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
  * @ return an Array of meta values under the metadata header
 **/
 DecompositionModel.prototype.getUniqueValuesByCategory = function(category){
-  md_idx = this.md_headers.indexOf(category);
+  var md_idx = this._getMetadataIndex(category);
   return _.uniq(
     _.map(this.plottable, function(pl){return pl.metadata[md_idx];}));
+};
+
+
+/**
+ * Get's the index of the metadata category found in the
+ * metadata headers
+ * @ param {category} a string with the metadata header
+ *
+ * @ return an index of the metadata category
+**/
+DecompositionModel.prototype._getMetadataIndex = function(category){
+  var md_idx = this.md_headers.indexOf(category);
+  if(idx === -1){
+    throw new Error(category + ' is '+
+                    'not found in the metadata headers');
+  }
+  return md_idx;
 };
