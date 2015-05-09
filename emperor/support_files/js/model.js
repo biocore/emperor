@@ -258,15 +258,29 @@ DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
  *
  * Retrieve the available values for a given metadata category
  *
- * @ param {category} a string with the metadata header
+ * @param {category} a string with the metadata header
  *
- * @ return an Array of the available values for the given metadata header
+ * @return an Array of the available values for the given metadata header
  *
 **/
 DecompositionModel.prototype.getUniqueValuesByCategory = function(category){
   var md_idx = this._getMetadataIndex(category);
   return _.uniq(
     _.map(this.plottable, function(pl){return pl.metadata[md_idx];}));
+};
+
+/**
+ *
+ * Executes the provided func passing all the plottables as parameters
+ *
+ * @param {func} the function to call for each plottable. It should accept
+ * a single parameter which will be the plottable
+ *
+ * @return An array with the results of executing func over all plottables
+ *
+ */
+DecompositionModel.prototype.apply = function(func){
+  return _.map(this.plottable, func)
 };
 
 /**
