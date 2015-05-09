@@ -316,7 +316,7 @@ $(document).ready(function() {
     deepEqual(obs, exp,
 	      "Metadata groups retrieved successfully");
 
-  }
+  });
 
   test('Test get plottables by ids', function(){
     var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
@@ -346,7 +346,7 @@ $(document).ready(function() {
     deepEqual(obs, exp,
 	      "Metadata groups retrieved successfully");
 
-  }
+  });
 
   test('Test get plottables by metadata category', function(){
     var exp = [
@@ -388,7 +388,7 @@ $(document).ready(function() {
     deepEqual(obs, exp,
 	      "Metadata groups retrieved successfully");
 
-  }
+  });
 
   test('Test get unique values by category', function(){
     var dm;
@@ -400,6 +400,6 @@ $(document).ready(function() {
 
     deepEqual(obs, exp,
 	      "Unique metadata values retrieved successfully");
-  }
+  });
 
 });

@@ -123,13 +123,49 @@ function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata){
   this.percExpl = pct_var;
   this.md_headers = md_headers;
 
+  /*
+    Check that the number of coordnates set provided are the same as the
+    number of samples
+  */
   if(this.ids.length !== coords.length){
     throw new Error("The number of coordinates differs from the number of " +
-                    "smples. Coords: " + coords.length + " samples: " +
+                    "samples. Coords: " + coords.length + " samples: " +
                     this.ids.length);
   }
 
+  /*
+    Check that all the coords set have the same number of coordinates
+  */
   num_coords = coords[0].length
+  var res = _.find(coords, function(c){return c.length !== num_coords;})
+  if(res !== undefined){
+    throw new Error("Not all samples have the same number of coordinates");
+  }
+
+  /*
+    Check that we have the percentage explained values for all coordinates
+  */
+  if(pct_var !== num_coords){
+    throw new Error("The number of percentage explained values does not " +
+                    "match the number of coordinates");
+  }
+
+  /*
+    Check that we have the metadata for all samples
+  */
+  if(this.ids.length !== metadata.length){
+    throw new Error("The number of metadata rows and the the number of " +
+                    "samples do not match. Samples: " + this.ids.length +
+                    " Metadata rows: " + metadata.length);
+  }
+
+  /*
+    Check that we have all the metadata categories in all rows
+  */
+  res = _.find(metadata, function(m){return m.length !== md_headers.length;})
+  if(res !== undefined){
+    throw new Error("Not all metadata rows have the same number of values");
+  }
 
   this.plottable = new Array(ids.length)
   for (var i = 0; i < ids.length; i++){
@@ -180,7 +216,7 @@ DecompositionModel.prototype.getPlottableByIDs = function(idArray){
 DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
     category, value){
   md_idx = this.md_headers.indexOf(category);
-  return _.find(this.plottable, function(pl){
+  return _.filter(this.plottable, function(pl){
     return pl.metadata[md_idx] === value; });
 };
 
