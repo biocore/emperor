@@ -44,8 +44,7 @@ $(document).ready(function() {
         [-0.349339, -0.120788, 0.115275, 0.069495, -0.025372, 0.067853,
          0.244448, -0.059883]];
       pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-                 10.024774995, 8.22835130237, 7.55971173665, 6.24945796136,
-                 1.17437418531e-14];
+                 10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
       md_headers = ['LinkerPrimerSequence', 'Treatment', 'DOB'];
       metadata = [['YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
                   ['YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
@@ -82,8 +81,7 @@ $(document).ready(function() {
     equal(dm.abbreviatedName, "pcoa", "Abbreviated name set correctly");
 
     var exp = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-               10.024774995, 8.22835130237, 7.55971173665, 6.24945796136,
-               1.17437418531e-14];
+               10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
     deepEqual(dm.percExpl, exp, "Percentage explained set correctly");
 
     exp = ['LinkerPrimerSequence', 'Treatment', 'DOB'];
@@ -395,8 +393,8 @@ $(document).ready(function() {
 
     dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                 metadata);
-    var obs = dm.getUniqueValuesByCategory('Treatment');
-    var exp = ['Fast', 'Control'];
+    var obs = new Set(dm.getUniqueValuesByCategory('Treatment'));
+    var exp = new Set(['Fast', 'Control']);
 
     deepEqual(obs, exp,
 	      "Unique metadata values retrieved successfully");

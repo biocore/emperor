@@ -145,9 +145,10 @@ function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata){
   /*
     Check that we have the percentage explained values for all coordinates
   */
-  if(pct_var !== num_coords){
+  if(pct_var.length !== num_coords){
     throw new Error("The number of percentage explained values does not " +
-                    "match the number of coordinates");
+                    "match the number of coordinates. Perc expl: " +
+                    pct_var.length + " Num coord: " + num_coords);
   }
 
   /*
