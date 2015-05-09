@@ -32,17 +32,6 @@ function ScenePlotView3D(params){
   this.changeVisibleDimensions = function(dimensions){};
 };
 
-/* This represents a camera */
-function ScenePlotView2D(params){
-  this.ndim = 2; // Number of dimensions shown
-  this.visibleDimensions = []; // List of indices to the PCoA
-  this.axes = new Axes(); // the axes of the plot
-  this.decompositionViews = []; // all the decomposition view in the scene
-
-  /* Setter to change the dimensions */
-  this.changeVisibleDimensions = function(dimensions){};
-};
-
 /**
  *
  * @name DecompositionView
@@ -86,7 +75,7 @@ DecompositionView.prototype._initBaseView = function(){
   var mesh, x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2];
 
-  dv = this;
+  var dv = this;
   this.decomp.apply(function(plottable){
     mesh = new THREE.Mesh(this._genericSphere, new THREE.MeshPhongMaterial());
 
@@ -105,9 +94,97 @@ DecompositionView.prototype._initBaseView = function(){
   });
 
   // apply but to the adjacency list NOT IMPLEMENTED
-  // this.decomp.applyAJ( ... ); Blame Jamie and Jose
+  // this.decomp.applyAJ( ... ); Blame Jamie and Jose - baby steps buddy...
 
 };
+
+/**
+ *
+ * Change the visible coordinates
+ *
+ * @param {newDims} an Array of integers in which each integer is the index
+ * to the principal coordinate to show
+ *
+**/
+DecompositionView.prototype.changeVisibleDimensions = function(newDims){
+  if(newDims.length !== 3){
+    throw new Error("Only three dimensions can be shown at the same time");
+  }
+
+  this.visibleDimensions = newDims;
+
+  var x = newDims[0], y = newDims[1], z = newDims[2], dv = this;
+  this.decomp.apply(function(plottable){
+    mesh = dv.markers[plottable.idx];
+    mesh.position.set(plottable.coordinates[x],
+                      plottable.coordinates[y],
+                      plottable.coordinates[z]);
+    mesh.updateMatrix();
+  });
+};
+
+/**
+ *
+ * Change the plottables coloring based on the metadata category using the
+ * provided color function
+ *
+ * @param {colorFunc} a Function that accepts a category value and returns
+ * a color
+ * @param {category} a string with the metadata header
+ *
+**/
+DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
+  this.setCategoryAttribute(colorFunc, category, "color")
+};
+
+/**
+ *
+ * Change the plottables opacity based on the metadata category using the
+ * provided opacity function
+ *
+ * @param {opacityFunc} a Function that accepts a category value and returns
+ * an opacity value
+ * @param {category} a string with the metadata header
+ *
+**/
+DecompositionView.prototype.setCategoryOpacity = function(opacityFunc,
+                                                          category){
+  this.setCategoryAttribute(opacityFunc, category, "opacity")
+};
+
+/**
+ *
+ * Change the plottables scale based on the metadata category using the
+ * provided scale function
+ *
+ * @param {shapeFunc} a Function that accepts a category value and returns
+ * a scale value
+ * @param {category} a string with the metadata header
+ *
+**/
+DecompositionView.prototype.setCategoryScale = function(scaleFunc, category){
+  this.setCategoryAttribute(scaleFunc, group, "scale")
+};
+
+/**
+ *
+ * Change the plottables opacity based on the metadata category using the
+ * provided opacity function
+ *
+ * @param {shapeFunc} a Function that accepts a category value and returns
+ * a THREE.geometry
+ * @param {category} a string with the metadata header
+ *
+**/
+DecompositionView.prototype.setCategoryShape = function(shapeFunc, category){
+  this.setCategoryAttribute(shapeFunc, category, "shape")
+};
+
+
+DecompositionView.prototype.setCategoryAttribute = function(value, category, attr){
+
+};
+
 
 /* Change the color for a set of plottables - group: list of plottables */
 DecompositionView.prototype.setGroupColor = function(color, group){
@@ -130,29 +207,5 @@ DecompositionView.prototype.setGroupScale = function(scale, group){
 };
 
 DecompositionView.prototype.setGroupAttribue = function(value, group, attr){
-
-};
-
-/* Change the color for a set of plottables */
-DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
-  this.setCategoryAttribute(colorFunc, category, "color")
-};
-
-/* Change the opacity for all plottables */
-DecompositionView.prototype.setCategoryOpacity = function(opacityFunc, category){
-  this.setCategoryAttribute(opacity, group, "opacity")
-};
-
-/* Change the shape for all plottables */
-DecompositionView.prototype.setCategoryShape = function(shape, category){
-  this.setCategoryAttribute(shape, group, "shape")
-};
-
-/* Change the scale for all plottables */
-DecompositionView.prototype.setCategoryScale = function(scale, category){
-  this.setCategoryAttribute(scale, group, "scale")
-};
-
-DecompositionView.prototype.setCategoryAttribue = function(value, category, attr){
 
 };

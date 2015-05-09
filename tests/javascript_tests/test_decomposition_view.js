@@ -98,4 +98,41 @@ $(document).ready(function() {
     // deepEqual(dv._genericSphere, undefined, "_genericSphere set correctly");
   });
 
+  /**
+   *
+   * Test that changeVisibleDimensions updates the meshes position
+   *
+   */
+  test("Test changeVisibleDimensions", function(){
+    var dv = new DecompositionView(decomp);
+    dv.changeVisibleDimensions([2, 3, 4]);
+    obs = [dv.markers[0].position.x,
+           dv.markers[0].position.y,
+           dv.markers[0].position.z];
+    exp = [0.066647, -0.067711, 0.176070];
+    deepEqual(obs, exp, "First marker position updated correctly");
+    obs = [dv.markers[1].position.x,
+           dv.markers[1].position.y,
+           dv.markers[1].position.z];
+    exp = [-0.138136, 0.159061, -0.247485];
+    deepEqual(obs, exp, "Second marker position updated correctly");
+  });
+
+  /**
+   *
+   * Test the changeVisibleDimensions throws an error if the number of
+   * dimensions passes is different the 3
+   *
+   */
+  test("Test changeVisibleDimensions excepts", function(){
+    throws(
+      function(){
+        var dv = new DecompositionView(decomp);
+        dv.changeVisibleDimensions([2, 3, 4, 5])
+      },
+      Error,
+      'An error is raised if the number of dimensions is not 3'
+    );
+  });
+
 });
