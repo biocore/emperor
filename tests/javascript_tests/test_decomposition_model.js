@@ -549,29 +549,30 @@ $(document).ready(function() {
     );
   });
 
-  // test('toString test', function(){
-  //   var _name = "pcoa";
-  //   var _ids = ['samp1', 'samp2'];
-  //   var _coords = [
-  //     [1, 2, 3],
-  //     [4, 5, 6]];
-  //   var _pct_var = [0.5, 0.4, 0.1];
-  //   var _md_headers = ['foo1', 'foo2', 'foo3'];
-  //   var _metadata = [['a', 'b', 'c'],
-  //                    ['d', 'f', 'g']];
-  //   var dm = new DecompositionModel(_name, _ids, _coords, _pct_var, _md_headers,
-  //                                   _metadata);
-  //   var exp = 'name: pcoa\n'+
-  //     'Metadata headers: [foo1, foo2, foo3]\n'+
-  //     'Plottables:\n'+
-  //     'Sample: samp1 located at: (1, 2, 3) '+
-  //     'metadata: [a, b, c] at index: 0 and without confidence intervals.\n'+
-  //     'Sample: samp2 located at: (4, 5, 6) '+
-  //     'metadata: [d, f, g] at index: 1 and without confidence intervals.';
+  /**
+   *
+   * Tests the toString method
+   *
+   */
+  test('Test toString', function(){
+    var _ids = ['samp1', 'samp2'];
+    var _coords = [[1, 2, 3], [4, 5, 6]];
+    var _pct_var = [0.5, 0.4, 0.1];
+    var _md_headers = ['foo1', 'foo2', 'foo3'];
+    var _metadata = [['a', 'b', 'c'], ['d', 'f', 'g']];
+    var dm = new DecompositionModel(name, _ids, _coords, _pct_var, _md_headers,
+                                    _metadata);
+    var exp = 'name: pcoa\n'+
+      'Metadata headers: [foo1, foo2, foo3]\n'+
+      'Plottables:\n'+
+      'Sample: samp1 located at: (1, 2, 3) '+
+      'metadata: [a, b, c] at index: 0 and without confidence intervals.\n'+
+      'Sample: samp2 located at: (4, 5, 6) '+
+      'metadata: [d, f, g] at index: 1 and without confidence intervals.';
 
-  //   equal(dm.toString(),exp,
-   //  'Test correctly converted Plottable to string type.');
+    equal(dm.toString(),exp,
+    'Test correctly converted Plottable to string type.');
 
-  // });
+  });
 
 });

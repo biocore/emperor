@@ -269,17 +269,17 @@ DecompositionModel.prototype.getUniqueValuesByCategory = function(category){
     _.map(this.plottable, function(pl){return pl.metadata[md_idx];}));
 };
 
-// /**
-//  *
-//  * Helper method to convert a DecompositionModel into a string.
-//  *
-//  * @return a string describing the Decomposition object.
-//  *
-//  */
-// DecompositionModel.prototype.toString = function(){
-//   return 'name: ' + this.abbreviatedName + '\n' +
-//     'Metadata headers: [' + this.md_headers.join(', ') + ']\n'+
-//     'Plottables:\n' +  _.map(this.plottable, function(plt){
-//       return plt.toString();
-//     }).join('\n');
-// };
+/**
+ *
+ * Helper method to convert a DecompositionModel into a string.
+ *
+ * @return a string describing the Decomposition object.
+ *
+ */
+DecompositionModel.prototype.toString = function(){
+  return 'name: ' + this.abbreviatedName + '\n' +
+    'Metadata headers: [' + this.md_headers.join(', ') + ']\n'+
+    'Plottables:\n' +  _.map(this.plottable, function(plt){
+      return plt.toString();
+    }).join('\n');
+};
