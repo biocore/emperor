@@ -61,7 +61,7 @@ DecompositionView.prototype._initBaseView = function(){
     mesh = new THREE.Mesh(dv._genericSphere, new THREE.MeshPhongMaterial());
 
     mesh.material.color = new THREE.Color(0xff0000)
-    mesh.material.transparent = true;
+    mesh.material.transparent = false;
     mesh.material.depthWrite = true;
     mesh.material.opacity = 1;
     mesh.matrixAutoUpdate = true;

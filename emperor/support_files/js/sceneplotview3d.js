@@ -36,16 +36,14 @@
  * @param {decViews} an Array of DecompositionViews shown in this scene
  *
  **/
-ScenePlotView3D = function(width, height, decViews){
+ScenePlotView3D = function(renderer, decViews, div_id, xView, yView, width, height){
   this.decViews = decViews;
-  // Set up the renderer
-  this.rendererBackgroundColor = new THREE.Color();
-  this.rendererBackgroundColor.setHex("0x000000");
+  this.renderer = renderer;
 
-  this.renderer = new THREE.WebGLRenderer( {antialias: true, preserveDrawingBuffer: true});
-  this.renderer.setClearColor(this.rendererBackgroundColor);
-  this.renderer.setSize(width, height);
-  this.renderer.sortObjects = true;
+  this.xView = xView;
+  this.yView = yView;
+  this.width = width;
+  this.height = height;
 
   // Set up the camera
   this.camera = new THREE.PerspectiveCamera(35, width/height,
@@ -64,6 +62,15 @@ ScenePlotView3D = function(width, height, decViews){
       this.scene.add(this.decViews[i].markers[j]);
     };
   };
+
+  this.control = new THREE.OrbitControls(this.camera, document.getElementById(div_id));
+  this.control.rotateSpeed = 1.0;
+  this.control.zoomSpeed = 1.2;
+  this.control.panSpeed = 0.8;
+  this.control.noZoom = false;
+  this.control.noPan = false;
+  this.control.staticMoving = true;
+  this.control.dynamicDampingFactor = 0.3;
 };
 
 ScenePlotView3D.prototype.setCameraAspectRatio = function(winAspect){
@@ -71,11 +78,15 @@ ScenePlotView3D.prototype.setCameraAspectRatio = function(winAspect){
   this.camera.updateProjectionMatrix();
 };
 
-ScenePlotView3D.prototype.resize = function(width, height){
-  this.renderer.setSize(width, height);
-  this.setCameraAspectRatio(width / height);
+ScenePlotView3D.prototype.resize = function(xView, yView, width, height){
+  this.xView = xView;
+  this.yView = yView;
+  this.width = width;
+  this.height = height;
+  this.setCameraAspectRatio(width/height);
 };
 
 ScenePlotView3D.prototype.render = function(){
+  this.renderer.setViewport(this.xView, this.yView, this.width, this.height);
   this.renderer.render(this.scene, this.camera)
 };
