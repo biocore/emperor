@@ -344,7 +344,7 @@ $(document).ready(function() {
     var obs = dm.getPlottableByID('PC.636');
 
     deepEqual(obs, exp,
-  	      "Metadata groups retrieved successfully");
+	      "Metadata groups retrieved successfully");
 
   });
 
@@ -358,9 +358,9 @@ $(document).ready(function() {
     var result;
     throws(
       function(){
-  	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-  					metadata);
-  	result = dm.getPlottableByID('PC.637');
+	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+					metadata);
+	result = dm.getPlottableByID('PC.637');
       },
       Error,
       'An error is raised if the id is not found in the Decomposition Model ids'
@@ -399,7 +399,7 @@ $(document).ready(function() {
     var obs = dm.getPlottableByIDs(['PC.636', 'PC.354', 'PC.355']);
 
     deepEqual(obs, exp,
-  	      "Metadata groups retrieved successfully");
+	      "Metadata groups retrieved successfully");
 
   });
 
@@ -447,7 +447,7 @@ $(document).ready(function() {
     var obs = dm.getPlottablesByMetadataCategoryValue('Treatment', 'Control');
 
     deepEqual(obs, exp,
-  	      "Metadata groups retrieved successfully");
+	      "Metadata groups retrieved successfully");
 
   });
 
@@ -461,9 +461,9 @@ $(document).ready(function() {
     var result;
     throws(
       function(){
-  	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-  					metadata);
-  	result = dm.getPlottablesByMetadataCategoryValue('foo');
+	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+					metadata);
+	result = dm.getPlottablesByMetadataCategoryValue('foo');
       },
       Error,
       'An error is raised if the metadata category is not found in the metadata headers';
@@ -486,7 +486,7 @@ $(document).ready(function() {
     var exp = ['Fast', 'Control'];
 
     deepEqual(obs, exp,
-  	      "Unique metadata values retrieved successfully");
+	      "Unique metadata values retrieved successfully");
   });
 
   /**
@@ -498,9 +498,9 @@ $(document).ready(function() {
     var result;
     throws(
       function(){
-  	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-  					metadata);
-  	result = dm.getUniqueValuesByCategory('foo');
+	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+					metadata);
+	result = dm.getUniqueValuesByCategory('foo');
       },
       Error,
       'An error is raised if the metadata category is not found in the metadata headers';
