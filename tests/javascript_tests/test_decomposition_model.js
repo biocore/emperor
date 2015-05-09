@@ -551,6 +551,21 @@ $(document).ready(function() {
 
   /**
    *
+   * Tests apply executes the provided function for all the plottables
+   * in the decomposition object
+   *
+   */
+  test("Test apply", function(){
+    var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                    metadata);
+    var obs = dm.apply(function(pl){return pl.name});
+    var exp = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593',
+               'PC.355', 'PC.607', 'PC.634'];
+    deepEqual(obs, exp, "Apply works as expected")
+  });
+
+  /**
+   *
    * Tests the toString method
    *
    */
