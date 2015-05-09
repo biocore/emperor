@@ -254,17 +254,20 @@ DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
   return res;
 };
 
-// /**
-//  * Get's a metadata category and returns the unique values on that category
-//  * @ param {category} a string with the metadata header
-//  *
-//  * @ return an Array of meta values under the metadata header
-// **/
-// DecompositionModel.prototype.getUniqueValuesByCategory = function(category){
-//   var md_idx = this._getMetadataIndex(category);
-//   return _.uniq(
-//     _.map(this.plottable, function(pl){return pl.metadata[md_idx];}));
-// };
+/**
+ *
+ * Retrieve the available values for a given metadata category
+ *
+ * @ param {category} a string with the metadata header
+ *
+ * @ return an Array of the available values for the given metadata header
+ *
+**/
+DecompositionModel.prototype.getUniqueValuesByCategory = function(category){
+  var md_idx = this._getMetadataIndex(category);
+  return _.uniq(
+    _.map(this.plottable, function(pl){return pl.metadata[md_idx];}));
+};
 
 // /**
 //  *

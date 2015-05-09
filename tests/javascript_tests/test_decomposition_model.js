@@ -513,41 +513,41 @@ $(document).ready(function() {
     );
   });
 
- //  /**
- //   *
- //   * Tests if a unique set of metadata category values can be obtained from a
- //   * metadata category
- //   *
- //   */
- //  test('Test get unique values by category', function(){
- //    var dm;
+  /**
+   *
+   * Tests if a unique set of metadata category values can be obtained from a
+   * metadata category
+   *
+   */
+  test('Test getUniqueValuesByCategory', function(){
+    var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                    metadata);
+    var obs = new Set(dm.getUniqueValuesByCategory('Treatment'));
+    var exp = new Set(['Fast', 'Control']);
 
- //    dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
- //                                metadata);
- //    var obs = new Set(dm.getUniqueValuesByCategory('Treatment'));
- //    var exp = new Set(['Fast', 'Control']);
+    deepEqual(obs, exp, "Unique metadata values retrieved successfully");
+  });
 
- //    deepEqual(obs, exp,
-  //       "Unique metadata values retrieved successfully");
- //  });
-
- //  /**
- //   *
- //   * Tests if an error is thrown when a metadata category isn't found in the metadata headers
- //   *
- //   */
- //  test("Test getUniqueValuesByCategory category not found in metadata headers", function(){
- //    var result;
- //    throws(
- //      function(){
-  // var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-  //        metadata);
-  // result = dm.getUniqueValuesByCategory('foo');
- //      },
- //      Error,
- //      'An error is raised if the metadata category is not found in the metadata headers'
- //    );
- //  });
+  /**
+   *
+   * Tests getUniqueValuesByCategory throws an error if the metadata header
+   * does not exists
+   *
+   */
+  test("Test getUniqueValuesByCategory excepts unrecognized headers",
+       function(){
+    var result;
+    throws(
+      function(){
+        var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                        metadata);
+        result = dm.getUniqueValuesByCategory("Does_not_exist");
+      },
+      Error,
+      "An error is raised if the metadata category value does not exist in " +
+      "the Decomposition Model object"
+    );
+  });
 
   // test('toString test', function(){
   //   var _name = "pcoa";
