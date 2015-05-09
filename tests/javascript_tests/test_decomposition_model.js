@@ -401,7 +401,8 @@ $(document).ready(function() {
   test("Test _getMetadataIndex", function(){
     var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                     metadata);
-    equal(dm._getMetadataIndex("Treatment"), 2)
+    equal(dm._getMetadataIndex("Treatment"), 2,
+          "Header index retrieved successfully")
   });
 
   /**
@@ -585,8 +586,8 @@ $(document).ready(function() {
       'Sample: samp2 located at: (4, 5, 6) '+
       'metadata: [d, f, g] at index: 1 and without confidence intervals.';
 
-    equal(dm.toString(),exp,
-    'Test correctly converted Plottable to string type.');
+    equal(dm.toString(), exp,
+          'Test correctly converted DecompositionModel to string type');
 
   });
 
