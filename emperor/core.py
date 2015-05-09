@@ -39,7 +39,6 @@ class Emperor(object):
 
     def _repr_html_(self):
         """Used to be displayed in the IPython notebook"""
-        print 'hellloooooo'
         # we import here as IPython shouldn't be a dependency of Emperor
         # however if this method is called it will be from an IPython notebook
         # otherwise the developer is responsible for calling this method
@@ -47,7 +46,6 @@ class Emperor(object):
 
         # this provides a string representation that's independent of the
         # filesystem, it will instead retrieve them from the official website
-        print 'all is well'
         #output = str(self).replace('emperor_required_resources',
         #                           RESOURCES_URL)
         output = str(self)
@@ -67,16 +65,42 @@ class Emperor(object):
         from os.path import dirname, abspath, join
         x = join(dirname(abspath(__file__)), 'support_files')
 
+    #<!-- Libraries the code depends on -->
+    #<script src="../vendor/js/underscore-min.js"></script>
+    #<script src="../vendor/js/jquery-1.7.1.min.js"></script>
+    #<script src="../vendor/js/chroma.min.js"></script>
+    #<script src="../vendor/js/three.min.js"></script>
+    #<script src="../vendor/js/three.js-plugins/OrbitControls.js"></script>>
+
+    #<!--Source files to test-->
+    #<script src="model.js"></script>
+    #<script src="view.js"></script>
+    #<script src="sceneplotview3d.js"></script>
+    #<script src="controller.js"></script>
+
+
         underscore = open("%s/vendor/js/underscore-min.js"%x).read()
+        jquery = open("%s/vendor/js/jquery-1.7.1.min.js"%x).read()
         chroma = open("%s/vendor/js/chroma.min.js"%x).read()
         three = open("%s/vendor/js/three.min.js"%x).read()
+        orbits = open("%s/vendor/js/three.js-plugins/OrbitControls.js"%x).read()
+
         model = open("%s/js/model.js"%x).read()
         view = open("%s/js/view.js"%x).read()
         sceneplot = open("%s/js/sceneplotview3d.js"%x).read()
+        controller = open("%s/js/controller.js"%x).read()
+
+        stuff = """
+      $("<div id='plots' style='float:left; height:500px; width:500px'></div>").appendTo(document.getElementById('container'))
+      var div = $('#plots');
+      """
+    
+
         # build the HTML string
         output = [EMPEROR2_HEADER_HTML_STRING,
-                  underscore,
-                  chroma, three, model, view, sceneplot,
+                  underscore, jquery,
+                  chroma, three, orbits, model, view, sceneplot, controller,
+                  stuff,
                   key_string, coords_string,
                   pct_var_string, md_header_string, metadata_string,
                   EMPEROR2_MAIN_HTML_STRING,
@@ -106,6 +130,11 @@ EMPEROR2_HEADER_HTML_STRING = """
 
     <script>
 """
+EMPEROR2_HEADER_HTML_STRING = """
+    <div id='container'>
+    </div>
+    <script>
+"""
 
 EMPEROR2_FOOTER_HTML_STRING = """
     </script>
@@ -114,31 +143,38 @@ EMPEROR2_FOOTER_HTML_STRING = """
 </html>
 """
 
+EMPEROR2_FOOTER_HTML_STRING = """
+    </script>
+
+"""
+
 EMPEROR2_MAIN_HTML_STRING = """
-      var dm, dv, spv;
+      var dm, ec;
 
       init();
       animate();
 
       function init() {
+        // Initialize the DecompositionModel
         dm = new DecompositionModel(name, ids, coords, pct_var,
                                     md_headers, metadata);
-        dv = new DecompositionView(dm);
-        spv = new ScenePlotView3D(window.innerWidth, window.innerHeight, [dv]);
+        // Initialize the EmperorController
+        ec = new EmperorController($('#plots').width(), $('#plots').height(), dm, 'plots');
 
-        document.body.appendChild(spv.renderer.domElement);
+
+        div.append(ec.renderer.domElement);
 
         window.addEventListener( 'resize', onWindowResize, false );
 
       }
 
       function onWindowResize() {
-        spv.resize(window.innerWidth, window.innerHeight);
+       ec.resize($('#plots').width(), $('#plots').height());
       }
 
       function animate() {
         requestAnimationFrame(animate);
-        spv.render();
+        ec.render();
       }
 """
 
