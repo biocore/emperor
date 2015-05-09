@@ -68,6 +68,10 @@ EMPEROR_HEADER_HTML_STRING =\
     <script type="text/javascript" src="emperor_required_resources/js/trajectory.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/ui.js"></script>
     <script type="text/javascript" src="emperor_required_resources/js/util.js"></script>
+
+    <script type="text/javascript" src="emperor_required_resources/js/sceneplotview3d.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/view.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/js/model.js"></script>
     <script type="text/javascript">
 
 """
