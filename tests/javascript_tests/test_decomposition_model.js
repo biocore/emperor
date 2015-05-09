@@ -299,7 +299,12 @@ $(document).ready(function() {
     )
   });
 
-  /* Jamie starts here */
+  /**
+   *
+   * Test that a plottable object can be retrieved from the Decomposition model object
+   * via indexing by an id
+   *
+   */
   test('Test get plottable by id', function(){
     var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                     metadata);
@@ -311,13 +316,38 @@ $(document).ready(function() {
          -0.229889, -0.046599],
          0);
 
-    var obs = dm.getPlottableByIDs('PC.636');
+    var obs = dm.getPlottableByID('PC.636');
 
     deepEqual(obs, exp,
 	      "Metadata groups retrieved successfully");
 
   }
 
+  /**
+   *
+   * Test that an error will be raised if the id doesn't
+   * belong in the DecompositionalModel
+   *
+   */
+  test("Test getPlottableByID id not in DecompositionModel ids", function(){
+    var result;
+    throws(
+      function(){
+	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+					metadata);
+	result = dm.getPlottableByID('PC.637');
+      },
+      Error,
+      'An error is raised if the id is not found in the Decomposition Model ids';
+    );
+  }
+
+  /**
+   *
+   * Test that plottable objects can be retrieved from the Decomposition model object
+   * via indexing by ids
+   *
+   */
   test('Test get plottables by ids', function(){
     var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                     metadata);
@@ -348,6 +378,12 @@ $(document).ready(function() {
 
   }
 
+  /**
+   *
+   * Test that plottable objects can be retrieved from the Decomposition model object
+   * via indexing by a metadata header and a metadata category value
+   *
+   */
   test('Test get plottables by metadata category', function(){
     var exp = [
       new Plottable(
@@ -390,6 +426,32 @@ $(document).ready(function() {
 
   }
 
+  /**
+   *
+   * Tests if an error will be thrown if a metadata category isn't found in the
+   * metadata headers
+   *
+   */
+  test("Test getPlottablesByMetadataCategoryValue category not found in metadata headers", function(){
+    var result;
+    throws(
+      function(){
+	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+					metadata);
+	result = dm.getPlottablesByMetadataCategoryValue('foo');
+      },
+      Error,
+      'An error is raised if the metadata category is not found in the metadata headers';
+    );
+  }
+
+
+  /**
+   *
+   * Tests if a unique set of metadata category values can be obtained from a
+   * metadata category
+   *
+   */
   test('Test get unique values by category', function(){
     var dm;
 
@@ -400,6 +462,24 @@ $(document).ready(function() {
 
     deepEqual(obs, exp,
 	      "Unique metadata values retrieved successfully");
+  }
+
+  /**
+   *
+   * Tests if an error is thrown when a metadata category isn't found in the metadata headers
+   *
+   */
+  test("Test getUniqueValuesByCategory category not found in metadata headers", function(){
+    var result;
+    throws(
+      function(){
+	var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+					metadata);
+	result = dm.getUniqueValuesByCategory('foo');
+      },
+      Error,
+      'An error is raised if the metadata category is not found in the metadata headers';
+    );
   }
 
 });
