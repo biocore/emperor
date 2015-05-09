@@ -31,45 +31,51 @@
  * @class Represents a sample and the associated metadata in the ordination
  * space.
  *
- * @param {name} a string indicating the name of the scene plot view.
- * @param {start} 
- * @param {width} width of the window object container
- * @param {height} height of the window object container
- * @param {idy} an *optional* integer representing the index where the object
- * @param {countt} an *optional* Array of floats indicating the confidence
- *             intervals in each dimension.
+ * @param {width} a float with the width of the renderer
+ * @param {height} a float with the height of the renderer
+ * @param {decViews} an Array of DecompositionViews shown in this scene
  *
  **/
-ScenePlotView3D = function( start, width, height, idy, countt ){
+ScenePlotView3D = function(width, height, decViews){
+  this.decViews = decViews;
+  // Set up the renderer
+  this.rendererBackgroundColor = new THREE.Color();
+  this.rendererBackgroundColor.setHex("0x000000");
 
-//need to initialize the scene
- this.scene = new THREE.Scene();
- 
-  this.start = start === undefined ? 75 : start;
-  this.width = width === undefined ? 0 : width;
-  this.height = height === undefined ? 1 : height;
-  this.idy = idy === undefined ? 0.1 : idy;
-  this.countt = countt === undefined ? 1000 : countt;
-  
-  /*
-  if (this.ci.length !== 0){
-    if (this.ci.length !== this.coordinates.length){
-      throw new Error("The number of confidence intervals doesn't match with"+
-                      " the number of dimensions in the coordinates "+
-                      "attribute. coords: " + this.coordinates.length +
-                      " ci: " + this.ci.length);
-    }
-  }*/
- 
-  this.camera = new THREE.PerspectiveCamera( start, width / height, idy, countt );
-  this.renderer = new THREE.WebGLRenderer();
-  this.renderer.setSize( window.innerWidth, window.innerHeight );
-  //document.body.appendChild( renderer.domElement );
-  
-  //camera, scene, ortho or perspective camera
+  this.renderer = new THREE.WebGLRenderer( {antialias: true, preserveDrawingBuffer: true});
+  this.renderer.setClearColor(this.rendererBackgroundColor);
+  this.renderer.setSize(width, height);
+  this.renderer.sortObjects = true;
 
+  // Set up the camera
+  this.camera = new THREE.PerspectiveCamera(35, width/height,
+                                            0.0000001, 10000);
+  this.camera.position.set(0, 0, 6);
+  
+  //need to initialize the scene
+  this.scene = new THREE.Scene();
+  this.scene.add(this.camera);
+  this.light = new THREE.DirectionalLight(0x999999, 2);
+  this.light.position.set(1,1,1).normalize();
+  this.camera.add(this.light);
+  // Add all the meshes to the scene
+  for (var i = 0; i < this.decViews.length; i++) {
+    for (var j = 0; j < this.decViews[i].markers.length; j++) {
+      this.scene.add(this.decViews[i].markers[j]);
+    };
+  };
 };
 
-ScenePlotView3D.prototype.setCamera = function( ){
+ScenePlotView3D.prototype.setCameraAspectRatio = function(winAspect){
+  this.camera.aspect = winAspect;
+  this.camera.updateProjectionMatrix();
+};
 
-}
+ScenePlotView3D.prototype.resize = function(width, height){
+  this.renderer.setSize(width, height);
+  this.setCameraAspectRatio(width / height);
+};
+
+ScenePlotView3D.prototype.render = function(){
+  this.renderer.render(this.scene, this.camera)
+};
