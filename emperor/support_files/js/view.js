@@ -13,25 +13,6 @@
  *
  */
 
-/* Models axes */
-function Axes(params){
-  this.labels = []; // list, len == num of axes
-  this.lines = []; // List Three.lines
-};
-
-/* The ScenePlotViews map to Viewports on WebGL */
-
-/* This represents a camera */
-function ScenePlotView3D(params){
-  this.ndim = 3; // Number of dimensions shown
-  this.visibleDimensions = []; // List of indices to the PCoA
-  this.axes = new Axes(); // the axes of the plot
-  this.decompositionViews = []; // all the decomposition view in the scene
-
-  /* Setter to change the dimensions */
-  this.changeVisibleDimensions = function(dimensions){};
-};
-
 /**
  *
  * @name DecompositionView
