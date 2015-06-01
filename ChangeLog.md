@@ -17,6 +17,7 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 * Add [flake8](http://flake8.readthedocs.org/en/2.3.0/) to enforce the PEP-8 coding guidelines in every Travis build ([#342](https://github.com/biocore/emperor/issues/342)).
 * Add an `all` target to get all the needed dependencies for emperor development (`pip install emperor[all]`).
 * Update FileSaver.js to the latest development version and fixes a bug with large file downloads.
+* Emperor's website can now be found by going to [http://emperor.microbio.me](http://emperor.microbio.me)
 
 ### New features
 
