@@ -30,7 +30,7 @@ from emperor.format import (format_mapping_file_to_js, format_pcoa_to_js,
 from emperor._format_strings import EMPEROR_HEADER_HTML_STRING
 
 # we are going to use this remote location to load external resources
-RESOURCES_URL = 'http://emperor.colorado.edu/master/make_emperor/emperor_outpu\
+RESOURCES_URL = 'http://emperor.microbio.me/master/make_emperor/emperor_outpu\
 t/emperor_required_resources'
 
 
