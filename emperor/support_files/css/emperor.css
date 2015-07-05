@@ -12,11 +12,7 @@
 
 body, html {
   font-size: 10px;
-  height: 100%;
-  width: 100%;
   margin: 0px;
-  overflow: hidden;
-  float: left;
 }
 
 /* #small-logo, #overlay, #explanation and #source are all styling elements
@@ -59,7 +55,7 @@ body, html {
 }
 
 /* the plotting area */
-div.emperor-plot-wrapper {
+div#emperor-plot-wrapper {
   position: relative;
   overflow: hidden;
   height: 100%;
@@ -102,7 +98,7 @@ div.emperor-separator:hover {
 div#emperor-menu {
   height: 100%;
   font-family: Helvetica, sans-serif;
-  width: 26%;
+  width: 27%;
   overflow: hidden;
   float: left;
   padding: 0px;
@@ -122,7 +118,6 @@ div#emperor-menu-tabs {
 .emperor-tab-div{
   padding-top: 0px;
   padding-bottom: 0px;
-  height: 100%;
   overflow: auto;
   align: center; /*align the contents to the center*/
 }
@@ -310,3 +305,16 @@ a.media-button:hover img{
 .invisible {
   display: none;
 }
+
+/*
+ * SlickGrid specific
+ *
+ * Gets rid of a horrible blue color that would otherwise get added to the
+ * grid, making it look not so slick. As suggested by:
+ *
+ * http://stackoverflow.com/a/17268879
+ **/
+.slick-row.ui-widget-content, .slick-cell {
+    background: none;
+}
+
