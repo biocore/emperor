@@ -30,7 +30,7 @@
  *
  */
 function ColorEditor(args){
-  var $input; 
+  var $input;
   var defaultValue;
   var scope = this;
 
@@ -38,7 +38,7 @@ function ColorEditor(args){
     // make the background look exactly the same when the color is being edited
     $(args.container).css('background-color', '#eeeeee');
 
-    $input = $('<div class="colorbox"></div>'); 
+    $input = $("<div class='colorbox'></div>");
     $input.css('background-color', args.item.color);
     $input.appendTo(args.container);
     $input.spectrum({
@@ -49,8 +49,8 @@ function ColorEditor(args){
       showInitial: true,
       showInput: true,
       clickoutFiresChange: true,
-      className: "full-spectrum",
-      preferredFormat: "hex6",
+      className: 'full-spectrum',
+      preferredFormat: 'hex6',
 
       /* On change callback */
       change: function(color) {
@@ -59,14 +59,14 @@ function ColorEditor(args){
         // commit the changes as soon as a new color is selected
         // http://stackoverflow.com/a/15513516/379593
         Slick.GlobalEditorLock.commitCurrentEdit();
-      } 
+      }
     });
     $input.spectrum('show');
   };
 
-  this.destroy = function () {
-    $input.spectrum("hide");
-    $input.spectrum("destroy");
+  this.destroy = function() {
+    $input.spectrum('hide');
+    $input.spectrum('destroy');
     $input.remove();
   };
 
@@ -87,7 +87,7 @@ function ColorEditor(args){
     $input.spectrum('set', defaultValue);
   };
 
-  this.applyValue = function(item,state) {
+  this.applyValue = function(item, state) {
     item[args.column.field] = state;
   };
 
@@ -96,18 +96,18 @@ function ColorEditor(args){
   };
 
   this.hide = function() {
-    $input.spectrum("hide");
+    $input.spectrum('hide');
   };
 
   this.show = function() {
-    $input.spectrum("show");
+    $input.spectrum('show');
   };
 
   this.position = function(cellBox) {
-    $input.spectrum("reflow");
+    $input.spectrum('reflow');
   };
 
-  this.init()
+  this.init();
 }
 
 
@@ -123,13 +123,13 @@ function ColorEditor(args){
  *
  * @return string with a div where the background color is set as the value
  * that's passed in.
- * 
+ *
  * This formatter is heavily based in the examples found in
  * slick.formattters.js and is only intended to be used with ColorFormatter.
  *
  */
 function ColorFormatter(row, cell, value, columnDef, dataContext) {
-  return "<div class='colorbox' style='background-color:"+ value +";'></div>"
+  return "<div class='colorbox' style='background-color:" + value + ";'></div>";
 }
 
 

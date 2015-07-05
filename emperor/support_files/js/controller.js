@@ -22,17 +22,17 @@ EmperorController = function(dm, divId){
   this.sceneViews = [];
 
   // main divs where the content of the plots will be located
-  this.$plotSpaceId = $('<div id="emperor-plot-wrapper"></div>');
-  this.$plotMenu = $('<div id="emperor-menu"></div>');
+  this.$plotSpaceId = $("<div id='emperor-plot-wrapper'></div>");
+  this.$plotMenu = $("<div id='emperor-menu'></div>");
 
   this.$divId.append(this.$plotSpaceId);
   this.$divId.append(this.$plotMenu);
 
   // set up the renderer
   this.rendererBackgroundColor = new THREE.Color();
-  this.rendererBackgroundColor.setHex("0x000000");
+  this.rendererBackgroundColor.setHex('0x000000');
 
-  this.renderer = new THREE.WebGLRenderer( {antialias: true});
+  this.renderer = new THREE.WebGLRenderer({antialias: true});
   this.renderer.setSize(this.width, this.height);
   this.renderer.setClearColor(this.rendererBackgroundColor);
   this.renderer.autoClear = false;
@@ -45,8 +45,8 @@ EmperorController = function(dm, divId){
   this.addView();
 };
 
-EmperorController.prototype.addView = function(){
-  if (this.sceneViews.length > 4){
+EmperorController.prototype.addView = function() {
+  if (this.sceneViews.length > 4) {
     throw Error('Cannot add another scene plot view');
   }
 
@@ -66,25 +66,25 @@ EmperorController.prototype.resize = function(width, height){
   // the area we have to present the plot is smaller than the total
   var plotWidth = this.$plotSpaceId.width();
 
-  if (this.sceneViews.length === 1){
+  if (this.sceneViews.length === 1) {
     this.sceneViews[0].resize(0, 0, plotWidth, this.height);
   }
-  else if(this.sceneViews.length === 2){
+  else if (this.sceneViews.length === 2) {
     this.sceneViews[0].resize(0, 0, 0.5 * plotWidth, this.height);
     this.sceneViews[1].resize(0.5 * plotWidth, 0, 0.5 * plotWidth, this.height);
   }
-  else if(this.sceneViews.length === 3){
+  else if (this.sceneViews.length === 3) {
     this.sceneViews[0].resize(0, 0, 0.5 * plotWidth, 0.5 * this.height);
     this.sceneViews[1].resize(0.5 * plotWidth, 0, 0.5 * plotWidth, 0.5 * this.height);
     this.sceneViews[2].resize(0, 0.5 * this.height, plotWidth, 0.5 * this.height);
   }
-  else if(this.sceneViews.length === 4){
+  else if (this.sceneViews.length === 4) {
     this.sceneViews[0].resize(0, 0, 0.5 * plotWidth, 0.5 * this.height);
     this.sceneViews[1].resize(0.5 * plotWidth, 0, 0.5 * plotWidth, 0.5 * this.height);
     this.sceneViews[2].resize(0, 0.5 * this.height, 0.5 * plotWidth, 0.5 * this.height);
     this.sceneViews[3].resize(0.5 * plotWidth, 0.5 * this.height, 0.5 * plotWidth, 0.5 * this.height);
   }
-  else{
+  else {
     throw Error('More than four views are currently not supported');
   }
 
@@ -92,50 +92,51 @@ EmperorController.prototype.resize = function(width, height){
 
   // resize the grid according to the size of the container, since we are
   // inside the tabs we have to account for that lost space, hence the 0.9
-  var gridWidth = this.$plotMenu.width()*0.9,
-      gridHeight = this.$plotMenu.height()*0.9;
+  var gridWidth = this.$plotMenu.width() * 0.9,
+      gridHeight = this.$plotMenu.height() * 0.9;
   $('#myGrid').width(gridWidth);
   $('#myGrid').height(gridHeight);
 };
 
-EmperorController.prototype.render = function(){
+EmperorController.prototype.render = function() {
   this.renderer.setViewport(0, 0, this.width, this.height);
   this.renderer.clear();
   for (var i = 0; i < this.sceneViews.length; i++) {
     this.sceneViews[i].render();
-  };
+  }
 };
 
-EmperorController.prototype.buildUI = function(){
+EmperorController.prototype.buildUI = function() {
 
-  this.$plotMenu.append('<div id="emperor-menu-tabs"></div>');
-  $('#emperor-menu-tabs').append('<ul><li><a href="#keys">Key</a></li></ul>');
-  $('#emperor-menu-tabs').append('<div id="keys" class="emperor-tab-div"></div>');
-  $('#emperor-menu-tabs').tabs({heightStyle: "fill"});
+  this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
+  $('#emperor-menu-tabs').append("<ul><li><a href='#keys'>Key</a></li></ul>");
+  $('#emperor-menu-tabs').append("<div id='keys' class='emperor-tab-div'></div>");
+  $('#emperor-menu-tabs').tabs({heightStyle: 'fill'});
 
-  var gridWidth = this.$plotMenu.width()*0.9,
-      gridHeight = this.$plotMenu.height()*0.9;
+  var gridWidth = this.$plotMenu.width() * 0.9,
+      gridHeight = this.$plotMenu.height() * 0.9;
 
 
-  $('#keys').append('<div id="myGrid"></div>');
+  $('#keys').append("<div id='myGrid'></div>");
   $('#myGrid').width(gridWidth);
   $('#myGrid').height(gridHeight);
 
   var grid;
   var columns = [
-    {id: "title", name: "", field:"color", sortable: false,
-     maxWidth:25, minWidth:25, editor: ColorEditor, formatter: ColorFormatter},
-    {id: "field1", name: "Category Name", field: "category"}
+    {id: 'title', name: '', field: 'color', sortable: false,
+     maxWidth: 25, minWidth: 25, editor: ColorEditor,
+     formatter: ColorFormatter},
+    {id: 'field1', name: 'Category Name', field: 'category'}
   ];
 
   var options = {
     editable: true,
     enableAddRow: false,
     enableCellNavigation: true,
-    forceFitColumns: true,
+    forceFitColumns: true
   };
 
-  $(function (ec) {
+  $(function(ec) {
     var data = [];
     var categories = ec.dm.getUniqueValuesByCategory('DOB');
     for (var i = 0; i < categories.length; i++) {
@@ -145,11 +146,11 @@ EmperorController.prototype.buildUI = function(){
       };
     }
 
-    grid = new Slick.Grid("#myGrid", data, columns, options);
+    grid = new Slick.Grid('#myGrid', data, columns, options);
 
     // make the columns fit the available spce whenever the window resizes
     // http://stackoverflow.com/a/29835739
-    $(window).resize(function(){
+    $(window).resize(function() {
       grid.setColumns(grid.getColumns());
     });
   }(this));
