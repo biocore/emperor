@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Emperor test</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/css/emperor.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/jquery-ui2.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/slick.grid.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/colorPicker.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/spectrum.css">
+
+
+    <style>
+      /* style specific to this plot */
+      div.emperor-space{
+        position: fixed;
+
+        /* Height and width fallback for older browsers. */
+        height: 100%;
+        width: 100%;
+
+        /* Set the height to match that of the viewport. */
+        height: 100vh;
+
+        /* Set the width to match that of the viewport. */
+        width: 100vw;
+
+        /* Remove any browser-default margins. */
+        margin: 0;
+      }
+
+    </style>
+
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/underscore-min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery.colorPicker.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/chroma.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/three.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/three.js-plugins/OrbitControls.js"></script>
+
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery.colorPicker.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/spectrum.js"></script>
+
+    <!-- slickgrid -->
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery.event.drag-2.2.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.core.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.grid.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.editors.js"></script>
+
+    <script type="text/javascript" src="../emperor/support_files/js/model.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/view.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/sceneplotview3d.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/controller.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/color-editor.js"></script>
+
+  </head>
+  <body>
+    <script type="text/javascript">
+
+      $("<div id='plots' class='emperor-space'></div>").appendTo(document.body);
+      var div = $('#plots');
+
+      var name = "pcoa";
+      var ids = {{ coords_ids }};
+      var coords = {{ coords }};
+      var pct_var = {{ pct_var }};
+      var md_headers = {{ md_headers}};
+      var metadata = {{  metadata }};
+
+      var dm, ec;
+
+      function init() {
+        // Initialize the DecompositionModel
+        dm = new DecompositionModel(name, ids, coords, pct_var,
+                                    md_headers, metadata);
+        // Initialize the EmperorController
+        ec = new EmperorController(dm, 'plots');
+      }
+
+      $(window).resize(function() {
+        ec.resize(window.innerWidth, window.innerHeight);
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        ec.render();
+      }
+
+      $(function () {
+        init();
+        animate();
+      });
+
+    </script>
+  </body>
+</html>
