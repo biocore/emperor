@@ -116,7 +116,25 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
  *
 **/
 DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
-  this.setCategoryAttribute(colorFunc, category, 'color');
+  var cats = this.decomp.getUniqueValuesByCategory(category), scope = this,
+  dataView = [], colors = getColorList(cats, 'discrete-coloring-qiime'),
+  plottables;
+
+  _.each(cats, function(value) {
+    /*
+     *
+     * WARNING: This is mixing attributes of the view with the model ...
+     * it's a bit of a gray area though.
+     *
+     **/
+    color = colors[value];
+    plottables = scope.decomp.getPlottablesByMetadataCategoryValue(category, value);
+    scope.setGroupColor(color, plottables);
+
+    dataView.push({category: value, color: color, plottables: plottables});
+  });
+
+  return dataView;
 };
 
 /**
@@ -173,7 +191,7 @@ DecompositionView.prototype.setGroupColor = function(color, group){
   var idx;
   var scope = this;
 
-  _.each(group, function(element, index) {
+  _.each(group, function(element) {
     idx = element.idx;
     scope.markers[idx].material.color = new THREE.Color(color);
   });

@@ -39,10 +39,10 @@ EmperorController = function(dm, divId){
   this.renderer.sortObjects = true;
   this.$plotSpaceId.append(this.renderer.domElement);
 
-  this.buildUI();
-
   // default decomposition view uses the full window
   this.addView();
+
+  this.buildUI();
 };
 
 EmperorController.prototype.addView = function() {
@@ -151,7 +151,7 @@ EmperorController.prototype.buildUI = function() {
   };
 
   $(function(ec) {
-    var data = ec.getDataView('DOB');
+    var data = ec.sceneViews[0].decViews[0].setCategoryColors(null, 'DOB');
 
     grid = new Slick.Grid('#myGrid', data, columns, options);
 
@@ -159,7 +159,7 @@ EmperorController.prototype.buildUI = function() {
     grid.onCellChange.subscribe(function(e, args) {
       var val = args.item.category, color = args.item.color, group = [];
 
-      group = ec.dm.getPlottablesByMetadataCategoryValue('DOB', val);
+      group = args.item.plottables;
       ec.sceneViews[0].decViews[0].setGroupColor(color, group);
     });
 
