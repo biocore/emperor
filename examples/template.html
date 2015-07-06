@@ -6,30 +6,19 @@
 
     <link rel="stylesheet" type="text/css" href="../emperor/support_files/css/emperor.css">
     <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/jquery-ui2.css">
-    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/slick.grid.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/slick.grid.min.css">
     <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/colorPicker.css">
     <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/spectrum.css">
 
-
     <style>
-      /* style specific to this plot */
       div.emperor-space{
         position: fixed;
-
-        /* Height and width fallback for older browsers. */
         height: 100%;
         width: 100%;
-
-        /* Set the height to match that of the viewport. */
         height: 100vh;
-
-        /* Set the width to match that of the viewport. */
         width: 100vw;
-
-        /* Remove any browser-default margins. */
         margin: 0;
       }
-
     </style>
 
     <script type="text/javascript" src="../emperor/support_files/vendor/js/underscore-min.js"></script>
@@ -44,13 +33,14 @@
     <script type="text/javascript" src="../emperor/support_files/vendor/js/spectrum.js"></script>
 
     <!-- slickgrid -->
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery.event.drag-2.2.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.core.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.grid.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.editors.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery.event.drag-2.2.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.core.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.grid.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.editors.min.js"></script>
 
     <script type="text/javascript" src="../emperor/support_files/js/model.js"></script>
     <script type="text/javascript" src="../emperor/support_files/js/view.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/util.js"></script>
     <script type="text/javascript" src="../emperor/support_files/js/sceneplotview3d.js"></script>
     <script type="text/javascript" src="../emperor/support_files/js/controller.js"></script>
     <script type="text/javascript" src="../emperor/support_files/js/color-editor.js"></script>
@@ -62,7 +52,6 @@
       $("<div id='plots' class='emperor-space'></div>").appendTo(document.body);
       var div = $('#plots');
 
-      var name = "pcoa";
       var ids = {{ coords_ids }};
       var coords = {{ coords }};
       var pct_var = {{ pct_var }};
