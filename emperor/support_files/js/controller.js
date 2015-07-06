@@ -106,6 +106,21 @@ EmperorController.prototype.render = function() {
   }
 };
 
+EmperorController.prototype.getDataView = function(category) {
+    var categories = this.dm.getUniqueValuesByCategory(category);
+    var colors = getColorList(categories, 'discrete-coloring-qiime');
+    var data = [];
+
+    for (var i = 0; i < categories.length; i++) {
+      data[i] = {
+        category: categories[i],
+        color: colors[categories[i]]
+      };
+    }
+
+    return data;
+}
+
 EmperorController.prototype.buildUI = function() {
 
   this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
@@ -136,16 +151,17 @@ EmperorController.prototype.buildUI = function() {
   };
 
   $(function(ec) {
-    var data = [];
-    var categories = ec.dm.getUniqueValuesByCategory('DOB');
-    for (var i = 0; i < categories.length; i++) {
-      data[i] = {
-        category: categories[i],
-        color: '#00ff00'
-      };
-    }
+    var data = ec.getDataView('DOB');
 
     grid = new Slick.Grid('#myGrid', data, columns, options);
+
+    // subscribe to events when a cell is changed
+    grid.onCellChange.subscribe(function(e, args) {
+      var val = args.item.category, color = args.item.color, group = [];
+
+      group = ec.dm.getPlottablesByMetadataCategoryValue('DOB', val);
+      ec.sceneViews[0].decViews[0].setGroupColor(color, group);
+    });
 
     // make the columns fit the available spce whenever the window resizes
     // http://stackoverflow.com/a/29835739

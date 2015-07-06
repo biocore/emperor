@@ -170,7 +170,13 @@ DecompositionView.prototype.setCategoryAttribute = function(value, category, att
 
 /* Change the color for a set of plottables - group: list of plottables */
 DecompositionView.prototype.setGroupColor = function(color, group){
-  this.setGroupAttribute(color, group, "color")
+  var idx;
+  var scope = this;
+
+  _.each(group, function(element, index) {
+    idx = element.idx;
+    scope.markers[idx].material.color = new THREE.Color(color);
+  });
 };
 
 /* Change the opacity for a set of plottables - group: list of plottables */
