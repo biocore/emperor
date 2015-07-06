@@ -116,7 +116,6 @@ EmperorController.prototype.buildUI = function() {
   var gridWidth = this.$plotMenu.width() * 0.9,
       gridHeight = this.$plotMenu.height() * 0.9;
 
-
   $('#keys').append("<div id='myGrid'></div>");
   $('#myGrid').width(gridWidth);
   $('#myGrid').height(gridHeight);
