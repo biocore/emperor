@@ -106,21 +106,6 @@ EmperorController.prototype.render = function() {
   }
 };
 
-EmperorController.prototype.getDataView = function(category) {
-    var categories = this.dm.getUniqueValuesByCategory(category);
-    var colors = getColorList(categories, 'discrete-coloring-qiime');
-    var data = [];
-
-    for (var i = 0; i < categories.length; i++) {
-      data[i] = {
-        category: categories[i],
-        color: colors[categories[i]]
-      };
-    }
-
-    return data;
-}
-
 EmperorController.prototype.buildUI = function() {
 
   this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
