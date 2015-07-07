@@ -116,6 +116,13 @@ EmperorController.prototype.buildUI = function() {
   var gridWidth = this.$plotMenu.width() * 0.9,
       gridHeight = this.$plotMenu.height() * 0.9;
 
+  // http://stackoverflow.com/a/6602002
+  var $select = $("<select class='emperor-tab-drop-down'>");
+  _.each(this.dm.md_headers, function(header) {
+    $select.append($('<option>').attr('value', header).text(header));
+  });
+
+  $('#keys').append($select);
   $('#keys').append("<div id='myGrid'></div>");
   $('#myGrid').width(gridWidth);
   $('#myGrid').height(gridHeight);
@@ -136,9 +143,7 @@ EmperorController.prototype.buildUI = function() {
   };
 
   $(function(ec) {
-    var data = ec.sceneViews[0].decViews[0].setCategoryColors(null, 'DOB');
-
-    grid = new Slick.Grid('#myGrid', data, columns, options);
+    grid = new Slick.Grid('#myGrid', [], columns, options);
 
     // subscribe to events when a cell is changed
     grid.onCellChange.subscribe(function(e, args) {
@@ -147,6 +152,21 @@ EmperorController.prototype.buildUI = function() {
       group = args.item.plottables;
       ec.sceneViews[0].decViews[0].setGroupColor(color, group);
     });
+
+    function categorySelectorChanged(evt, params) {
+      var newCategory = params.selected;
+
+      data = ec.sceneViews[0].decViews[0].setCategoryColors(null, newCategory);
+      grid.setData(data);
+      grid.invalidate();
+      grid.render();
+    }
+    // fire a callback to initialize the data grid
+    categorySelectorChanged(null, {selected: $select.val()});
+
+    // setup chosen
+    $select.chosen({width: "100%", search_contains: true});
+    $select.chosen().change(categorySelectorChanged);
 
     // make the columns fit the available spce whenever the window resizes
     // http://stackoverflow.com/a/29835739

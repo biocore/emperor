@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/slick.grid.min.css">
     <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/colorPicker.css">
     <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/spectrum.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/chosen.min.css">
 
     <style>
       div.emperor-space{
@@ -38,6 +39,8 @@
     <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.grid.min.js"></script>
     <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.editors.min.js"></script>
 
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/chosen.jquery.min.js"></script>
+
     <script type="text/javascript" src="../emperor/support_files/js/model.js"></script>
     <script type="text/javascript" src="../emperor/support_files/js/view.js"></script>
     <script type="text/javascript" src="../emperor/support_files/js/util.js"></script>
@@ -48,6 +51,8 @@
   </head>
   <body>
     <script type="text/javascript">
+      // we need to remove this callback from the chosen library
+      function chosen_highlight_callback() {};
 
       $("<div id='plots' class='emperor-space'></div>").appendTo(document.body);
       var div = $('#plots');

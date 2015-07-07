@@ -47,7 +47,6 @@ function ColorEditor(args){
       allowEmpty: false,
       showPalette: false,
       showInitial: true,
-      showInput: true,
       clickoutFiresChange: true,
       className: 'full-spectrum',
       preferredFormat: 'hex6',
@@ -61,7 +60,6 @@ function ColorEditor(args){
         Slick.GlobalEditorLock.commitCurrentEdit();
       }
     });
-    $input.spectrum('show');
   };
 
   this.destroy = function() {
