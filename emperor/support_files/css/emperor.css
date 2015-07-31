@@ -55,7 +55,7 @@ body, html {
 }
 
 /* the plotting area */
-div#emperor-plot-wrapper {
+div.emperor-plot-wrapper {
   position: relative;
   overflow: hidden;
   height: 100%;

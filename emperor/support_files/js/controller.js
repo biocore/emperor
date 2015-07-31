@@ -22,7 +22,7 @@ EmperorController = function(dm, divId){
   this.sceneViews = [];
 
   // main divs where the content of the plots will be located
-  this.$plotSpaceId = $("<div id='emperor-plot-wrapper'></div>");
+  this.$plotSpaceId = $("<div id='main-wrapper' class='emperor-plot-wrapper'></div>");
   this.$plotMenu = $("<div id='emperor-menu'></div>");
 
   this.$divId.append(this.$plotSpaceId);
