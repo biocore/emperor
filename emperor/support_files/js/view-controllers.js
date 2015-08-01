@@ -20,7 +20,7 @@
  * @param {Float} width, Width in pixels for the controller;
  * @param {Float} height, Height in pixels for the controller;
  * @param {ScenePlotView} sceneViews, SceneViews to controll; Maybe remove and
- * add a callback???
+ * add a callback. FIXME
  * @param {Object} options, Options to set to the controller before
  * initializaiton.
  *
@@ -38,6 +38,13 @@ function AttributeViewController(container, attrName, width, height,
   this._categorySelectionCallback = null;
   this._valueUpdatedCallback = null;
   this._slickGridColumn = null;
+
+  // verify we have a valid container
+  $container = $(container);
+  if ($container.length < 1) {
+    throw new Error("Emperor requires a valid container, " + container +
+        " does not exist in the DOM.");
+  }
 
   /*
    *
@@ -91,12 +98,6 @@ function AttributeViewController(container, attrName, width, height,
   this.init = function() {
     var columns, gridOptions;
 
-    $container = $(container);
-    if ($container.length < 1) {
-      throw new Error("Emperor requires a valid container, " + container +
-          " does not exist in the DOM.");
-    }
-
     // initialize the base attributes
     this._attrInit();
 
@@ -142,22 +143,47 @@ function AttributeViewController(container, attrName, width, height,
   this.init();
 }
 
+/*
+ *
+ * coming soon ...
+ *
+ **/
 function AnimationsViewController(){
 
 }
 
+/*
+ *
+ * coming soon ...
+ *
+ **/
 function LabelsViewController(){
 
 }
 
+/*
+ *
+ * coming soon ...
+ *
+ **/
 function VisibleDimensionsViewController(){
 
 }
 
+/*
+ *
+ * coming soon ...
+ *
+ **/
 function OptionsViewController(){
 
 }
 
+/*
+ *
+ * coming soon ...
+ *
+ **/
 function SearchViewController(){
 
 }
