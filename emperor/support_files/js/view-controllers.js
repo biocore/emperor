@@ -67,8 +67,7 @@ function AttributeViewController(container, attrName, width, height,
         scope.grid.setData(data);
         scope.grid.invalidate();
         scope.grid.render();
-      }
-;
+      };
 
       // properly respond to color changes
       scope._valueUpdatedCallback = function(e, args) {
@@ -83,6 +82,12 @@ function AttributeViewController(container, attrName, width, height,
                                 sortable: false, maxWidth: 25, minWidth: 25,
                                 editor: ColorEditor,
                                 formatter: ColorFormatter};
+    }
+    else if (scope.attrName === 'opacity') {
+      // TODO
+    }
+    else if (scope.attrName === 'visibility') {
+      // TODO
     }
     else{
       throw new Error("The attribute '" + scope.attrName +
