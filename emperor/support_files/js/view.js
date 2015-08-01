@@ -117,7 +117,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
 **/
 DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
   var cats = this.decomp.getUniqueValuesByCategory(category), scope = this,
-  dataView = [], colors = getColorList(cats, 'discrete-coloring-qiime'),
+  dataView = [], colors = getColorList(cats, colorFunc),
   plottables;
 
   _.each(cats, function(value) {

@@ -156,7 +156,7 @@ EmperorController.prototype.buildUI = function() {
     function categorySelectorChanged(evt, params) {
       var newCategory = params.selected;
 
-      data = ec.sceneViews[0].decViews[0].setCategoryColors(null, newCategory);
+      data = ec.sceneViews[0].decViews[0].setCategoryColors('discrete-coloring-qiime', newCategory);
       grid.setData(data);
       grid.invalidate();
       grid.render();
