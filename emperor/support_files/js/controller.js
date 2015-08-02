@@ -13,6 +13,24 @@
  *
  */
 
+
+// Constants
+var gridScale = 0.9;        // Scaling constant for grid dimensions
+var sceneViewScale = 0.5;   // Scaling constant for scene plot view dimensions
+var gridWidth = 25;         // Constant for width in slick-grid
+
+/**
+ *
+ * @name EmperorController
+ *
+ * @class Contains all the information on how the model is being presented to
+ *        the user.
+ *
+ * @param {dm} a DecompositionModel object that will be
+ * represented on screen.
+ * @param {divid} the jquery id correponding to the controller
+ *
+ **/
 EmperorController = function(dm, divId){
   this.$divId = $('#' + divId);
   this.width = this.$divId.width();
@@ -45,6 +63,10 @@ EmperorController = function(dm, divId){
   this.buildUI();
 };
 
+/**
+ * Helper method to add additional scenePlotViews (i.e. another plot)
+ *
+ **/
 EmperorController.prototype.addView = function() {
   if (this.sceneViews.length > 4) {
     throw Error('Cannot add another scene plot view');
@@ -58,6 +80,12 @@ EmperorController.prototype.addView = function() {
   this.resize(this.width, this.height);
 };
 
+/**
+ * Helper method to resize the plots
+ *
+ * @param {width} the width of the entire plotting space
+ * @param {height} the height of the entire plotting space
+ **/
 EmperorController.prototype.resize = function(width, height){
   // update the available space we have
   this.width = width;
@@ -66,23 +94,39 @@ EmperorController.prototype.resize = function(width, height){
   // the area we have to present the plot is smaller than the total
   var plotWidth = this.$plotSpaceId.width();
 
+  // TODO: The below will need refactoring
+  // This is addressed in issue #414
   if (this.sceneViews.length === 1) {
     this.sceneViews[0].resize(0, 0, plotWidth, this.height);
   }
   else if (this.sceneViews.length === 2) {
-    this.sceneViews[0].resize(0, 0, 0.5 * plotWidth, this.height);
-    this.sceneViews[1].resize(0.5 * plotWidth, 0, 0.5 * plotWidth, this.height);
+    this.sceneViews[0].resize(0, 0, sceneViewScale * plotWidth, this.height);
+    this.sceneViews[1].resize(sceneViewScale * plotWidth, 0,
+                              sceneViewScale * plotWidth, this.height);
   }
   else if (this.sceneViews.length === 3) {
-    this.sceneViews[0].resize(0, 0, 0.5 * plotWidth, 0.5 * this.height);
-    this.sceneViews[1].resize(0.5 * plotWidth, 0, 0.5 * plotWidth, 0.5 * this.height);
-    this.sceneViews[2].resize(0, 0.5 * this.height, plotWidth, 0.5 * this.height);
+    this.sceneViews[0].resize(0, 0,
+			      sceneViewScale * plotWidth,
+			      sceneViewScale * this.height);
+    this.sceneViews[1].resize(sceneViewScale * plotWidth, 0,
+			      sceneViewScale * plotWidth,
+			      sceneViewScale * this.height);
+    this.sceneViews[2].resize(0, sceneViewScale * this.height,
+			      plotWidth, sceneViewScale * this.height);
   }
   else if (this.sceneViews.length === 4) {
-    this.sceneViews[0].resize(0, 0, 0.5 * plotWidth, 0.5 * this.height);
-    this.sceneViews[1].resize(0.5 * plotWidth, 0, 0.5 * plotWidth, 0.5 * this.height);
-    this.sceneViews[2].resize(0, 0.5 * this.height, 0.5 * plotWidth, 0.5 * this.height);
-    this.sceneViews[3].resize(0.5 * plotWidth, 0.5 * this.height, 0.5 * plotWidth, 0.5 * this.height);
+    this.sceneViews[0].resize(0, 0, sceneViewScale * plotWidth,
+			      sceneViewScale * this.height);
+    this.sceneViews[1].resize(sceneViewScale * plotWidth, 0,
+			      sceneViewScale * plotWidth,
+			      sceneViewScale * this.height);
+    this.sceneViews[2].resize(0, sceneViewScale * this.height,
+			      sceneViewScale * plotWidth,
+			      sceneViewScale * this.height);
+    this.sceneViews[3].resize(sceneViewScale * plotWidth,
+			      sceneViewScale * this.height,
+			      sceneViewScale * plotWidth,
+			      sceneViewScale * this.height);
   }
   else {
     throw Error('More than four views are currently not supported');
@@ -91,13 +135,17 @@ EmperorController.prototype.resize = function(width, height){
   this.renderer.setSize(plotWidth, this.height);
 
   // resize the grid according to the size of the container, since we are
-  // inside the tabs we have to account for that lost space, hence the 0.9
-  var gridWidth = this.$plotMenu.width() * 0.9,
-      gridHeight = this.$plotMenu.height() * 0.9;
+  // inside the tabs we have to account for that lost space, hence the
+  // gridScale=0.9
+  var gridWidth = this.$plotMenu.width() * gridScale,
+      gridHeight = this.$plotMenu.height() * gridScale;
   $('#myGrid').width(gridWidth);
   $('#myGrid').height(gridHeight);
 };
 
+/**
+* Helper method to render sceneViews
+*/
 EmperorController.prototype.render = function() {
   this.renderer.setViewport(0, 0, this.width, this.height);
   this.renderer.clear();
@@ -106,6 +154,9 @@ EmperorController.prototype.render = function() {
   }
 };
 
+/**
+* Helper method to render sceneViews
+*/
 EmperorController.prototype.buildUI = function() {
 
   this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
@@ -113,8 +164,8 @@ EmperorController.prototype.buildUI = function() {
   $('#emperor-menu-tabs').append("<div id='keys' class='emperor-tab-div'></div>");
   $('#emperor-menu-tabs').tabs({heightStyle: 'fill'});
 
-  var gridWidth = this.$plotMenu.width() * 0.9,
-      gridHeight = this.$plotMenu.height() * 0.9;
+  var gridWidth = this.$plotMenu.width() * gridScale,
+      gridHeight = this.$plotMenu.height() * gridScale;
 
   // http://stackoverflow.com/a/6602002
   var $select = $("<select class='emperor-tab-drop-down'>");
@@ -130,7 +181,7 @@ EmperorController.prototype.buildUI = function() {
   var grid;
   var columns = [
     {id: 'title', name: '', field: 'color', sortable: false,
-     maxWidth: 25, minWidth: 25, editor: ColorEditor,
+     maxWidth: gridWidth, minWidth: gridWidth, editor: ColorEditor,
      formatter: ColorFormatter},
     {id: 'field1', name: 'Category Name', field: 'category'}
   ];
@@ -141,7 +192,11 @@ EmperorController.prototype.buildUI = function() {
     enableCellNavigation: true,
     forceFitColumns: true
   };
+  /**
+  Updates slick-grid cells
 
+  @param {ec} Emperor Controller object
+  */
   $(function(ec) {
     grid = new Slick.Grid('#myGrid', [], columns, options);
 
@@ -150,9 +205,15 @@ EmperorController.prototype.buildUI = function() {
       var val = args.item.category, color = args.item.color, group = [];
 
       group = args.item.plottables;
+      // Only coloring the first scene view.  Need to address in issue #414
       ec.sceneViews[0].decViews[0].setGroupColor(color, group);
     });
 
+    /**
+    Changes the colors according to category
+
+    @param {ec} Emperor Controller object
+    */
     function categorySelectorChanged(evt, params) {
       var newCategory = params.selected;
 
@@ -168,7 +229,7 @@ EmperorController.prototype.buildUI = function() {
     $select.chosen({width: "100%", search_contains: true});
     $select.chosen().change(categorySelectorChanged);
 
-    // make the columns fit the available spce whenever the window resizes
+    // make the columns fit the available space whenever the window resizes
     // http://stackoverflow.com/a/29835739
     $(window).resize(function() {
       grid.setColumns(grid.getColumns());
