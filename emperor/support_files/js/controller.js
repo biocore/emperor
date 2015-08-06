@@ -155,7 +155,7 @@ EmperorController.prototype.render = function() {
 };
 
 /**
-* Helper method to render sceneViews
+* Helper method to assemble UI, completely independent of HTML template
 */
 EmperorController.prototype.buildUI = function() {
 
