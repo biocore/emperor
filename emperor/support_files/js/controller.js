@@ -144,8 +144,8 @@ EmperorController.prototype.resize = function(width, height){
 };
 
 /**
-* Helper method to render sceneViews
-**/
+ * Helper method to render sceneViews
+ **/
 EmperorController.prototype.render = function() {
   this.renderer.setViewport(0, 0, this.width, this.height);
   this.renderer.clear();
@@ -155,8 +155,8 @@ EmperorController.prototype.render = function() {
 };
 
 /**
-* Helper method to assemble UI, completely independent of HTML template
-**/
+ * Helper method to assemble UI, completely independent of HTML template
+ **/
 EmperorController.prototype.buildUI = function() {
 
   this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
@@ -193,10 +193,10 @@ EmperorController.prototype.buildUI = function() {
     forceFitColumns: true
   };
   /**
-  * Updates slick-grid cells
-  *
-  @param {ec} Emperor Controller object
-  **/
+   * Updates slick-grid cells
+   *
+   * @param {ec} Emperor Controller object
+   **/
   $(function(ec) {
     grid = new Slick.Grid('#myGrid', [], columns, options);
 
@@ -210,10 +210,10 @@ EmperorController.prototype.buildUI = function() {
     });
 
     /**
-    * Changes the colors according to category
-    *
-    @param {ec} Emperor Controller object
-    **/
+     * Changes the colors according to category
+     *
+     * @param {ec} Emperor Controller object
+     **/
     function categorySelectorChanged(evt, params) {
       var newCategory = params.selected;
 
