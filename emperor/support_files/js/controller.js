@@ -210,8 +210,8 @@ EmperorController.prototype.buildUI = function() {
     });
 
     /**
-    Changes the colors according to category
-
+    * Changes the colors according to category
+    *
     @param {ec} Emperor Controller object
     **/
     function categorySelectorChanged(evt, params) {
