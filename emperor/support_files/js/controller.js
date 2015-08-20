@@ -102,31 +102,31 @@ EmperorController.prototype.resize = function(width, height){
   else if (this.sceneViews.length === 2) {
     this.sceneViews[0].resize(0, 0, SCENE_VIEW_SCALE * plotWidth, this.height);
     this.sceneViews[1].resize(SCENE_VIEW_SCALE * plotWidth, 0,
-			      SCENE_VIEW_SCALE * plotWidth, this.height);
+                              SCENE_VIEW_SCALE * plotWidth, this.height);
   }
   else if (this.sceneViews.length === 3) {
     this.sceneViews[0].resize(0, 0,
-			      SCENE_VIEW_SCALE * plotWidth,
-			      SCENE_VIEW_SCALE * this.height);
+                              SCENE_VIEW_SCALE * plotWidth,
+                              SCENE_VIEW_SCALE * this.height);
     this.sceneViews[1].resize(SCENE_VIEW_SCALE * plotWidth, 0,
-			      SCENE_VIEW_SCALE * plotWidth,
-			      SCENE_VIEW_SCALE * this.height);
+                              SCENE_VIEW_SCALE * plotWidth,
+                              SCENE_VIEW_SCALE * this.height);
     this.sceneViews[2].resize(0, SCENE_VIEW_SCALE * this.height,
-			      plotWidth, SCENE_VIEW_SCALE * this.height);
+                              plotWidth, SCENE_VIEW_SCALE * this.height);
   }
   else if (this.sceneViews.length === 4) {
     this.sceneViews[0].resize(0, 0, SCENE_VIEW_SCALE * plotWidth,
-			      SCENE_VIEW_SCALE * this.height);
+                              SCENE_VIEW_SCALE * this.height);
     this.sceneViews[1].resize(SCENE_VIEW_SCALE * plotWidth, 0,
-			      SCENE_VIEW_SCALE * plotWidth,
-			      SCENE_VIEW_SCALE * this.height);
+                              SCENE_VIEW_SCALE * plotWidth,
+                              SCENE_VIEW_SCALE * this.height);
     this.sceneViews[2].resize(0, SCENE_VIEW_SCALE * this.height,
-			      SCENE_VIEW_SCALE * plotWidth,
-			      SCENE_VIEW_SCALE * this.height);
+                              SCENE_VIEW_SCALE * plotWidth,
+                              SCENE_VIEW_SCALE * this.height);
     this.sceneViews[3].resize(SCENE_VIEW_SCALE * plotWidth,
-			      SCENE_VIEW_SCALE * this.height,
-			      SCENE_VIEW_SCALE * plotWidth,
-			      SCENE_VIEW_SCALE * this.height);
+                              SCENE_VIEW_SCALE * this.height,
+                              SCENE_VIEW_SCALE * plotWidth,
+                              SCENE_VIEW_SCALE * this.height);
   }
   else {
     throw Error('More than four views are currently not supported');
