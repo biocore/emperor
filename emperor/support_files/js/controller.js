@@ -102,7 +102,7 @@ EmperorController.prototype.resize = function(width, height){
   else if (this.sceneViews.length === 2) {
     this.sceneViews[0].resize(0, 0, SCENE_VIEW_SCALE * plotWidth, this.height);
     this.sceneViews[1].resize(SCENE_VIEW_SCALE * plotWidth, 0,
-                              SCENE_VIEW_SCALE * plotWidth, this.height);
+			      SCENE_VIEW_SCALE * plotWidth, this.height);
   }
   else if (this.sceneViews.length === 3) {
     this.sceneViews[0].resize(0, 0,
@@ -193,8 +193,8 @@ EmperorController.prototype.buildUI = function() {
     forceFitColumns: true
   };
   /**
-  Updates slick-grid cells
-
+  * Updates slick-grid cells
+  *
   @param {ec} Emperor Controller object
   **/
   $(function(ec) {
