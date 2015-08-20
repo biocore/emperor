@@ -199,7 +199,7 @@ DecompositionModel.prototype.getPlottableByID = function(id) {
 
 /**
  *
- * Retrieve all the plottable object with the given ids
+ * Retrieve all the plottable objects with the given ids
  *
  * @param {idArray} an Array of strings where each string is a plottable id
  *
@@ -232,7 +232,7 @@ DecompositionModel.prototype._getMetadataIndex = function(category){
 
 /**
  *
- * Retrieve all the plottable object under the metadata header value
+ * Retrieve all the plottable objects under the metadata header value
  *
  * @param {category} a string with the metadata header
  * @param {value} a string with the value under the metadata category

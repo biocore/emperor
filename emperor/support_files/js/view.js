@@ -20,11 +20,11 @@
  * @class Contains all the information on how the model is being presented to
  *        the user.
  *
- * @param {decomp} a DecompositionModel object that will be represented on
- *                 screen.
+ * @param {DecompositionModel} decomp a DecompositionModel object that will be
+ * represented on screen.
  *
  **/
-function DecompositionView(decomp){
+function DecompositionView(decomp) {
   /* The length of this list attributes is len(DecompositionModel.ids) */
 
   this.decomp = decomp; // The decomposition model seen by the view
@@ -45,7 +45,7 @@ function DecompositionView(decomp){
   // setup this.markers and this.lines
   this._initBaseView();
   // this.elementOrdering = []; // list of ints - Not sure if needed
-};
+}
 
 /*
  *
@@ -57,10 +57,11 @@ DecompositionView.prototype._initBaseView = function(){
       z = this.visibleDimensions[2];
 
   var dv = this;
-  this.decomp.apply(function(plottable){
+  this.decomp.apply(function(plottable) {
     mesh = new THREE.Mesh(dv._genericSphere, new THREE.MeshPhongMaterial());
+    mesh.name = plottable.name;
 
-    mesh.material.color = new THREE.Color(0xff0000)
+    mesh.material.color = new THREE.Color(0xff0000);
     mesh.material.transparent = false;
     mesh.material.depthWrite = true;
     mesh.material.opacity = 1;
@@ -115,7 +116,25 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
  *
 **/
 DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
-  this.setCategoryAttribute(colorFunc, category, "color")
+  var cats = this.decomp.getUniqueValuesByCategory(category), scope = this,
+  dataView = [], colors = getColorList(cats, 'discrete-coloring-qiime'),
+  plottables;
+
+  _.each(cats, function(value) {
+    /*
+     *
+     * WARNING: This is mixing attributes of the view with the model ...
+     * it's a bit of a gray area though.
+     *
+     **/
+    color = colors[value];
+    plottables = scope.decomp.getPlottablesByMetadataCategoryValue(category, value);
+    scope.setGroupColor(color, plottables);
+
+    dataView.push({category: value, color: color, plottables: plottables});
+  });
+
+  return dataView;
 };
 
 /**
@@ -130,7 +149,7 @@ DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
 **/
 DecompositionView.prototype.setCategoryOpacity = function(opacityFunc,
                                                           category){
-  this.setCategoryAttribute(opacityFunc, category, "opacity")
+  this.setCategoryAttribute(opacityFunc, category, 'opacity');
 };
 
 /**
@@ -144,7 +163,7 @@ DecompositionView.prototype.setCategoryOpacity = function(opacityFunc,
  *
 **/
 DecompositionView.prototype.setCategoryScale = function(scaleFunc, category){
-  this.setCategoryAttribute(scaleFunc, group, "scale")
+  this.setCategoryAttribute(scaleFunc, group, 'scale');
 };
 
 /**
@@ -158,7 +177,7 @@ DecompositionView.prototype.setCategoryScale = function(scaleFunc, category){
  *
 **/
 DecompositionView.prototype.setCategoryShape = function(shapeFunc, category){
-  this.setCategoryAttribute(shapeFunc, category, "shape")
+  this.setCategoryAttribute(shapeFunc, category, 'shape');
 };
 
 
@@ -169,24 +188,30 @@ DecompositionView.prototype.setCategoryAttribute = function(value, category, att
 
 /* Change the color for a set of plottables - group: list of plottables */
 DecompositionView.prototype.setGroupColor = function(color, group){
-  this.setGroupAttribute(color, group, "color")
+  var idx;
+  var scope = this;
+
+  _.each(group, function(element) {
+    idx = element.idx;
+    scope.markers[idx].material.color = new THREE.Color(color);
+  });
 };
 
 /* Change the opacity for a set of plottables - group: list of plottables */
 DecompositionView.prototype.setGroupOpacity = function(opacity, group){
-  this.setGroupAttribute(opacity, group, "opacity")
+  this.setGroupAttribute(opacity, group, 'opacity');
 };
 
 /* Change the shape for a set of plottables - group: list of plottables */
 DecompositionView.prototype.setGroupShape = function(shape, group){
-  this.setGroupAttribute(shape, group, "shape")
+  this.setGroupAttribute(shape, group, 'shape');
 };
 
 /* Change the scale for a set of plottables - group: list of plottables */
 DecompositionView.prototype.setGroupScale = function(scale, group){
-  this.setGroupAttribute(scale, group, "scale")
+  this.setGroupAttribute(scale, group, 'scale');
 };
 
-DecompositionView.prototype.setGroupAttribue = function(value, group, attr){
+DecompositionView.prototype.setGroupAttribute = function(value, group, attr){
 
 };
