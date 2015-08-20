@@ -13,12 +13,6 @@
  *
  */
 
-
-// Constants
-var GRID_SCALE = 0.9;         // Scaling constant for grid dimensions
-var SCENE_VIEW_SCALE = 0.5;   // Scaling constant for scene plot view dimensions
-var SLICK_WIDTH = 25;         // Constant for width in slick-grid
-
 /**
  *
  * @name EmperorController
@@ -32,6 +26,12 @@ var SLICK_WIDTH = 25;         // Constant for width in slick-grid
  *
  **/
 EmperorController = function(dm, divId){
+
+  // Constants
+  this.GRID_SCALE = 0.9;         // Scaling constant for grid dimensions
+  this.SCENE_VIEW_SCALE = 0.5;   // Scaling constant for scene plot view dimensions
+  this.SLICK_WIDTH = 25;         // Constant for width in slick-grid
+
   this.$divId = $('#' + divId);
   this.width = this.$divId.width();
   this.height = this.$divId.height();
@@ -100,33 +100,33 @@ EmperorController.prototype.resize = function(width, height){
     this.sceneViews[0].resize(0, 0, plotWidth, this.height);
   }
   else if (this.sceneViews.length === 2) {
-    this.sceneViews[0].resize(0, 0, SCENE_VIEW_SCALE * plotWidth, this.height);
-    this.sceneViews[1].resize(SCENE_VIEW_SCALE * plotWidth, 0,
-                              SCENE_VIEW_SCALE * plotWidth, this.height);
+    this.sceneViews[0].resize(0, 0, this.SCENE_VIEW_SCALE * plotWidth, this.height);
+    this.sceneViews[1].resize(this.SCENE_VIEW_SCALE * plotWidth, 0,
+                              this.SCENE_VIEW_SCALE * plotWidth, this.height);
   }
   else if (this.sceneViews.length === 3) {
     this.sceneViews[0].resize(0, 0,
-                              SCENE_VIEW_SCALE * plotWidth,
-                              SCENE_VIEW_SCALE * this.height);
-    this.sceneViews[1].resize(SCENE_VIEW_SCALE * plotWidth, 0,
-                              SCENE_VIEW_SCALE * plotWidth,
-                              SCENE_VIEW_SCALE * this.height);
-    this.sceneViews[2].resize(0, SCENE_VIEW_SCALE * this.height,
-                              plotWidth, SCENE_VIEW_SCALE * this.height);
+                              this.SCENE_VIEW_SCALE * plotWidth,
+                              this.SCENE_VIEW_SCALE * this.height);
+    this.sceneViews[1].resize(this.SCENE_VIEW_SCALE * plotWidth, 0,
+                              this.SCENE_VIEW_SCALE * plotWidth,
+                              this.SCENE_VIEW_SCALE * this.height);
+    this.sceneViews[2].resize(0, this.SCENE_VIEW_SCALE * this.height,
+                              plotWidth, this.SCENE_VIEW_SCALE * this.height);
   }
   else if (this.sceneViews.length === 4) {
-    this.sceneViews[0].resize(0, 0, SCENE_VIEW_SCALE * plotWidth,
-                              SCENE_VIEW_SCALE * this.height);
-    this.sceneViews[1].resize(SCENE_VIEW_SCALE * plotWidth, 0,
-                              SCENE_VIEW_SCALE * plotWidth,
-                              SCENE_VIEW_SCALE * this.height);
-    this.sceneViews[2].resize(0, SCENE_VIEW_SCALE * this.height,
-                              SCENE_VIEW_SCALE * plotWidth,
-                              SCENE_VIEW_SCALE * this.height);
-    this.sceneViews[3].resize(SCENE_VIEW_SCALE * plotWidth,
-                              SCENE_VIEW_SCALE * this.height,
-                              SCENE_VIEW_SCALE * plotWidth,
-                              SCENE_VIEW_SCALE * this.height);
+    this.sceneViews[0].resize(0, 0, this.SCENE_VIEW_SCALE * plotWidth,
+                              this.SCENE_VIEW_SCALE * this.height);
+    this.sceneViews[1].resize(this.SCENE_VIEW_SCALE * plotWidth, 0,
+                              this.SCENE_VIEW_SCALE * plotWidth,
+                              this.SCENE_VIEW_SCALE * this.height);
+    this.sceneViews[2].resize(0, this.SCENE_VIEW_SCALE * this.height,
+                              this.SCENE_VIEW_SCALE * plotWidth,
+                              this.SCENE_VIEW_SCALE * this.height);
+    this.sceneViews[3].resize(this.SCENE_VIEW_SCALE * plotWidth,
+                              this.SCENE_VIEW_SCALE * this.height,
+                              this.SCENE_VIEW_SCALE * plotWidth,
+                              this.SCENE_VIEW_SCALE * this.height);
   }
   else {
     throw Error('More than four views are currently not supported');
@@ -137,8 +137,8 @@ EmperorController.prototype.resize = function(width, height){
   // resize the grid according to the size of the container, since we are
   // inside the tabs we have to account for that lost space, hence the
   // gridScale=0.9
-  var gridWidth = this.$plotMenu.width() * GRID_SCALE,
-      gridHeight = this.$plotMenu.height() * GRID_SCALE;
+  var gridWidth = this.$plotMenu.width() * this.GRID_SCALE,
+      gridHeight = this.$plotMenu.height() * this.GRID_SCALE;
   $('#myGrid').width(gridWidth);
   $('#myGrid').height(gridHeight);
 };
@@ -164,8 +164,8 @@ EmperorController.prototype.buildUI = function() {
   $('#emperor-menu-tabs').append("<div id='keys' class='emperor-tab-div'></div>");
   $('#emperor-menu-tabs').tabs({heightStyle: 'fill'});
 
-  var gridWidth = this.$plotMenu.width() * GRID_SCALE,
-      gridHeight = this.$plotMenu.height() * GRID_SCALE;
+  var gridWidth = this.$plotMenu.width() * this.GRID_SCALE,
+      gridHeight = this.$plotMenu.height() * this.GRID_SCALE;
 
   // http://stackoverflow.com/a/6602002
   var $select = $("<select class='emperor-tab-drop-down'>");
@@ -181,7 +181,7 @@ EmperorController.prototype.buildUI = function() {
   var grid;
   var columns = [
     {id: 'title', name: '', field: 'color', sortable: false,
-     maxWidth: SLICK_WIDTH, minWidth: SLICK_WIDTH, editor: ColorEditor,
+     maxWidth: this.SLICK_WIDTH, minWidth: this.SLICK_WIDTH, editor: ColorEditor,
      formatter: ColorFormatter},
     {id: 'field1', name: 'Category Name', field: 'category'}
   ];
