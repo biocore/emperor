@@ -41,7 +41,7 @@
  * @param {ci} an *optional* Array of floats indicating the confidence
  *             intervals in each dimension.
  *
-* **/
+ **/
 function Plottable(name, metadata, coordinates, idx, ci) {
   this.name = name;
   this.metadata = metadata;
