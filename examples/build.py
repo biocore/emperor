@@ -1,4 +1,14 @@
 #!/usr/bin/env python
+"""
+build.py: create an emperor plot with N random data samples by default N=10 but
+you can change this value when calling from the command line, for example
+to generate a plot with 111 samples do:
+
+    ./build.py 111
+
+Note that you will need jinja2 installed, and to execute the program from
+within the examples folder.
+"""
 from __future__ import division
 
 from jinja2 import Template
