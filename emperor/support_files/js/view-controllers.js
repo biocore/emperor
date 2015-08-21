@@ -19,6 +19,8 @@
  * 'opacity' or 'visibility'.
  * @param {Float} width, Width in pixels for the controller;
  * @param {Float} height, Height in pixels for the controller;
+ * @param {DecompositionModel} dm, Model object with the information to be
+ * represented.
  * @param {ScenePlotView} sceneViews, SceneViews to controll; Maybe remove and
  * add a callback. FIXME
  * @param {Object} options, Options to set to the controller before
@@ -28,16 +30,20 @@
  *
  **/
 function AttributeViewController(container, attrName, width, height,
-                                 sceneViews, options){
+                                 dm, sceneViews, options){
   var $container, $canvas;
   var scope = this;
 
   this.grid = null;
   this.attrName = attrName;
+  this.dm = dm;
 
   this._categorySelectionCallback = null;
   this._valueUpdatedCallback = null;
   this._slickGridColumn = null;
+
+  // Constant for width in slick-grid
+  this.SLICK_WIDTH = 25;
 
   // verify we have a valid container
   $container = $(container);
@@ -79,7 +85,8 @@ function AttributeViewController(container, attrName, width, height,
 
       // we use our homebrewed color editor
       scope._slickGridColumn = {id: 'title', name: '', field: 'color',
-                                sortable: false, maxWidth: 25, minWidth: 25,
+                                sortable: false, maxWidth: scope.SLICK_WIDTH,
+                                minWidth: scope.SLICK_WIDTH,
                                 editor: ColorEditor,
                                 formatter: ColorFormatter};
     }
@@ -103,9 +110,17 @@ function AttributeViewController(container, attrName, width, height,
   this.init = function() {
     var columns, gridOptions;
 
-    // initialize the base attributes
+    // initialize the base attributes depending on the controller type
     this._attrInit();
 
+    // http://stackoverflow.com/a/6602002
+    var $select = $("<select class='emperor-tab-drop-down'>");
+    _.each(scope.dm.md_headers, function(header) {
+      $select.append($('<option>').attr('value', header).text(header));
+    });
+    $container.append($select);
+
+    // add the category selector and the div where the grid will reside
     $canvas = $('<div></div>');
     $container.append($canvas);
     $canvas.width(width);
@@ -118,6 +133,7 @@ function AttributeViewController(container, attrName, width, height,
     gridOptions = {editable: true, enableAddRow: false,
                    enableCellNavigation: true, forceFitColumns: true};
 
+    // initialize the grid on load
     $(function() {
       scope.grid = new Slick.Grid($canvas, [], columns, gridOptions);
 

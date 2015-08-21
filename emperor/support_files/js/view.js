@@ -181,7 +181,21 @@ DecompositionView.prototype.setCategoryShape = function(shapeFunc, category){
 };
 
 
-DecompositionView.prototype.setCategoryAttribute = function(value, category, attr){
+DecompositionView.prototype.setCategoryAttribute = function(value, category,
+                                                            attr, options){
+
+  if (attr === 'color'){
+    var colorMap = 'discrete-coloring-qiime';
+
+    if (options){
+
+    }
+
+    this.setCategoryColors();
+  }
+  else{
+    throw new Error('Cannot change ' + attr + 'attribute.');
+  }
 
 };
 

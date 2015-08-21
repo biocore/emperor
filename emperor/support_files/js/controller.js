@@ -30,7 +30,6 @@ EmperorController = function(dm, divId){
   // Constants
   this.GRID_SCALE = 0.9;         // Scaling constant for grid dimensions
   this.SCENE_VIEW_SCALE = 0.5;   // Scaling constant for scene plot view dimensions
-  this.SLICK_WIDTH = 25;         // Constant for width in slick-grid
 
   this.$divId = $('#' + divId);
   this.width = this.$divId.width();
@@ -160,79 +159,16 @@ EmperorController.prototype.render = function() {
 EmperorController.prototype.buildUI = function() {
 
   this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
-  $('#emperor-menu-tabs').append("<ul><li><a href='#keys'>Key</a></li></ul>");
-  $('#emperor-menu-tabs').append("<div id='keys' class='emperor-tab-div'></div>");
+  $('#emperor-menu-tabs').append("<ul><li><a href='#color-tab'>Colors</a></li></ul>");
+  $('#emperor-menu-tabs').append("<div id='color-tab' class='emperor-tab-div'></div>");
   $('#emperor-menu-tabs').tabs({heightStyle: 'fill'});
 
   var gridWidth = this.$plotMenu.width() * this.GRID_SCALE,
       gridHeight = this.$plotMenu.height() * this.GRID_SCALE;
 
-  // http://stackoverflow.com/a/6602002
-  var $select = $("<select class='emperor-tab-drop-down'>");
-  _.each(this.dm.md_headers, function(header) {
-    $select.append($('<option>').attr('value', header).text(header));
-  });
+  var colorController = new AttributeViewController('#color-tab', 'color',
+                                                    gridWidth, gridHeight,
+                                                    this.dm, this.sceneViews,
+                                                    null);
 
-  $('#keys').append($select);
-  $('#keys').append("<div id='myGrid'></div>");
-  $('#myGrid').width(gridWidth);
-  $('#myGrid').height(gridHeight);
-
-  var grid;
-  var columns = [
-    {id: 'title', name: '', field: 'color', sortable: false,
-     maxWidth: this.SLICK_WIDTH, minWidth: this.SLICK_WIDTH, editor: ColorEditor,
-     formatter: ColorFormatter},
-    {id: 'field1', name: 'Category Name', field: 'category'}
-  ];
-
-  var options = {
-    editable: true,
-    enableAddRow: false,
-    enableCellNavigation: true,
-    forceFitColumns: true
-  };
-  /**
-   * Updates slick-grid cells
-   *
-   * @param {ec} Emperor Controller object
-   **/
-  $(function(ec) {
-    grid = new Slick.Grid('#myGrid', [], columns, options);
-
-    // subscribe to events when a cell is changed
-    grid.onCellChange.subscribe(function(e, args) {
-      var val = args.item.category, color = args.item.color, group = [];
-
-      group = args.item.plottables;
-      // Only coloring the first scene view.  Need to address in issue #4
-      ec.sceneViews[0].decViews[0].setGroupColor(color, group);
-    });
-
-    /**
-     * Changes the colors according to category
-     *
-     * @param {ec} Emperor Controller object
-     **/
-    function categorySelectorChanged(evt, params) {
-      var newCategory = params.selected;
-
-      data = ec.sceneViews[0].decViews[0].setCategoryColors('discrete-coloring-qiime', newCategory);
-      grid.setData(data);
-      grid.invalidate();
-      grid.render();
-    }
-    // fire a callback to initialize the data grid
-    categorySelectorChanged(null, {selected: $select.val()});
-
-    // setup chosen
-    $select.chosen({width: "100%", search_contains: true});
-    $select.chosen().change(categorySelectorChanged);
-
-    // make the columns fit the available space whenever the window resizes
-    // http://stackoverflow.com/a/29835739
-    $(window).resize(function() {
-      grid.setColumns(grid.getColumns());
-    });
-  }(this));
 };
