@@ -16,7 +16,7 @@
  * @property {Node} [container=div node] jQuery element for the parent
  * container.
  * This only contains the canvas.
- * @property {Boolean} [active=false] Indicates whether the tab is frontmost
+ * @property {Boolean} [active=false] Indicates whether the tab is front most
  * @property {String} [identifier="EMPtab-xxxxxxx"] Unique hash identifier for
  * the tab instance.
  * @property {Boolean} [enabled=true] Indicates if tab can be accessed.
@@ -41,7 +41,7 @@
  * EmperorViewControllerABC.
  *
  */
-EmperorViewControllerABC = function(container, title, description){
+function EmperorViewControllerABC(container, title, description){
   this.$container = $(container);
   this.title = title;
   this.description = description;
@@ -55,52 +55,13 @@ EmperorViewControllerABC = function(container, title, description){
 
   var scope = this; // only used within class
 
-  if ($container.length < 1) {
+  if (this.$container.length < 1) {
     throw new Error("Emperor requires a valid container, " +
-                    container + " does not exist in the DOM.");
+                    this.$container + " does not exist in the DOM.");
   }
 
-  this._init();
-
-  /**
-   * Sets whether or not the tab can be modified or accessed.
-   *
-   * @param {Boolean} [trulse] option to enable tab.
-   */
-  this.setEnabled = function(trulse){
-    if(typeof(trulse) === "boolean"){
-      scope.enabled = trulse;
-    }
-    else{
-      throw new Error("`trulse` can only be of boolean type");
-    }
-  }
-
-  /**
-   * Sets whether or not the tab is visible.
-   *
-   * @param {Boolean} [trulse] option to activate tab
-   * (i.e. move tab to foreground).
-   */
-  this.setActive = function(trulse){
-    if(scope.enabled === true){
-      if(typeof(trulse) === "boolean"){
-        scope.active = trulse;
-      }
-      else{
-        throw new Error("`trulse` can only be of boolean type");
-      }
-    }
-  }
-
-  return this;
-}
-
-/**
- * Initializes the canvas and appends the canvas to the container
- * and initializes the header and the body to empty divs.
- */
-EmperorViewControllerABC._init = function(){
+  // Initializes the canvas and appends the canvas to the container
+  // and initializes the header and the body to empty divs.
   this.$canvas = $('<div></div>');
   this.$container.append(this.$canvas);
   this.$canvas.width(this.$container.width());
@@ -110,7 +71,40 @@ EmperorViewControllerABC._init = function(){
   this.$body = $('<div></div>');
   this.$canvas.append(this.$header);
   this.$canvas.append(this.$body);
+
+  return this;
 }
+
+/**
+ * Sets whether or not the tab can be modified or accessed.
+ *
+ * @param {Boolean} [trulse] option to enable tab.
+ */
+EmperorViewControllerABC.prototype.setEnabled = function(trulse){
+  if(typeof(trulse) === "boolean"){
+    this.enabled = trulse;
+  }
+  else{
+    throw new Error("`trulse` can only be of boolean type");
+  }
+};
+
+/**
+ * Sets whether or not the tab is visible.
+ *
+ * @param {Boolean} [trulse] option to activate tab
+ * (i.e. move tab to foreground).
+ */
+EmperorViewControllerABC.prototype.setActive = function(trulse){
+  if(this.enabled === true){
+    if(typeof(trulse) === "boolean"){
+      this.active = trulse;
+    }
+    else{
+      throw new Error("`trulse` can only be of boolean type");
+    }
+  }
+};
 
 /**
  * Resizes the container.
@@ -127,16 +121,15 @@ EmperorViewControllerABC.prototype.resize = function(width, height) {
  *
  * @return {String} JSON string representation of self.
  */
-EmperorViewControllerABC.prototype.toJSON(){
+EmperorViewControllerABC.prototype.toJSON = function(){
   throw Error('Not implemented');
-}
-
+};
 
 /**
  * Decodes JSON string and modifies its own instance variables accordingly.
  *
  * @param {String} JSON string representation of an instance.
  */
-EmperorViewControllerABC.prototype.fromJSON(jsonString){
+EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
   throw Error('Not implemented');
-}
+};
