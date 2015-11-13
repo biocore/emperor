@@ -53,7 +53,7 @@ function EmperorViewControllerABC(container, title, description){
   this.identifier = "EMPtab-" + Math.round(1000000 * Math.random());
   this.enabled = true;
 
-  var scope = this; // only used within class
+  var self = this; // only used within class
 
   if (this.$container.length < 1) {
     throw new Error("Emperor requires a valid container, " +
