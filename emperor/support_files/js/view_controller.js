@@ -190,7 +190,8 @@ function EmperorAttributeABC(container, title, description, decompViewDict,
   this.metadataField = metadataField;
 
   this.bodyGrid = bodyGrid;
-  this.activeViewKey = undefined;
+  // Picks the first key in the dictionary as the active key
+  this.activeViewKey = Object.keys(decompViewDict)[0];
   return this;
 }
 EmperorAttributeABC.prototype = Object.create(EmperorViewControllerABC.prototype);
