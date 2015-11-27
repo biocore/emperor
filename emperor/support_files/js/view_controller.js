@@ -239,7 +239,7 @@ EmperorAttributeABC.prototype.getSlickGridDataset = function(){
  *
  * @params {Array} [data] data.
  */
-EmperorAttributeABC.prototype.setSlickGridDataSet = function(data){
+EmperorAttributeABC.prototype.setSlickGridDataset = function(data){
   // Re-render
   this.bodyGrid.setData(data);
   this.bodyGrid.invalidate();

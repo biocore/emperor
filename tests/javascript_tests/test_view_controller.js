@@ -121,7 +121,6 @@ $(document).ready(function() {
                                       metadata);
 
       // Slickgrid
-      var grid;
       var columns = [
         {id: "pc1", name: "pc1", field: "pc1"},
         {id: "pc2", name: "pc2", field: "pc2"},
@@ -282,18 +281,30 @@ $(document).ready(function() {
     equal(attr.getActiveDecompViewKey(), 'biplot');
   });
 
-  // test('Test getSlickGridDataset', function(){
-  //   var dv = new DecompositionView(decomp);
-  //   var container = $('<div id="does-not-exist"></div>');
-  //   var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
-  //                                      {'scatter': dv, 'biplot': dv}, 
-  //                                      'butter', grid);    
-  //   //equal(attr.getSlickGridDataset(), [[1, 1, 1], [1, 1, 1]]);
+  test('Test getSlickGridDataset', function(){
+    var dv = new DecompositionView(decomp);
+    var container = $('<div id="does-not-exist"></div>');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+                                       {'scatter': dv, 'biplot': dv}, 
+                                       'butter', grid);    
+    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':1, 'pc3':1}, 
+                                           {'pc1':1, 'pc2':1, 'pc3':2}]);
     
-  // });
+  });
 
-  // test('Test setSlickGridDataset', function(){
-    
-  // });
+  test('Test setSlickGridDataset', function(){
+    var dv = new DecompositionView(decomp);
+    var container = $('<div id="does-not-exist"></div>');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+                                       {'scatter': dv, 'biplot': dv}, 
+                                       'butter', grid);    
+    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':1, 'pc3':1}, 
+                                           {'pc1':1, 'pc2':1, 'pc3':2}]);
+    attr.setSlickGridDataset([{'pc1':1, 'pc2':2, 'pc3':3}, 
+                              {'pc1':1, 'pc2':1, 'pc3':2}])
+    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':2, 'pc3':3}, 
+                                           {'pc1':1, 'pc2':1, 'pc3':2}]);
+
+  });
 
 });
