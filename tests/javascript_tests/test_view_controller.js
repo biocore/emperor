@@ -249,7 +249,7 @@ $(document).ready(function() {
   
   /**
    *
-   * Test the resize, toJSON and fromJSON methods raise the appropriate errors.
+   * Test set metadata field
    *
    */
   test('Test setMetadataField', function(){
@@ -262,6 +262,11 @@ $(document).ready(function() {
     equal(attr.metadataField, 'cheese');
   });
 
+  /**
+   *
+   * Test get active decomposition view key
+   *
+   */
   test('Test getActiveDecompViewKey', function(){
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
@@ -270,6 +275,11 @@ $(document).ready(function() {
     equal(attr.getActiveDecompViewKey(), 'scatter');
   });
 
+  /**
+   *
+   * Test set active decomposition view key
+   *
+   */
   test('Test setActiveDecompViewKey', function(){
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
@@ -281,6 +291,11 @@ $(document).ready(function() {
     equal(attr.getActiveDecompViewKey(), 'biplot');
   });
 
+  /**
+   *
+   * Test get slick grid dataset
+   *
+   */
   test('Test getSlickGridDataset', function(){
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
@@ -292,6 +307,11 @@ $(document).ready(function() {
     
   });
 
+  /**
+   *
+   * Test set slick grid dataset
+   *
+   */
   test('Test setSlickGridDataset', function(){
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
