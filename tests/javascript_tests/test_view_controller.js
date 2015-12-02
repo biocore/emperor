@@ -122,7 +122,6 @@ $(document).ready(function() {
                   ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
       decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
-<<<<<<< HEAD
       var dv = new DecompositionView(decomp);
       sharedDecompositionViewDict['pcoa'] = dv;
 
@@ -142,7 +141,6 @@ $(document).ready(function() {
                                       metadata);
       dv = new DecompositionView(decomp);
       sharedDecompositionViewDict['biplot'] = dv;
-=======
 
       // Slickgrid
       var columns = [
@@ -157,11 +155,9 @@ $(document).ready(function() {
       };
       var data = [];
       data.push({'pc1':1, 'pc2':1, 'pc3':1});
-      data.push({'pc1':1, 'pc2':1, 'pc3':2})
+      data.push({'pc1':1, 'pc2':1, 'pc3':2});
 
       grid = new Slick.Grid("#id1", data, columns, options);
-
->>>>>>> cc2e14edbd5d323ead2116b7e7916a00d7d28fa1
     },
     teardown: function(){
       sharedDecompositionViewDict = undefined;
@@ -176,38 +172,13 @@ $(document).ready(function() {
   test("Constructor tests", function(assert) {
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
-<<<<<<< HEAD
-    var controller = new EmperorAttributeABC(container, 'foo', 'bar',
-                                             sharedDecompositionViewDict);
 
     // verify the subclassing was set properly
     assert.ok(EmperorAttributeABC.prototype instanceof
               EmperorViewControllerABC);
-
-    deepEqual(controller.
-
-=======
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar', dv);
-
-    equal(attr.title, 'foo', 'Check the title is correctly set');
-    equal(attr.description, 'bar', 'Check the description is correctly'+
-                                        ' set');
-    equal(attr.$container.id, container.id, 'Check the id of the '+
-                                                  'parent is correct');
-    equal(attr.active, false, 'Check the active property');
-    equal(attr.identifier.slice(0, 7), 'EMPtab-', 'Check the identifier'+
-                                                        ' property');
-    parseFloat(attr.identifier.slice(7));
-    equal(attr.enabled, true, 'Check the enabled property');
-
-    // check all the elements were successfully created
-    assert.ok(attr.$canvas.length);
-    assert.ok(attr.$header.length);
-    assert.ok(attr.$body.length);
-
-    assert.ok($.contains(attr.$canvas, attr.$header));
-    assert.ok($.contains(attr.$canvas, attr.$body));
->>>>>>> cc2e14edbd5d323ead2116b7e7916a00d7d28fa1
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                             sharedDecompositionViewDict);
+    // FIXME: We need tests :(
   });
 
   /**
@@ -285,7 +256,7 @@ $(document).ready(function() {
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
-                                       {'scatter': dv}, 'butter');    
+                                       {'scatter': dv}, 'butter');
     equal(attr.metadataField, 'butter');
     attr.setMetadataField('cheese');
     equal(attr.metadataField, 'cheese');
