@@ -104,6 +104,9 @@ $(document).ready(function() {
   module("EmperorAttributeABC", {
 
     setup: function(){
+      sharedDecompositionViewDict = {}
+      var decomp;
+
       // setup function
       name = "pcoa";
       ids = ['PC.636', 'PC.635'];
@@ -119,18 +122,29 @@ $(document).ready(function() {
                   ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
       decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
+      var dv = new DecompositionView(decomp);
+      sharedDecompositionViewDict['pcoa'] = dv;
+
+      name = "biplot";
+      ids = ['tax_1', 'tax_2'];
+      coords = [
+        [-1, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+         -0.229889, -0.046599],
+        [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
+         -0.112864, 0.064794]];
+      pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
+                 10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+      md_headers = ['SampleID', 'Gram'];
+      metadata = [['tax_1', '1'],
+                  ['tax_2', '0']];
+      decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                      metadata);
+      dv = new DecompositionView(decomp);
+      sharedDecompositionViewDict['biplot'] = dv;
     },
     teardown: function(){
-      // teardown function
-      name = null;
-      ids = null;
-      coords = null;
-      pct_var = null;
-      md_headers = null;
-      metadata = null;
-      decomp = null;
+      sharedDecompositionViewDict = undefined;
     }
-
   });
 
   /**
@@ -141,26 +155,15 @@ $(document).ready(function() {
   test("Constructor tests", function(assert) {
 
     var container = $('<div id="does-not-exist"></div>');
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar');
+    var controller = new EmperorAttributeABC(container, 'foo', 'bar',
+                                             sharedDecompositionViewDict);
 
-    equal(controller.title, 'foo', 'Check the title is correctly set');
-    equal(controller.description, 'bar', 'Check the description is correctly'+
-                                        ' set');
-    equal(controller.$container.id, container.id, 'Check the id of the '+
-                                                  'parent is correct');
-    equal(controller.active, false, 'Check the active property');
-    equal(controller.identifier.slice(0, 7), 'EMPtab-', 'Check the identifier'+
-                                                        ' property');
-    parseFloat(controller.identifier.slice(7));
-    equal(controller.enabled, true, 'Check the enabled property');
+    // verify the subclassing was set properly
+    assert.ok(EmperorAttributeABC.prototype instanceof
+              EmperorViewControllerABC);
 
-    // check all the elements were successfully created
-    assert.ok(controller.$canvas.length);
-    assert.ok(controller.$header.length);
-    assert.ok(controller.$body.length);
+    deepEqual(controller.
 
-    assert.ok($.contains(controller.$canvas, controller.$header));
-    assert.ok($.contains(controller.$canvas, controller.$body));
   });
 
   /**

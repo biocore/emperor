@@ -147,8 +147,8 @@ EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
  * @property {String} [activeViewKey=undefined] This is the key of the active
  * decomposition view.
  * @property {String} [metadataField] Metadata column name.
- * @property {Slick.Grid} [bodyGrid] Container that lists the metadata
- * categories described unther the `metadataField` column and the attribute
+ * @property {Slick.Grid} [_bodyGrid] Container that lists the metadata
+ * categories described under the `metadataField` column and the attribute
  * that can be modified.
  *
  */
@@ -165,16 +165,12 @@ EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
  * identifiers and the values are DecompositionView objects referring to a set
  * of objects presented on screen. This dictionary will usually be shared by
  * all the tabs in the application. This argument is passed by reference.
- * @params {String} [metadataField] Metadata column name.
- * @params {Slick.Grid} [bodyGrid] Container that lists the metadata categories
- * described unther the `metadataField` column and the attribute that can be
- * modified.
+ *
  * @return {EmperorAttributeABC} Returns an instance of the EmperorAttributeABC
  * class.
  *
  */
-function EmperorAttributeABC(container, title, description, decompViewDict,
-                             metadataField, bodyGrid){
+function EmperorAttributeABC(container, title, description, decompViewDict){
   EmperorViewControllerABC.call(this, container, title, description);
 
   if (decompViewDict === undefined){
@@ -185,12 +181,13 @@ function EmperorAttributeABC(container, title, description, decompViewDict,
   }
   this.decompViewDict = decompViewDict;
 
-  // FIXME: this should be validated against decompViewDict i.e. we should be
-  // verifying that the metadata field indeed exists in the decomposition model
-  this.metadataField = metadataField;
+  this.metadataField = null;
+  this.activeViewKey = null;
 
-  this.bodyGrid = bodyGrid;
-  this.activeViewKey = undefined;
+  // This is a gray area, but we believe it makes sense to have a callback
+  // that initializes the grid object
+  this._bodyGrid = this.buildGrid();
+
   return this;
 }
 EmperorAttributeABC.prototype = Object.create(EmperorViewControllerABC.prototype);
@@ -202,6 +199,8 @@ EmperorAttributeABC.prototype.constructor = EmperorViewControllerABC;
  * @params {String} [m] Metadata column name to control.
  */
 EmperorAttributeABC.prototype.setMetadataField = function(m){
+  // FIXME: this should be validated against decompViewDict i.e. we should be
+  // verifying that the metadata field indeed exists in the decomposition model
   this.metadataField = m;
 }
 
@@ -221,6 +220,8 @@ EmperorAttributeABC.prototype.getActiveDecompViewKey = function(){
  * @params {String} [k] Key corresponding to active decomposition view.
  */
 EmperorAttributeABC.prototype.setActiveDecompViewKey = function(k){
+  // FIXME: this should be validated against decompViewDict i.e. we should be
+  // verifying that the key indeed exists
   this.activeViewKey = k;
 }
 
@@ -230,7 +231,7 @@ EmperorAttributeABC.prototype.setActiveDecompViewKey = function(k){
  * displayed by the body grid.
  */
 EmperorAttributeABC.prototype.getSlickGridDataset = function(){
-  return this.bodyGrid.getData();
+  return this._bodyGrid.getData();
 }
 
 /**
@@ -240,7 +241,16 @@ EmperorAttributeABC.prototype.getSlickGridDataset = function(){
  */
 EmperorAttributeABC.prototype.setSlickGridDataSet = function(data){
   // Re-render
-  this.bodyGrid.setData(data);
-  this.bodyGrid.invalidate();
-  this.bodyGrid.render();
+  this._bodyGrid.setData(data);
+  this._bodyGrid.invalidate();
+  this._bodyGrid.render();
+}
+
+/**
+ * Method in charge of building the SlickGrid object
+ *
+ * @returns Slick.Grid object with a minimal setup.
+ */
+EmperorAttributeABC.prototype.buildGrid = function(){
+  return new Slick.Grid(this.$body, [], [], {enableColumnReorder: false});
 }
