@@ -144,8 +144,8 @@ EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
  * identifiers and the values are DecompositionView objects referring to a set
  * of objects presented on screen. This dictionary will usually be shared by
  * all the tabs in the application. This argument is passed by reference.
- * @property {String} [activeViewKey=undefined] This is the key of the active
- * decomposition view.
+ * @property {String} [activeViewKey=First Key in decompViewDict] This is the
+ * key of the active decomposition view.
  * @property {String} [metadataField] Metadata column name.
  * @property {Slick.Grid} [_bodyGrid] Container that lists the metadata
  * categories described under the `metadataField` column and the attribute
@@ -188,6 +188,8 @@ function EmperorAttributeABC(container, title, description, decompViewDict){
   // that initializes the grid object
   this._bodyGrid = this.buildGrid();
 
+  // Picks the first key in the dictionary as the active key
+  this.activeViewKey = Object.keys(decompViewDict)[0];
   return this;
 }
 EmperorAttributeABC.prototype = Object.create(EmperorViewControllerABC.prototype);
@@ -239,7 +241,7 @@ EmperorAttributeABC.prototype.getSlickGridDataset = function(){
  *
  * @params {Array} [data] data.
  */
-EmperorAttributeABC.prototype.setSlickGridDataSet = function(data){
+EmperorAttributeABC.prototype.setSlickGridDataset = function(data){
   // Re-render
   this._bodyGrid.setData(data);
   this._bodyGrid.invalidate();

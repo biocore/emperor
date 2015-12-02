@@ -122,6 +122,7 @@ $(document).ready(function() {
                   ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
       decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
+<<<<<<< HEAD
       var dv = new DecompositionView(decomp);
       sharedDecompositionViewDict['pcoa'] = dv;
 
@@ -141,6 +142,26 @@ $(document).ready(function() {
                                       metadata);
       dv = new DecompositionView(decomp);
       sharedDecompositionViewDict['biplot'] = dv;
+=======
+
+      // Slickgrid
+      var columns = [
+        {id: "pc1", name: "pc1", field: "pc1"},
+        {id: "pc2", name: "pc2", field: "pc2"},
+        {id: "pc3", name: "pc3", field: "pc3"},
+      ];
+
+      var options = {
+        enableCellNavigation: true,
+        enableColumnReorder: false
+      };
+      var data = [];
+      data.push({'pc1':1, 'pc2':1, 'pc3':1});
+      data.push({'pc1':1, 'pc2':1, 'pc3':2})
+
+      grid = new Slick.Grid("#id1", data, columns, options);
+
+>>>>>>> cc2e14edbd5d323ead2116b7e7916a00d7d28fa1
     },
     teardown: function(){
       sharedDecompositionViewDict = undefined;
@@ -153,8 +174,9 @@ $(document).ready(function() {
    *
    */
   test("Constructor tests", function(assert) {
-
+    var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
+<<<<<<< HEAD
     var controller = new EmperorAttributeABC(container, 'foo', 'bar',
                                              sharedDecompositionViewDict);
 
@@ -164,6 +186,28 @@ $(document).ready(function() {
 
     deepEqual(controller.
 
+=======
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar', dv);
+
+    equal(attr.title, 'foo', 'Check the title is correctly set');
+    equal(attr.description, 'bar', 'Check the description is correctly'+
+                                        ' set');
+    equal(attr.$container.id, container.id, 'Check the id of the '+
+                                                  'parent is correct');
+    equal(attr.active, false, 'Check the active property');
+    equal(attr.identifier.slice(0, 7), 'EMPtab-', 'Check the identifier'+
+                                                        ' property');
+    parseFloat(attr.identifier.slice(7));
+    equal(attr.enabled, true, 'Check the enabled property');
+
+    // check all the elements were successfully created
+    assert.ok(attr.$canvas.length);
+    assert.ok(attr.$header.length);
+    assert.ok(attr.$body.length);
+
+    assert.ok($.contains(attr.$canvas, attr.$header));
+    assert.ok($.contains(attr.$canvas, attr.$body));
+>>>>>>> cc2e14edbd5d323ead2116b7e7916a00d7d28fa1
   });
 
   /**
@@ -173,15 +217,17 @@ $(document).ready(function() {
    */
   test('Test the enabled method works', function(){
 
+    var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
-    var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+                                       {'scatter': dv});
 
-    equal(controller.enabled, true);
-    controller.setEnabled(false);
-    equal(controller.enabled, false);
+    equal(attr.enabled, true);
+    attr.setEnabled(false);
+    equal(attr.enabled, false);
 
     throws(function(){
-      controller.setEnabled('shenanigans');
+      attr.setEnabled('shenanigans');
     }, Error, 'setEnabled can only take a boolean');
   });
 
@@ -192,15 +238,17 @@ $(document).ready(function() {
    */
   test('Test the setActive method works', function(){
 
+    var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
-    var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                       {'scatter': dv});
 
-    equal(controller.active, false);
-    controller.setActive(true);
-    equal(controller.active, true);
+    equal(attr.active, false);
+    attr.setActive(true);
+    equal(attr.active, true);
 
     throws(function(){
-      controller.setActive('shenanigans');
+      attr.setActive('shenanigans');
     }, Error, 'setActive can only take a boolean');
   });
 
@@ -211,20 +259,101 @@ $(document).ready(function() {
    */
   test('Test resize, toJSON and fromJSON methods', function(){
 
+    var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
-    var controller = EmperorViewControllerABC(container, 'foo', 'bar');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+                                       {'scatter': dv});
     throws(function(){
-      controller.resize(10, 10);
+      attr.resize(10, 10);
     }, Error, 'Cannot call this abstract method');
 
     throws(function(){
-      controller.fromJSON('{foo:11}');
+      attr.fromJSON('{foo:11}');
     }, Error, 'Cannot call this abstract method');
 
     throws(function(){
-      controller.toJSON();
+      attr.toJSON();
     }, Error, 'Cannot call this abstract method');
   });
+  
+  /**
+   *
+   * Test set metadata field
+   *
+   */
+  test('Test setMetadataField', function(){
+    var dv = new DecompositionView(decomp);
+    var container = $('<div id="does-not-exist"></div>');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+                                       {'scatter': dv}, 'butter');    
+    equal(attr.metadataField, 'butter');
+    attr.setMetadataField('cheese');
+    equal(attr.metadataField, 'cheese');
+  });
 
+  /**
+   *
+   * Test get active decomposition view key
+   *
+   */
+  test('Test getActiveDecompViewKey', function(){
+    var dv = new DecompositionView(decomp);
+    var container = $('<div id="does-not-exist"></div>');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+                                       {'scatter': dv}, 'butter');    
+    equal(attr.getActiveDecompViewKey(), 'scatter');
+  });
+
+  /**
+   *
+   * Test set active decomposition view key
+   *
+   */
+  test('Test setActiveDecompViewKey', function(){
+    var dv = new DecompositionView(decomp);
+    var container = $('<div id="does-not-exist"></div>');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+                                       {'scatter': dv, 'biplot': dv}, 
+                                       'butter');    
+    equal(attr.getActiveDecompViewKey(), 'scatter');
+    attr.setActiveDecompViewKey('biplot')
+    equal(attr.getActiveDecompViewKey(), 'biplot');
+  });
+
+  /**
+   *
+   * Test get slick grid dataset
+   *
+   */
+  test('Test getSlickGridDataset', function(){
+    var dv = new DecompositionView(decomp);
+    var container = $('<div id="does-not-exist"></div>');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+                                       {'scatter': dv, 'biplot': dv}, 
+                                       'butter', grid);    
+    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':1, 'pc3':1}, 
+                                           {'pc1':1, 'pc2':1, 'pc3':2}]);
+    
+  });
+
+  /**
+   *
+   * Test set slick grid dataset
+   *
+   */
+  test('Test setSlickGridDataset', function(){
+    var dv = new DecompositionView(decomp);
+    var container = $('<div id="does-not-exist"></div>');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+                                       {'scatter': dv, 'biplot': dv}, 
+                                       'butter', grid);    
+    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':1, 'pc3':1}, 
+                                           {'pc1':1, 'pc2':1, 'pc3':2}]);
+    attr.setSlickGridDataset([{'pc1':1, 'pc2':2, 'pc3':3}, 
+                              {'pc1':1, 'pc2':1, 'pc3':2}])
+    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':2, 'pc3':3}, 
+                                           {'pc1':1, 'pc2':1, 'pc3':2}]);
+
+  });
 
 });

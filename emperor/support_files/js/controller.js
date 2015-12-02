@@ -16,6 +16,7 @@
 /**
  *
  * @name EmperorController
+ *       This is the application controller
  *
  * @class Contains all the information on how the model is being presented to
  *        the user.
@@ -236,3 +237,5 @@ EmperorController.prototype.buildUI = function() {
     });
   }(this));
 };
+
+
