@@ -1,12 +1,6 @@
 $(document).ready(function() {
 
   module("EmperorViewControllerABC", {
-
-    setup: function(){
-    },
-    teardown: function(){
-    }
-
   });
 
   /**
@@ -105,7 +99,8 @@ $(document).ready(function() {
 
     setup: function(){
       sharedDecompositionViewDict = {}
-      var decomp;
+      var $slickid = $('<div id="fooligans"></div>');
+      $slickid.appendTo(document.body);
 
       // setup function
       name = "pcoa";
@@ -157,10 +152,12 @@ $(document).ready(function() {
       data.push({'pc1':1, 'pc2':1, 'pc3':1});
       data.push({'pc1':1, 'pc2':1, 'pc3':2});
 
-      grid = new Slick.Grid("#id1", data, columns, options);
+      grid = new Slick.Grid("#fooligans", data, columns, options);
     },
     teardown: function(){
       sharedDecompositionViewDict = undefined;
+      $("#fooligans").remove();
+      decomp=undefined;
     }
   });
 
@@ -170,6 +167,7 @@ $(document).ready(function() {
    *
    */
   test("Constructor tests", function(assert) {
+    console.log(decomp)
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
 
@@ -177,7 +175,18 @@ $(document).ready(function() {
     assert.ok(EmperorAttributeABC.prototype instanceof
               EmperorViewControllerABC);
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                             sharedDecompositionViewDict);
+                                       sharedDecompositionViewDict);
+
+    assert.ok(EmperorAttributeABC.prototype instanceof
+              EmperorViewControllerABC);
+
+    throws(function(){
+      new EmperorAttributeABC(container, 'foo', 'bar',
+                              {1:1, 2:2});
+      attr.setActive('shenanigans');
+    }, Error, 'The decomposition view dictionary' +
+              'can only have decomposition views');
+
     // FIXME: We need tests :(
   });
 
@@ -190,7 +199,7 @@ $(document).ready(function() {
 
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                        {'scatter': dv});
 
     equal(attr.enabled, true);
@@ -232,7 +241,7 @@ $(document).ready(function() {
 
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                        {'scatter': dv});
     throws(function(){
       attr.resize(10, 10);
@@ -255,9 +264,8 @@ $(document).ready(function() {
   test('Test setMetadataField', function(){
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
-                                       {'scatter': dv}, 'butter');
-    equal(attr.metadataField, 'butter');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                       {'scatter': dv});
     attr.setMetadataField('cheese');
     equal(attr.metadataField, 'cheese');
   });
@@ -270,8 +278,8 @@ $(document).ready(function() {
   test('Test getActiveDecompViewKey', function(){
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
-                                       {'scatter': dv}, 'butter');    
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                       {'scatter': dv});
     equal(attr.getActiveDecompViewKey(), 'scatter');
   });
 
@@ -283,28 +291,12 @@ $(document).ready(function() {
   test('Test setActiveDecompViewKey', function(){
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
-                                       {'scatter': dv, 'biplot': dv}, 
-                                       'butter');    
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                       {'scatter': dv, 'biplot': dv},
+                                       'butter');
     equal(attr.getActiveDecompViewKey(), 'scatter');
     attr.setActiveDecompViewKey('biplot')
     equal(attr.getActiveDecompViewKey(), 'biplot');
-  });
-
-  /**
-   *
-   * Test get slick grid dataset
-   *
-   */
-  test('Test getSlickGridDataset', function(){
-    var dv = new DecompositionView(decomp);
-    var container = $('<div id="does-not-exist"></div>');
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
-                                       {'scatter': dv, 'biplot': dv}, 
-                                       'butter', grid);    
-    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':1, 'pc3':1}, 
-                                           {'pc1':1, 'pc2':1, 'pc3':2}]);
-    
   });
 
   /**
@@ -315,16 +307,11 @@ $(document).ready(function() {
   test('Test setSlickGridDataset', function(){
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar', 
-                                       {'scatter': dv, 'biplot': dv}, 
-                                       'butter', grid);    
-    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':1, 'pc3':1}, 
-                                           {'pc1':1, 'pc2':1, 'pc3':2}]);
-    attr.setSlickGridDataset([{'pc1':1, 'pc2':2, 'pc3':3}, 
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                       {'scatter': dv, 'biplot': dv});
+    attr.setSlickGridDataset([{'pc1':1, 'pc2':2, 'pc3':3},
                               {'pc1':1, 'pc2':1, 'pc3':2}])
-    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':2, 'pc3':3}, 
+    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':2, 'pc3':3},
                                            {'pc1':1, 'pc2':1, 'pc3':2}]);
-
   });
-
 });

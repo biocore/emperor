@@ -176,6 +176,12 @@ function EmperorAttributeABC(container, title, description, decompViewDict){
   if (decompViewDict === undefined){
     throw Error('The decomposition view dictionary cannot be undefined');
   }
+  for(dv in decompViewDict){
+    if(!dv instanceof DecompositionView){
+      throw Error('The decomposition view dictionary ' +
+                  'can only have decomposition views');
+    }
+  }
   if (_.size(decompViewDict) <= 0){
     throw Error('The decomposition view dictionary cannot be empty');
   }
