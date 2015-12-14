@@ -94,7 +94,6 @@ $(document).ready(function() {
   });
 
 
-
   module("EmperorAttributeABC", {
 
     setup: function(){
