@@ -160,6 +160,9 @@ EmperorController.prototype.render = function() {
  **/
 EmperorController.prototype.buildUI = function() {
 
+  $('#emperor-menu-tabs').append("<ul><li><a href='#color-tab'>Colors</a></li></ul>");
+  $('#emperor-menu-tabs').append("<div id='color-tab' class='emperor-tab-div'></div>");
+
   this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
   $('#emperor-menu-tabs').append("<ul><li><a href='#keys'>Key</a></li></ul>");
   $('#emperor-menu-tabs').append("<div id='keys' class='emperor-tab-div'></div>");
