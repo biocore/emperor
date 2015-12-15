@@ -150,6 +150,9 @@ EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
  * @property {Slick.Grid} [_bodyGrid] Container that lists the metadata
  * categories described under the `metadataField` column and the attribute
  * that can be modified.
+ * @property {Object} [options] This is a dictionary of options used to build
+ * the view controller. Used to set attributes of the slick grid and the
+ * metadata category drop down.
  *
  */
 
@@ -165,12 +168,16 @@ EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
  * identifiers and the values are DecompositionView objects referring to a set
  * of objects presented on screen. This dictionary will usually be shared by
  * all the tabs in the application. This argument is passed by reference.
+ * @params {Object} [options] This is a dictionary of options used to build
+ * the view controller. Used to set attributes of the slick grid and the
+ * metadata category drop down.
  *
  * @return {EmperorAttributeABC} Returns an instance of the EmperorAttributeABC
  * class.
  *
  */
-function EmperorAttributeABC(container, title, description, decompViewDict){
+function EmperorAttributeABC(container, title, description,
+                             decompViewDict, options){
   EmperorViewControllerABC.call(this, container, title, description);
 
   if (decompViewDict === undefined){
@@ -190,12 +197,38 @@ function EmperorAttributeABC(container, title, description, decompViewDict){
   this.metadataField = null;
   this.activeViewKey = null;
 
+  $(function() {
+    // revise this section of code, we neeed to at the proper setup
+    // for the slick grid object and for the rest of the chosen object
+    // we also have to have a look at how the color view controller and other
+    // subclasses are going to be using this new interface. Finally we should
+    // make sure we add tests.
+
+    // setup chosen
+    $select.chosen({width: "100%", search_contains: true});
+    $select.chosen().change(scope._categorySelectionCallback);
+
+    // make the columns fit the available spce whenever the window resizes
+    // http://stackoverflow.com/a/29835739
+    $(window).resize(function() {
+      scope.grid.setColumns(scope.grid.getColumns());
+    });
+  });
+
   // This is a gray area, but we believe it makes sense to have a callback
   // that initializes the grid object
-  this._bodyGrid = this.buildGrid();
+  this._bodyGrid = this.buildGrid(options);
 
   // Picks the first key in the dictionary as the active key
   this.activeViewKey = Object.keys(decompViewDict)[0];
+
+  var dm = decompViewDict[this.activeViewKey];
+  this.$select = $("<select class='emperor-tab-drop-down'>");
+     _.each(dm.md_headers, function(header) {
+       $select.append($('<option>').attr('value', header).text(header));
+     });
+  this.$header.append(this.$select);
+
   return this;
 }
 EmperorAttributeABC.prototype = Object.create(EmperorViewControllerABC.prototype);
@@ -259,6 +292,17 @@ EmperorAttributeABC.prototype.setSlickGridDataset = function(data){
  *
  * @returns Slick.Grid object with a minimal setup.
  */
-EmperorAttributeABC.prototype.buildGrid = function(){
-  return new Slick.Grid(this.$body, [], [], {enableColumnReorder: false});
+EmperorAttributeABC.prototype.buildGrid = function(options){
+
+  // check if slickGridColumn is in options?
+  var columns;
+  if(options.slickGridColumn === undefined){
+    columns = [{id: 'field1', name: 'Category Name', field: 'category'}];
+  }else{
+    columns = [options.slickGridColumn,
+               {id: 'field1', name: 'Category Name', field: 'category'}];
+  }
+  var gridOptions = {editable: true, enableAddRow: false,
+                     enableCellNavigation: true, forceFitColumns: true};
+  return new Slick.Grid(this.$body, [], columns, gridOptions);
 }
