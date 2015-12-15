@@ -174,6 +174,14 @@ EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
  * following attributes:
  *  - categorySelectionCallback: a function object that's called when a new
  *  metadata category is selected in the dropdown living in the header.
+ *  See [change]{@link https://api.jquery.com/change/}.
+ *  - valueUpdatedCallback: a function object that's called when a metadata
+ *  visualization attribute is modified (i.e. a change of color).
+ *  See [onCellChange]{@link
+ *  https://github.com/mleibman/SlickGrid/wiki/Grid-Events}.
+ *  - slickGridColumn: a dictionary specifying options to be passed into the
+ *  slickGrid. For instance, the ColorFormatter and the ColorEditor would be
+ *  passed here.  For more information, refer to the Slick Grid documentation.
  *
  * @return {EmperorAttributeABC} Returns an instance of the EmperorAttributeABC
  * class.
@@ -223,7 +231,7 @@ function EmperorAttributeABC(container, title, description,
     scope.$select.chosen({width: "100%", search_contains: true});
     scope.$select.chosen().change(options.categorySelectionCallback);
 
-    // make the columns fit the available spce whenever the window resizes
+    // make the columns fit the available space whenever the window resizes
     // http://stackoverflow.com/a/29835739
     $(window).resize(function() {
       scope.bodyGrid.setColumns(scope.bodyGrid.getColumns());
@@ -306,4 +314,11 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
   }
 
   this.bodyGrid = new Slick.Grid(this.$body, [], columns, gridOptions);
+
+  // subscribe to events when a cell is changed
+  this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
+
+  // fire a callback to initialize the data grid
+  options.categorySelectionCallback(null, {selected: $select.val()});
+
 }
