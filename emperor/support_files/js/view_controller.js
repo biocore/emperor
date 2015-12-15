@@ -183,7 +183,7 @@ function EmperorAttributeABC(container, title, description,
   if (decompViewDict === undefined){
     throw Error('The decomposition view dictionary cannot be undefined');
   }
-  for(dv in decompViewDict){
+  for(var dv in decompViewDict){
     if(!dv instanceof DecompositionView){
       throw Error('The decomposition view dictionary ' +
                   'can only have decomposition views');
