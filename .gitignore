@@ -47,3 +47,4 @@ doc/source/generated/
 
 # unwanted files
 examples/new-emperor.html
+.ipynb_checkpoints

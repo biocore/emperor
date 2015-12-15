@@ -117,7 +117,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
 **/
 DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
   var cats = this.decomp.getUniqueValuesByCategory(category), scope = this,
-  dataView = [], colors = getColorList(cats, 'discrete-coloring-qiime'),
+  dataView = [], colors = getColorList(cats, colorFunc),
   plottables;
 
   _.each(cats, function(value) {
@@ -181,7 +181,21 @@ DecompositionView.prototype.setCategoryShape = function(shapeFunc, category){
 };
 
 
-DecompositionView.prototype.setCategoryAttribute = function(value, category, attr){
+DecompositionView.prototype.setCategoryAttribute = function(value, category,
+                                                            attr, options){
+
+  if (attr === 'color'){
+    var colorMap = 'discrete-coloring-qiime';
+
+    if (options){
+
+    }
+
+    this.setCategoryColors();
+  }
+  else{
+    throw new Error('Cannot change ' + attr + 'attribute.');
+  }
 
 };
 
