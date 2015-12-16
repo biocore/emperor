@@ -1,4 +1,4 @@
-/**
+y/**
  *
  * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
  *         Vazquez-Baeza
@@ -101,7 +101,8 @@ EmperorController.prototype.resize = function(width, height){
     this.sceneViews[0].resize(0, 0, plotWidth, this.height);
   }
   else if (this.sceneViews.length === 2) {
-    this.sceneViews[0].resize(0, 0, this.SCENE_VIEW_SCALE * plotWidth, this.height);
+    this.sceneViews[0].resize(0, 0, this.SCENE_VIEW_SCALE * plotWidth,
+                              this.height);
     this.sceneViews[1].resize(this.SCENE_VIEW_SCALE * plotWidth, 0,
                               this.SCENE_VIEW_SCALE * plotWidth, this.height);
   }
@@ -168,77 +169,10 @@ EmperorController.prototype.buildUI = function() {
   $('#emperor-menu-tabs').append("<div id='keys' class='emperor-tab-div'></div>");
   $('#emperor-menu-tabs').tabs({heightStyle: 'fill'});
 
-  var gridWidth = this.$plotMenu.width() * this.GRID_SCALE,
-      gridHeight = this.$plotMenu.height() * this.GRID_SCALE;
-
-  // http://stackoverflow.com/a/6602002
-  var $select = $("<select class='emperor-tab-drop-down'>");
-  _.each(this.dm.md_headers, function(header) {
-    $select.append($('<option>').attr('value', header).text(header));
-  });
-
-  $('#keys').append($select);
-  $('#keys').append("<div id='myGrid'></div>");
-  $('#myGrid').width(gridWidth);
-  $('#myGrid').height(gridHeight);
-
-  var grid;
-  var columns = [
-    {id: 'title', name: '', field: 'color', sortable: false,
-     maxWidth: this.SLICK_WIDTH, minWidth: this.SLICK_WIDTH, editor: ColorEditor,
-     formatter: ColorFormatter},
-    {id: 'field1', name: 'Category Name', field: 'category'}
-  ];
-
-  var options = {
-    editable: true,
-    enableAddRow: false,
-    enableCellNavigation: true,
-    forceFitColumns: true
-  };
-  /**
-   * Updates slick-grid cells
-   *
-   * @param {ec} Emperor Controller object
-   **/
-  $(function(ec) {
-    grid = new Slick.Grid('#myGrid', [], columns, options);
-
-    // subscribe to events when a cell is changed
-    grid.onCellChange.subscribe(function(e, args) {
-      var val = args.item.category, color = args.item.color, group = [];
-
-      group = args.item.plottables;
-      // Only coloring the first scene view.  Need to address in issue #4
-      ec.sceneViews[0].decViews[0].setGroupColor(color, group);
-    });
-
-    /**
-     * Changes the colors according to category
-     *
-     * @param {ec} Emperor Controller object
-     **/
-    function categorySelectorChanged(evt, params) {
-      var newCategory = params.selected;
-
-      data = ec.sceneViews[0].decViews[0].setCategoryColors(null, newCategory);
-      grid.setData(data);
-      grid.invalidate();
-      grid.render();
-    }
-    // fire a callback to initialize the data grid
-    categorySelectorChanged(null, {selected: $select.val()});
-
-    // setup chosen
-    $select.chosen({width: "100%", search_contains: true});
-    $select.chosen().change(categorySelectorChanged);
-
-    // make the columns fit the available space whenever the window resizes
-    // http://stackoverflow.com/a/29835739
-    $(window).resize(function() {
-      grid.setColumns(grid.getColumns());
-    });
-  }(this));
+  var cvc = new ColorViewController('#color-tab');
 };
 
-
+// We need to add a new method in this class, the reason is that we want to have
+// an automated way to add tabs to the plot's menu, and it should probably take
+// as an only parameter an EmperorViewController class. After that we should be
+// good to instantiate the controller and start playing around with the colors.

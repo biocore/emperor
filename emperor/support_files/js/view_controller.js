@@ -190,7 +190,6 @@ EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
 function EmperorAttributeABC(container, title, description,
                              decompViewDict, options){
   EmperorViewControllerABC.call(this, container, title, description);
-
   if (decompViewDict === undefined){
     throw Error('The decomposition view dictionary cannot be undefined');
   }
@@ -212,6 +211,8 @@ function EmperorAttributeABC(container, title, description,
   this.activeViewKey = Object.keys(decompViewDict)[0];
 
   var dm = decompViewDict[this.activeViewKey].decomp;
+
+  // http://stackoverflow.com/a/6602002
   this.$select = $("<select class='emperor-tab-drop-down'>");
      _.each(dm.md_headers, function(header) {
        scope.$select.append($('<option>').attr('value', header).text(header));
@@ -322,3 +323,13 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
   options.categorySelectionCallback(null, {selected: $select.val()});
 
 }
+/**
+ * Resizes the container.
+ *
+ * @param {float} width the container width.
+ * @param {float} height the container height.
+ */
+EmperorAttributeABC.prototype.resize = function(width, height) {
+  this.bodyGrid.width(width);
+  this.bodyGrid.height(height);
+};
