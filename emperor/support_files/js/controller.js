@@ -174,7 +174,7 @@ EmperorController.prototype.render = function() {
  * Helper method to assemble UI, completely independent of HTML template
  **/
 EmperorController.prototype.buildUI = function() {
-  this.colorController = this.addtab(this.sceneViews.decViews,
+  this.colorController = this.addTab(this.sceneViews.decViews,
                                      ColorViewController);
   // this.opacityController = this.addtab(this.sceneViews.decViews,
   //                                      OpacityViewController);
@@ -203,8 +203,10 @@ EmperorController.prototype.addTab = function(dvdict, viewConstructor){
 
   // dynamically instantiate the controller, see:
   // http://stackoverflow.com/a/8843181
-  var obj = new (Function.prototype.bind.apply(viewContructor,
-                                               ['#' + id, dvdict]));
+  console.log($('#' + id));
+  var obj = new (Function.prototype.bind.apply(viewConstructor,
+                                               [$('#' + id), dvdict]));
+  console.log('now we know');
 
   // set the identifier of the div to the one defined by the object
   $('#' + id).attr('id', obj.identifier);

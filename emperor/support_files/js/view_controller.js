@@ -57,6 +57,10 @@ function EmperorViewControllerABC(container, title, description){
   var self = this; // only used within class
 
   if (this.$container.length < 1) {
+    console.log('butthole');
+    console.log(this.$container.length)
+    console.log(this.$container)
+    console.log('butthole');
     throw new Error("Emperor requires a valid container, " +
                     this.$container + " does not exist in the DOM.");
   }
