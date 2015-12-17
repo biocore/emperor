@@ -1,4 +1,4 @@
-y/**
+/**
  *
  * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
  *         Vazquez-Baeza
@@ -12,6 +12,16 @@ y/**
  * @status Development
  *
  */
+
+
+/**
+ * @name EmperorViewControllerABC
+ *
+ * @class The main controller class used in Emperor.
+ * @property {String} [title=""] Title of the color view controller.
+ * @property {String} [title=""] Title of the opacity view controller.
+ * @property {String} [title=""] Title of the size view controller.
+ **/
 
 /**
  *
@@ -61,7 +71,11 @@ EmperorController = function(dm, divId){
   // default decomposition view uses the full window
   this.addView();
 
+  this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
+  $('#emperor-menu-tabs').append("<ul id='emperor-controller-list'></ul>");
+
   this.buildUI();
+
 };
 
 /**
@@ -160,19 +174,45 @@ EmperorController.prototype.render = function() {
  * Helper method to assemble UI, completely independent of HTML template
  **/
 EmperorController.prototype.buildUI = function() {
+  this.colorController = this.addtab(this.sceneViews.decViews,
+                                     ColorViewController);
+  // this.opacityController = this.addtab(this.sceneViews.decViews,
+  //                                      OpacityViewController);
+  // this.sizeController = this.addtab(this.sceneViews.decViews,
+  //                                   SizeViewController);
 
-  $('#emperor-menu-tabs').append("<ul><li><a href='#color-tab'>Colors</a></li></ul>");
-  $('#emperor-menu-tabs').append("<div id='color-tab' class='emperor-tab-div'></div>");
-
-  this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
-  $('#emperor-menu-tabs').append("<ul><li><a href='#keys'>Key</a></li></ul>");
-  $('#emperor-menu-tabs').append("<div id='keys' class='emperor-tab-div'></div>");
+  // We are tabifying this div, I don't know man.
   $('#emperor-menu-tabs').tabs({heightStyle: 'fill'});
-
-  var cvc = new ColorViewController('#color-tab');
 };
 
 // We need to add a new method in this class, the reason is that we want to have
 // an automated way to add tabs to the plot's menu, and it should probably take
 // as an only parameter an EmperorViewController class. After that we should be
 // good to instantiate the controller and start playing around with the colors.
+/**
+ * Helper method to resize the plots.
+ *
+ * @param {Array} [dvdict] Dictionary of DecompositionViews.
+ * @param {function} [viewConstructor] Constructor of the view controller.
+ **/
+EmperorController.prototype.addTab = function(dvdict, viewConstructor){
+  // nothing but a temporary id
+  var id = "" + Math.round(1000000 * Math.random());
+
+  $('#emperor-menu-tabs').append("<div id='" + id + "' class='emperor-tab-div'></div>");
+
+  // dynamically instantiate the controller, see:
+  // http://stackoverflow.com/a/8843181
+  var obj = new (Function.prototype.bind.apply(viewContructor,
+                                               ['#' + id, dvdict]));
+
+  // set the identifier of the div to the one defined by the object
+  $('#' + id).attr('id', obj.identifier);
+
+  // now add the list element linking to the container div with the proper
+  // title
+  $('#emperor-controller-list').append("<li><a  href='#" + obj.identifier +
+                                       "-tab'>" + obj.title + "</a></li>");
+
+  return obj
+};

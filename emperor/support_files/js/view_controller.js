@@ -50,6 +50,7 @@ function EmperorViewControllerABC(container, title, description){
   this.$body = null;
   this.$header = null;
   this.active = false;
+  // FIXME: Add title to the identifer? How about controller identifier?
   this.identifier = "EMPtab-" + Math.round(1000000 * Math.random());
   this.enabled = true;
 
