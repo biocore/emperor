@@ -188,10 +188,6 @@ EmperorController.prototype.buildUI = function() {
   $('#emperor-menu-tabs').tabs({heightStyle: 'fill'});
 };
 
-// We need to add a new method in this class, the reason is that we want to have
-// an automated way to add tabs to the plot's menu, and it should probably take
-// as an only parameter an EmperorViewController class. After that we should be
-// good to instantiate the controller and start playing around with the colors.
 /**
  * Helper method to resize the plots.
  *

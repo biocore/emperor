@@ -224,11 +224,7 @@ function EmperorAttributeABC(container, title, description,
   this.$header.append(this.$select);
   // there's a few attributes we can only set on "ready" so list them up here
   $(function() {
-    // revise this section of code, we neeed to at the proper setup
-    // for the slick grid object and for the rest of the chosen object
-    // we also have to have a look at how the color view controller and other
-    // subclasses are going to be using this new interface. Finally we should
-    // make sure we add tests.
+    // setup the slick grid
     scope.buildGrid(options);
 
     // setup chosen
