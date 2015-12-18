@@ -222,20 +222,19 @@ function EmperorAttributeABC(container, title, description,
        scope.$select.append($('<option>').attr('value', header).text(header));
      });
   this.$header.append(this.$select);
+
   // there's a few attributes we can only set on "ready" so list them up here
   $(function() {
     // setup the slick grid
     scope.buildGrid(options);
 
     // setup chosen
-    scope.$select.chosen({width: "100%", search_contains: true});
+    scope.$select.chosen({width: "95%", search_contains: true});
     scope.$select.chosen().change(options.categorySelectionCallback);
 
-    // make the columns fit the available space whenever the window resizes
-    // http://stackoverflow.com/a/29835739
-    $(window).resize(function() {
-      scope.bodyGrid.setColumns(scope.bodyGrid.getColumns());
-    });
+    // now that we have the chosen selector and the table fire a callback to
+    // initialize the data grid
+    options.categorySelectionCallback(null, {selected: scope.$select.val()});
   });
 
   return this;
@@ -310,7 +309,7 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
 
   // If there's a custom slickgrid column then add it to the object
   if(options.slickGridColumn !== undefined){
-    columns = columns.unshift(options.slickGridColumn);
+    columns.unshift(options.slickGridColumn);
   }
 
   this.bodyGrid = new Slick.Grid(this.$body, [], columns, gridOptions);
@@ -318,10 +317,8 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
   // subscribe to events when a cell is changed
   this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
 
-  // fire a callback to initialize the data grid
-  options.categorySelectionCallback(null, {selected: this.$select.val()});
-
 }
+
 /**
  * Resizes the container.
  *
@@ -329,7 +326,12 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
  * @param {float} height the container height.
  */
 EmperorAttributeABC.prototype.resize = function(width, height) {
-  this.bodyGrid.width(width);
-  this.bodyGrid.height(height);
+  this.$header.width(width);
+  this.$body.width(width);
+  this.$body.height(height);
+
+  // make the columns fit the available space whenever the window resizes
+  // http://stackoverflow.com/a/29835739
+  this.bodyGrid.setColumns(this.bodyGrid.getColumns());
 };
 

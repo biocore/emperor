@@ -11,7 +11,7 @@
 function ColorViewController(container, decompViewDict){
   var helpmenu = 'Change the colors of the attributes on the plot, such as ' +
                  'spheres, vectors and ellipsoids.';
-  var title = 'color';
+  var title = 'Color';
 
   // Constant for width in slick-grid
   var SLICK_WIDTH = 25;

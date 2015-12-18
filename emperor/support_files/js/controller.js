@@ -152,13 +152,15 @@ EmperorController.prototype.resize = function(width, height){
 
   this.renderer.setSize(plotWidth, this.height);
 
-  // resize the grid according to the size of the container, since we are
-  // inside the tabs we have to account for that lost space, hence the
-  // this.GRID_SCALE=0.9
-  var gridWidth = this.$plotMenu.width() * this.GRID_SCALE,
-      gridHeight = this.$plotMenu.height() * this.GRID_SCALE;
-  $('#myGrid').width(gridWidth);
-  $('#myGrid').height(gridHeight);
+  if (this.colorController !== undefined){
+    // resize the grid according to the size of the container, since we are
+    // inside the tabs we have to account for that lost space, hence the
+    // this.GRID_SCALE=0.9
+    var tabWidth = this.$plotMenu.width() * this.GRID_SCALE,
+        tabHeight = this.$plotMenu.height() * this.GRID_SCALE;
+
+    this.colorController.resize(tabWidth, tabHeight);
+  }
 };
 
 /**
@@ -198,7 +200,9 @@ EmperorController.prototype.addTab = function(dvdict, viewConstructor){
   // nothing but a temporary id
   var id = "" + Math.round(1000000 * Math.random());
 
-  $('#emperor-menu-tabs').append("<div id='" + id + "' class='emperor-tab-div' ></div>");
+  $('#emperor-menu-tabs').append("<div id='" + id +
+                                 "' class='emperor-tab-div' ></div>");
+  $('#' + id).height(this.$plotMenu.height());
 
   // dynamically instantiate the controller, see:
   // http://stackoverflow.com/a/8843181
