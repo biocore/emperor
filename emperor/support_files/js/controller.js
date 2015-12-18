@@ -37,6 +37,7 @@
  *
  **/
 EmperorController = function(dm, divId){
+  var scope = this;
 
   // Constants
   this.GRID_SCALE = 0.9;         // Scaling constant for grid dimensions
@@ -74,7 +75,9 @@ EmperorController = function(dm, divId){
   this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
   $('#emperor-menu-tabs').append("<ul id='emperor-controller-list'></ul>");
 
-  this.buildUI();
+  $(function() {
+    scope.buildUI();
+  });
 
 };
 
