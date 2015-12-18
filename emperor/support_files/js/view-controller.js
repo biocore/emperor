@@ -334,9 +334,6 @@ EmperorAttributeABC.prototype.resize = function(width, height) {
   this.$body.width(width);
   this.$body.height(height - this.$header.height);
 
-  this.bodyGrid.width(width);
-  this.bodyGrid.height(this.$body.height);
-
   // make the columns fit the available space whenever the window resizes
   // http://stackoverflow.com/a/29835739
   this.bodyGrid.setColumns(this.bodyGrid.getColumns());
