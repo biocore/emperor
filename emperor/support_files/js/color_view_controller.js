@@ -21,13 +21,13 @@ function ColorViewController(container, decompViewDict){
   var options = {'valueUpdatedCallback':function(e, args) {
                    var val = args.item.category, color = args.item.color, group = [];
                    group = args.item.plottables;
-                   decompViewDict[scope.getActiveDecompViewKey()].setGroupColor(color, group);
+                   scope.decompViewDict[scope.getActiveDecompViewKey()].setGroupColor(color, group);
                  },
                  'categorySelectionCallback':function(evt, params) {
                    var newCategory = params.selected;
 
                    // fetch the slickgrid-formatted data
-                   var data = decompViewDict[scope.getActiveDecompViewKey()].setCategoryColors(
+                   var data = scope.decompViewDict[scope.getActiveDecompViewKey()].setCategoryColors(
                      'discrete-coloring-qiime', newCategory);
                    scope.setSlickGridDataset(data);
                  },
