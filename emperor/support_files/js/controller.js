@@ -69,6 +69,10 @@ EmperorController = function(dm, divId){
   this.renderer.sortObjects = true;
   this.$plotSpaceId.append(this.renderer.domElement);
 
+  // FIXME: This is a hack to go around the fact that the constructor takes
+  // a single decomposition model instead of a dictionary
+  this.decViews = {'scatter': new DecompositionView(this.dm)};
+
   // default decomposition view uses the full window
   this.addView();
 
@@ -89,10 +93,8 @@ EmperorController.prototype.addView = function() {
   if (this.sceneViews.length > 4) {
     throw Error('Cannot add another scene plot view');
   }
-  // FIXME: This is a hack to force the ScenePlotViews to have decomposition
-  // view dictionaries
-  var dvs = {'scatter': new DecompositionView(this.dm)};
-  var spv = new ScenePlotView3D(this.renderer, dvs,
+
+  var spv = new ScenePlotView3D(this.renderer, this.decViews,
                                 this.$plotSpaceId.attr('id'), 0, 0, 0, 0);
   this.sceneViews.push(spv);
 
@@ -184,10 +186,6 @@ EmperorController.prototype.buildUI = function() {
   //FIXME: This only works for 1 scene plot view
   this.colorController = this.addTab(this.sceneViews[0].decViews,
                                      ColorViewController);
-  // this.opacityController = this.addtab(this.sceneViews.decViews,
-  //                                      OpacityViewController);
-  // this.sizeController = this.addtab(this.sceneViews.decViews,
-  //                                   SizeViewController);
 
   // We are tabifying this div, I don't know man.
   $('#emperor-menu-tabs').tabs({heightStyle: 'fill'});

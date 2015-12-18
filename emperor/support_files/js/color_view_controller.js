@@ -21,7 +21,7 @@ function ColorViewController(container, decompViewDict){
   var options = {'valueUpdatedCallback':function(e, args) {
                    var val = args.item.category, color = args.item.color, group = [];
                    group = args.item.plottables;
-                   decompViewDict[this.getActiveDecompViewKey()].setGroupColor(color, group);
+                   decompViewDict[scope.getActiveDecompViewKey()].setGroupColor(color, group);
                  },
                  'categorySelectionCallback':function(evt, params) {
                    var newCategory = params.selected;

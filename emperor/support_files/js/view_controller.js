@@ -63,13 +63,17 @@ function EmperorViewControllerABC(container, title, description){
   // and initializes the header and the body to empty divs.
   this.$canvas = $('<div name="emperor-view-controller-canvas"></div>');
   this.$container.append(this.$canvas);
+
   this.$canvas.width(this.$container.width());
-  console.log(this.$container);
-  console.log('hello mr james, this is is Hall, the container, my height is: ' + this.$container.height());
   this.$canvas.height(this.$container.height());
 
   this.$header = $('<div name="emperor-view-controller-header"></div>');
   this.$body = $('<div name="emperor-view-controller-body"></div>');
+
+  // inherit the size of the container minus the space being used for the
+  // header
+  this.$body.height(this.$canvas.height()-this.$header.height());
+
   this.$canvas.append(this.$header);
   this.$canvas.append(this.$body);
 
@@ -314,7 +318,6 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
 
   // subscribe to events when a cell is changed
   this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
-
 }
 
 /**
@@ -329,7 +332,10 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
 EmperorAttributeABC.prototype.resize = function(width, height) {
   this.$header.width(width);
   this.$body.width(width);
-  this.$body.height(height);
+  this.$body.height(height - this.$header.height);
+
+  this.bodyGrid.width(width);
+  this.bodyGrid.height(this.$body.height);
 
   // make the columns fit the available space whenever the window resizes
   // http://stackoverflow.com/a/29835739

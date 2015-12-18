@@ -56,13 +56,14 @@ ScenePlotView3D = function(renderer, decViews, div_id, xView, yView, width, heig
   this.light = new THREE.DirectionalLight(0x999999, 2);
   this.light.position.set(1,1,1).normalize();
   this.camera.add(this.light);
-  // Add all the meshes to the scene
-  // iterate through all keys in decomposition view dictionary
-  for(var dv in decViews){
-    for (var m  in dv.markers) {
-      this.scene.add(m);
-    };
-  };
+
+  // Add all the meshes to the scene, iterate through all keys in decomposition
+  // view dictionary
+  for(var decViewName in this.decViews){
+    for (var j = 0; j < this.decViews[decViewName].markers.length; j++) {
+      this.scene.add(this.decViews[decViewName].markers[j]);
+    }
+  }
 
   this.control = new THREE.OrbitControls(this.camera, document.getElementById(div_id));
   this.control.rotateSpeed = 1.0;
