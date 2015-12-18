@@ -318,7 +318,10 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
 }
 
 /**
- * Resizes the container.
+ * Resizes the container and the individual elements.
+ *
+ * Note, the consumer of this class, likely the main controller should call
+ * the resize function any time a resizing event happens.
  *
  * @param {float} width the container width.
  * @param {float} height the container height.

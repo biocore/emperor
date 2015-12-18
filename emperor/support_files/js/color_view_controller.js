@@ -40,7 +40,6 @@ function ColorViewController(container, decompViewDict){
   EmperorAttributeABC.call(this, container, title, helpmenu,
                            decompViewDict, options);
   return this;
-};
+}
 ColorViewController.prototype = Object.create(EmperorAttributeABC.prototype);
 ColorViewController.prototype.constructor = EmperorAttributeABC;
-
