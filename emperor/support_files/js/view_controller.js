@@ -54,8 +54,6 @@ function EmperorViewControllerABC(container, title, description){
   this.identifier = "EMPtab-" + Math.round(1000000 * Math.random());
   this.enabled = true;
 
-  var self = this; // only used within class
-
   if (this.$container.length < 1) {
     throw new Error("Emperor requires a valid container, " +
                     this.$container + " does not exist in the DOM.");

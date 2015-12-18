@@ -216,8 +216,6 @@ EmperorController.prototype.addTab = function(dvdict, viewConstructor){
   // title
   $('#emperor-controller-list').append("<li><a  href='#" + obj.identifier +
                                        "-tab'>" + obj.title + "</a></li>");
-  $('#' + obj.identifier).height(this.$plotMenu.height());
-  $('#' + obj.identifier).width(this.$plotMenu.width());
 
-  return obj
+  return obj;
 };
