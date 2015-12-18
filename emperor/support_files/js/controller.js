@@ -86,8 +86,10 @@ EmperorController.prototype.addView = function() {
   if (this.sceneViews.length > 4) {
     throw Error('Cannot add another scene plot view');
   }
-
-  var spv = new ScenePlotView3D(this.renderer, [new DecompositionView(this.dm)],
+  // FIXME: This is a hack to force the ScenePlotViews to have decomposition
+  // view dictionaries
+  var dvs = {'scatter': new DecompositionView(this.dm)};
+  var spv = new ScenePlotView3D(this.renderer, dvs,
                                 this.$plotSpaceId.attr('id'), 0, 0, 0, 0);
   this.sceneViews.push(spv);
 
@@ -174,7 +176,8 @@ EmperorController.prototype.render = function() {
  * Helper method to assemble UI, completely independent of HTML template
  **/
 EmperorController.prototype.buildUI = function() {
-  this.colorController = this.addTab(this.sceneViews.decViews,
+  //FIXME: This only works for 1 scene plot view
+  this.colorController = this.addTab(this.sceneViews[0].decViews,
                                      ColorViewController);
   // this.opacityController = this.addtab(this.sceneViews.decViews,
   //                                      OpacityViewController);
@@ -199,14 +202,12 @@ EmperorController.prototype.addTab = function(dvdict, viewConstructor){
   // nothing but a temporary id
   var id = "" + Math.round(1000000 * Math.random());
 
-  $('#emperor-menu-tabs').append("<div id='" + id + "' class='emperor-tab-div'></div>");
+  $('#emperor-menu-tabs').append("<div id='" + id + "' class='emperor-tab-div' ></div>");
 
   // dynamically instantiate the controller, see:
   // http://stackoverflow.com/a/8843181
-  console.log($('#' + id));
   var obj = new (Function.prototype.bind.apply(viewConstructor,
-                                               [$('#' + id), dvdict]));
-  console.log('now we know');
+                                               [null, '#' + id, dvdict]));
 
   // set the identifier of the div to the one defined by the object
   $('#' + id).attr('id', obj.identifier);
@@ -215,6 +216,8 @@ EmperorController.prototype.addTab = function(dvdict, viewConstructor){
   // title
   $('#emperor-controller-list').append("<li><a  href='#" + obj.identifier +
                                        "-tab'>" + obj.title + "</a></li>");
+  $('#' + obj.identifier).height(this.$plotMenu.height());
+  $('#' + obj.identifier).width(this.$plotMenu.width());
 
   return obj
 };

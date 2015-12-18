@@ -57,23 +57,21 @@ function EmperorViewControllerABC(container, title, description){
   var self = this; // only used within class
 
   if (this.$container.length < 1) {
-    console.log('butthole');
-    console.log(this.$container.length)
-    console.log(this.$container)
-    console.log('butthole');
     throw new Error("Emperor requires a valid container, " +
                     this.$container + " does not exist in the DOM.");
   }
 
   // Initializes the canvas and appends the canvas to the container
   // and initializes the header and the body to empty divs.
-  this.$canvas = $('<div></div>');
+  this.$canvas = $('<div name="emperor-view-controller-canvas"></div>');
   this.$container.append(this.$canvas);
   this.$canvas.width(this.$container.width());
+  console.log(this.$container);
+  console.log('hello mr james, this is is Hall, the container, my height is: ' + this.$container.height());
   this.$canvas.height(this.$container.height());
 
-  this.$header = $('<div></div>');
-  this.$body = $('<div></div>');
+  this.$header = $('<div name="emperor-view-controller-header"></div>');
+  this.$body = $('<div name="emperor-view-controller-body"></div>');
   this.$canvas.append(this.$header);
   this.$canvas.append(this.$body);
 
@@ -216,6 +214,7 @@ function EmperorAttributeABC(container, title, description,
   this.activeViewKey = Object.keys(decompViewDict)[0];
 
   var dm = decompViewDict[this.activeViewKey].decomp;
+  var scope = this;
 
   // http://stackoverflow.com/a/6602002
   this.$select = $("<select class='emperor-tab-drop-down'>");
@@ -223,7 +222,6 @@ function EmperorAttributeABC(container, title, description,
        scope.$select.append($('<option>').attr('value', header).text(header));
      });
   this.$header.append(this.$select);
-
   // there's a few attributes we can only set on "ready" so list them up here
   $(function() {
     // revise this section of code, we neeed to at the proper setup
@@ -316,7 +314,7 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
 
   // If there's a custom slickgrid column then add it to the object
   if(options.slickGridColumn !== undefined){
-    columns = options.unshift(slickGridColumn);
+    columns = columns.unshift(options.slickGridColumn);
   }
 
   this.bodyGrid = new Slick.Grid(this.$body, [], columns, gridOptions);
@@ -325,7 +323,7 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
   this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
 
   // fire a callback to initialize the data grid
-  options.categorySelectionCallback(null, {selected: $select.val()});
+  options.categorySelectionCallback(null, {selected: this.$select.val()});
 
 }
 /**
@@ -338,3 +336,4 @@ EmperorAttributeABC.prototype.resize = function(width, height) {
   this.bodyGrid.width(width);
   this.bodyGrid.height(height);
 };
+

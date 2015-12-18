@@ -27,7 +27,7 @@ function ColorViewController(container, decompViewDict){
                    var newCategory = params.selected;
 
                    // fetch the slickgrid-formatted data
-                   var data = decompViewDict[this.getActiveDecompViewKey()].setCategoryColors(
+                   var data = decompViewDict[scope.getActiveDecompViewKey()].setCategoryColors(
                      'discrete-coloring-qiime', newCategory);
                    scope.setSlickGridDataset(data);
                  },
@@ -36,9 +36,11 @@ function ColorViewController(container, decompViewDict){
                                     minWidth: SLICK_WIDTH,
                                     editor: ColorEditor,
                                     formatter: ColorFormatter}};
-    
+
   EmperorAttributeABC.call(this, container, title, helpmenu,
                            decompViewDict, options);
   return this;
 };
+ColorViewController.prototype = Object.create(EmperorAttributeABC.prototype);
+ColorViewController.prototype.constructor = EmperorAttributeABC;
 

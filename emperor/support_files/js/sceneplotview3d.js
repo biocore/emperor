@@ -33,13 +33,13 @@
  *
  * @param {width} a float with the width of the renderer
  * @param {height} a float with the height of the renderer
- * @param {decViews} an Array of DecompositionViews shown in this scene
+ * @param {decViews} dictionary of DecompositionViews shown in this scene
  *
  **/
 ScenePlotView3D = function(renderer, decViews, div_id, xView, yView, width, height){
+
   this.decViews = decViews;
   this.renderer = renderer;
-
   this.xView = xView;
   this.yView = yView;
   this.width = width;
@@ -49,7 +49,7 @@ ScenePlotView3D = function(renderer, decViews, div_id, xView, yView, width, heig
   this.camera = new THREE.PerspectiveCamera(35, width/height,
                                             0.0000001, 10000);
   this.camera.position.set(0, 0, 6);
-  
+
   //need to initialize the scene
   this.scene = new THREE.Scene();
   this.scene.add(this.camera);
@@ -57,9 +57,10 @@ ScenePlotView3D = function(renderer, decViews, div_id, xView, yView, width, heig
   this.light.position.set(1,1,1).normalize();
   this.camera.add(this.light);
   // Add all the meshes to the scene
-  for (var i = 0; i < this.decViews.length; i++) {
-    for (var j = 0; j < this.decViews[i].markers.length; j++) {
-      this.scene.add(this.decViews[i].markers[j]);
+  // iterate through all keys in decomposition view dictionary
+  for(var dv in decViews){
+    for (var m  in dv.markers) {
+      this.scene.add(m);
     };
   };
 
