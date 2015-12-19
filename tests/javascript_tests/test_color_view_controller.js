@@ -73,7 +73,9 @@ $(document).ready(function() {
 
     var controller = new ColorViewController(container, sharedDecompositionViewDict);
     equal(controller.title, 'Color');
-    
+
+    var testColumn = controller.bodyGrid.getColumns()[0]
+    equal(testColumn.field, 'color');
   });
 
 
