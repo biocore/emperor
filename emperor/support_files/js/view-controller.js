@@ -232,11 +232,16 @@ function EmperorAttributeABC(container, title, description,
 
     // setup chosen
     scope.$select.chosen({width: "95%", search_contains: true});
-    scope.$select.chosen().change(options.categorySelectionCallback);
 
-    // now that we have the chosen selector and the table fire a callback to
-    // initialize the data grid
-    options.categorySelectionCallback(null, {selected: scope.$select.val()});
+    // only subclasses will provide this callback
+    if(options.categorySelectionCallback !== undefined){
+      scope.$select.chosen().change(options.categorySelectionCallback);
+
+      // now that we have the chosen selector and the table fire a callback to
+      // initialize the data grid
+      options.categorySelectionCallback(null, {selected: scope.$select.val()});
+    }
+
   });
 
   return this;
@@ -307,7 +312,8 @@ EmperorAttributeABC.prototype.setSlickGridDataset = function(data){
 EmperorAttributeABC.prototype.buildGrid = function(options){
   var columns = [{id: 'field1', name: 'Category Name', field: 'category'}];
   var gridOptions = {editable: true, enableAddRow: false,
-                     enableCellNavigation: true, forceFitColumns: true};
+                     enableCellNavigation: true, forceFitColumns: true,
+                     enableColumnReorder: false};
 
   // If there's a custom slickgrid column then add it to the object
   if(options.slickGridColumn !== undefined){

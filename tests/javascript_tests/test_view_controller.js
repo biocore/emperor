@@ -166,7 +166,6 @@ $(document).ready(function() {
    *
    */
   test("Constructor tests", function(assert) {
-    console.log(decomp)
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
 
@@ -174,14 +173,14 @@ $(document).ready(function() {
     assert.ok(EmperorAttributeABC.prototype instanceof
               EmperorViewControllerABC);
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       sharedDecompositionViewDict);
+                                       sharedDecompositionViewDict, {});
 
     assert.ok(EmperorAttributeABC.prototype instanceof
               EmperorViewControllerABC);
 
     throws(function(){
       new EmperorAttributeABC(container, 'foo', 'bar',
-                              {1:1, 2:2});
+                              {1:1, 2:2}, {});
       attr.setActive('shenanigans');
     }, Error, 'The decomposition view dictionary' +
               'can only have decomposition views');
@@ -199,7 +198,7 @@ $(document).ready(function() {
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       {'scatter': dv});
+                                       {'scatter': dv}, {});
 
     equal(attr.enabled, true);
     attr.setEnabled(false);
@@ -220,7 +219,7 @@ $(document).ready(function() {
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       {'scatter': dv});
+                                       {'scatter': dv}, {});
 
     equal(attr.active, false);
     attr.setActive(true);
@@ -241,10 +240,7 @@ $(document).ready(function() {
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       {'scatter': dv});
-    throws(function(){
-      attr.resize(10, 10);
-    }, Error, 'Cannot call this abstract method');
+                                       {'scatter': dv}, {});
 
     throws(function(){
       attr.fromJSON('{foo:11}');
@@ -264,7 +260,7 @@ $(document).ready(function() {
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       {'scatter': dv});
+                                       {'scatter': dv}, {});
     attr.setMetadataField('cheese');
     equal(attr.metadataField, 'cheese');
   });
@@ -278,7 +274,7 @@ $(document).ready(function() {
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       {'scatter': dv});
+                                       {'scatter': dv}, {});
     equal(attr.getActiveDecompViewKey(), 'scatter');
   });
 
@@ -292,7 +288,7 @@ $(document).ready(function() {
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                        {'scatter': dv, 'biplot': dv},
-                                       'butter');
+                                       {});
     equal(attr.getActiveDecompViewKey(), 'scatter');
     attr.setActiveDecompViewKey('biplot')
     equal(attr.getActiveDecompViewKey(), 'biplot');
@@ -307,7 +303,7 @@ $(document).ready(function() {
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       {'scatter': dv, 'biplot': dv});
+                                       {'scatter': dv, 'biplot': dv}, {});
     attr.setSlickGridDataset([{'pc1':1, 'pc2':2, 'pc3':3},
                               {'pc1':1, 'pc2':1, 'pc3':2}])
     deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':2, 'pc3':3},
