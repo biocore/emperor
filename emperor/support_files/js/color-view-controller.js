@@ -1,3 +1,25 @@
+/**
+ * @name EmperorViewControllerABC
+ *
+ * @class Manipulates and displays colors.
+ * @property {String} [title=""] Title of the controller.
+ * @property {Node} [header=div node] jQuery element for the header
+ * which contains the uppermost elements displayed in a tab.
+ * @property {Node} [body=div node] jQuery element for the body,
+ * which contains the lowermost elements displayed in tab.
+ * This goes below the header.
+ * @property {Node} [canvas=div node] jQuery element for the canvas,
+ * which contains the header and the body.
+ * @property {Node} [container=div node] jQuery element for the parent
+ * container.
+ * This only contains the canvas.
+ * @property {Boolean} [active=false] Indicates whether the tab is front most
+ * @property {String} [identifier="EMPtab-xxxxxxx"] Unique hash identifier for
+ * the tab instance.
+ * @property {Boolean} [enabled=true] Indicates if tab can be accessed.
+ * @property {String} [description=""] Human-readable description of the tab.
+ **/
+
 /*
  * @name ColorViewController
  *
