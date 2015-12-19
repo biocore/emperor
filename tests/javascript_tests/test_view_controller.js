@@ -10,7 +10,7 @@ $(document).ready(function() {
    */
   test("Constructor tests", function(assert) {
 
-    var container = $('<div id="does-not-exist"></div>');
+    var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
     var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
 
     equal(controller.title, 'foo', 'Check the title is correctly set');
@@ -31,6 +31,10 @@ $(document).ready(function() {
 
     assert.ok($.contains(controller.$canvas, controller.$header));
     assert.ok($.contains(controller.$canvas, controller.$body));
+
+    equal(controller.$body.width(), 12);
+    equal(controller.$body.height(), 11);
+
   });
 
   /**
@@ -162,7 +166,7 @@ $(document).ready(function() {
 
   /**
    *
-   * Test that the constructor for EmperorViewControllerABC.
+   * Test the constructor for EmperorViewControllerABC.
    *
    */
   test("Constructor tests", function(assert) {
@@ -174,81 +178,64 @@ $(document).ready(function() {
               EmperorViewControllerABC);
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                        sharedDecompositionViewDict, {});
+  });
 
-    assert.ok(EmperorAttributeABC.prototype instanceof
-              EmperorViewControllerABC);
+  /**
+   *
+   * Test to see if the grid is being built correctly
+   *
+   */
+  test("Constructor test buildGrid", function(){
+    var options = {};
+    options['slickGridColumn'] = {id: 'title', name: 'spam', field: 'test',
+                                  sortable: false, maxWidth: 10, minWidth: 10};
+    var container = $('<div id="does-not-exist"></div>');
+    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                       sharedDecompositionViewDict,
+                                       options);
+    var testColumn = attr.bodyGrid.getColumns()[0]
+    equal(testColumn.name, 'spam');
+    equal(testColumn.field, 'test');
+  });
+
+  /**
+   *
+   * Tests to make sure the exceptions are being raised as expected
+   *
+   */
+  test("Constructor test exceptions", function(assert) {
+    var dv = new DecompositionView(decomp);
 
     throws(function(){
       new EmperorAttributeABC(container, 'foo', 'bar',
                               {1:1, 2:2}, {});
-      attr.setActive('shenanigans');
-    }, Error, 'The decomposition view dictionary' +
+
+    }, Error, 'The decomposition view dictionary ' +
               'can only have decomposition views');
 
-    // FIXME: We need tests :(
+    throws(function(){
+      new EmperorAttributeABC(container, 'foo', 'bar',
+                              {}, {});
+    }, Error, 'The decomposition view dictionary cannot be empty');
   });
 
   /**
    *
-   * Test the enabled method
+   * Test to see if the grid is being built correctly
    *
    */
-  test('Test the enabled method works', function(){
-
+  test('Test resize',
     var dv = new DecompositionView(decomp);
-    var container = $('<div id="does-not-exist"></div>');
+    var container = $('<div id="does-not-exist" style="height:20px; width:21px"></div>');
+
+    // verify the subclassing was set properly
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       {'scatter': dv}, {});
+                                       sharedDecompositionViewDict, {});
 
-    equal(attr.enabled, true);
-    attr.setEnabled(false);
-    equal(attr.enabled, false);
-
-    throws(function(){
-      attr.setEnabled('shenanigans');
-    }, Error, 'setEnabled can only take a boolean');
-  });
-
-  /**
-   *
-   * Test the enabled method
-   *
-   */
-  test('Test the setActive method works', function(){
-
-    var dv = new DecompositionView(decomp);
-    var container = $('<div id="does-not-exist"></div>');
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       {'scatter': dv}, {});
-
-    equal(attr.active, false);
-    attr.setActive(true);
-    equal(attr.active, true);
-
-    throws(function(){
-      attr.setActive('shenanigans');
-    }, Error, 'setActive can only take a boolean');
-  });
-
-  /**
-   *
-   * Test the resize, toJSON and fromJSON methods raise the appropriate errors.
-   *
-   */
-  test('Test resize, toJSON and fromJSON methods', function(){
-
-    var dv = new DecompositionView(decomp);
-    var container = $('<div id="does-not-exist"></div>');
-    var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       {'scatter': dv}, {});
-
-    throws(function(){
-      attr.fromJSON('{foo:11}');
-    }, Error, 'Cannot call this abstract method');
-
-    throws(function(){
-      attr.toJSON();
-    }, Error, 'Cannot call this abstract method');
+    attr.resize(20, 30);
+    equal(attr.$body.width(), 20);
+    equal(attr.$body.height(), 30 - attr.$header.height());
+    equal(attr.$header.width(), 20);
   });
   
   /**
@@ -296,7 +283,7 @@ $(document).ready(function() {
 
   /**
    *
-   * Test set slick grid dataset
+   * Test get/set slick grid dataset.
    *
    */
   test('Test setSlickGridDataset', function(){

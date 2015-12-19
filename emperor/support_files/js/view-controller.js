@@ -50,7 +50,6 @@ function EmperorViewControllerABC(container, title, description){
   this.$body = null;
   this.$header = null;
   this.active = false;
-  // FIXME: Add title to the identifer? How about controller identifier?
   this.identifier = "EMPtab-" + Math.round(1000000 * Math.random());
   this.enabled = true;
 
@@ -73,6 +72,7 @@ function EmperorViewControllerABC(container, title, description){
   // inherit the size of the container minus the space being used for the
   // header
   this.$body.height(this.$canvas.height()-this.$header.height());
+  this.$body.width(this.$canvas.width());
 
   this.$canvas.append(this.$header);
   this.$canvas.append(this.$body);
@@ -228,7 +228,7 @@ function EmperorAttributeABC(container, title, description,
   // there's a few attributes we can only set on "ready" so list them up here
   $(function() {
     // setup the slick grid
-    scope.buildGrid(options);
+    scope._buildGrid(options);
 
     // setup chosen
     scope.$select.chosen({width: "95%", search_contains: true});
@@ -309,7 +309,7 @@ EmperorAttributeABC.prototype.setSlickGridDataset = function(data){
  * of this object.
  *
  */
-EmperorAttributeABC.prototype.buildGrid = function(options){
+EmperorAttributeABC.prototype._buildGrid = function(options){
   var columns = [{id: 'field1', name: 'Category Name', field: 'category'}];
   var gridOptions = {editable: true, enableAddRow: false,
                      enableCellNavigation: true, forceFitColumns: true,
@@ -338,7 +338,7 @@ EmperorAttributeABC.prototype.buildGrid = function(options){
 EmperorAttributeABC.prototype.resize = function(width, height) {
   this.$header.width(width);
   this.$body.width(width);
-  this.$body.height(height - this.$header.height);
+  this.$body.height(height - this.$header.height());
 
   // make the columns fit the available space whenever the window resizes
   // http://stackoverflow.com/a/29835739
