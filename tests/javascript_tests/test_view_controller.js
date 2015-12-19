@@ -224,7 +224,7 @@ $(document).ready(function() {
    * Test to see if the grid is being built correctly
    *
    */
-  test('Test resize',
+  test('Test resize', function(){
     var dv = new DecompositionView(decomp);
     var container = $('<div id="does-not-exist" style="height:20px; width:21px"></div>');
 
