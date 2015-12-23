@@ -2,7 +2,9 @@
  *
  * @name ScenePlotView3D
  *
- * @class Represents a three dimensional scene in THREE.js.
+ * @class Represents a three dimensional scene in THREE.js, this is a helper
+ * class that wraps around the functionality provided to display objects on
+ * screen.
  *
  * @property {Float} [xView] horizontal position of the scene.
  * @property {Float} [yView] vertical position of the scene.
