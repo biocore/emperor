@@ -101,7 +101,7 @@ $(document).ready(function() {
   module("EmperorAttributeABC", {
 
     setup: function(){
-      sharedDecompositionViewDict = {}
+      sharedDecompositionViewDict = {};
       var $slickid = $('<div id="fooligans"></div>');
       $slickid.appendTo(document.body);
 
@@ -160,7 +160,7 @@ $(document).ready(function() {
     teardown: function(){
       sharedDecompositionViewDict = undefined;
       $("#fooligans").remove();
-      decomp=undefined;
+      decomp = undefined;
     }
   });
 
@@ -193,7 +193,7 @@ $(document).ready(function() {
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                        sharedDecompositionViewDict,
                                        options);
-    var testColumn = attr.bodyGrid.getColumns()[0]
+    var testColumn = attr.bodyGrid.getColumns()[0];
     equal(testColumn.name, 'spam');
     equal(testColumn.field, 'test');
   });
