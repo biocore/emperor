@@ -58,16 +58,26 @@ function EmperorViewControllerABC(container, title, description){
                     this.$container + " does not exist in the DOM.");
   }
 
-  // Initializes the canvas and appends the canvas to the container
-  // and initializes the header and the body to empty divs.
+  // the canvas contains both the header and the body, note that for all these
+  // divs the width should be 100% (whatever we have available), but the height
+  // is much trickier, see the resize method for more information
   this.$canvas = $('<div name="emperor-view-controller-canvas"></div>');
+  this.$canvas.width('100%');
   this.$container.append(this.$canvas);
 
   this.$canvas.width(this.$container.width());
   this.$canvas.height(this.$container.height());
 
+  // the margin and width properties are set this way to center all the
+  // contents of the divs themselves, see this SO answer:
+  // http://stackoverflow.com/a/114549
   this.$header = $('<div name="emperor-view-controller-header"></div>');
+  this.$header.css('margin', '0 auto');
+  this.$header.css('width', '100%');
+
   this.$body = $('<div name="emperor-view-controller-body"></div>');
+  this.$body.css('margin', '0 auto');
+  this.$body.css('width', '100%');
 
   // inherit the size of the container minus the space being used for the
   // header
@@ -112,13 +122,25 @@ EmperorViewControllerABC.prototype.setActive = function(trulse){
 };
 
 /**
- * Resizes the container.
+ * Resizes the container, note that the body will take whatever space is
+ * available after considering the size of the header. The header shouldn't
+ * have height variable objects, once added their height shouldn't really
+ * change.
  *
  * @param {float} width the container width.
  * @param {float} height the container height.
  */
 EmperorViewControllerABC.prototype.resize = function(width, height) {
-  throw Error('Not implemented');
+  $('#' + this.identifier).height(height);
+
+  this.$canvas.height(height);
+  this.$canvas.width('100%');
+
+  this.$header.width(width);
+
+  // the body has to account for the size used by the header
+  this.$body.width(width);
+  this.$body.height(height - this.$header.height());
 };
 
 /**
@@ -231,7 +253,7 @@ function EmperorAttributeABC(container, title, description,
     scope._buildGrid(options);
 
     // setup chosen
-    scope.$select.chosen({width: "95%", search_contains: true});
+    scope.$select.chosen({width: "100%", search_contains: true});
 
     // only subclasses will provide this callback
     if(options.categorySelectionCallback !== undefined){
@@ -336,9 +358,8 @@ EmperorAttributeABC.prototype._buildGrid = function(options){
  * @param {float} height the container height.
  */
 EmperorAttributeABC.prototype.resize = function(width, height) {
-  this.$header.width(width);
-  this.$body.width(width);
-  this.$body.height(height - this.$header.height());
+  // call super, most of the header and body resizing logic is done there
+  EmperorViewControllerABC.prototype.resize.call(this, width, height);
 
   // make the columns fit the available space whenever the window resizes
   // http://stackoverflow.com/a/29835739

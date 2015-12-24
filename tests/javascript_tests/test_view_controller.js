@@ -77,16 +77,39 @@ $(document).ready(function() {
 
   /**
    *
+   * Test the resize method.
+   *
+   */
+  test('Test the resize method', function(){
+
+    var container = $('<div id="does-not-exist"></div>');
+    var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
+
+    // header of size 0
+    controller.resize(10, 10);
+    equal(controller.$header.height(), 0);
+    equal(controller.$header.width(), 10);
+    equal(controller.$body.height(), 10);
+    equal(controller.$body.width(), 10);
+
+
+    controller.$header.height(11);
+    controller.resize(30, 30);
+    equal(controller.$header.height(), 11);
+    equal(controller.$header.width(), 30);
+    equal(controller.$body.height(), 19);
+    equal(controller.$body.width(), 30);
+  });
+
+  /**
+   *
    * Test the resize, toJSON and fromJSON methods raise the appropriate errors.
    *
    */
   test('Test resize, toJSON and fromJSON methods', function(){
 
     var container = $('<div id="does-not-exist"></div>');
-    var controller = EmperorViewControllerABC(container, 'foo', 'bar');
-    throws(function(){
-      controller.resize(10, 10);
-    }, Error, 'Cannot call this abstract method');
+    var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
 
     throws(function(){
       controller.fromJSON('{foo:11}');
