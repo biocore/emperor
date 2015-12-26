@@ -1,7 +1,7 @@
 /**
- * @name EmperorViewControllerABC
+ * @name ColorViewController
  *
- * @class Manipulates and displays colors.
+ * @class Manipulates and displays the coloring of objects on screen.
  * @property {String} [title=""] Title of the controller.
  * @property {Node} [header=div node] jQuery element for the header
  * which contains the uppermost elements displayed in a tab.
@@ -18,6 +18,10 @@
  * the tab instance.
  * @property {Boolean} [enabled=true] Indicates if tab can be accessed.
  * @property {String} [description=""] Human-readable description of the tab.
+ * @property {Node} [$select=chosen node] Drop-down menu to select the metadata
+ * category to color by.
+ * @property {Node} [$colormapSelect=chosen node] Drop-down menu to select the
+ * colormap.
  **/
 
 /*
@@ -36,9 +40,25 @@ function ColorViewController(container, decompViewDict){
   var title = 'Color';
 
   // Constant for width in slick-grid
-  var SLICK_WIDTH = 25;
+  var SLICK_WIDTH = 25, name, value, colorItem;
   var scope = this;
-  
+
+  // this class uses a colormap selector, so populate it before calling super
+  // because otherwise the categorySelectionCallback will be called before the
+  // data is populated
+  this.$colormapSelect = $("<select class='emperor-tab-drop-down'>");
+
+  for (var i = 0; i < ColorViewController.Colormaps.length; i++){
+
+    // the first array has the values that should be displayed on the UI
+    // the second array has the identifiers used to generate the colors
+    value = ColorViewController.Colormaps[i];
+    name = ColorViewController.ColormapNames[i];
+    colorItem = $('<option>').attr('value', value).text(name);
+
+    scope.$colormapSelect.append(colorItem);
+  }
+
   // Build the options dictionary
   var options = {'valueUpdatedCallback':function(e, args) {
                    var val = args.item.category, color = args.item.color, group = [];
@@ -46,11 +66,19 @@ function ColorViewController(container, decompViewDict){
                    scope.decompViewDict[scope.getActiveDecompViewKey()].setGroupColor(color, group);
                  },
                  'categorySelectionCallback':function(evt, params) {
-                   var newCategory = params.selected;
+                   // we re-use this same callback regardless of whether the
+                   // color or the metadata category changed, maybe we can do
+                   // something better about this
+                   var category = scope.$select.val();
+                   var color = scope.$colormapSelect.val();
+
+                   var k = scope.getActiveDecompViewKey();
+                   var data;
 
                    // fetch the slickgrid-formatted data
-                   var data = scope.decompViewDict[scope.getActiveDecompViewKey()].setCategoryColors(
-                     'discrete-coloring-qiime', newCategory);
+                   data = scope.decompViewDict[k].setCategoryColors(color,
+                                                                    category);
+
                    scope.setSlickGridDataset(data);
                  },
                  'slickGridColumn':{id: 'title', name: '', field: 'color',
@@ -61,6 +89,15 @@ function ColorViewController(container, decompViewDict){
 
   EmperorAttributeABC.call(this, container, title, helpmenu,
                            decompViewDict, options);
+  this.$header.append(this.$colormapSelect);
+
+  // the chosen select can only be set when the document is ready
+  $(function() {
+    scope.$colormapSelect.chosen({width: "100%", search_contains: true});
+    scope.$colormapSelect.chosen().change(options.categorySelectionCallback);
+  });
+
+
   return this;
 }
 ColorViewController.prototype = Object.create(EmperorAttributeABC.prototype);
@@ -172,5 +209,7 @@ ColorViewController._qiimeDiscrete = [ "#ff0000", "#0000ff", "#f27304",
   "#008000", "#91278d", "#ffff00", "#7cecf4", "#f49ac2", "#5da09e", "#6b440b",
   "#808080", "#f79679", "#7da9d8", "#fcc688", "#80c99b", "#a287bf", "#fff899",
   "#c49c6b", "#c0c0c0", "#ed008a", "#00b6ff", "#a54700", "#808000", "#008080"];
-ColorViewController._discreteColormaps = {"discrete-coloring":ColorViewController._colorbrewerDiscrete,
-                           "discrete-coloring-qiime":ColorViewController._qiimeDiscrete};
+ColorViewController._discreteColormaps = {
+                "discrete-coloring":ColorViewController._colorbrewerDiscrete,
+                "discrete-coloring-qiime":ColorViewController._qiimeDiscrete
+};

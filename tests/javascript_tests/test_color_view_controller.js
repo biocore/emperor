@@ -75,6 +75,10 @@ $(document).ready(function() {
 
     var testColumn = controller.bodyGrid.getColumns()[0];
     equal(testColumn.field, 'color');
+
+    // verify the color value is set properly
+    equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
+    equal(controller.$select.val(), 'SampleID');
   });
 
   test("Test discrete colors are retrieved correctly", function(){
