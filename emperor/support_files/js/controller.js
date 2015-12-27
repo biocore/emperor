@@ -15,15 +15,6 @@
 
 
 /**
- * @name EmperorViewControllerABC
- *
- * @class The main controller class used in Emperor.
- * @property {String} [title=""] Title of the color view controller.
- * @property {String} [title=""] Title of the opacity view controller.
- * @property {String} [title=""] Title of the size view controller.
- **/
-
-/**
  *
  * @name EmperorController
  *       This is the application controller
