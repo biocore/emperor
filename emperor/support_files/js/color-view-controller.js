@@ -40,8 +40,8 @@ function ColorViewController(container, decompViewDict){
   var title = 'Color';
 
   // Constant for width in slick-grid
-  var SLICK_WIDTH = 25, name, value, colorItem;
-  var scope = this;
+  var SLICK_WIDTH = 25, scope = this;
+  var name, value, colorItem;
 
   // this class uses a colormap selector, so populate it before calling super
   // because otherwise the categorySelectionCallback will be called before the
@@ -49,7 +49,6 @@ function ColorViewController(container, decompViewDict){
   this.$colormapSelect = $("<select class='emperor-tab-drop-down'>");
 
   for (var i = 0; i < ColorViewController.Colormaps.length; i++){
-
     // the first array has the values that should be displayed on the UI
     // the second array has the identifiers used to generate the colors
     value = ColorViewController.Colormaps[i];
@@ -116,8 +115,8 @@ ColorViewController.prototype.constructor = EmperorAttributeABC;
  * coloring scheme that the system is currently using (discrete or continuous).
 */
 ColorViewController.getColorList = function(values, map) {
-  var colors = {}, numColors = values.length-1, counter=0, interpolator,
-      discrete = false;
+  var colors = {}, numColors = values.length-1, counter=0, discrete = false;
+  var interpolator;
 
   if (ColorViewController.Colormaps.indexOf(map) === -1) {
     throw new Error("Could not find "+map+" in the available colormaps");

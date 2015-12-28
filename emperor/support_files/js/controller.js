@@ -217,7 +217,7 @@ EmperorController.prototype.buildUI = function() {
  **/
 EmperorController.prototype.addTab = function(dvdict, viewConstructor){
   // nothing but a temporary id
-  var id = "" + Math.round(1000000 * Math.random());
+  var id = (Math.round(1000000 * Math.random())).toString();
 
   this._$tabsContainer.append("<div id='" + id +
                               "' class='emperor-tab-div' ></div>");
