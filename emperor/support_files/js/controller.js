@@ -13,6 +13,7 @@
  *
  */
 
+
 /**
  *
  * @name EmperorController
@@ -27,9 +28,10 @@
  *
  **/
 EmperorController = function(dm, divId){
+  var scope = this;
 
   // Constants
-  this.GRID_SCALE = 0.9;         // Scaling constant for grid dimensions
+  this.GRID_SCALE = 0.97;         // Scaling constant for grid dimensions
   this.SCENE_VIEW_SCALE = 0.5;   // Scaling constant for scene plot view dimensions
   this.SLICK_WIDTH = 25;         // Constant for width in slick-grid
 
@@ -41,10 +43,10 @@ EmperorController = function(dm, divId){
   this.sceneViews = [];
 
   // main divs where the content of the plots will be located
-  this.$plotSpaceId = $("<div id='main-wrapper' class='emperor-plot-wrapper'></div>");
+  this.$plotSpace = $("<div id='main-wrapper' class='emperor-plot-wrapper'></div>");
   this.$plotMenu = $("<div id='emperor-menu'></div>");
 
-  this.$divId.append(this.$plotSpaceId);
+  this.$divId.append(this.$plotSpace);
   this.$divId.append(this.$plotMenu);
 
   // set up the renderer
@@ -56,15 +58,36 @@ EmperorController = function(dm, divId){
   this.renderer.setClearColor(this.rendererBackgroundColor);
   this.renderer.autoClear = false;
   this.renderer.sortObjects = true;
-  this.$plotSpaceId.append(this.renderer.domElement);
+  this.$plotSpace.append(this.renderer.domElement);
+
+  // menu tabs containers, note that we need them in this format to have
+  // jQuery's UI tabs work properly. All the view controllers will be added to
+  // this container, see the addTab method
+  this._$tabsContainer = $("<div name='emperor-tabs-container'></div>");
+  this._$tabsContainer.css('background-color', '#EEEEEE');
+  this._$tabsList = $("<ul name='emperor-tabs-list'></ul>");
+
+  // These will both live in the menu space. As of the writing of this code
+  // there's nothing else but tabs on the menu, but this may change in the
+  // future, that's why we are creating the extra "tabsContainer" div
+  this.$plotMenu.append(this._$tabsContainer);
+  this._$tabsContainer.append(this._$tabsList);
+
+  // FIXME: This is a hack to go around the fact that the constructor takes
+  // a single decomposition model instead of a dictionary
+  this.decViews = {'scatter': new DecompositionView(this.dm)};
 
   // default decomposition view uses the full window
   this.addView();
 
-  this.buildUI();
+  $(function() {
+    scope.buildUI();
+  });
+
 };
 
 /**
+ *
  * Helper method to add additional ScenePlotViews (i.e. another plot)
  *
  **/
@@ -73,8 +96,8 @@ EmperorController.prototype.addView = function() {
     throw Error('Cannot add another scene plot view');
   }
 
-  var spv = new ScenePlotView3D(this.renderer, [new DecompositionView(this.dm)],
-                                this.$plotSpaceId.attr('id'), 0, 0, 0, 0);
+  var spv = new ScenePlotView3D(this.renderer, this.decViews,
+                                this.$plotSpace.attr('id'), 0, 0, 0, 0);
   this.sceneViews.push(spv);
 
   // this will setup the appropriate sizes and widths
@@ -82,18 +105,25 @@ EmperorController.prototype.addView = function() {
 };
 
 /**
+ *
  * Helper method to resize the plots
  *
  * @param {width} the width of the entire plotting space
  * @param {height} the height of the entire plotting space
+ *
  **/
 EmperorController.prototype.resize = function(width, height){
   // update the available space we have
   this.width = width;
   this.height = height;
 
+  this.$plotSpace.height(height);
+  this.$plotMenu.height(height);
+
+  this._$tabsContainer.height(height);
+
   // the area we have to present the plot is smaller than the total
-  var plotWidth = this.$plotSpaceId.width();
+  var plotWidth = this.$plotSpace.width();
 
   // TODO: The below will need refactoring
   // This is addressed in issue #405
@@ -101,7 +131,8 @@ EmperorController.prototype.resize = function(width, height){
     this.sceneViews[0].resize(0, 0, plotWidth, this.height);
   }
   else if (this.sceneViews.length === 2) {
-    this.sceneViews[0].resize(0, 0, this.SCENE_VIEW_SCALE * plotWidth, this.height);
+    this.sceneViews[0].resize(0, 0, this.SCENE_VIEW_SCALE * plotWidth,
+                              this.height);
     this.sceneViews[1].resize(this.SCENE_VIEW_SCALE * plotWidth, 0,
                               this.SCENE_VIEW_SCALE * plotWidth, this.height);
   }
@@ -135,17 +166,24 @@ EmperorController.prototype.resize = function(width, height){
 
   this.renderer.setSize(plotWidth, this.height);
 
-  // resize the grid according to the size of the container, since we are
-  // inside the tabs we have to account for that lost space, hence the
-  // this.GRID_SCALE=0.9
-  var gridWidth = this.$plotMenu.width() * this.GRID_SCALE,
-      gridHeight = this.$plotMenu.height() * this.GRID_SCALE;
-  $('#myGrid').width(gridWidth);
-  $('#myGrid').height(gridHeight);
+  if (this.colorController !== undefined){
+    // resize the grid according to the size of the container, since we are
+    // inside the tabs we have to account for that lost space, hence the
+    var tabWidth = this.$plotMenu.width() * this.GRID_SCALE,
+        tabHeight = this.$plotMenu.height() * this.GRID_SCALE;
+
+    // the tab list at the top takes up a variable amount of space and without
+    // this, the table displayed below will have an odd scrolling behaviour
+    tabHeight -= this._$tabsList.height();
+
+    this.colorController.resize(tabWidth, tabHeight);
+  }
 };
 
 /**
+ *
  * Helper method to render sceneViews
+ *
  **/
 EmperorController.prototype.render = function() {
   this.renderer.setViewport(0, 0, this.width, this.height);
@@ -156,86 +194,48 @@ EmperorController.prototype.render = function() {
 };
 
 /**
+ *
  * Helper method to assemble UI, completely independent of HTML template
+ *
  **/
 EmperorController.prototype.buildUI = function() {
+  //FIXME: This only works for 1 scene plot view
+  this.colorController = this.addTab(this.sceneViews[0].decViews,
+                                     ColorViewController);
 
-  this.$plotMenu.append("<div id='emperor-menu-tabs'></div>");
-  $('#emperor-menu-tabs').append("<ul><li><a href='#keys'>Key</a></li></ul>");
-  $('#emperor-menu-tabs').append("<div id='keys' class='emperor-tab-div'></div>");
-  $('#emperor-menu-tabs').tabs({heightStyle: 'fill'});
-
-  var gridWidth = this.$plotMenu.width() * this.GRID_SCALE,
-      gridHeight = this.$plotMenu.height() * this.GRID_SCALE;
-
-  // http://stackoverflow.com/a/6602002
-  var $select = $("<select class='emperor-tab-drop-down'>");
-  _.each(this.dm.md_headers, function(header) {
-    $select.append($('<option>').attr('value', header).text(header));
-  });
-
-  $('#keys').append($select);
-  $('#keys').append("<div id='myGrid'></div>");
-  $('#myGrid').width(gridWidth);
-  $('#myGrid').height(gridHeight);
-
-  var grid;
-  var columns = [
-    {id: 'title', name: '', field: 'color', sortable: false,
-     maxWidth: this.SLICK_WIDTH, minWidth: this.SLICK_WIDTH, editor: ColorEditor,
-     formatter: ColorFormatter},
-    {id: 'field1', name: 'Category Name', field: 'category'}
-  ];
-
-  var options = {
-    editable: true,
-    enableAddRow: false,
-    enableCellNavigation: true,
-    forceFitColumns: true
-  };
-  /**
-   * Updates slick-grid cells
-   *
-   * @param {ec} Emperor Controller object
-   **/
-  $(function(ec) {
-    grid = new Slick.Grid('#myGrid', [], columns, options);
-
-    // subscribe to events when a cell is changed
-    grid.onCellChange.subscribe(function(e, args) {
-      var val = args.item.category, color = args.item.color, group = [];
-
-      group = args.item.plottables;
-      // Only coloring the first scene view.  Need to address in issue #4
-      ec.sceneViews[0].decViews[0].setGroupColor(color, group);
-    });
-
-    /**
-     * Changes the colors according to category
-     *
-     * @param {ec} Emperor Controller object
-     **/
-    function categorySelectorChanged(evt, params) {
-      var newCategory = params.selected;
-
-      data = ec.sceneViews[0].decViews[0].setCategoryColors(null, newCategory);
-      grid.setData(data);
-      grid.invalidate();
-      grid.render();
-    }
-    // fire a callback to initialize the data grid
-    categorySelectorChanged(null, {selected: $select.val()});
-
-    // setup chosen
-    $select.chosen({width: "100%", search_contains: true});
-    $select.chosen().change(categorySelectorChanged);
-
-    // make the columns fit the available space whenever the window resizes
-    // http://stackoverflow.com/a/29835739
-    $(window).resize(function() {
-      grid.setColumns(grid.getColumns());
-    });
-  }(this));
+  // We are tabifying this div, I don't know man.
+  this._$tabsContainer.tabs({heightStyle: 'fill'});
 };
 
+/**
+ *
+ * Helper method to resize the plots.
+ *
+ * @param {Array} [dvdict] Dictionary of DecompositionViews.
+ * @param {function} [viewConstructor] Constructor of the view controller.
+ *
+ **/
+EmperorController.prototype.addTab = function(dvdict, viewConstructor){
+  // nothing but a temporary id
+  var id = (Math.round(1000000 * Math.random())).toString();
 
+  this._$tabsContainer.append("<div id='" + id +
+                              "' class='emperor-tab-div' ></div>");
+  $('#' + id).height(this.$plotMenu.height() -
+                     this._$tabsList.height());
+
+  // dynamically instantiate the controller, see:
+  // http://stackoverflow.com/a/8843181
+  var obj = new (Function.prototype.bind.apply(viewConstructor,
+                                               [null, '#' + id, dvdict]));
+
+  // set the identifier of the div to the one defined by the object
+  $('#' + id).attr('id', obj.identifier);
+
+  // now add the list element linking to the container div with the proper
+  // title
+  this._$tabsList.append("<li><a  href='#" + obj.identifier +
+                         "-tab'>" + obj.title + "</a></li>");
+
+  return obj;
+};

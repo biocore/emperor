@@ -53,22 +53,37 @@ function EmperorViewControllerABC(container, title, description){
   this.identifier = "EMPtab-" + Math.round(1000000 * Math.random());
   this.enabled = true;
 
-  var self = this; // only used within class
-
   if (this.$container.length < 1) {
     throw new Error("Emperor requires a valid container, " +
                     this.$container + " does not exist in the DOM.");
   }
 
-  // Initializes the canvas and appends the canvas to the container
-  // and initializes the header and the body to empty divs.
-  this.$canvas = $('<div></div>');
+  // the canvas contains both the header and the body, note that for all these
+  // divs the width should be 100% (whatever we have available), but the height
+  // is much trickier, see the resize method for more information
+  this.$canvas = $('<div name="emperor-view-controller-canvas"></div>');
+  this.$canvas.width('100%');
   this.$container.append(this.$canvas);
+
   this.$canvas.width(this.$container.width());
   this.$canvas.height(this.$container.height());
 
-  this.$header = $('<div></div>');
-  this.$body = $('<div></div>');
+  // the margin and width properties are set this way to center all the
+  // contents of the divs themselves, see this SO answer:
+  // http://stackoverflow.com/a/114549
+  this.$header = $('<div name="emperor-view-controller-header"></div>');
+  this.$header.css('margin', '0 auto');
+  this.$header.css('width', '100%');
+
+  this.$body = $('<div name="emperor-view-controller-body"></div>');
+  this.$body.css('margin', '0 auto');
+  this.$body.css('width', '100%');
+
+  // inherit the size of the container minus the space being used for the
+  // header
+  this.$body.height(this.$canvas.height()-this.$header.height());
+  this.$body.width(this.$canvas.width());
+
   this.$canvas.append(this.$header);
   this.$canvas.append(this.$body);
 
@@ -107,13 +122,25 @@ EmperorViewControllerABC.prototype.setActive = function(trulse){
 };
 
 /**
- * Resizes the container.
+ * Resizes the container, note that the body will take whatever space is
+ * available after considering the size of the header. The header shouldn't
+ * have height variable objects, once added their height shouldn't really
+ * change.
  *
  * @param {float} width the container width.
  * @param {float} height the container height.
  */
 EmperorViewControllerABC.prototype.resize = function(width, height) {
-  throw Error('Not implemented');
+  $('#' + this.identifier).height(height);
+
+  this.$canvas.height(height);
+  this.$canvas.width('100%');
+
+  this.$header.width(width);
+
+  // the body has to account for the size used by the header
+  this.$body.width(width);
+  this.$body.height(height - this.$header.height());
 };
 
 /**
@@ -147,9 +174,12 @@ EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
  * @property {String} [activeViewKey=First Key in decompViewDict] This is the
  * key of the active decomposition view.
  * @property {String} [metadataField] Metadata column name.
- * @property {Slick.Grid} [_bodyGrid] Container that lists the metadata
+ * @property {Slick.Grid} [bodyGrid] Container that lists the metadata
  * categories described under the `metadataField` column and the attribute
  * that can be modified.
+ * @property {Object} [options] This is a dictionary of options used to build
+ * the view controller. Used to set attributes of the slick grid and the
+ * metadata category drop down.
  *
  */
 
@@ -165,18 +195,32 @@ EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
  * identifiers and the values are DecompositionView objects referring to a set
  * of objects presented on screen. This dictionary will usually be shared by
  * all the tabs in the application. This argument is passed by reference.
+ * @params {Object} [options] This is a dictionary of options used to build
+ * the view controller. Used to set attributes of the slick grid and the
+ * metadata category drop down. At the moment the constructor only expects the
+ * following attributes:
+ *  - categorySelectionCallback: a function object that's called when a new
+ *  metadata category is selected in the dropdown living in the header.
+ *  See [change]{@link https://api.jquery.com/change/}.
+ *  - valueUpdatedCallback: a function object that's called when a metadata
+ *  visualization attribute is modified (i.e. a change of color).
+ *  See [onCellChange]{@link
+ *  https://github.com/mleibman/SlickGrid/wiki/Grid-Events}.
+ *  - slickGridColumn: a dictionary specifying options to be passed into the
+ *  slickGrid. For instance, the ColorFormatter and the ColorEditor would be
+ *  passed here.  For more information, refer to the Slick Grid documentation.
  *
  * @return {EmperorAttributeABC} Returns an instance of the EmperorAttributeABC
  * class.
  *
  */
-function EmperorAttributeABC(container, title, description, decompViewDict){
+function EmperorAttributeABC(container, title, description,
+                             decompViewDict, options){
   EmperorViewControllerABC.call(this, container, title, description);
-
   if (decompViewDict === undefined){
     throw Error('The decomposition view dictionary cannot be undefined');
   }
-  for(dv in decompViewDict){
+  for(var dv in decompViewDict){
     if(!dv instanceof DecompositionView){
       throw Error('The decomposition view dictionary ' +
                   'can only have decomposition views');
@@ -190,12 +234,38 @@ function EmperorAttributeABC(container, title, description, decompViewDict){
   this.metadataField = null;
   this.activeViewKey = null;
 
-  // This is a gray area, but we believe it makes sense to have a callback
-  // that initializes the grid object
-  this._bodyGrid = this.buildGrid();
-
   // Picks the first key in the dictionary as the active key
   this.activeViewKey = Object.keys(decompViewDict)[0];
+
+  var dm = decompViewDict[this.activeViewKey].decomp;
+  var scope = this;
+
+  // http://stackoverflow.com/a/6602002
+  this.$select = $("<select class='emperor-tab-drop-down'>");
+     _.each(dm.md_headers, function(header) {
+       scope.$select.append($('<option>').attr('value', header).text(header));
+     });
+  this.$header.append(this.$select);
+
+  // there's a few attributes we can only set on "ready" so list them up here
+  $(function() {
+    // setup the slick grid
+    scope._buildGrid(options);
+
+    // setup chosen
+    scope.$select.chosen({width: "100%", search_contains: true});
+
+    // only subclasses will provide this callback
+    if(options.categorySelectionCallback !== undefined){
+      scope.$select.chosen().change(options.categorySelectionCallback);
+
+      // now that we have the chosen selector and the table fire a callback to
+      // initialize the data grid
+      options.categorySelectionCallback(null, {selected: scope.$select.val()});
+    }
+
+  });
+
   return this;
 }
 EmperorAttributeABC.prototype = Object.create(EmperorViewControllerABC.prototype);
@@ -239,7 +309,7 @@ EmperorAttributeABC.prototype.setActiveDecompViewKey = function(k){
  * displayed by the body grid.
  */
 EmperorAttributeABC.prototype.getSlickGridDataset = function(){
-  return this._bodyGrid.getData();
+  return this.bodyGrid.getData();
 }
 
 /**
@@ -249,16 +319,50 @@ EmperorAttributeABC.prototype.getSlickGridDataset = function(){
  */
 EmperorAttributeABC.prototype.setSlickGridDataset = function(data){
   // Re-render
-  this._bodyGrid.setData(data);
-  this._bodyGrid.invalidate();
-  this._bodyGrid.render();
+  this.bodyGrid.setData(data);
+  this.bodyGrid.invalidate();
+  this.bodyGrid.render();
 }
 
 /**
- * Method in charge of building the SlickGrid object
+ * Method in charge of initializing the SlickGrid object
  *
- * @returns Slick.Grid object with a minimal setup.
+ * @params {Object} [options] additional options to initialize the slick grid
+ * of this object.
+ *
  */
-EmperorAttributeABC.prototype.buildGrid = function(){
-  return new Slick.Grid(this.$body, [], [], {enableColumnReorder: false});
+EmperorAttributeABC.prototype._buildGrid = function(options){
+  var columns = [{id: 'field1', name: 'Category Name', field: 'category'}];
+  var gridOptions = {editable: true, enableAddRow: false,
+                     enableCellNavigation: true, forceFitColumns: true,
+                     enableColumnReorder: false};
+
+  // If there's a custom slickgrid column then add it to the object
+  if(options.slickGridColumn !== undefined){
+    columns.unshift(options.slickGridColumn);
+  }
+
+  this.bodyGrid = new Slick.Grid(this.$body, [], columns, gridOptions);
+
+  // subscribe to events when a cell is changed
+  this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
 }
+
+/**
+ * Resizes the container and the individual elements.
+ *
+ * Note, the consumer of this class, likely the main controller should call
+ * the resize function any time a resizing event happens.
+ *
+ * @param {float} width the container width.
+ * @param {float} height the container height.
+ */
+EmperorAttributeABC.prototype.resize = function(width, height) {
+  // call super, most of the header and body resizing logic is done there
+  EmperorViewControllerABC.prototype.resize.call(this, width, height);
+
+  // make the columns fit the available space whenever the window resizes
+  // http://stackoverflow.com/a/29835739
+  this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+};
+
