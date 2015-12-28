@@ -97,7 +97,6 @@ function ColorViewController(container, decompViewDict){
     scope.$colormapSelect.chosen().change(options.categorySelectionCallback);
   });
 
-
   return this;
 }
 ColorViewController.prototype = Object.create(EmperorAttributeABC.prototype);
