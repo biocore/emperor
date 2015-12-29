@@ -1313,6 +1313,7 @@ function setJqueryUi() {
     min: 0.1,
     max: 5,
     value: 1,
+    step: 0.1,
     slide: function( event, ui ) {
       animationSpeedChanged(ui);
     },
@@ -2454,6 +2455,7 @@ $(document).ready(function() {
       // if it's the 1st frame to  animate then the director will be null
       if (g_animationDirector === null) {
 
+
             // retrieve the values from the interface
             trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
             gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
@@ -2472,7 +2474,6 @@ $(document).ready(function() {
                                                             gradientCategory,
                                                             trajectoryCategory);
             g_animationDirector.updateFrame();
-            console.log(g_animationDirector.trajectories)
             clearPlot();
 
       }

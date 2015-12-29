@@ -73,8 +73,8 @@ function TrajectoryOfSamples(sampleNames, metadataCategoryName, gradientPoints,
 
   // this value determines how fast the animation will run for now let's use
   // 5 and stick to it as a good default value; 60 was way too slow
-  this.suppliedN = suppliedN !== undefined ? suppliedN : 5;
-  this.maxN = maxN !== undefined ? maxN : 10;
+  this.suppliedN = suppliedN !== undefined ? suppliedN : 10 / $("#animation-speed-slider").slider("option","value");
+  this.maxN = maxN !== undefined ? maxN : 100;
 
   if (this.coordinates.length != this.gradientPoints.length) {
     throw new Error("The number of coordinate points and gradient points is"+
