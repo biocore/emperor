@@ -307,7 +307,12 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <br><label for="gradient-category-drop-down" class="text">Gradient Category</label><br>
+                        <input type="checkbox" id="animate_traces" checked><label title="When checked, animated samples will trace lines on the plot as they move; otherwise samples will be plotted without a trace." >Render animation with traces.</label></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br><label for="gradient-category-drop-down" class="text">Gradient Category (time dimension)</label><br>
                     </td>
                 </tr>
                 <tr>
