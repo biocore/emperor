@@ -2474,7 +2474,9 @@ $(document).ready(function() {
                                                             gradientCategory,
                                                             trajectoryCategory);
             g_animationDirector.updateFrame();
-            clearPlot();
+            if ($("#animate_traces").is(":checked") === false) {
+                clearPlot();
+            }
 
       }
       else{
