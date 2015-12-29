@@ -1,5 +1,5 @@
 /**
- *
+ * 
  * @author Yoshiki Vazquez Baeza
  * @copyright Copyright 2013, The Emperor Project
  * @credits Yoshiki Vazquez Baeza

@@ -2464,14 +2464,16 @@ $(document).ready(function() {
             g_hiddenSpheres.forEach(function (sid) {
                 delete g_mappingFileDataVisible[sid];
             });
+
             // initialize the animation director
             g_animationDirector = new AnimationDirector(g_mappingFileHeaders,
                                                             g_mappingFileDataVisible,
                                                             g_spherePositions,
                                                             gradientCategory,
-                                                            trajectoryCategory,
-                                                            10);
+                                                            trajectoryCategory);
             g_animationDirector.updateFrame();
+            console.log(g_animationDirector.trajectories)
+            clearPlot();
 
       }
       else{
@@ -2496,8 +2498,13 @@ $(document).ready(function() {
                 trajectoryColor = trajectoryColor.replace(/\s/g, '');
 
             // draw a trajectory line per trajectory
-            drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index],
-                                                       g_animationDirector.currentFrame, trajectoryColor, 2);
+            if ($("#animate_traces").is(":checked") === false) {
+                drawingLineBuffer = drawTrajectoryPoint(g_animationDirector.trajectories[index],
+                                                           g_animationDirector.currentFrame, trajectoryColor, 10);
+            } else {
+                drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index],
+                                                           g_animationDirector.currentFrame, trajectoryColor, 10);
+            }
 
             g_mainScene.add(drawingLineBuffer);
             g_elementsGroup.add(drawingLineBuffer);
@@ -2562,6 +2569,63 @@ function resetAnimation() {
   // re-initialize as an empty array
   g_animationLines = [];
 }
+
+
+
+
+
+
+
+/**
+ *
+ * Create a point object off of a SampleTrajectory object
+ *
+ * @param {trajectory} SampleTrajectory object.
+ * @param {currentFrame} The current frame at which this line should be drawn.
+ * @param {color} string or integer that can be parsed by THREE.Color.
+ * @param {radius} Float value representing the radius of the point.
+ *
+ * @return Returns a sphere with the required attributes as defined by the input
+ * parameters.
+ */
+function drawTrajectoryPoint(trajectory, currentFrame, color, radius){
+
+    var interpPos = trajectory.interpolatedCoordinates[currentFrame];
+    if (typeof interpPos === 'undefined') { // interpPos will be undefined at the final keyframe of the animation; in this case we don't use an interpolated value but the 'coordinates' value
+        var coord = trajectory.coordinates;
+        interpPos = coord[coord.length - 1];
+    }
+    var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshLambertMaterial({color: color}) );
+    mesh.position.set(interpPos.x, interpPos.y, interpPos.z);
+
+    return mesh;
+}
+
+
+
+// clear out everything except the axes from the PCOA plot
+function clearPlot() {
+
+    // remove biplot vectors
+    for (var i in g_plotTaxaArrows) {
+        g_mainScene.remove(g_plotTaxaArrows[i]);
+    }
+
+    // remove biplot sphers
+    for (var i in g_plotTaxa) {
+        g_mainScene.remove(g_plotTaxa[i]);
+    }
+
+    // remove current spheres (there may be a more elegant way of doing this...)
+    g_mainScene.remove(g_elementsGroup);
+    g_elementsGroup = new THREE.Object3D();
+    g_mainScene.add(g_elementsGroup);
+
+}
+
+
+
+
 
 /**
  *
