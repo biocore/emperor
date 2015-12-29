@@ -38,6 +38,7 @@ var g_sceneControl;
 // general multipurpose variables
 var g_elementsGroup; // group that holds the plotted shapes
 var g_categoryIndex = 0; // current coloring category index
+var g_visibleSpheres = []; // array of SIDs currently visible
 var g_genericSphere; // generic sphere used for plots
 var g_categoryName = ""; // current coloring category
 var g_foundId = ""; // id of currently located point
@@ -613,6 +614,7 @@ function toggleVisible(value) {
       try{
 	g_elementsGroup.remove(g_plotSpheres[sid]);
 	g_visiblePoints--
+    g_visibleSpheres.splice(g_visibleSpheres.indexOf(sid), 1); // http://stackoverflow.com/a/3954451/1153897
       }
       catch(TypeError){}
       try{
@@ -630,6 +632,7 @@ function toggleVisible(value) {
       try {
 	g_elementsGroup.add(g_plotSpheres[sid]);
 	g_visiblePoints++;
+    g_visibleSpheres.push(sid);
       }
       catch(TypeError){}
       try{
@@ -2151,7 +2154,7 @@ $(document).ready(function() {
   animate();
 
   function init() {
-    // assign a position to the camera befor associating it with other
+    // assign a position to the camera before associating it with other
     // objects, else the original position will be lost and not make sense
     g_sceneCamera = new THREE.PerspectiveCamera(view_angle, winAspect, view_near, view_far);
     g_sceneCamera.position.set(0, 0, 0);
@@ -2291,6 +2294,7 @@ $(document).ready(function() {
       labelshtml += "<label id=\""+divid+"_label\" class=\"unselectable labels\" style=\"position:absolute; left:"+parseInt(coords['x'])+"px; top:"+parseInt(coords['y'])+"px;\">";
       labelshtml += sid;
       labelshtml += "</label>";
+      g_visibleSpheres.push(sid); // initially all SIDs are visible
     }
     document.getElementById("labels").innerHTML = labelshtml;
 
@@ -2450,58 +2454,64 @@ $(document).ready(function() {
       // if it's the 1st frame to  animate then the director will be null
       if (g_animationDirector === null) {
 
-	// retrieve the values from the interface
-	trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
-	gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
+            // retrieve the values from the interface
+            trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
+            gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
 
-	// initialize the animation director
-	g_animationDirector = new AnimationDirector(g_mappingFileHeaders,
-                                                    g_mappingFileData,
-                                                    g_spherePositions,
-                                                    gradientCategory,
-                                                    trajectoryCategory,
-                                                    10);
-	g_animationDirector.updateFrame();
+            // remove hidden SIDs from mappingFileData
+            var g_hiddenSpheres = $(Object.keys(g_mappingFileData)).not(g_visibleSpheres).get(); // http://stackoverflow.com/a/15386005/1153897
+            var g_mappingFileDataVisible = jQuery.extend(true, {}, g_mappingFileData); // http://stackoverflow.com/a/122704/1153897
+            g_hiddenSpheres.forEach(function (sid) {
+                delete g_mappingFileDataVisible[sid];
+            });
+            // initialize the animation director
+            g_animationDirector = new AnimationDirector(g_mappingFileHeaders,
+                                                            g_mappingFileDataVisible,
+                                                            g_spherePositions,
+                                                            gradientCategory,
+                                                            trajectoryCategory,
+                                                            10);
+            g_animationDirector.updateFrame();
 
       }
       else{
-	g_animationDirector.updateFrame();
+        g_animationDirector.updateFrame();
 
-	if (g_animationDirector.animationCycleFinished() == false){
-	  // we are trying to remove the lines from the previous frame
-	  for (var index = 0; index < g_animationLines.length; index++){
-	    g_mainScene.remove(g_animationLines[index]);
-	    g_elementsGroup.remove(g_animationLines[index]);
-	  }
+        if (g_animationDirector.animationCycleFinished() == false){
+          // we are trying to remove the lines from the previous frame
+          for (var index = 0; index < g_animationLines.length; index++){
+            g_mainScene.remove(g_animationLines[index]);
+            g_elementsGroup.remove(g_animationLines[index]);
+          }
 
-	  g_animationLines.length = 0;
+          g_animationLines.length = 0;
 
-	  for (var index = 0; index < g_animationDirector.trajectories.length; index++){
+          for (var index = 0; index < g_animationDirector.trajectories.length; index++){
 
-            categoryName = g_animationDirector.trajectories[index].metadataCategoryName;
-            categoryName = escapeRegularExpression(categoryName);
-            trajectoryColor = $('#emperor-animation-color-selector').find('div[name="'+categoryName+'"]').css('background-color');
+                categoryName = g_animationDirector.trajectories[index].metadataCategoryName;
+                categoryName = escapeRegularExpression(categoryName);
+                trajectoryColor = $('#emperor-animation-color-selector').find('div[name="'+categoryName+'"]').css('background-color');
 
-            // THREE cannot process spaces inside rgb(0, 0, 0) it has to be rgb(0,0,0)
-            trajectoryColor = trajectoryColor.replace(/\s/g, '');
+                // THREE cannot process spaces inside rgb(0, 0, 0) it has to be rgb(0,0,0)
+                trajectoryColor = trajectoryColor.replace(/\s/g, '');
 
-	    // draw a trajectory line per trajectory
-	    drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index],
-                                                   g_animationDirector.currentFrame, trajectoryColor, 10);
+            // draw a trajectory line per trajectory
+            drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index],
+                                                       g_animationDirector.currentFrame, trajectoryColor, 2);
 
-	    g_mainScene.add(drawingLineBuffer);
-	    g_elementsGroup.add(drawingLineBuffer);
+            g_mainScene.add(drawingLineBuffer);
+            g_elementsGroup.add(drawingLineBuffer);
 
-	    g_animationLines.push(drawingLineBuffer);
-	  }
-	}
-	else{
-	  // the animation is done, clean up the interface and other variables
-	  g_animationDirector = null;
-	  g_isPlaying = false;
-	  document.getElementById("play-button").disabled="false";
+            g_animationLines.push(drawingLineBuffer);
+          }
+        }
+        else{
+          // the animation is done, clean up the interface and other variables
+          g_animationDirector = null;
+          g_isPlaying = false;
+          document.getElementById("play-button").disabled="false";
 
-	}// animation cycle is done
+        }// animation cycle is done
       }// animation director is not null
     }// animation is playing
 
