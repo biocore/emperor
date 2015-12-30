@@ -372,6 +372,9 @@ function colorAnimationsByCategoryChanged() {
   // names of the categories used to do the animations
   gradient = $('#gradient-category-drop-down').find('option:selected').text();
   trajectory = $('#trajectory-category-drop-down').find('option:selected').text();
+  var ix = g_mappingFileHeaders.indexOf(trajectory);
+  var colorbycombo = $('#colorbycombo').find('option:selected').text();
+  var ix2 = g_mappingFileHeaders.indexOf(colorbycombo);
 
   table = buildColorSelectorTable(g_mappingFileHeaders, g_mappingFileData,
                                   trajectory, 'animations');
@@ -379,15 +382,33 @@ function colorAnimationsByCategoryChanged() {
   // add the DOM object to this div, note that this will reset the contents
   $('#emperor-animation-color-selector').html(table);
 
+  console.log(g_mappingFileHeaders);
+  console.log(g_mappingFileData);
+
+
   $('#emperor-animation-color-selector').children().find('div').each(
-    function(){
+    function(d){
       // get the id and the color for this element
       idString = '#' + $(this).attr('id');
       hexString = getDiscreteColor(colorIndex);
+      if ($("#animate_traces").is(":checked") === false) { // if not using traces, we will color samples with the colors-tab
+          var trajectoryID = $(this).attr('name');
+          for (var sid in g_mappingFileData) { // find associated color by color from the colors tab
+            var tmp = g_mappingFileData[sid][ix];
+            if (tmp == trajectoryID) {
+              var colorID = g_mappingFileData[sid][ix2];
+              var newColor = $('#colorbylist').find('div[name="'+colorID+'"]').css('background-color');
+              $(idString).css('backgroundColor',newColor);
+              break;
+            }
+          }
+      } else {
 
-      // CSS uses #FFFFFF instead of 0xFFFFFF
-      $(idString).css('backgroundColor',
-                      hexString.replace('0x', '#'));
+          // CSS uses #FFFFFF instead of 0xFFFFFF
+          $(idString).css('backgroundColor',
+                          hexString.replace('0x', '#'));
+
+      }
 
       // initialize an spectrum selector for this identifier
       $(idString).spectrum({
@@ -2457,8 +2478,11 @@ $(document).ready(function() {
 
 
             // retrieve the values from the interface
-            trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
             gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
+            trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
+            if ($("#animate_traces").is(":checked") === false) {
+                clearPlot();
+            }
 
             // remove hidden SIDs from mappingFileData
             var g_hiddenSpheres = $(Object.keys(g_mappingFileData)).not(g_visibleSpheres).get(); // http://stackoverflow.com/a/15386005/1153897
@@ -2474,9 +2498,6 @@ $(document).ready(function() {
                                                             gradientCategory,
                                                             trajectoryCategory);
             g_animationDirector.updateFrame();
-            if ($("#animate_traces").is(":checked") === false) {
-                clearPlot();
-            }
 
       }
       else{
@@ -2495,7 +2516,7 @@ $(document).ready(function() {
 
                 categoryName = g_animationDirector.trajectories[index].metadataCategoryName;
                 categoryName = escapeRegularExpression(categoryName);
-                trajectoryColor = $('#emperor-animation-color-selector').find('div[name="'+categoryName+'"]').css('background-color');
+                trajectoryColor = $('#emperor-animation-color-selector').find('div[name="'+categoryName+'"]').css('background-color'); 
 
                 // THREE cannot process spaces inside rgb(0, 0, 0) it has to be rgb(0,0,0)
                 trajectoryColor = trajectoryColor.replace(/\s/g, '');

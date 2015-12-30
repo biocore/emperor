@@ -307,7 +307,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <input type="checkbox" id="animate_traces" checked><label title="When checked, animated samples will trace lines on the plot as they move; otherwise samples will be plotted without a trace." >Render animation with traces.</label></input>
+                        <input type="checkbox" id="animate_traces" onchange="colorAnimationsByCategoryChanged()" checked><label title="When checked, animated samples will trace lines on the plot as they move; otherwise samples will be plotted without a trace and will be colored as defined in the 'Colors' tab." >Render animation with traces</label></input>
                     </td>
                 </tr>
                 <tr>
