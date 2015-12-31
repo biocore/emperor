@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Emperor test</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/css/emperor.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/jquery-ui2.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/slick.grid.min.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/colorPicker.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/spectrum.css">
+    <link rel="stylesheet" type="text/css" href="../emperor/support_files/vendor/css/chosen.min.css">
+
+    <style>
+      div.emperor-space{
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+      }
+    </style>
+
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/underscore-min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery.colorPicker.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/chroma.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/three.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/three.js-plugins/OrbitControls.js"></script>
+
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery.colorPicker.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/spectrum.js"></script>
+
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/chosen.jquery.min.js"></script>
+
+    <!-- slickgrid -->
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery.event.drag-2.2.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.core.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.grid.min.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.editors.min.js"></script>
+
+    <script type="text/javascript" src="../emperor/support_files/js/model.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/view.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/util.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/sceneplotview3d.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/view-controller.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/color-editor.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/color-view-controller.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/js/controller.js"></script>
+
+  </head>
+  <body>
+    <script type="text/javascript">
+      // we need to remove this callback from the chosen library
+      function chosen_highlight_callback() {};
+
+      $("<div id='plots' class='emperor-space'></div>").appendTo(document.body);
+      var div = $('#plots');
+
+      var ids = {{ coords_ids }};
+      var coords = {{ coords }};
+      var pct_var = {{ pct_var }};
+      var md_headers = {{ md_headers}};
+      var metadata = {{  metadata }};
+
+      var dm, ec;
+
+      function init() {
+        // Initialize the DecompositionModel
+        dm = new DecompositionModel(name, ids, coords, pct_var,
+                                    md_headers, metadata);
+        // Initialize the EmperorController
+        ec = new EmperorController(dm, 'plots');
+      }
+
+      $(window).resize(function() {
+        ec.resize(window.innerWidth, window.innerHeight);
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        ec.render();
+      }
+
+      $(function () {
+        init();
+        animate();
+      });
+
+    </script>
+  </body>
+</html>
