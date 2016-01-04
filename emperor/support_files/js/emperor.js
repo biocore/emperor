@@ -192,10 +192,10 @@ function toggleScaleCoordinates(element) {
     var whiteColor = new THREE.Color();
     whiteColor.setHex("0xFFFFFF");
     var taxaVector = makeLine([0, 0, 0,],
-			      [g_plotTaxa[index].position.x,
-			       g_plotTaxa[index].position.y,
-			       g_plotTaxa[index].position.z],
-			      whiteColor, 2);
+                  [g_plotTaxa[index].position.x,
+                   g_plotTaxa[index].position.y,
+                   g_plotTaxa[index].position.z],
+                  whiteColor, 2);
 
     g_plotTaxaArrows[index] = taxaVector;
     g_elementsGroup.add(g_plotTaxaArrows[index]);
@@ -217,20 +217,20 @@ function toggleScaleCoordinates(element) {
 
       // scale the position of each of the vertices
       currentPosition[vertex].x = operation(currentPosition[vertex].x,
-					    g_fractionExplained[g_viewingAxes[0]])
+                        g_fractionExplained[g_viewingAxes[0]])
       currentPosition[vertex].y = operation(currentPosition[vertex].y,
-					    g_fractionExplained[g_viewingAxes[1]])
+                        g_fractionExplained[g_viewingAxes[1]])
       currentPosition[vertex].z = operation(currentPosition[vertex].z,
-					    g_fractionExplained[g_viewingAxes[2]])
+                        g_fractionExplained[g_viewingAxes[2]])
 
       // create an array we can pass to makeLine
       currentPosition[vertex] = [currentPosition[vertex].x,
-				 currentPosition[vertex].y, currentPosition[vertex].z]
+                 currentPosition[vertex].y, currentPosition[vertex].z]
     }
 
     // add the element to the main vector array and to the group
     g_plotVectors[sample_id] = makeLine(currentPosition[0],
-					currentPosition[1], currentColor, 2);
+                    currentPosition[1], currentColor, 2);
     g_elementsGroup.add(g_plotVectors[sample_id]);
   }
 
@@ -249,24 +249,24 @@ function toggleScaleCoordinates(element) {
       g_mainScene.remove(g_plotEdges[sample_id][section])
 
       for (vertex in g_plotEdges[sample_id][section].geometry.vertices){
-	currentPosition[vertex] = g_plotEdges[sample_id][section].geometry.vertices[vertex];
+    currentPosition[vertex] = g_plotEdges[sample_id][section].geometry.vertices[vertex];
 
-	// scale the position of each of the vertices
-	currentPosition[vertex].x = operation(currentPosition[vertex].x,
-					      g_fractionExplained[g_viewingAxes[0]])
-	currentPosition[vertex].y = operation(currentPosition[vertex].y,
-					      g_fractionExplained[g_viewingAxes[1]])
-	currentPosition[vertex].z = operation(currentPosition[vertex].z,
-					      g_fractionExplained[g_viewingAxes[2]])
+    // scale the position of each of the vertices
+    currentPosition[vertex].x = operation(currentPosition[vertex].x,
+                          g_fractionExplained[g_viewingAxes[0]])
+    currentPosition[vertex].y = operation(currentPosition[vertex].y,
+                          g_fractionExplained[g_viewingAxes[1]])
+    currentPosition[vertex].z = operation(currentPosition[vertex].z,
+                          g_fractionExplained[g_viewingAxes[2]])
 
-	// create an array we can pass to makeLine
-	currentPosition[vertex] = [currentPosition[vertex].x,
-				   currentPosition[vertex].y, currentPosition[vertex].z]
+    // create an array we can pass to makeLine
+    currentPosition[vertex] = [currentPosition[vertex].x,
+                   currentPosition[vertex].y, currentPosition[vertex].z]
       }
 
       // add the element to the main vector array and to the group
       g_plotEdges[sample_id][section] = makeLine(currentPosition[0],
-						 currentPosition[1], currentColor, 2);
+                         currentPosition[1], currentColor, 2);
       g_elementsGroup.add(g_plotEdges[sample_id][section]);
       g_mainScene.add(g_plotEdges[sample_id][section]);
 
@@ -349,14 +349,14 @@ function colorByMenuChanged(categoryName) {
       preferredFormat: "hex6",
       change:
       function(color) {
-	$(this).css('backgroundColor', color.toHexString());
-	var c = color.toHexString();
-	if(c.length == 4){
-	  c = "#"+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2)+c.charAt(3)+c.charAt(3);
-	}
-	colorChanged($(this).attr('name'), c);
-	colors[$(this).attr('name')] = c;
-	colorParallelPlots(vals, colors);
+    $(this).css('backgroundColor', color.toHexString());
+    var c = color.toHexString();
+    if(c.length == 4){
+      c = "#"+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2)+c.charAt(3)+c.charAt(3);
+    }
+    colorChanged($(this).attr('name'), c);
+    colors[$(this).attr('name')] = c;
+    colorParallelPlots(vals, colors);
       }
     });
   }
@@ -381,9 +381,6 @@ function colorAnimationsByCategoryChanged() {
 
   // add the DOM object to this div, note that this will reset the contents
   $('#emperor-animation-color-selector').html(table);
-
-  console.log(g_mappingFileHeaders);
-  console.log(g_mappingFileData);
 
 
   $('#emperor-animation-color-selector').children().find('div').each(
@@ -526,10 +523,10 @@ function scalingByMenuChanged(){
       max: 20,
       value: 5,
       slide: function( event, ui ) {
-	sphereRadiusChange(ui, $(this).attr('name'));
+    sphereRadiusChange(ui, $(this).attr('name'));
       },
       change: function( event, ui ) {
-	sphereRadiusChange(ui, $(this).attr('name'));
+    sphereRadiusChange(ui, $(this).attr('name'));
       }
     });
     document.getElementById(idString+"scalingvalue").innerHTML = $("#"+idString+"scalingslider").slider("value")/5;
@@ -600,10 +597,10 @@ function showByMenuChanged() {
       max: 100,
       value: 100,
       slide: function( event, ui ) {
-	sphereOpacityChange(ui, $(this).attr('name'));
+    sphereOpacityChange(ui, $(this).attr('name'));
       },
       change: function( event, ui ) {
-	sphereOpacityChange(ui, $(this).attr('name'));
+    sphereOpacityChange(ui, $(this).attr('name'));
       }
     });
     document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%";
@@ -629,17 +626,17 @@ function toggleVisible(value) {
     var mappingVal = g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)]
     if(mappingVal == value && hidden){
       try{
-	g_elementsGroup.remove(g_plotEllipses[sid]);
+    g_elementsGroup.remove(g_plotEllipses[sid]);
       }
       catch(TypeError){}
       try{
-	g_elementsGroup.remove(g_plotSpheres[sid]);
-	g_visiblePoints--
+    g_elementsGroup.remove(g_plotSpheres[sid]);
+    g_visiblePoints--
     g_visibleSpheres.splice(g_visibleSpheres.indexOf(sid), 1); // http://stackoverflow.com/a/3954451/1153897
       }
       catch(TypeError){}
       try{
-	g_elementsGroup.remove(g_plotVectors[sid]);
+    g_elementsGroup.remove(g_plotVectors[sid]);
       }
       catch(TypeError){}
       $('#'+divid+"_label").css('display','none');
@@ -647,17 +644,17 @@ function toggleVisible(value) {
     else if(mappingVal == value && !hidden)
     {
       try {
-	g_elementsGroup.add(g_plotEllipses[sid]);
+    g_elementsGroup.add(g_plotEllipses[sid]);
       }
       catch(TypeError){}
       try {
-	g_elementsGroup.add(g_plotSpheres[sid]);
-	g_visiblePoints++;
+    g_elementsGroup.add(g_plotSpheres[sid]);
+    g_visiblePoints++;
     g_visibleSpheres.push(sid);
       }
       catch(TypeError){}
       try{
-	g_elementsGroup.add(g_plotVectors[sid]);
+    g_elementsGroup.add(g_plotVectors[sid]);
       }
       catch(TypeError){}
       $('#'+divid+"_label").css('display','block');
@@ -689,15 +686,15 @@ function setKey(values, colors) {
       keyHTML += "</td></tr>";
 
       try {
-	g_plotEllipses[g_plotIds[i]].material.color.setStyle(catColor);
+    g_plotEllipses[g_plotIds[i]].material.color.setStyle(catColor);
       }
       catch(TypeError){}
       try {
-	g_plotSpheres[g_plotIds[i]].material.color.setStyle(catColor);
+    g_plotSpheres[g_plotIds[i]].material.color.setStyle(catColor);
       }
       catch(TypeError){}
       try {
-	g_plotVectors[g_plotIds[i]].material.color.setStyle(catColor);
+    g_plotVectors[g_plotIds[i]].material.color.setStyle(catColor);
       }
       catch(TypeError){}
     }
@@ -710,7 +707,7 @@ function setKey(values, colors) {
       var divid = sid.replace(/\./g,'')+"_key";
       $('#'+divid).attr('name',sid);
       $('#'+divid).dblclick(function () {
-	toggleFinder($(this), $(this).attr('name'));
+    toggleFinder($(this), $(this).attr('name'));
       });
     }
     g_keyBuilt = true;
@@ -752,15 +749,15 @@ function colorChanged(catValue,color) {
       $("#"+sid.replace(/\./g,'')+"_key").css('backgroundColor',color);
       // set the color of the corresponding sphere and ellipse
       try {
-	g_plotEllipses[sid].material.color.setHex(color.replace('#','0x'));
+    g_plotEllipses[sid].material.color.setHex(color.replace('#','0x'));
       }
       catch(TypeError){}
       try {
-	g_plotSpheres[sid].material.color.setHex(color.replace('#','0x'));
+    g_plotSpheres[sid].material.color.setHex(color.replace('#','0x'));
       }
       catch(TypeError){}
       try{
-	g_plotVectors[sid].material.color.setHex(color.replace('#','0x'));
+    g_plotVectors[sid].material.color.setHex(color.replace('#','0x'));
       }
       catch(TypeError){}
     }
@@ -853,8 +850,8 @@ function labelMenuChanged() {
       palette: [['red', 'green', 'blue']],
       change:
       function(color) {
-	$(this).css('backgroundColor', color.toHexString());
-	labelColorChanged($(this).attr('name'), color.toHexString());
+    $(this).css('backgroundColor', color.toHexString());
+    labelColorChanged($(this).attr('name'), color.toHexString());
       }
     });
   }
@@ -896,15 +893,15 @@ function toggleLabels() {
       var value = document.labels.elements[i].name;
 
       for(var j in g_plotIds){
-	var sid = g_plotIds[j];
-	var divid = sid.replace(/\./g,'');
+    var sid = g_plotIds[j];
+    var divid = sid.replace(/\./g,'');
 
-	if(g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)] == value && hidden){
-	  $('#'+divid+"_label").css('display', 'none');
-	}
-	else if(g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)] == value && !hidden){
-	  $('#'+divid+"_label").css('display', 'block');
-	}
+    if(g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)] == value && hidden){
+      $('#'+divid+"_label").css('display', 'none');
+    }
+    else if(g_mappingFileData[sid][g_mappingFileHeaders.indexOf(g_categoryName)] == value && !hidden){
+      $('#'+divid+"_label").css('display', 'block');
+    }
       }
     }
   }
@@ -1000,11 +997,11 @@ function toScreenXY( position, camera, jqdiv ) {
 
   // multiply the matrices and aply the vector to the projection matrix
   screenProjectionMatrix.multiplyMatrices( camera.projectionMatrix,
-					   camera.matrixWorldInverse);
+                       camera.matrixWorldInverse);
   screenPosition.applyProjection(screenProjectionMatrix);
 
   return { x: (screenPosition.x + 1)*jqdiv.width()/2 + jqdiv.offset().left,
-	   y: (-screenPosition.y+1)*jqdiv.height()/2 + jqdiv.offset().top};
+       y: (-screenPosition.y+1)*jqdiv.height()/2 + jqdiv.offset().top};
 }
 
 /*This function is used to filter the key to a user's provided search string*/
@@ -1074,7 +1071,7 @@ function sphereOpacityChange(ui, category) {
 
     for(var i in g_plotIds){
       if(g_mappingFileData[g_plotIds[i]][showByCategoryIndex] == category){
-	g_plotSpheres[g_plotIds[i]].material.opacity = sphereOpacity;
+    g_plotSpheres[g_plotIds[i]].material.opacity = sphereOpacity;
       }
       document.getElementById(idString+"opacityvalue").innerHTML = $("#"+idString+"opacityslider").slider("value")+"%";
     }
@@ -1137,7 +1134,7 @@ function sphereRadiusChange(ui, category) {
 
     for(var i in g_plotIds){
       if(g_mappingFileData[g_plotIds[i]][scalingByCategoryIndex] == category){
-	g_plotSpheres[g_plotIds[i]].scale.set(scale, scale, scale);
+    g_plotSpheres[g_plotIds[i]].scale.set(scale, scale, scale);
       }
       document.getElementById(idString+"scalingvalue").innerHTML = $("#"+idString+"scalingslider").slider("value")/5;
     }
@@ -1168,9 +1165,9 @@ function setJqueryUi() {
       $(this).css('backgroundColor', color.toHexString());
       $('#labels').css('color', color.toHexString());
       for(var i in g_plotIds){
-	var sid = g_plotIds[i];
-	var divid = sid.replace(/\./g,'');
-	$('#'+divid+"_label").css('color', color.toHexString());
+    var sid = g_plotIds[i];
+    var divid = sid.replace(/\./g,'');
+    $('#'+divid+"_label").css('color', color.toHexString());
       }
       document.getElementById('labelcombo').selectedIndex = 0;
       labelMenuChanged();
@@ -1185,10 +1182,10 @@ function setJqueryUi() {
       max: 100,
       value: 20,
       slide: function( event, ui ) {
-	ellipseOpacityChange(ui);
+    ellipseOpacityChange(ui);
       },
       change: function( event, ui ) {
-	ellipseOpacityChange(ui);
+    ellipseOpacityChange(ui);
       }
     });
     document.getElementById('ellipseopacity').innerHTML = $( "#eopacityslider" ).slider( "value")+"%";
@@ -1202,10 +1199,10 @@ function setJqueryUi() {
       max: 100,
       value: 100,
       slide: function( event, ui ) {
-	vectorsOpacityChange(ui);
+    vectorsOpacityChange(ui);
       },
       change: function( event, ui ) {
-	vectorsOpacityChange(ui);
+    vectorsOpacityChange(ui);
       }
     });
     document.getElementById('vectorsopacity').innerHTML = $( "#vopacityslider" ).slider( "value")+"%";
@@ -1223,10 +1220,10 @@ function setJqueryUi() {
       showInput: true,
       change:
       function(color) {
-	// pass a boolean flag to convert to hex6 string
-	var c = color.toHexString(true);
-	$(this).css('backgroundColor', c);
-	colorChangedForTaxaSpheres(c.replace('#', '0x'));
+    // pass a boolean flag to convert to hex6 string
+    var c = color.toHexString(true);
+    $(this).css('backgroundColor', c);
+    colorChangedForTaxaSpheres(c.replace('#', '0x'));
       }
     });
   }
@@ -1241,11 +1238,11 @@ function setJqueryUi() {
       showInput: true,
       change:
       function(col) {
-	// pass a boolean flag to convert to hex6 string
-	var c = col.toHexString(true);
-	// set the color for the box and for the renderer
-	$(this).css('backgroundColor', c);
-	colorChangedForTaxaLabels(c);
+    // pass a boolean flag to convert to hex6 string
+    var c = col.toHexString(true);
+    // set the color for the box and for the renderer
+    $(this).css('backgroundColor', c);
+    colorChangedForTaxaLabels(c);
       }// on-change callback
     });
   }
@@ -1262,10 +1259,10 @@ function setJqueryUi() {
       showInput: true,
       change:
       function(color) {
-	// pass a boolean flag to convert to hex6 string
-	var c = color.toHexString(true);
-	$(this).css('backgroundColor', c);
-	colorChangedForEdges(c.replace('#', '0x'), 0);
+    // pass a boolean flag to convert to hex6 string
+    var c = color.toHexString(true);
+    $(this).css('backgroundColor', c);
+    colorChangedForEdges(c.replace('#', '0x'), 0);
       }
     });
   }
@@ -1279,10 +1276,10 @@ function setJqueryUi() {
       showInput: true,
       change:
       function(color) {
-	// pass a boolean flag to convert to hex6 string
-	var c = color.toHexString(true);
-	$(this).css('backgroundColor', c);
-	colorChangedForEdges(c.replace('#', '0x'), 1);
+    // pass a boolean flag to convert to hex6 string
+    var c = color.toHexString(true);
+    $(this).css('backgroundColor', c);
+    colorChangedForEdges(c.replace('#', '0x'), 1);
       }
     });
   }
@@ -1489,7 +1486,7 @@ function drawTaxa(){
 
   for (var key in g_taxaPositions){
     var mesh = new THREE.Mesh(g_genericSphere,
-			      new THREE.MeshPhongMaterial());
+                  new THREE.MeshPhongMaterial());
 
     // set the volume of the sphere
     mesh.scale.x = g_taxaPositions[key]['radius'];
@@ -1498,8 +1495,8 @@ function drawTaxa(){
 
     // set the position
     mesh.position.set(g_taxaPositions[key]['x'],
-		      g_taxaPositions[key]['y'],
-		      g_taxaPositions[key]['z']);
+              g_taxaPositions[key]['y'],
+              g_taxaPositions[key]['z']);
 
     // the legacy color of these spheres is white
     mesh.material.color = whiteColor;
@@ -1515,10 +1512,10 @@ function drawTaxa(){
 
     // add the line from the origin to the element
     var taxaVector = makeLine([0, 0, 0,],
-			      [g_taxaPositions[key]['x'],
- 			       g_taxaPositions[key]['y'],
-			       g_taxaPositions[key]['z']],
-			      whiteColor, 2);
+                  [g_taxaPositions[key]['x'],
+                   g_taxaPositions[key]['y'],
+                   g_taxaPositions[key]['z']],
+                  whiteColor, 2);
     g_elementsGroup.add(taxaVector);
     g_mainScene.add(taxaVector);
     g_plotTaxaArrows[key] = taxaVector;
@@ -1541,20 +1538,20 @@ function drawVectors(){
 
       // retrieve the initial position on the first loop
       if (previous == null){
-	previous = g_vectorPositions[categoryKey][sampleKey];
+    previous = g_vectorPositions[categoryKey][sampleKey];
       }
       // if we already have the initial position, draw the line with
       // the current position and the value of previous (initial position)
       else{
-	current = g_vectorPositions[categoryKey][sampleKey];
-	current_vector = makeLine(previous, current, 0xFFFFFF, 2)
-	previous = current;
-	g_plotVectors[sampleKey] = current_vector;
+    current = g_vectorPositions[categoryKey][sampleKey];
+    current_vector = makeLine(previous, current, 0xFFFFFF, 2)
+    previous = current;
+    g_plotVectors[sampleKey] = current_vector;
 
-	if(g_mappingFileData[sampleKey] != undefined){
-	  g_elementsGroup.add(current_vector);
-	  g_plotVectors[sampleKey] = current_vector;
-	}
+    if(g_mappingFileData[sampleKey] != undefined){
+      g_elementsGroup.add(current_vector);
+      g_plotVectors[sampleKey] = current_vector;
+    }
       }
     }
 
@@ -1590,40 +1587,40 @@ function drawEdges(spherepositions){
     for (var sampleKey in spherepositions){
       for (var edgePosition in spherepositions[sampleKey]){
 
-	// if we don't have a start point store it and move along
-	if (previous == null) {
-	  previous = spherepositions[sampleKey][edgePosition];
-	}
-	// if we already have a start point then draw the edge
-	else{
-	  current = spherepositions[sampleKey][edgePosition];
+    // if we don't have a start point store it and move along
+    if (previous == null) {
+      previous = spherepositions[sampleKey][edgePosition];
+    }
+    // if we already have a start point then draw the edge
+    else{
+      current = spherepositions[sampleKey][edgePosition];
 
-	  // the edge is composed by two lines so calculate the middle
-	  // point between these two lines and end the first line in this
-	  // point and start the second line in this point
-	  middle_point = [(previous[0]+current[0])/2,
-			  (previous[1]+current[1])/2, (previous[2]+current[2])/2];
+      // the edge is composed by two lines so calculate the middle
+      // point between these two lines and end the first line in this
+      // point and start the second line in this point
+      middle_point = [(previous[0]+current[0])/2,
+              (previous[1]+current[1])/2, (previous[2]+current[2])/2];
 
-	  currentColorA_hex = $("#edgecolorselector_a").spectrum("get").toHexString(true);
-	  currentColorB_hex = $("#edgecolorselector_b").spectrum("get").toHexString(true);
-	  line_a = makeLine(previous, middle_point, currentColorA_hex, 2);
-	  line_b = makeLine(middle_point, current, currentColorB_hex, 2);
-	  line_a.transparent = false;
-	  line_b.transparent = false;
+      currentColorA_hex = $("#edgecolorselector_a").spectrum("get").toHexString(true);
+      currentColorB_hex = $("#edgecolorselector_b").spectrum("get").toHexString(true);
+      line_a = makeLine(previous, middle_point, currentColorA_hex, 2);
+      line_b = makeLine(middle_point, current, currentColorB_hex, 2);
+      line_a.transparent = false;
+      line_b.transparent = false;
 
-	  // index the two lines by the name of the sample plus a suffix
-	  g_plotEdges[sampleKey+'_'+index.toString()] = [line_a, line_b];
+      // index the two lines by the name of the sample plus a suffix
+      g_plotEdges[sampleKey+'_'+index.toString()] = [line_a, line_b];
 
-	  g_elementsGroup.add(line_a);
-	  g_elementsGroup.add(line_b);
-	  g_mainScene.add(line_a);
-	  g_mainScene.add(line_b);
+      g_elementsGroup.add(line_a);
+      g_elementsGroup.add(line_b);
+      g_mainScene.add(line_a);
+      g_mainScene.add(line_b);
 
-	  // the current line becomes the previous line for the next
-	  // iteration as all samples must be connected
-	  previous = spherepositions[sampleKey][edgePosition];
-	}
-	index = index+1;
+      // the current line becomes the previous line for the next
+      // iteration as all samples must be connected
+      previous = spherepositions[sampleKey][edgePosition];
+    }
+    index = index+1;
       }
 
       // if we've finished with the connecting lines let a new line start
@@ -1634,37 +1631,37 @@ function drawEdges(spherepositions){
   else{
     for (var sampleKey in spherepositions){
       for (var edgePosition in spherepositions[sampleKey]){
-	if (origin == null) {
-	  origin = spherepositions[sampleKey][edgePosition];
-	}
-	else{
-	  current = spherepositions[sampleKey][edgePosition];
+    if (origin == null) {
+      origin = spherepositions[sampleKey][edgePosition];
+    }
+    else{
+      current = spherepositions[sampleKey][edgePosition];
 
-	  // edges are composed of two lines so use the start and
-	  // the end point to calculate the position of the vertices
-	  middle_point = [(origin[0]+current[0])/2,
-			  (origin[1]+current[1])/2, (origin[2]+current[2])/2];
+      // edges are composed of two lines so use the start and
+      // the end point to calculate the position of the vertices
+      middle_point = [(origin[0]+current[0])/2,
+              (origin[1]+current[1])/2, (origin[2]+current[2])/2];
 
-	  // in the case of centered comparisons the origins are
-	  // painted in color white one one side and red on the other
-	  currentColorA_hex = $("#edgecolorselector_a").spectrum("get").toHexString(true);
-	  currentColorB_hex = $("#edgecolorselector_b").spectrum("get").toHexString(true);
-	  line_a = makeLine(origin, middle_point, currentColorA_hex, 2);
-	  line_b = makeLine(middle_point, current, currentColorB_hex, 2);
-	  line_a.transparent = false;
-	  line_b.transparent = false;
+      // in the case of centered comparisons the origins are
+      // painted in color white one one side and red on the other
+      currentColorA_hex = $("#edgecolorselector_a").spectrum("get").toHexString(true);
+      currentColorB_hex = $("#edgecolorselector_b").spectrum("get").toHexString(true);
+      line_a = makeLine(origin, middle_point, currentColorA_hex, 2);
+      line_b = makeLine(middle_point, current, currentColorB_hex, 2);
+      line_a.transparent = false;
+      line_b.transparent = false;
 
-	  // given that these are just sample repetitions just
-	  // just add a suffix at the end of the sample id
-	  g_plotEdges[sampleKey+'_'+index.toString()] = [line_a, line_b];
+      // given that these are just sample repetitions just
+      // just add a suffix at the end of the sample id
+      g_plotEdges[sampleKey+'_'+index.toString()] = [line_a, line_b];
 
-	  g_elementsGroup.add(line_a);
-	  g_elementsGroup.add(line_b);
-	  g_mainScene.add(line_a);
-	  g_mainScene.add(line_b);
+      g_elementsGroup.add(line_a);
+      g_elementsGroup.add(line_b);
+      g_mainScene.add(line_a);
+      g_mainScene.add(line_b);
 
-	}
-	index = index + 1;
+    }
+    index = index + 1;
       }
       origin = null;
     }
@@ -1679,9 +1676,9 @@ function saveSVG(button){
   // add a name subfix for the filenames
   if ((g_segments<=8 && g_visiblePoints>=10000) || (g_segments>8 && g_visiblePoints>=5000)) {
     var res = confirm("The number of segments (" + g_segments + ") combined with the number " +
-		      "of samples could take a long time and in some computers the browser will crash. " +
-		      "If this happens we suggest to lower the number of segments or use the png " +
-		      "implementation. Do you want to continue?");
+              "of samples could take a long time and in some computers the browser will crash. " +
+              "If this happens we suggest to lower the number of segments or use the png " +
+              "implementation. Do you want to continue?");
     if (res==false) return;
   }
 
@@ -1792,11 +1789,11 @@ function drawAxisLines() {
 
   // one line for each of the axes
   g_xAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
-			 [g_xMaximumValue, g_yMinimumValue, g_zMinimumValue], axesColorFromColorPicker, 3);
+             [g_xMaximumValue, g_yMinimumValue, g_zMinimumValue], axesColorFromColorPicker, 3);
   g_yAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
-			 [g_xMinimumValue, g_yMaximumValue, g_zMinimumValue], axesColorFromColorPicker, 3);
+             [g_xMinimumValue, g_yMaximumValue, g_zMinimumValue], axesColorFromColorPicker, 3);
   g_zAxisLine = makeLine([g_xMinimumValue, g_yMinimumValue, g_zMinimumValue],
-			 [g_xMinimumValue, g_yMinimumValue, g_zMaximumValue], axesColorFromColorPicker, 3);
+             [g_xMinimumValue, g_yMinimumValue, g_zMaximumValue], axesColorFromColorPicker, 3);
 
   // axes shouldn't be transparent
   g_xAxisLine.material.transparent = false;
@@ -1899,7 +1896,7 @@ function changeAxesDisplayed() {
 
   for (var sample_id in g_plotSpheres){
     g_plotSpheres[sample_id].position.set(g_spherePositions[sample_id]['x'],
-					  g_spherePositions[sample_id]['y'], g_spherePositions[sample_id]['z']);
+                      g_spherePositions[sample_id]['y'], g_spherePositions[sample_id]['z']);
   }
 
   // Setting up new axes for axes by coords explained
@@ -1937,10 +1934,10 @@ function flipEdges(axis) {
     flippedPositions1d = []
     for (var edgePosition in g_comparisonPositions[sampleKey]){
       flippedPositions = [g_comparisonPositions[sampleKey][edgePosition][0],
-			  g_comparisonPositions[sampleKey][edgePosition][1],
-			  g_comparisonPositions[sampleKey][edgePosition][2]]
+              g_comparisonPositions[sampleKey][edgePosition][1],
+              g_comparisonPositions[sampleKey][edgePosition][2]]
       for (var i=0;i<axis.length;i++) {
-	flippedPositions[axis[i]] *= (-1);
+    flippedPositions[axis[i]] *= (-1);
       }
       flippedPositions1d.push(flippedPositions);
     }
@@ -2051,12 +2048,12 @@ function separator_draggable() {
     drag: function (event, ui) {
       offset = ui.offset.left;
       if (offset > $(window).width()) {
-	offset = $(window).width()*0.99;
+    offset = $(window).width()*0.99;
       }
       aspectReset();
       resetDivSizes(offset);
       if (offset < $(window).width()*0.93) {
-	g_separator_history = offset;
+    g_separator_history = offset;
       }
     }
   });
@@ -2212,20 +2209,20 @@ $(document).ready(function() {
     for(var i in sortedMappingFileHeaders){
       var temp = [];
       for(var j in g_plotIds) {
-	if(g_mappingFileData[g_plotIds[j]] == undefined){
-	  console.warning(g_plotIds[j] +" not in mapping")
-	  continue
-	}
-	temp.push(g_mappingFileData[g_plotIds[j]][i])
+    if(g_mappingFileData[g_plotIds[j]] == undefined){
+      console.warning(g_plotIds[j] +" not in mapping")
+      continue
+    }
+    temp.push(g_mappingFileData[g_plotIds[j]][i])
       }
       temp = _.uniq(temp, false);
 
       // note that each category is added to all the dropdown menus in the
       // user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
       if (i==0) {
-	line = "<option selected value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+    line = "<option selected value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
       } else {
-	line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
+    line = "<option value=\""+sortedMappingFileHeaders[i]+"\">"+sortedMappingFileHeaders[i]+"</option>"
       }
       $("#colorbycombo").append(line);
       $("#scalingbycombo").append(line);
@@ -2250,9 +2247,9 @@ $(document).ready(function() {
       // note that each category is added to all the dropdown menus in the
       // user interface, these are declared in _EMPEROR_FOOTER_HTML_STRING
       if (i==0) {
-	line = "<option selected value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
+    line = "<option selected value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
       } else {
-	line = "<option value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
+    line = "<option value=\""+sortedAnimatableMappingFileHeaders[i]+"\">"+sortedAnimatableMappingFileHeaders[i]+"</option>"
       }
       $("#gradient-category-drop-down").append(line);
     }
@@ -2332,9 +2329,9 @@ $(document).ready(function() {
           max: numTaxaLevels,
           step: 1,
           change: function( event, ui ) {
-	    if(document.biplotoptions.elements[0].checked){
-	      displayTaxaLabels(ui.value);
-	    }
+        if(document.biplotoptions.elements[0].checked){
+          displayTaxaLabels(ui.value);
+        }
           }
         }
       );
@@ -2348,7 +2345,7 @@ $(document).ready(function() {
 
   function drawMenuAxesDisplayed() {
     if (!jQuery.isEmptyObject(g_vectorPositions) || !jQuery.isEmptyObject(g_taxaPositions) ||
-	!jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
+    !jQuery.isEmptyObject(g_ellipsesDimensions) || g_number_of_custom_axes!=0) {
       text = '<table class="emperor-tab-table">';
       text += '<tr><td><font color="red">This is disabled for custom axes, biplots, vectors, and jackknifed</font></td></tr>';
       text += '</table>';
@@ -2365,9 +2362,9 @@ $(document).ready(function() {
 
     for (var i=1; i < g_fractionExplainedRounded.length + 1; i++) {
       if (i==1) {
-	text += '<option selected value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+    text += '<option selected value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
       } else {
-	text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+    text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
       }
     }
     text += '</select></td>'
@@ -2380,9 +2377,9 @@ $(document).ready(function() {
     text += '<td><select id="pc2_axis" onchange="clean_label_refresh_axes();">';
     for (var i=1; i < g_fractionExplained.length + 1; i++) {
       if (i==2) {
-	text += '<option selected value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+    text += '<option selected value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
       } else {
-	text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+    text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
       }
     }
     text += '</select></td>'
@@ -2395,9 +2392,9 @@ $(document).ready(function() {
     text += '<td><select id="pc3_axis" onchange="clean_label_refresh_axes();">';
     for (var i=1; i < g_fractionExplained.length + 1; i++) {
       if (i==3) {
-	text += '<option selected value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+    text += '<option selected value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
       } else {
-	text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
+    text += '<option value="P' + i + '">P' + i + " (" + g_fractionExplainedRounded[i-1] + "%)" + '</option>';
       }
     }
     text += '</select></td>'
@@ -2434,27 +2431,27 @@ $(document).ready(function() {
     // move labels when the plot is moved
     if(document.plotoptions.elements[0].checked){
       for(var i in g_plotIds) {
-	var sid = g_plotIds[i];
-	mesh = g_plotSpheres[sid];
-	var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main-plot'));
-	var divid = sid.replace(/\./g,'');
-	$('#'+divid+"_label").css('left',coords['x']);
-	$('#'+divid+"_label").css('top',coords['y']);
+    var sid = g_plotIds[i];
+    mesh = g_plotSpheres[sid];
+    var coords = toScreenXY(mesh.position, g_sceneCamera, $('#main-plot'));
+    var divid = sid.replace(/\./g,'');
+    $('#'+divid+"_label").css('left',coords['x']);
+    $('#'+divid+"_label").css('top',coords['y']);
       }
     }
     // check if you have to reposition the taxa labels for each frame
     // this is something that will only happen when drawing biplots
     if(document.biplotoptions){
       if(document.biplotoptions.elements[0].checked){
-	for(var key in g_taxaPositions) {
-	  // retrieve the position of the taxa on screen
-	  var coords = toScreenXY(g_plotTaxa[key].position,
-				  g_sceneCamera, $('#main-plot'));
+    for(var key in g_taxaPositions) {
+      // retrieve the position of the taxa on screen
+      var coords = toScreenXY(g_plotTaxa[key].position,
+                  g_sceneCamera, $('#main-plot'));
 
-	  // add the label at the appropriate position
-	  $('#'+key+"_taxalabel").css('left',coords['x']);
-	  $('#'+key+"_taxalabel").css('top',coords['y']);
-	}
+      // add the label at the appropriate position
+      $('#'+key+"_taxalabel").css('left',coords['x']);
+      $('#'+key+"_taxalabel").css('top',coords['y']);
+    }
       }
     }
     if(g_foundId) {
@@ -2475,29 +2472,27 @@ $(document).ready(function() {
     if (g_isPlaying) {
       // if it's the 1st frame to  animate then the director will be null
       if (g_animationDirector === null) {
+        // retrieve the values from the interface
+        gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
+        trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
+        if ($("#animate_traces").is(":checked") === false) {
+          clearPlot();
+        }
 
+        // remove hidden SIDs from mappingFileData
+        var g_hiddenSpheres = $(Object.keys(g_mappingFileData)).not(g_visibleSpheres).get(); // http://stackoverflow.com/a/15386005/1153897
+        var g_mappingFileDataVisible = jQuery.extend(true, {}, g_mappingFileData); // http://stackoverflow.com/a/122704/1153897
+        g_hiddenSpheres.forEach(function (sid) {
+          delete g_mappingFileDataVisible[sid];
+        });
 
-            // retrieve the values from the interface
-            gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
-            trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
-            if ($("#animate_traces").is(":checked") === false) {
-                clearPlot();
-            }
-
-            // remove hidden SIDs from mappingFileData
-            var g_hiddenSpheres = $(Object.keys(g_mappingFileData)).not(g_visibleSpheres).get(); // http://stackoverflow.com/a/15386005/1153897
-            var g_mappingFileDataVisible = jQuery.extend(true, {}, g_mappingFileData); // http://stackoverflow.com/a/122704/1153897
-            g_hiddenSpheres.forEach(function (sid) {
-                delete g_mappingFileDataVisible[sid];
-            });
-
-            // initialize the animation director
-            g_animationDirector = new AnimationDirector(g_mappingFileHeaders,
-                                                            g_mappingFileDataVisible,
-                                                            g_spherePositions,
-                                                            gradientCategory,
-                                                            trajectoryCategory);
-            g_animationDirector.updateFrame();
+        // initialize the animation director
+        g_animationDirector = new AnimationDirector(g_mappingFileHeaders,
+                                                        g_mappingFileDataVisible,
+                                                        g_spherePositions,
+                                                        gradientCategory,
+                                                        trajectoryCategory);
+        g_animationDirector.updateFrame();
 
       }
       else{
@@ -2514,19 +2509,19 @@ $(document).ready(function() {
 
           for (var index = 0; index < g_animationDirector.trajectories.length; index++){
 
-                categoryName = g_animationDirector.trajectories[index].metadataCategoryName;
-                categoryName = escapeRegularExpression(categoryName);
-                trajectoryColor = $('#emperor-animation-color-selector').find('div[name="'+categoryName+'"]').css('background-color'); 
+            categoryName = g_animationDirector.trajectories[index].metadataCategoryName;
+            categoryName = escapeRegularExpression(categoryName);
+            trajectoryColor = $('#emperor-animation-color-selector').find('div[name="'+categoryName+'"]').css('background-color'); 
 
-                // THREE cannot process spaces inside rgb(0, 0, 0) it has to be rgb(0,0,0)
-                trajectoryColor = trajectoryColor.replace(/\s/g, '');
+            // THREE cannot process spaces inside rgb(0, 0, 0) it has to be rgb(0,0,0)
+            trajectoryColor = trajectoryColor.replace(/\s/g, '');
 
             // draw a trajectory line per trajectory
             if ($("#animate_traces").is(":checked") === false) {
-                drawingLineBuffer = drawTrajectoryPoint(g_animationDirector.trajectories[index],
+              drawingLineBuffer = drawTrajectoryPoint(g_animationDirector.trajectories[index],
                                                            g_animationDirector.currentFrame, trajectoryColor, 10);
             } else {
-                drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index],
+              drawingLineBuffer = drawTrajectoryLine(g_animationDirector.trajectories[index],
                                                            g_animationDirector.currentFrame, trajectoryColor, 10);
             }
 
@@ -2614,15 +2609,15 @@ function resetAnimation() {
  */
 function drawTrajectoryPoint(trajectory, currentFrame, color, radius){
 
-    var interpPos = trajectory.interpolatedCoordinates[currentFrame];
-    if (typeof interpPos === 'undefined') { // interpPos will be undefined at the final keyframe of the animation; in this case we don't use an interpolated value but the 'coordinates' value
-        var coord = trajectory.coordinates;
-        interpPos = coord[coord.length - 1];
-    }
-    var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshLambertMaterial({color: color}) );
-    mesh.position.set(interpPos.x, interpPos.y, interpPos.z);
+  var interpPos = trajectory.interpolatedCoordinates[currentFrame];
+  if (typeof interpPos === 'undefined') { // interpPos will be undefined at the final keyframe of the animation; in this case we don't use an interpolated value but the 'coordinates' value
+      var coord = trajectory.coordinates;
+      interpPos = coord[coord.length - 1];
+  }
+  var mesh = new THREE.Mesh( g_genericSphere, new THREE.MeshLambertMaterial({color: color}) );
+  mesh.position.set(interpPos.x, interpPos.y, interpPos.z);
 
-    return mesh;
+  return mesh;
 }
 
 
@@ -2630,20 +2625,20 @@ function drawTrajectoryPoint(trajectory, currentFrame, color, radius){
 // clear out everything except the axes from the PCOA plot
 function clearPlot() {
 
-    // remove biplot vectors
-    for (var i in g_plotTaxaArrows) {
-        g_mainScene.remove(g_plotTaxaArrows[i]);
-    }
+  // remove biplot vectors
+  for (var i in g_plotTaxaArrows) {
+      g_mainScene.remove(g_plotTaxaArrows[i]);
+  }
 
-    // remove biplot sphers
-    for (var i in g_plotTaxa) {
-        g_mainScene.remove(g_plotTaxa[i]);
-    }
+  // remove biplot sphers
+  for (var i in g_plotTaxa) {
+      g_mainScene.remove(g_plotTaxa[i]);
+  }
 
-    // remove current spheres (there may be a more elegant way of doing this...)
-    g_mainScene.remove(g_elementsGroup);
-    g_elementsGroup = new THREE.Object3D();
-    g_mainScene.add(g_elementsGroup);
+  // remove current spheres (there may be a more elegant way of doing this...)
+  g_mainScene.remove(g_elementsGroup);
+  g_elementsGroup = new THREE.Object3D();
+  g_mainScene.add(g_elementsGroup);
 
 }
 
@@ -2676,7 +2671,7 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width){
 
   for (var index = 0; index < _trajectory.length; index++){
     points.push(new THREE.Vector3(_trajectory[index]['x'],
-				  _trajectory[index]['y'], _trajectory[index]['z']));
+                  _trajectory[index]['y'], _trajectory[index]['z']));
   }
 
   path = new THREE.EmperorTrajectory(points)
