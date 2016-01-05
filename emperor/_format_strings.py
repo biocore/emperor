@@ -24,8 +24,7 @@ EMPEROR_HEADER_HTML_STRING =\
 
     <!-- Style files -->
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/emperor.css">
-    <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/jquery-ui2.css">
-    <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/colorPicker.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/jquery-ui.min.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/spectrum.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/d3.parcoords.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/chosen.min.css">
@@ -38,10 +37,9 @@ EMPEROR_HEADER_HTML_STRING =\
     <!-- JavaScript code -->
 
     <!-- jQuery and other plugins -->
-    <script type="text/javascript" src="emperor_required_resources/vendor/js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="emperor_required_resources/vendor/js/jquery-ui-1.8.17.custom.min.js"></script>
-    <script type="text/javascript" src="emperor_required_resources/vendor/js/jquery.colorPicker.js"></script>
-    <script type="text/javascript" src="emperor_required_resources/vendor/js/spectrum.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/vendor/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/vendor/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="emperor_required_resources/vendor/js/spectrum.min.js"></script>
     <script type="text/javascript" src="emperor_required_resources/vendor/js/chosen.jquery.min.js"></script>
 
     <!-- D3.js for the parallel coordinates plugin -->

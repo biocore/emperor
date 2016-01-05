@@ -335,7 +335,7 @@ EmperorAttributeABC.prototype._buildGrid = function(options){
   var columns = [{id: 'field1', name: 'Category Name', field: 'category'}];
   var gridOptions = {editable: true, enableAddRow: false,
                      enableCellNavigation: true, forceFitColumns: true,
-                     enableColumnReorder: false};
+                     enableColumnReorder: false, autoEdit: true};
 
   // If there's a custom slickgrid column then add it to the object
   if(options.slickGridColumn !== undefined){
@@ -365,4 +365,3 @@ EmperorAttributeABC.prototype.resize = function(width, height) {
   // http://stackoverflow.com/a/29835739
   this.bodyGrid.setColumns(this.bodyGrid.getColumns());
 };
-

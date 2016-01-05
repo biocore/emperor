@@ -134,8 +134,7 @@ ColorViewController.getColorList = function(values, map) {
 
   if (discrete === false){
     map = chroma.brewer[map];
-    interpolator = chroma.interpolate.bezier([map[0], map[3], map[4], map[5],
-                                              map[8]]);
+    interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
   }
 
   for(var index in values){
