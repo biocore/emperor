@@ -783,6 +783,12 @@ def main():
 
     # write the biplot coords in the output file if a path is passed
     if biplot_fp and taxa_fp:
+        if biplot_fp.endswith('/') or isdir(biplot_fp):
+            option_parser.error("Do not specify a path to a new (path ending "
+                                "in a slash) or existing directory for "
+                                "biplot_fp. The output file will be a "
+                                "tab-delimited text file.")
+
         # make sure this file can be created
         try:
             fd = open(biplot_fp, 'w')
