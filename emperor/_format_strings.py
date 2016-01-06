@@ -25,7 +25,7 @@ EMPEROR_HEADER_HTML_STRING =\
     <!-- Style files -->
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/css/emperor.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/jquery-ui.min.css">
-    <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/spectrum.css">
+    <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/spectrum.min.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/d3.parcoords.css">
     <link rel="stylesheet" type="text/css" href="emperor_required_resources/vendor/css/chosen.min.css">
 

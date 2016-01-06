@@ -6,7 +6,7 @@ Emperor makes usage of all of the following copyrighted packages; their licenses
 --------------------------------------------------------------------------------
 
 #### SlickGrid (v2.1.0-dev)
-[SlickGrid](https://github.com/6pac/SlickGrid) - A lightning fast JavaScript grid/spreadsheet (e004912b5ce29ac0d0cb04df50fe66db5e3af9ea)
+[SlickGrid](https://github.com/6pac/SlickGrid) - A lightning fast JavaScript grid/spreadsheet (d05dcd5b9369cae4b61df895ef7f51e8248e11c2)
 
 Copyright (c) 2010 Michael Leibman, http://github.com/mleibman/slickgrid
 
@@ -110,7 +110,7 @@ THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### THREE.js ([r73](https://github.com/mrdoob/three.js/tree/r68)) is released under the MIT License
+### THREE.js ([r73](https://github.com/mrdoob/three.js/tree/r73) is released under the MIT License
 
 The MIT License
 
@@ -162,7 +162,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### Spectrum ([1.8.0](https://github.com/bgrins/spectrum/tree/1.0.2)) is released under the MIT License
+### Spectrum ([1.8.0](https://github.com/bgrins/spectrum/tree/1.8.0)) is released under the MIT License
 
 Copyright (c) 2013, Brian Grinstead, http://briangrinstead.com
 
