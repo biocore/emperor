@@ -29,8 +29,8 @@ $(document).ready(function() {
     assert.ok(controller.$header.length);
     assert.ok(controller.$body.length);
 
-    assert.ok($.contains(controller.$canvas, controller.$header));
-    assert.ok($.contains(controller.$canvas, controller.$body));
+    assert.ok($.contains(controller.$canvas[0], controller.$header[0]));
+    assert.ok($.contains(controller.$canvas[0], controller.$body[0]));
 
     equal(controller.$body.width(), 12);
     equal(controller.$body.height(), 11);
@@ -260,7 +260,7 @@ $(document).ready(function() {
     equal(attr.$body.height(), 30 - attr.$header.height());
     equal(attr.$header.width(), 20);
   });
-  
+
   /**
    *
    * Test set metadata field

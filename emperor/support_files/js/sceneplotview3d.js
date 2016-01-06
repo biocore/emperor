@@ -72,10 +72,10 @@ ScenePlotView3D = function(renderer, decViews, div_id, xView, yView, width,
   this.control.rotateSpeed = 1.0;
   this.control.zoomSpeed = 1.2;
   this.control.panSpeed = 0.8;
-  this.control.noZoom = false;
-  this.control.noPan = false;
-  this.control.staticMoving = true;
-  this.control.dynamicDampingFactor = 0.3;
+  this.control.enableZoom = true;
+  this.control.enablePan = true;
+  this.control.enableDamping = true;
+  this.control.dampingFactor = 0.3;
 };
 
 /**
