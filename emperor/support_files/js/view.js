@@ -112,12 +112,12 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
  *
  * @param {colorFunc} a Function that accepts a category value and returns
  * a color
- * @param {category} a string with the metadata header
- *
+ * @param {category} a string with the metadata header.
+ * @return {dataview} Array of objects to be consumed by Slick grid.
 **/
 DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
   var cats = this.decomp.getUniqueValuesByCategory(category), scope = this,
-  dataView = [], colors = getColorList(cats, 'discrete-coloring-qiime'),
+  dataView = [], colors = ColorViewController.getColorList(cats, colorFunc),
   plottables;
 
   _.each(cats, function(value) {
