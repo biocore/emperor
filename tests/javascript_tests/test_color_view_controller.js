@@ -74,7 +74,7 @@ $(document).ready(function() {
     equal(controller.title, 'Color');
 
     var testColumn = controller.bodyGrid.getColumns()[0];
-    equal(testColumn.field, 'color');
+    equal(testColumn.field, 'value');
 
     // verify the color value is set properly
     equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
