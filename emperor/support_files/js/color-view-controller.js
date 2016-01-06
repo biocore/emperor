@@ -60,27 +60,31 @@ function ColorViewController(container, decompViewDict){
 
   // Build the options dictionary
   var options = {'valueUpdatedCallback':function(e, args) {
-                   var val = args.item.category, color = args.item.color, group = [];
+                   var val = args.item.category, color = args.item.value, group = [];
                    group = args.item.plottables;
-                   scope.decompViewDict[scope.getActiveDecompViewKey()].setGroupColor(color, group);
+                   ColorViewController.setPlottableAttributes(scope.decompViewDict[scope.getActiveDecompViewKey()], color, group);
                  },
                  'categorySelectionCallback':function(evt, params) {
                    // we re-use this same callback regardless of whether the
                    // color or the metadata category changed, maybe we can do
                    // something better about this
                    var category = scope.$select.val();
-                   var color = scope.$colormapSelect.val();
+                   var colorScheme = scope.$colormapSelect.val();
 
                    var k = scope.getActiveDecompViewKey();
                    var data;
+                   var decompViewDict = scope.decompViewDict[k];
 
+                   // getting all unique values per categories
+                   uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
+                   // getting color for each uniqueVals
+                   attributes = ColorViewController.getColorList(uniqueVals, colorScheme);
                    // fetch the slickgrid-formatted data
-                   data = scope.decompViewDict[k].setCategoryColors(color,
-                                                                    category);
+                   data = decompViewDict.setCategory(attributes, ColorViewController.setPlottableAttributes, category);
 
                    scope.setSlickGridDataset(data);
                  },
-                 'slickGridColumn':{id: 'title', name: '', field: 'color',
+                 'slickGridColumn':{id: 'title', name: '', field: 'value',
                                     sortable: false, maxWidth: SLICK_WIDTH,
                                     minWidth: SLICK_WIDTH,
                                     editor: ColorEditor,
@@ -180,6 +184,16 @@ ColorViewController.getDiscreteColor = function(index, map){
   }
 
   return ColorViewController._discreteColormaps[map][index];
+};
+
+/* Change the color for a set of plottables - group: list of plottables */
+ColorViewController.setPlottableAttributes = function(scope, color, group){
+  var idx;
+
+  _.each(group, function(element) {
+    idx = element.idx;
+    scope.markers[idx].material.color = new THREE.Color(color);
+  });
 };
 
 ColorViewController.Colormaps = ['discrete-coloring-qiime',

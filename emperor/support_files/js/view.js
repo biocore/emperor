@@ -115,86 +115,28 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
  * @param {category} a string with the metadata header.
  * @return {dataview} Array of objects to be consumed by Slick grid.
 **/
-DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
-  var cats = this.decomp.getUniqueValuesByCategory(category), scope = this,
-  dataView = [], colors = ColorViewController.getColorList(cats, colorFunc),
-  plottables;
+DecompositionView.prototype.setCategory = function(attributes, setPlottableAttributes, category){
+  var scope = this, dataView = [], plottables;
 
-  _.each(cats, function(value) {
+  _.each(attributes, function(value, key) {
     /*
      *
      * WARNING: This is mixing attributes of the view with the model ...
      * it's a bit of a gray area though.
      *
      **/
-    color = colors[value];
-    plottables = scope.decomp.getPlottablesByMetadataCategoryValue(category, value);
-    scope.setGroupColor(color, plottables);
+    plottables = scope.decomp.getPlottablesByMetadataCategoryValue(category, key);
+    setPlottableAttributes(scope, value, plottables);
 
-    dataView.push({category: value, color: color, plottables: plottables});
+    dataView.push({category: key, value: value, plottables: plottables});
   });
 
   return dataView;
 };
 
-/**
- *
- * Change the plottables opacity based on the metadata category using the
- * provided opacity function
- *
- * @param {opacityFunc} a Function that accepts a category value and returns
- * an opacity value
- * @param {category} a string with the metadata header
- *
-**/
-DecompositionView.prototype.setCategoryOpacity = function(opacityFunc,
-                                                          category){
-  this.setCategoryAttribute(opacityFunc, category, 'opacity');
-};
-
-/**
- *
- * Change the plottables scale based on the metadata category using the
- * provided scale function
- *
- * @param {shapeFunc} a Function that accepts a category value and returns
- * a scale value
- * @param {category} a string with the metadata header
- *
-**/
-DecompositionView.prototype.setCategoryScale = function(scaleFunc, category){
-  this.setCategoryAttribute(scaleFunc, group, 'scale');
-};
-
-/**
- *
- * Change the plottables opacity based on the metadata category using the
- * provided opacity function
- *
- * @param {shapeFunc} a Function that accepts a category value and returns
- * a THREE.geometry
- * @param {category} a string with the metadata header
- *
-**/
-DecompositionView.prototype.setCategoryShape = function(shapeFunc, category){
-  this.setCategoryAttribute(shapeFunc, category, 'shape');
-};
-
 
 DecompositionView.prototype.setCategoryAttribute = function(value, category, attr){
 
-};
-
-
-/* Change the color for a set of plottables - group: list of plottables */
-DecompositionView.prototype.setGroupColor = function(color, group){
-  var idx;
-  var scope = this;
-
-  _.each(group, function(element) {
-    idx = element.idx;
-    scope.markers[idx].material.color = new THREE.Color(color);
-  });
 };
 
 /* Change the opacity for a set of plottables - group: list of plottables */
