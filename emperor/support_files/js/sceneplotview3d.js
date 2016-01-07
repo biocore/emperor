@@ -1,3 +1,7 @@
+define([
+    "three",
+    "orbitcontrols"
+], function (THREE, OrbitControls) {
 /**
  *
  * @name ScenePlotView3D
@@ -118,3 +122,6 @@ ScenePlotView3D.prototype.render = function(){
   this.renderer.setViewport(this.xView, this.yView, this.width, this.height);
   this.renderer.render(this.scene, this.camera);
 };
+
+  return ScenePlotView3D;
+});

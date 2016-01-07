@@ -1,15 +1,10 @@
-/**
- *
- * @author Yoshiki Vazquez-Baeza
- * @copyright Copyright 2013--, The Emperor Project
- * @credits Yoshiki Vazquez-Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez-Baeza
- * @email josenavas@gmail.com
- * @status Development
- *
- */
+define([
+    "jquery",
+    "underscore",
+    "view",
+    "viewcontroller",
+    "spectrum"
+], function ($, _, DecompositionView, ViewControllers, spectrum) {
 
 /**
  *
@@ -130,4 +125,5 @@ function ColorFormatter(row, cell, value, columnDef, dataContext) {
   return "<div class='colorbox' style='background-color:" + value + ";'></div>";
 }
 
-
+  return {'ColorEditor': ColorEditor, 'ColorFormatter': ColorFormatter};
+});

@@ -1,18 +1,8 @@
-/**
- *
- * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *         Vazquez-Baeza
- * @copyright Copyright 2013--, The Emperor Project
- * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *          Vazquez-Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+define([
+    "jquery",
+    "underscore",
+    "three",
+], function ($, _, THREE) {
 /**
  *
  * @name DecompositionView
@@ -117,8 +107,14 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
 **/
 DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
   var cats = this.decomp.getUniqueValuesByCategory(category), scope = this,
-  dataView = [], colors = ColorViewController.getColorList(cats, colorFunc),
-  plottables;
+      dataView = [], colors, plottables;
+
+  // If we added 'colorviewcontroller' at the toplevel define call, we would
+  // introduce a circular dependency between view.js and colorviewcontroller.js
+  //
+  // The require.js developers suggest that exports are an ugly practice
+  // http://stackoverflow.com/a/4881496/379593
+  colors = requirejs('colorviewcontroller').getColorList(cats, colorFunc);
 
   _.each(cats, function(value) {
     /*
@@ -215,3 +211,6 @@ DecompositionView.prototype.setGroupScale = function(scale, group){
 DecompositionView.prototype.setGroupAttribute = function(value, group, attr){
 
 };
+
+  return DecompositionView;
+});

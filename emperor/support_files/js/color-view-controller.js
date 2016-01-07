@@ -1,3 +1,16 @@
+define([
+    "jquery",
+    "underscore",
+    "view",
+    "viewcontroller",
+    "color-editor",
+    "chroma"
+], function ($, _, DecompositionView, ViewControllers, Color, chroma) {
+
+  // we only use the base attribute class, no need to get the base class
+  var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
+  var ColorEditor = Color.ColorEditor, ColorFormatter = Color.ColorFormatter;
+
 /**
  * @name ColorViewController
  *
@@ -210,3 +223,5 @@ ColorViewController._discreteColormaps = {
                 "discrete-coloring":ColorViewController._colorbrewerDiscrete,
                 "discrete-coloring-qiime":ColorViewController._qiimeDiscrete
 };
+  return ColorViewController;
+});
