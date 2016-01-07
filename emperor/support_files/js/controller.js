@@ -169,6 +169,7 @@ EmperorController.prototype.resize = function(width, height){
   if (this.colorController !== undefined){
     // resize the grid according to the size of the container, since we are
     // inside the tabs we have to account for that lost space, hence the
+
     var tabWidth = this.$plotMenu.width() * this.GRID_SCALE,
         tabHeight = this.$plotMenu.height() * this.GRID_SCALE;
 

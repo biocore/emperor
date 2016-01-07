@@ -67,26 +67,29 @@ function EmperorViewControllerABC(container, title, description){
 
   this.$canvas.width(this.$container.width());
   this.$canvas.height(this.$container.height());
+  this.$canvas.css('overflow-x', 'hidden');
 
   // the margin and width properties are set this way to center all the
   // contents of the divs themselves, see this SO answer:
   // http://stackoverflow.com/a/114549
   this.$header = $('<div name="emperor-view-controller-header"></div>');
+  this.$header.css('padding', '10px');
   this.$header.css('margin', '0 auto');
   this.$header.css('width', '100%');
 
+  //this.$header.width(this.$canvas.width());
+
   this.$body = $('<div name="emperor-view-controller-body"></div>');
+  this.$body.css('padding', '10px');
   this.$body.css('margin', '0 auto');
   this.$body.css('width', '100%');
 
   // inherit the size of the container minus the space being used for the
   // header
   this.$body.height(this.$canvas.height()-this.$header.height());
-  this.$body.width(this.$canvas.width());
 
   this.$canvas.append(this.$header);
   this.$canvas.append(this.$body);
-
   return this;
 }
 
