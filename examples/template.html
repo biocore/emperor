@@ -21,71 +21,107 @@
       }
     </style>
 
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/underscore-min.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery-2.1.4.min.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/chroma.min.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/three.min.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/three.js-plugins/OrbitControls.js"></script>
-
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/spectrum.min.js"></script>
-
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/chosen.jquery.min.js"></script>
-
-    <!-- slickgrid -->
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/jquery.event.drag-2.2.min.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.core.min.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.grid.min.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/vendor/js/slick.editors.min.js"></script>
-
-    <script type="text/javascript" src="../emperor/support_files/js/model.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/js/view.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/js/util.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/js/sceneplotview3d.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/js/view-controller.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/js/color-editor.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/js/color-view-controller.js"></script>
-    <script type="text/javascript" src="../emperor/support_files/js/controller.js"></script>
+    <script type="text/javascript" src="../emperor/support_files/vendor/js/require-2.1.22.min.js"></script>
 
   </head>
   <body>
     <script type="text/javascript">
-      // we need to remove this callback from the chosen library
-      function chosen_highlight_callback() {};
+      requirejs.config({
+        'baseUrl': '../emperor/support_files/',
 
-      $("<div id='plots' class='emperor-space'></div>").appendTo(document.body);
-      var div = $('#plots');
+        // the left side is the module name, and the right side is the path
+        // relative to the baseUrl attribute, do NOT include the .js extension
+        'paths': {
+          /* jQuery */
+          'jquery': './vendor/js/jquery-2.1.4.min',
+          'jqueryui': './vendor/js/jquery-ui.min',
+          'jquery_drag': './vendor/js/jquery.event.drag-2.2.min',
 
-      var ids = {{ coords_ids }};
-      var coords = {{ coords }};
-      var pct_var = {{ pct_var }};
-      var md_headers = {{ md_headers}};
-      var metadata = {{  metadata }};
+          /* jQuery plugins */
+          'chosen': './vendor/js/chosen.jquery.min',
+          'spectrum': './vendor/js/spectrum.min',
 
-      var dm, ec;
+          /* other libraries */
+          'underscore': './vendor/js/underscore-min',
+          'chroma': './vendor/js/chroma.min',
 
-      function init() {
-        // Initialize the DecompositionModel
-        dm = new DecompositionModel(name, ids, coords, pct_var,
-                                    md_headers, metadata);
-        // Initialize the EmperorController
-        ec = new EmperorController(dm, 'plots');
-      }
 
-      $(window).resize(function() {
-        ec.resize(window.innerWidth, window.innerHeight);
+          /* THREE.js and plugins */
+          'three': './vendor/js/three.min',
+          'orbitcontrols': './vendor/js/three.js-plugins/OrbitControls',
+
+          /* SlickGrid */
+          'slickcore': './vendor/js/slick.core.min',
+          'slickgrid': './vendor/js/slick.grid.min',
+
+          /* Emperor's objects */
+          'model': './js/model',
+          'view': './js/view',
+          'controller': './js/controller',
+          'scene3d': './js/sceneplotview3d',
+          'viewcontroller': './js/view-controller',
+          'colorviewcontroller': './js/color-view-controller',
+          'color-editor': './js/color-editor',
+        },
+        /*
+           Libraries that are not AMD compatible need shim to declare their
+           dependencies.
+         */
+        'shim': {
+          'jquery_drag': {
+            'deps': ['jquery', 'jqueryui']
+          },
+          'chosen': {
+            'deps': ['jquery'],
+            'exports': 'jQuery.fn.chosen'
+          },
+          'orbitcontrols': {
+            'deps': ['three']
+          },
+        'slickcore': ['jqueryui'],
+        'slickgrid': ['slickcore', 'jquery_drag']
+        }
       });
 
-      function animate() {
-        requestAnimationFrame(animate);
-        ec.render();
-      }
+      requirejs(
+        ["jquery", "model", "controller"],
+        function($, model, EmperorController) {
+          var DecompositionModel = model.DecompositionModel;
 
-      $(function () {
-        init();
-        animate();
-      });
+          $("<div id='plots' class='emperor-space'></div>").appendTo(document.body);
+          var div = $('#plots');
 
+          var ids = {{ coords_ids }};
+          var coords = {{ coords }};
+          var pct_var = {{ pct_var }};
+          var md_headers = {{ md_headers}};
+          var metadata = {{  metadata }};
+
+          var dm, ec;
+
+          function init() {
+            // Initialize the DecompositionModel
+            dm = new DecompositionModel(name, ids, coords, pct_var,
+                                        md_headers, metadata);
+            // Initialize the EmperorController
+            ec = new EmperorController(dm, 'plots');
+          }
+
+          $(window).resize(function() {
+            ec.resize(window.innerWidth, window.innerHeight);
+          });
+
+          function animate() {
+            requestAnimationFrame(animate);
+            ec.render();
+          }
+
+          $(function () {
+            init();
+            animate();
+          });
+
+      }); // END REQUIRE.JS block
     </script>
   </body>
 </html>
