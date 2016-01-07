@@ -187,9 +187,6 @@ ColorViewController.getDiscreteColor = function(index, map){
   return ColorViewController._discreteColormaps[map][index];
 };
 
-/* Change the color for a set of plottables - group: list of plottables */
-
-
 /**
  * Helper function to set the color of plottable
  *
