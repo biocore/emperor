@@ -32,7 +32,7 @@ $(document).ready(function() {
     assert.ok($.contains(controller.$canvas[0], controller.$header[0]));
     assert.ok($.contains(controller.$canvas[0], controller.$body[0]));
 
-    equal(controller.$body.width(), 12);
+    equal(controller.$body.width(), 100); // 100%
     equal(controller.$body.height(), 11);
 
   });
@@ -88,17 +88,17 @@ $(document).ready(function() {
     // header of size 0
     controller.resize(10, 10);
     equal(controller.$header.height(), 0);
-    equal(controller.$header.width(), 10);
+    equal(controller.$header.width(), 100); // 100%
     equal(controller.$body.height(), 10);
-    equal(controller.$body.width(), 10);
+    equal(controller.$body.width(), 100); // 100%
 
 
     controller.$header.height(11);
     controller.resize(30, 30);
     equal(controller.$header.height(), 11);
-    equal(controller.$header.width(), 30);
+    equal(controller.$header.width(), 100); // 100%
     equal(controller.$body.height(), 19);
-    equal(controller.$body.width(), 30);
+    equal(controller.$body.width(), 100); // 100%
   });
 
   /**
@@ -256,9 +256,9 @@ $(document).ready(function() {
                                        sharedDecompositionViewDict, {});
 
     attr.resize(20, 30);
-    equal(attr.$body.width(), 20);
+    equal(attr.$body.width(), 100); // 100%
     equal(attr.$body.height(), 30 - attr.$header.height());
-    equal(attr.$header.width(), 20);
+    equal(attr.$header.width(), 100); // 100%
   });
 
   /**

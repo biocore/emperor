@@ -101,6 +101,9 @@ function ColorViewController(container, decompViewDict){
     scope.$colormapSelect.chosen().change(options.categorySelectionCallback);
   });
 
+  // Need to re-adjust body and height since the header has been changed
+  this.$body.height(this.$canvas.height() - this.$header.height());
+  console.log('color header height : '+this.$header.height());
   return this;
 }
 ColorViewController.prototype = Object.create(EmperorAttributeABC.prototype);
@@ -190,7 +193,7 @@ ColorViewController.getDiscreteColor = function(index, map){
 /**
  * Helper function to set the color of plottable
  *
- * @param {scope} object, the plottables exist
+ * @param {scope} object, the scope where the plottables exist
  * @param {color} string, hexadecimal representation of a color, which will
  * be applied to the plottables
  * @param {group} array of objects, list of object that should be changed in
