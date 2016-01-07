@@ -202,6 +202,8 @@ EmperorController.prototype.buildUI = function() {
   //FIXME: This only works for 1 scene plot view
   this.colorController = this.addTab(this.sceneViews[0].decViews,
                                      ColorViewController);
+  this.colorController = this.addTab(this.sceneViews[0].decViews,
+                                     VisibilityController);
 
   // We are tabifying this div, I don't know man.
   this._$tabsContainer.tabs({heightStyle: 'fill'});

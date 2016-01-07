@@ -126,7 +126,9 @@ DecompositionView.prototype.setCategory = function(attributes, setPlottableAttri
      *
      **/
     plottables = scope.decomp.getPlottablesByMetadataCategoryValue(category, key);
-    setPlottableAttributes(scope, value, plottables);
+    if (setPlottableAttributes !== null){
+      setPlottableAttributes(scope, value, plottables);
+    }
 
     dataView.push({category: key, value: value, plottables: plottables});
   });

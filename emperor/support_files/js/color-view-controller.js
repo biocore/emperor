@@ -72,21 +72,21 @@ function ColorViewController(container, decompViewDict){
                    var colorScheme = scope.$colormapSelect.val();
 
                    var k = scope.getActiveDecompViewKey();
-                   var data;
                    var decompViewDict = scope.decompViewDict[k];
 
                    // getting all unique values per categories
-                   uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
+                   var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
                    // getting color for each uniqueVals
-                   attributes = ColorViewController.getColorList(uniqueVals, colorScheme);
+                   var attributes = ColorViewController.getColorList(uniqueVals, colorScheme);
                    // fetch the slickgrid-formatted data
-                   data = decompViewDict.setCategory(attributes, ColorViewController.setPlottableAttributes, category);
+                   var data = decompViewDict.setCategory(attributes, ColorViewController.setPlottableAttributes, category);
 
                    scope.setSlickGridDataset(data);
                  },
                  'slickGridColumn':{id: 'title', name: '', field: 'value',
                                     sortable: false, maxWidth: SLICK_WIDTH,
                                     minWidth: SLICK_WIDTH,
+                                    autoEdit: true,
                                     editor: ColorEditor,
                                     formatter: ColorFormatter}};
 
