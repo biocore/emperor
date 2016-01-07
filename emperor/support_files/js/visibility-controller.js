@@ -26,25 +26,26 @@
  * @name VisibilityController
  *
  * @param {Node} container, Container node to create the controller in.
- * @params {Object} [decompViewDict] This is object is keyed by unique
+ * @params {Object} [decompViewDict] This object is keyed by unique
  * identifiers and the values are DecompositionView objects referring to a set
  * of objects presented on screen. This dictionary will usually be shared by
  * all the tabs in the application. This argument is passed by reference.
  *
  **/
 function VisibilityController(container, decompViewDict){
-  var helpmenu = 'Change the Visibility of the attributes on the plot, such as ' +
+  var helpmenu = 'Change the visibility of the attributes on the plot, such as ' +
                  'spheres, vectors and ellipsoids.';
   var title = 'Visibility';
 
   // Constant for width in slick-grid
   var SLICK_WIDTH = 25, scope = this;
-  var name, value;
 
   // Build the options dictionary
   var options = {'valueUpdatedCallback':function(e, args) {
-                  var visible = args.item.value, group = args.item.plottables;
-                  VisibilityController.setPlottableAttributes(scope.decompViewDict[scope.getActiveDecompViewKey()], visible, group);
+                  var visible = args.item.value;
+                  var group = args.item.plottables;
+                  var element = scope.decompViewDict[scope.getActiveDecompViewKey()]
+                  VisibilityController.setPlottableAttributes(element, visible, group);
                  },
                  'categorySelectionCallback':function(evt, params) {
                    var category = scope.$select.val();
@@ -78,8 +79,16 @@ function VisibilityController(container, decompViewDict){
 VisibilityController.prototype = Object.create(EmperorAttributeABC.prototype);
 VisibilityController.prototype.constructor = EmperorAttributeABC;
 
-/* Change the visualization for a set of plottables - group: list of plottables */
-VisibilityController.setPlottableAttributes = function(scope, visible, group){
+
+/**
+ * Helper function to set the visibility of plottable
+ *
+ * @param {scope} object, the plottables exist
+ * @param {visible} bool, visibility of the plottables
+ * @param {group} array of objects, list of object that should be changed in
+ * scope
+ */
+ VisibilityController.setPlottableAttributes = function(scope, visible, group){
   var idx;
 
   _.each(group, function(element) {

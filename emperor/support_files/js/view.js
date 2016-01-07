@@ -106,16 +106,20 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
 };
 
 /**
- *
  * Change the plottables coloring based on the metadata category using the
  * provided color function
  *
- * @param {colorFunc} a Function that accepts a category value and returns
- * a color
- * @param {category} a string with the metadata header.
- * @return {dataview} Array of objects to be consumed by Slick grid.
+ * @param {attributes} key:value pares of elements and values to change in
+ * plottables
+ * @param {setPlottableAttributes} helper function to change the values of
+ * plottables, in general this should be implemented in the controller but it
+ * can be nullable if not needed
+ * @param {category} the category/column in the mapping file
+ * @return {dataView} Array of objects to be consumed by Slick grid.
 **/
-DecompositionView.prototype.setCategory = function(attributes, setPlottableAttributes, category){
+DecompositionView.prototype.setCategory = function(attributes,
+                                                   setPlottableAttributes,
+                                                   category){
   var scope = this, dataView = [], plottables;
 
   _.each(attributes, function(value, key) {
@@ -134,28 +138,4 @@ DecompositionView.prototype.setCategory = function(attributes, setPlottableAttri
   });
 
   return dataView;
-};
-
-
-DecompositionView.prototype.setCategoryAttribute = function(value, category, attr){
-
-};
-
-/* Change the opacity for a set of plottables - group: list of plottables */
-DecompositionView.prototype.setGroupOpacity = function(opacity, group){
-  this.setGroupAttribute(opacity, group, 'opacity');
-};
-
-/* Change the shape for a set of plottables - group: list of plottables */
-DecompositionView.prototype.setGroupShape = function(shape, group){
-  this.setGroupAttribute(shape, group, 'shape');
-};
-
-/* Change the scale for a set of plottables - group: list of plottables */
-DecompositionView.prototype.setGroupScale = function(scale, group){
-  this.setGroupAttribute(scale, group, 'scale');
-};
-
-DecompositionView.prototype.setGroupAttribute = function(value, group, attr){
-
 };

@@ -61,8 +61,9 @@ function ColorViewController(container, decompViewDict){
   // Build the options dictionary
   var options = {'valueUpdatedCallback':function(e, args) {
                    var val = args.item.category, color = args.item.value, group = [];
-                   group = args.item.plottables;
-                   ColorViewController.setPlottableAttributes(scope.decompViewDict[scope.getActiveDecompViewKey()], color, group);
+                   var group = args.item.plottables;
+                   var element = scope.decompViewDict[scope.getActiveDecompViewKey()]
+                   ColorViewController.setPlottableAttributes(element, color, group);
                  },
                  'categorySelectionCallback':function(evt, params) {
                    // we re-use this same callback regardless of whether the
@@ -187,6 +188,17 @@ ColorViewController.getDiscreteColor = function(index, map){
 };
 
 /* Change the color for a set of plottables - group: list of plottables */
+
+
+/**
+ * Helper function to set the color of plottable
+ *
+ * @param {scope} object, the plottables exist
+ * @param {color} string, hexadecimal representation of a color, which will
+ * be applied to the plottables
+ * @param {group} array of objects, list of object that should be changed in
+ * scope
+ */
 ColorViewController.setPlottableAttributes = function(scope, color, group){
   var idx;
 

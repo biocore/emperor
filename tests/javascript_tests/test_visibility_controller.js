@@ -21,7 +21,7 @@ $(document).ready(function() {
                   ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
       decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
-      var dv = new DecompositionView(decomp);
+      dv = new DecompositionView(decomp);
       sharedDecompositionViewDict['pcoa'] = dv;
 
       name = "biplot";
@@ -76,8 +76,25 @@ $(document).ready(function() {
     var testColumn = controller.bodyGrid.getColumns()[0];
     equal(testColumn.field, 'value');
 
-    // verify the color value is set properly
+    // verify the visibility value is set properly
     equal(controller.$select.val(), 'SampleID');
+  });
+
+  test("Testing setPlottableAttributes helper function", function(assert) {
+    // testing with one plottable
+    var idx = 0;
+    plottables = [{idx:idx}]
+    equal(dv.markers[idx].visible, true)
+    equal(dv.markers[idx+1].visible, true)
+    VisibilityController.setPlottableAttributes(dv, false, plottables);
+
+    // testing with multiple plottable
+    plottables = [{idx:idx}, {idx:idx+1}]
+    equal(dv.markers[idx].visible, false)
+    equal(dv.markers[idx+1].visible, true)
+    VisibilityController.setPlottableAttributes(dv, true, plottables);
+    equal(dv.markers[idx].visible, true)
+    equal(dv.markers[idx].visible, true)
   });
 
 });
