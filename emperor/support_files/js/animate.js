@@ -1,15 +1,10 @@
-/**
- *
- * @author Yoshiki Vazquez Baeza
- * @copyright Copyright 2013, The Emperor Project
- * @credits Yoshiki Vazquez Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
+define([
+    "underscore",
+    "trajectory"
+], function (_, trajectory){
+  var getSampleNamesAndDataForSortedTrajectories = trajectory.getSampleNamesAndDataForSortedTrajectories;
+  var getMinimumDelta = trajectory.getMinimumDelta;
+  var TrajectoryOfSamples = trajectory.TrajectoryOfSamples;
 
 /**
  *
@@ -236,3 +231,6 @@ AnimationDirector.prototype.updateFrame = function (){
 AnimationDirector.prototype.animationCycleFinished = function (){
   return this.currentFrame > this.getMaximumTrajectoryLength();
 }
+
+  return AnimationDirector;
+});

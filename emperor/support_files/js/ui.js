@@ -1,16 +1,5 @@
-/**
- *
- * @author Yoshiki Vazquez Baeza
- * @copyright Copyright 2013, The Emperor Project
- * @credits Yoshiki Vazquez Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+define(['underscore', 'util'], function(_, util){
+  var naturalSort = util.naturalSort;
 /**
  *
  * Formatting function that creates a table to display color pickers.
@@ -65,3 +54,5 @@ function buildColorSelectorTable(headers, data, category, id){
 
   return table;
 }
+  return buildColorSelectorTable;
+});
