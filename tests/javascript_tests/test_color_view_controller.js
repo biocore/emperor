@@ -1,8 +1,19 @@
+requirejs([
+    "jquery",
+    "underscore",
+    "model",
+    "view",
+    "viewcontroller",
+    "slickgrid",
+    "colorviewcontroller"
+], function ($, _, model, DecompositionView, viewcontroller, SlickGrid, ColorViewController) {
 $(document).ready(function() {
+  var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
+  var DecompositionModel = model.DecompositionModel;
 
   module("ColorViewController", {
     setup: function(){
-      sharedDecompositionViewDict = {}
+      this.sharedDecompositionViewDict = {};
       var $slickid = $('<div id="fooligans"></div>');
       $slickid.appendTo(document.body);
 
@@ -22,7 +33,7 @@ $(document).ready(function() {
       decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
       var dv = new DecompositionView(decomp);
-      sharedDecompositionViewDict['pcoa'] = dv;
+      this.sharedDecompositionViewDict.pcoa = dv;
 
       name = "biplot";
       ids = ['tax_1', 'tax_2'];
@@ -36,10 +47,10 @@ $(document).ready(function() {
       md_headers = ['SampleID', 'Gram'];
       metadata = [['tax_1', '1'],
                   ['tax_2', '0']];
-      decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+      this.decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
-      dv = new DecompositionView(decomp);
-      sharedDecompositionViewDict['biplot'] = dv;
+      dv = new DecompositionView(this.decomp);
+      this.sharedDecompositionViewDict.biplot = dv;
 
       // Slickgrid
       var columns = [
@@ -59,9 +70,9 @@ $(document).ready(function() {
       grid = new Slick.Grid("#fooligans", data, columns, options);
     },
     teardown: function(){
-      sharedDecompositionViewDict = undefined;
+      this.sharedDecompositionViewDict = undefined;
       $("#fooligans").remove();
-      decomp = undefined;
+      this.decomp = undefined;
     }
   });
 
@@ -70,7 +81,7 @@ $(document).ready(function() {
 
     assert.ok(ColorViewController.prototype instanceof EmperorAttributeABC);
 
-    var controller = new ColorViewController(container, sharedDecompositionViewDict);
+    var controller = new ColorViewController(container, this.sharedDecompositionViewDict);
     equal(controller.title, 'Color');
 
     var testColumn = controller.bodyGrid.getColumns()[0];
@@ -132,7 +143,7 @@ $(document).ready(function() {
     five = [0, 1, 2, 3, 4];
     ten = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     twenty = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-              19]
+              19];
 
 
     deepEqual(ColorViewController.getColorList(five, 'discrete-coloring'), { "0": "#8dd3c7", "1":
@@ -172,6 +183,6 @@ $(document).ready(function() {
 
   });
 
-
+});
 
 });

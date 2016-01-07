@@ -1,19 +1,12 @@
-/**
- *
- * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *         Vazquez-Baeza
- * @copyright Copyright 2013--, The Emperor Project
- * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *          Vazquez-Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Jose Antonio Navas Molina
- * @email josenavasmolina@gmail.com
- * @status Development
- *
- */
+requirejs([
+    "jquery",
+    "underscore",
+    "model"
+], function ($, _, model) {
 
 $(document).ready(function() {
+  var DecompositionModel = model.DecompositionModel;
+  var Plottable = model.Plottable;
 
   // these variables are reused throughout this test suite
   var name, ids, coords, pct_var, md_headers, metadata;
@@ -590,5 +583,7 @@ $(document).ready(function() {
           'Test correctly converted DecompositionModel to string type');
 
   });
+
+});
 
 });

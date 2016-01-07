@@ -1,16 +1,4 @@
-/**
- *
- * @author Yoshiki Vazquez Baeza
- * @copyright Copyright 2013, The Emperor Project
- * @credits Yoshiki Vazquez Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector){
 $(document).ready(function() {
 
     // these variables are reused throughout this test suite
@@ -266,4 +254,5 @@ $(document).ready(function() {
         equal(director.trajectories.length, 1,'Correct number of trajectories');
 
     });
+});
 });
