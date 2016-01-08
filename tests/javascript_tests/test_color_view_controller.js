@@ -21,7 +21,7 @@ $(document).ready(function() {
                   ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
       decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
-      var dv = new DecompositionView(decomp);
+      dv = new DecompositionView(decomp);
       sharedDecompositionViewDict['pcoa'] = dv;
 
       name = "biplot";
@@ -74,7 +74,7 @@ $(document).ready(function() {
     equal(controller.title, 'Color');
 
     var testColumn = controller.bodyGrid.getColumns()[0];
-    equal(testColumn.field, 'color');
+    equal(testColumn.field, 'value');
 
     // verify the color value is set properly
     equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
@@ -172,6 +172,21 @@ $(document).ready(function() {
 
   });
 
+  test("Testing setPlottableAttributes helper function", function(assert) {
+    // testing with one plottable
+    var idx = 0;
+    plottables = [{idx:idx}]
+    equal(dv.markers[idx].material.color.getHexString(), 'ff0000');
+    equal(dv.markers[idx+1].material.color.getHexString(), 'ff0000');
+    ColorViewController.setPlottableAttributes(dv, '#00ff00', plottables);
+    equal(dv.markers[idx].material.color.getHexString(), '00ff00');
+    equal(dv.markers[idx+1].material.color.getHexString(), 'ff0000');
 
+    // testing with multiple plottable
+    plottables = [{idx:idx}, {idx:idx+1}]
+    ColorViewController.setPlottableAttributes(dv, '#000000', plottables);
+    equal(dv.markers[idx].material.color.getHexString(), '000000')
+    equal(dv.markers[idx+1].material.color.getHexString(), '000000')
+  });
 
 });

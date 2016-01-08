@@ -106,112 +106,39 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
 };
 
 /**
+ * Change the plottables attributes based on the metadata category using the
+ * provided setPlottableAttributes function
  *
- * Change the plottables coloring based on the metadata category using the
- * provided color function
- *
- * @param {colorFunc} a Function that accepts a category value and returns
- * a color
- * @param {category} a string with the metadata header.
- * @return {dataview} Array of objects to be consumed by Slick grid.
+ * @param {attributes} key:value pairs of elements and values to change in
+ * plottables
+ * @param {setPlottableAttributes} helper function to change the values of
+ * plottables, in general this should be implemented in the controller but it
+ * can be nullable if not needed. setPlottableAttributes should receive:
+ * the scope where the plottables exist, the value to be applied to the
+ * plottables and the plotables to change. For more info see:
+ * see ColorViewController.setPlottableAttribute
+ * @param {category} the category/column in the mapping file
+ * @return {dataView} Array of objects to be consumed by Slick grid.
 **/
-DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
-  var cats = this.decomp.getUniqueValuesByCategory(category), scope = this,
-  dataView = [], colors = ColorViewController.getColorList(cats, colorFunc),
-  plottables;
+DecompositionView.prototype.setCategory = function(attributes,
+                                                   setPlottableAttributes,
+                                                   category){
+  var scope = this, dataView = [], plottables;
 
-  _.each(cats, function(value) {
+  _.each(attributes, function(value, key) {
     /*
      *
      * WARNING: This is mixing attributes of the view with the model ...
      * it's a bit of a gray area though.
      *
      **/
-    color = colors[value];
-    plottables = scope.decomp.getPlottablesByMetadataCategoryValue(category, value);
-    scope.setGroupColor(color, plottables);
+    plottables = scope.decomp.getPlottablesByMetadataCategoryValue(category, key);
+    if (setPlottableAttributes !== null){
+      setPlottableAttributes(scope, value, plottables);
+    }
 
-    dataView.push({category: value, color: color, plottables: plottables});
+    dataView.push({category: key, value: value, plottables: plottables});
   });
 
   return dataView;
-};
-
-/**
- *
- * Change the plottables opacity based on the metadata category using the
- * provided opacity function
- *
- * @param {opacityFunc} a Function that accepts a category value and returns
- * an opacity value
- * @param {category} a string with the metadata header
- *
-**/
-DecompositionView.prototype.setCategoryOpacity = function(opacityFunc,
-                                                          category){
-  this.setCategoryAttribute(opacityFunc, category, 'opacity');
-};
-
-/**
- *
- * Change the plottables scale based on the metadata category using the
- * provided scale function
- *
- * @param {shapeFunc} a Function that accepts a category value and returns
- * a scale value
- * @param {category} a string with the metadata header
- *
-**/
-DecompositionView.prototype.setCategoryScale = function(scaleFunc, category){
-  this.setCategoryAttribute(scaleFunc, group, 'scale');
-};
-
-/**
- *
- * Change the plottables opacity based on the metadata category using the
- * provided opacity function
- *
- * @param {shapeFunc} a Function that accepts a category value and returns
- * a THREE.geometry
- * @param {category} a string with the metadata header
- *
-**/
-DecompositionView.prototype.setCategoryShape = function(shapeFunc, category){
-  this.setCategoryAttribute(shapeFunc, category, 'shape');
-};
-
-
-DecompositionView.prototype.setCategoryAttribute = function(value, category, attr){
-
-};
-
-
-/* Change the color for a set of plottables - group: list of plottables */
-DecompositionView.prototype.setGroupColor = function(color, group){
-  var idx;
-  var scope = this;
-
-  _.each(group, function(element) {
-    idx = element.idx;
-    scope.markers[idx].material.color = new THREE.Color(color);
-  });
-};
-
-/* Change the opacity for a set of plottables - group: list of plottables */
-DecompositionView.prototype.setGroupOpacity = function(opacity, group){
-  this.setGroupAttribute(opacity, group, 'opacity');
-};
-
-/* Change the shape for a set of plottables - group: list of plottables */
-DecompositionView.prototype.setGroupShape = function(shape, group){
-  this.setGroupAttribute(shape, group, 'shape');
-};
-
-/* Change the scale for a set of plottables - group: list of plottables */
-DecompositionView.prototype.setGroupScale = function(scale, group){
-  this.setGroupAttribute(scale, group, 'scale');
-};
-
-DecompositionView.prototype.setGroupAttribute = function(value, group, attr){
-
 };

@@ -202,6 +202,8 @@ EmperorController.prototype.buildUI = function() {
   //FIXME: This only works for 1 scene plot view
   this.colorController = this.addTab(this.sceneViews[0].decViews,
                                      ColorViewController);
+  this.visibilityController = this.addTab(this.sceneViews[0].decViews,
+                                          VisibilityController);
 
   // We are tabifying this div, I don't know man.
   this._$tabsContainer.tabs({heightStyle: 'fill'});
@@ -234,8 +236,8 @@ EmperorController.prototype.addTab = function(dvdict, viewConstructor){
 
   // now add the list element linking to the container div with the proper
   // title
-  this._$tabsList.append("<li><a  href='#" + obj.identifier +
-                         "-tab'>" + obj.title + "</a></li>");
+  this._$tabsList.append("<li><a href='#" + obj.identifier + "'>" +
+                         obj.title + "</a></li>");
 
   return obj;
 };
