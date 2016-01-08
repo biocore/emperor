@@ -106,14 +106,17 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
 };
 
 /**
- * Change the plottables coloring based on the metadata category using the
- * provided color function
+ * Change the plottables attributes based on the metadata category using the
+ * provided setPlottableAttributes function
  *
- * @param {attributes} key:value pares of elements and values to change in
+ * @param {attributes} key:value pairs of elements and values to change in
  * plottables
  * @param {setPlottableAttributes} helper function to change the values of
  * plottables, in general this should be implemented in the controller but it
- * can be nullable if not needed
+ * can be nullable if not needed. setPlottableAttributes should receive:
+ * the scope where the plottables exist, the value to be applied to the
+ * plottables and the plotables to change. For more info see:
+ * see ColorViewController.setPlottableAttribute
  * @param {category} the category/column in the mapping file
  * @return {dataView} Array of objects to be consumed by Slick grid.
 **/

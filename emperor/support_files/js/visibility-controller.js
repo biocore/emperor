@@ -83,7 +83,7 @@ VisibilityController.prototype.constructor = EmperorAttributeABC;
 /**
  * Helper function to set the visibility of plottable
  *
- * @param {scope} object, the plottables exist
+ * @param {scope} object, the scope where the plottables exist
  * @param {visible} bool, visibility of the plottables
  * @param {group} array of objects, list of object that should be changed in
  * scope
