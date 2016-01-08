@@ -62,32 +62,27 @@ function EmperorViewControllerABC(container, title, description){
   // divs the width should be 100% (whatever we have available), but the height
   // is much trickier, see the resize method for more information
   this.$canvas = $('<div name="emperor-view-controller-canvas"></div>');
-  this.$canvas.width('100%');
   this.$container.append(this.$canvas);
-
-  this.$canvas.width(this.$container.width());
+  
+  this.$canvas.width('100%');
+  //this.$canvas.height('100%');
   this.$canvas.height(this.$container.height());
-  this.$canvas.css('overflow-x', 'hidden');
+  this.$canvas.css('margin', '0 auto');
 
   // the margin and width properties are set this way to center all the
   // contents of the divs themselves, see this SO answer:
   // http://stackoverflow.com/a/114549
   this.$header = $('<div name="emperor-view-controller-header"></div>');
-  this.$header.css('padding', '10px');
-  this.$header.css('margin', '0 auto');
   this.$header.css('width', '100%');
 
-  //this.$header.width(this.$canvas.width());
 
   this.$body = $('<div name="emperor-view-controller-body"></div>');
-  this.$body.css('padding', '10px');
-  this.$body.css('margin', '0 auto');
   this.$body.css('width', '100%');
 
   // inherit the size of the container minus the space being used for the
   // header
   this.$body.height(this.$canvas.height()-this.$header.height());
-
+  
   this.$canvas.append(this.$header);
   this.$canvas.append(this.$body);
   return this;
@@ -139,10 +134,10 @@ EmperorViewControllerABC.prototype.resize = function(width, height) {
   this.$canvas.height(height);
   this.$canvas.width('100%');
 
-  this.$header.width(width);
+  this.$header.width('100%');
 
   // the body has to account for the size used by the header
-  this.$body.width(width);
+  this.$body.width('100%');
   this.$body.height(height - this.$header.height());
 };
 
@@ -268,7 +263,7 @@ function EmperorAttributeABC(container, title, description,
     }
 
   });
-
+  
   return this;
 }
 EmperorAttributeABC.prototype = Object.create(EmperorViewControllerABC.prototype);

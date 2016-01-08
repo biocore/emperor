@@ -32,8 +32,8 @@ EmperorController = function(dm, divId){
 
   // Constants
   this.GRID_SCALE = 0.97;         // Scaling constant for grid dimensions
-  this.SCENE_VIEW_SCALE = 0.5;   // Scaling constant for scene plot view dimensions
-  this.SLICK_WIDTH = 25;         // Constant for width in slick-grid
+  this.SCENE_VIEW_SCALE = 0.5;    // Scaling constant for scene plot view dimensions
+  this.SLICK_WIDTH = 25;          // Constant for width in slick-grid
 
   this.$divId = $('#' + divId);
   this.width = this.$divId.width();

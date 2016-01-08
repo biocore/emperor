@@ -101,6 +101,9 @@ function ColorViewController(container, decompViewDict){
     scope.$colormapSelect.chosen().change(options.categorySelectionCallback);
   });
 
+  // Need to re-adjust body and height since the header has been changed
+  this.$body.height(this.$canvas.height() - this.$header.height());
+
   return this;
 }
 ColorViewController.prototype = Object.create(EmperorAttributeABC.prototype);
