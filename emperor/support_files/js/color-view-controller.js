@@ -190,7 +190,7 @@ ColorViewController.getDiscreteColor = function(index, map){
 /**
  * Helper function to set the color of plottable
  *
- * @param {scope} object, the plottables exist
+ * @param {scope} object, the scope where the plottables exist
  * @param {color} string, hexadecimal representation of a color, which will
  * be applied to the plottables
  * @param {group} array of objects, list of object that should be changed in
