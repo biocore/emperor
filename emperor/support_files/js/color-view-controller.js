@@ -73,9 +73,9 @@ function ColorViewController(container, decompViewDict){
 
   // Build the options dictionary
   var options = {'valueUpdatedCallback':function(e, args) {
-                   var val = args.item.category, color = args.item.value, group = [];
+                   var val = args.item.category, color = args.item.value;
                    var group = args.item.plottables;
-                   var element = scope.decompViewDict[scope.getActiveDecompViewKey()]
+                   var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
                    ColorViewController.setPlottableAttributes(element, color, group);
                  },
                  'categorySelectionCallback':function(evt, params) {

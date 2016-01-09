@@ -4,9 +4,10 @@ define([
     "three",
     "view",
     "scene3d",
-    "colorviewcontroller"
+    "colorviewcontroller",
+    "visibilitycontroller"
 
-], function ($, _, THREE, DecompositionView, ScenePlotView3D, ColorViewController) {
+], function ($, _, THREE, DecompositionView, ScenePlotView3D, ColorViewController, VisibilityController) {
 
 /**
  *
