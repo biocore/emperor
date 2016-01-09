@@ -49,7 +49,7 @@ $(document).ready(function() {
                   ['tax_2', '0']];
       this.decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
-      dv = new DecompositionView(this.decomp);
+      this.dv = new DecompositionView(this.decomp);
       this.sharedDecompositionViewDict.biplot = dv;
 
       // Slickgrid
@@ -186,18 +186,18 @@ $(document).ready(function() {
   test("Testing setPlottableAttributes helper function", function(assert) {
     // testing with one plottable
     var idx = 0;
-    plottables = [{idx:idx}]
-    equal(dv.markers[idx].material.color.getHexString(), 'ff0000');
-    equal(dv.markers[idx+1].material.color.getHexString(), 'ff0000');
-    ColorViewController.setPlottableAttributes(dv, '#00ff00', plottables);
-    equal(dv.markers[idx].material.color.getHexString(), '00ff00');
-    equal(dv.markers[idx+1].material.color.getHexString(), 'ff0000');
+    plottables = [{idx:idx}];
+    equal(this.dv.markers[idx].material.color.getHexString(), 'ff0000');
+    equal(this.dv.markers[idx+1].material.color.getHexString(), 'ff0000');
+    ColorViewController.setPlottableAttributes(this.dv, '#00ff00', plottables);
+    equal(this.dv.markers[idx].material.color.getHexString(), '00ff00');
+    equal(this.dv.markers[idx+1].material.color.getHexString(), 'ff0000');
 
     // testing with multiple plottable
-    plottables = [{idx:idx}, {idx:idx+1}]
-    ColorViewController.setPlottableAttributes(dv, '#000000', plottables);
-    equal(dv.markers[idx].material.color.getHexString(), '000000')
-    equal(dv.markers[idx+1].material.color.getHexString(), '000000')
+    plottables = [{idx:idx}, {idx:idx+1}];
+    ColorViewController.setPlottableAttributes(this.dv, '#000000', plottables);
+    equal(this.dv.markers[idx].material.color.getHexString(), '000000');
+    equal(this.dv.markers[idx+1].material.color.getHexString(), '000000');
   });
 
 });
