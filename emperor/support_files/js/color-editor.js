@@ -34,7 +34,7 @@ function ColorEditor(args){
     $(args.container).css('background-color', '#eeeeee');
 
     $input = $("<div class='colorbox'></div>");
-    $input.css('background-color', args.item.color);
+    $input.css('background-color', args.item.value);
     $input.appendTo(args.container);
     $input.spectrum({
       color: args.item.color,

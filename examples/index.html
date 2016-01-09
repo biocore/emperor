@@ -52,6 +52,8 @@
           /* SlickGrid */
           'slickcore': './vendor/js/slick.core.min',
           'slickgrid': './vendor/js/slick.grid.min',
+          'slickformatters': './vendor/js/slick.editors.min',
+          'slickeditors': './vendor/js/slick.formatters.min',
 
           /* Emperor's objects */
           'model': './js/model',
@@ -78,7 +80,8 @@
             'deps': ['three']
           },
         'slickcore': ['jqueryui'],
-        'slickgrid': ['slickcore', 'jquery_drag']
+        'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
+                      'slickeditors']
         }
       });
 

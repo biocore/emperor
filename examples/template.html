@@ -52,6 +52,8 @@
           /* SlickGrid */
           'slickcore': './vendor/js/slick.core.min',
           'slickgrid': './vendor/js/slick.grid.min',
+          'slickformatters': './vendor/js/slick.editors.min',
+          'slickeditors': './vendor/js/slick.formatters.min',
 
           /* Emperor's objects */
           'model': './js/model',
@@ -61,6 +63,7 @@
           'viewcontroller': './js/view-controller',
           'colorviewcontroller': './js/color-view-controller',
           'color-editor': './js/color-editor',
+          'visibility-controller': './js/visibility-controller'
         },
         /*
            Libraries that are not AMD compatible need shim to declare their
@@ -78,7 +81,8 @@
             'deps': ['three']
           },
         'slickcore': ['jqueryui'],
-        'slickgrid': ['slickcore', 'jquery_drag']
+        'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
+                      'slickeditors']
         }
       });
 
