@@ -1,17 +1,6 @@
-/**
- *
- * @author Yoshiki Vazquez Baeza
- * @copyright Copyright 2013, The Emperor Project
- * @credits Yoshiki Vazquez Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+requirejs(['underscore', 'ui', 'util'], function(_, buildColorSelectorTable, util){
 $(document).ready(function() {
+  var cleanHTML = util.cleanHTML, convertXMLToString = util.convertXMLToString;
 
   // these variables are reused throughout this test suite
   var mappingFileHeaders, mappingFileData, coordinatesData;
@@ -138,4 +127,5 @@ $(document).ready(function() {
     );
   });
 
+});
 });

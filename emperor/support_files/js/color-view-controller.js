@@ -1,3 +1,16 @@
+define([
+    "jquery",
+    "underscore",
+    "view",
+    "viewcontroller",
+    "color-editor",
+    "chroma"
+], function ($, _, DecompositionView, ViewControllers, Color, chroma) {
+
+  // we only use the base attribute class, no need to get the base class
+  var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
+  var ColorEditor = Color.ColorEditor, ColorFormatter = Color.ColorFormatter;
+
 /**
  * @name ColorViewController
  *
@@ -60,9 +73,9 @@ function ColorViewController(container, decompViewDict){
 
   // Build the options dictionary
   var options = {'valueUpdatedCallback':function(e, args) {
-                   var val = args.item.category, color = args.item.value, group = [];
+                   var val = args.item.category, color = args.item.value;
                    var group = args.item.plottables;
-                   var element = scope.decompViewDict[scope.getActiveDecompViewKey()]
+                   var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
                    ColorViewController.setPlottableAttributes(element, color, group);
                  },
                  'categorySelectionCallback':function(evt, params) {
@@ -233,3 +246,5 @@ ColorViewController._discreteColormaps = {
                 "discrete-coloring":ColorViewController._colorbrewerDiscrete,
                 "discrete-coloring-qiime":ColorViewController._qiimeDiscrete
 };
+  return ColorViewController;
+});

@@ -1,8 +1,19 @@
+requirejs([
+    "jquery",
+    "underscore",
+    "model",
+    "view",
+    "viewcontroller",
+    "slickgrid",
+    "visibilitycontroller"
+], function ($, _, model, DecompositionView, viewcontroller, SlickGrid, VisibilityController) {
 $(document).ready(function() {
+  var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
+  var DecompositionModel = model.DecompositionModel;
 
   module("VisibilityController", {
     setup: function(){
-      sharedDecompositionViewDict = {}
+      this.sharedDecompositionViewDict = {};
       var $slickid = $('<div id="fooligans"></div>');
       $slickid.appendTo(document.body);
 
@@ -19,10 +30,10 @@ $(document).ready(function() {
       md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
       metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
                   ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
-      decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+      var decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
-      dv = new DecompositionView(decomp);
-      sharedDecompositionViewDict['pcoa'] = dv;
+      var dv = new DecompositionView(decomp);
+      this.sharedDecompositionViewDict.pcoa = dv;
 
       name = "biplot";
       ids = ['tax_1', 'tax_2'];
@@ -36,10 +47,10 @@ $(document).ready(function() {
       md_headers = ['SampleID', 'Gram'];
       metadata = [['tax_1', '1'],
                   ['tax_2', '0']];
-      decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-                                      metadata);
-      dv = new DecompositionView(decomp);
-      sharedDecompositionViewDict['biplot'] = dv;
+      this.decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                           metadata);
+      this.dv = new DecompositionView(this.decomp);
+      this.sharedDecompositionViewDict.biplot = this.dv;
 
       // Slickgrid
       var columns = [
@@ -59,9 +70,9 @@ $(document).ready(function() {
       grid = new Slick.Grid("#fooligans", data, columns, options);
     },
     teardown: function(){
-      sharedDecompositionViewDict = undefined;
+      this.sharedDecompositionViewDict = undefined;
       $("#fooligans").remove();
-      decomp = undefined;
+      this.decomp = undefined;
     }
   });
 
@@ -70,7 +81,7 @@ $(document).ready(function() {
 
     assert.ok(VisibilityController.prototype instanceof EmperorAttributeABC);
 
-    var controller = new VisibilityController(container, sharedDecompositionViewDict);
+    var controller = new VisibilityController(container, this.sharedDecompositionViewDict);
     equal(controller.title, 'Visibility');
 
     var testColumn = controller.bodyGrid.getColumns()[0];
@@ -83,18 +94,20 @@ $(document).ready(function() {
   test("Testing setPlottableAttributes helper function", function(assert) {
     // testing with one plottable
     var idx = 0;
-    plottables = [{idx:idx}]
-    equal(dv.markers[idx].visible, true)
-    equal(dv.markers[idx+1].visible, true)
-    VisibilityController.setPlottableAttributes(dv, false, plottables);
+    plottables = [{idx:idx}];
+    equal(this.dv.markers[idx].visible, true);
+    equal(this.dv.markers[idx+1].visible, true);
+    VisibilityController.setPlottableAttributes(this.dv, false, plottables);
 
     // testing with multiple plottable
-    plottables = [{idx:idx}, {idx:idx+1}]
-    equal(dv.markers[idx].visible, false)
-    equal(dv.markers[idx+1].visible, true)
-    VisibilityController.setPlottableAttributes(dv, true, plottables);
-    equal(dv.markers[idx].visible, true)
-    equal(dv.markers[idx].visible, true)
+    plottables = [{idx:idx}, {idx:idx+1}];
+    equal(this.dv.markers[idx].visible, false);
+    equal(this.dv.markers[idx+1].visible, true);
+    VisibilityController.setPlottableAttributes(this.dv, true, plottables);
+    equal(this.dv.markers[idx].visible, true);
+    equal(this.dv.markers[idx].visible, true);
   });
+
+});
 
 });

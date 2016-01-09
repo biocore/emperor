@@ -1,18 +1,13 @@
-/**
- *
- * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *         Vazquez-Baeza
- * @copyright Copyright 2013--, The Emperor Project
- * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *          Vazquez-Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Jose Antonio Navas Molina
- * @email josenavas@gmail.com
- * @status Development
- *
- */
+define([
+    "jquery",
+    "underscore",
+    "three",
+    "view",
+    "scene3d",
+    "colorviewcontroller",
+    "visibilitycontroller"
 
+], function ($, _, THREE, DecompositionView, ScenePlotView3D, ColorViewController, VisibilityController) {
 
 /**
  *
@@ -241,3 +236,6 @@ EmperorController.prototype.addTab = function(dvdict, viewConstructor){
 
   return obj;
 };
+
+  return EmperorController;
+});

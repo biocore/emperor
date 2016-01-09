@@ -1,3 +1,15 @@
+requirejs([
+    "jquery",
+    "underscore",
+    "model",
+    "view",
+    "viewcontroller",
+    "slickgrid"
+], function ($, _, model, DecompositionView, viewcontroller, SlickGrid) {
+  var EmperorViewControllerABC = viewcontroller.EmperorViewControllerABC;
+  var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
+  var DecompositionModel = model.DecompositionModel;
+
 $(document).ready(function() {
 
   module("EmperorViewControllerABC", {
@@ -124,7 +136,7 @@ $(document).ready(function() {
   module("EmperorAttributeABC", {
 
     setup: function(){
-      sharedDecompositionViewDict = {};
+      this.sharedDecompositionViewDict = {};
       var $slickid = $('<div id="fooligans"></div>');
       $slickid.appendTo(document.body);
 
@@ -144,7 +156,7 @@ $(document).ready(function() {
       decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
       var dv = new DecompositionView(decomp);
-      sharedDecompositionViewDict['pcoa'] = dv;
+      this.sharedDecompositionViewDict.pcoa = dv;
 
       name = "biplot";
       ids = ['tax_1', 'tax_2'];
@@ -161,7 +173,7 @@ $(document).ready(function() {
       decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
       dv = new DecompositionView(decomp);
-      sharedDecompositionViewDict['biplot'] = dv;
+      this.sharedDecompositionViewDict.biplot = dv;
 
       // Slickgrid
       var columns = [
@@ -170,7 +182,7 @@ $(document).ready(function() {
         {id: "pc3", name: "pc3", field: "pc3"},
       ];
 
-      var options = {
+      this.options = {
         enableCellNavigation: true,
         enableColumnReorder: false
       };
@@ -178,12 +190,13 @@ $(document).ready(function() {
       data.push({'pc1':1, 'pc2':1, 'pc3':1});
       data.push({'pc1':1, 'pc2':1, 'pc3':2});
 
-      grid = new Slick.Grid("#fooligans", data, columns, options);
+      grid = new Slick.Grid("#fooligans", data, columns, this.options);
+      this.decomp = decomp;
     },
     teardown: function(){
-      sharedDecompositionViewDict = undefined;
+      this.sharedDecompositionViewDict = undefined;
       $("#fooligans").remove();
-      decomp = undefined;
+      this.decomp = undefined;
     }
   });
 
@@ -193,14 +206,14 @@ $(document).ready(function() {
    *
    */
   test("Constructor tests", function(assert) {
-    var dv = new DecompositionView(decomp);
+    var dv = new DecompositionView(this.decomp);
     var container = $('<div id="does-not-exist"></div>');
 
     // verify the subclassing was set properly
     assert.ok(EmperorAttributeABC.prototype instanceof
               EmperorViewControllerABC);
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       sharedDecompositionViewDict, {});
+                                       this.sharedDecompositionViewDict, {});
   });
 
   /**
@@ -208,17 +221,22 @@ $(document).ready(function() {
    * Test to see if the grid is being built correctly
    *
    */
-  test("Constructor test buildGrid", function(){
+  asyncTest("Constructor test buildGrid", function(assert){
     var options = {};
-    options['slickGridColumn'] = {id: 'title', name: 'spam', field: 'test',
-                                  sortable: false, maxWidth: 10, minWidth: 10};
+    options.slickGridColumn = {id: 'title', name: 'spam', field: 'test',
+                               sortable: false, maxWidth: 10, minWidth: 10};
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       sharedDecompositionViewDict,
+                                       this.sharedDecompositionViewDict,
                                        options);
-    var testColumn = attr.bodyGrid.getColumns()[0];
-    equal(testColumn.name, 'spam');
-    equal(testColumn.field, 'test');
+
+    $(function(){
+      var testColumn = attr.bodyGrid.getColumns()[0];
+      equal(testColumn.name, 'spam');
+      equal(testColumn.field, 'test');
+
+      start(); // qunit
+    });
   });
 
   /**
@@ -227,7 +245,7 @@ $(document).ready(function() {
    *
    */
   test("Constructor test exceptions", function(assert) {
-    var dv = new DecompositionView(decomp);
+    var dv = new DecompositionView(this.decomp);
 
     throws(function(){
       new EmperorAttributeABC(container, 'foo', 'bar',
@@ -247,18 +265,22 @@ $(document).ready(function() {
    * Test to see if the grid is being built correctly
    *
    */
-  test('Test resize', function(){
-    var dv = new DecompositionView(decomp);
+  asyncTest('Test resize', function(){
+    var dv = new DecompositionView(this.decomp);
     var container = $('<div id="does-not-exist" style="height:20px; width:21px"></div>');
 
     // verify the subclassing was set properly
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-                                       sharedDecompositionViewDict, {});
+                                       this.sharedDecompositionViewDict, {});
 
-    attr.resize(20, 30);
-    equal(attr.$body.width(), 20);
-    equal(attr.$body.height(), 30 - attr.$header.height());
-    equal(attr.$header.width(), 20);
+    $(function(){
+      attr.resize(20, 30);
+      equal(attr.$body.width(), 20);
+      equal(attr.$body.height(), 30 - attr.$header.height());
+      equal(attr.$header.width(), 20);
+
+      start(); // qunit
+    });
   });
 
   /**
@@ -267,7 +289,7 @@ $(document).ready(function() {
    *
    */
   test('Test setMetadataField', function(){
-    var dv = new DecompositionView(decomp);
+    var dv = new DecompositionView(this.decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                        {'scatter': dv}, {});
@@ -281,7 +303,7 @@ $(document).ready(function() {
    *
    */
   test('Test getActiveDecompViewKey', function(){
-    var dv = new DecompositionView(decomp);
+    var dv = new DecompositionView(this.decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                        {'scatter': dv}, {});
@@ -294,13 +316,13 @@ $(document).ready(function() {
    *
    */
   test('Test setActiveDecompViewKey', function(){
-    var dv = new DecompositionView(decomp);
+    var dv = new DecompositionView(this.decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                        {'scatter': dv, 'biplot': dv},
                                        {});
     equal(attr.getActiveDecompViewKey(), 'scatter');
-    attr.setActiveDecompViewKey('biplot')
+    attr.setActiveDecompViewKey('biplot');
     equal(attr.getActiveDecompViewKey(), 'biplot');
   });
 
@@ -309,14 +331,20 @@ $(document).ready(function() {
    * Test get/set slick grid dataset.
    *
    */
-  test('Test setSlickGridDataset', function(){
-    var dv = new DecompositionView(decomp);
+  asyncTest('Test setSlickGridDataset', function(){
+    var dv = new DecompositionView(this.decomp);
     var container = $('<div id="does-not-exist"></div>');
     var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                        {'scatter': dv, 'biplot': dv}, {});
-    attr.setSlickGridDataset([{'pc1':1, 'pc2':2, 'pc3':3},
-                              {'pc1':1, 'pc2':1, 'pc3':2}])
-    deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':2, 'pc3':3},
-                                           {'pc1':1, 'pc2':1, 'pc3':2}]);
+
+    $(function(){
+      attr.setSlickGridDataset([{'pc1':1, 'pc2':2, 'pc3':3},
+                                {'pc1':1, 'pc2':1, 'pc3':2}]);
+      deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':2, 'pc3':3},
+                                             {'pc1':1, 'pc2':1, 'pc3':2}]);
+
+      start(); // qunit
+    });
   });
+});
 });

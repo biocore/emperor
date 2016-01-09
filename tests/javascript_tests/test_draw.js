@@ -1,16 +1,4 @@
-/**
- *
- * @author Yoshiki Vazquez Baeza
- * @copyright Copyright 2013, The Emperor Project
- * @credits Yoshiki Vazquez Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+requirejs(['draw'], function(formatSVGLegend){
 $(document).ready(function() {
 
   module("Drawing utilities", {
@@ -90,4 +78,5 @@ $(document).ready(function() {
     res = formatSVGLegend(names, colors);
     deepEqual(res, exp, 'SVG file is formatted correcly'); 
   });
+});
 });

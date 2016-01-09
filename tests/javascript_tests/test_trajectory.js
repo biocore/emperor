@@ -1,17 +1,10 @@
-/**
- *
- * @author Yoshiki Vazquez Baeza
- * @copyright Copyright 2013, The Emperor Project
- * @credits Yoshiki Vazquez Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+requirejs(['underscore', 'trajectory'], function(_, trajectory){
 $(document).ready(function() {
+   var TrajectoryOfSamples = trajectory.TrajectoryOfSamples;
+   var getMinimumDelta = trajectory.getMinimumDelta;
+   var getSampleNamesAndDataForSortedTrajectories = trajectory.getSampleNamesAndDataForSortedTrajectories;
+   var distanceBetweenPoints = trajectory.distanceBetweenPoints;
+   var linearInterpolation = trajectory.linearInterpolation;
 
     // these variables are reused throughout this test suite
     var mappingFileHeaders, mappingFileData, coordinatesData;
@@ -462,4 +455,5 @@ $(document).ready(function() {
               'category');
     });
 
+});
 });

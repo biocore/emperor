@@ -1,16 +1,6 @@
-/**
- *
- * @author Yoshiki Vazquez Baeza
- * @copyright Copyright 2013, The Emperor Project
- * @credits Yoshiki Vazquez Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+define([
+    "underscore",
+], function (_){
 /**
  *
  * @name TrajectoryOfSamples
@@ -391,3 +381,10 @@ function getMinimumDelta(sampleData){
   // return the minimum of these values
   return _.min(deltasArray);
 }
+
+  return {'TrajectoryOfSamples': TrajectoryOfSamples,
+          'getMinimumDelta': getMinimumDelta,
+          'getSampleNamesAndDataForSortedTrajectories': getSampleNamesAndDataForSortedTrajectories,
+          'distanceBetweenPoints': distanceBetweenPoints,
+          'linearInterpolation': linearInterpolation};
+});

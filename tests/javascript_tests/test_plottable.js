@@ -1,19 +1,6 @@
-/**
- *
- * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *         Vazquez-Baeza
- * @copyright Copyright 2013--, The Emperor Project
- * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *          Vazquez-Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+requirejs(['jquery', 'model'], function ($, model){
 $(document).ready(function() {
+  var Plottable = model.Plottable;
 
   module("Plottable", {
 
@@ -108,10 +95,11 @@ $(document).ready(function() {
       'Test correctly converted Plottable to string type with confidence'+
       ' intervals.');
 
-    var plot = new Plottable('foo', ['a', 'b', 'c'], [0.2, 0.3, 0.5, 0.2]);
+    plot = new Plottable('foo', ['a', 'b', 'c'], [0.2, 0.3, 0.5, 0.2]);
     equal(plot.toString(), 'Sample: foo located at: (0.2, 0.3, 0.5, 0.2) '+
       'metadata: [a, b, c] without index and without confidence intervals.',
       'Test correctly converted Plottable to string type without index.');
 
   });
+});
 });

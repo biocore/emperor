@@ -1,17 +1,4 @@
-/**
- *
- * @author Yoshiki Vazquez Baeza
- * @copyright Copyright 2013, The Emperor Project
- * @credits Yoshiki Vazquez Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
-
+define(['underscore'], function(_){
 /**
  *
  * Sorting function that deals with alpha and numeric elements
@@ -124,5 +111,10 @@ function escapeRegularExpression(regex){
  *
  */
 function cleanHTML(htmlString){
-    return htmlString.replace(' xmlns="http://www.w3.org/1999/xhtml"', '')
+    return htmlString.replace(' xmlns="http://www.w3.org/1999/xhtml"', '');
 }
+  return {'truncateLevel': truncateLevel, 'naturalSort': naturalSort,
+          'convertXMLToString': convertXMLToString,
+          'escapeRegularExpression': escapeRegularExpression,
+          'cleanHTML': cleanHTML};
+});

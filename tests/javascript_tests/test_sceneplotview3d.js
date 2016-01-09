@@ -1,9 +1,20 @@
+requirejs([
+    "jquery",
+    "underscore",
+    "model",
+    "view",
+    "scene3d",
+    "three",
+    "svgrenderer",
+    "orbitcontrols"
+], function ($, _, model, DecompositionView, ScenePlotView3D, THREE, SVGRenderer, OrbitControls) {
+  var DecompositionModel = model.DecompositionModel;
 $(document).ready(function() {
   module('ScenePlotView3D', {
 
     setup: function(){
       // global variable shared
-      sharedDecompositionViewDict = {};
+      this.sharedDecompositionViewDict = {};
 
       var div = $('<div id="fooligans"></div>');
       div.appendTo(document.body);
@@ -22,7 +33,7 @@ $(document).ready(function() {
       var decomp = new DecompositionModel(name, ids, coords, pct_var,
                                           md_headers, metadata);
       var dv = new DecompositionView(decomp);
-      sharedDecompositionViewDict['pcoa'] = dv;
+      this.sharedDecompositionViewDict.pcoa = dv;
 
       name = "biplot";
       ids = ['tax_1', 'tax_2'];
@@ -39,12 +50,12 @@ $(document).ready(function() {
       decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
                                       metadata);
       dv = new DecompositionView(decomp);
-      sharedDecompositionViewDict['biplot'] = dv;
+      this.sharedDecompositionViewDict.biplot = dv;
     },
 
     teardown: function(){
       // created as global during the setup function
-      sharedDecompositionViewDict = undefined;
+      this.sharedDecompositionViewDict = undefined;
 
       // appended to the body during setup
       $("#fooligans").remove();
@@ -62,7 +73,7 @@ $(document).ready(function() {
     // We will use SVGRenderer here and in the other tests as we cannot use
     // WebGLRenderer and test with phantom.js
     var renderer = new THREE.SVGRenderer({antialias: true});
-    var spv = new ScenePlotView3D(renderer, sharedDecompositionViewDict,
+    var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                   'fooligans', 0, 0, 20, 20);
 
     // assert proper initializations for the attributes, we won't check their
@@ -89,7 +100,7 @@ $(document).ready(function() {
   test('Test setCameraAspectRatio', function(){
 
     var renderer = new THREE.SVGRenderer({antialias: true});
-    var spv = new ScenePlotView3D(renderer, sharedDecompositionViewDict,
+    var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                   'fooligans', 0, 0, 20, 20);
     spv.setCameraAspectRatio(100);
     equal(spv.camera.aspect, 100);
@@ -110,7 +121,7 @@ $(document).ready(function() {
   test('Test resize', function(){
 
     var renderer = new THREE.SVGRenderer({antialias: true});
-    var spv = new ScenePlotView3D(renderer, sharedDecompositionViewDict,
+    var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                   'fooligans', 0, 0, 20, 20);
     spv.resize(11, 11, 200, 300);
 
@@ -137,7 +148,7 @@ $(document).ready(function() {
   test('Test render', function(assert){
 
     var renderer = new THREE.SVGRenderer({antialias: true});
-    var spv = new ScenePlotView3D(renderer, sharedDecompositionViewDict,
+    var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                   'fooligans', 0, 0, 20, 20);
 
     // Couldn't really find a way to properly test the render method as the
@@ -149,4 +160,5 @@ $(document).ready(function() {
     // SVGRenderer class. Would be great if we find a way around this problem.
     assert.ok(true);
   });
+});
 });

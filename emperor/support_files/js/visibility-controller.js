@@ -1,3 +1,14 @@
+define([
+    "jquery",
+    "underscore",
+    "viewcontroller",
+    "chroma",
+    "slickformatters",
+    "slickeditors"
+], function ($, _, ViewControllers, chroma, slickformatters, slickeditors) {
+
+  // we only use the base attribute class, no need to get the base class
+  var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
 /**
  * @name VisibilityController
  *
@@ -44,7 +55,7 @@ function VisibilityController(container, decompViewDict){
   var options = {'valueUpdatedCallback':function(e, args) {
                   var visible = args.item.value;
                   var group = args.item.plottables;
-                  var element = scope.decompViewDict[scope.getActiveDecompViewKey()]
+                  var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
                   VisibilityController.setPlottableAttributes(element, visible, group);
                  },
                  'categorySelectionCallback':function(evt, params) {
@@ -56,10 +67,10 @@ function VisibilityController(container, decompViewDict){
                    // getting all unique values per categories
                    var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
                    // getting color for each uniqueVals
-                   var attributes = {}
+                   var attributes = {};
                    _.each(uniqueVals, function(value) {
-                     attributes[value] = true
-                   })
+                     attributes[value] = true;
+                   });
                    // fetch the slickgrid-formatted data
                    var data = decompViewDict.setCategory(attributes, VisibilityController.setPlottableAttributes, category);
 
@@ -96,3 +107,6 @@ VisibilityController.prototype.constructor = EmperorAttributeABC;
     scope.markers[idx].visible = visible;
   });
 };
+
+  return VisibilityController;
+});

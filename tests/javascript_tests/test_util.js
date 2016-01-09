@@ -1,16 +1,8 @@
-/**
- *
- * @author Yoshiki Vazquez Baeza
- * @copyright Copyright 2013, The Emperor Project
- * @credits Yoshiki Vazquez Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+requirejs(['jquery', 'underscore', 'util'], function($, _, util){
+  var naturalSort = util.naturalSort, truncateLevel = util.truncateLevel,
+      convertXMLToString = util.convertXMLToString,
+      escapeRegularExpression = util.escapeRegularExpression,
+      cleanHTML = util.cleanHTML;
 $(document).ready(function() {
 
   module("General utilities", {
@@ -150,4 +142,5 @@ $(document).ready(function() {
     equal(escapeRegularExpression('s/.*?ome.sample.id'), 's/\\.\\*\\?ome\\.sample\\.id');
   });
 
+});
 });
