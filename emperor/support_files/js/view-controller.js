@@ -51,6 +51,7 @@ function EmperorViewControllerABC(container, title, description){
   this.$header = null;
   this.active = false;
   this.identifier = "EMPtab-" + Math.round(1000000 * Math.random());
+
   this.enabled = true;
 
   if (this.$container.length < 1) {
@@ -63,9 +64,9 @@ function EmperorViewControllerABC(container, title, description){
   // is much trickier, see the resize method for more information
   this.$canvas = $('<div name="emperor-view-controller-canvas"></div>');
   this.$container.append(this.$canvas);
-  
+
   this.$canvas.width('100%');
-  //this.$canvas.height('100%');
+
   this.$canvas.height(this.$container.height());
   this.$canvas.css('margin', '0 auto');
 
@@ -75,14 +76,13 @@ function EmperorViewControllerABC(container, title, description){
   this.$header = $('<div name="emperor-view-controller-header"></div>');
   this.$header.css('width', '100%');
 
-
   this.$body = $('<div name="emperor-view-controller-body"></div>');
   this.$body.css('width', '100%');
 
   // inherit the size of the container minus the space being used for the
   // header
   this.$body.height(this.$canvas.height()-this.$header.height());
-  
+
   this.$canvas.append(this.$header);
   this.$canvas.append(this.$body);
   return this;
@@ -133,9 +133,7 @@ EmperorViewControllerABC.prototype.resize = function(width, height) {
 
   this.$canvas.height(height);
   this.$canvas.width('100%');
-
   this.$header.width('100%');
-
   // the body has to account for the size used by the header
   this.$body.width('100%');
   this.$body.height(height - this.$header.height());
@@ -261,9 +259,8 @@ function EmperorAttributeABC(container, title, description,
       // initialize the data grid
       options.categorySelectionCallback(null, {selected: scope.$select.val()});
     }
-
   });
-  
+
   return this;
 }
 EmperorAttributeABC.prototype = Object.create(EmperorViewControllerABC.prototype);

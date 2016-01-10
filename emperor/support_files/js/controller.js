@@ -83,7 +83,6 @@ EmperorController = function(dm, divId){
   $(function() {
     scope.buildUI();
   });
-
 };
 
 /**
@@ -208,6 +207,17 @@ EmperorController.prototype.buildUI = function() {
 
   // We are tabifying this div, I don't know man.
   this._$tabsContainer.tabs({heightStyle: 'fill'});
+
+  // Fix the height of the controllers now that the container heights
+  // have been finalized.  Note that all of the tab container heights should
+  // be the same, so we'll just grab the color-view-controller
+  var tabHeight = $('#' + this.colorController.identifier).height();
+  var tabWidth = $('#' + this.colorController.identifier).width();
+
+  EmperorViewControllerABC.prototype.resize.call(this.colorController,
+                                                 tabWidth, tabHeight);
+  EmperorViewControllerABC.prototype.resize.call(this.visibilityController,
+                                                 tabWidth, tabHeight);
 };
 
 /**
@@ -224,9 +234,9 @@ EmperorController.prototype.addTab = function(dvdict, viewConstructor){
 
   this._$tabsContainer.append("<div id='" + id +
                               "' class='emperor-tab-div' ></div>");
+
   $('#' + id).height(this.$plotMenu.height() -
                      this._$tabsList.height());
-
   // dynamically instantiate the controller, see:
   // http://stackoverflow.com/a/8843181
   var obj = new (Function.prototype.bind.apply(viewConstructor,

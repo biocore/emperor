@@ -74,6 +74,8 @@ function VisibilityController(container, decompViewDict){
 
   EmperorAttributeABC.call(this, container, title, helpmenu,
                            decompViewDict, options);
+
+  this.$body.height(this.$canvas.height() - this.$header.height());
   return this;
 }
 VisibilityController.prototype = Object.create(EmperorAttributeABC.prototype);
