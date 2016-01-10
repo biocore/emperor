@@ -1,18 +1,8 @@
-/**
- *
- * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *         Vazquez-Baeza
- * @copyright Copyright 2013--, The Emperor Project
- * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *          Vazquez-Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+define([
+    "jquery",
+    "underscore",
+    "three",
+], function ($, _, THREE) {
 /**
  *
  * @name DecompositionView
@@ -142,3 +132,17 @@ DecompositionView.prototype.setCategory = function(attributes,
 
   return dataView;
 };
+
+/* Change the color for a set of plottables - group: list of plottables */
+DecompositionView.prototype.setGroupColor = function(color, group){
+  var idx;
+  var scope = this;
+
+  _.each(group, function(element) {
+    idx = element.idx;
+    scope.markers[idx].material.color = new THREE.Color(color);
+  });
+};
+
+  return DecompositionView;
+});
