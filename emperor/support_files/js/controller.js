@@ -5,11 +5,11 @@ define([
     "view",
     "scene3d",
     "colorviewcontroller",
-    "visibilitycontroller"
+    "visibilitycontroller",
+
 
 ], function ($, _, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController) {
-
   /**
    *
    * @name EmperorController
@@ -210,11 +210,9 @@ define([
   // be the same, so we'll just grab the color-view-controller
   var tabHeight = $('#' + this.colorController.identifier).height();
   var tabWidth = $('#' + this.colorController.identifier).width();
+  this.colorController.resize(tabWidth, tabHeight);
+  this.visibilityController.resize(tabWidth, tabHeight);
 
-  EmperorViewControllerABC.prototype.resize.call(this.colorController,
-                                                 tabWidth, tabHeight);
-  EmperorViewControllerABC.prototype.resize.call(this.visibilityController,
-                                                 tabWidth, tabHeight);
 };
 
   /**

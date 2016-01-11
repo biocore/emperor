@@ -373,9 +373,13 @@ define([
 
     // make the columns fit the available space whenever the window resizes
     // http://stackoverflow.com/a/29835739
-    this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+    if(this.bodyGrid !== undefined){
+        // allows for the resize function to be called without the
+        // body grid being set
+        this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+    }
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,
-    'EmperorAttributeABC': EmperorAttributeABC};
+          'EmperorAttributeABC': EmperorAttributeABC};
 });
