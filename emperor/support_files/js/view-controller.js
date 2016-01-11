@@ -71,6 +71,8 @@ define([
     // the height is much trickier, see the resize method for more information
     this.$canvas = $('<div name="emperor-view-controller-canvas"></div>');
     this.$canvas.width('100%');
+    this.$canvas.css('overflow', 'hidden');
+
     this.$container.append(this.$canvas);
 
     this.$canvas.width(this.$container.width());
