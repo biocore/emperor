@@ -146,10 +146,10 @@ define([
     this.$canvas.height(height);
     this.$canvas.width('100%');
 
-    this.$header.width(width);
+    this.$header.width('100%');
 
     // the body has to account for the size used by the header
-    this.$body.width(width);
+    this.$body.width('100%');
     this.$body.height(height - this.$header.height());
   };
 
