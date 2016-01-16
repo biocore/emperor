@@ -161,7 +161,6 @@ define([
     }
 
     this.renderer.setSize(plotWidth, this.height);
-
     if (this.colorController !== undefined){
       // resize the grid according to the size of the container, since we are
       // inside the tabs we have to account for that lost space, hence the
@@ -174,6 +173,21 @@ define([
       tabHeight -= this._$tabsList.height();
 
       this.colorController.resize(tabWidth, tabHeight);
+    }
+
+    if (this.visibilityController !== undefined){
+      // resize the grid according to the size of the container, since we are
+      // inside the tabs we have to account for that lost space, hence the
+      var tabWidth = this.$plotMenu.width() * this.GRID_SCALE,
+      tabHeight = this.$plotMenu.height() * this.GRID_SCALE;
+
+      // the tab list at the top takes up a variable amount of space and
+      // without this, the table displayed below will have an odd scrolling
+      // behaviour
+      tabHeight -= this._$tabsList.height();
+
+      this.visibilityController.resize(tabWidth, tabHeight);
+
     }
   };
 

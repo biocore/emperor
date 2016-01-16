@@ -50,7 +50,7 @@ define([
     var title = 'Visibility';
 
     // Constant for width in slick-grid
-    var SLICK_WIDTH = 25, scope = this;
+    var SLICK_WIDTH = 50, scope = this;
 
     // Build the options dictionary
     var options = {'valueUpdatedCallback':function(e, args) {
@@ -88,6 +88,8 @@ define([
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
         decompViewDict, options);
+
+
     return this;
   }
   VisibilityController.prototype = Object.create(EmperorAttributeABC.prototype);

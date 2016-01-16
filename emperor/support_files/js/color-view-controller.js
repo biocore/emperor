@@ -53,7 +53,7 @@ define([
     var title = 'Color';
 
     // Constant for width in slick-grid
-    var SLICK_WIDTH = 25, scope = this;
+    var SLICK_WIDTH = 50, scope = this;
     var name, value, colorItem;
 
     // this class uses a colormap selector, so populate it before calling super
