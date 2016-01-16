@@ -5,9 +5,7 @@ define([
     "view",
     "scene3d",
     "colorviewcontroller",
-    "visibilitycontroller",
-
-
+    "visibilitycontroller"
 ], function ($, _, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController) {
   /**
@@ -26,10 +24,10 @@ define([
   EmperorController = function(dm, divId){
     var scope = this;
 
-  // Constants
-  this.GRID_SCALE = 0.97;         // Scaling constant for grid dimensions
-  this.SCENE_VIEW_SCALE = 0.5;    // Scaling constant for scene plot view dimensions
-  this.SLICK_WIDTH = 25;          // Constant for width in slick-grid
+    // Constants
+    this.GRID_SCALE = 0.97;         // Scaling constant for grid dimensions
+    this.SCENE_VIEW_SCALE = 0.5;    // Scaling constant for scene plot view dimensions
+    this.SLICK_WIDTH = 25;          // Constant for width in slick-grid
 
     this.$divId = $('#' + divId);
     this.width = this.$divId.width();
@@ -161,6 +159,7 @@ define([
     }
 
     this.renderer.setSize(plotWidth, this.height);
+
     if (this.colorController !== undefined){
       // resize the grid according to the size of the container, since we are
       // inside the tabs we have to account for that lost space, hence the
@@ -173,22 +172,9 @@ define([
       tabHeight -= this._$tabsList.height();
 
       this.colorController.resize(tabWidth, tabHeight);
-    }
-
-    if (this.visibilityController !== undefined){
-      // resize the grid according to the size of the container, since we are
-      // inside the tabs we have to account for that lost space, hence the
-      var tabWidth = this.$plotMenu.width() * this.GRID_SCALE,
-      tabHeight = this.$plotMenu.height() * this.GRID_SCALE;
-
-      // the tab list at the top takes up a variable amount of space and
-      // without this, the table displayed below will have an odd scrolling
-      // behaviour
-      tabHeight -= this._$tabsList.height();
-
       this.visibilityController.resize(tabWidth, tabHeight);
-
     }
+
   };
 
   /**
@@ -216,16 +202,16 @@ define([
     this.visibilityController = this.addTab(this.sceneViews[0].decViews,
         VisibilityController);
 
-  // We are tabifying this div, I don't know man.
-  this._$tabsContainer.tabs({heightStyle: 'fill'});
+    // We are tabifying this div, I don't know man.
+    this._$tabsContainer.tabs({heightStyle: 'fill'});
 
-  // Fix the height of the controllers now that the container heights
-  // have been finalized.  Note that all of the tab container heights should
-  // be the same, so we'll just grab the color-view-controller
-  var tabHeight = $('#' + this.colorController.identifier).height();
-  var tabWidth = $('#' + this.colorController.identifier).width();
-  this.colorController.resize(tabWidth, tabHeight);
-  this.visibilityController.resize(tabWidth, tabHeight);
+    // Fix the height of the controllers now that the container heights
+    // have been finalized.  Note that all of the tab container heights should
+    // be the same, so we'll just grab the color-view-controller
+    var tabHeight = $('#' + this.colorController.identifier).height();
+    var tabWidth = $('#' + this.colorController.identifier).width();
+    this.colorController.resize(tabWidth, tabHeight);
+    this.visibilityController.resize(tabWidth, tabHeight);
 
 };
 

@@ -50,7 +50,7 @@ define([
     var title = 'Visibility';
 
     // Constant for width in slick-grid
-    var SLICK_WIDTH = 50, scope = this;
+    var SLICK_WIDTH = 25, scope = this;
 
     // Build the options dictionary
     var options = {'valueUpdatedCallback':function(e, args) {
@@ -87,8 +87,7 @@ define([
         editor: Slick.Editors.Checkbox}};
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
-        decompViewDict, options);
-
+                             decompViewDict, options);
 
     return this;
   }

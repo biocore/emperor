@@ -77,6 +77,7 @@ define([
 
     this.$canvas.width(this.$container.width());
     this.$canvas.height(this.$container.height());
+
     // the margin and width properties are set this way to center all the
     // contents of the divs themselves, see this SO answer:
     // http://stackoverflow.com/a/114549
@@ -92,14 +93,12 @@ define([
     // inherit the size of the container minus the space being used for the
     // header.
 
-    // FIXME: The body is still cropping.  This is fixed in resize
     this.$body.height(this.$canvas.height()-this.$header.height());
     this.$body.width(this.$canvas.width());
 
     this.$canvas.append(this.$header);
     this.$canvas.append(this.$body);
 
-    //this.resize(window.innerWidth, window.innerHeight)
     return this;
   }
 
@@ -148,10 +147,8 @@ define([
 
     this.$canvas.height(height);
     this.$canvas.width('100%');
-    this.$header.width('100%');
 
     // the body has to account for the size used by the header
-    this.$body.width('100%');
     this.$body.height(height - this.$header.height());
   };
 
