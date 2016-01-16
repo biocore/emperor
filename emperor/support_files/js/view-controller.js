@@ -92,7 +92,6 @@ define([
 
     // inherit the size of the container minus the space being used for the
     // header.
-
     this.$body.height(this.$canvas.height()-this.$header.height());
     this.$body.width(this.$canvas.width());
 
