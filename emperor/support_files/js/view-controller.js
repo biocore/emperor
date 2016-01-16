@@ -373,11 +373,11 @@ define([
     // call super, most of the header and body resizing logic is done there
     EmperorViewControllerABC.prototype.resize.call(this, width, height);
 
-    // make the columns fit the available space whenever the window resizes
-    // http://stackoverflow.com/a/29835739
+    // allows for the resize function to be called without the
+    // body grid being set
     if(this.bodyGrid !== undefined){
-        // allows for the resize function to be called without the
-        // body grid being set
+        // make the columns fit the available space whenever the window resizes
+        // http://stackoverflow.com/a/29835739
         this.bodyGrid.setColumns(this.bodyGrid.getColumns());
     }
 

@@ -8,6 +8,7 @@ define([
     "visibilitycontroller"
 ], function ($, _, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController) {
+
   /**
    *
    * @name EmperorController
@@ -212,8 +213,7 @@ define([
     var tabWidth = $('#' + this.colorController.identifier).width();
     this.colorController.resize(tabWidth, tabHeight);
     this.visibilityController.resize(tabWidth, tabHeight);
-
-};
+  };
 
   /**
    *

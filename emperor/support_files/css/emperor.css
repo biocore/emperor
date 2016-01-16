@@ -316,10 +316,5 @@ a.media-button:hover img{
  **/
 .slick-row.ui-widget-content, .slick-cell {
     background: none;
-    /* border-top: none; */
 }
 
-/* .slick-viewport { */
-/*     overflow-x: hidden !important; */
-/*     position: fixed; */
-/* } */
