@@ -205,14 +205,6 @@ define([
 
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill'});
-
-    // Fix the height of the controllers now that the container heights
-    // have been finalized.  Note that all of the tab container heights should
-    // be the same, so we'll just grab the color-view-controller
-    var tabHeight = $('#' + this.colorController.identifier).height();
-    var tabWidth = $('#' + this.colorController.identifier).width();
-    this.colorController.resize(tabWidth, tabHeight);
-    this.visibilityController.resize(tabWidth, tabHeight);
   };
 
   /**
