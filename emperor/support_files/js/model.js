@@ -1,18 +1,7 @@
-/**
- *
- * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *         Vazquez-Baeza
- * @copyright Copyright 2013--, The Emperor Project
- * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *          Vazquez-Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+define([
+    "jquery",
+    "underscore",
+], function ($, _) {
 
 /**
  *
@@ -297,3 +286,8 @@ DecompositionModel.prototype.toString = function(){
       return plt.toString();
     }).join('\n');
 };
+
+  return { "DecompositionModel": DecompositionModel,
+           "Plottable": Plottable};
+
+});

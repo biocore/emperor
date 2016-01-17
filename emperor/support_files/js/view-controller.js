@@ -1,3 +1,11 @@
+define([
+    "jquery",
+    "underscore",
+    "view",
+    "slickgrid",
+    "chosen"
+], function ($, _, DecompositionView, SlickGrid, Chosen) {
+
 /**
  * @name EmperorViewControllerABC
  *
@@ -360,3 +368,7 @@ EmperorAttributeABC.prototype.resize = function(width, height) {
   // http://stackoverflow.com/a/29835739
   this.bodyGrid.setColumns(this.bodyGrid.getColumns());
 };
+
+  return {'EmperorViewControllerABC': EmperorViewControllerABC,
+          'EmperorAttributeABC': EmperorAttributeABC};
+});

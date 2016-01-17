@@ -1,18 +1,8 @@
-/**
- *
- * @author Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *         Vazquez-Baeza
- * @copyright Copyright 2013--, The Emperor Project
- * @credits Jamie Morton, Jose Navas Molina, Andrew Hodges & Yoshiki
- *          Vazquez-Baeza
- * @license BSD
- * @version 0.9.51-dev
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
-
+define([
+    "jquery",
+    "underscore",
+    "three",
+], function ($, _, THREE) {
 /**
  *
  * @name DecompositionView
@@ -120,10 +110,23 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
  * @param {category} the category/column in the mapping file
  * @return {dataView} Array of objects to be consumed by Slick grid.
 **/
+<<<<<<< HEAD
 DecompositionView.prototype.setCategory = function(attributes,
                                                    setPlottableAttributes,
                                                    category){
   var scope = this, dataView = [], plottables;
+=======
+DecompositionView.prototype.setCategoryColors = function(colorFunc, category){
+  var cats = this.decomp.getUniqueValuesByCategory(category), scope = this,
+      dataView = [], colors, plottables;
+
+  // If we added 'colorviewcontroller' at the toplevel define call, we would
+  // introduce a circular dependency between view.js and colorviewcontroller.js
+  //
+  // The require.js developers suggest that exports are an ugly practice
+  // http://stackoverflow.com/a/4881496/379593
+  colors = requirejs('colorviewcontroller').getColorList(cats, colorFunc);
+>>>>>>> b2edf02... ENH: Integrate require.js in the codebase
 
   _.each(attributes, function(value, key) {
     /*
@@ -142,3 +145,88 @@ DecompositionView.prototype.setCategory = function(attributes,
 
   return dataView;
 };
+<<<<<<< HEAD
+=======
+
+/**
+ *
+ * Change the plottables opacity based on the metadata category using the
+ * provided opacity function
+ *
+ * @param {opacityFunc} a Function that accepts a category value and returns
+ * an opacity value
+ * @param {category} a string with the metadata header
+ *
+**/
+DecompositionView.prototype.setCategoryOpacity = function(opacityFunc,
+                                                          category){
+  this.setCategoryAttribute(opacityFunc, category, 'opacity');
+};
+
+/**
+ *
+ * Change the plottables scale based on the metadata category using the
+ * provided scale function
+ *
+ * @param {shapeFunc} a Function that accepts a category value and returns
+ * a scale value
+ * @param {category} a string with the metadata header
+ *
+**/
+DecompositionView.prototype.setCategoryScale = function(scaleFunc, category){
+  this.setCategoryAttribute(scaleFunc, group, 'scale');
+};
+
+/**
+ *
+ * Change the plottables opacity based on the metadata category using the
+ * provided opacity function
+ *
+ * @param {shapeFunc} a Function that accepts a category value and returns
+ * a THREE.geometry
+ * @param {category} a string with the metadata header
+ *
+**/
+DecompositionView.prototype.setCategoryShape = function(shapeFunc, category){
+  this.setCategoryAttribute(shapeFunc, category, 'shape');
+};
+
+
+DecompositionView.prototype.setCategoryAttribute = function(value, category, attr){
+
+};
+
+
+/* Change the color for a set of plottables - group: list of plottables */
+DecompositionView.prototype.setGroupColor = function(color, group){
+  var idx;
+  var scope = this;
+
+  _.each(group, function(element) {
+    idx = element.idx;
+    scope.markers[idx].material.color = new THREE.Color(color);
+  });
+};
+
+/* Change the opacity for a set of plottables - group: list of plottables */
+DecompositionView.prototype.setGroupOpacity = function(opacity, group){
+  this.setGroupAttribute(opacity, group, 'opacity');
+};
+
+/* Change the shape for a set of plottables - group: list of plottables */
+DecompositionView.prototype.setGroupShape = function(shape, group){
+  this.setGroupAttribute(shape, group, 'shape');
+};
+
+/* Change the scale for a set of plottables - group: list of plottables */
+DecompositionView.prototype.setGroupScale = function(scale, group){
+  this.setGroupAttribute(scale, group, 'scale');
+};
+
+DecompositionView.prototype.setGroupAttribute = function(value, group, attr){
+
+};
+
+  return DecompositionView;
+});
+>>>>>>> b2edf02... ENH: Integrate require.js in the codebase
