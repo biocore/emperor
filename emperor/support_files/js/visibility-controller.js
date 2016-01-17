@@ -73,7 +73,9 @@ define([
           attributes[value] = true;
         });
         // fetch the slickgrid-formatted data
-        var data = decompViewDict.setCategory(attributes, VisibilityController.setPlottableAttributes, category);
+        var data = decompViewDict.setCategory(attributes,
+                                              VisibilityController.setPlottableAttributes,
+                                              category);
 
         scope.setSlickGridDataset(data);
       },
@@ -85,7 +87,8 @@ define([
         editor: Slick.Editors.Checkbox}};
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
-        decompViewDict, options);
+                             decompViewDict, options);
+
     return this;
   }
   VisibilityController.prototype = Object.create(EmperorAttributeABC.prototype);

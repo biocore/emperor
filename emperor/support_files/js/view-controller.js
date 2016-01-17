@@ -71,6 +71,8 @@ define([
     // the height is much trickier, see the resize method for more information
     this.$canvas = $('<div name="emperor-view-controller-canvas"></div>');
     this.$canvas.width('100%');
+    this.$canvas.css('overflow', 'hidden');
+
     this.$container.append(this.$canvas);
 
     this.$canvas.width(this.$container.width());
@@ -86,9 +88,10 @@ define([
     this.$body = $('<div name="emperor-view-controller-body"></div>');
     this.$body.css('margin', '0 auto');
     this.$body.css('width', '100%');
+    this.$body.css('heigth', '100%');
 
     // inherit the size of the container minus the space being used for the
-    // header
+    // header.
     this.$body.height(this.$canvas.height()-this.$header.height());
     this.$body.width(this.$canvas.width());
 
@@ -144,10 +147,7 @@ define([
     this.$canvas.height(height);
     this.$canvas.width('100%');
 
-    this.$header.width(width);
-
     // the body has to account for the size used by the header
-    this.$body.width(width);
     this.$body.height(height - this.$header.height());
   };
 
@@ -272,6 +272,7 @@ define([
         // to initialize the data grid
         options.categorySelectionCallback(null, {selected: scope.$select.val()});
       }
+      scope.resize(scope.$container.width(), scope.$container.height());
 
     });
 
@@ -345,7 +346,8 @@ define([
     var columns = [{id: 'field1', name: 'Category Name', field: 'category'}];
     var gridOptions = {editable: true, enableAddRow: false,
       enableCellNavigation: true, forceFitColumns: true,
-      enableColumnReorder: false, autoEdit: true};
+      enableColumnReorder: false, autoEdit: true,
+      leaveSpaceForNewRows: true};
 
     // If there's a custom slickgrid column then add it to the object
     if(options.slickGridColumn !== undefined){
@@ -371,11 +373,16 @@ define([
     // call super, most of the header and body resizing logic is done there
     EmperorViewControllerABC.prototype.resize.call(this, width, height);
 
-    // make the columns fit the available space whenever the window resizes
-    // http://stackoverflow.com/a/29835739
-    this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+    // allows for the resize function to be called without the
+    // body grid being set
+    if(this.bodyGrid !== undefined){
+        // make the columns fit the available space whenever the window resizes
+        // http://stackoverflow.com/a/29835739
+        this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+    }
+
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,
-    'EmperorAttributeABC': EmperorAttributeABC};
+          'EmperorAttributeABC': EmperorAttributeABC};
 });
