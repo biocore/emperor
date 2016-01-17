@@ -346,7 +346,8 @@ define([
     var columns = [{id: 'field1', name: 'Category Name', field: 'category'}];
     var gridOptions = {editable: true, enableAddRow: false,
       enableCellNavigation: true, forceFitColumns: true,
-      enableColumnReorder: false, autoEdit: true};
+      enableColumnReorder: false, autoEdit: true,
+      leaveSpaceForNewRows: true};
 
     // If there's a custom slickgrid column then add it to the object
     if(options.slickGridColumn !== undefined){
