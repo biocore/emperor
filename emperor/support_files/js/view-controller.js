@@ -140,15 +140,17 @@ define([
    */
   EmperorViewControllerABC.prototype.resize = function(width, height) {
     $('#' + this.identifier).height(height);
+    $('#' + this.identifier).width(width);
 
     this.$canvas.height(height);
-    this.$canvas.width('100%');
-
-    this.$header.width(width);
-
+    this.$canvas.width(width-10);
+    this.$canvas.css({'padding-x':"10px"})
+    this.$header.width(width-10);
+    this.$header.css({'padding-x':"10px"})
     // the body has to account for the size used by the header
-    this.$body.width(width);
+    this.$body.width(width-10);
     this.$body.height(height - this.$header.height());
+    this.$body.css({'padding-x':"10px"})
   };
 
   /**
