@@ -171,7 +171,6 @@ define([
     // without this, the table displayed below will have an odd scrolling
     // behaviour
     tabHeight -= this._$tabsList.height();
-    console.log('True width: ' + tabWidth);
 
     if (this.colorController !== undefined){
       this.colorController.resize(tabWidth, tabHeight);
