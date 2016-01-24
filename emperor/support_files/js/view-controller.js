@@ -151,6 +151,11 @@ define([
     this.$body.width(width-padding);
     this.$body.height(height - this.$header.height());
 
+    console.log("header width: "+this.$header.width())
+    console.log("header height: "+this.$header.height())
+    console.log("body width: "+this.$body.width())
+    console.log("body height: "+this.$body.height())
+
   };
 
   /**

@@ -98,19 +98,18 @@ requirejs([
       var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
 
       // header of size 0
-      controller.resize(10, 10);
+      controller.resize(20, 10);
       equal(controller.$header.height(), 0);
-      equal(controller.$header.width(), 10);
+      equal(controller.$header.width(), 10); // because of padding
       equal(controller.$body.height(), 10);
-      equal(controller.$body.width(), 10);
-
+      equal(controller.$body.width(), 10); // because of padding
 
       controller.$header.height(11);
       controller.resize(30, 30);
       equal(controller.$header.height(), 11);
-      equal(controller.$header.width(), 30);
+      equal(controller.$header.width(), 20); //because of padding
       equal(controller.$body.height(), 19);
-      equal(controller.$body.width(), 30);
+      equal(controller.$body.width(), 20); //because of padding
     });
 
     /**
@@ -275,9 +274,9 @@ requirejs([
 
       $(function(){
         attr.resize(20, 30);
-        equal(attr.$body.width(), 20);
+        equal(attr.$body.width(), 10);
         equal(attr.$body.height(), 30 - attr.$header.height());
-        equal(attr.$header.width(), 20);
+        equal(attr.$header.width(), 10);
 
         start(); // qunit
       });
