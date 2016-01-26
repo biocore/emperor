@@ -163,7 +163,7 @@ define([
     this.renderer.setSize(plotWidth, this.height);
 
     // resize the grid according to the size of the container, since we are
-    // inside the tabs we have to account for that lost space, hence the
+    // inside the tabs we have to account for that lost space.
     var tabWidth = this.$plotMenu.width() * this.GRID_SCALE,
     tabHeight = this.$plotMenu.height() * this.GRID_SCALE;
 

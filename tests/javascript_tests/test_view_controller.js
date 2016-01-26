@@ -274,9 +274,9 @@ requirejs([
 
       $(function(){
         attr.resize(20, 30);
-        equal(attr.$body.width(), 10);
+        equal(attr.$body.width(), 10); // because of padding
         equal(attr.$body.height(), 30 - attr.$header.height());
-        equal(attr.$header.width(), 10);
+        equal(attr.$header.width(), 10); // because of padding
 
         start(); // qunit
       });
