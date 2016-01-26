@@ -150,7 +150,6 @@ define([
     // the body has to account for the size used by the header
     this.$body.width(width-padding);
     this.$body.height(height - this.$header.height());
-
   };
 
   /**

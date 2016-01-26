@@ -201,6 +201,8 @@ define([
    *
    **/
   EmperorController.prototype.buildUI = function() {
+    var scope = this;
+
     //FIXME: This only works for 1 scene plot view
     this.colorController = this.addTab(this.sceneViews[0].decViews,
         ColorViewController);
@@ -208,7 +210,20 @@ define([
         VisibilityController);
 
     // We are tabifying this div, I don't know man.
-    this._$tabsContainer.tabs({heightStyle: 'fill'});
+    this._$tabsContainer.tabs({heightStyle: 'fill',
+                               // The tabs on the plot space only get resized
+                               // when they are visible, thus we subscribe to
+                               // the event that's fired after a user selects a
+                               // tab.  If you don't do this, the width and
+                               // height of each of the view controllers will
+                               // be wrong.  We also found that subscribing to
+                               // document.ready() wouldn't work either as the
+                               // resize callback couldn't be executed on a tab
+                               // that didn't exist yet.
+                               activate: function(event, ui){
+                                 scope.resize(scope.$divId.width(),
+                                              scope.$divId.height());
+                               }});
   };
 
   /**
