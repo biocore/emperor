@@ -162,19 +162,24 @@ define([
 
     this.renderer.setSize(plotWidth, this.height);
 
+    // resize the grid according to the size of the container, since we are
+    // inside the tabs we have to account for that lost space.
+    var tabWidth = this.$plotMenu.width() * this.GRID_SCALE,
+    tabHeight = this.$plotMenu.height() * this.GRID_SCALE;
+
+    // the tab list at the top takes up a variable amount of space and
+    // without this, the table displayed below will have an odd scrolling
+    // behaviour
+    tabHeight -= this._$tabsList.height();
+
     if (this.colorController !== undefined){
-      // resize the grid according to the size of the container, since we are
-      // inside the tabs we have to account for that lost space, hence the
-      var tabWidth = this.$plotMenu.width() * this.GRID_SCALE,
-      tabHeight = this.$plotMenu.height() * this.GRID_SCALE;
-
-      // the tab list at the top takes up a variable amount of space and
-      // without this, the table displayed below will have an odd scrolling
-      // behaviour
-      tabHeight -= this._$tabsList.height();
-
       this.colorController.resize(tabWidth, tabHeight);
     }
+
+    if (this.visibilityController !== undefined){
+      this.visibilityController.resize(tabWidth, tabHeight);
+    }
+
   };
 
   /**
@@ -196,6 +201,8 @@ define([
    *
    **/
   EmperorController.prototype.buildUI = function() {
+    var scope = this;
+
     //FIXME: This only works for 1 scene plot view
     this.colorController = this.addTab(this.sceneViews[0].decViews,
         ColorViewController);
@@ -203,7 +210,20 @@ define([
         VisibilityController);
 
     // We are tabifying this div, I don't know man.
-    this._$tabsContainer.tabs({heightStyle: 'fill'});
+    this._$tabsContainer.tabs({heightStyle: 'fill',
+                               // The tabs on the plot space only get resized
+                               // when they are visible, thus we subscribe to
+                               // the event that's fired after a user selects a
+                               // tab.  If you don't do this, the width and
+                               // height of each of the view controllers will
+                               // be wrong.  We also found that subscribing to
+                               // document.ready() wouldn't work either as the
+                               // resize callback couldn't be executed on a tab
+                               // that didn't exist yet.
+                               activate: function(event, ui){
+                                 scope.resize(scope.$divId.width(),
+                                              scope.$divId.height());
+                               }});
   };
 
   /**

@@ -140,14 +140,18 @@ define([
    */
   EmperorViewControllerABC.prototype.resize = function(width, height) {
     $('#' + this.identifier).height(height);
+    $('#' + this.identifier).width(width);
 
+    // This padding is required in order to make space
+    // for the horizontal menus
+    var padding = 10;
     this.$canvas.height(height);
-    this.$canvas.width('100%');
+    this.$canvas.width(width-padding);
 
-    this.$header.width(width);
+    this.$header.width(width-padding);
 
     // the body has to account for the size used by the header
-    this.$body.width(width);
+    this.$body.width(width-padding);
     this.$body.height(height - this.$header.height());
   };
 
