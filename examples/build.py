@@ -31,8 +31,8 @@ with open('new-emperor.html', 'w') as f, open('template.html') as temp:
     categories = np.asarray(np.random.randint(1, 1000, N), str)
 
     coords_ids = listify(np.arange(N))
-    coords = listify(np.random.randn(N, 10))
-    pct_var = listify(1/np.exp(np.arange(10)))
+    coords = np.random.randn(N, 10).tolist()
+    pct_var = (1/np.exp(np.arange(10))).tolist()
 
     md_headers = ['SampleID', 'DOB']
     metadata = []

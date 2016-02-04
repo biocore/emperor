@@ -119,7 +119,6 @@ define([
         scope.dimensionRanges.min = decomp.dimensionRanges.min.slice();
       }
       else {
-        console.log('so broken');
         // when we have more than one decomposition view we need to figure out
         // the absolute largest range that views span over
         _.each(decomp.dimensionRanges.max, function(value, index){
