@@ -86,6 +86,17 @@ function ($, _) {
    *
    * @class Represents all the information that need to be plotted
    *
+   * @property {String} [abbreviatedName] abbreviated name of the decomposition
+   * object being visualized.
+   * @property {Array} [ids] array of strings with the sample identifiers.
+   * @property {Array} [percExpl] array of floats with the percent explained by
+   * each axes.
+   * @property {Array} [md_headers] array of strings with the names of the
+   * available metadta.
+   * @property {Array} [plottable] array of plottable objects.
+   * @property {Object} [dimensionRanges] object with two properties "min" and
+   * "max", these determine the ranges over which all the samples span.
+   *
    */
 
   /**
@@ -154,22 +165,31 @@ function ($, _) {
     /*
       Check that we have all the metadata categories in all rows
     */
-    res = _.find(metadata, function(m){return m.length !== md_headers.length;})
+    res = _.find(metadata, function(m){
+                  return m.length !== md_headers.length;
+    });
     if(res !== undefined){
       throw new Error("Not all metadata rows have the same number of values");
     }
 
-    this.plottable = new Array(ids.length)
+    this.plottable = new Array(ids.length);
     for (var i = 0; i < ids.length; i++){
-      this.plottable[i] = new Plottable(ids[i], metadata[i], coords[i], i)
+      this.plottable[i] = new Plottable(ids[i], metadata[i], coords[i], i);
     }
+
+    // use slice to make a copy of the array so we can modfiy it
+    this.dimensionRanges = {'min': coords[0].slice(),
+                            'max': coords[0].slice()};
+    this.dimensionRanges = _.reduce(this.plottable,
+                                    DecompositionModel._minMaxReduce,
+                                    this.dimensionRanges);
 
     this.length = this.plottable.length;
     // TODO:
     // this.edges = [];
     // this.plotEdge = false;
     // this.serialComparison = false;
-  };
+  }
 
   /**
    *
@@ -272,6 +292,35 @@ function ($, _) {
    */
   DecompositionModel.prototype.apply = function(func){
     return _.map(this.plottable, func);
+  };
+
+  /**
+   *
+   * Helper function used to find the minimum and maximum values every
+   * dimension in the plottable objects. This function is used with
+   * uderscore.js' reduce function (_.reduce).
+   *
+   * @param {accumulator} Object with a "min" and "max" arrays that store the
+   * minimum and maximum values over all the plottables.
+   * @param {plottable} Plottable object to compare with.
+   *
+   * @return Updated version of accumulator, integrating the ranges of the
+   * newly seen plottable object.
+   *
+   **/
+  DecompositionModel._minMaxReduce = function(accumulator, plottable){
+
+    // iterate over every dimension
+    _.each(plottable.coordinates, function(value, index){
+      if (value > accumulator.max[index]){
+        accumulator.max[index] = value;
+      }
+      else if (value < accumulator.min[index]){
+        accumulator.min[index] = value;
+      }
+    });
+
+    return accumulator;
   };
 
   /**
