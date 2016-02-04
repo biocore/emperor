@@ -298,7 +298,7 @@ function ($, _) {
    *
    * Helper function used to find the minimum and maximum values every
    * dimension in the plottable objects. This function is used with
-   * uderscore.js' reduce function (_.reduce).
+   * underscore.js' reduce function (_.reduce).
    *
    * @param {accumulator} Object with a "min" and "max" arrays that store the
    * minimum and maximum values over all the plottables.
