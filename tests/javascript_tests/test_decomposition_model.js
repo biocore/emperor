@@ -140,6 +140,13 @@ requirejs([
             8)];
       deepEqual(dm.plottable, exp, "Plottables set correctly");
 
+      deepEqual(dm.dimensionRanges.min, [-0.349339, -0.194113, -0.287149,
+                                         -0.346121, -0.247485, -0.279924,
+                                         -0.229889, -0.255786]);
+      deepEqual(dm.dimensionRanges.max, [0.280399, 0.424147, 0.322871,
+                                         0.183347, 0.17607, 0.206043, 0.244448,
+                                         0.140148]);
+
       equal(dm.length, 9, "Length set correctly");
     });
 
@@ -506,6 +513,25 @@ requirejs([
               "the Decomposition Model object"
               );
         });
+
+    /**
+     *
+     * Test the function used to find minimum and maximum values works.
+     *
+     */
+    test("Test the _minMaxReduce function", function(){
+        var p = new Plottable('PC.635', ['PC.635', 'YATGCTGCCTCCCGTAGGAGT',
+                              'Fast', '20071112'], [-0.237661, 0.046053,
+                              -0.138136, 0.159061, -0.247485, -0.115211,
+                              -0.112864, 0.064794], 1);
+        var accumulator = {'min': [-5, -5, -5, -5, -5, -6, -0.01, -8],
+                           'max': [0, 0, 0, 0, 0, 0, 0, 0]};
+
+        var val = DecompositionModel._minMaxReduce(accumulator, p);
+
+        deepEqual(val.min, [-5, -5, -5, -5, -5, -6, -0.112864, -8]);
+        deepEqual(val.max, [0, 0.046053, 0, 0.159061, 0, 0, 0, 0.064794]);
+    });
 
     /**
      *

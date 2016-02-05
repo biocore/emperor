@@ -1,4 +1,6 @@
-requirejs(['draw'], function(formatSVGLegend){
+requirejs(['draw'], function(draw){
+  var formatSVGLegend = draw.formatSVGLegend;
+  var makeLine = draw.makeLine;
   $(document).ready(function() {
 
     module("Drawing utilities", {
@@ -9,6 +11,47 @@ requirejs(['draw'], function(formatSVGLegend){
       teardown: function(){
       }
 
+    });
+
+    /**
+     *
+     * Test that makeLine works
+     *
+     */
+    test("Test makeLine works correctly", function(assert){
+      var testLine = makeLine([0, 0, 0], [1, 1, 1], 0x00ff00, 1, true);
+
+      equal(testLine.material.opacity, 1.0);
+      equal(testLine.material.transparent, true);
+
+      equal(testLine.geometry.vertices[0].x, 0);
+      equal(testLine.geometry.vertices[0].y, 0);
+      equal(testLine.geometry.vertices[0].z, 0);
+
+      equal(testLine.geometry.vertices[1].x, 1);
+      equal(testLine.geometry.vertices[1].y, 1);
+      equal(testLine.geometry.vertices[1].z, 1);
+
+      equal(testLine.material.color.r, 0);
+      equal(testLine.material.color.g, 1);
+      equal(testLine.material.color.b, 0);
+
+      testLine = makeLine([0, 0, 0], [1, 1, 1], 0x00ff00, 1, false);
+
+      equal(testLine.material.opacity, 1.0);
+      equal(testLine.material.transparent, false);
+
+      equal(testLine.geometry.vertices[0].x, 0);
+      equal(testLine.geometry.vertices[0].y, 0);
+      equal(testLine.geometry.vertices[0].z, 0);
+
+      equal(testLine.geometry.vertices[1].x, 1);
+      equal(testLine.geometry.vertices[1].y, 1);
+      equal(testLine.geometry.vertices[1].z, 1);
+
+      equal(testLine.material.color.r, 0);
+      equal(testLine.material.color.g, 1);
+      equal(testLine.material.color.b, 0);
     });
 
     /**

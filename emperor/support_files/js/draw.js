@@ -36,6 +36,45 @@ define(['underscore', 'three'], function(_, THREE){
     return u;
   };
 
+
+  /**
+   *
+   * Create a generic THREE.Line object
+   *
+   * @param {start} Array with the x, y and z coordinates of one of the ends
+   * of the line.
+   * @param {end} Array with the x, y and z coordinates of one of the ends
+   * of the line.
+   * @param {color} Integer in hexadecimal base that specifies the color of the
+   * line.
+   * @param {width} Float with the width of the line being drawn.
+   * @param {transparent} Bool, whether the line will be transparent or not.
+   *
+   * @return THREE.Line object.
+   *
+   **/
+  function makeLine(start, end, color, width, transparent){
+    // based on the example described in:
+    // https://github.com/mrdoob/three.js/wiki/Drawing-lines
+    var material, geometry, line;
+
+    // make the material transparent and with full opacity
+    material = new THREE.LineBasicMaterial({color:color, linewidth:width});
+    material.matrixAutoUpdate = true;
+    material.transparent = transparent;
+    material.opacity = 1.0;
+
+    // add the two vertices to the geometry
+    geometry = new THREE.Geometry();
+    geometry.vertices.push(new THREE.Vector3(start[0], start[1], start[2]));
+    geometry.vertices.push(new THREE.Vector3(end[0], end[1], end[2]));
+
+    // the line will contain the two vertices and the described material
+    line = new THREE.Line(geometry, material);
+
+    return line;
+  }
+
   /**
    *
    * Format an SVG string with labels and colors.
@@ -77,5 +116,5 @@ define(['underscore', 'three'], function(_, THREE){
     return labels_svg;
   }
 
-  return formatSVGLegend;
+  return {'formatSVGLegend': formatSVGLegend, 'makeLine': makeLine};
 });
