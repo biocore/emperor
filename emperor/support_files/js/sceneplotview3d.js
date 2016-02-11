@@ -168,9 +168,9 @@ define([
       [range.min[x], range.min[y], range.max[z]]
     ];
 
-    for (var i = 0; i < 3; i++){
-      action(start, ends[i], i);
-    }
+    action(start, ends[0], 0);
+    action(start, ends[1], 1);
+    action(start, ends[2], 2);
   };
 
   /**
