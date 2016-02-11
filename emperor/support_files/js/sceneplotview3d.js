@@ -4,6 +4,7 @@ define([
     "draw"
 ], function (THREE, OrbitControls, draw) {
   var makeLine = draw.makeLine;
+  var makeLabel = draw.makeLabel;
   /**
    *
    * @name ScenePlotView3D
@@ -58,8 +59,9 @@ define([
     this.width = width;
     this.height = height;
 
-    // used to name the axis lines in the scene
+    // used to name the axis lines/labels in the scene
     this._axisPrefix = 'emperor-axis-line-';
+    this._axisLabelPrefix = 'emperor-axis-label-';
 
     // Set up the camera
     this.camera = new THREE.PerspectiveCamera(35, width/height,
@@ -94,6 +96,7 @@ define([
     this.visibleDimensions = [0, 1, 2];
     this.dimensionRanges = {'max': [], 'min': []};
     this.drawAxesWithColor(0xFFFFFF);
+    this.drawAxesLabelsWithColor(0xFFFFFF);
   };
 
   /**
@@ -136,17 +139,20 @@ define([
     });
   };
 
-
   /**
    *
-   * Draw the axes lines in the plot
+   * Helper method used to iterate over the ranges of the visible dimensions.
    *
-   * @parameter {color} an integer in hexadecimal that specifies the color of
-   * each of the axes lines, the length of these lines is determined by the
-   * dimensionRanges property.
+   * This function that centralizes the pattern followed by drawAxesWithColor
+   * and drawAxesLabelsWithColor.
+   *
+   * @param {action} a function that can take up to three arguments "start",
+   * "end" and "index".  And for each visible dimension the function will get
+   * the "start" and "end" of the range, and the current "index" of the visible
+   * dimension.
    *
    **/
-  ScenePlotView3D.prototype.drawAxesWithColor = function(color){
+  ScenePlotView3D.prototype._dimensionsIterator = function(action){
     this._unionRanges();
 
     // shortcut to the index of the visible dimension and the range object
@@ -162,13 +168,86 @@ define([
       [range.min[x], range.min[y], range.max[z]]
     ];
 
+    action(start, ends[0], 0);
+    action(start, ends[1], 1);
+    action(start, ends[2], 2);
+  };
+
+  /**
+   *
+   * Draw the axes lines in the plot
+   *
+   * @parameter {color} an integer in hexadecimal that specifies the color of
+   * each of the axes lines, the length of these lines is determined by the
+   * dimensionRanges property.
+   *
+   **/
+  ScenePlotView3D.prototype.drawAxesWithColor = function(color){
+    var scope = this, axisLine;
+
     this.removeAxes();
 
-    for (var i = 0; i < 3; i++){
-      axisLine = makeLine(start, ends[i], color, 3, false);
-      axisLine.name = this._axisPrefix + i;
+    this._dimensionsIterator(function(start, end, index){
+      axisLine = makeLine(start, end, color, 3, false);
+      axisLine.name = scope._axisPrefix + index;
 
-      this.scene.add(axisLine);
+      scope.scene.add(axisLine);
+    });
+  };
+
+  /**
+   *
+   * Draw the axes labels for each visible dimension.
+   *
+   * @parameter {color} an integer in hexadecimal that specifies the color of
+   * the labels, these labels will be positioned at the end of the axes line.
+   * The text in the labels is determined using the percentage explained by
+   * each dimension and the abbreviated name of a single decomposition object.
+   * Note that we arbitrarily use the first one, as all decomposition objects
+   * presented in the same scene should have the same percentages explained by
+   * each axis.
+   *
+   **/
+  ScenePlotView3D.prototype.drawAxesLabelsWithColor = function(color){
+    var scope = this, axisLabel, decomp, firstKey, text;
+
+    this.removeAxesLabels();
+
+    // get the first decomposition object, it doesn't really mater which one
+    // we look at though, as all of them should have the same percentage
+    // explained on each axis
+    firstKey = _.keys(this.decViews)[0];
+    decomp = this.decViews[firstKey].decomp;
+
+    this._dimensionsIterator(function(start, end, index){
+
+      // construct a label of the format: AbbNam (xx.xx %)
+      text = decomp.abbreviatedName + ' (' +
+             decomp.percExpl[index].toPrecision(4) + ' %)';
+
+      axisLabel = makeLabel(end, text, color);
+      axisLabel.name = scope._axisLabelPrefix + index;
+
+      scope.scene.add(axisLabel);
+    });
+  };
+
+  /**
+   *
+   * Helper method to remove objects that match a prefix from the view's scene
+   * this method is used by removeAxes and removeAxesLabels. This function
+   * iterates "num" times, and for each iteration it finds and removes objects
+   * with the name of the form "prefix" + "iteration".
+   *
+   * @param {prefix} a string indicating the label that will prepended to the
+   * iterating index.
+   * @param {num} an integer specifying the number of iterations to perform.
+   *
+   **/
+  ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix, num){
+    for (var i = 0; i < num; i++){
+      var axisLine = this.scene.getObjectByName(prefix + i);
+      this.scene.remove(axisLine);
     }
   };
 
@@ -178,12 +257,17 @@ define([
    *
    **/
   ScenePlotView3D.prototype.removeAxes = function(){
-    for (var i = 0; i < 3; i++){
-      var axisLine = this.scene.getObjectByName(this._axisPrefix + i);
-      this.scene.remove(axisLine);
-    }
+    this._removeObjectsWithPrefix(this._axisPrefix, 3);
   };
 
+  /**
+   *
+   * Remove the axis labels from the scene
+   *
+   **/
+  ScenePlotView3D.prototype.removeAxesLabels = function(){
+    this._removeObjectsWithPrefix(this._axisLabelPrefix, 3);
+  };
 
   /**
    *

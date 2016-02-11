@@ -137,6 +137,53 @@ requirejs([
       }
     });
 
+
+    test('Test the draw axes labels', function(assert){
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+          'fooligans', 0, 0, 20, 20);
+
+      // color the axis lines
+      spv.drawAxesLabelsWithColor(0x00FF0F);
+
+      var label, positions = [[-0.237661, -0.144964, -0.138136],
+                              [-1, 0.046053, -0.138136],
+                              [-1, -0.144964, 0.066647]];
+
+      for (var i = 0; i < 3; i++){
+        label = spv.scene.getObjectByName('emperor-axis-label-' + i);
+
+        equal(label.position.x, positions[i][0]);
+        equal(label.position.y, positions[i][1]);
+        equal(label.position.z, positions[i][2]);
+
+        equal(label.material.color.r, 0);
+        equal(label.material.color.g, 1);
+        equal(label.material.color.b, 0.058823529411764705);
+      }
+    });
+
+    test('Test removing axes labels', function(assert){
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+          'fooligans', 0, 0, 20, 20);
+
+      // remove the axis lines
+      spv.removeAxesLabels();
+
+      var label;
+
+      for (var i = 0; i < 3; i++){
+        label = spv.scene.getObjectByName('emperor-axis-label-' + i);
+        assert.equal(label, undefined);
+      }
+    });
+
+
     /**
      *
      * Test the setCameraAspectRatio method for ScenePlotView3D

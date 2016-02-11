@@ -1,6 +1,7 @@
 requirejs(['draw'], function(draw){
   var formatSVGLegend = draw.formatSVGLegend;
   var makeLine = draw.makeLine;
+  var makeLabel = draw.makeLabel;
   $(document).ready(function() {
 
     module("Drawing utilities", {
@@ -53,6 +54,24 @@ requirejs(['draw'], function(draw){
       equal(testLine.material.color.g, 1);
       equal(testLine.material.color.b, 0);
     });
+
+    /**
+     *
+     * Test that makeLabel works correctly.
+     *
+     */
+    test("Test makeLabel works correctly", function(assert){
+      var label = makeLabel([0, 0, 0], "foolibusters", 0x00FF00);
+
+      equal(label.material.color.r, 0);
+      equal(label.material.color.g, 1);
+      equal(label.material.color.b, 0);
+
+      equal(label.position.x, 0);
+      equal(label.position.y, 0);
+      equal(label.position.z, 0);
+    });
+
 
     /**
      *
