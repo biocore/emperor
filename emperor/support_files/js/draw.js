@@ -77,6 +77,45 @@ define(['underscore', 'three'], function(_, THREE){
 
   /**
    *
+   * Create a THREE object that displays 2D text, this implementation is based
+   * on the answer found here: http://stackoverflow.com/a/14106703/379593
+   *
+   * @param {position} Array representing the location of the label.
+   * @param {text} String with the text to be shown on screen.
+   * @param {color} Integer in hexadecimal base that represents the color of
+   * the text.
+   *
+   * @return THREE.Sprite object with the text displaying in it.
+   *
+   **/
+  function makeLabel(position, text, color){
+    var canvas = document.createElement('canvas');
+    var size = 512;
+    canvas.width = size;
+    canvas.height = size;
+    var context = canvas.getContext('2d');
+    context.fillStyle = '#ffffff';
+    context.textAlign = 'center';
+    context.font = '30px Arial';
+    context.fillText(text, size/2, size/2);
+
+    var amap = new THREE.Texture(canvas);
+    amap.needsUpdate = true;
+
+    var mat = new THREE.SpriteMaterial({
+        map: amap,
+        transparent: true,
+        color: color
+    });
+
+    var sp = new THREE.Sprite(mat);
+    sp.position.set(position[0], position[1], position[2]);
+
+    return sp;
+  }
+
+  /**
+   *
    * Format an SVG string with labels and colors.
    *
    * @param {labels} Array object with the name of the labels.
@@ -116,5 +155,6 @@ define(['underscore', 'three'], function(_, THREE){
     return labels_svg;
   }
 
-  return {'formatSVGLegend': formatSVGLegend, 'makeLine': makeLine};
+  return {'formatSVGLegend': formatSVGLegend, 'makeLine': makeLine,
+          'makeLabel': makeLabel};
 });
