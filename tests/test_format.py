@@ -336,7 +336,6 @@ class TopLevelTests(TestCase):
         self.assertTrue('HostName:' in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
-        self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
         autograph = format_emperor_autograph('mapping_file.txt',
@@ -352,7 +351,6 @@ class TopLevelTests(TestCase):
         self.assertTrue('HostName:' in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
-        self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
         autograph = format_emperor_autograph('mapping_file.txt',
@@ -368,7 +366,6 @@ class TopLevelTests(TestCase):
         self.assertTrue('HostName:' in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
-        self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
         autograph = format_emperor_autograph('mapping_file.txt',
@@ -384,7 +381,6 @@ class TopLevelTests(TestCase):
         self.assertTrue('HostName:' in autograph)
         self.assertTrue("Command:" in autograph)
         self.assertTrue("Emperor Version: " in autograph)
-        self.assertTrue("QIIME Version: " in autograph)
         self.assertTrue("Command executed on " in autograph)
 
         # haskell and cobol are ... not supported
