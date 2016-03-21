@@ -23,15 +23,13 @@ Classes
 # ----------------------------------------------------------------------------
 from __future__ import division
 
-from emperor.format import (format_mapping_file_to_js, format_pcoa_to_js,
-                            format_taxa_to_js, format_vectors_to_js,
-                            format_comparison_bars_to_js,
-                            format_emperor_html_footer_string)
-from emperor._format_strings import EMPEROR_HEADER_HTML_STRING
-
+from template import TEMPLATE_HTML, TEMPLATE_JS
+from jinja2 import Template
+import numpy as np
 # we are going to use this remote location to load external resources
-RESOURCES_URL = 'http://emperor.microbio.me/master/make_emperor/emperor_outpu\
-t/emperor_required_resources'
+# RESOURCES_URL = 'http://emperor.microbio.me/master/make_emperor/emperor_outpu\
+#t/emperor_required_resources'
+#BASE_URL = 'https://cdn.rawgit.com/ElDeveloper/emperor/require-js'
 
 
 class Emperor(object):
@@ -44,14 +42,13 @@ class Emperor(object):
 
     Parameters
     ----------
-    ordination: skbio.maths.stats.ordination.OrdinationResults
+    ordination: skbio.stats.ordination.OrdinationResults
         Object containing the computed values for an ordination method in
         scikit-bio.
-    mapping_file_data: list of list objects
-        Metadata mapping file used to color the plot.
-    mapping_file_headers: list of str objects
-        List of strings representing the header names of the
-        `mapping_file_data`. All names should be unique.
+    metadata: pd.DataFrame
+        Table of metadata where samples correspond to rows and metadata
+        variables correspond to columns.
+
 
     Examples
     --------
@@ -87,11 +84,10 @@ class Emperor(object):
        2013 Nov 26;2(1):16.
 
     """
-    def __init__(self, ordination, mapping_file_data, mapping_file_headers):
+    def __init__(self, ordination, metadata):
+
         self.ordination = ordination
-        self.mapping_file_data = mapping_file_data
-        self.mapping_file_headers = mapping_file_headers
-        self.ids = [s[0] for s in mapping_file_data]
+        self.metadata = metadata
         self._html = None
 
     def __str__(self):
@@ -109,35 +105,30 @@ class Emperor(object):
 
         # this provides a string representation that's independent of the
         # filesystem, it will instead retrieve them from the official website
-        output = str(self).replace('emperor_required_resources',
-                                   RESOURCES_URL)
 
+        #output = str(self).replace('emperor_required_resources',
+        #                           RESOURCES_URL)
+        output = str(self)
         # thanks to the IPython devs for helping me figure this one out
         return display(HTML(output), metadata=dict(isolated=True))
 
     def _make_emperor(self):
         """Private method to build an Emperor HTML string"""
-        pcoa_string = format_pcoa_to_js(self.ids,
-                                        self.ordination.site,
-                                        self.ordination.proportion_explained)
+        # template = Template(TEMPLATE_STRING)
+        def listify(a):
+            return np.asarray(a, dtype='str').tolist()
 
-        # we pass the mapping file headers twice so nothing is filtered out
-        mf_string = format_mapping_file_to_js(self.mapping_file_data,
-                                              self.mapping_file_headers,
-                                              self.mapping_file_headers)
+        coords_ids = listify(self.ordination.samples.index)
+        coords = listify(self.ordination.samples)
+        pct_var = listify(self.ordination.proportion_explained)
 
-        # A lot of this is going to be empty because we don't really need any
-        # of it
-        footer = format_emperor_html_footer_string(False, False, False, False)
-        taxa = format_taxa_to_js([], [], [])
-        bars = format_comparison_bars_to_js([], [], 0)
-        vectors = format_vectors_to_js([], [], [], [], None)
+        md_headers = listify(self.metadata.columns)
+        metadata = listify(self.metadata.values)
 
-        # build the HTML string
-        output = [EMPEROR_HEADER_HTML_STRING, mf_string, pcoa_string, taxa,
-                  bars, vectors, footer]
 
-        # add the remote resources
-        _emperor = '\n'.join(output)
+        full = Template(TEMPLATE_HTML).render(base_URL=BASE_URL)
+        full += Template(TEMPLATE_JS).render(coords_ids=coords_ids, coords=coords,
+                                             pct_var=pct_var, md_headers=md_headers,
+                                             metadata=metadata, base_URL=BASE_URL)
+        self._html = full
 
-        self._html = _emperor
