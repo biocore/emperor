@@ -29,7 +29,7 @@ import numpy as np
 # we are going to use this remote location to load external resources
 # RESOURCES_URL = 'http://emperor.microbio.me/master/make_emperor/emperor_outpu\
 #t/emperor_required_resources'
-#BASE_URL = 'https://cdn.rawgit.com/ElDeveloper/emperor/require-js'
+BASE_URL = 'https://cdn.rawgit.com/biocore/emperor/new-api'
 
 
 class Emperor(object):

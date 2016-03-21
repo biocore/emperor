@@ -1,6 +1,7 @@
 TEMPLATE_HTML = """
 <script type="text/javascript">
 {% raw %}
+requirejs('jquery', function($){
 if ($("#emperor-css").length == 0){{
     $("head").append([
 {% endraw %}
@@ -11,6 +12,7 @@ if ($("#emperor-css").length == 0){{
         '<link rel="stylesheet" type="text/css" href="{{ base_URL }}/emperor/support_files/vendor/css/chosen.min.css">'
     ]);
 }}
+});
 </script>
 <div id='python-penguin' style="position: relative; width:100%; height:500px;"></div>
 </div>
