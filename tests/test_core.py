@@ -11,7 +11,7 @@ from unittest import TestCase, main
 from StringIO import StringIO
 from skbio.stats.ordination import OrdinationResults
 
-import pandas as pd, numpy as np
+import pandas as pd
 
 from emperor.core import Emperor
 from _test_core_strings import PCOA_STRING, HTML_STRING

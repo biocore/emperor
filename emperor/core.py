@@ -28,11 +28,6 @@ from os.path import join
 from jinja2 import Template
 
 from emperor.util import get_emperor_support_files_dir
-from emperor.format import (format_mapping_file_to_js, format_pcoa_to_js,
-                            format_taxa_to_js, format_vectors_to_js,
-                            format_comparison_bars_to_js,
-                            format_emperor_html_footer_string)
-from emperor._format_strings import EMPEROR_HEADER_HTML_STRING
 
 # we are going to use this remote location to load external resources
 BASE_URL = 'https://cdn.rawgit.com/biocore/emperor/new-api'
@@ -60,10 +55,11 @@ class Emperor(object):
         DataFrame object with the metadata associated to the samples in the
         `ordination` object, should have an index set and it should match the
         identifiers in the `ordination` object.
+    dimensions: int, optional
+        Number of dimensions to keep from the ordination data, defaults to 5.
 
     Examples
     --------
-
     Create an Emperor object and display it from the Jupyter notebook:
 
     >>> import pandas as pd, numpy as np
@@ -72,7 +68,7 @@ class Emperor(object):
 
     Ordination plots are almost invariantly associated with a set of data, that
     relates each sample to its scientific context, we refer to this as the
-    *sample metadata*, and represent it using Pandas `DataFrame`s. For this
+    *sample metadata*, and represent it using Pandas DataFrames. For this
     example we will need some metadata, we start by creating our metadata
     object:
 
@@ -129,13 +125,18 @@ class Emperor(object):
        2013 Nov 26;2(1):16.
 
     """
-    def __init__(self, ordination, mapping_file):
+    def __init__(self, ordination, mapping_file, dimensions=5):
         self.ordination = ordination
 
         # filter all metadata that we may have for which we don't have any
         # coordinates
         self.mf = mapping_file.loc[list(ordination.site_ids)].copy()
         self._html = None
+
+        if ordination.proportion_explained.shape[0] < dimensions:
+            self.dimensions = ordination.proportion_explained.shape[0]
+        else:
+            self.dimensions = dimensions
 
     def __str__(self):
         if self._html is None:
@@ -151,7 +152,6 @@ class Emperor(object):
         from IPython.display import display, HTML
 
         return display(HTML(str(self)))
-
 
     def _make_emperor(self):
         """Private method to build an Emperor HTML string"""
