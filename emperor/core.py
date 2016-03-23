@@ -170,8 +170,9 @@ class Emperor(object):
                                  axis=1).values.tolist()
 
         # format the coordinates
-        pct_var = self.ordination.proportion_explained.tolist()
-        coords = self.ordination.site.tolist()
+        d = self.dimensions
+        pct_var = self.ordination.proportion_explained[:d].tolist()
+        coords = self.ordination.site[:, :d].tolist()
         coord_ids = self.mf.index.tolist()
 
         output.append(main_template.render(coords_ids=coord_ids,
