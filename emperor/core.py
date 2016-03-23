@@ -28,11 +28,6 @@ from os.path import join
 from jinja2 import Template
 
 from emperor.util import get_emperor_support_files_dir
-from emperor.format import (format_mapping_file_to_js, format_pcoa_to_js,
-                            format_taxa_to_js, format_vectors_to_js,
-                            format_comparison_bars_to_js,
-                            format_emperor_html_footer_string)
-from emperor._format_strings import EMPEROR_HEADER_HTML_STRING
 
 # we are going to use this remote location to load external resources
 BASE_URL = 'https://cdn.rawgit.com/biocore/emperor/new-api'
@@ -116,7 +111,7 @@ class Emperor(object):
     Finally import the Emperor object and display it using Jupyter, note that
     this call will have no effect under a regular Python session:
 
-    >>> Emperor(mf, ores)
+    >>> Emperor(ores, mf)
 
     Notes
     -----
@@ -157,7 +152,6 @@ class Emperor(object):
         from IPython.display import display, HTML
 
         return display(HTML(str(self)))
-
 
     def _make_emperor(self):
         """Private method to build an Emperor HTML string"""
