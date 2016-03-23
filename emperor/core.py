@@ -143,15 +143,13 @@ class Emperor(object):
         return self._html
 
     def _repr_html_(self):
-        """Used to be displayed in the IPython notebook"""
+        """Used to display a plot in the Jupyter notebook"""
 
         # we import here as IPython shouldn't be a dependency of Emperor
         # however if this method is called it will be from an IPython notebook
         # otherwise the developer is responsible for calling this method
         from IPython.display import display, HTML
 
-        # thanks to the IPython devs for helping me figure this one out
-        #return display(HTML(str(self)), isolated=True)
         return display(HTML(str(self)))
 
 
@@ -168,10 +166,8 @@ class Emperor(object):
         # format the mapping file
         headers = [self.mf.index.name] + self.mf.columns.tolist()
 
-
         metadata = self.mf.apply(lambda x: [x.name] + x.astype('str').tolist(),
                                  axis=1).values.tolist()
-        # metadata = metadata.values.astype('str').tolist()
 
         # format the coordinates
         pct_var = self.ordination.proportion_explained.tolist()
