@@ -23,6 +23,11 @@ Classes
 # ----------------------------------------------------------------------------
 from __future__ import division
 
+from os.path import join
+
+from jinja2 import Template
+
+from emperor.util import get_emperor_support_files_dir
 from emperor.format import (format_mapping_file_to_js, format_pcoa_to_js,
                             format_taxa_to_js, format_vectors_to_js,
                             format_comparison_bars_to_js,
@@ -30,8 +35,12 @@ from emperor.format import (format_mapping_file_to_js, format_pcoa_to_js,
 from emperor._format_strings import EMPEROR_HEADER_HTML_STRING
 
 # we are going to use this remote location to load external resources
-RESOURCES_URL = 'http://emperor.microbio.me/master/make_emperor/emperor_outpu\
-t/emperor_required_resources'
+BASE_URL = 'https://cdn.rawgit.com/biocore/emperor/new-api'
+
+STYLE_PATH = join(get_emperor_support_files_dir(), 'templates',
+                  'style-template.html')
+MAIN_PATH = join(get_emperor_support_files_dir(), 'templates',
+                 'main-template.html')
 
 
 class Emperor(object):
@@ -47,15 +56,26 @@ class Emperor(object):
     ordination: skbio.maths.stats.ordination.OrdinationResults
         Object containing the computed values for an ordination method in
         scikit-bio.
-    mapping_file_data: list of list objects
-        Metadata mapping file used to color the plot.
-    mapping_file_headers: list of str objects
-        List of strings representing the header names of the
-        `mapping_file_data`. All names should be unique.
+    mapping_file: pd.DataFrame
+        DataFrame object with the metadata associated to the samples in the
+        `ordination` object, should have an index set and it should match the
+        identifiers in the `ordination` object.
+    dimensions: int, optional
+        Number of dimensions to keep from the ordination data, defaults to 5.
 
     Examples
     --------
-    Create an Emperor object and display it from the IPython notebook:
+    Create an Emperor object and display it from the Jupyter notebook:
+
+    >>> import pandas as pd, numpy as np
+    >>> from emperor import Emperor
+    >>> from skbio.stats.ordination import OrdinationResults
+
+    Ordination plots are almost invariantly associated with a set of data, that
+    relates each sample to its scientific context, we refer to this as the
+    *sample metadata*, and represent it using Pandas DataFrames. For this
+    example we will need some metadata, we start by creating our metadata
+    object:
 
     >>> data = [['PC.354', 'Control', '20061218', 'Control_mouse_I.D._354'],
     ... ['PC.355', 'Control', '20061218', 'Control_mouse_I.D._355'],
@@ -66,14 +86,37 @@ class Emperor(object):
     ... ['PC.634', 'Fast', '20080116', 'Fasting_mouse_I.D._634'],
     ... ['PC.635', 'Fast', '20080116', 'Fasting_mouse_I.D._635'],
     ... ['PC.636', 'Fast', '20080116', 'Fasting_mouse_I.D._636']]
-    >>> headers = ['SampleID', 'Treatment', 'DOB', 'Description']
-    >>> ordination = OrdinationResults.read('unweighted_unifrac_pc.txt')
+    >>> columns = ['SampleID', 'Treatment', 'DOB', 'Description']
+    >>> mf = pd.DataFrame(columns=columns, data=data)
 
-    Now import the Emperor object and display it using IPython, note that this
-    call will have no effect under an interactive Python session:
+    Before we can use this mapping file in Emperor, we should set the index
+    to be `SampleID`.
 
-    >>> from emperor import Emperor
-    >>> Emperor(ordination, data, headers)
+    >>> mf.set_index('SampleID', inplace=True)
+
+    Then let's create some artificial ordination data:
+
+    >>> eigvals = np.array([0.47941212, 0.29201496, 0.24744925,
+    ...                     0.20149607, 0.18007613, 0.14780677,
+    ...                     0.13579593, 0.1122597, 0.])
+    >>> n = eigvals.shape[0]
+    >>> site = np.random.randn(n, n)
+    >>> site_ids = ('PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593',
+    ...             'PC.355', 'PC.607', 'PC.634')
+    >>> p_explained = np.array([0.26688705, 0.1625637, 0.13775413, 0.11217216,
+                                0.10024775, 0.08228351, 0.07559712, 0.06249458,
+                                0.])
+
+    And encapsulate it inside an `OrdinationResults` object:
+
+
+    >>> ores = OrdinationResults(eigvals, site=site, site_ids=site_ids,
+    ...                          proportion_explained=p_explained)
+
+    Finally import the Emperor object and display it using Jupyter, note that
+    this call will have no effect under a regular Python session:
+
+    >>> Emperor(mf, ores)
 
     Notes
     -----
@@ -87,12 +130,18 @@ class Emperor(object):
        2013 Nov 26;2(1):16.
 
     """
-    def __init__(self, ordination, mapping_file_data, mapping_file_headers):
+    def __init__(self, ordination, mapping_file, dimensions=5):
         self.ordination = ordination
-        self.mapping_file_data = mapping_file_data
-        self.mapping_file_headers = mapping_file_headers
-        self.ids = [s[0] for s in mapping_file_data]
+
+        # filter all metadata that we may have for which we don't have any
+        # coordinates
+        self.mf = mapping_file.loc[list(ordination.site_ids)].copy()
         self._html = None
+
+        if ordination.proportion_explained.shape[0] < dimensions:
+            self.dimensions = ordination.proportion_explained.shape[0]
+        else:
+            self.dimensions = dimensions
 
     def __str__(self):
         if self._html is None:
@@ -100,44 +149,43 @@ class Emperor(object):
         return self._html
 
     def _repr_html_(self):
-        """Used to be displayed in the IPython notebook"""
+        """Used to display a plot in the Jupyter notebook"""
 
         # we import here as IPython shouldn't be a dependency of Emperor
         # however if this method is called it will be from an IPython notebook
         # otherwise the developer is responsible for calling this method
         from IPython.display import display, HTML
 
-        # this provides a string representation that's independent of the
-        # filesystem, it will instead retrieve them from the official website
-        output = str(self).replace('emperor_required_resources',
-                                   RESOURCES_URL)
+        return display(HTML(str(self)))
 
-        # thanks to the IPython devs for helping me figure this one out
-        return display(HTML(output), metadata=dict(isolated=True))
 
     def _make_emperor(self):
         """Private method to build an Emperor HTML string"""
-        pcoa_string = format_pcoa_to_js(self.ids,
-                                        self.ordination.site,
-                                        self.ordination.proportion_explained)
+        output = []
 
-        # we pass the mapping file headers twice so nothing is filtered out
-        mf_string = format_mapping_file_to_js(self.mapping_file_data,
-                                              self.mapping_file_headers,
-                                              self.mapping_file_headers)
+        with open(STYLE_PATH) as sty, open(MAIN_PATH) as mai:
+            style_template = Template(sty.read())
+            main_template = Template(mai.read())
 
-        # A lot of this is going to be empty because we don't really need any
-        # of it
-        footer = format_emperor_html_footer_string(False, False, False, False)
-        taxa = format_taxa_to_js([], [], [])
-        bars = format_comparison_bars_to_js([], [], 0)
-        vectors = format_vectors_to_js([], [], [], [], None)
+        output.append(style_template.render(base_URL=BASE_URL))
 
-        # build the HTML string
-        output = [EMPEROR_HEADER_HTML_STRING, mf_string, pcoa_string, taxa,
-                  bars, vectors, footer]
+        # format the mapping file
+        headers = [self.mf.index.name] + self.mf.columns.tolist()
 
-        # add the remote resources
-        _emperor = '\n'.join(output)
+        metadata = self.mf.apply(lambda x: [x.name] + x.astype('str').tolist(),
+                                 axis=1).values.tolist()
 
-        self._html = _emperor
+        # format the coordinates
+        d = self.dimensions
+        pct_var = self.ordination.proportion_explained[:d].tolist()
+        coords = self.ordination.site[:, :d].tolist()
+        coord_ids = self.mf.index.tolist()
+
+        output.append(main_template.render(coords_ids=coord_ids,
+                                           coords=coords,
+                                           pct_var=pct_var,
+                                           md_headers=headers,
+                                           metadata=metadata,
+                                           base_URL=BASE_URL))
+
+        self._html = ''.join(output)
