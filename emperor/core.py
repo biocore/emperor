@@ -111,7 +111,7 @@ class Emperor(object):
     Finally import the Emperor object and display it using Jupyter, note that
     this call will have no effect under a regular Python session:
 
-    >>> Emperor(mf, ores)
+    >>> Emperor(ores, mf)
 
     Notes
     -----
