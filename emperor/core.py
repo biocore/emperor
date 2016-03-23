@@ -60,10 +60,11 @@ class Emperor(object):
         DataFrame object with the metadata associated to the samples in the
         `ordination` object, should have an index set and it should match the
         identifiers in the `ordination` object.
+    dimensions: int, optional
+        Number of dimensions to keep from the ordination data, defaults to 5.
 
     Examples
     --------
-
     Create an Emperor object and display it from the Jupyter notebook:
 
     >>> import pandas as pd, numpy as np
@@ -72,7 +73,7 @@ class Emperor(object):
 
     Ordination plots are almost invariantly associated with a set of data, that
     relates each sample to its scientific context, we refer to this as the
-    *sample metadata*, and represent it using Pandas `DataFrame`s. For this
+    *sample metadata*, and represent it using Pandas DataFrames. For this
     example we will need some metadata, we start by creating our metadata
     object:
 
@@ -129,13 +130,18 @@ class Emperor(object):
        2013 Nov 26;2(1):16.
 
     """
-    def __init__(self, ordination, mapping_file):
+    def __init__(self, ordination, mapping_file, dimensions=5):
         self.ordination = ordination
 
         # filter all metadata that we may have for which we don't have any
         # coordinates
         self.mf = mapping_file.loc[list(ordination.site_ids)].copy()
         self._html = None
+
+        if ordination.proportion_explained.shape[0] < dimensions:
+            self.dimensions = ordination.proportion_explained.shape[0]
+        else:
+            self.dimensions = dimensions
 
     def __str__(self):
         if self._html is None:
