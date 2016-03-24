@@ -42,6 +42,13 @@ class TopLevelTests(TestCase):
         self.assertItemsEqual(HTML_STRING.split('\n'), str(emp).split('\n'))
         self.assertEqual(HTML_STRING, str(emp))
 
+    def test_unnamed_index(self):
+        self.mf.index.name = None
+        emp = Emperor(self.ord_res, self.mf)
+
+        self.assertItemsEqual(HTML_STRING.split('\n'), str(emp).split('\n'))
+        self.assertEqual(HTML_STRING, str(emp))
+
 
 if __name__ == "__main__":
     main()

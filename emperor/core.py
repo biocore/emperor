@@ -128,9 +128,16 @@ class Emperor(object):
     def __init__(self, ordination, mapping_file, dimensions=5):
         self.ordination = ordination
 
+        self.mf = mapping_file.copy()
+
+        # the index of the dataframe needs to be named
+        if self.mf.index.name is None:
+            self.mf.index.name = 'SampleID'
+
         # filter all metadata that we may have for which we don't have any
         # coordinates
-        self.mf = mapping_file.loc[list(ordination.site_ids)].copy()
+        self.mf = self.mf.loc[list(ordination.site_ids)]
+
         self._html = None
 
         if ordination.proportion_explained.shape[0] < dimensions:
