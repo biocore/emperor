@@ -24,6 +24,7 @@ Classes
 from __future__ import division
 
 from os.path import join
+import numpy as np
 
 from jinja2 import Template
 
@@ -182,11 +183,16 @@ class Emperor(object):
         coords = self.ordination.site[:, :d].tolist()
         coord_ids = self.mf.index.tolist()
 
-        output.append(main_template.render(coords_ids=coord_ids,
-                                           coords=coords,
-                                           pct_var=pct_var,
-                                           md_headers=headers,
-                                           metadata=metadata,
-                                           base_URL=BASE_URL))
+        # yes, we could have used UUID, but we couldn't find an easier way to
+        # test that deterministically and with this approach we can seed the
+        # random number generator and test accordingly
+        plot_id = 'emperor-notebook-' + str(hex(np.random.randint(2**32)))
+
+        plot = main_template.render(coords_ids=coord_ids, coords=coords,
+                                    pct_var=pct_var, md_headers=headers,
+                                    metadata=metadata, base_URL=BASE_URL,
+                                    plot_id=plot_id)
+
+        output.append(plot)
 
         self._html = ''.join(output)

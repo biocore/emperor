@@ -66,8 +66,10 @@ if ($("#emperor-css").length == 0){{
     ]);
 }}
 </script>
-<div id='python-penguin' style="position: relative; width:100%; height:500px;"></div>
-</div><script type="text/javascript">
+<div id='emperor-notebook-0x9cb72f54' style="position: relative; width:100%; height:500px;"></div>
+</div>
+
+<script type="text/javascript">
 requirejs.config({
 'baseUrl': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/',
 
@@ -135,8 +137,7 @@ requirejs(
 function($, model, EmperorController) {
   var DecompositionModel = model.DecompositionModel;
 
-  var div = $('#python-penguin');
-  console.log(div)
+  var div = $('#emperor-notebook-0x9cb72f54');
 
   var ids = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593', 'PC.355', 'PC.607', 'PC.634'];
   var coords = [[-0.276542163845, -0.144964375408, 0.0666467344429, -0.0677109454288, 0.176070269506], [-0.237661393984, 0.0460527772512, -0.138135814766, 0.159061025229, -0.247484698646], [0.228820399536, -0.130142097093, -0.287149447883, 0.0864498846421, 0.0442951919304], [0.0422628480532, -0.0139681511889, 0.0635314615517, -0.346120552134, -0.127813807608], [0.280399117569, -0.0060128286014, 0.0234854344148, -0.0468109474823, -0.146624450094], [0.232872767451, 0.139788385269, 0.322871079774, 0.18334700682, 0.0204661596818], [0.170517581885, -0.194113268955, -0.0308965283066, 0.0198086158783, 0.155100062794], [-0.0913299284215, 0.424147148265, -0.135627421345, -0.057519480907, 0.151363490722], [-0.349339228244, -0.120787589539, 0.115274502117, 0.0694953933826, -0.0253722182853]];
@@ -151,8 +152,7 @@ function($, model, EmperorController) {
     dm = new DecompositionModel(name, ids, coords, pct_var,
                                 md_headers, metadata);
     // Initialize the EmperorController
-    ec = new EmperorController(dm, 'python-penguin');
-    lol = ec
+    ec = new EmperorController(dm, 'emperor-notebook-0x9cb72f54');
   }
 
   function animate() {
