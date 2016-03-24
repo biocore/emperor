@@ -12,6 +12,7 @@ from StringIO import StringIO
 from skbio.stats.ordination import OrdinationResults
 
 import pandas as pd
+import numpy as np
 
 from emperor.core import Emperor
 from _test_core_strings import PCOA_STRING, HTML_STRING
@@ -36,7 +37,16 @@ class TopLevelTests(TestCase):
         self.mf = pd.DataFrame(data=data, columns=headers)
         self.mf.set_index('SampleID', inplace=True)
 
+        np.random.seed(111)
+
     def test_str(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        self.assertItemsEqual(HTML_STRING.split('\n'), str(emp).split('\n'))
+        self.assertEqual(HTML_STRING, str(emp))
+
+    def test_unnamed_index(self):
+        self.mf.index.name = None
         emp = Emperor(self.ord_res, self.mf)
 
         self.assertItemsEqual(HTML_STRING.split('\n'), str(emp).split('\n'))

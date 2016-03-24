@@ -1,3 +1,6 @@
+<div id='{{ plot_id }}' style="position: relative; width:100%; height:500px;"></div>
+</div>
+
 <script type="text/javascript">
 requirejs.config({
 'baseUrl': '{{ base_URL }}/emperor/support_files/',
@@ -66,8 +69,7 @@ requirejs(
 function($, model, EmperorController) {
   var DecompositionModel = model.DecompositionModel;
 
-  var div = $('#python-penguin');
-  console.log(div)
+  var div = $('#{{ plot_id }}');
 
   var ids = {{ coords_ids }};
   var coords = {{ coords }};
@@ -82,8 +84,7 @@ function($, model, EmperorController) {
     dm = new DecompositionModel(name, ids, coords, pct_var,
                                 md_headers, metadata);
     // Initialize the EmperorController
-    ec = new EmperorController(dm, 'python-penguin');
-    lol = ec
+    ec = new EmperorController(dm, '{{ plot_id }}');
   }
 
   function animate() {
