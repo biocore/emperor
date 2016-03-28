@@ -131,10 +131,6 @@ class Emperor(object):
 
         self.mf = mapping_file.copy()
 
-        # the index of the dataframe needs to be named
-        if self.mf.index.name is None:
-            self.mf.index.name = 'SampleID'
-
         # filter all metadata that we may have for which we don't have any
         # coordinates
         self.mf = self.mf.loc[list(ordination.site_ids)]
@@ -171,9 +167,16 @@ class Emperor(object):
 
         output.append(style_template.render(base_URL=BASE_URL))
 
-        # format the mapping file
-        headers = [self.mf.index.name] + self.mf.columns.tolist()
+        # there's a bug in old versions of Pandas that won't allow us to rename
+        # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
+        # would overwrite the name and simply set it as None
+        if self.mf.index.name is None:
+            index_name = 'SampleID'
+        else:
+            index_name = self.mf.index.name
 
+        # format the metadata
+        headers = [index_name] + self.mf.columns.tolist()
         metadata = self.mf.apply(lambda x: [x.name] + x.astype('str').tolist(),
                                  axis=1).values.tolist()
 
