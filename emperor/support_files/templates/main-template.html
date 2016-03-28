@@ -1,0 +1,105 @@
+<div id='{{ plot_id }}' style="position: relative; width:100%; height:500px;"></div>
+</div>
+
+<script type="text/javascript">
+requirejs.config({
+'baseUrl': '{{ base_URL }}/emperor/support_files/',
+
+// the left side is the module name, and the right side is the path
+// relative to the baseUrl attribute, do NOT include the .js extension
+'paths': {
+  /* jQuery */
+  'jquery': './vendor/js/jquery-2.1.4.min',
+  'jqueryui': './vendor/js/jquery-ui.min',
+  'jquery_drag': './vendor/js/jquery.event.drag-2.2.min',
+
+  /* jQuery plugins */
+  'chosen': './vendor/js/chosen.jquery.min',
+  'spectrum': './vendor/js/spectrum.min',
+
+  /* other libraries */
+  'underscore': './vendor/js/underscore-min',
+  'chroma': './vendor/js/chroma.min',
+
+
+  /* THREE.js and plugins */
+  'three': './vendor/js/three.min',
+  'orbitcontrols': './vendor/js/three.js-plugins/OrbitControls',
+
+  /* SlickGrid */
+  'slickcore': './vendor/js/slick.core.min',
+  'slickgrid': './vendor/js/slick.grid.min',
+  'slickformatters': './vendor/js/slick.editors.min',
+  'slickeditors': './vendor/js/slick.formatters.min',
+
+  /* Emperor's objects */
+  'model': './js/model',
+  'view': './js/view',
+  'controller': './js/controller',
+  'draw': './js/draw',
+  'scene3d': './js/sceneplotview3d',
+  'viewcontroller': './js/view-controller',
+  'colorviewcontroller': './js/color-view-controller',
+  'visibilitycontroller': './js/visibility-controller',
+  'color-editor': './js/color-editor',
+},
+/*
+   Libraries that are not AMD compatible need shim to declare their
+   dependencies.
+ */
+'shim': {
+  'jquery_drag': {
+    'deps': ['jquery', 'jqueryui']
+  },
+  'chosen': {
+    'deps': ['jquery'],
+    'exports': 'jQuery.fn.chosen'
+  },
+  'orbitcontrols': {
+    'deps': ['three']
+  },
+'slickcore': ['jqueryui'],
+'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
+              'slickeditors']
+}
+});
+
+requirejs(
+["jquery", "model", "controller"],
+function($, model, EmperorController) {
+  var DecompositionModel = model.DecompositionModel;
+
+  var div = $('#{{ plot_id }}');
+
+  var ids = {{ coords_ids }};
+  var coords = {{ coords }};
+  var pct_var = {{ pct_var }};
+  var md_headers = {{ md_headers}};
+  var metadata = {{  metadata }};
+
+  var dm, ec;
+
+  function init() {
+    // Initialize the DecompositionModel
+    dm = new DecompositionModel(name, ids, coords, pct_var,
+                                md_headers, metadata);
+    // Initialize the EmperorController
+    ec = new EmperorController(dm, '{{ plot_id }}');
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    ec.render();
+  }
+  $(window).resize(function() {
+    ec.resize(window.innerWidth, window.innerHeight);
+  });
+
+  $(function(){
+    init();
+    animate();
+
+  });
+
+}); // END REQUIRE.JS block
+</script>

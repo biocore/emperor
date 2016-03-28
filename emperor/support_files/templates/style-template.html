@@ -1,0 +1,14 @@
+<script type="text/javascript">
+{% raw %}
+if ($("#emperor-css").length == 0){{
+    $("head").append([
+{% endraw %}
+        '<link id="emperor-css" rel="stylesheet" type="text/css" href="{{ base_URL }}/emperor/support_files/css/emperor.css">',
+        '<link rel="stylesheet" type="text/css" href="{{ base_URL }}/emperor/support_files/vendor/css/jquery-ui.min.css">',
+        '<link rel="stylesheet" type="text/css" href="{{ base_URL }}/emperor/support_files/vendor/css/slick.grid.min.css">',
+        '<link rel="stylesheet" type="text/css" href="{{ base_URL }}/emperor/support_files/vendor/css/spectrum.min.css">',
+        '<link rel="stylesheet" type="text/css" href="{{ base_URL }}/emperor/support_files/vendor/css/chosen.min.css">'
+    ]);
+}}
+</script>
+
