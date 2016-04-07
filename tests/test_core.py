@@ -41,16 +41,18 @@ class TopLevelTests(TestCase):
 
     def test_str(self):
         emp = Emperor(self.ord_res, self.mf)
+        obs = str(emp)
 
-        self.assertItemsEqual(HTML_STRING.split('\n'), str(emp).split('\n'))
-        self.assertEqual(HTML_STRING, str(emp))
+        self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
+        self.assertEqual(HTML_STRING, obs)
 
     def test_unnamed_index(self):
         self.mf.index.name = None
         emp = Emperor(self.ord_res, self.mf)
+        obs = str(emp)
 
-        self.assertItemsEqual(HTML_STRING.split('\n'), str(emp).split('\n'))
-        self.assertEqual(HTML_STRING, str(emp))
+        self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
+        self.assertEqual(HTML_STRING, obs)
 
 
 if __name__ == "__main__":

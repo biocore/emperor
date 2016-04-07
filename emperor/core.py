@@ -143,9 +143,7 @@ class Emperor(object):
             self.dimensions = dimensions
 
     def __str__(self):
-        if self._html is None:
-            self._make_emperor()
-        return self._html
+        return self._make_emperor()
 
     def _repr_html_(self):
         """Used to display a plot in the Jupyter notebook"""
@@ -198,4 +196,4 @@ class Emperor(object):
 
         output.append(plot)
 
-        self._html = ''.join(output)
+        return ''.join(output)
