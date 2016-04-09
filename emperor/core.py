@@ -31,7 +31,8 @@ from jinja2 import Template
 from emperor.util import get_emperor_support_files_dir
 
 # we are going to use this remote location to load external resources
-BASE_URL = 'https://cdn.rawgit.com/biocore/emperor/new-api'
+REMOTE_URL = 'https://cdn.rawgit.com/biocore/emperor/new-api'
+LOCAL_URL = "/nbextensions"
 
 STYLE_PATH = join(get_emperor_support_files_dir(), 'templates',
                   'style-template.html')
@@ -126,7 +127,7 @@ class Emperor(object):
        2013 Nov 26;2(1):16.
 
     """
-    def __init__(self, ordination, mapping_file, dimensions=5):
+    def __init__(self, ordination, mapping_file, dimensions=5, remote=True):
         self.ordination = ordination
 
         self.mf = mapping_file.copy()
@@ -141,6 +142,11 @@ class Emperor(object):
             self.dimensions = ordination.proportion_explained.shape[0]
         else:
             self.dimensions = dimensions
+
+        if remote:
+            self.base_url = REMOTE_URL
+        else:
+            self.base_url = LOCAL_URL
 
     def __str__(self):
         return self._make_emperor()
@@ -163,7 +169,7 @@ class Emperor(object):
             style_template = Template(sty.read())
             main_template = Template(mai.read())
 
-        output.append(style_template.render(base_URL=BASE_URL))
+        output.append(style_template.render(base_URL=self.base_url))
 
         # there's a bug in old versions of Pandas that won't allow us to rename
         # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
@@ -191,7 +197,7 @@ class Emperor(object):
 
         plot = main_template.render(coords_ids=coord_ids, coords=coords,
                                     pct_var=pct_var, md_headers=headers,
-                                    metadata=metadata, base_URL=BASE_URL,
+                                    metadata=metadata, base_URL=self.base_url,
                                     plot_id=plot_id)
 
         output.append(plot)
