@@ -40,7 +40,7 @@ define([
 
     // main divs where the content of the plots will be located
     this.$plotSpace = $("<div id='main-wrapper' class='emperor-plot-wrapper'></div>");
-    this.$plotMenu = $("<div id='emperor-menu'></div>");
+    this.$plotMenu = $("<div class='emperor-plot-menu'></div>");
 
     this.$divId.append(this.$plotSpace);
     this.$divId.append(this.$plotMenu);
