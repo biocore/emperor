@@ -89,9 +89,6 @@ function($, model, EmperorController) {
     requestAnimationFrame(animate);
     ec.render();
   }
-  $(window).resize(function() {
-    ec.resize(window.innerWidth, window.innerHeight);
-  });
 
   $(function(){
     init();
