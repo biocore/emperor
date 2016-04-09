@@ -3,45 +3,43 @@
 
 <script type="text/javascript">
 requirejs.config({
-'baseUrl': '{{ base_URL }}/emperor/support_files/',
-
 // the left side is the module name, and the right side is the path
 // relative to the baseUrl attribute, do NOT include the .js extension
 'paths': {
   /* jQuery */
-  'jquery': './vendor/js/jquery-2.1.4.min',
-  'jqueryui': './vendor/js/jquery-ui.min',
-  'jquery_drag': './vendor/js/jquery.event.drag-2.2.min',
+  'jquery': '{{ base_url }}/vendor/js/jquery-2.1.4.min',
+  'jqueryui': '{{ base_url }}/vendor/js/jquery-ui.min',
+  'jquery_drag': '{{ base_url }}/vendor/js/jquery.event.drag-2.2.min',
 
   /* jQuery plugins */
-  'chosen': './vendor/js/chosen.jquery.min',
-  'spectrum': './vendor/js/spectrum.min',
+  'chosen': '{{ base_url }}/vendor/js/chosen.jquery.min',
+  'spectrum': '{{ base_url }}/vendor/js/spectrum.min',
 
   /* other libraries */
-  'underscore': './vendor/js/underscore-min',
-  'chroma': './vendor/js/chroma.min',
+  'underscore': '{{ base_url }}/vendor/js/underscore-min',
+  'chroma': '{{ base_url }}/vendor/js/chroma.min',
 
 
   /* THREE.js and plugins */
-  'three': './vendor/js/three.min',
-  'orbitcontrols': './vendor/js/three.js-plugins/OrbitControls',
+  'three': '{{ base_url }}/vendor/js/three.min',
+  'orbitcontrols': '{{ base_url }}/vendor/js/three.js-plugins/OrbitControls',
 
   /* SlickGrid */
-  'slickcore': './vendor/js/slick.core.min',
-  'slickgrid': './vendor/js/slick.grid.min',
-  'slickformatters': './vendor/js/slick.editors.min',
-  'slickeditors': './vendor/js/slick.formatters.min',
+  'slickcore': '{{ base_url }}/vendor/js/slick.core.min',
+  'slickgrid': '{{ base_url }}/vendor/js/slick.grid.min',
+  'slickformatters': '{{ base_url }}/vendor/js/slick.editors.min',
+  'slickeditors': '{{ base_url }}/vendor/js/slick.formatters.min',
 
   /* Emperor's objects */
-  'model': './js/model',
-  'view': './js/view',
-  'controller': './js/controller',
-  'draw': './js/draw',
-  'scene3d': './js/sceneplotview3d',
-  'viewcontroller': './js/view-controller',
-  'colorviewcontroller': './js/color-view-controller',
-  'visibilitycontroller': './js/visibility-controller',
-  'color-editor': './js/color-editor',
+  'model': '{{ base_url }}/js/model',
+  'view': '{{ base_url }}/js/view',
+  'controller': '{{ base_url }}/js/controller',
+  'draw': '{{ base_url }}/js/draw',
+  'scene3d': '{{ base_url }}/js/sceneplotview3d',
+  'viewcontroller': '{{ base_url }}/js/view-controller',
+  'colorviewcontroller': '{{ base_url }}/js/color-view-controller',
+  'visibilitycontroller': '{{ base_url }}/js/visibility-controller',
+  'color-editor': '{{ base_url }}/js/color-editor',
 },
 /*
    Libraries that are not AMD compatible need shim to declare their

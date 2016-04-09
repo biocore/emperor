@@ -31,8 +31,9 @@ from jinja2 import Template
 from emperor.util import get_emperor_support_files_dir
 
 # we are going to use this remote location to load external resources
-REMOTE_URL = 'https://cdn.rawgit.com/biocore/emperor/new-api'
-LOCAL_URL = "/nbextensions"
+REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/new-api/emperor'
+              '/support_files')
+LOCAL_URL = "/nbextensions/emperor/support_files"
 
 STYLE_PATH = join(get_emperor_support_files_dir(), 'templates',
                   'style-template.html')
@@ -169,7 +170,7 @@ class Emperor(object):
             style_template = Template(sty.read())
             main_template = Template(mai.read())
 
-        output.append(style_template.render(base_URL=self.base_url))
+        output.append(style_template.render(base_url=self.base_url))
 
         # there's a bug in old versions of Pandas that won't allow us to rename
         # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
@@ -197,7 +198,7 @@ class Emperor(object):
 
         plot = main_template.render(coords_ids=coord_ids, coords=coords,
                                     pct_var=pct_var, md_headers=headers,
-                                    metadata=metadata, base_URL=self.base_url,
+                                    metadata=metadata, base_url=self.base_url,
                                     plot_id=plot_id)
 
         output.append(plot)
