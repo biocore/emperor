@@ -49,14 +49,6 @@ div.emperor-tab-div{
   align: center; /*align the contents to the center*/
 }
 
-/* drop-down menus inside the tabs should use as much space as possible but
- * never go out of the tab size, this is important because otherwise it breaks
- * some of the interface's layout.
- */
-select.emperor-tab-drop-down{
-  width: 100%;
-}
-
 div.colorbox {
   border: 1px solid black;
   height: 18px;
