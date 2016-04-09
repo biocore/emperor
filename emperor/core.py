@@ -60,6 +60,12 @@ class Emperor(object):
         identifiers in the `ordination` object.
     dimensions: int, optional
         Number of dimensions to keep from the ordination data, defaults to 5.
+    remote: bool, optional
+        Whether to load resources from a remote URL or to do it from the
+        nbextensions folder in your Jupyter installation. Note you will need to
+        import the `nbinstall` function from the util module and then call it
+        so the installation of the resources can take place. Defaults to load
+        resources from a remote location.
 
     Examples
     --------
