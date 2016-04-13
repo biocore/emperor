@@ -115,7 +115,7 @@ def copy_support_files(file_path):
     return
 
 
-def nbinstall(overwrite=False, user=True):
+def nbinstall(overwrite=False, user=True, prefix=None):
     """Copies resources to the '/nbextensions' folder in your IPython directory
 
     This function was taken from [1] and modified to match our usecase.
@@ -130,6 +130,16 @@ def nbinstall(overwrite=False, user=True):
         Otherwise do a system-wide install
         (e.g. /usr/local/share/jupyter/nbextensions/emperor). Defaults to
         False.
+    prefix : str, optional
+        Where the files are copied to, by default they are copied to the
+        appropriate Jupyter/IPython folder, alternatively it can be a folder
+        where the resources are copied to. Note, that if this parameter is set
+        `user` has to be `None`.
+
+    Raises
+    ------
+    ArgumentConflict
+        When `prefix` and `user` are used together.
 
     Notes
     -----
@@ -152,6 +162,7 @@ def nbinstall(overwrite=False, user=True):
         get_emperor_support_files_dir(),
         overwrite=overwrite,
         symlink=False,
+        prefix=prefix,
         verbose=0,
         destination='emperor/support_files',
         **({'user': user} if version_info >= (3, 0, 0, '') else {})
