@@ -41,10 +41,17 @@ class TopLevelTests(TestCase):
 
     def test_str(self):
         emp = Emperor(self.ord_res, self.mf)
+        self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
+                                       '/new-api/emperor/support_files')
+
         obs = str(emp)
 
         self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
         self.assertEqual(HTML_STRING, obs)
+
+    def test_remote_url(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False)
+        self.assertEqual(emp.base_url, "/nbextensions/emperor/support_files")
 
     def test_unnamed_index(self):
         self.mf.index.name = None
