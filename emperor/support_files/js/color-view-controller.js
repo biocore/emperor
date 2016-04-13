@@ -59,7 +59,8 @@ define([
     // this class uses a colormap selector, so populate it before calling super
     // because otherwise the categorySelectionCallback will be called before the
     // data is populated
-    this.$colormapSelect = $("<select class='emperor-tab-drop-down'>");
+    this.$colormapSelect = $("<select>");
+    this.$colormapSelect.css('width', '100%');
 
     for (var i = 0; i < ColorViewController.Colormaps.length; i++){
       // the first array has the values that should be displayed on the UI

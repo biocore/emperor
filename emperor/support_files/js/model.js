@@ -21,8 +21,6 @@ function ($, _) {
    * space.
    *
    * @param {name} a string indicating the name of the sample.
-   * @param {idx} the index where the object is located in a decomposition
-   * model.
    * @param {metadata} an Array of strings with the metadata values.
    * @param {coordinates} an Array of floats indicating the position in space
    * where this sample is located.

@@ -254,7 +254,8 @@ define([
     var scope = this;
 
     // http://stackoverflow.com/a/6602002
-    this.$select = $("<select class='emperor-tab-drop-down'>");
+    this.$select = $("<select>");
+    this.$select.css('width', '100%');
     _.each(dm.md_headers, function(header) {
       scope.$select.append($('<option>').attr('value', header).text(header));
     });
