@@ -83,7 +83,7 @@ define([
     this.$header.css('margin', '0 auto');
     this.$header.css('width', '100%');
 
-    this.$body = $('<div name="emperor-view-controller-body"></div>');
+    this.$body = $('<div></div>');
     this.$body.css('margin', '0 auto');
     this.$body.css('width', '100%');
 
@@ -243,6 +243,11 @@ define([
       throw Error('The decomposition view dictionary cannot be empty');
     }
     this.decompViewDict = decompViewDict;
+    this.$gridDiv = $('<div name="emperor-view-controller-body"></div>');
+    this.$gridDiv.css('margin', '0 auto');
+    this.$gridDiv.css('width', '100%');
+    this.$gridDiv.css('height', '100%');
+    this.$body.append(this.$gridDiv);
 
     this.metadataField = null;
     this.activeViewKey = null;
@@ -356,7 +361,7 @@ define([
       columns.unshift(options.slickGridColumn);
     }
 
-    this.bodyGrid = new Slick.Grid(this.$body, [], columns, gridOptions);
+    this.bodyGrid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
 
     // subscribe to events when a cell is changed
     this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);

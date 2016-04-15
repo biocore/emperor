@@ -57,7 +57,7 @@ define([
     var name, value, colorItem;
 
     // Create checkbox for whether using scalar data or not
-    this.$colorScale = $("<span id='colorScale'>");
+    this.$colorScale = $("<div id='colorScale' class='gradient'>");
     this.$scaled = $("<input type='checkbox' id='scaled'>");
     this.$scaledLabel = $("<label for='scaled'>Scalar values</label>")
 
@@ -104,9 +104,10 @@ define([
           var attributes = colorInfo[0];
           // fetch the slickgrid-formatted data
           var data = decompViewDict.setCategory(attributes, ColorViewController.setPlottableAttributes, category);
-          if(scaled) {
+          if (scaled) {
             scope.setSlickGridDataset({});
-            this.$colorScale.html(colorInfo[1]);
+            scope.$gridDiv.hide();
+            scope.$colorScale.html(colorInfo[1]);
           } else {
             scope.setSlickGridDataset(data);
           }
@@ -127,6 +128,7 @@ define([
     this.$header.append(this.$scaled);
     this.$header.append(this.$scaledLabel);
     this.$body.append(this.$colorScale);
+    console.log(this.$body);
 
     // the chosen select can only be set when the document is ready
     $(function() {
@@ -159,7 +161,7 @@ define([
    */
   ColorViewController.getColorList = function(values, map, scaled) {
     var colors = {}, numColors = values.length-1, counter=0, discrete = false;
-    var interpolator;
+    var interpolator, scaleInterpolator, min, max;
     var scaled = scaled || false;
 
     if (ColorViewController.Colormaps.indexOf(map) === -1) {
@@ -183,7 +185,10 @@ define([
       if (scaled === true) {
         //assuming we have numeric since scaled called
         var numericValues = _.map(values, Number);
-        interpolator = interpolator.scale().domain([_.min(numericValues), _.max(numericValues)]);
+        min = _.min(numericValues);
+        max = _.max(numericValues);
+        interpolator = interpolator.scale();
+        scaleInterpolator = interpolator.domain([min, max]);
       }
     }
 
@@ -193,14 +198,28 @@ define([
         colors[values[index]] = ColorViewController.getDiscreteColor(index, map);
       }
       else if (scaled === true) {
-        colors[values[index]] = interpolator(Number(values[index])).hex();
+        colors[values[index]] = scaleInterpolator(Number(values[index])).hex();
       } else {
         colors[values[index]] = interpolator(counter / numColors).hex();
         counter = counter + 1;
       }
     }
 
-    return [colors, interpolator];
+    //if scaled, generate the scale and add to div.
+    if (scaled) {
+      var min = _.min(numericValues);
+      var max = _.max(numericValues);
+      var mid = (min + max) / 2;
+      var gradient = '';
+      for (var s = 0; s <= 1; s += 0.01) {
+        gradient += "<span class='grad-step' style='background-color:" + interpolator(s).hex() + "'></span>";
+      }
+      gradient += "<span class='domain-min'>" + min + "</span>"
+      gradient += "<span class='domain-med'>" + mid + "</span>"
+      gradient += "<span class='domain-max'>" + max + "</span>"
+    }
+
+    return [colors, gradient];
   };
 
   /**
