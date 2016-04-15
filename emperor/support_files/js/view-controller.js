@@ -376,9 +376,13 @@ define([
     // call super, most of the header and body resizing logic is done there
     EmperorViewControllerABC.prototype.resize.call(this, width, height);
 
-    // make the columns fit the available space whenever the window resizes
-    // http://stackoverflow.com/a/29835739
-    this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+    // the whole code is asynchronous, so there may be situations where
+    // bodyGrid doesn't exist yet, so check before trying to modify the object
+    if (this.bodyGrid !== undefined){
+      // make the columns fit the available space whenever the window resizes
+      // http://stackoverflow.com/a/29835739
+      this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+    }
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,

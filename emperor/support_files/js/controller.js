@@ -80,6 +80,12 @@ define([
       scope.buildUI();
     });
 
+    // once the object finishes loading, resize the contents so everything fits
+    // nicely
+    $(this).ready(function() {
+      scope.resize(scope.$divId.width(), scope.$divId.height());
+    });
+
   };
 
   /**
