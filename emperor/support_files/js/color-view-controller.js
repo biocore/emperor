@@ -56,6 +56,11 @@ define([
     var SLICK_WIDTH = 25, scope = this;
     var name, value, colorItem;
 
+    // Create checkbox for whether using scalar data or not
+    this.$colorScale = $("<span id='colorScale'>");
+    this.$scaled = $("<input type='checkbox' id='scaled'>");
+    this.$scaledLabel = $("<label for='scaled'>Scalar values</label>")
+
     // this class uses a colormap selector, so populate it before calling super
     // because otherwise the categorySelectionCallback will be called before the
     // data is populated
@@ -72,46 +77,62 @@ define([
     }
 
     // Build the options dictionary
-    var options = {'valueUpdatedCallback':function(e, args) {
-      var val = args.item.category, color = args.item.value;
-      var group = args.item.plottables;
-      var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
-      ColorViewController.setPlottableAttributes(element, color, group);
-    },
-      'categorySelectionCallback':function(evt, params) {
-        // we re-use this same callback regardless of whether the
-        // color or the metadata category changed, maybe we can do
-        // something better about this
-        var category = scope.$select.val();
-        var colorScheme = scope.$colormapSelect.val();
+    var options = {
+      'valueUpdatedCallback':
+        function(e, args) {
+          var val = args.item.category, color = args.item.value;
+          var group = args.item.plottables;
+          var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
+          ColorViewController.setPlottableAttributes(element, color, group);
+        },
+      'categorySelectionCallback':
+        function(evt, params) {
+          // we re-use this same callback regardless of whether the
+          // color or the metadata category changed, maybe we can do
+          // something better about this
+          var category = scope.$select.val();
+          var scaled = scope.$scaled.is(':checked');
+          var colorScheme = scope.$colormapSelect.val();
 
-        var k = scope.getActiveDecompViewKey();
-        var decompViewDict = scope.decompViewDict[k];
+          var k = scope.getActiveDecompViewKey();
+          var decompViewDict = scope.decompViewDict[k];
 
-        // getting all unique values per categories
-        var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
-        // getting color for each uniqueVals
-        var attributes = ColorViewController.getColorList(uniqueVals, colorScheme);
-        // fetch the slickgrid-formatted data
-        var data = decompViewDict.setCategory(attributes, ColorViewController.setPlottableAttributes, category);
-
-        scope.setSlickGridDataset(data);
-      },
-      'slickGridColumn':{id: 'title', name: '', field: 'value',
+          // getting all unique values per categories
+          var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
+          // getting color for each uniqueVals
+          var colorInfo = ColorViewController.getColorList(uniqueVals, colorScheme, scaled);
+          var attributes = colorInfo[0];
+          // fetch the slickgrid-formatted data
+          var data = decompViewDict.setCategory(attributes, ColorViewController.setPlottableAttributes, category);
+          if(scaled) {
+            scope.setSlickGridDataset({});
+            this.$colorScale.html(colorInfo[1]);
+          } else {
+            scope.setSlickGridDataset(data);
+          }
+        },
+      'slickGridColumn': {
+        id: 'title', name: '', field: 'value',
         sortable: false, maxWidth: SLICK_WIDTH,
         minWidth: SLICK_WIDTH,
         autoEdit: true,
         editor: ColorEditor,
-        formatter: ColorFormatter}};
+        formatter: ColorFormatter
+      }
+    };
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
                              decompViewDict, options);
     this.$header.append(this.$colormapSelect);
+    this.$header.append(this.$scaled);
+    this.$header.append(this.$scaledLabel);
+    this.$body.append(this.$colorScale);
 
     // the chosen select can only be set when the document is ready
     $(function() {
       scope.$colormapSelect.chosen({width: "100%", search_contains: true});
       scope.$colormapSelect.chosen().change(options.categorySelectionCallback);
+      scope.$scaled.on('change', options.categorySelectionCallback);
     });
 
     return this;
@@ -128,15 +149,18 @@ define([
    * category in a given metadata column.
    * @param {map} name of the color map to use, see
    * ColorViewController.Colormaps
+   * @param {scaled} Whether to use a scaled colormap or equidistant colors for
+   * each value.
    *
    *
    * This function will generate a list of coloring values depending on the
    * coloring scheme that the system is currently using (discrete or
    * continuous).
    */
-  ColorViewController.getColorList = function(values, map) {
+  ColorViewController.getColorList = function(values, map, scaled) {
     var colors = {}, numColors = values.length-1, counter=0, discrete = false;
     var interpolator;
+    var scaled = scaled || false;
 
     if (ColorViewController.Colormaps.indexOf(map) === -1) {
       throw new Error("Could not find "+map+" in the available colormaps");
@@ -153,23 +177,30 @@ define([
       return colors;
     }
 
-    if (discrete === false){
+    if (discrete === false) {
       map = chroma.brewer[map];
       interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
+      if (scaled === true) {
+        //assuming we have numeric since scaled called
+        var numericValues = _.map(values, Number);
+        interpolator = interpolator.scale().domain([_.min(numericValues), _.max(numericValues)]);
+      }
     }
 
-    for(var index in values){
-      if(discrete){
+    for (var index in values) {
+      if (discrete) {
         // get the next available color
         colors[values[index]] = ColorViewController.getDiscreteColor(index, map);
       }
-      else{
-        colors[values[index]] =  interpolator(counter/numColors).hex();
+      else if (scaled === true) {
+        colors[values[index]] = interpolator(Number(values[index])).hex();
+      } else {
+        colors[values[index]] = interpolator(counter / numColors).hex();
         counter = counter + 1;
       }
     }
 
-    return colors;
+    return [colors, interpolator];
   };
 
   /**
@@ -188,9 +219,8 @@ define([
    *
    */
   ColorViewController.getDiscreteColor = function(index, map){
-    if (map === undefined){
-      map = 'discrete-coloring';
-    }
+      var map = map || 'discrete-coloring';
+
     if (_.has(ColorViewController._discreteColormaps, map) === false){
       throw new Error("Could not find "+map+" as a discrete colormap.");
     }
