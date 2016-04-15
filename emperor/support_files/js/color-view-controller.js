@@ -59,7 +59,7 @@ define([
     // Create checkbox for whether using scalar data or not
     this.$colorScale = $("<div id='colorScale' class='gradient'>");
     this.$scaled = $("<input type='checkbox' id='scaled'>");
-    this.$scaledLabel = $("<label for='scaled'>Scalar values</label>")
+    this.$scaledLabel = $("<label for='scaled'>Continuous values</label>")
 
     // this class uses a colormap selector, so populate it before calling super
     // because otherwise the categorySelectionCallback will be called before the
@@ -107,9 +107,12 @@ define([
           if (scaled) {
             scope.setSlickGridDataset({});
             scope.$gridDiv.hide();
+            scope.$colorScale.show();
             scope.$colorScale.html(colorInfo[1]);
           } else {
             scope.setSlickGridDataset(data);
+            scope.$colorScale.hide();
+            scope.$gridDiv.show();
           }
         },
       'slickGridColumn': {
@@ -161,7 +164,7 @@ define([
    */
   ColorViewController.getColorList = function(values, map, scaled) {
     var colors = {}, numColors = values.length-1, counter=0, discrete = false;
-    var interpolator, scaleInterpolator, min, max;
+    var interpolator, min, max;
     var scaled = scaled || false;
 
     if (ColorViewController.Colormaps.indexOf(map) === -1) {
@@ -187,8 +190,7 @@ define([
         var numericValues = _.map(values, Number);
         min = _.min(numericValues);
         max = _.max(numericValues);
-        interpolator = interpolator.scale();
-        scaleInterpolator = interpolator.domain([min, max]);
+        interpolator = interpolator.scale().domain([min, max]);
       }
     }
 
@@ -198,7 +200,7 @@ define([
         colors[values[index]] = ColorViewController.getDiscreteColor(index, map);
       }
       else if (scaled === true) {
-        colors[values[index]] = scaleInterpolator(Number(values[index])).hex();
+        colors[values[index]] = interpolator(Number(values[index])).hex();
       } else {
         colors[values[index]] = interpolator(counter / numColors).hex();
         counter = counter + 1;
@@ -210,8 +212,9 @@ define([
       var min = _.min(numericValues);
       var max = _.max(numericValues);
       var mid = (min + max) / 2;
+      step = (max - min) / 100;
       var gradient = '';
-      for (var s = 0; s <= 1; s += 0.01) {
+      for (var s = min; s <= max; s += step) {
         gradient += "<span class='grad-step' style='background-color:" + interpolator(s).hex() + "'></span>";
       }
       gradient += "<span class='domain-min'>" + min + "</span>"
