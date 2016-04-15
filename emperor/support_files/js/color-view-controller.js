@@ -57,7 +57,9 @@ define([
     var name, value, colorItem;
 
     // Create checkbox for whether using scalar data or not
-    this.$colorScale = $("<div id='colorScale' class='gradient'>");
+    this.$scaleDiv = $('<div></div>')
+    this.$colorScale = $("<svg width='90%' height='40'></svg>");
+    this.$scaleDiv.append(this.$colorScale);
     this.$scaled = $("<input type='checkbox' id='scaled'>");
     this.$scaledLabel = $("<label for='scaled'>Continuous values</label>")
 
@@ -107,10 +109,12 @@ define([
           if (scaled) {
             scope.setSlickGridDataset({});
             scope.$gridDiv.hide();
+            scope.$scaleDiv.show();
             scope.$colorScale.show();
             scope.$colorScale.html(colorInfo[1]);
           } else {
             scope.setSlickGridDataset(data);
+            scope.$scaleDiv.hide();
             scope.$colorScale.hide();
             scope.$gridDiv.show();
           }
@@ -131,7 +135,6 @@ define([
     this.$header.append(this.$scaled);
     this.$header.append(this.$scaledLabel);
     this.$body.append(this.$colorScale);
-    console.log(this.$body);
 
     // the chosen select can only be set when the document is ready
     $(function() {
@@ -213,16 +216,22 @@ define([
       var max = _.max(numericValues);
       var mid = (min + max) / 2;
       step = (max - min) / 100;
-      var gradient = '';
+      var stopColors = [];
       for (var s = min; s <= max; s += step) {
-        gradient += "<span class='grad-step' style='background-color:" + interpolator(s).hex() + "'></span>";
+        stopColors.push(interpolator(s).hex());
       }
-      gradient += "<span class='domain-min'>" + min + "</span>"
-      gradient += "<span class='domain-med'>" + mid + "</span>"
-      gradient += "<span class='domain-max'>" + max + "</span>"
+
+      var gradientSVG = '<defs><linearGradient id="Gradient" x1="0" x2="1" y1="1" y2="1">'
+      for (pos in stopColors) {
+        gradientSVG += '<stop offset="' + pos + '%" stop-color="' + stopColors[pos] + '"/>';
+      }
+      gradientSVG += '</defs><rect id="gradientRect" width="100%" height="20" fill="url(#Gradient)"/>'
+      gradientSVG += '<text x="0%" y="38" font-family="sans-serif" font-size="12px">' + min + '</text>'
+      gradientSVG += '<text x="50%" y="38" font-family="sans-serif" font-size="12px" text-anchor="middle">' + mid + '</text>'
+      gradientSVG += '<text x="100%" y="38" font-family="sans-serif" font-size="12px" text-anchor="end">' + max + '</text>'
     }
 
-    return [colors, gradient];
+    return [colors, gradientSVG];
   };
 
   /**
