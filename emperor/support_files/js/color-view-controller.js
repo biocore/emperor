@@ -187,11 +187,15 @@ define([
     var interpolator, min, max;
     var scaled = scaled || false;
 
+    if (_.findWhere(ColorViewController.Colormaps, {id: map}) === undefined){
+      throw new Error("Could not find "+map+" as a discrete colormap.");
+    }
+
     // 1 color and continuous coloring should return the first element of the
     // map
     if (numColors === 0 && discrete === false){
       colors[values[0]] = chroma.brewer[map][0];
-      return colors;
+      return [colors, gradientSVG];
     }
 
     if (discrete === false) {
