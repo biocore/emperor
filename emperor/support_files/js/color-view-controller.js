@@ -55,7 +55,7 @@ define([
     var SLICK_WIDTH = 25, scope = this;
     var name, value, colorItem;
 
-    // Create checkbox for whether using scalar data or not
+    // Create scale div and checkbox for whether using scalar data or not
     this.$scaleDiv = $('<div></div>')
     this.$colorScale = $("<svg width='90%' height='40'></svg>");
     this.$scaleDiv.append(this.$colorScale);
@@ -173,8 +173,10 @@ define([
    * category in a given metadata column.
    * @param {map} name of the color map to use, see
    * ColorViewController.Colormaps
+   * @param {discrete} Whether to treat colormap requested as a discrete set
+   * of colors or use interpolation to create gradient of colors
    * @param {scaled} Whether to use a scaled colormap or equidistant colors for
-   * each value.
+   * each value. Defaiult false.
    *
    *
    * This function will generate a list of coloring values depending on the
