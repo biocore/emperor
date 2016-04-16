@@ -102,7 +102,6 @@ define([
           var category = scope.$select.val();
           var discrete = $('option:selected', scope.$colormapSelect)
                            .attr('data-type') == 'Discrete';
-          var scaled = scope.$scaled.is(':checked');
           var colorScheme = scope.$colormapSelect.val();
 
           var k = scope.getActiveDecompViewKey();
@@ -114,7 +113,7 @@ define([
           } else {
             scope.$scaled.prop('disabled', false);
           }
-
+          var scaled = scope.$scaled.is(':checked');
           // getting all unique values per categories
           var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
           // getting color for each uniqueVals
@@ -188,7 +187,7 @@ define([
     var scaled = scaled || false;
 
     if (_.findWhere(ColorViewController.Colormaps, {id: map}) === undefined){
-      throw new Error("Could not find "+map+" as a discrete colormap.");
+      throw new Error("Could not find "+map+" as a colormap.");
     }
 
     // 1 color and continuous coloring should return the first element of the
@@ -199,8 +198,6 @@ define([
     }
 
     if (discrete === false) {
-      console.log(chroma.brewer);
-      console.log(map);
       map = chroma.brewer[map];
       interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
       if (scaled === true) {
