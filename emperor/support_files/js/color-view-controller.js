@@ -205,7 +205,7 @@ define([
         var numericValues = _.map(values, Number);
         min = _.min(numericValues);
         max = _.max(numericValues);
-        interpolator = interpolator.scale().domain([min, max]);
+        interpolator = chroma.scale(map).domain([min, max]);
       }
     }
 
@@ -331,9 +331,9 @@ define([
     {id: 'RdYlB', name: 'Red-Yellow-Blue', type: 'Diverging'},
     {id: 'RdGy', name: 'Red-Grey', type: 'Diverging'},
     {id: 'PiYG', name: 'Pink-Yellow-Green', type: 'Diverging'},
-    {id: 'PRGn', name: 'Pink-Red-Green', type: 'Diverging'},
     {id: 'BrBG', name: 'Brown-Blue-Green', type: 'Diverging'},
-    {id: 'PuOr', name: 'Purple-Orange', type: 'Diverging'}
+    {id: 'PuOr', name: 'Purple-Orange', type: 'Diverging'},
+    {id: 'PRGn', name: 'Purple-Green', type: 'Diverging'}
   ]
 
 
