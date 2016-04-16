@@ -10,7 +10,6 @@ define([
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
   var ColorEditor = Color.ColorEditor, ColorFormatter = Color.ColorFormatter;
-
   /**
    * @name ColorViewController
    *
@@ -67,16 +66,24 @@ define([
     // because otherwise the categorySelectionCallback will be called before the
     // data is populated
     this.$colormapSelect = $("<select class='emperor-tab-drop-down'>");
+    var currType = ColorViewController.Colormaps[0].type;
+    var selectOpts = $('<optgroup>').attr('label', currType);
 
-    for (var i = 0; i < ColorViewController.Colormaps.length; i++){
-      // the first array has the values that should be displayed on the UI
-      // the second array has the identifiers used to generate the colors
-      value = ColorViewController.Colormaps[i];
-      name = ColorViewController.ColormapNames[i];
-      colorItem = $('<option>').attr('value', value).text(name);
-
-      scope.$colormapSelect.append(colorItem);
+    for (var i = 0; i < ColorViewController.Colormaps.length; i++) {
+      var colormap = ColorViewController.Colormaps[i];
+      //Check if we are in a new optgroup
+      if (colormap.type != currType) {
+        currType = colormap.type;
+        scope.$colormapSelect.append(selectOpts);
+        selectOpts = $('<optgroup>').attr('label', currType);
+      }
+      var colorItem = $('<option>')
+        .attr('value', colormap.id)
+        .attr('data-type', colormap.type)
+        .text(colormap.name);
+      selectOpts.append(colorItem);
     }
+    scope.$colormapSelect.append(selectOpts);
 
     // Build the options dictionary
     var options = {
@@ -93,19 +100,29 @@ define([
           // color or the metadata category changed, maybe we can do
           // something better about this
           var category = scope.$select.val();
+          var discrete = $('option:selected', scope.$colormapSelect)
+                           .attr('data-type') == 'Discrete';
           var scaled = scope.$scaled.is(':checked');
           var colorScheme = scope.$colormapSelect.val();
 
           var k = scope.getActiveDecompViewKey();
           var decompViewDict = scope.decompViewDict[k];
 
+          if (discrete) {
+            scope.$scaled.prop('checked', false);
+            scope.$scaled.prop('disabled', true);
+          } else {
+            scope.$scaled.prop('disabled', false);
+          }
+
           // getting all unique values per categories
           var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
           // getting color for each uniqueVals
-          var colorInfo = ColorViewController.getColorList(uniqueVals, colorScheme, scaled);
+          var colorInfo = ColorViewController.getColorList(uniqueVals, colorScheme, discrete, scaled);
           var attributes = colorInfo[0];
           // fetch the slickgrid-formatted data
           var data = decompViewDict.setCategory(attributes, ColorViewController.setPlottableAttributes, category);
+
           if (scaled) {
             scope.setSlickGridDataset({});
             scope.$gridDiv.hide();
@@ -165,18 +182,10 @@ define([
    * coloring scheme that the system is currently using (discrete or
    * continuous).
    */
-  ColorViewController.getColorList = function(values, map, scaled) {
-    var colors = {}, numColors = values.length-1, counter=0, discrete = false;
+  ColorViewController.getColorList = function(values, map, discrete, scaled) {
+    var colors = {}, numColors = values.length - 1, counter = 0;
     var interpolator, min, max;
     var scaled = scaled || false;
-
-    if (ColorViewController.Colormaps.indexOf(map) === -1) {
-      throw new Error("Could not find "+map+" in the available colormaps");
-    }
-
-    if (map === 'discrete-coloring' || map === 'discrete-coloring-qiime'){
-      discrete = true;
-    }
 
     // 1 color and continuous coloring should return the first element of the
     // map
@@ -186,6 +195,8 @@ define([
     }
 
     if (discrete === false) {
+      console.log(chroma.brewer);
+      console.log(map);
       map = chroma.brewer[map];
       interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
       if (scaled === true) {
@@ -250,18 +261,19 @@ define([
    *
    */
   ColorViewController.getDiscreteColor = function(index, map){
-      var map = map || 'discrete-coloring';
+    var map = map || 'discrete-coloring-qiime';
 
-    if (_.has(ColorViewController._discreteColormaps, map) === false){
-      throw new Error("Could not find "+map+" as a discrete colormap.");
+    if (map == 'discrete-coloring-qiime') {
+      map = ColorViewController._qiimeDiscrete;
+    } else {
+      map = chroma.brewer[map];
     }
-
-    var size = ColorViewController._discreteColormaps[map].length;
+    var size = map.length;
     if(index >= size){
       index = index - (Math.floor(index/size)*size);
     }
 
-    return ColorViewController._discreteColormaps[map][index];
+    return map[index];
   };
 
   /**
@@ -282,34 +294,53 @@ define([
     });
   };
 
-  ColorViewController.Colormaps = ['discrete-coloring-qiime',
-  'discrete-coloring', 'OrRd', 'PuBu', 'BuPu', 'Oranges', 'BuGn', 'YlOrBr',
-  'YlGn', 'Reds', 'RdPu', 'Greens', 'YlGnBu', 'Purples', 'GnBu', 'Greys',
-  'YlOrRd', 'PuRd', 'Blues', 'PuBuGn', 'Spectral', 'RdYlGn', 'RdBu', 'PiYG',
-  'PRGn', 'RdYlBu', 'BrBG', 'RdGy', 'PuOr', 'Viridis'];
-  ColorViewController.ColormapNames = ['Classic QIIME Colors',
-  'Discrete Coloring (Colorbrewer)', 'Orange-Red', 'Purple-Blue',
-  'Blue-Purple', 'Oranges', 'Blue-Green', 'Yellow-Orange-Brown',
-  'Yellow-Green', 'Reds', 'Red-Purple', 'Greens', 'Yellow-Green-Blue',
-  'Purples', 'Green-Blue', 'Greys', 'Yellow-Orange-Red', 'Purple-Red', 'Blues',
-  'Purple-Blue-Green', 'Spectral', 'Red-Yellow-Green', 'Red-Blue',
-  'Pink-Yellow-Green', 'Pink-Red-Green', 'Red-Yellow-Blue', 'Brown-Blue-Green',
-  'Red-Grey', 'Purple-Orange', 'Viridis'];
-  ColorViewController._colorbrewerDiscrete = ["#8dd3c7", "#ffffb3", "#bebada",
-  "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd",
-  "#ccebc5", "#ffed6f", /*first list ends here*/ "#a6cee3", "#1f78b4",
-  "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6",
-  "#6a3d9a", "#ffff99", "#b15928"];
+  ColorViewController.Colormaps = [
+    {id: 'discrete-coloring-qiime', name: 'Classic QIIME Colors', type: 'Discrete'},
+    {id: 'Paired', name: 'Paired', type: 'Discrete'},
+    {id: 'Accent', name: 'Accent', type: 'Discrete'},
+    {id: 'Dark2', name: 'Dark', type: 'Discrete'},
+    {id: 'Set1', name: 'Set1', type: 'Discrete'},
+    {id: 'Set2', name: 'Set2', type: 'Discrete'},
+    {id: 'Set3', name: 'Set3', type: 'Discrete'},
+    {id: 'Pastel1', name: 'Pastel1', type: 'Discrete'},
+    {id: 'Pastel2', name: 'Pastel2', type: 'Discrete'},
+
+    {id: 'Viridis', name: 'Viridis', type: 'Converging'},
+    {id: 'Reds', name: 'Reds', type: 'Converging'},
+    {id: 'RdPu', name: 'Red-Purple', type: 'Converging'},
+    {id: 'Oranges', name: 'Oranges', type: 'Converging'},
+    {id: 'OrRd', name: 'Orange-Red', type: 'Converging'},
+    {id: 'YlOrBr', name: 'Yellow-Orange-Brown', type: 'Converging'},
+    {id: 'YlOrRd', name: 'Yellow-Orange-Red', type: 'Converging'},
+    {id: 'YlGn', name: 'Yellow-Green', type: 'Converging'},
+    {id: 'YlGnBu', name: 'Yellow-Green-Blue', type: 'Converging'},
+    {id: 'Greens', name: 'Greens', type: 'Converging'},
+    {id: 'GnBu', name: 'Green-Blue', type: 'Converging'},
+    {id: 'Blues', name: 'Blues', type: 'Converging'},
+    {id: 'BuGn', name: 'Blue-Green', type: 'Converging'},
+    {id: 'BuPu', name: 'Blue-Purple', type: 'Converging'},
+    {id: 'Purples', name: 'Purples', type: 'Converging'},
+    {id: 'PuRd', name: 'Purple-Red', type: 'Converging'},
+    {id: 'PuBuGn', name: 'Purple-Blue-Green', type: 'Converging'},
+    {id: 'Greys', name: 'Greys', type: 'Converging'},
+
+    {id: 'Spectral', name: 'Spectral', type: 'Diverging'},
+    {id: 'RdBu', name: 'Red-Blue', type: 'Diverging'},
+    {id: 'RdYlGn', name: 'Red-Yellow-Green', type: 'Diverging'},
+    {id: 'RdYlB', name: 'Red-Yellow-Blue', type: 'Diverging'},
+    {id: 'RdGy', name: 'Red-Grey', type: 'Diverging'},
+    {id: 'PiYG', name: 'Pink-Yellow-Green', type: 'Diverging'},
+    {id: 'PRGn', name: 'Pink-Red-Green', type: 'Diverging'},
+    {id: 'BrBG', name: 'Brown-Blue-Green', type: 'Diverging'},
+    {id: 'PuOr', name: 'Purple-Orange', type: 'Diverging'}
+  ]
+
 
   // taken from the qiime/colors.py module; a total of 24 colors
-  ColorViewController._qiimeDiscrete = [ "#ff0000", "#0000ff", "#f27304",
+  ColorViewController._qiimeDiscrete = ["#ff0000", "#0000ff", "#f27304",
   "#008000", "#91278d", "#ffff00", "#7cecf4", "#f49ac2", "#5da09e", "#6b440b",
   "#808080", "#f79679", "#7da9d8", "#fcc688", "#80c99b", "#a287bf", "#fff899",
   "#c49c6b", "#c0c0c0", "#ed008a", "#00b6ff", "#a54700", "#808000", "#008080"];
-  ColorViewController._discreteColormaps = {
-    "discrete-coloring":ColorViewController._colorbrewerDiscrete,
-    "discrete-coloring-qiime":ColorViewController._qiimeDiscrete
-  };
 
   return ColorViewController;
 });
