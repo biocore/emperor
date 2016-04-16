@@ -225,7 +225,7 @@ define([
   'discrete-coloring', 'OrRd', 'PuBu', 'BuPu', 'Oranges', 'BuGn', 'YlOrBr',
   'YlGn', 'Reds', 'RdPu', 'Greens', 'YlGnBu', 'Purples', 'GnBu', 'Greys',
   'YlOrRd', 'PuRd', 'Blues', 'PuBuGn', 'Spectral', 'RdYlGn', 'RdBu', 'PiYG',
-  'PRGn', 'RdYlBu', 'BrBG', 'RdGy', 'PuOr'];
+  'PRGn', 'RdYlBu', 'BrBG', 'RdGy', 'PuOr', 'Viridis'];
   ColorViewController.ColormapNames = ['Classic QIIME Colors',
   'Discrete Coloring (Colorbrewer)', 'Orange-Red', 'Purple-Blue',
   'Blue-Purple', 'Oranges', 'Blue-Green', 'Yellow-Orange-Brown',
@@ -233,7 +233,7 @@ define([
   'Purples', 'Green-Blue', 'Greys', 'Yellow-Orange-Red', 'Purple-Red', 'Blues',
   'Purple-Blue-Green', 'Spectral', 'Red-Yellow-Green', 'Red-Blue',
   'Pink-Yellow-Green', 'Pink-Red-Green', 'Red-Yellow-Blue', 'Brown-Blue-Green',
-  'Red-Grey', 'Purple-Orange'];
+  'Red-Grey', 'Purple-Orange', 'Viridis'];
   ColorViewController._colorbrewerDiscrete = ["#8dd3c7", "#ffffb3", "#bebada",
   "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd",
   "#ccebc5", "#ffed6f", /*first list ends here*/ "#a6cee3", "#1f78b4",
