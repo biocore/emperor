@@ -109,7 +109,9 @@ requirejs.config({
   'viewcontroller': './js/view-controller',
   'colorviewcontroller': './js/color-view-controller',
   'visibilitycontroller': './js/visibility-controller',
+  'shapecontroller': './js/shape-controller',
   'color-editor': './js/color-editor',
+  'shapes', '.js/shapes'
 },
 /*
    Libraries that are not AMD compatible need shim to declare their
