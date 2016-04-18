@@ -79,11 +79,10 @@ define([
     for (var i = 1; i < ColorViewController.Colormaps.length; i++) {
       var colormap = ColorViewController.Colormaps[i];
       // Check if we are in a new optgroup
-      if (colormap.hasOwnProperty('type')) {
+      if (colormap.type !== currType) {
         currType = colormap.type;
         scope.$colormapSelect.append(selectOpts);
         selectOpts = $('<optgroup>').attr('label', currType);
-        continue;
       }
       var colorItem = $('<option>')
         .attr('value', colormap.id)
@@ -109,7 +108,7 @@ define([
           // something better about this
           var category = scope.$select.val();
           var discrete = $('option:selected', scope.$colormapSelect)
-                           .attr('data-type') == 'Discrete';
+                           .attr('data-type') == DISCRETE;
           var colorScheme = scope.$colormapSelect.val();
 
           var k = scope.getActiveDecompViewKey();
@@ -307,48 +306,48 @@ define([
     });
   };
 
+  var DISCRETE = 'Discrete';
+  var SEQUENTIAL = 'Sequential';
+  var DIVERGING = 'Diverging';
   ColorViewController.Colormaps = [
-    {type: 'Discrete'},
-    {id: 'discrete-coloring-qiime', name: 'Classic QIIME Colors'},
-    {id: 'Paired', name: 'Paired'},
-    {id: 'Accent', name: 'Accent'},
-    {id: 'Dark2', name: 'Dark'},
-    {id: 'Set1', name: 'Set1'},
-    {id: 'Set2', name: 'Set2'},
-    {id: 'Set3', name: 'Set3'},
-    {id: 'Pastel1', name: 'Pastel1'},
-    {id: 'Pastel2', name: 'Pastel2'},
+    {id: 'discrete-coloring-qiime', name: 'Classic QIIME Colors', type: DISCRETE},
+    {id: 'Paired', name: 'Paired', type: DISCRETE},
+    {id: 'Accent', name: 'Accent', type: DISCRETE},
+    {id: 'Dark2', name: 'Dark', type: DISCRETE},
+    {id: 'Set1', name: 'Set1', type: DISCRETE},
+    {id: 'Set2', name: 'Set2', type: DISCRETE},
+    {id: 'Set3', name: 'Set3', type: DISCRETE},
+    {id: 'Pastel1', name: 'Pastel1', type: DISCRETE},
+    {id: 'Pastel2', name: 'Pastel2', type: DISCRETE},
 
-    {type: 'Sequential'},
-    {id: 'Viridis', name: 'Viridis'},
-    {id: 'Reds', name: 'Reds'},
-    {id: 'RdPu', name: 'Red-Purple'},
-    {id: 'Oranges', name: 'Oranges'},
-    {id: 'OrRd', name: 'Orange-Red'},
-    {id: 'YlOrBr', name: 'Yellow-Orange-Brown'},
-    {id: 'YlOrRd', name: 'Yellow-Orange-Red'},
-    {id: 'YlGn', name: 'Yellow-Green'},
-    {id: 'YlGnBu', name: 'Yellow-Green-Blue'},
-    {id: 'Greens', name: 'Greens'},
-    {id: 'GnBu', name: 'Green-Blue'},
-    {id: 'Blues', name: 'Blues'},
-    {id: 'BuGn', name: 'Blue-Green'},
-    {id: 'BuPu', name: 'Blue-Purple'},
-    {id: 'Purples', name: 'Purples'},
-    {id: 'PuRd', name: 'Purple-Red'},
-    {id: 'PuBuGn', name: 'Purple-Blue-Green'},
-    {id: 'Greys', name: 'Greys'},
+    {id: 'Viridis', name: 'Viridis', type: SEQUENTIAL},
+    {id: 'Reds', name: 'Reds', type: SEQUENTIAL},
+    {id: 'RdPu', name: 'Red-Purple', type: SEQUENTIAL},
+    {id: 'Oranges', name: 'Oranges', type: SEQUENTIAL},
+    {id: 'OrRd', name: 'Orange-Red', type: SEQUENTIAL},
+    {id: 'YlOrBr', name: 'Yellow-Orange-Brown', type: SEQUENTIAL},
+    {id: 'YlOrRd', name: 'Yellow-Orange-Red', type: SEQUENTIAL},
+    {id: 'YlGn', name: 'Yellow-Green', type: SEQUENTIAL},
+    {id: 'YlGnBu', name: 'Yellow-Green-Blue', type: SEQUENTIAL},
+    {id: 'Greens', name: 'Greens', type: SEQUENTIAL},
+    {id: 'GnBu', name: 'Green-Blue', type: SEQUENTIAL},
+    {id: 'Blues', name: 'Blues', type: SEQUENTIAL},
+    {id: 'BuGn', name: 'Blue-Green', type: SEQUENTIAL},
+    {id: 'BuPu', name: 'Blue-Purple', type: SEQUENTIAL},
+    {id: 'Purples', name: 'Purples', type: SEQUENTIAL},
+    {id: 'PuRd', name: 'Purple-Red', type: SEQUENTIAL},
+    {id: 'PuBuGn', name: 'Purple-Blue-Green', type: SEQUENTIAL},
+    {id: 'Greys', name: 'Greys', type: SEQUENTIAL},
 
-    {type: 'Diverging'},
-    {id: 'Spectral', name: 'Spectral'},
-    {id: 'RdBu', name: 'Red-Blue'},
-    {id: 'RdYlGn', name: 'Red-Yellow-Green'},
-    {id: 'RdYlB', name: 'Red-Yellow-Blue'},
-    {id: 'RdGy', name: 'Red-Grey'},
-    {id: 'PiYG', name: 'Pink-Yellow-Green'},
-    {id: 'BrBG', name: 'Brown-Blue-Green'},
-    {id: 'PuOr', name: 'Purple-Orange'},
-    {id: 'PRGn', name: 'Purple-Green'}
+    {id: 'Spectral', name: 'Spectral', type: DIVERGING},
+    {id: 'RdBu', name: 'Red-Blue', type: DIVERGING},
+    {id: 'RdYlGn', name: 'Red-Yellow-Green', type: DIVERGING},
+    {id: 'RdYlB', name: 'Red-Yellow-Blue', type: DIVERGING},
+    {id: 'RdGy', name: 'Red-Grey', type: DIVERGING},
+    {id: 'PiYG', name: 'Pink-Yellow-Green', type: DIVERGING},
+    {id: 'BrBG', name: 'Brown-Blue-Green', type: DIVERGING},
+    {id: 'PuOr', name: 'Purple-Orange', type: DIVERGING},
+    {id: 'PRGn', name: 'Purple-Green', type: DIVERGING}
   ]
 
 
