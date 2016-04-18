@@ -7,6 +7,7 @@ define([
     "shape-editor",
     "shapes"
 ], function ($, _, DecompositionView, ViewControllers, three, Shape, shapes) {
+  console.log(shapes)
 
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;

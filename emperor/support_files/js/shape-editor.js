@@ -29,7 +29,6 @@ function($, _, DecompositionView, ViewControllers, shapes) {
     var $input;
     var defaultValue;
     var scope = this;
-    console.log(args);
 
     this.init = function() {
 
