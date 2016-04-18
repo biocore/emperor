@@ -26,7 +26,7 @@ define(['jquery'], function($) {
         geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.2, 10);
         break;
       default:
-        new Error('Unknown shape ' + shape);
+        throw new Error('Unknown shape ' + shape);
       }
       return geometry;
   }
