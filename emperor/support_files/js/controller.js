@@ -245,9 +245,8 @@ define([
     var id = (Math.round(1000000 * Math.random())).toString();
 
     this._$tabsContainer.append("<div id='" + id +
-        "' class='emperor-tab-div' ></div>");
-    $('#' + id).height(this.$plotMenu.height() -
-        this._$tabsList.height());
+                                "' class='emperor-tab-div' ></div>");
+    $('#' + id).height(this.$plotMenu.height() - this._$tabsList.height());
 
     // dynamically instantiate the controller, see:
     // http://stackoverflow.com/a/8843181
