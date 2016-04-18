@@ -34,6 +34,13 @@ define([
    * metadata category to color by.
    * @property {Node} [$colormapSelect=chosen node] Drop-down menu to select
    * the colormap.
+   * @property {Node} [$scaleDiv=div] jQuery element for the div containing the
+   * SVG scale data
+   * @property {SVG} [$colorScale] The SVG colorbar scale for the data
+   * @property {Node} [$scaled=checkbox node] jQuery element for the checkbox
+   * for toggling scaled coloring
+   * @property {Node} [$scaledLabel=label node] jQuery element for the label for
+   * the $scaled checkbox
    **/
 
   /*
@@ -57,9 +64,9 @@ define([
 
     // Create scale div and checkbox for whether using scalar data or not
     this.$scaleDiv = $('<div></div>')
-    this.$colorScale = $("<svg width='90%' height='40'></svg>");
+    this.$colorScale = $("<svg width='90%' height='40' style='display:block;margin:auto;'></svg>");
     this.$scaleDiv.append(this.$colorScale);
-    this.$scaled = $("<input type='checkbox' id='scaled'>");
+    this.$scaled = $("<input type='checkbox'>");
     this.$scaledLabel = $("<label for='scaled'>Continuous values</label>")
 
     // this class uses a colormap selector, so populate it before calling super
@@ -69,17 +76,18 @@ define([
     var currType = ColorViewController.Colormaps[0].type;
     var selectOpts = $('<optgroup>').attr('label', currType);
 
-    for (var i = 0; i < ColorViewController.Colormaps.length; i++) {
+    for (var i = 1; i < ColorViewController.Colormaps.length; i++) {
       var colormap = ColorViewController.Colormaps[i];
-      //Check if we are in a new optgroup
-      if (colormap.type != currType) {
+      // Check if we are in a new optgroup
+      if (colormap.hasOwnProperty('type')) {
         currType = colormap.type;
         scope.$colormapSelect.append(selectOpts);
         selectOpts = $('<optgroup>').attr('label', currType);
+        continue;
       }
       var colorItem = $('<option>')
         .attr('value', colormap.id)
-        .attr('data-type', colormap.type)
+        .attr('data-type', currType)
         .text(colormap.name);
       selectOpts.append(colorItem);
     }
@@ -109,9 +117,11 @@ define([
 
           if (discrete) {
             scope.$scaled.prop('checked', false);
-            scope.$scaled.prop('disabled', true);
+            scope.$scaled.prop('hidden', true);
+            scope.$scaledLabel.prop('hidden', true);
           } else {
-            scope.$scaled.prop('disabled', false);
+            scope.$scaled.prop('hidden', false);
+            scope.$scaledLabel.prop('hidden', false);
           }
           var scaled = scope.$scaled.is(':checked');
           // getting all unique values per categories
@@ -176,7 +186,7 @@ define([
    * @param {discrete} Whether to treat colormap requested as a discrete set
    * of colors or use interpolation to create gradient of colors
    * @param {scaled} Whether to use a scaled colormap or equidistant colors for
-   * each value. Defaiult false.
+   * each value. Default is false.
    *
    *
    * This function will generate a list of coloring values depending on the
@@ -189,12 +199,12 @@ define([
     var scaled = scaled || false;
 
     if (_.findWhere(ColorViewController.Colormaps, {id: map}) === undefined){
-      throw new Error("Could not find "+map+" as a colormap.");
+      throw new Error("Could not find " + map + " as a colormap.");
     }
 
     // 1 color and continuous coloring should return the first element of the
     // map
-    if (numColors === 0 && discrete === false){
+    if (numColors === 0 && discrete === false) {
       colors[values[0]] = chroma.brewer[map][0];
       return [colors, gradientSVG];
     }
@@ -203,7 +213,7 @@ define([
       map = chroma.brewer[map];
       interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
       if (scaled === true) {
-        //assuming we have numeric since scaled called
+        // Assuming we have numeric since scaled called
         var numericValues = _.map(values, Number);
         min = _.min(numericValues);
         max = _.max(numericValues);
@@ -224,7 +234,7 @@ define([
       }
     }
 
-    //if scaled, generate the scale and add to div.
+    // if scaled, generate the scale and add to div.
     if (scaled) {
       var min = _.min(numericValues);
       var max = _.max(numericValues);
@@ -298,44 +308,47 @@ define([
   };
 
   ColorViewController.Colormaps = [
-    {id: 'discrete-coloring-qiime', name: 'Classic QIIME Colors', type: 'Discrete'},
-    {id: 'Paired', name: 'Paired', type: 'Discrete'},
-    {id: 'Accent', name: 'Accent', type: 'Discrete'},
-    {id: 'Dark2', name: 'Dark', type: 'Discrete'},
-    {id: 'Set1', name: 'Set1', type: 'Discrete'},
-    {id: 'Set2', name: 'Set2', type: 'Discrete'},
-    {id: 'Set3', name: 'Set3', type: 'Discrete'},
-    {id: 'Pastel1', name: 'Pastel1', type: 'Discrete'},
-    {id: 'Pastel2', name: 'Pastel2', type: 'Discrete'},
+    {type: 'Discrete'},
+    {id: 'discrete-coloring-qiime', name: 'Classic QIIME Colors'},
+    {id: 'Paired', name: 'Paired'},
+    {id: 'Accent', name: 'Accent'},
+    {id: 'Dark2', name: 'Dark'},
+    {id: 'Set1', name: 'Set1'},
+    {id: 'Set2', name: 'Set2'},
+    {id: 'Set3', name: 'Set3'},
+    {id: 'Pastel1', name: 'Pastel1'},
+    {id: 'Pastel2', name: 'Pastel2'},
 
-    {id: 'Viridis', name: 'Viridis', type: 'Converging'},
-    {id: 'Reds', name: 'Reds', type: 'Converging'},
-    {id: 'RdPu', name: 'Red-Purple', type: 'Converging'},
-    {id: 'Oranges', name: 'Oranges', type: 'Converging'},
-    {id: 'OrRd', name: 'Orange-Red', type: 'Converging'},
-    {id: 'YlOrBr', name: 'Yellow-Orange-Brown', type: 'Converging'},
-    {id: 'YlOrRd', name: 'Yellow-Orange-Red', type: 'Converging'},
-    {id: 'YlGn', name: 'Yellow-Green', type: 'Converging'},
-    {id: 'YlGnBu', name: 'Yellow-Green-Blue', type: 'Converging'},
-    {id: 'Greens', name: 'Greens', type: 'Converging'},
-    {id: 'GnBu', name: 'Green-Blue', type: 'Converging'},
-    {id: 'Blues', name: 'Blues', type: 'Converging'},
-    {id: 'BuGn', name: 'Blue-Green', type: 'Converging'},
-    {id: 'BuPu', name: 'Blue-Purple', type: 'Converging'},
-    {id: 'Purples', name: 'Purples', type: 'Converging'},
-    {id: 'PuRd', name: 'Purple-Red', type: 'Converging'},
-    {id: 'PuBuGn', name: 'Purple-Blue-Green', type: 'Converging'},
-    {id: 'Greys', name: 'Greys', type: 'Converging'},
+    {type: 'Sequential'},
+    {id: 'Viridis', name: 'Viridis'},
+    {id: 'Reds', name: 'Reds'},
+    {id: 'RdPu', name: 'Red-Purple'},
+    {id: 'Oranges', name: 'Oranges'},
+    {id: 'OrRd', name: 'Orange-Red'},
+    {id: 'YlOrBr', name: 'Yellow-Orange-Brown'},
+    {id: 'YlOrRd', name: 'Yellow-Orange-Red'},
+    {id: 'YlGn', name: 'Yellow-Green'},
+    {id: 'YlGnBu', name: 'Yellow-Green-Blue'},
+    {id: 'Greens', name: 'Greens'},
+    {id: 'GnBu', name: 'Green-Blue'},
+    {id: 'Blues', name: 'Blues'},
+    {id: 'BuGn', name: 'Blue-Green'},
+    {id: 'BuPu', name: 'Blue-Purple'},
+    {id: 'Purples', name: 'Purples'},
+    {id: 'PuRd', name: 'Purple-Red'},
+    {id: 'PuBuGn', name: 'Purple-Blue-Green'},
+    {id: 'Greys', name: 'Greys'},
 
-    {id: 'Spectral', name: 'Spectral', type: 'Diverging'},
-    {id: 'RdBu', name: 'Red-Blue', type: 'Diverging'},
-    {id: 'RdYlGn', name: 'Red-Yellow-Green', type: 'Diverging'},
-    {id: 'RdYlB', name: 'Red-Yellow-Blue', type: 'Diverging'},
-    {id: 'RdGy', name: 'Red-Grey', type: 'Diverging'},
-    {id: 'PiYG', name: 'Pink-Yellow-Green', type: 'Diverging'},
-    {id: 'BrBG', name: 'Brown-Blue-Green', type: 'Diverging'},
-    {id: 'PuOr', name: 'Purple-Orange', type: 'Diverging'},
-    {id: 'PRGn', name: 'Purple-Green', type: 'Diverging'}
+    {type: 'Diverging'},
+    {id: 'Spectral', name: 'Spectral'},
+    {id: 'RdBu', name: 'Red-Blue'},
+    {id: 'RdYlGn', name: 'Red-Yellow-Green'},
+    {id: 'RdYlB', name: 'Red-Yellow-Blue'},
+    {id: 'RdGy', name: 'Red-Grey'},
+    {id: 'PiYG', name: 'Pink-Yellow-Green'},
+    {id: 'BrBG', name: 'Brown-Blue-Green'},
+    {id: 'PuOr', name: 'Purple-Orange'},
+    {id: 'PRGn', name: 'Purple-Green'}
   ]
 
 
