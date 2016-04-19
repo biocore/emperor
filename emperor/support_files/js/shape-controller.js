@@ -73,7 +73,7 @@ define([
         // Reset all to shapes to default
         var attributes = {}
         for (var index in uniqueVals) {
-          attributes[uniqueVals[index]] = shapes.shapes[0];
+          attributes[uniqueVals[index]] = 'sphere';
         }
         // fetch the slickgrid-formatted data
 
@@ -107,7 +107,10 @@ define([
    */
   ShapeController.setPlottableAttributes = function(scope, shape, group) {
     var idx;
-    var geometry = shapes.getGeometry(shape);
+    var geometry = shapes.shapes[shape];
+    if (geometry === undefined) {
+      throw new Error('Unknown shape ' + shape);
+    }
 
     _.each(group, function(element) {
       idx = element.idx;

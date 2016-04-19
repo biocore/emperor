@@ -81,7 +81,18 @@ requirejs([
     });
 
     test("Shapes available list", function() {
-      deepEqual(shapes.shapes, shapesAvailable);
+      var testShapes = [];
+      for (s in shapes.shapes) {
+        testShapes.push(s);
+      }
+      deepEqual(testShapes, shapesAvailable);
+
+      var testGeoms = [];
+      for (s in shapes.shapes) {
+        testGeoms.push(shapes.shapes[s].type);
+      }
+      deepEqual(testGeoms, ["SphereGeometry", "BoxGeometry", "CylinderGeometry",
+                            "IcosahedronGeometry", "CylinderGeometry"])
     });
 
     test("Shapes dropdown", function() {
@@ -90,19 +101,6 @@ requirejs([
           values.push($(this).attr('value'));
       });
       deepEqual(values, shapesAvailable);
-    });
-
-    test("Geometry creation", function() {
-      var obs = shapes.getGeometry('sphere');
-      var exp = new THREE.SphereGeometry(0.1, 8, 8);
-      equal(typeof obs, typeof exp);
-    });
-
-    test("Geometry creation - unknown shape", function() {
-      throws(function() {
-        obs = shapes.getGeometry('Weird Unknown Shape');
-      },
-      Error, 'Throws an error if unknown shape passed');
     });
 
     test("Constructor tests", function(assert) {
@@ -132,6 +130,15 @@ requirejs([
       ShapeController.setPlottableAttributes(this.dv, 'cylinder', plottables);
       equal(this.dv.markers[idx].geometry.type, 'CylinderGeometry');
       equal(this.dv.markers[idx+1].geometry.type, 'CylinderGeometry');
+    });
+
+    test("Testing setPlottableAttributes unknown shape", function(assert) {
+      // testing with one plottable
+      plottables = [{idx:idx}];
+      throws(function() {
+        ShapeController.setPlottableAttributes(this.dv, 'WEIRD', plottables)
+      }, Error, 'Throw error if unknown shape given');
+
     });
 
   });
