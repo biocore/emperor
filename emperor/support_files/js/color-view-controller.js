@@ -60,7 +60,6 @@ define([
     // because otherwise the categorySelectionCallback will be called before the
     // data is populated
     this.$colormapSelect = $("<select>");
-    this.$colormapSelect.css('width', '100%');
 
     for (var i = 0; i < ColorViewController.Colormaps.length; i++){
       // the first array has the values that should be displayed on the UI
