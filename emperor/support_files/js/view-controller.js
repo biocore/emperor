@@ -19,6 +19,8 @@ define([
    * @property {Node} [body=div node] jQuery element for the body,
    * which contains the lowermost elements displayed in tab.
    * This goes below the header.
+   * @property {Node} [gridDiv=div node] jQuery element for the div containing
+   * the slickgrid of sample information.
    * @property {Node} [canvas=div node] jQuery element for the canvas,
    * which contains the header and the body.
    * @property {Node} [container=div node] jQuery element for the parent
@@ -240,6 +242,11 @@ define([
       throw Error('The decomposition view dictionary cannot be empty');
     }
     this.decompViewDict = decompViewDict;
+    this.$gridDiv = $('<div name="emperor-grid-div"></div>');
+    this.$gridDiv.css('margin', '0 auto');
+    this.$gridDiv.css('width', '100%');
+    this.$gridDiv.css('height', '100%');
+    this.$body.append(this.$gridDiv);
 
     this.metadataField = null;
     this.activeViewKey = null;
@@ -353,7 +360,7 @@ define([
       columns.unshift(options.slickGridColumn);
     }
 
-    this.bodyGrid = new Slick.Grid(this.$body, [], columns, gridOptions);
+    this.bodyGrid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
 
     // hide the header row of the grid
     // http://stackoverflow.com/a/29827664/379593

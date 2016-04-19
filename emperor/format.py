@@ -33,7 +33,6 @@ from emperor.qiime_backports.parse import mapping_file_to_dict
 from emperor.qiime_backports.filter import (
     sample_ids_from_metadata_description)
 from emperor.qiime_backports.util import MetadataMap
-from emperor.qiime_backports import __version__ as qiime_backports_version
 
 
 class EmperorLogicError(ValueError):
@@ -569,7 +568,6 @@ def format_emperor_autograph(metadata_fp, coords_fp, language='HTML'):
 
     # add library version and SHA-1 if available
     autograph.append('Emperor Version: %s' % get_emperor_library_version())
-    autograph.append('QIIME Version: %s' % qiime_backports_version)
     autograph.append('HostName: %s' % gethostname())
 
     # full path to input files
