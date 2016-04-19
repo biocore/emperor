@@ -45,6 +45,9 @@ define([
     this.$divId.append(this.$plotSpace);
     this.$divId.append(this.$plotMenu);
 
+    // holds a reference to all the tabs (view controllers) in the $plotMenu
+    this.controllers = {};
+
     // set up the renderer
     this.rendererBackgroundColor = new THREE.Color();
     this.rendererBackgroundColor.setHex('0x000000');
@@ -168,24 +171,31 @@ define([
 
     this.renderer.setSize(plotWidth, this.height);
 
+    /* Resizing the tabs (view controllers) */
+
     // resize the grid according to the size of the container, since we are
     // inside the tabs we have to account for that lost space.
-    var tabWidth = this.$plotMenu.width() * this.GRID_SCALE,
-    tabHeight = this.$plotMenu.height() * this.GRID_SCALE;
+    var tabHeight = this.$plotMenu.height() * this.GRID_SCALE;
 
     // the tab list at the top takes up a variable amount of space and
     // without this, the table displayed below will have an odd scrolling
     // behaviour
     tabHeight -= this._$tabsList.height();
 
-    if (this.colorController !== undefined){
-      this.colorController.resize(tabWidth, tabHeight);
-    }
+    // for each controller, we need to (1) trigger the resize method, and (2)
+    // resize the height of the containing DIV tag (we don't need to resize the
+    // width as this is already taken care of since it just has to fit the
+    // available space).
+    _.each(this.controllers, function(controller, index){
+      if(controller !== undefined){
+        $('#' + controller.identifier).height(tabHeight);
 
-    if (this.visibilityController !== undefined){
-      this.visibilityController.resize(tabWidth, tabHeight);
-    }
+        var w = $('#' + controller.identifier).width(),
+            h = $('#' + controller.identifier).height();
 
+        controller.resize(w, h);
+      }
+    });
   };
 
   /**
@@ -210,10 +220,10 @@ define([
     var scope = this;
 
     //FIXME: This only works for 1 scene plot view
-    this.colorController = this.addTab(this.sceneViews[0].decViews,
-        ColorViewController);
-    this.visibilityController = this.addTab(this.sceneViews[0].decViews,
-        VisibilityController);
+    this.controllers.color = this.addTab(this.sceneViews[0].decViews,
+                                         ColorViewController);
+    this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
+                                              VisibilityController);
 
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
@@ -245,9 +255,8 @@ define([
     var id = (Math.round(1000000 * Math.random())).toString();
 
     this._$tabsContainer.append("<div id='" + id +
-        "' class='emperor-tab-div' ></div>");
-    $('#' + id).height(this.$plotMenu.height() -
-        this._$tabsList.height());
+                                "' class='emperor-tab-div' ></div>");
+    $('#' + id).height(this.$plotMenu.height() - this._$tabsList.height());
 
     // dynamically instantiate the controller, see:
     // http://stackoverflow.com/a/8843181
