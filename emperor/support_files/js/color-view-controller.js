@@ -76,7 +76,7 @@ define([
     var currType = ColorViewController.Colormaps[0].type;
     var selectOpts = $('<optgroup>').attr('label', currType);
 
-    for (var i = 1; i < ColorViewController.Colormaps.length; i++) {
+    for (var i = 0; i < ColorViewController.Colormaps.length; i++) {
       var colormap = ColorViewController.Colormaps[i];
       // Check if we are in a new optgroup
       if (colormap.type !== currType) {
