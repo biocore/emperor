@@ -343,7 +343,7 @@ define([
    *
    */
   EmperorAttributeABC.prototype._buildGrid = function(options){
-    var columns = [{id: 'field1', name: 'Category Name', field: 'category'}];
+    var columns = [{id: 'field1', name: '', field: 'category'}];
     var gridOptions = {editable: true, enableAddRow: false,
       enableCellNavigation: true, forceFitColumns: true,
       enableColumnReorder: false, autoEdit: true};
@@ -354,6 +354,10 @@ define([
     }
 
     this.bodyGrid = new Slick.Grid(this.$body, [], columns, gridOptions);
+
+    // hide the header row of the grid
+    // http://stackoverflow.com/a/29827664/379593
+    $(this.$body).find('.slick-header').css('display', 'none');
 
     // subscribe to events when a cell is changed
     this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
