@@ -139,9 +139,6 @@ define([
    * @param {float} height the container height.
    */
   EmperorViewControllerABC.prototype.resize = function(width, height) {
-    $('#' + this.identifier).height(height);
-    $('#' + this.identifier).width(width);
-
     // This padding is required in order to make space
     // for the horizontal menus
     var padding = 10;
