@@ -1,4 +1,4 @@
-define(['jquery'], function($) {
+define(['jquery', 'three'], function($, THREE) {
 
   var shapes = {
     'sphere': new THREE.SphereGeometry(0.1, 8, 8),
