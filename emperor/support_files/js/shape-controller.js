@@ -1,12 +1,10 @@
 define([
     "jquery",
     "underscore",
-    "view",
     "viewcontroller",
-    "three",
     "shape-editor",
     "shapes"
-], function ($, _, DecompositionView, ViewControllers, three, Shape, shapes) {
+], function ($, _, ViewControllers, Shape, shapes) {
 
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
@@ -15,25 +13,8 @@ define([
   /**
    * @name ShapeController
    *
-   * @class Manipulates and displays the shape of objects on screen.
-   * @property {String} [title=""] Title of the controller.
-   * @property {Node} [header=div node] jQuery element for the header
-   * which contains the uppermost elements displayed in a tab.
-   * @property {Node} [body=div node] jQuery element for the body,
-   * which contains the lowermost elements displayed in tab.
-   * This goes below the header.
-   * @property {Node} [canvas=div node] jQuery element for the canvas,
-   * which contains the header and the body.
-   * @property {Node} [container=div node] jQuery element for the parent
-   * container.
-   * This only contains the canvas.
-   * @property {Boolean} [active=false] Indicates whether the tab is front most
-   * @property {String} [identifier="EMPtab-xxxxxxx"] Unique hash identifier
-   * for the tab instance.
-   * @property {Boolean} [enabled=true] Indicates if tab can be accessed.
-   * @property {String} [description=""] Human-readable description of the tab.
-   * @property {Node} [$select=chosen node] Drop-down menu to select the
-   * metadata category to change shape for.
+   * @inherits EmperorAttributeABC
+   *
    **/
 
   /*
@@ -55,12 +36,13 @@ define([
     var name, value, shapeItem;
 
     // Build the options dictionary
-    var options = {'valueUpdatedCallback': function(e, args) {
-      var val = args.item.category, shape = args.item.value;
-      var group = args.item.plottables;
-      var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
-      ShapeController.setPlottableAttributes(element, shape, group);
-    },
+    var options = {
+      'valueUpdatedCallback': function(e, args) {
+        var val = args.item.category, shape = args.item.value;
+        var group = args.item.plottables;
+        var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
+        ShapeController.setPlottableAttributes(element, shape, group);
+      },
       'categorySelectionCallback': function(evt, params) {
         var category = scope.$select.val();
 
@@ -76,17 +58,18 @@ define([
           attributes[uniqueVals[index]] = 'sphere';
         }
         // fetch the slickgrid-formatted data
-
         var data = decompViewDict.setCategory(attributes, ShapeController.setPlottableAttributes, category);
 
         scope.setSlickGridDataset(data);
       },
-      'slickGridColumn':{id: 'title', name: '', field: 'value',
-        sortable: false, maxWidth: SLICK_WIDTH,
-        minWidth: SLICK_WIDTH,
+      'slickGridColumn': {
+        id: 'title', name: '', field: 'value',
+        sortable: false, maxWidth: SLICK_WIDTH, minWidth: SLICK_WIDTH,
         autoEdit: true,
         editor: ShapeEditor,
-        formatter: ShapeFormatter}};
+        formatter: ShapeFormatter
+      }
+    };
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
         decompViewDict, options);
