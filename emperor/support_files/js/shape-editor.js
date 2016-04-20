@@ -21,8 +21,8 @@ function($, _, DecompositionView, ViewControllers, shapes) {
    * the documentation that can be found here:
    *    https://github.com/mleibman/SlickGrid/wiki/Writing-custom-cell-editors
    *
-   * Also see ShapeFormatter, a function in charge of formatting dropdown for the
-   * SlickGrid object.
+   * Also see ShapeFormatter, a function in charge of formatting a dropdown for
+   * the SlickGrid object.
    *
    */
   function ShapeEditor(args) {
@@ -92,7 +92,7 @@ function($, _, DecompositionView, ViewControllers, shapes) {
    *
    */
   function ShapeFormatter(row, cell, value, columnDef, dataContext) {
-    return "<div class='shapebox'>" + value + "</div>";
+    return "<div>" + value + "</div>";
   }
 
   return {'ShapeEditor': ShapeEditor, 'ShapeFormatter': ShapeFormatter};
