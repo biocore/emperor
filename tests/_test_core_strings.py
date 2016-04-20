@@ -71,47 +71,45 @@ if ($("#emperor-css").length == 0){{
 
 <script type="text/javascript">
 requirejs.config({
-'baseUrl': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/',
-
 // the left side is the module name, and the right side is the path
 // relative to the baseUrl attribute, do NOT include the .js extension
 'paths': {
   /* jQuery */
-  'jquery': './vendor/js/jquery-2.1.4.min',
-  'jqueryui': './vendor/js/jquery-ui.min',
-  'jquery_drag': './vendor/js/jquery.event.drag-2.2.min',
+  'jquery': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/jquery-2.1.4.min',
+  'jqueryui': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/jquery-ui.min',
+  'jquery_drag': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/jquery.event.drag-2.2.min',
 
   /* jQuery plugins */
-  'chosen': './vendor/js/chosen.jquery.min',
-  'spectrum': './vendor/js/spectrum.min',
+  'chosen': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chosen.jquery.min',
+  'spectrum': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/spectrum.min',
 
   /* other libraries */
-  'underscore': './vendor/js/underscore-min',
-  'chroma': './vendor/js/chroma.min',
+  'underscore': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/underscore-min',
+  'chroma': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chroma.min',
 
 
   /* THREE.js and plugins */
-  'three': './vendor/js/three.min',
-  'orbitcontrols': './vendor/js/three.js-plugins/OrbitControls',
+  'three': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.min',
+  'orbitcontrols': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/OrbitControls',
 
   /* SlickGrid */
-  'slickcore': './vendor/js/slick.core.min',
-  'slickgrid': './vendor/js/slick.grid.min',
-  'slickformatters': './vendor/js/slick.editors.min',
-  'slickeditors': './vendor/js/slick.formatters.min',
+  'slickcore': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.core.min',
+  'slickgrid': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.grid.min',
+  'slickformatters': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.editors.min',
+  'slickeditors': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.formatters.min',
 
   /* Emperor's objects */
-  'model': './js/model',
-  'view': './js/view',
-  'controller': './js/controller',
-  'draw': './js/draw',
-  'scene3d': './js/sceneplotview3d',
-  'viewcontroller': './js/view-controller',
-  'colorviewcontroller': './js/color-view-controller',
-  'visibilitycontroller': './js/visibility-controller',
-  'shapecontroller': './js/shape-controller',
-  'color-editor': './js/color-editor',
-  'shapes', '.js/shapes'
+  'model': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/model',
+  'view': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/view',
+  'controller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/controller',
+  'draw': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/draw',
+  'scene3d': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/sceneplotview3d',
+  'viewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/view-controller',
+  'colorviewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/color-view-controller',
+  'visibilitycontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/visibility-controller',
+  'shapecontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shape-controller',
+  'color-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/color-editor',
+  'shapes', 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shapes'
 },
 /*
    Libraries that are not AMD compatible need shim to declare their
@@ -161,8 +159,8 @@ function($, model, EmperorController) {
     requestAnimationFrame(animate);
     ec.render();
   }
-  $(window).resize(function() {
-    ec.resize(window.innerWidth, window.innerHeight);
+  $(div).resize(function() {
+    ec.resize(div.innerWidth(), div.innerHeight());
   });
 
   $(function(){

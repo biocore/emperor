@@ -115,6 +115,60 @@ def copy_support_files(file_path):
     return
 
 
+def nbinstall(overwrite=False, user=True, prefix=None):
+    """Copies resources to the '/nbextensions' folder in your IPython directory
+
+    This function was taken from [1] and modified to match our usecase.
+
+    Parameters
+    ----------
+    overwrite : bool, optional
+        If True, always install the files, regardless of what may already be
+        installed. Defaults to False.
+    user : bool, optional
+        Whether to install to the user's .ipython/nbextensions directory.
+        Otherwise do a system-wide install
+        (e.g. /usr/local/share/jupyter/nbextensions/emperor). Defaults to
+        False.
+    prefix : str, optional
+        Where the files are copied to, by default they are copied to the
+        appropriate Jupyter/IPython folder, alternatively it can be a folder
+        where the resources are copied to. Note, that if this parameter is set
+        `user` has to be `None`.
+
+    Raises
+    ------
+    ArgumentConflict
+        When `prefix` and `user` are used together.
+
+    Notes
+    -----
+    After you install emperor, call this function once before attempting to
+    call ``Emperor`` in the Jupyter notebook.
+
+    References
+    ----------
+    .. [1] GitHub repository for qgrid https://github.com/quantopian/qgrid
+    """
+
+    # Lazy imports so we don't pollute the namespace.
+    try:
+        from notebook import install_nbextension
+    except ImportError:
+        from IPython.html.nbextensions import install_nbextension
+    from IPython import version_info
+
+    install_nbextension(
+        get_emperor_support_files_dir(),
+        overwrite=overwrite,
+        symlink=False,
+        prefix=prefix,
+        verbose=0,
+        destination='emperor/support_files',
+        **({'user': user} if version_info >= (3, 0, 0, '') else {})
+    )
+
+
 def preprocess_mapping_file(data, headers, columns, unique=False, single=False,
                             clones=0):
     """Process a mapping file to expand the data or remove unuseful fields
