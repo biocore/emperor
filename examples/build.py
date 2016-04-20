@@ -21,7 +21,8 @@ import numpy as np
 def listify(a):
     return np.asarray(a, dtype='str').tolist()
 
-with open('new-emperor.html', 'w') as f, open('template.html') as temp:
+with open('new-emperor.html', 'w') as f, \
+        open('../emperor/support_files/templates/main-template.html') as temp:
     template = Template(temp.read())
 
     N = 10
@@ -41,4 +42,4 @@ with open('new-emperor.html', 'w') as f, open('template.html') as temp:
 
     f.write(template.render(coords_ids=coords_ids, coords=coords,
                             pct_var=pct_var, md_headers=md_headers,
-                            metadata=metadata))
+                            metadata=metadata, base_url='.'))
