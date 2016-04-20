@@ -141,9 +141,6 @@ define([
    * @param {float} height the container height.
    */
   EmperorViewControllerABC.prototype.resize = function(width, height) {
-    $('#' + this.identifier).height(height);
-    $('#' + this.identifier).width(width);
-
     // This padding is required in order to make space
     // for the horizontal menus
     var padding = 10;
@@ -261,7 +258,7 @@ define([
     var scope = this;
 
     // http://stackoverflow.com/a/6602002
-    this.$select = $("<select class='emperor-tab-drop-down'>");
+    this.$select = $("<select>");
     _.each(dm.md_headers, function(header) {
       scope.$select.append($('<option>').attr('value', header).text(header));
     });
@@ -353,7 +350,7 @@ define([
    *
    */
   EmperorAttributeABC.prototype._buildGrid = function(options){
-    var columns = [{id: 'field1', name: 'Category Name', field: 'category'}];
+    var columns = [{id: 'field1', name: '', field: 'category'}];
     var gridOptions = {editable: true, enableAddRow: false,
       enableCellNavigation: true, forceFitColumns: true,
       enableColumnReorder: false, autoEdit: true};
@@ -364,6 +361,10 @@ define([
     }
 
     this.bodyGrid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
+
+    // hide the header row of the grid
+    // http://stackoverflow.com/a/29827664/379593
+    $(this.$body).find('.slick-header').css('display', 'none');
 
     // subscribe to events when a cell is changed
     this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
@@ -382,9 +383,13 @@ define([
     // call super, most of the header and body resizing logic is done there
     EmperorViewControllerABC.prototype.resize.call(this, width, height);
 
-    // make the columns fit the available space whenever the window resizes
-    // http://stackoverflow.com/a/29835739
-    this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+    // the whole code is asynchronous, so there may be situations where
+    // bodyGrid doesn't exist yet, so check before trying to modify the object
+    if (this.bodyGrid !== undefined){
+      // make the columns fit the available space whenever the window resizes
+      // http://stackoverflow.com/a/29835739
+      this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+    }
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,

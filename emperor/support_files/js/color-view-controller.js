@@ -63,11 +63,11 @@ define([
     var name, value, colorItem;
 
     // Create scale div and checkbox for whether using scalar data or not
-    this.$scaleDiv = $('<div></div>')
+    this.$scaleDiv = $('<div></div>');
     this.$colorScale = $("<svg width='90%' height='40' style='display:block;margin:auto;'></svg>");
     this.$scaleDiv.append(this.$colorScale);
     this.$scaled = $("<input type='checkbox'>");
-    this.$scaledLabel = $("<label for='scaled'>Continuous values</label>")
+    this.$scaledLabel = $("<label for='scaled'>Continuous values</label>");
 
     // this class uses a colormap selector, so populate it before calling super
     // because otherwise the categorySelectionCallback will be called before the
@@ -76,7 +76,7 @@ define([
     var currType = ColorViewController.Colormaps[0].type;
     var selectOpts = $('<optgroup>').attr('label', currType);
 
-    for (var i = 1; i < ColorViewController.Colormaps.length; i++) {
+    for (var i = 0; i < ColorViewController.Colormaps.length; i++) {
       var colormap = ColorViewController.Colormaps[i];
       // Check if we are in a new optgroup
       if (colormap.type !== currType) {
@@ -244,14 +244,14 @@ define([
         stopColors.push(interpolator(s).hex());
       }
 
-      var gradientSVG = '<defs><linearGradient id="Gradient" x1="0" x2="1" y1="1" y2="1">'
+      var gradientSVG = '<defs><linearGradient id="Gradient" x1="0" x2="1" y1="1" y2="1">';
       for (pos in stopColors) {
         gradientSVG += '<stop offset="' + pos + '%" stop-color="' + stopColors[pos] + '"/>';
       }
-      gradientSVG += '</defs><rect id="gradientRect" width="100%" height="20" fill="url(#Gradient)"/>'
-      gradientSVG += '<text x="0%" y="38" font-family="sans-serif" font-size="12px">' + min + '</text>'
-      gradientSVG += '<text x="50%" y="38" font-family="sans-serif" font-size="12px" text-anchor="middle">' + mid + '</text>'
-      gradientSVG += '<text x="100%" y="38" font-family="sans-serif" font-size="12px" text-anchor="end">' + max + '</text>'
+      gradientSVG += '</defs><rect id="gradientRect" width="100%" height="20" fill="url(#Gradient)"/>';
+      gradientSVG += '<text x="0%" y="38" font-family="sans-serif" font-size="12px">' + min + '</text>';
+      gradientSVG += '<text x="50%" y="38" font-family="sans-serif" font-size="12px" text-anchor="middle">' + mid + '</text>';
+      gradientSVG += '<text x="100%" y="38" font-family="sans-serif" font-size="12px" text-anchor="end">' + max + '</text>';
     }
 
     return [colors, gradientSVG];
@@ -348,7 +348,7 @@ define([
     {id: 'BrBG', name: 'Brown-Blue-Green', type: DIVERGING},
     {id: 'PuOr', name: 'Purple-Orange', type: DIVERGING},
     {id: 'PRGn', name: 'Purple-Green', type: DIVERGING}
-  ]
+  ];
 
 
   // taken from the qiime/colors.py module; a total of 24 colors

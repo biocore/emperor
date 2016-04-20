@@ -31,7 +31,9 @@ from jinja2 import Template
 from emperor.util import get_emperor_support_files_dir
 
 # we are going to use this remote location to load external resources
-BASE_URL = 'https://cdn.rawgit.com/biocore/emperor/new-api'
+REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/new-api/emperor'
+              '/support_files')
+LOCAL_URL = "/nbextensions/emperor/support_files"
 
 STYLE_PATH = join(get_emperor_support_files_dir(), 'templates',
                   'style-template.html')
@@ -58,6 +60,12 @@ class Emperor(object):
         identifiers in the `ordination` object.
     dimensions: int, optional
         Number of dimensions to keep from the ordination data, defaults to 5.
+    remote: bool, optional
+        Whether to load resources from a remote URL or to do it from the
+        nbextensions folder in your Jupyter installation. Note you will need to
+        import the `nbinstall` function from the util module and then call it
+        so the installation of the resources can take place. Defaults to load
+        resources from a remote location.
 
     Examples
     --------
@@ -126,7 +134,7 @@ class Emperor(object):
        2013 Nov 26;2(1):16.
 
     """
-    def __init__(self, ordination, mapping_file, dimensions=5):
+    def __init__(self, ordination, mapping_file, dimensions=5, remote=True):
         self.ordination = ordination
 
         self.mf = mapping_file.copy()
@@ -142,10 +150,13 @@ class Emperor(object):
         else:
             self.dimensions = dimensions
 
+        if remote:
+            self.base_url = REMOTE_URL
+        else:
+            self.base_url = LOCAL_URL
+
     def __str__(self):
-        if self._html is None:
-            self._make_emperor()
-        return self._html
+        return self._make_emperor()
 
     def _repr_html_(self):
         """Used to display a plot in the Jupyter notebook"""
@@ -165,7 +176,7 @@ class Emperor(object):
             style_template = Template(sty.read())
             main_template = Template(mai.read())
 
-        output.append(style_template.render(base_URL=BASE_URL))
+        output.append(style_template.render(base_url=self.base_url))
 
         # there's a bug in old versions of Pandas that won't allow us to rename
         # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
@@ -193,9 +204,9 @@ class Emperor(object):
 
         plot = main_template.render(coords_ids=coord_ids, coords=coords,
                                     pct_var=pct_var, md_headers=headers,
-                                    metadata=metadata, base_URL=BASE_URL,
+                                    metadata=metadata, base_url=self.base_url,
                                     plot_id=plot_id)
 
         output.append(plot)
 
-        self._html = ''.join(output)
+        return ''.join(output)
