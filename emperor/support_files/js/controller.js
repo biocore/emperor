@@ -228,7 +228,6 @@ define([
     this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
         ShapeController);
 
-
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
                                // The tabs on the plot space only get resized
