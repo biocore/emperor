@@ -48,4 +48,5 @@ for _id in coords_ids:
 with open('new-emperor.html', 'w') as f:
     f.write(template.render(coords_ids=coords_ids, coords=coords,
                             pct_var=pct_var, md_headers=md_headers,
-                            metadata=metadata, base_url='.'))
+                            metadata=metadata, plot_id='testing',
+                            base_url='../emperor/support_files'))
