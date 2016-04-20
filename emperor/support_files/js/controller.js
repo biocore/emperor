@@ -221,19 +221,13 @@ define([
     var scope = this;
 
     //FIXME: This only works for 1 scene plot view
-<<<<<<< HEAD
-    this.colorController = this.addTab(this.sceneViews[0].decViews,
-        ColorViewController);
-    this.visibilityController = this.addTab(this.sceneViews[0].decViews,
-        VisibilityController);
-    this.shapeController = this.addTab(this.sceneViews[0].decViews,
-        ShapeController);
-=======
     this.controllers.color = this.addTab(this.sceneViews[0].decViews,
                                          ColorViewController);
     this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
                                               VisibilityController);
->>>>>>> abaafba094b112aaffd6cbf9eede755fd673cb91
+    this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
+        ShapeController);
+
 
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
