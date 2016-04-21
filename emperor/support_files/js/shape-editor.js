@@ -31,7 +31,6 @@ function($, _, DecompositionView, ViewControllers, shapes) {
     var scope = this;
 
     this.init = function() {
-
       $input = shapes.$shapesDropdown;
       $input.appendTo(args.container);
     };

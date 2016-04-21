@@ -26,7 +26,10 @@ def listify(a):
 pages = ['../emperor/support_files/templates/main-template.html',
          'template.html']
 env = Environment()
-templates = dict((name, open(name, 'rb').read()) for name in pages)
+templates = {}
+for name in pages:
+    with open(name, 'rb') as f:
+        templates[name] = f.read()
 env.loader = DictLoader(templates)
 template = env.get_template('template.html')
 
