@@ -21,7 +21,7 @@ define([
    * @param {dm} a DecompositionModel object that will be
    * represented on screen.
    * @param {divid} the jQuery id correponding to the controller
-   * @param {webglcanvas} the canvas to use to render the information, this
+   * @param {webglcanvas} the canvas to use to render the information. This
    * parameter is optional, and should rarely be set. But is useful for
    * external applications like SAGE2.
    *
