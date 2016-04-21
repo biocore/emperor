@@ -21,9 +21,12 @@ define([
    * @param {dm} a DecompositionModel object that will be
    * represented on screen.
    * @param {divid} the jQuery id correponding to the controller
+   * @param {webglcanvas} the canvas to use to render the information. This
+   * parameter is optional, and should rarely be set. But is useful for
+   * external applications like SAGE2.
    *
    **/
-  EmperorController = function(dm, divId){
+  EmperorController = function(dm, divId, webglcanvas){
     var scope = this;
 
     // Constants
@@ -52,7 +55,14 @@ define([
     this.rendererBackgroundColor = new THREE.Color();
     this.rendererBackgroundColor.setHex('0x000000');
 
-    this.renderer = new THREE.WebGLRenderer({antialias: true});
+    if (webglcanvas !== undefined){
+        this.renderer = new THREE.WebGLRenderer({canvas: webglcanvas,
+                                                 antialias: true});
+    }
+    else{
+        this.renderer = new THREE.WebGLRenderer({antialias: true});
+    }
+
     this.renderer.setSize(this.width, this.height);
     this.renderer.setClearColor(this.rendererBackgroundColor);
     this.renderer.autoClear = false;
