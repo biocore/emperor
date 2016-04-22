@@ -138,7 +138,6 @@ define([
       }
     });
   };
-
   /**
    *
    * Helper method used to iterate over the ranges of the visible dimensions.
@@ -308,6 +307,11 @@ define([
   ScenePlotView3D.prototype.render = function(){
     this.renderer.setViewport(this.xView, this.yView, this.width, this.height);
     this.renderer.render(this.scene, this.camera);
+    var camera = this.camera;
+    //point all samples towards the camera
+    _.each(this.decViews.scatter.markers, function(element) {
+      element.quaternion.copy(camera.quaternion);
+    });
   };
 
   return ScenePlotView3D;

@@ -5,10 +5,11 @@ define([
     "view",
     "scene3d",
     "colorviewcontroller",
-    "visibilitycontroller"
+    "visibilitycontroller",
+    "shapecontroller"
 
 ], function ($, _, THREE, DecompositionView, ScenePlotView3D,
-             ColorViewController, VisibilityController) {
+             ColorViewController, VisibilityController, ShapeController) {
 
   /**
    *
@@ -234,6 +235,8 @@ define([
                                          ColorViewController);
     this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
                                               VisibilityController);
+    this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
+        ShapeController);
 
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
