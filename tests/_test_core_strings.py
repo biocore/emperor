@@ -160,7 +160,7 @@ function($, model, EmperorController) {
     requestAnimationFrame(animate);
     ec.render();
   }
-  $(div).resize(function() {
+  $(window).resize(function() {
     ec.resize(div.innerWidth(), div.innerHeight());
   });
 
