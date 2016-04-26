@@ -60,12 +60,13 @@ class Emperor(object):
         identifiers in the `ordination` object.
     dimensions: int, optional
         Number of dimensions to keep from the ordination data, defaults to 5.
-    remote: bool, optional
-        Whether to load resources from a remote URL or to do it from the
-        nbextensions folder in your Jupyter installation. Note you will need to
-        import the `nbinstall` function from the util module and then call it
-        so the installation of the resources can take place. Defaults to load
-        resources from a remote location.
+    remote: bool or str, optional
+        This parameter can have one of the following three behaviors according
+        to the value: (1) `str` - load the resources from a user-specified
+        remote location, (2) `False` - load the resources from the nbextensions
+        folder in the Jupyter installation or (3) `True` - load the resources
+        from the GitHub repository. This parameter defaults to `True`. See the
+        Notes section for more information.
 
     Examples
     --------
@@ -127,6 +128,22 @@ class Emperor(object):
     This object currently does not support the full range of actions that the
     GUI does support and should be considered experimental at the moment.
 
+    The `remote` parameter is intended for different use-cases, you should use
+    the first option "(1) - URL" when you want to load the data from a location
+    different than the GitHub repository or your Jupyter notebook resources
+    i.e. a custom URL. The second option "(2) - `False`" loads resources from
+    your local Jupyter installation, note that you **need** to execute
+    `nbinstall` at least once or the application will error, this option is
+    ideal for developers modifying the JavaScript source code, and in
+    environments of limited internet connection. Finally, the third option "(3)
+    - `True`" should be used if you intend to embed an Emperor plot in a
+    notebook and then publish it using http://nbviewer.jupyter.org.
+
+    Raises
+    ------
+    ValueError
+        If the remote argument is not of `bool` or `str` type.
+
     References
     ----------
     .. [1] EMPeror: a tool for visualizing high-throughput microbial community
@@ -150,10 +167,16 @@ class Emperor(object):
         else:
             self.dimensions = dimensions
 
-        if remote:
-            self.base_url = REMOTE_URL
+        if isinstance(remote, bool):
+            if remote:
+                self.base_url = REMOTE_URL
+            else:
+                self.base_url = LOCAL_URL
+        elif isinstance(remote, str):
+            self.base_url = remote
         else:
-            self.base_url = LOCAL_URL
+            raise ValueError("Unsupported type for `remote` argument, should be"
+                             "a bool or str")
 
     def __str__(self):
         return self._make_emperor()
