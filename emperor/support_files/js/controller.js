@@ -236,7 +236,7 @@ define([
     this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
                                               VisibilityController);
     this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
-        ShapeController);
+                                         ShapeController);
 
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
@@ -273,8 +273,8 @@ define([
 
     // dynamically instantiate the controller, see:
     // http://stackoverflow.com/a/8843181
-    var obj = new (Function.prototype.bind.apply(viewConstructor,
-          [null, '#' + id, dvdict]));
+    var params = [null, '#' + id, dvdict];
+    var obj = new (Function.prototype.bind.apply(viewConstructor, params));
 
     // set the identifier of the div to the one defined by the object
     $('#' + id).attr('id', obj.identifier);
@@ -282,7 +282,7 @@ define([
     // now add the list element linking to the container div with the proper
     // title
     this._$tabsList.append("<li><a href='#" + obj.identifier + "'>" +
-        obj.title + "</a></li>");
+                           obj.title + "</a></li>");
 
     return obj;
   };
