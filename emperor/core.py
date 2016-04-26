@@ -175,8 +175,8 @@ class Emperor(object):
         elif isinstance(remote, str):
             self.base_url = remote
         else:
-            raise ValueError("Unsupported type for `remote` argument, should be"
-                             "a bool or str")
+            raise ValueError("Unsupported type for `remote` argument, should "
+                             "be a bool or str")
 
     def __str__(self):
         return self._make_emperor()
