@@ -40,18 +40,20 @@ define([
    *
    * @param {renderer} THREE renderer object.
    * @param {decViews} dictionary of DecompositionViews shown in this scene
-   * @param {div_id} Unique identifier for an element in the DOM.
-   * @param {xView} Horizontal position of the rendered scene in the div_id
-   * container.
-   * @param {yView} Vertical position of the rendered sciene in the div_id
-   * container.
+   * @param {container} Node where the scene will be rendered.
+   * @param {xView} Horizontal position of the rendered scene in the container
+   * element.
+   * @param {yView} Vertical position of the rendered sciene in the container
+   * element.
    * @param {width} a float with the width of the renderer
    * @param {height} a float with the height of the renderer
    *
    **/
-  ScenePlotView3D = function(renderer, decViews, div_id, xView, yView, width,
-      height){
+  ScenePlotView3D = function(renderer, decViews, container, xView, yView,
+                             width, height){
 
+    // convert to jquery object for consistency with the rest of the objects
+    var $container = $(container);
     this.decViews = decViews;
     this.renderer = renderer;
     this.xView = xView;
@@ -83,8 +85,9 @@ define([
       }
     }
 
+    // use get(0) to retrieve the native DOM object
     this.control = new THREE.OrbitControls(this.camera,
-                                           document.getElementById(div_id));
+                                           $container.get(0));
     this.control.rotateSpeed = 1.0;
     this.control.zoomSpeed = 1.2;
     this.control.panSpeed = 0.8;
