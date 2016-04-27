@@ -9,7 +9,7 @@ from __future__ import division
 
 from unittest import TestCase, main
 from StringIO import StringIO
-from skbio.stats.ordination import OrdinationResults
+from skbio import OrdinationResults
 
 import pandas as pd
 import numpy as np
@@ -20,7 +20,7 @@ from _test_core_strings import PCOA_STRING, HTML_STRING
 
 class TopLevelTests(TestCase):
     def setUp(self):
-        or_f = StringIO(PCOA_STRING)
+        or_f = StringIO(unicode(PCOA_STRING))
         self.ord_res = OrdinationResults.read(or_f)
 
         data = \

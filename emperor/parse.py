@@ -7,8 +7,8 @@
 # ----------------------------------------------------------------------------
 from __future__ import division
 
-from skbio.stats.ordination import OrdinationResults
-from skbio.io import FileFormatError
+from skbio import OrdinationResults
+from skbio.io import FileFormatError, IOSourceError
 
 from emperor.qiime_backports.parse import parse_coords as qiime_parse_coords
 
@@ -31,9 +31,10 @@ def parse_coords(lines):
     """
     try:
         pcoa_results = OrdinationResults.read(lines)
-        return (pcoa_results.site_ids, pcoa_results.site, pcoa_results.eigvals,
-                pcoa_results.proportion_explained)
-    except FileFormatError:
+        return (pcoa_results.samples.index.tolist(),
+                pcoa_results.samples.values, pcoa_results.eigvals.values,
+                pcoa_results.proportion_explained.values)
+    except (FileFormatError, IOSourceError):
         try:
             lines.seek(0)
         except AttributeError:

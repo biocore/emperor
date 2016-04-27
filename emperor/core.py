@@ -51,7 +51,7 @@ class Emperor(object):
 
     Parameters
     ----------
-    ordination: skbio.maths.stats.ordination.OrdinationResults
+    ordination: skbio.OrdinationResults
         Object containing the computed values for an ordination method in
         scikit-bio.
     mapping_file: pd.DataFrame
@@ -73,7 +73,7 @@ class Emperor(object):
 
     >>> import pandas as pd, numpy as np
     >>> from emperor import Emperor
-    >>> from skbio.stats.ordination import OrdinationResults
+    >>> from skbio import OrdinationResults
 
     Ordination plots are almost invariantly associated with a set of data, that
     relates each sample to its scientific context, we refer to this as the
@@ -100,21 +100,23 @@ class Emperor(object):
 
     Then let's create some artificial ordination data:
 
+    >>> ids = ('PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593',
+    ...             'PC.355', 'PC.607', 'PC.634')
     >>> eigvals = np.array([0.47941212, 0.29201496, 0.24744925,
     ...                     0.20149607, 0.18007613, 0.14780677,
     ...                     0.13579593, 0.1122597, 0.])
+    >>> eigvals = pd.Series(data=eigvals, index=ids)
     >>> n = eigvals.shape[0]
-    >>> site = np.random.randn(n, n)
-    >>> site_ids = ('PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593',
-    ...             'PC.355', 'PC.607', 'PC.634')
+    >>> samples = np.random.randn(n, n)
+    >>> samples = pd.DataFrame(data=site, index=ids)
     >>> p_explained = np.array([0.26688705, 0.1625637, 0.13775413, 0.11217216,
-                                0.10024775, 0.08228351, 0.07559712, 0.06249458,
-                                0.])
+    ...                         0.10024775, 0.08228351, 0.07559712, 0.06249458,
+    ...                         0.])
+    >>> p_explained = pd.Series(data=p_explained, index=ids)
 
     And encapsulate it inside an `OrdinationResults` object:
 
-
-    >>> ores = OrdinationResults(eigvals, site=site, site_ids=site_ids,
+    >>> ores = OrdinationResults(eigvals, samples=samples,
     ...                          proportion_explained=p_explained)
 
     Finally import the Emperor object and display it using Jupyter, note that
@@ -140,8 +142,9 @@ class Emperor(object):
         self.mf = mapping_file.copy()
 
         # filter all metadata that we may have for which we don't have any
-        # coordinates
-        self.mf = self.mf.loc[list(ordination.site_ids)]
+        # coordinates this also ensures that the coordinates are in the
+        # same order as the metadata
+        self.mf = self.mf.loc[ordination.samples.index]
 
         self._html = None
 
@@ -187,15 +190,18 @@ class Emperor(object):
             index_name = self.mf.index.name
 
         # format the metadata
-        headers = [index_name] + self.mf.columns.tolist()
-        metadata = self.mf.apply(lambda x: [x.name] + x.astype('str').tolist(),
+        headers = map(str, [index_name] + self.mf.columns.tolist())
+        metadata = self.mf.apply(lambda x: [str(x.name)] +
+                                 x.astype('str').tolist(),
                                  axis=1).values.tolist()
 
         # format the coordinates
         d = self.dimensions
         pct_var = self.ordination.proportion_explained[:d].tolist()
-        coords = self.ordination.site[:, :d].tolist()
-        coord_ids = self.mf.index.tolist()
+        coords = self.ordination.samples.values[:, :d].tolist()
+
+        # avoid unicode strings
+        coord_ids = map(str, self.mf.index.tolist())
 
         # yes, we could have used UUID, but we couldn't find an easier way to
         # test that deterministically and with this approach we can seed the
