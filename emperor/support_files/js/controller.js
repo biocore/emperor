@@ -256,7 +256,7 @@ define([
                                }});
 
     // Set up the context menu
-    $.contextMenu({
+    this.$contextMenu = $.contextMenu({
       selector: '.emperor-plot-wrapper',
       items: {
         'saveImage': {
@@ -272,7 +272,7 @@ define([
 
   EmperorController.prototype.screenshot = function(type) {
     type = type || 'png'
-    // Render all scenes
+    // Render all scenes so it's rendreed in same context as save
     for (var i = 0; i < this.sceneViews.length; i++) {
       this.sceneViews[i].render();
     }
