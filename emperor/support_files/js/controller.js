@@ -275,9 +275,15 @@ define([
             var file = $('<input id="myInput" type="file">');
             file.on('change', function(evt) {
               var f = evt.target.files[0];
-              scope.loadConfig(f);
+              //With help from http://www.htmlgoodies.com/beyond/javascript/read-text-files-using-the-javascript-filereader.html
+              var r = new FileReader();
+              r.onload = function(e) {
+                scope.loadConfig(JSON.parse(e.target.result));
+              }
+              r.readAsText(f);
             });
             file.click();
+
           }
         },
         'saveImage': {
@@ -325,10 +331,10 @@ define([
    *
    * Method to load a save file and set all variables
    *
-   * @param {file} [File] Javascript file information
+   * @param {object} [json] Emperor save information
    *
    **/
-   EmperorController.prototype.loadConfig = function(file) {
+   EmperorController.prototype.loadConfig = function(json) {
     if (!FileReader) {
       alert("Your browser does not support file loading. Please upgrade your browser.");
       return;
@@ -336,18 +342,12 @@ define([
     //still assuming one sceneview for now
     var sceneview = this.sceneViews[0];
 
-    //With help from http://www.htmlgoodies.com/beyond/javascript/read-text-files-using-the-javascript-filereader.html
-     var r = new FileReader();
-     var contents;
-      r.onload = function(e) {
-        contents = JSON.parse(e.target.result);
-        sceneview.camera.position.set(contents.cameraPos.x, contents.cameraPos.y, contents.cameraPos.z);
-        sceneview.camera.quaternion.set(contents.cameraQuat._x, contents.cameraQuat._y, contents.cameraQuat._z, contents.cameraQuat._w);
-        //must call updates to reset for mcamera move
-        sceneview.camera.updateProjectionMatrix();
-        sceneview.control.update();
-      };
-      r.readAsText(file);
+    sceneview.camera.position.set(json.cameraPos.x, json.cameraPos.y, json.cameraPos.z);
+    sceneview.camera.quaternion.set(json.cameraQuat._x, json.cameraQuat._y, json.cameraQuat._z, json.cameraQuat._w);
+
+    //must call updates to reset for mcamera move
+    sceneview.camera.updateProjectionMatrix();
+    sceneview.control.update();
    };
 
   /**
