@@ -1,14 +1,15 @@
 define([
     "jquery",
     "underscore",
+    "contextmenu",
     "three",
     "view",
     "scene3d",
     "colorviewcontroller",
     "visibilitycontroller",
-    "shapecontroller"
+    "shapecontroller",
 
-], function ($, _, THREE, DecompositionView, ScenePlotView3D,
+], function ($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController, ShapeController) {
 
   /**
@@ -253,6 +254,20 @@ define([
                                  scope.resize(scope.$divId.width(),
                                               scope.$divId.height());
                                }});
+
+    // Set up the context menu
+    $.contextMenu({
+      selector: '.emperor-plot-wrapper',
+      items: {
+        'saveImage': {
+          name: 'Save Image (png)',
+          icon: 'edit',
+          callback: function(key, opts) {
+            alert('clicked!');
+          }
+        }
+      }
+    });
   };
 
   /**
