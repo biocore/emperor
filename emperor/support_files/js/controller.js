@@ -8,9 +8,11 @@ define([
     "colorviewcontroller",
     "visibilitycontroller",
     "shapecontroller",
+    "filesaver"
 
 ], function ($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
-             ColorViewController, VisibilityController, ShapeController) {
+             ColorViewController, VisibilityController, ShapeController,
+             FileSaver) {
 
   /**
    *
@@ -259,12 +261,32 @@ define([
     this.$contextMenu = $.contextMenu({
       selector: '.emperor-plot-wrapper',
       items: {
+        'saveState': {
+          name: 'Save Emperor setup',
+          icon: 'edit',
+          callback: function(key, opts) {
+            scope.saveConfig();
+          }
+        },
+        'loadState': {
+          name: 'Load Emperor setup',
+          icon: 'load',
+          callback: function(key, opts) {
+            var file = $('<input id="myInput" type="file">');
+            file.on('change', function(evt) {
+              var f = evt.target.files[0];
+              scope.loadConfig(f);
+            });
+            file.click();
+          }
+        },
         'saveImage': {
           name: 'Save Image (png)',
           icon: 'edit',
           callback: function(key, opts) {
             scope.screenshot();
           }
+
         }
       }
     });
@@ -279,7 +301,53 @@ define([
     var c = this.renderer.domElement.toDataURL("image/" + type);
     var w = window.open('about:blank','image from canvas');
     w.document.write("<img src='"+c+"' alt='from canvas'/>");
-  }
+  };
+
+  /**
+   *
+   * Method to write save file for saving the current configuration
+   *
+   **/
+   EmperorController.prototype.saveConfig = function() {
+    var saveinfo = {};
+    // Assuming single sceneview for now
+    sceneview = this.sceneViews[0];
+    saveinfo.cameraPos = sceneview.camera.position;
+    saveinfo.cameraQuat = sceneview.camera.quaternion;
+
+    //save the file
+    var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "Emperor Settings.txt");
+   };
+
+   /**
+   *
+   * Method to load a save file and set all variables
+   *
+   * @param {file} [File] Javascript file information
+   *
+   **/
+   EmperorController.prototype.loadConfig = function(file) {
+    if (!FileReader) {
+      alert("Your browser does not support file loading. Please upgrade your browser.");
+      return;
+    }
+    //still assuming one sceneview for now
+    var sceneview = this.sceneViews[0];
+
+    //With help from http://www.htmlgoodies.com/beyond/javascript/read-text-files-using-the-javascript-filereader.html
+     var r = new FileReader();
+     var contents;
+      r.onload = function(e) {
+        contents = JSON.parse(e.target.result);
+        sceneview.camera.position.set(contents.cameraPos.x, contents.cameraPos.y, contents.cameraPos.z);
+        sceneview.camera.quaternion.set(contents.cameraQuat.x_, contents.cameraQuat.y_, contents.cameraQuat.z_, contents.cameraQuat.w_);
+        sceneview.control.update();
+        //must call render to view again after camera move
+        //sceneview.render();
+      };
+      r.readAsText(file);
+   };
 
   /**
    *
