@@ -270,6 +270,13 @@ define([
     });
   };
 
+  /**
+   *
+   * Save the current canvas view to a new window
+   *
+   * @param {string} [type] What type to save the file as. Default png.
+   *
+   **/
   EmperorController.prototype.screenshot = function(type) {
     type = type || 'png'
     // Render all scenes so it's rendered in same context as save
