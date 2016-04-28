@@ -270,12 +270,13 @@ define([
     });
   };
 
-  EmperorController.prototype.screenshot = function() {
+  EmperorController.prototype.screenshot = function(type) {
+    type = type || 'png'
     // Render all scenes
     for (var i = 0; i < this.sceneViews.length; i++) {
       this.sceneViews[i].render();
     }
-    var c = this.renderer.domElement.toDataURL("image/png");
+    var c = this.renderer.domElement.toDataURL("image/" + type);
     var w = window.open('about:blank','image from canvas');
     w.document.write("<img src='"+c+"' alt='from canvas'/>");
   }
