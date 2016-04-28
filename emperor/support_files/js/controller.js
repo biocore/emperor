@@ -314,6 +314,7 @@ define([
     sceneview = this.sceneViews[0];
     saveinfo.cameraPos = sceneview.camera.position;
     saveinfo.cameraQuat = sceneview.camera.quaternion;
+    console.log(sceneview.camera);
 
     //save the file
     var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/plain;charset=utf-8"});
@@ -341,10 +342,10 @@ define([
       r.onload = function(e) {
         contents = JSON.parse(e.target.result);
         sceneview.camera.position.set(contents.cameraPos.x, contents.cameraPos.y, contents.cameraPos.z);
-        sceneview.camera.quaternion.set(contents.cameraQuat.x_, contents.cameraQuat.y_, contents.cameraQuat.z_, contents.cameraQuat.w_);
+        sceneview.camera.quaternion.set(contents.cameraQuat._x, contents.cameraQuat._y, contents.cameraQuat._z, contents.cameraQuat._w);
+        //must call updates to reset for mcamera move
+        sceneview.camera.updateProjectionMatrix();
         sceneview.control.update();
-        //must call render to view again after camera move
-        //sceneview.render();
       };
       r.readAsText(file);
    };
