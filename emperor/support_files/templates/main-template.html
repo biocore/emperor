@@ -39,7 +39,10 @@ requirejs.config({
   'viewcontroller': '{{ base_url }}/js/view-controller',
   'colorviewcontroller': '{{ base_url }}/js/color-view-controller',
   'visibilitycontroller': '{{ base_url }}/js/visibility-controller',
+  'shapecontroller': '{{ base_url }}/js/shape-controller',
+  'shape-editor': '{{ base_url }}/js/shape-editor',
   'color-editor': '{{ base_url }}/js/color-editor',
+  'shapes': '{{ base_url }}/js/shapes'
 },
 /*
    Libraries that are not AMD compatible need shim to declare their
@@ -89,7 +92,7 @@ function($, model, EmperorController) {
     requestAnimationFrame(animate);
     ec.render();
   }
-  $(div).resize(function() {
+  $(window).resize(function() {
     ec.resize(div.innerWidth(), div.innerHeight());
   });
 

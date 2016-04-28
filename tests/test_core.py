@@ -53,6 +53,10 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.ord_res, self.mf, remote=False)
         self.assertEqual(emp.base_url, "/nbextensions/emperor/support_files")
 
+    def test_remote_url_custom(self):
+        emp = Emperor(self.ord_res, self.mf, remote='/foobersurus/bar/')
+        self.assertEqual(emp.base_url, '/foobersurus/bar/')
+
     def test_unnamed_index(self):
         self.mf.index.name = None
         emp = Emperor(self.ord_res, self.mf)

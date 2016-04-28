@@ -107,7 +107,10 @@ requirejs.config({
   'viewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/view-controller',
   'colorviewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/color-view-controller',
   'visibilitycontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/visibility-controller',
+  'shapecontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shape-controller',
+  'shape-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shape-editor',
   'color-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/color-editor',
+  'shapes': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shapes'
 },
 /*
    Libraries that are not AMD compatible need shim to declare their
@@ -157,7 +160,7 @@ function($, model, EmperorController) {
     requestAnimationFrame(animate);
     ec.render();
   }
-  $(div).resize(function() {
+  $(window).resize(function() {
     ec.resize(div.innerWidth(), div.innerHeight());
   });
 

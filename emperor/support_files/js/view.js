@@ -2,7 +2,8 @@ define([
     "jquery",
     "underscore",
     "three",
-], function ($, _, THREE) {
+    "shapes"
+], function ($, _, THREE, shapes) {
 /**
  *
  * @name DecompositionView
@@ -29,9 +30,6 @@ function DecompositionView(decomp) {
   this.markers = []; // Three.meshes
   this.lines = []; // Three.lines
 
-  // these sizes should likely be changed but, they should be modified here
-  this._genericSphere = new THREE.SphereGeometry(0.1, 8, 8);
-
   // setup this.markers and this.lines
   this._initBaseView();
   // this.elementOrdering = []; // list of ints - Not sure if needed
@@ -48,7 +46,7 @@ DecompositionView.prototype._initBaseView = function(){
 
   var dv = this;
   this.decomp.apply(function(plottable) {
-    mesh = new THREE.Mesh(dv._genericSphere, new THREE.MeshPhongMaterial());
+    mesh = new THREE.Mesh(shapes.shapes.sphere, new THREE.MeshPhongMaterial());
     mesh.name = plottable.name;
 
     mesh.material.color = new THREE.Color(0xff0000);
