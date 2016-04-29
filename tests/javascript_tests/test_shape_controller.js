@@ -36,7 +36,11 @@ requirejs([
         decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
             metadata);
         var dv = new DecompositionView(decomp);
-        this.sharedDecompositionViewDict.pcoa = dv;
+        // Add shapes to the initial markers
+        for (i = 0; i < dv.markers.lengthl; i++) {
+          dv.markers[i].shape = 'sphere';
+        }
+        this.sharedDecompositionViewDict.scatter = dv;
 
         name = "biplot";
         ids = ['tax_1', 'tax_2'];
@@ -120,6 +124,19 @@ requirejs([
         ShapeController.setPlottableAttributes(this.dv, 'WEIRD', plottables)
       }, Error, 'Throw error if unknown shape given');
 
+    });
+
+    test("Testing toJSON", function() {
+      var idx = 0;
+      plottables = [{idx:idx}];
+      ShapeController.setPlottableAttributes(this.sharedDecompositionViewDict.scatter, 'cube', plottables);
+
+      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var controller = new ShapeController(container, this.sharedDecompositionViewDict);
+
+      var obs = controller.toJSON();
+      var exp = "{\"category\":\"SampleID\",\"shapes\":{\"PC.636\":\"sphere\",\"PC.635\":\"sphere\"}}";
+      deepEqual(obs, exp);
     });
 
   });

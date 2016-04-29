@@ -33,7 +33,7 @@ requirejs([
         var decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
             metadata);
         var dv = new DecompositionView(decomp);
-        this.sharedDecompositionViewDict.pcoa = dv;
+        this.sharedDecompositionViewDict.scatter = dv;
 
         name = "biplot";
         ids = ['tax_1', 'tax_2'];
@@ -106,6 +106,15 @@ requirejs([
       VisibilityController.setPlottableAttributes(this.dv, true, plottables);
       equal(this.dv.markers[idx].visible, true);
       equal(this.dv.markers[idx].visible, true);
+    });
+
+    test("Testing toJSON", function() {
+      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var controller = new VisibilityController(container, this.sharedDecompositionViewDict);
+
+      var obs = controller.toJSON();
+      var exp = "{\"category\":\"SampleID\",\"visible\":{\"PC.636\":true,\"PC.635\":true}}";
+      deepEqual(obs, exp);
     });
 
   });

@@ -33,7 +33,7 @@ requirejs([
         decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
             metadata);
         var dv = new DecompositionView(decomp);
-        this.sharedDecompositionViewDict.pcoa = dv;
+        this.sharedDecompositionViewDict.scatter = dv;
 
         name = "biplot";
         ids = ['tax_1', 'tax_2'];
@@ -203,6 +203,19 @@ requirejs([
       ColorViewController.setPlottableAttributes(this.dv, '#000000', plottables);
       equal(this.dv.markers[idx].material.color.getHexString(), '000000');
       equal(this.dv.markers[idx+1].material.color.getHexString(), '000000');
+    });
+
+    test("Testing toJSON", function() {
+      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var controller = new ColorViewController(container, this.sharedDecompositionViewDict);
+      //change color on one point
+      var idx = 0;
+      plottables = [{idx:idx}];
+      ColorViewController.setPlottableAttributes(this.dv, '#00ff00', plottables);
+
+      var obs = controller.toJSON();
+      var exp = "{\"category\":\"SampleID\",\"colormap\":\"discrete-coloring-qiime\",\"continuous\":false,\"colors\":{\"PC.636\":\"#ff0000\",\"PC.635\":\"#0000ff\"}}";
+      deepEqual(obs, exp);
     });
 
   });

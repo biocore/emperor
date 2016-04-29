@@ -358,7 +358,6 @@ define([
     sceneview.control.update();
 
     //load the rest of the controller settings
-    //Save settings for each controller in the view
      _.each(this.controllers, function(controller, index) {
       if (controller === undefined) {
         return;
