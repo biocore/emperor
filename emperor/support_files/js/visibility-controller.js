@@ -91,6 +91,34 @@ define([
   VisibilityController.prototype = Object.create(EmperorAttributeABC.prototype);
   VisibilityController.prototype.constructor = EmperorAttributeABC;
 
+  VisibilityController.prototype.toJSON = function() {
+    var json = {};
+    json.category = this.$select.val();
+
+    //get visbility status to save
+    var k = this.getActiveDecompViewKey();
+    var markers = this.decompViewDict.scatter.markers;
+    var ids = this.decompViewDict[k].decomp.getUniqueValuesByCategory(json.category);
+
+    var visible = {};
+    for (var i = 0; i < ids.length; i++) {
+      var name = ids[i];
+      visible[name] = markers[i].visible;
+    }
+    json.visible = visible;
+    return json;
+  }
+
+  VisibilityController.prototype.fromJSON = function(json) {
+    this.$select.val(json.category);
+    this.$select.trigger('chosen:updated');
+
+    // fetch and set the slickgrid-formatted data
+    var k = this.getActiveDecompViewKey();
+      var data = this.decompViewDict[k].setCategory(json.visible, VisibilityController.setPlottableAttributes, json.category);
+    this.setSlickGridDataset(data);
+  }
+
 
   /**
    * Helper function to set the visibility of plottable

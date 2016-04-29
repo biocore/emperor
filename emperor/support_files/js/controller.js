@@ -323,15 +323,12 @@ define([
     saveinfo.cameraPos = sceneview.camera.position;
     saveinfo.cameraQuat = sceneview.camera.quaternion;
     //Save settings for each controller in the view
-    saveinfo.color = this.controllers.color.toJSON();
-    saveinfo.shape = this.controllers.shape.toJSON();
-    //saveinfo.visibility = this.controllers.visibility.toJSON();
-    //  _.each(this.controllers, function(controller, index) {
-    //   if (controller === undefined) {
-    //     return;
-    //   }
-    //   saveinfo[index] = controller.toJSON();
-    // });
+     _.each(this.controllers, function(controller, index) {
+      if (controller === undefined) {
+        return;
+      }
+      saveinfo[index] = controller.toJSON();
+    });
 
     //save the file
     var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/plain;charset=utf-8"});
@@ -361,9 +358,13 @@ define([
     sceneview.control.update();
 
     //load the rest of the controller settings
-    this.controllers.color.fromJSON(json.color);
-    this.controllers.shape.fromJSON(json.shape);
-    //this.controllers.visibility.fromJSON(json.visibility);
+    //Save settings for each controller in the view
+     _.each(this.controllers, function(controller, index) {
+      if (controller === undefined) {
+        return;
+      }
+      controller.fromJSON(json[index]);
+    });
    };
 
   /**
