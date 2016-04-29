@@ -104,18 +104,24 @@ define([
     this.drawAxesWithColor(0xFFFFFF);
     this.drawAxesLabelsWithColor(0xFFFFFF);
 
-    // Add callback call when container is clicked
-    $container.on('click', function() {
-      var mouse3D = new THREE.Vector3((this.clientX / window.innerWidth) * 2 - 1,   //x
-                                      -(this.clientY / window.innerHeight) * 2 + 1, //y
-                                      0.5);                                         //z
-      var ray = new THREE.Ray(scope.camera.position, mouse3D.subSelf(this.camera.position).normalize());
-      var intersects = ray.intersectObject(plane);
+    // Add callback call when sample is clicked
+    $container.on('click', function(event) {
+      event.preventDefault();
+      var mouse = new THREE.Vector2();
+      mouse.x = ((event.clientX - scope.renderer.domElement.offsetLeft) / scope.renderer.domElement.width) * 2 - 1;
+      mouse.y = -((event.clientY - scope.renderer.domElement.offsetTop) / scope.renderer.domElement.height) * 2 + 1;
+
+      var raycaster = new THREE.Raycaster();
+
+      raycaster.setFromCamera(mouse, scope.camera);
+      var intersects = raycaster.intersectObjects(scope.decViews.scatter.markers);
+      console.log(intersects);
       // Get first intersected item and call callback with it.
       if (intersects.length > 0) {
-        var intersect = intersects[0];
+        var intersect = intersects[0].object;
         console.log(intersect);
-        callback(intersect);
+        callback(intersect.name, intersect);
+        intersect.material.color = new THREE.Color('#ff0000');
       }
   });
   };
