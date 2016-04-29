@@ -313,7 +313,7 @@ define([
 
   /**
    *
-   * Method to write save file for saving the current configuration
+   * Write save file for the current controller settings
    *
    **/
    EmperorController.prototype.saveConfig = function() {
@@ -337,7 +337,7 @@ define([
 
    /**
    *
-   * Method to load a save file and set all variables
+   * Load a save file and set all controller variables
    *
    * @param {object} [json] Emperor save information
    *

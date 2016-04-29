@@ -257,6 +257,11 @@ define([
     return [colors, gradientSVG];
   };
 
+  /**
+   * Converts the current instance into a JSON string.
+   *
+   * @return {String} JSON string representation of self.
+   */
   ColorViewController.prototype.toJSON = function() {
     var json = {};
     json.category = this.$select.val();
@@ -278,6 +283,11 @@ define([
     return json;
   }
 
+  /**
+   * Decodes JSON string and modifies its own instance variables accordingly.
+   *
+   * @param {String} JSON string representation of an instance.
+   */
   ColorViewController.prototype.fromJSON = function(json) {
     this.$select.val(json.category);
     this.$colormapSelect.val(json.colormap);
