@@ -257,7 +257,9 @@ define([
 
     // Set up the context menu
     this.$contextMenu = $.contextMenu({
-      selector: '.emperor-plot-wrapper',
+      // only tie this selector to our own container div, otherwise with
+      // multiple plots on the same screen, this callback gets confused
+      selector: '#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper',
       items: {
         'saveImage': {
           name: 'Save Image (PNG)',
@@ -287,7 +289,7 @@ define([
     // Create DOM-less download link and click it to start download
     var download = $('<a href="' + c + '" download="emperor.' + type + '">');
     download.get(0).click();
-  }
+  };
 
   /**
    *
