@@ -272,7 +272,6 @@ define([
     for (var i = 0; i < markers.length; i++) {
       var name = ids[i];
       colors[name] = "#" + markers[i].material.color.getHexString();
-      console.log(markers[i].material.color.getHexString());
     }
     console.log(colors);
     json.colors = colors;
@@ -288,9 +287,13 @@ define([
     this.$colormapSelect.trigger('chosen:updated');
     this.$scaled.trigger('change');
 
-    var k = this.getActiveDecompViewKey();
-    this.decompViewDict[k].setCategory(json.colors, ColorViewController.setPlottableAttributes, json.category);
-    
+    if(json.continuous) {
+      scope.setSlickGridDataset({});
+    } else {
+      var k = this.getActiveDecompViewKey();
+      var data = this.decompViewDict[k].setCategory(json.colors, ColorViewController.setPlottableAttributes, json.category);
+      this.setSlickGridDataset(data);
+    }
   }
 
   /**

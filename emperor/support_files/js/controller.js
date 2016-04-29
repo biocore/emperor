@@ -275,7 +275,8 @@ define([
             var file = $('<input id="myInput" type="file">');
             file.on('change', function(evt) {
               var f = evt.target.files[0];
-              //With help from http://www.htmlgoodies.com/beyond/javascript/read-text-files-using-the-javascript-filereader.html
+              // With help from
+              // http://www.htmlgoodies.com/beyond/javascript/read-text-files-using-the-javascript-filereader.html
               var r = new FileReader();
               r.onload = function(e) {
                 scope.loadConfig(JSON.parse(e.target.result));
