@@ -260,6 +260,7 @@ define([
       // only tie this selector to our own container div, otherwise with
       // multiple plots on the same screen, this callback gets confused
       selector: '#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper',
+      trigger: 'none',
       items: {
         'saveImage': {
           name: 'Save Image (PNG)',
@@ -268,6 +269,14 @@ define([
             scope.screenshot();
           }
         }
+      }
+    });
+
+    // Add shift+right click as the trigger for the context menu
+    this.$plotSpace.on('contextmenu', function(e) {
+      if (e.shiftKey) {
+        var contextDiv = $('#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper');
+        contextDiv.contextMenu({x: e.pageX, y: e.pageY});
       }
     });
   };
