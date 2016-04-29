@@ -88,6 +88,8 @@ requirejs.config({
   /* other libraries */
   'underscore': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/underscore-min',
   'chroma': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chroma.min',
+  'filesaver': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/FileSaver.min',
+  'blob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/Blob',
 
 
   /* THREE.js and plugins */
@@ -128,6 +130,9 @@ requirejs.config({
   },
   'contextmenu' : {
     'deps': ['jquery', 'jqueryui', 'position']
+  },
+  'filesaver' : {
+    'deps': ['blob']
   },
   'orbitcontrols': {
     'deps': ['three']
