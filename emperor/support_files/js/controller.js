@@ -1,14 +1,15 @@
 define([
     "jquery",
     "underscore",
+    "contextmenu",
     "three",
     "view",
     "scene3d",
     "colorviewcontroller",
     "visibilitycontroller",
-    "shapecontroller"
+    "shapecontroller",
 
-], function ($, _, THREE, DecompositionView, ScenePlotView3D,
+], function ($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController, ShapeController) {
 
   /**
@@ -253,7 +254,39 @@ define([
                                  scope.resize(scope.$divId.width(),
                                               scope.$divId.height());
                                }});
+
+    // Set up the context menu
+    this.$contextMenu = $.contextMenu({
+      selector: '.emperor-plot-wrapper',
+      items: {
+        'saveImage': {
+          name: 'Save Image (png)',
+          icon: 'edit',
+          callback: function(key, opts) {
+            scope.screenshot();
+          }
+        }
+      }
+    });
   };
+
+  /**
+   *
+   * Save the current canvas view to a new window
+   *
+   * @param {string} [type] What type to save the file as. Default png.
+   *
+   **/
+  EmperorController.prototype.screenshot = function(type) {
+    type = type || 'png'
+    // Render all scenes so it's rendered in same context as save
+    for (var i = 0; i < this.sceneViews.length; i++) {
+      this.sceneViews[i].render();
+    }
+    var c = this.renderer.domElement.toDataURL("image/" + type);
+    var w = window.open('about:blank','image from canvas');
+    w.document.write("<img src='"+c+"' alt='from canvas'/>");
+  }
 
   /**
    *

@@ -14,6 +14,8 @@ requirejs.config({
   /* jQuery plugins */
   'chosen': '{{ base_url }}/vendor/js/chosen.jquery.min',
   'spectrum': '{{ base_url }}/vendor/js/spectrum.min',
+  'position': '{{ base_url }}/vendor/js/jquery.ui.position.min',
+  'contextmenu': '{{ base_url }}/vendor/js/jquery.contextMenu.min',
 
   /* other libraries */
   'underscore': '{{ base_url }}/vendor/js/underscore-min',
@@ -55,6 +57,9 @@ requirejs.config({
   'chosen': {
     'deps': ['jquery'],
     'exports': 'jQuery.fn.chosen'
+  },
+  'contextmenu' : {
+    'deps': ['jquery', 'jqueryui', 'position']
   },
   'orbitcontrols': {
     'deps': ['three']
