@@ -257,6 +257,42 @@ define([
     return [colors, gradientSVG];
   };
 
+  ColorViewController.prototype.toJSON = function() {
+    var json = {};
+    json.category = this.$select.val();
+    json.colormap = this.$colormapSelect.val();
+    json.continuous = this.$scaled.is(':checked');
+
+    //get colors to save
+    var k = this.getActiveDecompViewKey();
+    var markers = this.decompViewDict.scatter.markers;
+    var ids = this.decompViewDict.scatter.decomp.ids;
+
+    var colors = {};
+    for (var i = 0; i < markers.length; i++) {
+      var name = ids[i];
+      colors[name] = "#" + markers[i].material.color.getHexString();
+      console.log(markers[i].material.color.getHexString());
+    }
+    console.log(colors);
+    json.colors = colors;
+
+    return json;
+  }
+
+  ColorViewController.prototype.fromJSON = function(json) {
+    this.$select.val(json.category);
+    this.$colormapSelect.val(json.colormap);
+    this.$scaled.prop('checked', json.continuous);
+    this.$select.trigger('chosen:updated');
+    this.$colormapSelect.trigger('chosen:updated');
+    this.$scaled.trigger('change');
+
+    var k = this.getActiveDecompViewKey();
+    this.decompViewDict[k].setCategory(json.colors, ColorViewController.setPlottableAttributes, json.category);
+    
+  }
+
   /**
    *
    * Retrieve a discrete color.

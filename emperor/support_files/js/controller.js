@@ -286,6 +286,7 @@ define([
 
           }
         },
+        "sep1": "---------",
         'saveImage': {
           name: 'Save Image (png)',
           icon: 'edit',
@@ -320,7 +321,15 @@ define([
     sceneview = this.sceneViews[0];
     saveinfo.cameraPos = sceneview.camera.position;
     saveinfo.cameraQuat = sceneview.camera.quaternion;
-    console.log(sceneview.camera);
+
+    //Save settings for each controller in the view
+    saveinfo.color = this.controllers.color.toJSON();
+    //  _.each(this.controllers, function(controller, index) {
+    //   if (controller === undefined) {
+    //     return;
+    //   }
+    //   saveinfo[index] = controller.toJSON();
+    // });
 
     //save the file
     var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/plain;charset=utf-8"});
@@ -345,9 +354,12 @@ define([
     sceneview.camera.position.set(json.cameraPos.x, json.cameraPos.y, json.cameraPos.z);
     sceneview.camera.quaternion.set(json.cameraQuat._x, json.cameraQuat._y, json.cameraQuat._z, json.cameraQuat._w);
 
-    //must call updates to reset for mcamera move
+    //must call updates to reset for camera move
     sceneview.camera.updateProjectionMatrix();
     sceneview.control.update();
+
+    //load the rest of the controller settings
+    this.controllers.color.fromJSON(json.color);
    };
 
   /**
