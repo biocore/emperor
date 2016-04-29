@@ -280,7 +280,7 @@ define([
     }
     json.colors = colors;
 
-    return json;
+    return JSON.stringify(json);
   }
 
   /**
@@ -289,6 +289,7 @@ define([
    * @param {String} JSON string representation of an instance.
    */
   ColorViewController.prototype.fromJSON = function(json) {
+    var json = JSON.parse(json);
     this.$select.val(json.category);
     this.$colormapSelect.val(json.colormap);
     this.$scaled.prop('checked', json.continuous);

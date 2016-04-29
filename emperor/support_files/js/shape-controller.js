@@ -99,7 +99,7 @@ define([
       shapes[name] = markers[i].shape;
     }
     json.shapes = shapes;
-    return json;
+    return JSON.stringify(json);
   }
 
   /**
@@ -108,6 +108,7 @@ define([
    * @param {String} JSON string representation of an instance.
    */
   ShapeController.prototype.fromJSON = function(json) {
+    var json = JSON.parse(json);
     this.$select.val(json.category);
     this.$select.trigger('chosen:updated');
 

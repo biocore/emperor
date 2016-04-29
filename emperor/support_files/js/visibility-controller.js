@@ -111,7 +111,7 @@ define([
       visible[name] = markers[i].visible;
     }
     json.visible = visible;
-    return json;
+    return JSON.stringify(json);
   }
 
   /**
@@ -120,6 +120,7 @@ define([
    * @param {String} JSON string representation of an instance.
    */
   VisibilityController.prototype.fromJSON = function(json) {
+    var json = JSON.parse(json);
     this.$select.val(json.category);
     this.$select.trigger('chosen:updated');
 
