@@ -127,16 +127,24 @@ requirejs([
     });
 
     test("Testing toJSON", function() {
-      var idx = 0;
-      plottables = [{idx:idx}];
-      ShapeController.setPlottableAttributes(this.sharedDecompositionViewDict.scatter, 'cube', plottables);
-
       var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
       var controller = new ShapeController(container, this.sharedDecompositionViewDict);
 
       var obs = controller.toJSON();
       var exp = "{\"category\":\"SampleID\",\"shapes\":{\"PC.636\":\"sphere\",\"PC.635\":\"sphere\"}}";
       deepEqual(obs, exp);
+    });
+
+    test("Testing fromJSON", function() {
+      var json = "{\"category\":\"SampleID\",\"shapes\":{\"PC.636\":\"cube\",\"PC.635\":\"sphere\"}}";
+
+      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var controller = new ShapeController(container, this.sharedDecompositionViewDict);
+
+      controller.fromJSON(json);
+      var idx = 0;
+      equal(controller.decompViewDict.scatter.markers[idx].geometry.type, 'BoxGeometry');
+      equal(controller.decompViewDict.scatter.markers[idx+1].geometry.type, 'SphereGeometry');
     });
 
   });

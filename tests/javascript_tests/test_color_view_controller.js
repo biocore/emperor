@@ -217,6 +217,21 @@ requirejs([
       var exp = "{\"category\":\"SampleID\",\"colormap\":\"discrete-coloring-qiime\",\"continuous\":false,\"colors\":{\"PC.636\":\"#ff0000\",\"PC.635\":\"#0000ff\"}}";
       deepEqual(obs, exp);
     });
+    test("Testing fromJSON", function() {
+      var json = "{\"category\":\"DOB\",\"colormap\":\"discrete-coloring-qiime\",\"continuous\":false,\"colors\":{\"20070314\":\"#ff0000\",\"20071112\":\"#0000ff\"}}";
+  
+      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var controller = new ColorViewController(container, this.sharedDecompositionViewDict);
+
+      var obs = controller.toJSON();
+      controller.fromJSON(json);
+      var idx = 0;
+      equal(controller.decompViewDict.scatter.markers[idx].material.color.getHexString(), 'ff0000');
+      equal(controller.decompViewDict.scatter.markers[idx+1].material.color.getHexString(), '0000ff');
+      equal(controller.$select.val(), 'DOB');
+      equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
+      equal(controller.$scaled.is(':checked'), false);
+    });
 
   });
 
