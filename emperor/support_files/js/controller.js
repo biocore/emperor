@@ -7,7 +7,7 @@ define([
     "scene3d",
     "colorviewcontroller",
     "visibilitycontroller",
-    "shapecontroller",
+    "shapecontroller"
 
 ], function ($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController, ShapeController) {
@@ -260,7 +260,7 @@ define([
       selector: '.emperor-plot-wrapper',
       items: {
         'saveImage': {
-          name: 'Save Image (png)',
+          name: 'Save Image (PNG)',
           icon: 'edit',
           callback: function(key, opts) {
             scope.screenshot();
@@ -278,14 +278,15 @@ define([
    *
    **/
   EmperorController.prototype.screenshot = function(type) {
-    type = type || 'png'
+    type = type || 'png';
     // Render all scenes so it's rendered in same context as save
     for (var i = 0; i < this.sceneViews.length; i++) {
       this.sceneViews[i].render();
     }
     var c = this.renderer.domElement.toDataURL("image/" + type);
-    var w = window.open('about:blank','image from canvas');
-    w.document.write("<img src='"+c+"' alt='from canvas'/>");
+    // Create DOM-less download link and click it to start download
+    var download = $('<a href="' + c + '" download="emperor.' + type + '">');
+    download.get(0).click();
   }
 
   /**
