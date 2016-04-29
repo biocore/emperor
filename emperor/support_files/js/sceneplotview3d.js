@@ -50,7 +50,10 @@ define([
    *
    **/
   ScenePlotView3D = function(renderer, decViews, container, xView, yView,
-                             width, height){
+                             width, height, callback){
+    var scope = this;
+    // Make setting a callback optional
+    callback = callback || function(name, item) {};
 
     // convert to jquery object for consistency with the rest of the objects
     var $container = $(container);
@@ -100,6 +103,21 @@ define([
     this.dimensionRanges = {'max': [], 'min': []};
     this.drawAxesWithColor(0xFFFFFF);
     this.drawAxesLabelsWithColor(0xFFFFFF);
+
+    // Add callback call when container is clicked
+    $container.on('click', function() {
+      var mouse3D = new THREE.Vector3((this.clientX / window.innerWidth) * 2 - 1,   //x
+                                      -(this.clientY / window.innerHeight) * 2 + 1, //y
+                                      0.5);                                         //z
+      var ray = new THREE.Ray(scope.camera.position, mouse3D.subSelf(this.camera.position).normalize());
+      var intersects = ray.intersectObject(plane);
+      // Get first intersected item and call callback with it.
+      if (intersects.length > 0) {
+        var intersect = intersects[0];
+        console.log(intersect);
+        callback(intersect);
+      }
+  });
   };
 
   /**
