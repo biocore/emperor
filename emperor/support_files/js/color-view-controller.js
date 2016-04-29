@@ -264,12 +264,13 @@ define([
     json.continuous = this.$scaled.is(':checked');
 
     //get colors to save
+    var meta_pos = this.decompViewDict.scatter.decomp.md_headers.indexOf(json.category);
     var markers = this.decompViewDict.scatter.markers;
-    var ids = this.decompViewDict.scatter.decomp.ids;
+    var metadata = this.decompViewDict.scatter.decomp.plottable;
 
     var colors = {};
     for (var i = 0; i < markers.length; i++) {
-      var name = ids[i];
+      var name = metadata[i].metadata[meta_pos];
       colors[name] = "#" + markers[i].material.color.getHexString();
     }
     json.colors = colors;

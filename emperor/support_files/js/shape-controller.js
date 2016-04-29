@@ -84,13 +84,13 @@ define([
     json.category = this.$select.val();
 
     //get shapes to save
-    var k = this.getActiveDecompViewKey();
+    var meta_pos = this.decompViewDict.scatter.decomp.md_headers.indexOf(json.category);
     var markers = this.decompViewDict.scatter.markers;
-    var ids = this.decompViewDict[k].decomp.getUniqueValuesByCategory(json.category);
+    var metadata = this.decompViewDict.scatter.decomp.plottable;
 
     var shapes = {};
     for (var i = 0; i < markers.length; i++) {
-      var name = ids[i];
+      var name = metadata[i].metadata[meta_pos];
       shapes[name] = markers[i].shape;
     }
     json.shapes = shapes;

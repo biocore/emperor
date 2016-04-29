@@ -96,13 +96,13 @@ define([
     json.category = this.$select.val();
 
     //get visbility status to save
-    var k = this.getActiveDecompViewKey();
+    var meta_pos = this.decompViewDict.scatter.decomp.md_headers.indexOf(json.category);
     var markers = this.decompViewDict.scatter.markers;
-    var ids = this.decompViewDict[k].decomp.getUniqueValuesByCategory(json.category);
+    var metadata = this.decompViewDict.scatter.decomp.plottable;
 
     var visible = {};
-    for (var i = 0; i < ids.length; i++) {
-      var name = ids[i];
+    for (var i = 0; i < markers.length; i++) {
+      var name = metadata[i].metadata[meta_pos];
       visible[name] = markers[i].visible;
     }
     json.visible = visible;
