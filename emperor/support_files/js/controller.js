@@ -44,7 +44,7 @@ define([
     this.sceneViews = [];
 
     // main divs where the content of the plots will be located
-    this.$plotSpace = $("<div id='main-wrapper' class='emperor-plot-wrapper'></div>");
+    this.$plotSpace = $("<div class='emperor-plot-wrapper'></div>");
     this.$plotMenu = $("<div class='emperor-plot-menu'></div>");
 
     this.$divId.append(this.$plotSpace);
@@ -114,7 +114,7 @@ define([
     }
 
     var spv = new ScenePlotView3D(this.renderer, this.decViews,
-        this.$plotSpace.attr('id'), 0, 0, 0, 0);
+                                  this.$plotSpace, 0, 0, 0, 0);
     this.sceneViews.push(spv);
 
     // this will setup the appropriate sizes and widths
