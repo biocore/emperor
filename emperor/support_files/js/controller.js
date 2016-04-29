@@ -322,9 +322,10 @@ define([
     sceneview = this.sceneViews[0];
     saveinfo.cameraPos = sceneview.camera.position;
     saveinfo.cameraQuat = sceneview.camera.quaternion;
-
     //Save settings for each controller in the view
     saveinfo.color = this.controllers.color.toJSON();
+    saveinfo.shape = this.controllers.shape.toJSON();
+    //saveinfo.visibility = this.controllers.visibility.toJSON();
     //  _.each(this.controllers, function(controller, index) {
     //   if (controller === undefined) {
     //     return;
@@ -361,6 +362,8 @@ define([
 
     //load the rest of the controller settings
     this.controllers.color.fromJSON(json.color);
+    this.controllers.shape.fromJSON(json.shape);
+    //this.controllers.visibility.fromJSON(json.visibility);
    };
 
   /**

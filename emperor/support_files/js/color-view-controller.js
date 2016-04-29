@@ -264,7 +264,6 @@ define([
     json.continuous = this.$scaled.is(':checked');
 
     //get colors to save
-    var k = this.getActiveDecompViewKey();
     var markers = this.decompViewDict.scatter.markers;
     var ids = this.decompViewDict.scatter.decomp.ids;
 
@@ -273,7 +272,6 @@ define([
       var name = ids[i];
       colors[name] = "#" + markers[i].material.color.getHexString();
     }
-    console.log(colors);
     json.colors = colors;
 
     return json;

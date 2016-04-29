@@ -79,6 +79,34 @@ define([
   ShapeController.prototype = Object.create(EmperorAttributeABC.prototype);
   ShapeController.prototype.constructor = EmperorAttributeABC;
 
+  ShapeController.prototype.toJSON = function() {
+    var json = {};
+    json.category = this.$select.val();
+
+    //get shapes to save
+    var k = this.getActiveDecompViewKey();
+    var markers = this.decompViewDict.scatter.markers;
+    var ids = this.decompViewDict[k].decomp.getUniqueValuesByCategory(json.category);
+
+    var shapes = {};
+    for (var i = 0; i < markers.length; i++) {
+      var name = ids[i];
+      shapes[name] = markers[i].shape;
+    }
+    json.shapes = shapes;
+    return json;
+  }
+
+  ShapeController.prototype.fromJSON = function(json) {
+    this.$select.val(json.category);
+    this.$select.trigger('chosen:updated');
+
+    // fetch and set the slickgrid-formatted data
+    var k = this.getActiveDecompViewKey();
+      var data = this.decompViewDict[k].setCategory(json.shapes, ShapeController.setPlottableAttributes, json.category);
+    this.setSlickGridDataset(data);
+  }
+
     /**
    * Helper function to set the shape of plottable
    *
@@ -98,6 +126,7 @@ define([
     _.each(group, function(element) {
       idx = element.idx;
       scope.markers[idx].geometry = geometry;
+      scope.markers[idx].shape = shape;
     });
   };
   return ShapeController;
