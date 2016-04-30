@@ -274,6 +274,7 @@ MIT licensed
 --------------------------------------------------------------------------------
 
 ### FileSaver [1.1.20160328](https://github.com/eligrey/FileSaver.js/)
+### Blob [2014-07-24](http://purl.eligrey.com/github/Blob.js/blob/master/Blob.js)
 
 Copyright © 2015 Eli Grey.
 
