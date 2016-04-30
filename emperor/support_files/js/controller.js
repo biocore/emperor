@@ -45,7 +45,7 @@ define([
     this.sceneViews = [];
 
     // main divs where the content of the plots will be located
-    this.$plotSpace = $("<div id='main-wrapper' class='emperor-plot-wrapper'></div>");
+    this.$plotSpace = $("<div class='emperor-plot-wrapper'></div>");
     this.$plotMenu = $("<div class='emperor-plot-menu'></div>");
 
     this.$divId.append(this.$plotSpace);
@@ -115,7 +115,7 @@ define([
     }
 
     var spv = new ScenePlotView3D(this.renderer, this.decViews,
-        this.$plotSpace.attr('id'), 0, 0, 0, 0);
+                                  this.$plotSpace, 0, 0, 0, 0);
     this.sceneViews.push(spv);
 
     // this will setup the appropriate sizes and widths
@@ -258,7 +258,10 @@ define([
 
     // Set up the context menu
     this.$contextMenu = $.contextMenu({
-      selector: '.emperor-plot-wrapper',
+      // only tie this selector to our own container div, otherwise with
+      // multiple plots on the same screen, this callback gets confused
+      selector: '#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper',
+      trigger: 'none',
       items: {
         'saveState': {
           name: 'Save Emperor setup',
@@ -295,6 +298,14 @@ define([
           }
 
         }
+      }
+    });
+
+    // Add shift+right click as the trigger for the context menu
+    this.$plotSpace.on('contextmenu', function(e) {
+      if (e.shiftKey) {
+        var contextDiv = $('#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper');
+        contextDiv.contextMenu({x: e.pageX, y: e.pageY});
       }
     });
   };
