@@ -1,6 +1,7 @@
 define([
     "jquery",
     "underscore",
+    "contextmenu",
     "three",
     "view",
     "scene3d",
@@ -8,7 +9,7 @@ define([
     "visibilitycontroller",
     "shapecontroller"
 
-], function ($, _, THREE, DecompositionView, ScenePlotView3D,
+], function ($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController, ShapeController) {
 
   /**
@@ -253,6 +254,50 @@ define([
                                  scope.resize(scope.$divId.width(),
                                               scope.$divId.height());
                                }});
+
+    // Set up the context menu
+    this.$contextMenu = $.contextMenu({
+      // only tie this selector to our own container div, otherwise with
+      // multiple plots on the same screen, this callback gets confused
+      selector: '#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper',
+      trigger: 'none',
+      items: {
+        'saveImage': {
+          name: 'Save Image (PNG)',
+          icon: 'edit',
+          callback: function(key, opts) {
+            scope.screenshot();
+          }
+        }
+      }
+    });
+
+    // Add shift+right click as the trigger for the context menu
+    this.$plotSpace.on('contextmenu', function(e) {
+      if (e.shiftKey) {
+        var contextDiv = $('#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper');
+        contextDiv.contextMenu({x: e.pageX, y: e.pageY});
+      }
+    });
+  };
+
+  /**
+   *
+   * Save the current canvas view to a new window
+   *
+   * @param {string} [type] What type to save the file as. Default png.
+   *
+   **/
+  EmperorController.prototype.screenshot = function(type) {
+    type = type || 'png';
+    // Render all scenes so it's rendered in same context as save
+    for (var i = 0; i < this.sceneViews.length; i++) {
+      this.sceneViews[i].render();
+    }
+    var c = this.renderer.domElement.toDataURL("image/" + type);
+    // Create DOM-less download link and click it to start download
+    var download = $('<a href="' + c + '" download="emperor.' + type + '">');
+    download.get(0).click();
   };
 
   /**
