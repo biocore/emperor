@@ -70,7 +70,7 @@ define([
 
     // Set up the camera
     this.camera = new THREE.PerspectiveCamera(35, width/height,
-        0.0000001, 10000);
+        .0001, 10000);
     this.camera.position.set(0, 0, 6);
 
     //need to initialize the scene
@@ -104,22 +104,23 @@ define([
     this.drawAxesWithColor(0xFFFFFF);
     this.drawAxesLabelsWithColor(0xFFFFFF);
 
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
+
     // Add callback call when sample is clicked
     $container.on('click', function(event) {
       event.preventDefault();
-      var mouse = new THREE.Vector2();
-      mouse.x = ((event.clientX - scope.renderer.domElement.offsetLeft) / scope.renderer.domElement.width) * 2 - 1;
-      mouse.y = -((event.clientY - scope.renderer.domElement.offsetTop) / scope.renderer.domElement.height) * 2 + 1;
+      scope.mouse.x = ((event.clientX - scope.renderer.domElement.offsetLeft) / scope.renderer.domElement.width) * 2 - 1;
+      scope.mouse.y = -((event.clientY - scope.renderer.domElement.offsetTop) / scope.renderer.domElement.height) * 2 + 1;
 
-      var raycaster = new THREE.Raycaster();
 
-      raycaster.setFromCamera(mouse, scope.camera);
-      var intersects = raycaster.intersectObjects(scope.decViews.scatter.markers);
+      scope.raycaster.setFromCamera(scope.mouse, scope.camera);
+      var intersects = scope.raycaster.intersectObjects(scope.decViews.scatter.markers);
+      console.log(scope.raycaster);
       console.log(intersects);
       // Get first intersected item and call callback with it.
       if (intersects.length > 0) {
         var intersect = intersects[0].object;
-        console.log(intersect);
         callback(intersect.name, intersect);
         intersect.material.color = new THREE.Color('#ff0000');
       }
