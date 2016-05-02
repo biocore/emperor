@@ -8,11 +8,13 @@
 # ----------------------------------------------------------------------------
 from __future__ import division
 
+import io
+
 from os import makedirs
 from os.path import join, isdir
+from itertools import chain
 
 from qcli.option_parsing import parse_command_line_parameters, make_option
-from skbio.util import flatten
 
 from emperor.qiime_backports.filter import filter_mapping_file
 from emperor.qiime_backports.parse import (parse_mapping_file,
@@ -453,7 +455,7 @@ def main():
 
         for fp in coord_fps:
             try:
-                parsed = parse_coords(open(fp, 'U'))
+                parsed = parse_coords(io.open(fp, 'r', encoding='utf8'))
             except (ValueError, QiimeParseError):
                 offending_coords_fp.append(fp)
 
@@ -477,9 +479,9 @@ def main():
         # check all files contain the same sample identifiers by flattening the
         # list of available sample ids and returning the sample ids that are
         # in one of the sets of sample ids but not in the globablly shared ids
-        _coords_headers = set(flatten(coords_headers))
+        _coords_headers = set(chain(*coords_headers))
         _per_file_missing = [_coords_headers - set(e) for e in coords_headers]
-        non_shared_ids = set(flatten(_per_file_missing))
+        non_shared_ids = set(chain(*_per_file_missing))
         if non_shared_ids:
             errout = ', '.join(non_shared_ids)
             option_parser.error(("The following sample identifier(s): '%s' "
@@ -503,7 +505,7 @@ def main():
 
     else:
         try:
-            parsed = parse_coords(open(input_coords, 'U'))
+            parsed = parse_coords(io.open(input_coords, 'r', encoding='utf8'))
         # this exception was noticed when there were letters in the coords file
         # other exeptions should be catched here; code will be updated then
         except (ValueError, QiimeParseError):

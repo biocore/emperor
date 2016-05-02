@@ -12,7 +12,7 @@ codebase and not included in for example format.py, because the length would
 violate PEP-8 rules.
 """
 
-PCOA_STRING = """Eigvals	9
+PCOA_STRING = u"""Eigvals	9
 0.479412119045	0.29201495623	0.247449246064	0.201496072404	0.180076127632\
 	0.147806772727	0.135795927213	0.112259695609	0.0
 
