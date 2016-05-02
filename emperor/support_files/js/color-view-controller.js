@@ -275,10 +275,10 @@ define([
    * @param {Object} Parsed JSON string representation of self.
    */
   ColorViewController.prototype.fromJSON = function(json) {
-    EmperorAttributeABC.prototype.fromJSON.call(this, json)
     this.$colormapSelect.val(json.colormap);
-    this.$scaled.prop('checked', json.continuous);
     this.$colormapSelect.trigger('chosen:updated');
+    EmperorAttributeABC.prototype.fromJSON.call(this, json)
+    this.$scaled.prop('checked', json.continuous);
     this.$scaled.trigger('change');
   }
 
