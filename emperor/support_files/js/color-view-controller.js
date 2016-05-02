@@ -99,7 +99,7 @@ define([
           var val = args.item.category, color = args.item.value;
           var group = args.item.plottables;
           var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
-          ColorViewController.setPlottableAttributes(element, color, group);
+          scope.setPlottableAttributes(element, color, group);
         },
       'categorySelectionCallback':
         function(evt, params) {
@@ -129,7 +129,7 @@ define([
           var colorInfo = ColorViewController.getColorList(uniqueVals, colorScheme, discrete, scaled);
           var attributes = colorInfo[0];
           // fetch the slickgrid-formatted data
-          var data = decompViewDict.setCategory(attributes, ColorViewController.setPlottableAttributes, category);
+          var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
 
           if (scaled) {
             scope.setSlickGridDataset({});
@@ -260,50 +260,26 @@ define([
   /**
    * Converts the current instance into a JSON string.
    *
-   * @return {String} JSON string representation of self.
+   * @return {Object} JSON ready representation of self.
    */
   ColorViewController.prototype.toJSON = function() {
-    var json = {};
-    json.category = this.$select.val();
+    var json = EmperorAttributeABC.prototype.toJSON.call(this);
     json.colormap = this.$colormapSelect.val();
     json.continuous = this.$scaled.is(':checked');
-
-    //get colors to save
-    var meta_pos = this.decompViewDict.scatter.decomp.md_headers.indexOf(json.category);
-    var markers = this.decompViewDict.scatter.markers;
-    var metadata = this.decompViewDict.scatter.decomp.plottable;
-
-    var colors = {};
-    for (var i = 0; i < markers.length; i++) {
-      var name = metadata[i].metadata[meta_pos];
-      colors[name] = "#" + markers[i].material.color.getHexString();
-    }
-    json.colors = colors;
-
-    return JSON.stringify(json);
+    return json;
   }
 
   /**
    * Decodes JSON string and modifies its own instance variables accordingly.
    *
-   * @param {String} JSON string representation of an instance.
+   * @param {Object} Parsed JSON string representation of self.
    */
   ColorViewController.prototype.fromJSON = function(json) {
-    var json = JSON.parse(json);
-    this.$select.val(json.category);
+    EmperorAttributeABC.prototype.fromJSON.call(this, json)
     this.$colormapSelect.val(json.colormap);
     this.$scaled.prop('checked', json.continuous);
-    this.$select.trigger('chosen:updated');
     this.$colormapSelect.trigger('chosen:updated');
     this.$scaled.trigger('change');
-
-    if(json.continuous) {
-      scope.setSlickGridDataset({});
-    } else {
-      var k = this.getActiveDecompViewKey();
-      var data = this.decompViewDict[k].setCategory(json.colors, ColorViewController.setPlottableAttributes, json.category);
-      this.setSlickGridDataset(data);
-    }
   }
 
   /**
@@ -346,7 +322,7 @@ define([
    * @param {group} array of objects, list of object that should be changed in
    * scope
    */
-  ColorViewController.setPlottableAttributes = function(scope, color, group){
+  ColorViewController.prototype.setPlottableAttributes = function(scope, color, group){
     var idx;
 
     _.each(group, function(element) {

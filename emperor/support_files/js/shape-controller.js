@@ -41,7 +41,7 @@ define([
         var val = args.item.category, shape = args.item.value;
         var group = args.item.plottables;
         var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
-        ShapeController.setPlottableAttributes(element, shape, group);
+        scope.setPlottableAttributes(element, shape, group);
       },
       'categorySelectionCallback': function(evt, params) {
         var category = scope.$select.val();
@@ -58,7 +58,7 @@ define([
           attributes[uniqueVals[index]] = 'sphere';
         }
         // fetch the slickgrid-formatted data
-        var data = decompViewDict.setCategory(attributes, ShapeController.setPlottableAttributes, category);
+        var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
 
         scope.setSlickGridDataset(data);
       },
@@ -79,44 +79,6 @@ define([
   ShapeController.prototype = Object.create(EmperorAttributeABC.prototype);
   ShapeController.prototype.constructor = EmperorAttributeABC;
 
-  /**
-   * Converts the current instance into a JSON string.
-   *
-   * @return {String} JSON string representation of self.
-   */
-  ShapeController.prototype.toJSON = function() {
-    var json = {};
-    json.category = this.$select.val();
-
-    //get shapes to save
-    var meta_pos = this.decompViewDict.scatter.decomp.md_headers.indexOf(json.category);
-    var markers = this.decompViewDict.scatter.markers;
-    var metadata = this.decompViewDict.scatter.decomp.plottable;
-
-    var shapes = {};
-    for (var i = 0; i < markers.length; i++) {
-      var name = metadata[i].metadata[meta_pos];
-      shapes[name] = markers[i].shape;
-    }
-    json.shapes = shapes;
-    return JSON.stringify(json);
-  }
-
-  /**
-   * Decodes JSON string and modifies its own instance variables accordingly.
-   *
-   * @param {String} JSON string representation of an instance.
-   */
-  ShapeController.prototype.fromJSON = function(json) {
-    var json = JSON.parse(json);
-    this.$select.val(json.category);
-    this.$select.trigger('chosen:updated');
-
-    // fetch and set the slickgrid-formatted data
-    var k = this.getActiveDecompViewKey();
-      var data = this.decompViewDict[k].setCategory(json.shapes, ShapeController.setPlottableAttributes, json.category);
-    this.setSlickGridDataset(data);
-  }
 
     /**
    * Helper function to set the shape of plottable
@@ -127,7 +89,7 @@ define([
    * @param {group} array of objects, list of object that should be changed in
    * scope
    */
-  ShapeController.setPlottableAttributes = function(scope, shape, group) {
+  ShapeController.prototype.setPlottableAttributes = function(scope, shape, group) {
     var idx;
     var geometry = shapes.shapes[shape];
     if (geometry === undefined) {
@@ -137,7 +99,6 @@ define([
     _.each(group, function(element) {
       idx = element.idx;
       scope.markers[idx].geometry = geometry;
-      scope.markers[idx].shape = shape;
     });
   };
   return ShapeController;

@@ -155,24 +155,6 @@ define([
   };
 
   /**
-   * Converts the current instance into a JSON string.
-   *
-   * @return {String} JSON string representation of self.
-   */
-  EmperorViewControllerABC.prototype.toJSON = function(){
-    throw Error('Not implemented');
-  };
-
-  /**
-   * Decodes JSON string and modifies its own instance variables accordingly.
-   *
-   * @param {String} JSON string representation of an instance.
-   */
-  EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
-    throw Error('Not implemented');
-  };
-
-  /**
    * @name EmperorAttributeABC
    *
    * @class Abstract base class for view controllers that control attributes of
@@ -390,6 +372,42 @@ define([
       // http://stackoverflow.com/a/29835739
       this.bodyGrid.setColumns(this.bodyGrid.getColumns());
     }
+  };
+
+  /**
+   * Converts the current instance into a JSON object.
+   *
+   * @return {Object} base object ready for JSON conversion.
+   */
+  EmperorAttributeABC.prototype.toJSON = function() {
+    var json = {};
+    json.category = this.$select.val();
+
+    //get all category settings to save
+    //convert slickGrid list of objects to single object
+    var gridData = this.bodyGrid.getData();
+    var jsonData = {}
+    for(var i = 0; i < gridData.length; i++) {
+      jsonData[gridData[i].category] = gridData[i].value;
+    }
+    json.data = jsonData;
+    return json;
+  };
+
+  /**
+   * Decodes JSON string and modifies its own instance variables accordingly.
+   *
+   * @param {Object} Parsed JSON string representation of self.
+   *
+   */
+  EmperorAttributeABC.prototype.fromJSON = function(json) {
+    this.$select.val(json.category);
+    this.$select.trigger('chosen:updated');
+
+    // fetch and set the slickgrid-formatted data
+    var k = this.getActiveDecompViewKey();
+    var data = this.decompViewDict[k].setCategory(json.data, this.setPlottableAttributes, json.category);
+    this.setSlickGridDataset(data);
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,

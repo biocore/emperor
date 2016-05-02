@@ -57,7 +57,7 @@ define([
       var visible = args.item.value;
       var group = args.item.plottables;
       var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
-      VisibilityController.setPlottableAttributes(element, visible, group);
+      scope.setPlottableAttributes(element, visible, group);
     },
       'categorySelectionCallback':function(evt, params) {
         var category = scope.$select.val();
@@ -73,7 +73,7 @@ define([
           attributes[value] = true;
         });
         // fetch the slickgrid-formatted data
-        var data = decompViewDict.setCategory(attributes, VisibilityController.setPlottableAttributes, category);
+        var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
 
         scope.setSlickGridDataset(data);
       },
@@ -92,46 +92,6 @@ define([
   VisibilityController.prototype.constructor = EmperorAttributeABC;
 
   /**
-   * Converts the current instance into a JSON string.
-   *
-   * @return {String} JSON string representation of self.
-   */
-  VisibilityController.prototype.toJSON = function() {
-    var json = {};
-    json.category = this.$select.val();
-
-    //get visbility status to save
-    var meta_pos = this.decompViewDict.scatter.decomp.md_headers.indexOf(json.category);
-    var markers = this.decompViewDict.scatter.markers;
-    var metadata = this.decompViewDict.scatter.decomp.plottable;
-
-    var visible = {};
-    for (var i = 0; i < markers.length; i++) {
-      var name = metadata[i].metadata[meta_pos];
-      visible[name] = markers[i].visible;
-    }
-    json.visible = visible;
-    return JSON.stringify(json);
-  }
-
-  /**
-   * Decodes JSON string and modifies its own instance variables accordingly.
-   *
-   * @param {String} JSON string representation of an instance.
-   */
-  VisibilityController.prototype.fromJSON = function(json) {
-    var json = JSON.parse(json);
-    this.$select.val(json.category);
-    this.$select.trigger('chosen:updated');
-
-    // fetch and set the slickgrid-formatted data
-    var k = this.getActiveDecompViewKey();
-      var data = this.decompViewDict[k].setCategory(json.visible, VisibilityController.setPlottableAttributes, json.category);
-    this.setSlickGridDataset(data);
-  }
-
-
-  /**
    * Helper function to set the visibility of plottable
    *
    * @param {scope} object, the scope where the plottables exist
@@ -139,7 +99,7 @@ define([
    * @param {group} array of objects, list of object that should be changed in
    * scope
    */
-  VisibilityController.setPlottableAttributes = function(scope, visible, group){
+  VisibilityController.prototype.setPlottableAttributes = function(scope, visible, group){
     var idx;
 
     _.each(group, function(element) {
