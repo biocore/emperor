@@ -310,7 +310,6 @@ define([
           callback: function(key, opts) {
             scope.screenshot();
           }
-
         }
       }
     });
