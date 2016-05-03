@@ -422,7 +422,7 @@ define([
     this.$select.val(json.category);
     this.$select.trigger('chosen:updated');
 
-    // fetch and set the slickgrid-formatted data
+    // fetch and set the SlickGrid-formatted data
     var k = this.getActiveDecompViewKey();
     var data = this.decompViewDict[k].setCategory(json.data, this.setPlottableAttributes, json.category);
     this.setSlickGridDataset(data);

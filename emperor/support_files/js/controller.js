@@ -372,7 +372,7 @@ define([
     saveAs(blob, "emperor-settings.json");
    };
 
-   /**
+  /**
    *
    * Load a settings file and set all controller variables
    *

@@ -105,16 +105,27 @@ requirejs([
       equal(this.dv.markers[idx+1].visible, true);
       VisibilityController.prototype.setPlottableAttributes(this.dv, true, plottables);
       equal(this.dv.markers[idx].visible, true);
-      equal(this.dv.markers[idx].visible, true);
+      equal(this.dv.markers[idx+1].visible, true);
     });
 
     test("Testing toJSON", function() {
       var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
-      var controller = new VisibilityController(container, this.sharedDecompositionViewDict);
+      var controller = new VisibilityController(container, this.sharedDecompositionViewDict)
 
       var obs = controller.toJSON();
       var exp = {category: 'SampleID', data: {'PC.636': true, 'PC.635': true}};
       deepEqual(obs, exp);
+    });
+
+    test("Testing fromJSON", function() {
+      var json = {category: 'SampleID', data: {'PC.636': false, 'PC.635': true}};
+      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var controller = new VisibilityController(container, this.sharedDecompositionViewDict);
+      controller.fromJSON(json);
+
+      var idx = 0;
+      equal(controller.decompViewDict.scatter.markers[idx].visible, false);
+      equal(controller.decompViewDict.scatter.markers[idx+1].visible, true);
     });
 
   });
