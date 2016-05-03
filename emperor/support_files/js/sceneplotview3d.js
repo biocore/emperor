@@ -70,7 +70,7 @@ define([
 
     // Set up the camera
     this.camera = new THREE.PerspectiveCamera(35, width/height,
-        .0001, 10000);
+        0.0001, 10000);
     this.camera.position.set(0, 0, 6);
 
     //need to initialize the scene
@@ -110,8 +110,9 @@ define([
     // Add callback call when sample is clicked
     $container.on('click', function(event) {
       event.preventDefault();
-      scope.mouse.x = ((event.clientX - scope.renderer.domElement.offsetLeft) / scope.renderer.domElement.width) * 2 - 1;
-      scope.mouse.y = -((event.clientY - scope.renderer.domElement.offsetTop) / scope.renderer.domElement.height) * 2 + 1;
+      var element = scope.renderer.domElement;
+      scope.mouse.x = ((event.clientX - element.offsetLeft) / element.width) * 2 - 1;
+      scope.mouse.y = -((event.clientY - element.offsetTop) / element.height) * 2 + 1;
 
 
       scope.raycaster.setFromCamera(scope.mouse, scope.camera);
