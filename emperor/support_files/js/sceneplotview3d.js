@@ -107,22 +107,64 @@ define([
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
 
-    // Add callback call when sample is clicked
-    $container.on('click', function(event) {
+    //initialize subscribers for event callbacks
+    this.EVENTS = ['click'];
+    var subscribers = {};
+    for (var i = 0; i < this.EVENTS.length; i++) {
+      subscribers[this.EVENTS[i]] = [];
+    }
+
+    //create helper function for callbacks
+    var eventCallback = function(eventType, event) {
       event.preventDefault();
+      //dont do anything if no subscribers
+      if (subscribers[eventType].length === 0) {
+        return;
+      }
+
       var element = scope.renderer.domElement;
       scope.mouse.x = ((event.clientX - element.offsetLeft) / element.width) * 2 - 1;
       scope.mouse.y = -((event.clientY - element.offsetTop) / element.height) * 2 + 1;
-
 
       scope.raycaster.setFromCamera(scope.mouse, scope.camera);
       var intersects = scope.raycaster.intersectObjects(scope.decViews.scatter.markers);
       // Get first intersected item and call callback with it.
       if (intersects.length > 0) {
         var intersect = intersects[0].object;
-        scope.callback(intersect.name, intersect);
+        for (var i = 0; i < subscribers[eventType].length; i++) {
+          subscribers[eventType][i](intersect.name, intersect);
+        }
       }
-  });
+    };
+
+    // Add callback call when sample is clicked
+    $container.on('click', function(event) {
+      eventCallback('click', event);
+    });
+
+    // Create privileged function to add subscribers
+    // handler must be a function taking the object name and THREE.js object for
+    // the clicked point
+    // E.X.     function (name, object) { ... }
+    this.on = function(eventType, handler) {
+      if (this.EVENTS.indexOf(eventType) === -1) {
+        console.log('Unknown event ' + eventType + '. Available events are ' + this.EVENTS);
+        return;
+      }
+      subscribers[eventType].push(handler);
+    };
+
+    // Create privileged function to remove subscribers
+    this.off = function(eventType, handler) {
+      if (this.EVENTS.indexOf(eventType) === -1) {
+        console.log('Unknown event ' + eventType + '. Available events are ' + this.EVENTS);
+        return;
+      }
+      var pos = subscribers[eventType].find(handler);
+      if (pos !== -1) {
+        subscribers[eventType].splice(pos, 1);
+      }
+    };
   };
 
   /**
@@ -342,3 +384,5 @@ define([
 
   return ScenePlotView3D;
 });
+
+
