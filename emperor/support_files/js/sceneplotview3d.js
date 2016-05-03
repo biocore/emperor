@@ -103,8 +103,8 @@ define([
     this.drawAxesWithColor(0xFFFFFF);
     this.drawAxesLabelsWithColor(0xFFFFFF);
 
-    this.raycaster = new THREE.Raycaster();
-    this.mouse = new THREE.Vector2();
+    var raycaster = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
 
     //initialize subscribers for event callbacks
     this.EVENTS = ['click'];
@@ -122,11 +122,11 @@ define([
       }
 
       var element = scope.renderer.domElement;
-      scope.mouse.x = ((event.clientX - element.offsetLeft) / element.width) * 2 - 1;
-      scope.mouse.y = -((event.clientY - element.offsetTop) / element.height) * 2 + 1;
+      mouse.x = ((event.clientX - element.offsetLeft) / element.width) * 2 - 1;
+      mouse.y = -((event.clientY - element.offsetTop) / element.height) * 2 + 1;
 
-      scope.raycaster.setFromCamera(scope.mouse, scope.camera);
-      var intersects = scope.raycaster.intersectObjects(scope.decViews.scatter.markers);
+      raycaster.setFromCamera(mouse, scope.camera);
+      var intersects = raycaster.intersectObjects(scope.decViews.scatter.markers);
       // Get first intersected item and call callback with it.
       if (intersects.length > 0) {
         var intersect = intersects[0].object;
