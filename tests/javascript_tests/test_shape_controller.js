@@ -36,10 +36,6 @@ requirejs([
         decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
             metadata);
         var dv = new DecompositionView(decomp);
-        // Add shapes to the initial markers
-        for (i = 0; i < dv.markers.lengthl; i++) {
-          dv.markers[i].shape = 'sphere';
-        }
         this.sharedDecompositionViewDict.scatter = dv;
 
         name = "biplot";

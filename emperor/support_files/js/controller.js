@@ -264,17 +264,15 @@ define([
       trigger: 'none',
       items: {
         'saveState': {
-          name: 'Save Emperor setup',
+          name: 'Save current settings',
           icon: 'edit',
-          callback: function(key, opts) {
-            scope.saveConfig();
-          }
+          callback: scope.saveConfig
         },
         'loadState': {
-          name: 'Load Emperor setup',
-          icon: 'load',
+          name: 'Load saved settings',
+          icon: 'paste',
           callback: function(key, opts) {
-            var file = $('<input id="myInput" type="file">');
+            var file = $('<input type="file">');
             file.on('change', function(evt) {
               var f = evt.target.files[0];
               // With help from
@@ -282,11 +280,10 @@ define([
               var r = new FileReader();
               r.onload = function(e) {
                 scope.loadConfig(JSON.parse(e.target.result));
-              }
+              };
               r.readAsText(f);
             });
             file.click();
-
           }
         },
         "sep1": "---------",
@@ -331,31 +328,30 @@ define([
 
   /**
    *
-   * Write save file for the current controller settings
+   * Write settings file for the current controller settings
    *
    **/
    EmperorController.prototype.saveConfig = function() {
     var saveinfo = {};
     // Assuming single sceneview for now
     sceneview = this.sceneViews[0];
-    saveinfo.cameraPos = sceneview.camera.position;
-    saveinfo.cameraQuat = sceneview.camera.quaternion;
-    //Save settings for each controller in the view
+    saveinfo.cameraPosition = sceneview.camera.position;
+    saveinfo.cameraQuaternion = sceneview.camera.quaternion;
+    // Save settings for each controller in the view
      _.each(this.controllers, function(controller, index) {
-      if (controller === undefined) {
-        return;
+      if (controller !== undefined) {
+        saveinfo[index] = controller.toJSON();
       }
-      saveinfo[index] = controller.toJSON();
     });
 
-    //save the file
-    var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, "Emperor Settings.txt");
+    // Save the file
+    var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/json;charset=utf-8"});
+    saveAs(blob, "emperor-setting.json");
    };
 
    /**
    *
-   * Load a save file and set all controller variables
+   * Load a settings file and set all controller variables
    *
    * @param {object} [json] Emperor save information
    *
@@ -368,8 +364,8 @@ define([
     //still assuming one sceneview for now
     var sceneview = this.sceneViews[0];
 
-    sceneview.camera.position.set(json.cameraPos.x, json.cameraPos.y, json.cameraPos.z);
-    sceneview.camera.quaternion.set(json.cameraQuat._x, json.cameraQuat._y, json.cameraQuat._z, json.cameraQuat._w);
+    sceneview.camera.position.set(json.cameraPosition.x, json.cameraPosition.y, json.cameraPosition.z);
+    sceneview.camera.quaternion.set(json.cameraQuaternion._x, json.cameraQuaternion._y, json.cameraQuaternion._z, json.cameraQuaternion._w);
 
     //must call updates to reset for camera move
     sceneview.camera.updateProjectionMatrix();
@@ -377,10 +373,9 @@ define([
 
     //load the rest of the controller settings
      _.each(this.controllers, function(controller, index) {
-      if (controller === undefined) {
-        return;
+      if (controller !== undefined) {
+        controller.fromJSON(json[index]);
       }
-      controller.fromJSON(json[index]);
     });
    };
 

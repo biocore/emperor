@@ -79,7 +79,6 @@ define([
   ShapeController.prototype = Object.create(EmperorAttributeABC.prototype);
   ShapeController.prototype.constructor = EmperorAttributeABC;
 
-
     /**
    * Helper function to set the shape of plottable
    *

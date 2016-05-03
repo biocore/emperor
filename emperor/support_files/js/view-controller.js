@@ -155,6 +155,25 @@ define([
   };
 
   /**
+  *
+   * Converts the current instance into a JSON string.
+   *
+   * @return {Object} ready to serialize representation of self.
+   */
+  EmperorViewControllerABC.prototype.toJSON = function() {
+    throw Error('Not implemented');
+  };
+
+  /**
+   * Decodes JSON string and modifies its own instance variables accordingly.
+   *
+   * @param {Object} parsed JSON string representation of an instance.
+   */
+  EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
+    throw Error('Not implemented');
+  };
+
+  /**
    * @name EmperorAttributeABC
    *
    * @class Abstract base class for view controllers that control attributes of
@@ -383,10 +402,9 @@ define([
     var json = {};
     json.category = this.$select.val();
 
-    //get all category settings to save
-    //convert slickGrid list of objects to single object
+    // Convert SlickGrid list of objects to single object
     var gridData = this.bodyGrid.getData();
-    var jsonData = {}
+    var jsonData = {};
     for(var i = 0; i < gridData.length; i++) {
       jsonData[gridData[i].category] = gridData[i].value;
     }
