@@ -275,15 +275,13 @@ define([
    * @param {Object} Parsed JSON string representation of self.
    */
   ColorViewController.prototype.fromJSON = function(json) {
-    // Order here is important First, it  loads the colormap and sets colors
-    // from that. Then the JSON load overwrites what colors are needed. Finally,
-    // the scaled checkbox is set to get the colorbar if needed, which can
-    // override the saved colors.
+    // Order here is important. We want to set all the extra controller
+    // settings before we load from json, as they can override the JSON when set
     this.$colormapSelect.val(json.colormap);
     this.$colormapSelect.trigger('chosen:updated');
-    EmperorAttributeABC.prototype.fromJSON.call(this, json);
     this.$scaled.prop('checked', json.continuous);
     this.$scaled.trigger('change');
+    EmperorAttributeABC.prototype.fromJSON.call(this, json);
   }
 
   /**

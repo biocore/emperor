@@ -102,13 +102,13 @@ requirejs([
       plottables = [{idx:idx}];
       equal(this.dv.markers[idx].geometry.type, 'SphereGeometry');
       equal(this.dv.markers[idx+1].geometry.type, 'SphereGeometry');
-      ShapeController.setPlottableAttributes(this.dv, 'cube', plottables);
+      ShapeController.prototype.setPlottableAttributes(this.dv, 'cube', plottables);
       equal(this.dv.markers[idx].geometry.type, 'BoxGeometry');
       equal(this.dv.markers[idx+1].geometry.type, 'SphereGeometry');
 
       // testing with multiple plottable
       plottables = [{idx:idx}, {idx:idx+1}];
-      ShapeController.setPlottableAttributes(this.dv, 'cylinder', plottables);
+      ShapeController.prototype.setPlottableAttributes(this.dv, 'cylinder', plottables);
       equal(this.dv.markers[idx].geometry.type, 'CylinderGeometry');
       equal(this.dv.markers[idx+1].geometry.type, 'CylinderGeometry');
     });
@@ -117,7 +117,7 @@ requirejs([
       // testing with one plottable
       plottables = [{idx:idx}];
       throws(function() {
-        ShapeController.setPlottableAttributes(this.dv, 'WEIRD', plottables)
+        ShapeController.prototype.setPlottableAttributes(this.dv, 'WEIRD', plottables)
       }, Error, 'Throw error if unknown shape given');
 
     });
@@ -127,12 +127,12 @@ requirejs([
       var controller = new ShapeController(container, this.sharedDecompositionViewDict);
 
       var obs = controller.toJSON();
-      var exp = "{\"category\":\"SampleID\",\"shapes\":{\"PC.636\":\"sphere\",\"PC.635\":\"sphere\"}}";
+      var exp = {category: 'SampleID', data: {'PC.636': 'sphere', 'PC.635': 'sphere'}};
       deepEqual(obs, exp);
     });
 
     test("Testing fromJSON", function() {
-      var json = "{\"category\":\"SampleID\",\"shapes\":{\"PC.636\":\"cube\",\"PC.635\":\"sphere\"}}";
+      var json = {'category': 'SampleID', 'data': {'PC.636': 'cube', 'PC.635': 'sphere'}};
 
       var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
       var controller = new ShapeController(container, this.sharedDecompositionViewDict);

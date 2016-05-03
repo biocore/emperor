@@ -97,13 +97,13 @@ requirejs([
       plottables = [{idx:idx}];
       equal(this.dv.markers[idx].visible, true);
       equal(this.dv.markers[idx+1].visible, true);
-      VisibilityController.setPlottableAttributes(this.dv, false, plottables);
+      VisibilityController.prototype.setPlottableAttributes(this.dv, false, plottables);
 
       // testing with multiple plottable
       plottables = [{idx:idx}, {idx:idx+1}];
       equal(this.dv.markers[idx].visible, false);
       equal(this.dv.markers[idx+1].visible, true);
-      VisibilityController.setPlottableAttributes(this.dv, true, plottables);
+      VisibilityController.prototype.setPlottableAttributes(this.dv, true, plottables);
       equal(this.dv.markers[idx].visible, true);
       equal(this.dv.markers[idx].visible, true);
     });
@@ -113,7 +113,7 @@ requirejs([
       var controller = new VisibilityController(container, this.sharedDecompositionViewDict);
 
       var obs = controller.toJSON();
-      var exp = "{\"category\":\"SampleID\",\"visible\":{\"PC.636\":true,\"PC.635\":true}}";
+      var exp = {category: 'SampleID', data: {'PC.636': true, 'PC.635': true}};
       deepEqual(obs, exp);
     });
 

@@ -194,13 +194,13 @@ requirejs([
       plottables = [{idx:idx}];
       equal(this.dv.markers[idx].material.color.getHexString(), 'ff0000');
       equal(this.dv.markers[idx+1].material.color.getHexString(), 'ff0000');
-      ColorViewController.setPlottableAttributes(this.dv, '#00ff00', plottables);
+      ColorViewController.prototype.setPlottableAttributes(this.dv, '#00ff00', plottables);
       equal(this.dv.markers[idx].material.color.getHexString(), '00ff00');
       equal(this.dv.markers[idx+1].material.color.getHexString(), 'ff0000');
 
       // testing with multiple plottable
       plottables = [{idx:idx}, {idx:idx+1}];
-      ColorViewController.setPlottableAttributes(this.dv, '#000000', plottables);
+      ColorViewController.prototype.setPlottableAttributes(this.dv, '#000000', plottables);
       equal(this.dv.markers[idx].material.color.getHexString(), '000000');
       equal(this.dv.markers[idx+1].material.color.getHexString(), '000000');
     });
@@ -211,22 +211,21 @@ requirejs([
       // Change color on one point
       var idx = 0;
       plottables = [{idx:idx}];
-      ColorViewController.setPlottableAttributes(this.dv, '#00ff00', plottables);
+      ColorViewController.prototype.setPlottableAttributes(this.dv, '#00ff00', plottables);
 
       var obs = controller.toJSON();
       var exp = {category: 'SampleID', colormap: 'discrete-coloring-qiime',
-                 continuous: false, colors: {'PC.636': '#ff0000', 'PC.635': '#0000ff'}};
+                 continuous: false, data: {'PC.636': '#ff0000', 'PC.635': '#0000ff'}};
       deepEqual(obs, exp);
     });
 
     test("Testing fromJSON", function() {
       var json = {category: 'DOB', colormap: 'discrete-coloring-qiime',
-                  continuous: 'false', colors: {20070314: '#ff0000', 20071112: '#0000ff'}};
+                  continuous: false, data: {20070314: '#ff0000', 20071112: '#0000ff'}};
 
       var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(container, this.sharedDecompositionViewDict);
 
-      var obs = controller.toJSON();
       controller.fromJSON(json);
       var idx = 0;
       equal(controller.decompViewDict.scatter.markers[idx].material.color.getHexString(), 'ff0000');

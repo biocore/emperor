@@ -266,7 +266,9 @@ define([
         'saveState': {
           name: 'Save current settings',
           icon: 'edit',
-          callback: scope.saveConfig
+          callback: function(key, opts) {
+            scope.saveConfig();
+          }
         },
         'loadState': {
           name: 'Load saved settings',
@@ -346,7 +348,7 @@ define([
 
     // Save the file
     var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/json;charset=utf-8"});
-    saveAs(blob, "emperor-setting.json");
+    saveAs(blob, "emperor-settings.json");
    };
 
    /**
