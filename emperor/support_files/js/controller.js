@@ -347,6 +347,12 @@ define([
    *
    * Write settings file for the current controller settings
    *
+   * The format is as follows: a javascript object with the camera position
+   * stored in the 'cameraPosition' key and the quaternion in the
+   * 'cameraQuaternion' key. Each controller in this.controllers is then saved
+   * by calling toJSON on them, and the resulting object saved under the same
+   * key as the controllers object.
+   *
    **/
    EmperorController.prototype.saveConfig = function() {
     var saveinfo = {};
