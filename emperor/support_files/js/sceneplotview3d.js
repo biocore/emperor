@@ -50,10 +50,8 @@ define([
    *
    **/
   ScenePlotView3D = function(renderer, decViews, container, xView, yView,
-                             width, height, callback){
+                             width, height){
     var scope = this;
-    // Make setting a callback optional
-    this.callback = callback || function(name, item) {};
 
     // convert to jquery object for consistency with the rest of the objects
     var $container = $(container);
