@@ -50,7 +50,10 @@ define([
    *
    **/
   ScenePlotView3D = function(renderer, decViews, container, xView, yView,
-                             width, height){
+                             width, height, callback){
+    var scope = this;
+    // Make setting a callback optional
+    this.callback = callback || function(name, item) {};
 
     // convert to jquery object for consistency with the rest of the objects
     var $container = $(container);
@@ -67,7 +70,7 @@ define([
 
     // Set up the camera
     this.camera = new THREE.PerspectiveCamera(35, width/height,
-        0.0000001, 10000);
+        0.0001, 10000);
     this.camera.position.set(0, 0, 6);
 
     //need to initialize the scene
@@ -100,6 +103,26 @@ define([
     this.dimensionRanges = {'max': [], 'min': []};
     this.drawAxesWithColor(0xFFFFFF);
     this.drawAxesLabelsWithColor(0xFFFFFF);
+
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
+
+    // Add callback call when sample is clicked
+    $container.on('click', function(event) {
+      event.preventDefault();
+      var element = scope.renderer.domElement;
+      scope.mouse.x = ((event.clientX - element.offsetLeft) / element.width) * 2 - 1;
+      scope.mouse.y = -((event.clientY - element.offsetTop) / element.height) * 2 + 1;
+
+
+      scope.raycaster.setFromCamera(scope.mouse, scope.camera);
+      var intersects = scope.raycaster.intersectObjects(scope.decViews.scatter.markers);
+      // Get first intersected item and call callback with it.
+      if (intersects.length > 0) {
+        var intersect = intersects[0].object;
+        scope.callback(intersect.name, intersect);
+      }
+  });
   };
 
   /**
