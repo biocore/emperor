@@ -275,7 +275,7 @@ define([
           icon: 'paste',
           callback: function(key, opts) {
             if (!FileReader) {
-              alert("Your browser does not support file loading. Please upgrade your browser.");
+              alert("Your browser does not support file loading. We recommend using Google Chrome for full functionality.");
               return;
             }
             var file = $('<input type="file">');
@@ -287,14 +287,14 @@ define([
               r.onload = function(e) {
                 try {
                   var json = JSON.parse(e.target.result);
-                } catch (e) {
+                } catch (err) {
                   alert("File given is not a JSON parsable file.");
                   return;
                 }
                 try {
-                  scope.loadConfig(json)
-                } catch (e) {
-                  alert("Error loading settings from file: " + e.message);
+                  scope.loadConfig(json);
+                } catch (err) {
+                  alert("Error loading settings from file: " + err.message);
                   return;
                 }
               };
@@ -368,7 +368,7 @@ define([
     });
 
     // Save the file
-    var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/json;charset=utf-8"});
+    var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/json"});
     saveAs(blob, "emperor-settings.json");
    };
 

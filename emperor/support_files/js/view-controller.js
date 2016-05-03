@@ -155,7 +155,7 @@ define([
   };
 
   /**
-  *
+   *
    * Converts the current instance into a JSON string.
    *
    * @return {Object} ready to serialize representation of self.
