@@ -53,7 +53,7 @@ define([
                              width, height, callback){
     var scope = this;
     // Make setting a callback optional
-    callback = callback || function(name, item) {};
+    this.callback = callback || function(name, item) {};
 
     // convert to jquery object for consistency with the rest of the objects
     var $container = $(container);
@@ -116,13 +116,10 @@ define([
 
       scope.raycaster.setFromCamera(scope.mouse, scope.camera);
       var intersects = scope.raycaster.intersectObjects(scope.decViews.scatter.markers);
-      console.log(scope.raycaster);
-      console.log(intersects);
       // Get first intersected item and call callback with it.
       if (intersects.length > 0) {
         var intersect = intersects[0].object;
-        callback(intersect.name, intersect);
-        intersect.material.color = new THREE.Color('#ff0000');
+        scope.callback(intersect.name, intersect);
       }
   });
   };
