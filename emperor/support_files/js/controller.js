@@ -274,6 +274,10 @@ define([
           name: 'Load saved settings',
           icon: 'paste',
           callback: function(key, opts) {
+            if (!FileReader) {
+              alert("Your browser does not support file loading. Please upgrade your browser.");
+              return;
+            }
             var file = $('<input type="file">');
             file.on('change', function(evt) {
               var f = evt.target.files[0];
@@ -281,7 +285,18 @@ define([
               // http://www.htmlgoodies.com/beyond/javascript/read-text-files-using-the-javascript-filereader.html
               var r = new FileReader();
               r.onload = function(e) {
-                scope.loadConfig(JSON.parse(e.target.result));
+                try {
+                  var json = JSON.parse(e.target.result);
+                } catch (e) {
+                  alert("File given is not a JSON parsable file.");
+                  return;
+                }
+                try {
+                  scope.loadConfig(json)
+                } catch (e) {
+                  alert("Error loading settings from file: " + e.message);
+                  return;
+                }
               };
               r.readAsText(f);
             });
@@ -359,10 +374,6 @@ define([
    *
    **/
    EmperorController.prototype.loadConfig = function(json) {
-    if (!FileReader) {
-      alert("Your browser does not support file loading. Please upgrade your browser.");
-      return;
-    }
     //still assuming one sceneview for now
     var sceneview = this.sceneViews[0];
 
