@@ -47,6 +47,7 @@ define([
    * element.
    * @param {width} a float with the width of the renderer
    * @param {height} a float with the height of the renderer
+   * @param {EVENTS} array of events allowed for on addition. DO NOT EDIT.
    *
    **/
   ScenePlotView3D = function(renderer, decViews, container, xView, yView,
