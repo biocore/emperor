@@ -252,22 +252,5 @@ requirejs([
       // SVGRenderer class. Would be great if we find a way around this problem.
       assert.ok(true);
     });
-
-    test('Test clickCallback', function() {
-      // We will use SVGRenderer here and in the other tests as we cannot use
-      // WebGLRenderer and test with phantom.js
-      var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
-      spv.callback = function(n, o) {alert(n); };
-
-
-
-      event = {preventDefault: function() {}, clientX: 0, clientY: 0};
-      spv.clickCallback(event);
-      window.onAlert = function(alertText) {
-        equal(alertText, '1');
-      }
-    });
   });
 });
