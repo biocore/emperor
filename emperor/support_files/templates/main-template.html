@@ -79,7 +79,7 @@ function($, model, EmperorController) {
 
   var ids = {{ coords_ids }};
   var coords = {{ coords }};
-  var pct_var = {{ pct_var }};
+  var pct_var = {{ pct_var | map('float') | list }};
   var md_headers = {{ md_headers}};
   var metadata = {{  metadata }};
 
