@@ -193,6 +193,7 @@ define([
    * continuous).
    */
   ColorViewController.getColorList = function(values, map, discrete, scaled) {
+    var scope = this;
     var colors = {}, numColors = values.length - 1, counter = 0;
     var interpolator, min, max;
     var scaled = scaled || false;
@@ -212,8 +213,13 @@ define([
       map = chroma.brewer[map];
       interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
       if (scaled === true) {
-        // Assuming we have numeric since scaled called
-        var numericValues = _.map(values, Number);
+        // Get list of only numeric values, error if none
+        var numericValues = values.filter(function(v) { return !isNaN(v)});
+        if (numericValues.length < 2) {
+          alert('less than 2 numeric values found, can not create scale for category!');
+          throw new Error('non-numeric category');
+        }
+        numericValues = _.map(numericValues, Number);
         min = _.min(numericValues);
         max = _.max(numericValues);
         interpolator = chroma.scale(map).domain([min, max]);
@@ -226,7 +232,13 @@ define([
         colors[values[index]] = ColorViewController.getDiscreteColor(index, map);
       }
       else if (scaled === true) {
-        colors[values[index]] = interpolator(Number(values[index])).hex();
+        var val = Number(values[index]);
+        if (!isNaN(val)) {
+          colors[values[index]] = interpolator(val).hex();
+        } else {
+          //Gray out non-numeric values
+          colors[values[index]] = '#64655d';
+        }
       } else {
         colors[values[index]] = interpolator(counter / numColors).hex();
         counter = counter + 1;
@@ -235,8 +247,6 @@ define([
 
     // if scaled, generate the scale and add to div.
     if (scaled) {
-      var min = _.min(numericValues);
-      var max = _.max(numericValues);
       var mid = (min + max) / 2;
       step = (max - min) / 100;
       var stopColors = [];

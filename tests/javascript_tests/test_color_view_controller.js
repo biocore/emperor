@@ -126,7 +126,7 @@ requirejs([
 
     test("Test ColorViewController.getColorList exceptions", function(){
       var five;
-      five = [0, 1, 2, 3, 4];
+      five = ['0', 'string1', 'string2', 'string3', 'string4'];
 
       throws(
           function (){
@@ -134,6 +134,14 @@ requirejs([
           },
           Error,
           'An error is raised if the colormap does not exist'
+          );
+
+      throws(
+          function (){
+            var color = ColorViewController.getColorList(five, 'Blues', false, true);
+          },
+          Error,
+          'An error is raised if there are less than 2 numeric values when scaled'
           );
     });
 
@@ -177,14 +185,14 @@ requirejs([
     test("Test ColorViewController.getColorList exceptions", function(){
       var five;
       five = [0, 1, 2, 3, 4];
-
+      onAlert(
       throws(
           function (){
             var colors = ColorViewController.getColorList(five, false, 'Non-existant');
           },
           Error,
           'An error is raised if the colormap does not exist'
-          );
+          ));
 
     });
 
