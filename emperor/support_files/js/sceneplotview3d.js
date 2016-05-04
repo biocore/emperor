@@ -107,7 +107,7 @@ define([
     var mouse = new THREE.Vector2();
 
     //initialize subscribers for event callbacks
-    this.EVENTS = ['click'];
+    this.EVENTS = ['click', 'dblclick'];
     var subscribers = {};
     for (var i = 0; i < this.EVENTS.length; i++) {
       subscribers[this.EVENTS[i]] = [];
@@ -137,8 +137,24 @@ define([
     };
 
     // Add callback call when sample is clicked
-    $container.on('click', function(event) {
-      eventCallback('click', event);
+    // double and single click together from http://stackoverflow.com/a/7845282
+    var DELAY = 200, clicks = 0, timer = null;
+    $container.on("click", function(event) {
+        clicks++;
+        if (clicks === 1) {
+            timer = setTimeout(function() {
+                eventCallback('click', event);
+                clicks = 0;
+            }, DELAY);
+
+        } else {
+            clearTimeout(timer);
+            eventCallback('dblclick', event);
+            clicks = 0;
+        }
+    })
+    .on("dblclick", function(event) {
+        event.preventDefault();  //cancel system double-click event
     });
 
     // Create privileged function to add subscribers
