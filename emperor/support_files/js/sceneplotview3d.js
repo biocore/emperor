@@ -131,7 +131,13 @@ define([
       if (intersects.length > 0) {
         var intersect = intersects[0].object;
         for (var i = 0; i < subscribers[eventType].length; i++) {
-          subscribers[eventType][i](intersect.name, intersect);
+          // keep going if one of the callbacks fails
+          try {
+            subscribers[eventType][i](intersect.name, intersect);
+          } catch (e) {
+            console.log(e);
+            continue;
+          }
         }
       }
     };
