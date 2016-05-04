@@ -99,7 +99,7 @@ define([
           var val = args.item.category, color = args.item.value;
           var group = args.item.plottables;
           var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
-          ColorViewController.setPlottableAttributes(element, color, group);
+          scope.setPlottableAttributes(element, color, group);
         },
       'categorySelectionCallback':
         function(evt, params) {
@@ -129,7 +129,7 @@ define([
           var colorInfo = ColorViewController.getColorList(uniqueVals, colorScheme, discrete, scaled);
           var attributes = colorInfo[0];
           // fetch the slickgrid-formatted data
-          var data = decompViewDict.setCategory(attributes, ColorViewController.setPlottableAttributes, category);
+          var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
 
           if (scaled) {
             scope.setSlickGridDataset({});
@@ -258,6 +258,33 @@ define([
   };
 
   /**
+   * Converts the current instance into a JSON string.
+   *
+   * @return {Object} JSON ready representation of self.
+   */
+  ColorViewController.prototype.toJSON = function() {
+    var json = EmperorAttributeABC.prototype.toJSON.call(this);
+    json.colormap = this.$colormapSelect.val();
+    json.continuous = this.$scaled.is(':checked');
+    return json;
+  }
+
+  /**
+   * Decodes JSON string and modifies its own instance variables accordingly.
+   *
+   * @param {Object} Parsed JSON string representation of self.
+   */
+  ColorViewController.prototype.fromJSON = function(json) {
+    // Order here is important. We want to set all the extra controller
+    // settings before we load from json, as they can override the JSON when set
+    this.$colormapSelect.val(json.colormap);
+    this.$colormapSelect.trigger('chosen:updated');
+    this.$scaled.prop('checked', json.continuous);
+    this.$scaled.trigger('change');
+    EmperorAttributeABC.prototype.fromJSON.call(this, json);
+  }
+
+  /**
    *
    * Retrieve a discrete color.
    *
@@ -297,7 +324,7 @@ define([
    * @param {group} array of objects, list of object that should be changed in
    * scope
    */
-  ColorViewController.setPlottableAttributes = function(scope, color, group){
+  ColorViewController.prototype.setPlottableAttributes = function(scope, color, group){
     var idx;
 
     _.each(group, function(element) {

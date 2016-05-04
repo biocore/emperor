@@ -20,6 +20,8 @@ requirejs.config({
   /* other libraries */
   'underscore': '{{ base_url }}/vendor/js/underscore-min',
   'chroma': '{{ base_url }}/vendor/js/chroma.min',
+  'filesaver': '{{ base_url }}/vendor/js/FileSaver.min',
+  'blob': '{{ base_url }}/vendor/js/Blob',
 
 
   /* THREE.js and plugins */
@@ -61,6 +63,9 @@ requirejs.config({
   'contextmenu' : {
     'deps': ['jquery', 'jqueryui', 'position']
   },
+  'filesaver' : {
+    'deps': ['blob']
+  },
   'orbitcontrols': {
     'deps': ['three']
   },
@@ -79,7 +84,7 @@ function($, model, EmperorController) {
 
   var ids = {{ coords_ids }};
   var coords = {{ coords }};
-  var pct_var = {{ pct_var }};
+  var pct_var = {{ pct_var | map('float') | list }};
   var md_headers = {{ md_headers}};
   var metadata = {{  metadata }};
 

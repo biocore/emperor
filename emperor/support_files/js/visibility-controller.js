@@ -57,7 +57,7 @@ define([
       var visible = args.item.value;
       var group = args.item.plottables;
       var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
-      VisibilityController.setPlottableAttributes(element, visible, group);
+      scope.setPlottableAttributes(element, visible, group);
     },
       'categorySelectionCallback':function(evt, params) {
         var category = scope.$select.val();
@@ -73,7 +73,7 @@ define([
           attributes[value] = true;
         });
         // fetch the slickgrid-formatted data
-        var data = decompViewDict.setCategory(attributes, VisibilityController.setPlottableAttributes, category);
+        var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
 
         scope.setSlickGridDataset(data);
       },
@@ -91,7 +91,6 @@ define([
   VisibilityController.prototype = Object.create(EmperorAttributeABC.prototype);
   VisibilityController.prototype.constructor = EmperorAttributeABC;
 
-
   /**
    * Helper function to set the visibility of plottable
    *
@@ -100,7 +99,7 @@ define([
    * @param {group} array of objects, list of object that should be changed in
    * scope
    */
-  VisibilityController.setPlottableAttributes = function(scope, visible, group){
+  VisibilityController.prototype.setPlottableAttributes = function(scope, visible, group){
     var idx;
 
     _.each(group, function(element) {
