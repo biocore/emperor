@@ -33,7 +33,7 @@ requirejs([
         var decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
             metadata);
         var dv = new DecompositionView(decomp);
-        this.sharedDecompositionViewDict.pcoa = dv;
+        this.sharedDecompositionViewDict.scatter = dv;
 
         name = "biplot";
         ids = ['tax_1', 'tax_2'];
@@ -97,15 +97,35 @@ requirejs([
       plottables = [{idx:idx}];
       equal(this.dv.markers[idx].visible, true);
       equal(this.dv.markers[idx+1].visible, true);
-      VisibilityController.setPlottableAttributes(this.dv, false, plottables);
+      VisibilityController.prototype.setPlottableAttributes(this.dv, false, plottables);
 
       // testing with multiple plottable
       plottables = [{idx:idx}, {idx:idx+1}];
       equal(this.dv.markers[idx].visible, false);
       equal(this.dv.markers[idx+1].visible, true);
-      VisibilityController.setPlottableAttributes(this.dv, true, plottables);
+      VisibilityController.prototype.setPlottableAttributes(this.dv, true, plottables);
       equal(this.dv.markers[idx].visible, true);
-      equal(this.dv.markers[idx].visible, true);
+      equal(this.dv.markers[idx+1].visible, true);
+    });
+
+    test("Testing toJSON", function() {
+      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var controller = new VisibilityController(container, this.sharedDecompositionViewDict)
+
+      var obs = controller.toJSON();
+      var exp = {category: 'SampleID', data: {'PC.636': true, 'PC.635': true}};
+      deepEqual(obs, exp);
+    });
+
+    test("Testing fromJSON", function() {
+      var json = {category: 'SampleID', data: {'PC.636': false, 'PC.635': true}};
+      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var controller = new VisibilityController(container, this.sharedDecompositionViewDict);
+      controller.fromJSON(json);
+
+      var idx = 0;
+      equal(controller.decompViewDict.scatter.markers[idx].visible, false);
+      equal(controller.decompViewDict.scatter.markers[idx+1].visible, true);
     });
 
   });

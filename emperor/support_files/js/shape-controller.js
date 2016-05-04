@@ -41,7 +41,7 @@ define([
         var val = args.item.category, shape = args.item.value;
         var group = args.item.plottables;
         var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
-        ShapeController.setPlottableAttributes(element, shape, group);
+        scope.setPlottableAttributes(element, shape, group);
       },
       'categorySelectionCallback': function(evt, params) {
         var category = scope.$select.val();
@@ -58,7 +58,7 @@ define([
           attributes[uniqueVals[index]] = 'sphere';
         }
         // fetch the slickgrid-formatted data
-        var data = decompViewDict.setCategory(attributes, ShapeController.setPlottableAttributes, category);
+        var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
 
         scope.setSlickGridDataset(data);
       },
@@ -88,7 +88,7 @@ define([
    * @param {group} array of objects, list of object that should be changed in
    * scope
    */
-  ShapeController.setPlottableAttributes = function(scope, shape, group) {
+  ShapeController.prototype.setPlottableAttributes = function(scope, shape, group) {
     var idx;
     var geometry = shapes.shapes[shape];
     if (geometry === undefined) {
