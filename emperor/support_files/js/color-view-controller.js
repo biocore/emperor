@@ -132,8 +132,18 @@ define([
           var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
 
           if (scaled) {
-            scope.setSlickGridDataset({});
-            scope.$gridDiv.hide();
+            //build plottables as all non-numerics
+            var nonNumeric = uniqueVals.filter(function(v) { return isNaN(v)});
+            var plotList = data.filter(function(x) {
+              return $.inArray(x.category, nonNumeric) !== -1;
+            });
+            var plottables = [];
+            for (var i = 0; i < plotList.length; i++) {
+              plottables = plottables.concat(plotList[i].plottables);
+            }
+            // Set SlickGrid for color of non-numeric values and show color bar for rest
+            scope.setSlickGridDataset([{category: 'Non-numeric values', value:'#64655d', plottables: plottables}]);
+            scope.$gridDiv.css('height', '30px');
             scope.$scaleDiv.show();
             scope.$colorScale.show();
             scope.$colorScale.html(colorInfo[1]);
@@ -141,7 +151,7 @@ define([
             scope.setSlickGridDataset(data);
             scope.$scaleDiv.hide();
             scope.$colorScale.hide();
-            scope.$gridDiv.show();
+            scope.$gridDiv.css('height', '100%');
           }
         },
       'slickGridColumn': {
@@ -176,7 +186,8 @@ define([
 
   /**
    *
-   * Generate a list of colors that corresponds to all the samples in the plot
+   * Wrapper for generating a list of colors that corresponds to all samples
+   * in the plot by coloring type requested
    *
    * @param {values} list of objects to generate a color for, usually a
    * category in a given metadata column.
@@ -194,78 +205,151 @@ define([
    */
   ColorViewController.getColorList = function(values, map, discrete, scaled) {
     var scope = this;
-    var colors = {}, numColors = values.length - 1, counter = 0;
-    var interpolator, min, max;
+    var colors, gradientSVG;
     var scaled = scaled || false;
 
     if (_.findWhere(ColorViewController.Colormaps, {id: map}) === undefined){
       throw new Error("Could not find " + map + " as a colormap.");
     }
 
-    // 1 color and continuous coloring should return the first element of the
-    // map
-    if (numColors === 0 && discrete === false) {
+    // 1 color and continuous coloring should return the first element in map
+    if (values.length == 1 && discrete === false) {
       colors[values[0]] = chroma.brewer[map][0];
       return [colors, gradientSVG];
     }
 
-    if (discrete === false) {
-      map = chroma.brewer[map];
-      interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
-      if (scaled === true) {
-        // Get list of only numeric values, error if none
-        var numericValues = values.filter(function(v) { return !isNaN(v)});
-        if (numericValues.length < 2) {
-          alert('less than 2 numeric values found, can not create scale for category!');
-          throw new Error('non-numeric category');
-        }
-        numericValues = _.map(numericValues, Number);
-        min = _.min(numericValues);
-        max = _.max(numericValues);
-        interpolator = chroma.scale(map).domain([min, max]);
-      }
+    //Call helper function to create the required colormap type
+    if (discrete) {
+      colors = ColorViewController.getDiscreteColors(values, map);
+    } else if (scaled) {
+      var info = ColorViewController.getScaledColors(values, map);
+      colors = info[0];
+      gradientSVG = info[1];
+    } else {
+      colors = ColorViewController.getInterpolatedColors(values, map)
     }
-
-    for (var index in values) {
-      if (discrete) {
-        // get the next available color
-        colors[values[index]] = ColorViewController.getDiscreteColor(index, map);
-      }
-      else if (scaled === true) {
-        var val = Number(values[index]);
-        if (!isNaN(val)) {
-          colors[values[index]] = interpolator(val).hex();
-        } else {
-          //Gray out non-numeric values
-          colors[values[index]] = '#64655d';
-        }
-      } else {
-        colors[values[index]] = interpolator(counter / numColors).hex();
-        counter = counter + 1;
-      }
-    }
-
-    // if scaled, generate the scale and add to div.
-    if (scaled) {
-      var mid = (min + max) / 2;
-      step = (max - min) / 100;
-      var stopColors = [];
-      for (var s = min; s <= max; s += step) {
-        stopColors.push(interpolator(s).hex());
-      }
-
-      var gradientSVG = '<defs><linearGradient id="Gradient" x1="0" x2="1" y1="1" y2="1">';
-      for (pos in stopColors) {
-        gradientSVG += '<stop offset="' + pos + '%" stop-color="' + stopColors[pos] + '"/>';
-      }
-      gradientSVG += '</defs><rect id="gradientRect" width="100%" height="20" fill="url(#Gradient)"/>';
-      gradientSVG += '<text x="0%" y="38" font-family="sans-serif" font-size="12px">' + min + '</text>';
-      gradientSVG += '<text x="50%" y="38" font-family="sans-serif" font-size="12px" text-anchor="middle">' + mid + '</text>';
-      gradientSVG += '<text x="100%" y="38" font-family="sans-serif" font-size="12px" text-anchor="end">' + max + '</text>';
-    }
-
     return [colors, gradientSVG];
   };
+
+  /**
+   *
+   * Retrieve a discrete color.
+   *
+   * @param {values} list of objects to generate a color for, usually a
+   * category in a given metadata column.
+   * @param {map} string, name of the discrete color map to use.
+   *
+   * This function will generate a list of coloring values depending on the
+   * coloring scheme that the system is currently using (discrete or
+   * continuous).
+   *
+   * Defaults to use qiime discrete colors if there's no map passed in.
+   *
+   */
+  ColorViewController.getDiscreteColors = function(values, map) {
+    var map = map || 'discrete-coloring-qiime';
+
+    if (map == 'discrete-coloring-qiime') {
+      map = ColorViewController._qiimeDiscrete;
+    } else {
+      map = chroma.brewer[map];
+    }
+    var size = map.length;
+    var colors = {};
+    for (var i = 0; i < values.length; i++) {
+        mapIndex = i - (Math.floor(i / size) * size);
+        colors[values[i]] = map[mapIndex];
+    }
+    return colors;
+  };
+
+  /**
+   *
+   * Retrieve a scaled color set with scale bar.
+   *
+   * @param {values} list of objects to generate a color for, usually a
+   * category in a given metadata column.
+   * @param {map} string, name of the discrete color map to use.
+   *
+   * This function will generate a list of coloring values depending on the
+   * coloring scheme that the system is currently using (discrete or
+   * continuous).
+   *
+   * Defaults to use viridis colormap if there's no map passed in.
+   *
+   */
+  ColorViewController.getScaledColors = function(values, map, nanColor) {
+    var map = map || 'viridis';
+    var nanColor = nanColor || '#64655d';
+    map = chroma.brewer[map];
+
+    // Get list of only numeric values, error if none
+    var numericValues = values.filter(function(v) { return !isNaN(v)});
+    if (numericValues.length < 2) {
+      alert('less than 2 numeric values found, can not create scale for category!');
+      throw new Error('non-numeric category');
+    }
+    numericValues = _.map(numericValues, Number);
+    min = _.min(numericValues);
+    max = _.max(numericValues);
+    interpolator = chroma.scale(map).domain([min, max]);
+    var colors = {};
+    for (var i = 0; i < values.length; i++) {
+      var val = Number(values[i]);
+      if (!isNaN(val)) {
+        colors[values[i]] = interpolator(val).hex();
+      } else {
+        //Gray out non-numeric values
+        colors[values[i]] = nanColor;
+      }
+    }
+    //build the SVG showing the gradient of colors for values
+    var mid = (min + max) / 2;
+    var step = (max - min) / 100;
+    var stopColors = [];
+    for (var s = min; s <= max; s += step) {
+      stopColors.push(interpolator(s).hex());
+    }
+    var gradientSVG = '<defs><linearGradient id="Gradient" x1="0" x2="1" y1="1" y2="1">';
+    for (pos in stopColors) {
+      gradientSVG += '<stop offset="' + pos + '%" stop-color="' + stopColors[pos] + '"/>';
+    }
+    gradientSVG += '</defs><rect id="gradientRect" width="100%" height="20" fill="url(#Gradient)"/>';
+    gradientSVG += '<text x="0%" y="38" font-family="sans-serif" font-size="12px">' + min + '</text>';
+    gradientSVG += '<text x="50%" y="38" font-family="sans-serif" font-size="12px" text-anchor="middle">' + mid + '</text>';
+    gradientSVG += '<text x="100%" y="38" font-family="sans-serif" font-size="12px" text-anchor="end">' + max + '</text>';
+    return [colors, gradientSVG];
+  };
+
+  /**
+   *
+   * Retrieve an interpolatd color set.
+   *
+   * @param {values} list of objects to generate a color for, usually a
+   * category in a given metadata column.
+   * @param {map} string, name of the discrete color map to use.
+   *
+   * This function will generate a list of coloring values depending on the
+   * coloring scheme that the system is currently using (discrete or
+   * continuous).
+   *
+   * Defaults to use viridis colormap if there's no map passed in.
+   *
+   */
+  ColorViewController.getInterpolatedColors = function(values, map) {
+    var map = map || 'viridis';
+    map = chroma.brewer[map];
+
+    var total = values.length;
+    var counter = 0;
+    interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
+    var colors = {};
+    for(var i = 0; i < values.length; i++) {
+      colors[values[i]] = interpolator(counter / total).hex();
+      counter++;
+    }
+    return colors;
+  }
 
   /**
    * Converts the current instance into a JSON string.
@@ -293,37 +377,6 @@ define([
     this.$scaled.trigger('change');
     EmperorAttributeABC.prototype.fromJSON.call(this, json);
   }
-
-  /**
-   *
-   * Retrieve a discrete color.
-   *
-   * @param {index} int, the index of the color to retrieve.
-   * @param {map} string, name of the discrete color map to use.
-   *
-   * @return string representation of the hexadecimal value for a color in the
-   * list the QIIME colors or the ColorBrewer discrete colors. If this value
-   * value is greater than the number of colors available, the function will just
-   * rollover and retrieve the next available color.
-   *
-   * Defaults to use ColorBrewer colors if there's no map passed in.
-   *
-   */
-  ColorViewController.getDiscreteColor = function(index, map){
-    var map = map || 'discrete-coloring-qiime';
-
-    if (map == 'discrete-coloring-qiime') {
-      map = ColorViewController._qiimeDiscrete;
-    } else {
-      map = chroma.brewer[map];
-    }
-    var size = map.length;
-    if(index >= size){
-      index = index - (Math.floor(index/size)*size);
-    }
-
-    return map[index];
-  };
 
   /**
    * Helper function to set the color of plottable
