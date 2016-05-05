@@ -33,7 +33,7 @@ requirejs([
         var decomp = new DecompositionModel(name, ids, coords, pct_var,
             md_headers, metadata);
         var dv = new DecompositionView(decomp);
-        this.sharedDecompositionViewDict.pcoa = dv;
+        this.sharedDecompositionViewDict.scatter = dv;
 
         name = "biplot";
         ids = ['tax_1', 'tax_2'];
