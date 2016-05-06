@@ -253,7 +253,12 @@ requirejs([
       assert.ok(true);
     });
 
-    test('Test off', function(assert){
+    /**
+     *
+     * Test exceptions are correctly raised on unknown events
+     *
+     */
+    test('Test off', function(){
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
           'fooligans', 0, 0, 20, 20);
@@ -262,11 +267,16 @@ requirejs([
       throws(
         function (){
           spv.off('does not exist', function(a, b){ return a;});
-        }, Error, 'An error is raised if the event is unknwon'
+        }, Error, 'An error is raised if the event is unknown'
       );
     });
 
-    test('Test on exceptions', function(assert){
+    /**
+     *
+     * Test exceptions are correctly raised on unknown events
+     *
+     */
+    test('Test on exceptions', function(){
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
           'fooligans', 0, 0, 20, 20);
@@ -275,8 +285,117 @@ requirejs([
       throws(
         function (){
           spv.on('does not exist', function(a, b){ return a;});
-        }, Error, 'An error is raised if the event is unknwon'
+        }, Error, 'An error is raised if the event is unknown'
       );
+    });
+
+    /*
+     *
+     * Testing raycasting-involved methods
+     *
+     * We need to setup a few mock methods and objects, otherwise we can't
+     * quite test the raycasting with the SVGRenderer.
+     *
+     * 1.- Setup a mock event that will be used to calculate the position of
+     * the mouse.
+     *
+     * 2.- Overwrite the intersectObjects method with a new function that
+     * returns a manufactured mock object.
+     *
+     * 3.- Finally, trigger the callback on 'click' and verify that the
+     * received objects are correct.
+     *
+     * Note that if this assertion was never triggered, this test case would
+     * fail because there were no assertions made.
+     *
+     */
+
+    /**
+     *
+     * Test the 'click' callback is resolved
+     *
+     */
+    test('Verifying click works', function(){
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+          'fooligans', 0, 0, 20, 20);
+
+      spv.on('click', function(a, b){
+        equal(a, 'Meshy McMeshface');
+        console.log(b);
+        deepEqual(b, {'name': 'Meshy McMeshface'});
+      });
+
+      var mockEvent = {
+        'clientX': -0.276542,
+        'clientY': -0.144964,
+        'offsetLeft': 0,
+        'offsetTop': 0,
+        'width': 20,
+        'height': 20
+      };
+      mockEvent.preventDefault = function(){};
+
+      var meshy = {'object': {'name': 'Meshy McMeshface'}};
+      spv._raycaster.intersectObjects = function(){ return [meshy]; };
+      spv._eventCallback('click', mockEvent);
+    });
+
+    /**
+     *
+     * Test the 'dblclick' callback is resolved
+     *
+     */
+    test('Verifying double click works', function(){
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+          'fooligans', 0, 0, 20, 20);
+
+      spv.on('dblclick', function(a, b){
+        equal(a, 'Meshy McMeshface');
+        deepEqual(b, {'name': 'Meshy McMeshface'});
+      });
+
+      var mockEvent = {
+        'clientX': -0.276542,
+        'clientY': -0.144964,
+        'offsetLeft': 0,
+        'offsetTop': 0,
+        'width': 20,
+        'height': 20
+      };
+      mockEvent.preventDefault = function(){};
+
+      var meshy = {'object': {'name': 'Meshy McMeshface'}};
+      spv._raycaster.intersectObjects = function(){ return [meshy]; };
+      spv._eventCallback('dblclick', mockEvent);
+    });
+
+    /*
+     *
+     * Check we can add/remove subscribers
+     *
+     */
+    test('Check removal and addition of subscribers', function(){
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+          'fooligans', 0, 0, 20, 20);
+
+      var a = function (){
+        return 42;
+      };
+
+      var b = function (){
+        return 'forty two';
+      };
+
+      spv.on('click', a);
+      spv.on('click', b);
+      equal(spv._subscribers.click.length, 2);
+      spv.off('click', a);
+      equal(spv._subscribers.click.length, 1);
+      spv.off('click', b);
+      equal(spv._subscribers.click.length, 0);
     });
 
   });

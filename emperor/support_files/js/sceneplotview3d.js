@@ -377,9 +377,7 @@ define([
         try {
           this._subscribers[eventType][i](intersect.name, intersect);
         } catch (e) {
-          // this should probably be an exception
           console.error(e);
-          continue;
         }
       }
     }
