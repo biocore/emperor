@@ -7,10 +7,11 @@ define([
     "scene3d",
     "colorviewcontroller",
     "visibilitycontroller",
-    "shapecontroller"
-
+    "shapecontroller",
+    "filesaver"
 ], function ($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
-             ColorViewController, VisibilityController, ShapeController) {
+             ColorViewController, VisibilityController, ShapeController,
+             FileSaver) {
 
   /**
    *
@@ -262,6 +263,47 @@ define([
       selector: '#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper',
       trigger: 'none',
       items: {
+        'saveState': {
+          name: 'Save current settings',
+          icon: 'edit',
+          callback: function(key, opts) {
+            scope.saveConfig();
+          }
+        },
+        'loadState': {
+          name: 'Load saved settings',
+          icon: 'paste',
+          callback: function(key, opts) {
+            if (!FileReader) {
+              alert("Your browser does not support file loading. We recommend using Google Chrome for full functionality.");
+              return;
+            }
+            var file = $('<input type="file">');
+            file.on('change', function(evt) {
+              var f = evt.target.files[0];
+              // With help from
+              // http://www.htmlgoodies.com/beyond/javascript/read-text-files-using-the-javascript-filereader.html
+              var r = new FileReader();
+              r.onload = function(e) {
+                try {
+                  var json = JSON.parse(e.target.result);
+                } catch (err) {
+                  alert("File given is not a JSON parsable file.");
+                  return;
+                }
+                try {
+                  scope.loadConfig(json);
+                } catch (err) {
+                  alert("Error loading settings from file: " + err.message);
+                  return;
+                }
+              };
+              r.readAsText(f);
+            });
+            file.click();
+          }
+        },
+        "sep1": "---------",
         'saveImage': {
           name: 'Save Image (PNG)',
           icon: 'edit',
@@ -299,6 +341,61 @@ define([
     var download = $('<a href="' + c + '" download="emperor.' + type + '">');
     download.get(0).click();
   };
+
+  /**
+   *
+   * Write settings file for the current controller settings
+   *
+   * The format is as follows: a javascript object with the camera position
+   * stored in the 'cameraPosition' key and the quaternion in the
+   * 'cameraQuaternion' key. Each controller in this.controllers is then saved
+   * by calling toJSON on them, and the resulting object saved under the same
+   * key as the controllers object.
+   *
+   **/
+   EmperorController.prototype.saveConfig = function() {
+    var saveinfo = {};
+    // Assuming single sceneview for now
+    sceneview = this.sceneViews[0];
+    saveinfo.cameraPosition = sceneview.camera.position;
+    saveinfo.cameraQuaternion = sceneview.camera.quaternion;
+    // Save settings for each controller in the view
+     _.each(this.controllers, function(controller, index) {
+      if (controller !== undefined) {
+        saveinfo[index] = controller.toJSON();
+      }
+    });
+
+    // Save the file
+    var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/json"});
+    saveAs(blob, "emperor-settings.json");
+   };
+
+  /**
+   *
+   * Load a settings file and set all controller variables
+   *
+   * @param {object} [json] Emperor save information
+   *
+   **/
+   EmperorController.prototype.loadConfig = function(json) {
+    //still assuming one sceneview for now
+    var sceneview = this.sceneViews[0];
+
+    sceneview.camera.position.set(json.cameraPosition.x, json.cameraPosition.y, json.cameraPosition.z);
+    sceneview.camera.quaternion.set(json.cameraQuaternion._x, json.cameraQuaternion._y, json.cameraQuaternion._z, json.cameraQuaternion._w);
+
+    //must call updates to reset for camera move
+    sceneview.camera.updateProjectionMatrix();
+    sceneview.control.update();
+
+    //load the rest of the controller settings
+     _.each(this.controllers, function(controller, index) {
+      if (controller !== undefined) {
+        controller.fromJSON(json[index]);
+      }
+    });
+   };
 
   /**
    *
