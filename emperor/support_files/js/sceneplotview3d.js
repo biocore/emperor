@@ -107,11 +107,11 @@ define([
     this._mouse = new THREE.Vector2();
 
     // initialize subscribers for event callbacks
-    this._EVENTS = ['click', 'dblclick'];
+    this.EVENTS = ['click', 'dblclick'];
     this._subscribers = {};
 
-    for (var i = 0; i < this._EVENTS.length; i++) {
-      this._subscribers[this._EVENTS[i]] = [];
+    for (var i = 0; i < this.EVENTS.length; i++) {
+      this._subscribers[this.EVENTS[i]] = [];
     }
 
     // Add callback call when sample is clicked double and single click
@@ -352,10 +352,15 @@ define([
     });
   };
 
+  /**
+   *
+   * Helper method thats subscribed to the container's callbacks, see init.
+   *
+   **/
   ScenePlotView3D.prototype._eventCallback = function(eventType, event) {
     event.preventDefault();
 
-    // dont do anything if no subscribers
+    // don't do anything if no subscribers
     if (this._subscribers[eventType].length === 0) {
       return;
     }
@@ -383,24 +388,43 @@ define([
     }
   };
 
-  // Create privileged function to add subscribers
-  // handler must be a function taking the object name and THREE.js object for
-  // the clicked point
-  // E.X.     function (name, object) { ... }
+  /*
+   *
+   * Interface to subscribe to event types in the canvas, see the EVENTS
+   * property.
+   *
+   * @param {eventType} String indicating the type of event to subscribe to.
+   * @param {handler} Function to call when `eventType` is triggered, receives
+   * two parameters, a string with the name of the object, and the object
+   * itself i.e. f(objectName, object).
+   *
+   * If the event is unknown an Error will be thrown.
+   *
+   **/
   ScenePlotView3D.prototype.on = function(eventType, handler) {
-    if (this._EVENTS.indexOf(eventType) === -1) {
+    if (this.EVENTS.indexOf(eventType) === -1) {
       throw new Error('Unknown event ' + eventType + '. Known events are: ' +
-                      this._EVENTS.join(', '));
+                      this.EVENTS.join(', '));
     }
 
     this._subscribers[eventType].push(handler);
   };
 
-  // Create privileged function to remove subscribers
+  /*
+   *
+   * Interface to unsubscribe a function from an event type, see the EVENTS
+   * property.
+   *
+   * @property {eventType} String with the type of event to unsubscribe from.
+   * @property {handler} Function to remove from the subscribers list.
+   *
+   * If the event is unknown an Error will be thrown.
+   *
+   **/
   ScenePlotView3D.prototype.off = function(eventType, handler) {
-    if (this._EVENTS.indexOf(eventType) === -1) {
+    if (this.EVENTS.indexOf(eventType) === -1) {
       throw new Error('Unknown event ' + eventType + '. Known events are ' +
-                      this._EVENTS.join(', '));
+                      this.EVENTS.join(', '));
     }
 
     var pos = this._subscribers[eventType].find(handler);

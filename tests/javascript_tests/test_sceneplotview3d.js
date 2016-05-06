@@ -322,7 +322,6 @@ requirejs([
 
       spv.on('click', function(a, b){
         equal(a, 'Meshy McMeshface');
-        console.log(b);
         deepEqual(b, {'name': 'Meshy McMeshface'});
       });
 
