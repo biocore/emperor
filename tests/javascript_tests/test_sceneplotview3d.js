@@ -252,5 +252,32 @@ requirejs([
       // SVGRenderer class. Would be great if we find a way around this problem.
       assert.ok(true);
     });
+
+    test('Test off', function(assert){
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+          'fooligans', 0, 0, 20, 20);
+
+      // check this happens for all the properties
+      throws(
+        function (){
+          spv.off('does not exist', function(a, b){ return a;});
+        }, Error, 'An error is raised if the event is unknwon'
+      );
+    });
+
+    test('Test on exceptions', function(assert){
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+          'fooligans', 0, 0, 20, 20);
+
+      // check this happens for all the properties
+      throws(
+        function (){
+          spv.on('does not exist', function(a, b){ return a;});
+        }, Error, 'An error is raised if the event is unknwon'
+      );
+    });
+
   });
 });
