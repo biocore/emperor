@@ -103,59 +103,31 @@ define([
     this.drawAxesWithColor(0xFFFFFF);
     this.drawAxesLabelsWithColor(0xFFFFFF);
 
-    var raycaster = new THREE.Raycaster();
-    var mouse = new THREE.Vector2();
+    this._raycaster = new THREE.Raycaster();
+    this._mouse = new THREE.Vector2();
 
-    //initialize subscribers for event callbacks
-    this.EVENTS = ['click', 'dblclick'];
-    var subscribers = {};
-    for (var i = 0; i < this.EVENTS.length; i++) {
-      subscribers[this.EVENTS[i]] = [];
+    // initialize subscribers for event callbacks
+    this._EVENTS = ['click', 'dblclick'];
+    this._subscribers = {};
+
+    for (var i = 0; i < this._EVENTS.length; i++) {
+      this._subscribers[this._EVENTS[i]] = [];
     }
 
-    //create helper function for callbacks
-    var eventCallback = function(eventType, event) {
-      event.preventDefault();
-      //dont do anything if no subscribers
-      if (subscribers[eventType].length === 0) {
-        return;
-      }
-
-      var element = scope.renderer.domElement;
-      mouse.x = ((event.clientX - element.offsetLeft) / element.width) * 2 - 1;
-      mouse.y = -((event.clientY - element.offsetTop) / element.height) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, scope.camera);
-      var intersects = raycaster.intersectObjects(scope.decViews.scatter.markers);
-      // Get first intersected item and call callback with it.
-      if (intersects.length > 0) {
-        var intersect = intersects[0].object;
-        for (var i = 0; i < subscribers[eventType].length; i++) {
-          // keep going if one of the callbacks fails
-          try {
-            subscribers[eventType][i](intersect.name, intersect);
-          } catch (e) {
-            console.log(e);
-            continue;
-          }
-        }
-      }
-    };
-
-    // Add callback call when sample is clicked
-    // double and single click together from http://stackoverflow.com/a/7845282
+    // Add callback call when sample is clicked double and single click
+    // together from: http://stackoverflow.com/a/7845282
     var DELAY = 200, clicks = 0, timer = null;
     $container.on("click", function(event) {
         clicks++;
         if (clicks === 1) {
             timer = setTimeout(function() {
-                eventCallback('click', event);
+                scope._eventCallback('click', event);
                 clicks = 0;
             }, DELAY);
-
-        } else {
+        }
+        else {
             clearTimeout(timer);
-            eventCallback('dblclick', event);
+            scope._eventCallback('dblclick', event);
             clicks = 0;
         }
     })
@@ -163,29 +135,6 @@ define([
         event.preventDefault();  //cancel system double-click event
     });
 
-    // Create privileged function to add subscribers
-    // handler must be a function taking the object name and THREE.js object for
-    // the clicked point
-    // E.X.     function (name, object) { ... }
-    this.on = function(eventType, handler) {
-      if (this.EVENTS.indexOf(eventType) === -1) {
-        console.log('Unknown event ' + eventType + '. Available events are ' + this.EVENTS);
-        return;
-      }
-      subscribers[eventType].push(handler);
-    };
-
-    // Create privileged function to remove subscribers
-    this.off = function(eventType, handler) {
-      if (this.EVENTS.indexOf(eventType) === -1) {
-        console.log('Unknown event ' + eventType + '. Available events are ' + this.EVENTS);
-        return;
-      }
-      var pos = subscribers[eventType].find(handler);
-      if (pos !== -1) {
-        subscribers[eventType].splice(pos, 1);
-      }
-    };
   };
 
   /**
@@ -401,6 +350,65 @@ define([
     _.each(this.decViews.scatter.markers, function(element) {
       element.quaternion.copy(camera.quaternion);
     });
+  };
+
+  ScenePlotView3D.prototype._eventCallback = function(eventType, event) {
+    event.preventDefault();
+
+    // dont do anything if no subscribers
+    if (this._subscribers[eventType].length === 0) {
+      return;
+    }
+
+    var element = this.renderer.domElement;
+    this._mouse.x = ((event.clientX - element.offsetLeft) / element.width) * 2 - 1;
+    this._mouse.y = -((event.clientY - element.offsetTop) / element.height) * 2 + 1;
+
+    this._raycaster.setFromCamera(this._mouse, this.camera);
+
+    var intersects = this._raycaster.intersectObjects(this.decViews.scatter.markers);
+
+    // Get first intersected item and call callback with it.
+    if (intersects.length > 0) {
+      var intersect = intersects[0].object;
+
+      for (var i = 0; i < this._subscribers[eventType].length; i++) {
+        // keep going if one of the callbacks fails
+        try {
+          this._subscribers[eventType][i](intersect.name, intersect);
+        } catch (e) {
+          // this should probably be an exception
+          console.error(e);
+          continue;
+        }
+      }
+    }
+  };
+
+  // Create privileged function to add subscribers
+  // handler must be a function taking the object name and THREE.js object for
+  // the clicked point
+  // E.X.     function (name, object) { ... }
+  ScenePlotView3D.prototype.on = function(eventType, handler) {
+    if (this._EVENTS.indexOf(eventType) === -1) {
+      throw new Error('Unknown event ' + eventType + '. Known events are: ' +
+                      this._EVENTS.join(', '));
+    }
+
+    this._subscribers[eventType].push(handler);
+  };
+
+  // Create privileged function to remove subscribers
+  ScenePlotView3D.prototype.off = function(eventType, handler) {
+    if (this._EVENTS.indexOf(eventType) === -1) {
+      throw new Error('Unknown event ' + eventType + '. Known events are ' +
+                      this._EVENTS.join(', '));
+    }
+
+    var pos = this._subscribers[eventType].find(handler);
+    if (pos !== -1) {
+      this._subscribers[eventType].splice(pos, 1);
+    }
   };
 
   return ScenePlotView3D;
