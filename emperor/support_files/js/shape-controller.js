@@ -55,7 +55,7 @@ define([
         // Reset all to shapes to default
         var attributes = {};
         for (var index in uniqueVals) {
-          attributes[uniqueVals[index]] = 'sphere';
+          attributes[uniqueVals[index]] = 'Sphere';
         }
         // fetch the slickgrid-formatted data
         var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
@@ -90,7 +90,10 @@ define([
    */
   ShapeController.prototype.setPlottableAttributes = function(scope, shape, group) {
     var idx;
-    var geometry = shapes.shapes[shape];
+
+    // get the appropriately sized geometry
+    var geometry = shapes.getGeometry(shape, scope.decomp.dimensionRanges);
+
     if (geometry === undefined) {
       throw new Error('Unknown shape ' + shape);
     }
