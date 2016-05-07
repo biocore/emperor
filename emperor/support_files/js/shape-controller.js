@@ -53,7 +53,7 @@ define([
         var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
 
         // Reset all to shapes to default
-        var attributes = {}
+        var attributes = {};
         for (var index in uniqueVals) {
           attributes[uniqueVals[index]] = 'sphere';
         }
@@ -72,7 +72,7 @@ define([
     };
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
-        decompViewDict, options);
+                             decompViewDict, options);
     return this;
   }
 
