@@ -81,6 +81,40 @@ requirejs([
       equal(testColumn.field, 'value');
     });
 
+    test("Test getGeometry", function(){
+      var geom, range;
+
+      range = {'min': [-2, -1, -3], 'max': [3, 8, 9]};
+
+      geom = shapes.getGeometry('Sphere', range);
+      equal(geom.parameters.radius, 0.06);
+
+      geom = shapes.getGeometry('Cube', range);
+      equal(geom.parameters.width, 0.06);
+      equal(geom.parameters.height, 0.06);
+      equal(geom.parameters.depth, 0.06);
+
+      geom = shapes.getGeometry('Cone', range);
+      equal(geom.parameters.radiusTop, 0.024);
+      equal(geom.parameters.radiusBottom, 0);
+      equal(geom.parameters.height, 0.09);
+
+      geom = shapes.getGeometry('Icosahedron', range);
+      equal(geom.parameters.radius, 0.06);
+
+      geom = shapes.getGeometry('Cylinder', range);
+      equal(geom.parameters.radiusTop, 0.024);
+      equal(geom.parameters.radiusBottom, 0.024);
+      equal(geom.parameters.height, 0.09);
+    });
+
+    test("Check getGeometry raises an exception with unknown shape", function(){
+      var range = {'min': [-2, -1, -3], 'max': [3, 8, 9]};
+      throws(function() {
+        shapes.getGeometry('Geometry McGeometryface', range);
+      }, Error, 'Throw error if unknown shape given');
+    });
+
     test("Testing setPlottableAttributes helper function", function(assert) {
       // testing with one plottable
       var idx = 0;
