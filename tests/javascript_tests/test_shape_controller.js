@@ -17,7 +17,7 @@ requirejs([
     module("Shape Controller", {
       setup: function() {
         // setup function
-        this.shapesAvailable = ['sphere', 'cube', 'cone', 'icosahedron', 'cylinder'];
+        this.shapesAvailable = ['Sphere', 'Cube', 'Cone', 'Icosahedron', 'Cylinder'];
         this.sharedDecompositionViewDict = {};
 
         // setup function
@@ -61,21 +61,6 @@ requirejs([
       }
     });
 
-    test("Shapes available list", function() {
-      var testShapes = [];
-      for (s in shapes.shapes) {
-        testShapes.push(s);
-      }
-      deepEqual(testShapes, this.shapesAvailable);
-
-      var testGeoms = [];
-      for (s in shapes.shapes) {
-        testGeoms.push(shapes.shapes[s].type);
-      }
-      deepEqual(testGeoms, ["SphereGeometry", "BoxGeometry", "CylinderGeometry",
-                            "IcosahedronGeometry", "CylinderGeometry"])
-    });
-
     test("Shapes dropdown", function() {
       var values = [];
       shapes.$shapesDropdown.find('option').each(function() {
@@ -102,13 +87,13 @@ requirejs([
       plottables = [{idx:idx}];
       equal(this.dv.markers[idx].geometry.type, 'SphereGeometry');
       equal(this.dv.markers[idx+1].geometry.type, 'SphereGeometry');
-      ShapeController.prototype.setPlottableAttributes(this.dv, 'cube', plottables);
+      ShapeController.prototype.setPlottableAttributes(this.dv, 'Cube', plottables);
       equal(this.dv.markers[idx].geometry.type, 'BoxGeometry');
       equal(this.dv.markers[idx+1].geometry.type, 'SphereGeometry');
 
       // testing with multiple plottable
       plottables = [{idx:idx}, {idx:idx+1}];
-      ShapeController.prototype.setPlottableAttributes(this.dv, 'cylinder', plottables);
+      ShapeController.prototype.setPlottableAttributes(this.dv, 'Cylinder', plottables);
       equal(this.dv.markers[idx].geometry.type, 'CylinderGeometry');
       equal(this.dv.markers[idx+1].geometry.type, 'CylinderGeometry');
     });
@@ -117,7 +102,7 @@ requirejs([
       // testing with one plottable
       plottables = [{idx:idx}];
       throws(function() {
-        ShapeController.prototype.setPlottableAttributes(this.dv, 'WEIRD', plottables)
+        ShapeController.prototype.setPlottableAttributes(this.dv, 'WEIRD', plottables);
       }, Error, 'Throw error if unknown shape given');
 
     });
@@ -127,12 +112,12 @@ requirejs([
       var controller = new ShapeController(container, this.sharedDecompositionViewDict);
 
       var obs = controller.toJSON();
-      var exp = {category: 'SampleID', data: {'PC.636': 'sphere', 'PC.635': 'sphere'}};
+      var exp = {category: 'SampleID', data: {'PC.636': 'Sphere', 'PC.635': 'Sphere'}};
       deepEqual(obs, exp);
     });
 
     test("Testing fromJSON", function() {
-      var json = {'category': 'SampleID', 'data': {'PC.636': 'cube', 'PC.635': 'sphere'}};
+      var json = {'category': 'SampleID', 'data': {'PC.636': 'Cube', 'PC.635': 'Sphere'}};
 
       var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
       var controller = new ShapeController(container, this.sharedDecompositionViewDict);
