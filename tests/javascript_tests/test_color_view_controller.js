@@ -10,6 +10,7 @@ requirejs([
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var DecompositionModel = model.DecompositionModel;
+    var Plottable = model.Plottable;
 
     module("ColorViewController", {
       setup: function(){
@@ -27,7 +28,7 @@ requirejs([
           -0.112864, 0.064794]];
         pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
         10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
-        md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
+        md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB', 'Mix'];
         metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
         decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
@@ -90,6 +91,45 @@ requirejs([
       // verify the color value is set properly
       equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
       equal(controller.$select.val(), 'SampleID');
+    });
+
+    test("Test _nonNumericPlottables", function(){
+      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var controller = new ColorViewController(container, this.sharedDecompositionViewDict);
+      var k = controller.getActiveDecompViewKey();
+      var decompViewDict = controller.decompViewDict[k];
+
+      var colors = {"Control": "#f7fbff", "Fast": "#f3f8fd"}
+      var data = decompViewDict.setCategory(
+        colors, ColorViewController.prototype.setPlottableAttributes, 'Treatment');
+      var uniqueVars = ["Control", "Fast"];
+
+      // Test all are string
+      ColorViewController._nonNumericPlottables(uniqueVars, data);
+      var plottables = ColorViewController._nonNumericPlottables(uniqueVars, data);
+      var exp = [
+        new Plottable(
+            'PC.636',
+            ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+            [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+            -0.229889, -0.046599],
+            0),
+        new Plottable(
+            'PC.635',
+            ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
+            [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
+            -0.112864, 0.064794],
+            1)
+        ];
+      deepEqual(plottables, exp);
+
+      // Test all are numeric
+      var colors = {"20070314": "#f7fbff", "20071112": "#f3f8fd"}
+      var data = decompViewDict.setCategory(
+        colors, ColorViewController.prototype.setPlottableAttributes, 'DOB');
+      var uniqueVars = ["20070314", "20071112"];
+      var plottables = ColorViewController._nonNumericPlottables(uniqueVars, data);
+      deepEqual(plottables, []);
     });
 
     test("Test discrete colors are retrieved correctly", function(){

@@ -132,22 +132,15 @@ define([
           var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
 
           if (scaled) {
-            //build plottables as all non-numerics
-            var nonNumeric = uniqueVals.filter(function(v) { return isNaN(v)});
-            var plotList = data.filter(function(x) {
-              return $.inArray(x.category, nonNumeric) !== -1;
-            });
-            var plottables = [];
-            for (var i = 0; i < plotList.length; i++) {
-              plottables = plottables.concat(plotList[i].plottables);
-            }
+            plottables = ColorViewController._nonNumericPlottables(uniqueVals, data);
             // Set SlickGrid for color of non-numeric values and show color bar for rest
-            scope.setSlickGridDataset([{category: 'Non-numeric values', value:'#64655d', plottables: plottables}]);
+            scope.setSlickGridDataset([{category: 'Non-numeric values', value: '#64655d', plottables: plottables}]);
             scope.$gridDiv.css('height', '30px');
             scope.$scaleDiv.show();
             scope.$colorScale.show();
             scope.$colorScale.html(colorInfo[1]);
-          } else {
+          }
+          else {
             scope.setSlickGridDataset(data);
             scope.$scaleDiv.hide();
             scope.$colorScale.hide();
@@ -182,6 +175,30 @@ define([
   }
   ColorViewController.prototype = Object.create(EmperorAttributeABC.prototype);
   ColorViewController.prototype.constructor = EmperorAttributeABC;
+
+
+  /*
+   * Helper for building the plottables for non-numeric data
+   *
+   * @param {uniqueVals} Array of unique values for the category
+   * @param {data} SlickGrid formatted data from setCategory function
+   *
+   * @return {plottables} Array of plottables for all non-numeric values
+   *
+   */
+   ColorViewController._nonNumericPlottables = function(uniqueVals, data) {
+     // Filter down to only non-numeric data
+     var nonNumeric = uniqueVals.filter(function(v) { return isNaN(v)});
+     var plotList = data.filter(function(x) {
+       return $.inArray(x.category, nonNumeric) !== -1;
+     });
+     // Build list of plottables and return
+     var plottables = [];
+     for (var i = 0; i < plotList.length; i++) {
+       plottables = plottables.concat(plotList[i].plottables);
+     }
+     return plottables;
+   }
 
 
   /**
@@ -250,7 +267,7 @@ define([
    *
    */
   ColorViewController.getDiscreteColors = function(values, map) {
-    var map = map || 'discrete-coloring-qiime';
+    map = map || 'discrete-coloring-qiime';
 
     if (map == 'discrete-coloring-qiime') {
       map = ColorViewController._qiimeDiscrete;
