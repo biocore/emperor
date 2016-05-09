@@ -132,7 +132,13 @@ define([
           if (scaled) {
             plottables = ColorViewController._nonNumericPlottables(uniqueVals, data);
             // Set SlickGrid for color of non-numeric values and show color bar for rest
-            scope.setSlickGridDataset([{category: 'Non-numeric values', value: '#64655d', plottables: plottables}]);
+            // if there are non numeric categories
+            if (plottables.length > 0) {
+              scope.setSlickGridDataset([{category: 'Non-numeric values', value: '#64655d', plottables: plottables}]);
+            }
+            else {
+              scope.setSlickGridDataset([]);
+            }
             scope.$colorScale.show();
             scope.$colorScale.html(colorInfo[1]);
           }
