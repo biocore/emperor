@@ -63,9 +63,7 @@ define([
     var name, value, colorItem;
 
     // Create scale div and checkbox for whether using scalar data or not
-    this.$scaleDiv = $('<div></div>');
     this.$colorScale = $("<svg width='90%' height='80%' style='display:block;margin:auto;'></svg>");
-    this.$scaleDiv.append(this.$colorScale);
     this.$scaled = $("<input type='checkbox'>");
     this.$scaledLabel = $("<label for='scaled'>Continuous values</label>");
 
@@ -135,16 +133,12 @@ define([
             plottables = ColorViewController._nonNumericPlottables(uniqueVals, data);
             // Set SlickGrid for color of non-numeric values and show color bar for rest
             scope.setSlickGridDataset([{category: 'Non-numeric values', value: '#64655d', plottables: plottables}]);
-            scope.$gridDiv.css('height', '30px');
-            scope.$scaleDiv.show();
             scope.$colorScale.show();
             scope.$colorScale.html(colorInfo[1]);
           }
           else {
             scope.setSlickGridDataset(data);
-            scope.$scaleDiv.hide();
             scope.$colorScale.hide();
-            scope.$gridDiv.css('height', '100%');
           }
           // Call resize to update all methods for new shows/hides/resizes
           scope.resize()
@@ -164,7 +158,7 @@ define([
     this.$header.append(this.$colormapSelect);
     this.$header.append(this.$scaled);
     this.$header.append(this.$scaledLabel);
-    this.$body.append(this.$colorScale);
+    this.$body.prepend(this.$colorScale);
 
     // the chosen select can only be set when the document is ready
     $(function() {
