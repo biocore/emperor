@@ -216,7 +216,7 @@ define([
    *
    */
   ColorViewController.getColorList = function(values, map, discrete, scaled) {
-    var colors, gradientSVG;
+    var colors = {}, gradientSVG;
     scaled = scaled || false;
 
     if (_.findWhere(ColorViewController.Colormaps, {id: map}) === undefined){
@@ -301,7 +301,6 @@ define([
     // Get list of only numeric values, error if none
     numericValues = [];
     for(var i = 0; i < values.length; i++) {
-      console.log(values[i]);
       if (!isNaN(values[i])) {
         numericValues.push(Number(values[i]));
       }
