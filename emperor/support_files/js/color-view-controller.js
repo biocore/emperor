@@ -184,7 +184,7 @@ define([
    */
    ColorViewController._nonNumericPlottables = function(uniqueVals, data) {
      // Filter down to only non-numeric data
-     var nonNumeric = uniqueVals.filter(function(v) { return isNaN(v)});
+     var nonNumeric = uniqueVals.filter(isNaN);
      var plotList = data.filter(function(x) {
        return $.inArray(x.category, nonNumeric) !== -1;
      });
@@ -238,7 +238,7 @@ define([
         var info = ColorViewController.getScaledColors(values, map);
       } catch (e) {
         alert('less than 2 numeric values found, can not create scale for category!');
-        throw new Error('non-numeric');
+        throw new Error('non-numeric category');
       }
       colors = info[0];
       gradientSVG = info[1];
@@ -299,11 +299,16 @@ define([
     map = chroma.brewer[map];
 
     // Get list of only numeric values, error if none
-    var numericValues = values.filter(function(v) { return !isNaN(v)});
+    numericValues = [];
+    for(var i = 0; i < values.length; i++) {
+      console.log(values[i]);
+      if (!isNaN(values[i])) {
+        numericValues.push(Number(values[i]));
+      }
+    }
     if (numericValues.length < 2) {
       throw new Error('non-numeric category');
     }
-    numericValues = _.map(numericValues, Number);
     min = _.min(numericValues);
     max = _.max(numericValues);
     interpolator = chroma.scale(map).domain([min, max]);
