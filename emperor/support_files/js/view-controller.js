@@ -390,6 +390,8 @@ define([
       // make the columns fit the available space whenever the window resizes
       // http://stackoverflow.com/a/29835739
       this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+      grid.css('height', grid_opts.height);
+      slick.resizeCanvas();
     }
   };
 
