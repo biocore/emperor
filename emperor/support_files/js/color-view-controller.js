@@ -198,15 +198,13 @@ define([
    * @param {scaled} Whether to use a scaled colormap or equidistant colors for
    * each value. Default is false.
    *
+   * @return {colors} The object containing the hex colors keyed to each sample
+   * @return {gradientSVG} The SVG string for the scaled data or null
    *
-   * This function will generate a list of coloring values depending on the
-   * coloring scheme that the system is currently using (discrete or
-   * continuous).
    */
   ColorViewController.getColorList = function(values, map, discrete, scaled) {
-    var scope = this;
     var colors, gradientSVG;
-    var scaled = scaled || false;
+    scaled = scaled || false;
 
     if (_.findWhere(ColorViewController.Colormaps, {id: map}) === undefined){
       throw new Error("Could not find " + map + " as a colormap.");
@@ -221,12 +219,19 @@ define([
     //Call helper function to create the required colormap type
     if (discrete) {
       colors = ColorViewController.getDiscreteColors(values, map);
-    } else if (scaled) {
-      var info = ColorViewController.getScaledColors(values, map);
+    }
+    else if (scaled) {
+      try {
+        var info = ColorViewController.getScaledColors(values, map);
+      } catch (e) {
+        alert('less than 2 numeric values found, can not create scale for category!');
+        throw new Error('non-numeric');
+      }
       colors = info[0];
       gradientSVG = info[1];
-    } else {
-      colors = ColorViewController.getInterpolatedColors(values, map)
+    }
+    else {
+      colors = ColorViewController.getInterpolatedColors(values, map);
     }
     return [colors, gradientSVG];
   };
@@ -239,9 +244,7 @@ define([
    * category in a given metadata column.
    * @param {map} string, name of the discrete color map to use.
    *
-   * This function will generate a list of coloring values depending on the
-   * coloring scheme that the system is currently using (discrete or
-   * continuous).
+   * @return {colors} The object containing the hex colors keyed to each sample
    *
    * Defaults to use qiime discrete colors if there's no map passed in.
    *
@@ -271,22 +274,20 @@ define([
    * category in a given metadata column.
    * @param {map} string, name of the discrete color map to use.
    *
-   * This function will generate a list of coloring values depending on the
-   * coloring scheme that the system is currently using (discrete or
-   * continuous).
+   * @return {colors} The object containing the hex colors keyed to each sample
+   * @return {gradientSVG} The SVG string for the scaled data or null
    *
    * Defaults to use viridis colormap if there's no map passed in.
    *
    */
   ColorViewController.getScaledColors = function(values, map, nanColor) {
-    var map = map || 'viridis';
-    var nanColor = nanColor || '#64655d';
+    map = map || 'viridis';
+    nanColor = nanColor || '#64655d';
     map = chroma.brewer[map];
 
     // Get list of only numeric values, error if none
     var numericValues = values.filter(function(v) { return !isNaN(v)});
     if (numericValues.length < 2) {
-      alert('less than 2 numeric values found, can not create scale for category!');
       throw new Error('non-numeric category');
     }
     numericValues = _.map(numericValues, Number);
@@ -311,7 +312,7 @@ define([
       stopColors.push(interpolator(s).hex());
     }
     var gradientSVG = '<defs><linearGradient id="Gradient" x1="0" x2="1" y1="1" y2="1">';
-    for (pos in stopColors) {
+    for (var pos = 0; pos < stopColors.length; pos++) {
       gradientSVG += '<stop offset="' + pos + '%" stop-color="' + stopColors[pos] + '"/>';
     }
     gradientSVG += '</defs><rect id="gradientRect" width="100%" height="20" fill="url(#Gradient)"/>';
@@ -329,24 +330,20 @@ define([
    * category in a given metadata column.
    * @param {map} string, name of the discrete color map to use.
    *
-   * This function will generate a list of coloring values depending on the
-   * coloring scheme that the system is currently using (discrete or
-   * continuous).
+   * @return {colors} The object containing the hex colors keyed to each sample
    *
    * Defaults to use viridis colormap if there's no map passed in.
    *
    */
   ColorViewController.getInterpolatedColors = function(values, map) {
-    var map = map || 'viridis';
+    map = map || 'viridis';
     map = chroma.brewer[map];
 
     var total = values.length;
-    var counter = 0;
     interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
     var colors = {};
     for(var i = 0; i < values.length; i++) {
-      colors[values[i]] = interpolator(counter / total).hex();
-      counter++;
+      colors[values[i]] = interpolator(i / total).hex();
     }
     return colors;
   }

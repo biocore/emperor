@@ -48,7 +48,8 @@ pct_var = (1/np.exp(np.arange(10))).tolist()
 md_headers = ['SampleID', 'DOB', 'Strings']
 metadata = []
 for _id in coords_ids:
-    metadata.append([_id, ''.join(sample(categories, 1)), ''.join(choice(ascii_letters) for x in range(10))])
+    metadata.append([_id, ''.join(sample(categories, 1)), ''.join(choice(
+        ascii_letters) for x in range(10))])
 
 with open('new-emperor.html', 'w') as f:
     f.write(template.render(coords_ids=coords_ids, coords=coords,
