@@ -146,6 +146,8 @@ define([
             scope.$colorScale.hide();
             scope.$gridDiv.css('height', '100%');
           }
+          // Call resize to update all methods for new shows/hides/resizes
+          scope.resize()
         },
       'slickGridColumn': {
         id: 'title', name: '', field: 'value',
