@@ -334,15 +334,15 @@ define([
     for (var s = min; s <= max; s += step) {
       stopColors.push(interpolator(s).hex());
     }
-    var gradientSVG = '<defs><linearGradient id="Gradient" x1="0" x2="0" y1="0" y2="1">';
+    var gradientSVG = '<defs><linearGradient id="Gradient" x1="0" x2="0" y1="1" y2="0">';
     for (var pos = 0; pos < stopColors.length; pos++) {
       gradientSVG += '<stop offset="' + pos + '%" stop-color="' + stopColors[pos] + '"/>';
     }
-    gradientSVG += '</defs><rect id="gradientRect" width="20" height="100%" fill="url(#Gradient)"/>';
+    gradientSVG += '</defs><rect id="gradientRect" width="20" height="95%" fill="url(#Gradient)"/>';
     // Note the plus sign before min, midm and max drops any extra zeroes at the end.
-    gradientSVG += '<text x="25" y="12px" font-family="sans-serif" font-size="12px" text-anchor="start">' + min + '</text>';
+    gradientSVG += '<text x="25" y="12px" font-family="sans-serif" font-size="12px" text-anchor="start">' + max + '</text>';
     gradientSVG += '<text x="25" y="50%" font-family="sans-serif" font-size="12px" text-anchor="start">' + mid + '</text>';
-    gradientSVG += '<text x="25" y="100%" font-family="sans-serif" font-size="12px" text-anchor="start">' + max + '</text>';
+    gradientSVG += '<text x="25" y="95%" font-family="sans-serif" font-size="12px" text-anchor="start">' + min + '</text>';
     return [colors, gradientSVG];
   };
 
