@@ -242,6 +242,9 @@ define([
     if (_.size(decompViewDict) <= 0){
       throw Error('The decomposition view dictionary cannot be empty');
     }
+    // Picks the first key in the dictionary as the active key
+    this.activeViewKey = Object.keys(decompViewDict)[0];
+
     this.decompViewDict = decompViewDict;
     this.$gridDiv = $('<div name="emperor-grid-div"></div>');
     this.$gridDiv.css('margin', '0 auto');
@@ -250,10 +253,6 @@ define([
     this.$body.append(this.$gridDiv);
 
     this.metadataField = null;
-    this.activeViewKey = null;
-
-    // Picks the first key in the dictionary as the active key
-    this.activeViewKey = Object.keys(decompViewDict)[0];
 
     var dm = decompViewDict[this.activeViewKey].decomp;
     var scope = this;

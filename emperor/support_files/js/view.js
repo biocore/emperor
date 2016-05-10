@@ -43,10 +43,13 @@ function DecompositionView(decomp) {
 DecompositionView.prototype._initBaseView = function(){
   var mesh, x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2];
+  var scope = this;
 
-  var dv = this;
+  // get the correctly sized geometry
+  var geometry = shapes.getGeometry('Sphere', this.decomp.dimensionRanges);
+
   this.decomp.apply(function(plottable) {
-    mesh = new THREE.Mesh(shapes.shapes.sphere, new THREE.MeshPhongMaterial());
+    mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial());
     mesh.name = plottable.name;
 
     mesh.material.color = new THREE.Color(0xff0000);
@@ -60,7 +63,7 @@ DecompositionView.prototype._initBaseView = function(){
 
     mesh.updateMatrix();
 
-    dv.markers.push(mesh);
+    scope.markers.push(mesh);
   });
 
   // apply but to the adjacency list NOT IMPLEMENTED

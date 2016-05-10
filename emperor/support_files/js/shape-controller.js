@@ -53,9 +53,9 @@ define([
         var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
 
         // Reset all to shapes to default
-        var attributes = {}
+        var attributes = {};
         for (var index in uniqueVals) {
-          attributes[uniqueVals[index]] = 'sphere';
+          attributes[uniqueVals[index]] = 'Sphere';
         }
         // fetch the slickgrid-formatted data
         var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
@@ -72,7 +72,7 @@ define([
     };
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
-        decompViewDict, options);
+                             decompViewDict, options);
     return this;
   }
 
@@ -90,7 +90,10 @@ define([
    */
   ShapeController.prototype.setPlottableAttributes = function(scope, shape, group) {
     var idx;
-    var geometry = shapes.shapes[shape];
+
+    // get the appropriately sized geometry
+    var geometry = shapes.getGeometry(shape, scope.decomp.dimensionRanges);
+
     if (geometry === undefined) {
       throw new Error('Unknown shape ' + shape);
     }
