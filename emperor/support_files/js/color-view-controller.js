@@ -63,7 +63,9 @@ define([
     var name, value, colorItem;
 
     // Create scale div and checkbox for whether using scalar data or not
-    this.$colorScale = $("<svg width='90%' height='80%' style='display:block;margin:auto;'></svg>");
+    this.$scaleDiv = $("<div style='height:85%'>");
+    this.$colorScale = $("<svg width='90%' height='100%' style='display:block;margin:auto;'></svg>");
+    this.$scaleDiv.append(this.$colorScale);
     this.$scaled = $("<input type='checkbox'>");
     this.$scaledLabel = $("<label for='scaled'>Continuous values</label>");
 
@@ -139,15 +141,15 @@ define([
             else {
               scope.setSlickGridDataset([]);
             }
-            scope.$colorScale.show();
+            scope.$scaleDiv.show();
             scope.$colorScale.html(colorInfo[1]);
           }
           else {
             scope.setSlickGridDataset(data);
-            scope.$colorScale.hide();
+            scope.$scaleDiv.hide();
           }
           // Call resize to update all methods for new shows/hides/resizes
-          scope.resize()
+          scope.resize();
         },
       'slickGridColumn': {
         id: 'title', name: '', field: 'value',
@@ -164,7 +166,7 @@ define([
     this.$header.append(this.$colormapSelect);
     this.$header.append(this.$scaled);
     this.$header.append(this.$scaledLabel);
-    this.$body.prepend(this.$colorScale);
+    this.$body.prepend(this.$scaleDiv);
 
     // the chosen select can only be set when the document is ready
     $(function() {
@@ -398,6 +400,26 @@ define([
     this.$scaled.trigger('change');
     EmperorAttributeABC.prototype.fromJSON.call(this, json);
   }
+
+    /**
+   * Resizes the container and the individual elements.
+   *
+   * Note, the consumer of this class, likely the main controller should call
+   * the resize function any time a resizing event happens.
+   *
+   * @param {float} width the container width.
+   * @param {float} height the container height.
+   */
+  ColorViewController.prototype.resize = function(width, height) {
+    if (this.$scaleDiv.is(':visible')) {
+      this.$gridDiv.css('height', this.$body.height() - this.$scaleDiv.height());
+    }
+    else {
+      this.$gridDiv.css('height', '100%');
+    }
+    // call super, most of the header and body resizing logic is done there
+    EmperorAttributeABC.prototype.resize.call(this, width, height);
+  };
 
   /**
    * Helper function to set the color of plottable

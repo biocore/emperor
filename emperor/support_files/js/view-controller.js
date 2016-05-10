@@ -390,8 +390,8 @@ define([
       // make the columns fit the available space whenever the window resizes
       // http://stackoverflow.com/a/29835739
       this.bodyGrid.setColumns(this.bodyGrid.getColumns());
-      // Make sure the viewport always is the full height
-      $(this.$body).find('.slick-viewport').css('height', '100%');
+      // Resize the slickgrid canvas for the new body size.
+      this.bodyGrid.resizeCanvas();
     }
   };
 
