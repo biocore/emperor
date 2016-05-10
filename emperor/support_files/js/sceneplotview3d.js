@@ -68,8 +68,10 @@ define([
     this._axisLabelPrefix = 'emperor-axis-label-';
 
     // Set up the camera
+    // Note: if we change the near parameter to something smaller than this
+    // the raytracing will not work as expected.
     this.camera = new THREE.PerspectiveCamera(35, width/height,
-        0.0001, 10000);
+                                              0.0001, 10000);
     this.camera.position.set(0, 0, 6);
 
     //need to initialize the scene
@@ -415,8 +417,8 @@ define([
    * Interface to unsubscribe a function from an event type, see the EVENTS
    * property.
    *
-   * @property {eventType} String with the type of event to unsubscribe from.
-   * @property {handler} Function to remove from the subscribers list.
+   * @param {eventType} String with the type of event to unsubscribe from.
+   * @param {handler} Function to remove from the subscribers list.
    *
    * If the event is unknown an Error will be thrown.
    *
@@ -435,5 +437,3 @@ define([
 
   return ScenePlotView3D;
 });
-
-
