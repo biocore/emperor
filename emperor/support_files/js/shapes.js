@@ -50,6 +50,6 @@ define(['jquery', 'three'], function($, THREE) {
     $shapesDropdown.append(new Option(shape, shape));
   });
 
-  return {$shapesDropdown: $shapesDropdown,
-          getGeometry: getGeometry};
+  return {$shapesDropdown: $shapesDropdown, getGeometry: getGeometry,
+          shapes: shapes};
 });
