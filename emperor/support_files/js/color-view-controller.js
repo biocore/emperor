@@ -394,11 +394,30 @@ define([
   ColorViewController.prototype.fromJSON = function(json) {
     // Order here is important. We want to set all the extra controller
     // settings before we load from json, as they can override the JSON when set
+    var data;
+    this.$select.val(json.category);
+    this.$select.trigger('chosen:updated');
     this.$colormapSelect.val(json.colormap);
     this.$colormapSelect.trigger('chosen:updated');
     this.$scaled.prop('checked', json.continuous);
     this.$scaled.trigger('change');
-    EmperorAttributeABC.prototype.fromJSON.call(this, json);
+
+    // Fetch and set the SlickGrid-formatted data
+    // Need to take into account the existence of the non-numeric values grid
+    // information from the continuous data.
+    var decompViewDict = this.decompViewDict[this.getActiveDecompViewKey()];
+    if (this.$scaled.is(':checked')) {
+      // Get the current SlickGrid data and update with the saved color
+      var data = this.bodyGrid.getData();
+      data[0].value = json.data['Non-numeric values'];
+      this.setPlottableAttributes(decompViewDict, json.data['Non-numeric values'], data[0].plottables);
+
+    }
+    else {
+      var data = decompViewDict.setCategory(json.data, this.setPlottableAttributes, json.category);
+    }
+    console.log(data);
+    this.setSlickGridDataset(data);
   }
 
     /**
