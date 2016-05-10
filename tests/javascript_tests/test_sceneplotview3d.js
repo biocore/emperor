@@ -97,6 +97,15 @@ requirejs([
       deepEqual(spv.dimensionRanges.min, [-1, -0.144964, -0.138136, -0.067711,
                                           -0.247485, -0.115211, -0.229889,
                                           -0.046599]);
+
+      // raycasting properties
+      assert.ok(spv._raycaster instanceof THREE.Raycaster);
+      assert.ok(spv._mouse instanceof THREE.Vector2);
+
+      // pub/sub
+      deepEqual(spv.EVENTS, ['click', 'dblclick']);
+      deepEqual(spv._subscribers, {'click': [], 'dblclick': []});
+
     });
 
     test('Test the draw axes', function(assert){
@@ -258,7 +267,7 @@ requirejs([
      * Test exceptions are correctly raised on unknown events
      *
      */
-    test('Test off', function(){
+    test('Test off exceptions', function(){
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
           'fooligans', 0, 0, 20, 20);
@@ -305,9 +314,6 @@ requirejs([
      * 3.- Finally, trigger the callback on 'click' and verify that the
      * received objects are correct.
      *
-     * Note that if this assertion was never triggered, this test case would
-     * fail because there were no assertions made.
-     *
      */
 
     /**
@@ -316,6 +322,9 @@ requirejs([
      *
      */
     test('Verifying click works', function(){
+      // for the test to pass, two assertions should be made
+      expect(2);
+
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
           'fooligans', 0, 0, 20, 20);
@@ -346,6 +355,9 @@ requirejs([
      *
      */
     test('Verifying double click works', function(){
+      // for the test to pass, two assertions should be made
+      expect(2);
+
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
           'fooligans', 0, 0, 20, 20);
