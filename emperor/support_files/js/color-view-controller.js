@@ -63,7 +63,7 @@ define([
     var name, value, colorItem;
 
     // Create scale div and checkbox for whether using scalar data or not
-    this.$scaleDiv = $("<div style='height:85%'>");
+    this.$scaleDiv = $("<div style='height:50%'>");
     this.$colorScale = $("<svg width='90%' height='100%' style='display:block;margin:auto;'></svg>");
     this.$scaleDiv.append(this.$colorScale);
     this.$scaled = $("<input type='checkbox'>");
@@ -416,11 +416,10 @@ define([
     else {
       var data = decompViewDict.setCategory(json.data, this.setPlottableAttributes, json.category);
     }
-    console.log(data);
     this.setSlickGridDataset(data);
   }
 
-    /**
+  /**
    * Resizes the container and the individual elements.
    *
    * Note, the consumer of this class, likely the main controller should call
@@ -430,8 +429,8 @@ define([
    * @param {float} height the container height.
    */
   ColorViewController.prototype.resize = function(width, height) {
-    if (this.$scaleDiv.is(':visible')) {
-      this.$gridDiv.css('height', this.$body.height() - this.$scaleDiv.height());
+    if (this.$scaled.is(':checked')) {
+      this.$gridDiv.css('height', '50%');
     }
     else {
       this.$gridDiv.css('height', '100%');
