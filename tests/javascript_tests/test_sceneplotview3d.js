@@ -74,7 +74,7 @@ requirejs([
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // assert proper initializations for the attributes, we won't check their
       // initialization values as these are subject to change
@@ -97,6 +97,15 @@ requirejs([
       deepEqual(spv.dimensionRanges.min, [-1, -0.144964, -0.138136, -0.067711,
                                           -0.247485, -0.115211, -0.229889,
                                           -0.046599]);
+
+      // raycasting properties
+      assert.ok(spv._raycaster instanceof THREE.Raycaster);
+      assert.ok(spv._mouse instanceof THREE.Vector2);
+
+      // pub/sub
+      deepEqual(spv.EVENTS, ['click', 'dblclick']);
+      deepEqual(spv._subscribers, {'click': [], 'dblclick': []});
+
     });
 
     test('Test the draw axes', function(assert){
@@ -104,7 +113,7 @@ requirejs([
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // color the axis lines
       spv.drawAxesWithColor(0x00FF0F);
@@ -124,7 +133,7 @@ requirejs([
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // remove the axis lines
       spv.removeAxes();
@@ -143,7 +152,7 @@ requirejs([
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // color the axis lines
       spv.drawAxesLabelsWithColor(0x00FF0F);
@@ -170,7 +179,7 @@ requirejs([
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // remove the axis lines
       spv.removeAxesLabels();
@@ -193,7 +202,7 @@ requirejs([
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
       spv.setCameraAspectRatio(100);
       equal(spv.camera.aspect, 100);
 
@@ -214,7 +223,7 @@ requirejs([
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
       spv.resize(11, 11, 200, 300);
 
       equal(spv.xView, 11);
@@ -241,7 +250,7 @@ requirejs([
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // Couldn't really find a way to properly test the render method as the
       // properties it modifies are not publicly exposed by the renderer object.
@@ -252,5 +261,153 @@ requirejs([
       // SVGRenderer class. Would be great if we find a way around this problem.
       assert.ok(true);
     });
+
+    /**
+     *
+     * Test exceptions are correctly raised on unknown events
+     *
+     */
+    test('Test off exceptions', function(){
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      // check this happens for all the properties
+      throws(
+        function (){
+          spv.off('does not exist', function(a, b){ return a;});
+        }, Error, 'An error is raised if the event is unknown'
+      );
+    });
+
+    /**
+     *
+     * Test exceptions are correctly raised on unknown events
+     *
+     */
+    test('Test on exceptions', function(){
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      // check this happens for all the properties
+      throws(
+        function (){
+          spv.on('does not exist', function(a, b){ return a;});
+        }, Error, 'An error is raised if the event is unknown'
+      );
+    });
+
+    /*
+     *
+     * Testing raycasting-involved methods
+     *
+     * We need to setup a few mock methods and objects, otherwise we can't
+     * quite test the raycasting with the SVGRenderer.
+     *
+     * 1.- Setup a mock event that will be used to calculate the position of
+     * the mouse.
+     *
+     * 2.- Overwrite the intersectObjects method with a new function that
+     * returns a manufactured mock object.
+     *
+     * 3.- Finally, trigger the callback on 'click' and verify that the
+     * received objects are correct.
+     *
+     */
+
+    /**
+     *
+     * Test the 'click' callback is resolved
+     *
+     */
+    test('Verifying click works', function(){
+      // for the test to pass, two assertions should be made
+      expect(2);
+
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      spv.on('click', function(a, b){
+        equal(a, 'Meshy McMeshface');
+        deepEqual(b, {'name': 'Meshy McMeshface'});
+      });
+
+      var mockEvent = {
+        'clientX': -0.276542,
+        'clientY': -0.144964,
+        'offsetLeft': 0,
+        'offsetTop': 0,
+        'width': 20,
+        'height': 20
+      };
+      mockEvent.preventDefault = function(){};
+
+      var meshy = {'object': {'name': 'Meshy McMeshface'}};
+      spv._raycaster.intersectObjects = function(){ return [meshy]; };
+      spv._eventCallback('click', mockEvent);
+    });
+
+    /**
+     *
+     * Test the 'dblclick' callback is resolved
+     *
+     */
+    test('Verifying double click works', function(){
+      // for the test to pass, two assertions should be made
+      expect(2);
+
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      spv.on('dblclick', function(a, b){
+        equal(a, 'Meshy McMeshface');
+        deepEqual(b, {'name': 'Meshy McMeshface'});
+      });
+
+      var mockEvent = {
+        'clientX': -0.276542,
+        'clientY': -0.144964,
+        'offsetLeft': 0,
+        'offsetTop': 0,
+        'width': 20,
+        'height': 20
+      };
+      mockEvent.preventDefault = function(){};
+
+      var meshy = {'object': {'name': 'Meshy McMeshface'}};
+      spv._raycaster.intersectObjects = function(){ return [meshy]; };
+      spv._eventCallback('dblclick', mockEvent);
+    });
+
+    /*
+     *
+     * Check we can add/remove subscribers
+     *
+     */
+    test('Check removal and addition of subscribers', function(){
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      var a = function (){
+        return 42;
+      };
+
+      var b = function (){
+        return 'forty two';
+      };
+
+      spv.on('click', a);
+      spv.on('click', b);
+      equal(spv._subscribers.click.length, 2);
+      spv.off('click', a);
+      equal(spv._subscribers.click.length, 1);
+      spv.off('click', b);
+      equal(spv._subscribers.click.length, 0);
+    });
+
   });
 });
