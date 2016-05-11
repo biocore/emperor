@@ -430,7 +430,7 @@ define([
    */
   ColorViewController.prototype.resize = function(width, height) {
     if (this.$scaled.is(':checked')) {
-      this.$gridDiv.css('height', '50%');
+      this.$gridDiv.css('height', '10%');
     }
     else {
       this.$gridDiv.css('height', '100%');
