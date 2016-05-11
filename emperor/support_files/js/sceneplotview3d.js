@@ -47,10 +47,12 @@ define([
    * element.
    * @param {width} a float with the width of the renderer
    * @param {height} a float with the height of the renderer
+   * @param {EVENTS} array of events allowed for on addition. DO NOT EDIT.
    *
    **/
   ScenePlotView3D = function(renderer, decViews, container, xView, yView,
                              width, height){
+    var scope = this;
 
     // convert to jquery object for consistency with the rest of the objects
     var $container = $(container);
@@ -66,8 +68,10 @@ define([
     this._axisLabelPrefix = 'emperor-axis-label-';
 
     // Set up the camera
+    // Note: if we change the near parameter to something smaller than this
+    // the raytracing will not work as expected.
     this.camera = new THREE.PerspectiveCamera(35, width/height,
-        0.0000001, 10000);
+                                              0.0001, 10000);
     this.camera.position.set(0, 0, 6);
 
     //need to initialize the scene
@@ -100,6 +104,39 @@ define([
     this.dimensionRanges = {'max': [], 'min': []};
     this.drawAxesWithColor(0xFFFFFF);
     this.drawAxesLabelsWithColor(0xFFFFFF);
+
+    this._raycaster = new THREE.Raycaster();
+    this._mouse = new THREE.Vector2();
+
+    // initialize subscribers for event callbacks
+    this.EVENTS = ['click', 'dblclick'];
+    this._subscribers = {};
+
+    for (var i = 0; i < this.EVENTS.length; i++) {
+      this._subscribers[this.EVENTS[i]] = [];
+    }
+
+    // Add callback call when sample is clicked double and single click
+    // together from: http://stackoverflow.com/a/7845282
+    var DELAY = 200, clicks = 0, timer = null;
+    $container.on("click", function(event) {
+        clicks++;
+        if (clicks === 1) {
+            timer = setTimeout(function() {
+                scope._eventCallback('click', event);
+                clicks = 0;
+            }, DELAY);
+        }
+        else {
+            clearTimeout(timer);
+            scope._eventCallback('dblclick', event);
+            clicks = 0;
+        }
+    })
+    .on("dblclick", function(event) {
+        event.preventDefault();  //cancel system double-click event
+    });
+
   };
 
   /**
@@ -315,6 +352,87 @@ define([
     _.each(this.decViews.scatter.markers, function(element) {
       element.quaternion.copy(camera.quaternion);
     });
+  };
+
+  /**
+   *
+   * Helper method thats subscribed to the container's callbacks, see init.
+   *
+   **/
+  ScenePlotView3D.prototype._eventCallback = function(eventType, event) {
+    event.preventDefault();
+
+    // don't do anything if no subscribers
+    if (this._subscribers[eventType].length === 0) {
+      return;
+    }
+
+    var element = this.renderer.domElement;
+    this._mouse.x = ((event.clientX - element.offsetLeft) / element.width) * 2 - 1;
+    this._mouse.y = -((event.clientY - element.offsetTop) / element.height) * 2 + 1;
+
+    this._raycaster.setFromCamera(this._mouse, this.camera);
+
+    var intersects = this._raycaster.intersectObjects(this.decViews.scatter.markers);
+
+    // Get first intersected item and call callback with it.
+    if (intersects.length > 0) {
+      var intersect = intersects[0].object;
+
+      for (var i = 0; i < this._subscribers[eventType].length; i++) {
+        // keep going if one of the callbacks fails
+        try {
+          this._subscribers[eventType][i](intersect.name, intersect);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  };
+
+  /*
+   *
+   * Interface to subscribe to event types in the canvas, see the EVENTS
+   * property.
+   *
+   * @param {eventType} String indicating the type of event to subscribe to.
+   * @param {handler} Function to call when `eventType` is triggered, receives
+   * two parameters, a string with the name of the object, and the object
+   * itself i.e. f(objectName, object).
+   *
+   * If the event is unknown an Error will be thrown.
+   *
+   **/
+  ScenePlotView3D.prototype.on = function(eventType, handler) {
+    if (this.EVENTS.indexOf(eventType) === -1) {
+      throw new Error('Unknown event ' + eventType + '. Known events are: ' +
+                      this.EVENTS.join(', '));
+    }
+
+    this._subscribers[eventType].push(handler);
+  };
+
+  /*
+   *
+   * Interface to unsubscribe a function from an event type, see the EVENTS
+   * property.
+   *
+   * @param {eventType} String with the type of event to unsubscribe from.
+   * @param {handler} Function to remove from the subscribers list.
+   *
+   * If the event is unknown an Error will be thrown.
+   *
+   **/
+  ScenePlotView3D.prototype.off = function(eventType, handler) {
+    if (this.EVENTS.indexOf(eventType) === -1) {
+      throw new Error('Unknown event ' + eventType + '. Known events are ' +
+                      this.EVENTS.join(', '));
+    }
+
+    var pos = this._subscribers[eventType].find(handler);
+    if (pos !== -1) {
+      this._subscribers[eventType].splice(pos, 1);
+    }
   };
 
   return ScenePlotView3D;
