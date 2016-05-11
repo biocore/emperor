@@ -74,7 +74,7 @@ requirejs([
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // assert proper initializations for the attributes, we won't check their
       // initialization values as these are subject to change
@@ -113,7 +113,7 @@ requirejs([
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // color the axis lines
       spv.drawAxesWithColor(0x00FF0F);
@@ -133,7 +133,7 @@ requirejs([
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // remove the axis lines
       spv.removeAxes();
@@ -152,7 +152,7 @@ requirejs([
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // color the axis lines
       spv.drawAxesLabelsWithColor(0x00FF0F);
@@ -179,7 +179,7 @@ requirejs([
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // remove the axis lines
       spv.removeAxesLabels();
@@ -202,7 +202,7 @@ requirejs([
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
       spv.setCameraAspectRatio(100);
       equal(spv.camera.aspect, 100);
 
@@ -223,7 +223,7 @@ requirejs([
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
       spv.resize(11, 11, 200, 300);
 
       equal(spv.xView, 11);
@@ -250,7 +250,7 @@ requirejs([
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // Couldn't really find a way to properly test the render method as the
       // properties it modifies are not publicly exposed by the renderer object.
@@ -270,7 +270,7 @@ requirejs([
     test('Test off exceptions', function(){
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // check this happens for all the properties
       throws(
@@ -288,7 +288,7 @@ requirejs([
     test('Test on exceptions', function(){
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       // check this happens for all the properties
       throws(
@@ -327,7 +327,7 @@ requirejs([
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       spv.on('click', function(a, b){
         equal(a, 'Meshy McMeshface');
@@ -360,7 +360,7 @@ requirejs([
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       spv.on('dblclick', function(a, b){
         equal(a, 'Meshy McMeshface');
@@ -390,7 +390,7 @@ requirejs([
     test('Check removal and addition of subscribers', function(){
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
-          'fooligans', 0, 0, 20, 20);
+                                    'fooligans', 0, 0, 20, 20);
 
       var a = function (){
         return 42;
