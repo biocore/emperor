@@ -221,26 +221,14 @@ define([
    **/
   EmperorController.prototype.render = function() {
     if (!_.some(this.sceneViews, function(sv) {
-      // Check if the sceneView or any decView in the sceneView was updated and
-      // needs re-rendering
-      if (_.any(sv.decViews, function(dv) {
-        return dv.needsUpdate;
-      })) {
-        return true;
-      }
-      return sv.needsUpdate;
+      return sv.checkUpdate();
     })) {
-      // Do not render if no changes
       return;
     }
     this.renderer.setViewport(0, 0, this.width, this.height);
     this.renderer.clear();
     for (var i = 0; i < this.sceneViews.length; i++) {
       this.sceneViews[i].render();
-      this.sceneViews[i].needsUpdate = false;
-      $.each(this.sceneViews[i].decViews, function(key, val) {
-        val.needsUpdate = false;
-      });
     }
   };
 

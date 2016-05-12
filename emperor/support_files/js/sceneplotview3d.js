@@ -346,6 +346,22 @@ define([
 
   /**
    *
+   * Convenience method to check if this or any decViews under this need rendering
+   *
+   **/
+   ScenePlotView3D.prototype.checkUpdate = function() {
+    // Check if the sceneView or any decView in the sceneView was updated and
+    // needs re-rendering
+    if (_.any(this.decViews, function(dv) {
+      return dv.needsUpdate;
+    })) {
+      return true;
+    }
+    return this.needsUpdate;
+   }
+
+  /**
+   *
    * Convenience method to re-render the contents of the scene.
    *
    **/
@@ -357,7 +373,10 @@ define([
     _.each(this.decViews.scatter.markers, function(element) {
       element.quaternion.copy(camera.quaternion);
     });
-    this.needsUpdate = true;
+    this.needsUpdate = false;
+    $.each(this.decViews, function(key, val) {
+      val.needsUpdate = false;
+    });
   };
 
   /**
