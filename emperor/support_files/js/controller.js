@@ -43,7 +43,6 @@ define([
 
     this.dm = dm;
     this.sceneViews = [];
-    this.needsUpdate = true; // Whether we need to do a new render
 
     // main divs where the content of the plots will be located
     this.$plotSpace = $("<div class='emperor-plot-wrapper'></div>");
@@ -121,7 +120,6 @@ define([
 
     // this will setup the appropriate sizes and widths
     this.resize(this.width, this.height);
-    this.needsUpdate = true;
   };
 
   /**
@@ -211,7 +209,9 @@ define([
         controller.resize(w, h);
       }
     });
-    this.needsUpdate = true;
+
+    // Set for update
+    this.sceneViews[0].needsUpdate = true;
   };
 
   /**
@@ -405,7 +405,6 @@ define([
         controller.fromJSON(json[index]);
       }
     });
-    this.needsUpdate = true;
    };
 
   /**
