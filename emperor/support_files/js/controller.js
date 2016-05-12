@@ -43,6 +43,7 @@ define([
 
     this.dm = dm;
     this.sceneViews = [];
+    this.needsUpdate = true; // Whether we need to do a new render
 
     // main divs where the content of the plots will be located
     this.$plotSpace = $("<div class='emperor-plot-wrapper'></div>");
@@ -120,6 +121,7 @@ define([
 
     // this will setup the appropriate sizes and widths
     this.resize(this.width, this.height);
+    this.needsUpdate = true;
   };
 
   /**
@@ -209,6 +211,7 @@ define([
         controller.resize(w, h);
       }
     });
+    this.needsUpdate = true;
   };
 
   /**
@@ -217,10 +220,17 @@ define([
    *
    **/
   EmperorController.prototype.render = function() {
+    if (!_.some(this.sceneViews, function(sv) {
+      return sv.needsUpdate;
+    })) {
+      return;
+    }
+    console.log('ECRENDER');
     this.renderer.setViewport(0, 0, this.width, this.height);
     this.renderer.clear();
     for (var i = 0; i < this.sceneViews.length; i++) {
       this.sceneViews[i].render();
+      this.sceneViews[i].needsUpdate = false;
     }
   };
 
@@ -395,6 +405,7 @@ define([
         controller.fromJSON(json[index]);
       }
     });
+    this.needsUpdate = true;
    };
 
   /**

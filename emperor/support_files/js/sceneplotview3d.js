@@ -92,6 +92,9 @@ define([
     // use get(0) to retrieve the native DOM object
     this.control = new THREE.OrbitControls(this.camera,
                                            $container.get(0));
+    this.control.addEventListener('change', function() {
+      scope.needsUpdate = true;
+    });
     this.control.rotateSpeed = 1.0;
     this.control.zoomSpeed = 1.2;
     this.control.panSpeed = 0.8;
@@ -99,6 +102,7 @@ define([
     this.control.enablePan = true;
     this.control.enableDamping = true;
     this.control.dampingFactor = 0.3;
+    this.needsUpdate = true;
 
     this.visibleDimensions = [0, 1, 2];
     this.dimensionRanges = {'max': [], 'min': []};
@@ -345,6 +349,7 @@ define([
    *
    **/
   ScenePlotView3D.prototype.render = function(){
+    console.log('SPV3D');
     this.renderer.setViewport(this.xView, this.yView, this.width, this.height);
     this.renderer.render(this.scene, this.camera);
     var camera = this.camera;
