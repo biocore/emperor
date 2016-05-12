@@ -102,6 +102,7 @@ define([
       idx = element.idx;
       scope.markers[idx].geometry = geometry;
     });
+    scope.needsUpdate = true;
   };
   return ShapeController;
 });

@@ -341,6 +341,7 @@ define([
     this.width = width;
     this.height = height;
     this.setCameraAspectRatio(width/height);
+    this.needsUpdate = true;
   };
 
   /**
@@ -349,7 +350,6 @@ define([
    *
    **/
   ScenePlotView3D.prototype.render = function(){
-    console.log('SPV3D');
     this.renderer.setViewport(this.xView, this.yView, this.width, this.height);
     this.renderer.render(this.scene, this.camera);
     var camera = this.camera;
@@ -357,6 +357,7 @@ define([
     _.each(this.decViews.scatter.markers, function(element) {
       element.quaternion.copy(camera.quaternion);
     });
+    this.needsUpdate = true;
   };
 
   /**
@@ -391,6 +392,7 @@ define([
         } catch (e) {
           console.error(e);
         }
+        this.needsUpdate = true;
       }
     }
   };
