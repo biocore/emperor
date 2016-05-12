@@ -230,6 +230,7 @@ define([
       }
       return sv.needsUpdate;
     })) {
+      // Do not render if no changes
       return;
     }
     this.renderer.setViewport(0, 0, this.width, this.height);
