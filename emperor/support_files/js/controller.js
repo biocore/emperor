@@ -220,15 +220,16 @@ define([
    *
    **/
   EmperorController.prototype.render = function() {
-    if (!_.some(this.sceneViews, function(sv) {
+    var needsRender = _.some(this.sceneViews, function(sv) {
       return sv.checkUpdate();
-    })) {
-      return;
-    }
-    this.renderer.setViewport(0, 0, this.width, this.height);
-    this.renderer.clear();
-    for (var i = 0; i < this.sceneViews.length; i++) {
-      this.sceneViews[i].render();
+    });
+
+    if (needsRender) {
+      this.renderer.setViewport(0, 0, this.width, this.height);
+      this.renderer.clear();
+      for (var i = 0; i < this.sceneViews.length; i++) {
+        this.sceneViews[i].render();
+      }
     }
   };
 

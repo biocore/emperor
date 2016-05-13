@@ -11,8 +11,12 @@ define([
  * @class Contains all the information on how the model is being presented to
  *        the user.
  *
+ * @property {Boolean} [needsUpdate] True when changes have occured that
+ * require re-rendering of the canvas
+ *
  * @param {DecompositionModel} decomp a DecompositionModel object that will be
  * represented on screen.
+
  *
  **/
 function DecompositionView(decomp) {

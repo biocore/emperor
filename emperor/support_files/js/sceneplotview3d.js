@@ -29,6 +29,8 @@ define([
    * by default is set to a light and transparent color (0x99999999).
    * @property {THREE.OrbitControls} [control] object used to interact with the
    * scene. By default it uses the mouse.
+   * @property {Boolean} [needsUpdate] True when changes have occured that
+   * require re-rendering of the canvas
    *
    */
 
@@ -346,12 +348,11 @@ define([
 
   /**
    *
-   * Convenience method to check if this or any decViews under this need rendering
+   * Convenience method to check if this or any of the decViews under this need
+   * rendering
    *
    **/
    ScenePlotView3D.prototype.checkUpdate = function() {
-    // Check if the sceneView or any decView in the sceneView was updated and
-    // needs re-rendering
     if (_.any(this.decViews, function(dv) {
       return dv.needsUpdate;
     })) {
