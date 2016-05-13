@@ -67,7 +67,7 @@ if ($("#emperor-css").length == 0){{
     ]);
 }}
 </script>
-<div id='emperor-notebook-0x9cb72f54' style="position: relative; width:100%; height:500px;"></div>
+<div id='emperor-notebook-0x9cb72f54' style="position: relative; width:100%; height:500px;background-image"><div class='loading' style="position: absolute;top: 50%;left: 50%;margin-left: -229px; margin-top: -59px; z-index: 10000;height:118px;width:458px;padding:0px"><img src='https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/img/emperor.png' alt='Emperor logo'></div></div>
 </div>
 
 <script type="text/javascript">
