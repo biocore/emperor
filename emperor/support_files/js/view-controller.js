@@ -425,6 +425,8 @@ define([
     var k = this.getActiveDecompViewKey();
     var data = this.decompViewDict[k].setCategory(json.data, this.setPlottableAttributes, json.category);
     this.setSlickGridDataset(data);
+    //set all to needsUpdate
+    this.decompViewDict[k].needsUpdate = true;
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,

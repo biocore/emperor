@@ -89,6 +89,7 @@ requirejs([
 
       equal(spv.width, 20);
       equal(spv.height, 20);
+      equal(spv.checkUpdate(), true);
 
       deepEqual(spv.visibleDimensions, [0, 1, 2]);
       deepEqual(spv.dimensionRanges.max, [-0.237661, 0.046053, 0.066647,
@@ -106,6 +107,25 @@ requirejs([
       deepEqual(spv.EVENTS, ['click', 'dblclick']);
       deepEqual(spv._subscribers, {'click': [], 'dblclick': []});
 
+    });
+
+    test('Test checkUpdate', function() {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+      spv.needsUpdate = false;
+      spv.decViews.scatter.needsUpdate = false;
+      spv.decViews.biplot.needsUpdate = false;
+      equal(spv.checkUpdate(), false);
+
+      spv.needsUpdate = true;
+      equal(spv.checkUpdate(), true);
+      spv.needsUpdate = false;
+
+      spv.decViews.scatter.needsUpdate = true;
+      equal(spv.checkUpdate(), true);
     });
 
     test('Test the draw axes', function(assert){
@@ -231,6 +251,8 @@ requirejs([
 
       equal(spv.width, 200);
       equal(spv.height, 300);
+
+      equal(spv.needsUpdate, true)
 
       spv.resize(8, 6, 75, 309);
 
