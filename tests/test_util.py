@@ -15,7 +15,7 @@ from tempfile import gettempdir
 from numpy import array
 from numpy.testing import assert_almost_equal
 
-from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
+from emperor.util import (keep_columns_from_mapping_file,
                           preprocess_mapping_file, preprocess_coords_file,
                           EmperorInputFilesError,
                           fill_mapping_field_from_mapping_file,
@@ -113,19 +113,6 @@ class TopLevelTests(TestCase):
     def tearDown(self):
         for f in self.files_to_delete:
             rmtree(f)
-
-    def test_copy_support_files(self):
-        """Test the support files are correctly copied to a file path"""
-        copy_support_files(self.support_files_filename)
-        self.assertTrue(exists(join(
-            self.support_files_filename, 'emperor_required_resources/')))
-
-        # related to https://github.com/qiime/emperor/issues/66
-        # the target path has spaces, the support files function will work fine
-        copy_support_files(self.support_files_filename_spaces)
-        self.assertTrue(exists(join(
-            self.support_files_filename_spaces,
-            'emperor_required_resources/')))
 
     def test_preprocess_mapping_file(self):
         """Check correct preprocessing of metadata is done"""

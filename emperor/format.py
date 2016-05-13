@@ -14,7 +14,7 @@ from os.path import abspath
 from datetime import datetime
 from socket import gethostname
 
-from emperor.util import get_emperor_library_version
+from emperor import __version__ as emperor_library_version
 
 
 def format_emperor_autograph(metadata_fp, coords_fp, language='HTML'):
@@ -56,7 +56,7 @@ def format_emperor_autograph(metadata_fp, coords_fp, language='HTML'):
                                              ' %H:%M:%S'))
 
     # add library version and SHA-1 if available
-    autograph.append('Emperor Version: %s' % get_emperor_library_version())
+    autograph.append('Emperor Version: %s' % emperor_library_version)
     autograph.append('HostName: %s' % gethostname())
 
     # full path to input files
