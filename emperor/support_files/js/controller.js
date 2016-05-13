@@ -210,8 +210,10 @@ define([
       }
     });
 
-    // Set for update 
-    this.sceneViews[0].needsUpdate = true;
+    //Set all scenes to needing update
+    for (var i = 0; i < this.sceneViews.length, i++) {
+      this.sceneViews[i].needsUpdate = true;
+    }
   };
 
   /**
@@ -404,6 +406,7 @@ define([
         controller.fromJSON(json[index]);
       }
     });
+    sceneview.needsUpdate = true;
    };
 
   /**
