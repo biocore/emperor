@@ -63,7 +63,7 @@ define([
     var name, value, colorItem;
 
     // Create scale div and checkbox for whether using scalar data or not
-    this.$scaleDiv = $("<div style='height:50%'>");
+    this.$scaleDiv = $("<div>");
     this.$colorScale = $("<svg width='90%' height='100%' style='display:block;margin:auto;'></svg>");
     this.$scaleDiv.append(this.$colorScale);
     this.$scaled = $("<input type='checkbox'>");
@@ -429,14 +429,19 @@ define([
    * @param {float} height the container height.
    */
   ColorViewController.prototype.resize = function(width, height) {
+    // call super, most of the header and body resizing logic is done there
+    EmperorAttributeABC.prototype.resize.call(this, width, height);
+
     if (this.$scaled.is(':checked')) {
-      this.$gridDiv.css('height', '10%');
+      this.$scaleDiv.css('height', (this.$body.height() / 2) + 'px');
+      this.$gridDiv.css('height', (this.$body.height() / 2 - 20) + 'px');
     }
     else {
       this.$gridDiv.css('height', '100%');
     }
-    // call super, most of the header and body resizing logic is done there
-    EmperorAttributeABC.prototype.resize.call(this, width, height);
+    if (this.bodyGrid !== undefined) {
+      this.bodyGrid.resizeCanvas();
+    }
   };
 
   /**
