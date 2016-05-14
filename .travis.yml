@@ -21,7 +21,7 @@ install:
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
   # execute the full test suite
-  - python tests/all_tests.py --emperor_scripts_dir scripts
+  - python tests/all_tests.py
   # we just check coverage in the latest version of NumPy
   - if [ ${WITH_COVERAGE} ]; then nosetests emperor --with-coverage --cover-package=emperor --cover-inclusive tests; fi
   - make -C doc html
