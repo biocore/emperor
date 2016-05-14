@@ -14,8 +14,6 @@ from os import makedirs, listdir
 from os.path import abspath, dirname, join, exists, isdir
 from copy import deepcopy
 
-from qcli.util import qcli_system_call
-
 from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
                                                    remove_nans,
                                                    scale_custom_coords)
