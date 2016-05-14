@@ -18,13 +18,13 @@ import re
 import click
 import subprocess
 
-from os import walk, getcwd, chdir
+from os import walk
 from sys import exit
 from glob import glob
-from os.path import join, abspath, dirname, split, exists
+from os.path import join, abspath, dirname, split
 
-from emperor.util import get_emperor_project_dir
 from emperor import __version__
+
 
 def console(cmd):
     """Small subprocess helper function
@@ -36,16 +36,18 @@ def console(cmd):
                                stderr=subprocess.PIPE)
     o, e = process.communicate()
 
-    not_none = lambda x: '' if x is None else x
-    return not_none(o), not_none(e), process.returncode
+    return '' if o is None else o, '' if e is None else e, process.returncode
+
 
 @click.command()
-@click.option('--suppress_unit_tests', help="suppress execution of Emperor's"
-              "unit tests", default=False, is_flag=True)
+@click.option('--suppress_unit_tests', help="suppress execution of Emperor's "
+              "unit tests", default=False, is_flag=True, show_default=True)
 @click.option('--suppress_javascript_unit_tests', help="suppress Emperor's "
-              "JavaScript unit tests.", default=False, is_flag=True)
+              "JavaScript unit tests.", default=False, is_flag=True,
+              show_default=True)
 @click.option('--unittest_glob', help='wildcard pattern to match the unit '
-              'tests to execute.', default=None, is_flag=True)
+              'tests to execute.', default=None, is_flag=True,
+              show_default=True)
 @click.version_option(__version__)
 def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
     """Run Emperor's test suite.
@@ -139,7 +141,7 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
     # In case there were no failures of any type, exit with a return code of 0
     return_code = 1
     if (len(bad_tests) == 0 and len(missing_application_tests) == 0 and
-        javascript_tests_passed):
+       javascript_tests_passed):
         return_code = 0
 
     return return_code

@@ -10,18 +10,15 @@ from __future__ import division
 from numpy import ndarray, ones, zeros, vstack
 from string import strip
 
-from os import makedirs, listdir
-from os.path import abspath, dirname, join, exists, isdir
+from os import listdir
+from os.path import abspath, dirname, join, isdir
 from copy import deepcopy
 
 from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
                                                    remove_nans,
                                                    scale_custom_coords)
 from emperor.qiime_backports.parse import mapping_file_to_dict
-from emperor.qiime_backports.util import (MetadataMap, is_valid_git_refname,
-                                          is_valid_git_sha1, summarize_pcoas)
-
-from emperor import __version__ as emperor_library_version
+from emperor.qiime_backports.util import MetadataMap, summarize_pcoas
 
 
 class EmperorSupportFilesError(IOError):
