@@ -210,17 +210,18 @@ define([
    * Wrapper for generating a list of colors that corresponds to all samples
    * in the plot by coloring type requested
    *
-   * @param {values} list of objects to generate a color for, usually a
+   * @param {Array} [values] list of objects to generate a color for, usually a
    * category in a given metadata column.
-   * @param {map} name of the color map to use, see
+   * @param {String} [map] name of the color map to use, see
    * ColorViewController.Colormaps
-   * @param {discrete} Whether to treat colormap requested as a discrete set
-   * of colors or use interpolation to create gradient of colors
-   * @param {scaled} Whether to use a scaled colormap or equidistant colors for
-   * each value. Default is false.
+   * @param {Boolean} [discrete] Whether to treat colormap requested as a
+   * discrete set of colors or use interpolation to create gradient of colors
+   * @param {Boolean} [scaled] Whether to use a scaled colormap or equidistant
+   * colors for each value. Default is false.
    *
-   * @return {colors} The object containing the hex colors keyed to each sample
-   * @return {gradientSVG} The SVG string for the scaled data or null
+   * @return {Object} [colors] The object containing the hex colors keyed to
+   * each sample
+   * @return {String} [gradientSVG] The SVG string for the scaled data or null
    *
    */
   ColorViewController.getColorList = function(values, map, discrete, scaled) {
@@ -245,7 +246,8 @@ define([
       try {
         var info = ColorViewController.getScaledColors(values, map);
       } catch (e) {
-        alert('less than 2 numeric values found, can not create scale for category!');
+        alert('Category can not be shown as continuous values. Continuous ' +
+              'coloration requires at least 2 numeric values in the category.');
         throw new Error('non-numeric category');
       }
       colors = info[0];
@@ -259,15 +261,16 @@ define([
 
   /**
    *
-   * Retrieve a discrete color.
+   * Retrieve a discrete color set.
    *
-   * @param {values} list of objects to generate a color for, usually a
+   * @param {Array} [values] list of objects to generate a color for, usually a
    * category in a given metadata column.
-   * @param {map} string, name of the discrete color map to use.
+   * @param {String} [map] name of the color map to use, see
+   * ColorViewController.Colormaps Defaults to use qiime discrete colors if
+   * there's no map passed in.
    *
-   * @return {colors} The object containing the hex colors keyed to each sample
-   *
-   * Defaults to use qiime discrete colors if there's no map passed in.
+   * @return {Object} [colors] The object containing the hex colors keyed to
+   * each sample
    *
    */
   ColorViewController.getDiscreteColors = function(values, map) {
@@ -289,16 +292,21 @@ define([
 
   /**
    *
-   * Retrieve a scaled color set with scale bar.
+   * Retrieve a scaled color set.
    *
-   * @param {values} list of objects to generate a color for, usually a
+   * @param {Array} [values] Objects to generate a color for, usually a
    * category in a given metadata column.
-   * @param {map} string, name of the discrete color map to use.
+   * @param {String} [map] name of the discrete color map to use. Defaults to
+   * use viridis colormap if there's no map passed in.
+   * @param {String} [nanColor] Color to use for non-numeric values. Defaults
+   * to #64655d
    *
-   * @return {colors} The object containing the hex colors keyed to each sample
-   * @return {gradientSVG} The SVG string for the scaled data or null
+   * @return {object} [colors] The object containing the hex colors keyed to
+   * each sample.
    *
-   * Defaults to use viridis colormap if there's no map passed in.
+   * @return {Object} [colors] The object containing the hex colors keyed to
+   * each sample
+   * @return {String} [gradientSVG] The SVG string for the scaled data or null
    *
    */
   ColorViewController.getScaledColors = function(values, map, nanColor) {
@@ -318,7 +326,7 @@ define([
     }
     min = _.min(numericValues);
     max = _.max(numericValues);
-    interpolator = chroma.scale(map).domain([min, max]);
+    var interpolator = chroma.scale(map).domain([min, max]);
     var colors = {};
     for (var i = 0; i < values.length; i++) {
       var val = Number(values[i]);
@@ -352,13 +360,14 @@ define([
    *
    * Retrieve an interpolatd color set.
    *
-   * @param {values} list of objects to generate a color for, usually a
+   * @param {Array} [values] Objects to generate a color for, usually a
    * category in a given metadata column.
-   * @param {map} string, name of the discrete color map to use.
+   * @param {String} [map] name of the discrete color map to use. Defaults to
+   * use viridis colormap if there's no map passed in.
    *
-   * @return {colors} The object containing the hex colors keyed to each sample
+   * @return {object} [colors] The object containing the hex colors keyed to
+   * each sample.
    *
-   * Defaults to use viridis colormap if there's no map passed in.
    *
    */
   ColorViewController.getInterpolatedColors = function(values, map) {
@@ -366,7 +375,7 @@ define([
     map = chroma.brewer[map];
 
     var total = values.length;
-    interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
+    var interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
     var colors = {};
     for(var i = 0; i < values.length; i++) {
       colors[values[i]] = interpolator(i / total).hex();
@@ -392,6 +401,7 @@ define([
    * @param {Object} Parsed JSON string representation of self.
    */
   ColorViewController.prototype.fromJSON = function(json) {
+    // NOTE: We do not call super here because of the non-numeric values issue
     // Order here is important. We want to set all the extra controller
     // settings before we load from json, as they can override the JSON when set
     var data;
