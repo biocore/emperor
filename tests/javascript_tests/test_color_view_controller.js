@@ -228,12 +228,14 @@ requirejs([
       ColorViewController.prototype.setPlottableAttributes(this.dv, '#00ff00', plottables);
       equal(this.dv.markers[idx].material.color.getHexString(), '00ff00');
       equal(this.dv.markers[idx+1].material.color.getHexString(), 'ff0000');
+      equal(this.dv.needsUpdate, true);
 
       // testing with multiple plottable
       plottables = [{idx:idx}, {idx:idx+1}];
       ColorViewController.prototype.setPlottableAttributes(this.dv, '#000000', plottables);
       equal(this.dv.markers[idx].material.color.getHexString(), '000000');
       equal(this.dv.markers[idx+1].material.color.getHexString(), '000000');
+      equal(this.dv.needsUpdate, true);
     });
 
     test("Testing toJSON", function() {

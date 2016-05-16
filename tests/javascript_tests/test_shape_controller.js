@@ -124,12 +124,14 @@ requirejs([
       ShapeController.prototype.setPlottableAttributes(this.dv, 'Cube', plottables);
       equal(this.dv.markers[idx].geometry.type, 'BoxGeometry');
       equal(this.dv.markers[idx+1].geometry.type, 'SphereGeometry');
+      equal(this.dv.needsUpdate, true);
 
       // testing with multiple plottable
       plottables = [{idx:idx}, {idx:idx+1}];
       ShapeController.prototype.setPlottableAttributes(this.dv, 'Cylinder', plottables);
       equal(this.dv.markers[idx].geometry.type, 'CylinderGeometry');
       equal(this.dv.markers[idx+1].geometry.type, 'CylinderGeometry');
+      equal(this.dv.needsUpdate, true);
     });
 
     test("Testing setPlottableAttributes unknown shape", function(assert) {

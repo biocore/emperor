@@ -11,6 +11,9 @@ define([
  * @class Contains all the information on how the model is being presented to
  *        the user.
  *
+ * @property {Boolean} [needsUpdate] True when changes have occured that
+ * require re-rendering of the canvas
+ *
  * @param {DecompositionModel} decomp a DecompositionModel object that will be
  * represented on screen.
  *
@@ -32,6 +35,7 @@ function DecompositionView(decomp) {
 
   // setup this.markers and this.lines
   this._initBaseView();
+  this.needsUpdate = true;
   // this.elementOrdering = []; // list of ints - Not sure if needed
 }
 
@@ -93,6 +97,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
                       plottable.coordinates[y],
                       plottable.coordinates[z]);
     mesh.updateMatrix();
+    this.needsUpdate = true;
   });
 };
 
@@ -130,6 +135,7 @@ DecompositionView.prototype.setCategory = function(attributes,
 
     dataView.push({category: key, value: value, plottables: plottables});
   });
+  this.needsUpdate = true;
 
   return dataView;
 };
@@ -144,6 +150,7 @@ DecompositionView.prototype.setGroupColor = function(color, group){
     scope.markers[idx].material.color = new THREE.Color(color);
   });
 };
+this.needsUpdate = true;
 
   return DecompositionView;
 });

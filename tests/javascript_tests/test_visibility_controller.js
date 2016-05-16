@@ -98,6 +98,7 @@ requirejs([
       equal(this.dv.markers[idx].visible, true);
       equal(this.dv.markers[idx+1].visible, true);
       VisibilityController.prototype.setPlottableAttributes(this.dv, false, plottables);
+      equal(this.dv.needsUpdate, true);
 
       // testing with multiple plottable
       plottables = [{idx:idx}, {idx:idx+1}];
@@ -106,6 +107,7 @@ requirejs([
       VisibilityController.prototype.setPlottableAttributes(this.dv, true, plottables);
       equal(this.dv.markers[idx].visible, true);
       equal(this.dv.markers[idx+1].visible, true);
+      equal(this.dv.needsUpdate, true);
     });
 
     test("Testing toJSON", function() {

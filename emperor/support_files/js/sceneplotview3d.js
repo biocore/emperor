@@ -29,6 +29,8 @@ define([
    * by default is set to a light and transparent color (0x99999999).
    * @property {THREE.OrbitControls} [control] object used to interact with the
    * scene. By default it uses the mouse.
+   * @property {Boolean} [needsUpdate] True when changes have occured that
+   * require re-rendering of the canvas
    *
    */
 
@@ -92,6 +94,9 @@ define([
     // use get(0) to retrieve the native DOM object
     this.control = new THREE.OrbitControls(this.camera,
                                            $container.get(0));
+    this.control.addEventListener('change', function() {
+      scope.needsUpdate = true;
+    });
     this.control.rotateSpeed = 1.0;
     this.control.zoomSpeed = 1.2;
     this.control.panSpeed = 0.8;
@@ -99,6 +104,7 @@ define([
     this.control.enablePan = true;
     this.control.enableDamping = true;
     this.control.dampingFactor = 0.3;
+    this.needsUpdate = true;
 
     this.visibleDimensions = [0, 1, 2];
     this.dimensionRanges = {'max': [], 'min': []};
@@ -337,7 +343,23 @@ define([
     this.width = width;
     this.height = height;
     this.setCameraAspectRatio(width/height);
+    this.needsUpdate = true;
   };
+
+  /**
+   *
+   * Convenience method to check if this or any of the decViews under this need
+   * rendering
+   *
+   **/
+   ScenePlotView3D.prototype.checkUpdate = function() {
+    if (_.any(this.decViews, function(dv) {
+      return dv.needsUpdate;
+    })) {
+      return true;
+    }
+    return this.needsUpdate;
+   }
 
   /**
    *
@@ -351,6 +373,10 @@ define([
     //point all samples towards the camera
     _.each(this.decViews.scatter.markers, function(element) {
       element.quaternion.copy(camera.quaternion);
+    });
+    this.needsUpdate = false;
+    $.each(this.decViews, function(key, val) {
+      val.needsUpdate = false;
     });
   };
 
@@ -386,6 +412,7 @@ define([
         } catch (e) {
           console.error(e);
         }
+        this.needsUpdate = true;
       }
     }
   };

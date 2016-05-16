@@ -106,6 +106,7 @@ define([
       idx = element.idx;
       scope.markers[idx].visible = visible;
     });
+    scope.needsUpdate = true;
   };
 
   return VisibilityController;
