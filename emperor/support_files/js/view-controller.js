@@ -59,7 +59,6 @@ define([
     this.$canvas = null;
     this.$body = null;
     this.$header = null;
-    this.$info = null;
     this.active = false;
     this.identifier = "EMPtab-" + Math.round(1000000 * Math.random());
     this.enabled = true;

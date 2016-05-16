@@ -142,10 +142,11 @@ define([
     this.$info.css('position', 'absolute')
       .css('bottom', 0)
       .css('height', 16)
-      .css('padding', 2)
-      .css('left-padding', 10)
+      .css('width', '100%')
+      .css('padding-left', 10)
+      .css('padding-right', 10)
       .css('font-size', 12)
-      .css('background-color', 'white')
+      .css('background-color', 'rgb(238, 238, 238)')
       .css('border', '1px solid black')
       .css('font-family', 'Verdana,Arial,sans-serif')
       .hide();
@@ -153,25 +154,21 @@ define([
 
     // register callback for populating info with clicked sample name
     // set the timeout for fading out the info div
+    var infoDuration = 2500;
     var infoTimeout = setTimeout(function() {
         scope.$info.fadeOut();
-      }, 2000);
+      }, infoDuration);
 
-    this._subscribers.click.push(function(n, i) {
+    this.on('click', function(n, i) {
       clearTimeout(infoTimeout);
-
-      scope.$info.stop().data('timer');
       scope.$info.text(n);
-      scope.$info.show();
 
       // reset the timeout for fading out the info div
       infoTimeout = setTimeout(function() {
         scope.$info.fadeOut();
-      }, 2000);
-
+        scope.$info.text('');
+      }, infoDuration);
     });
-    console.log(this._subscribers);
-
   };
 
   /**
@@ -396,15 +393,15 @@ define([
    **/
   ScenePlotView3D.prototype._eventCallback = function(eventType, event) {
     event.preventDefault();
-
     // don't do anything if no subscribers
     if (this._subscribers[eventType].length === 0) {
       return;
     }
 
     var element = this.renderer.domElement;
-    this._mouse.x = ((event.clientX - element.offsetLeft) / element.width) * 2 - 1;
-    this._mouse.y = -((event.clientY - element.offsetTop) / element.height) * 2 + 1;
+    var offset = $(element).offset();
+    this._mouse.x = ((event.clientX - offset.left) / element.width) * 2 - 1;
+    this._mouse.y = -((event.clientY - offset.top) / element.height) * 2 + 1;
 
     this._raycaster.setFromCamera(this._mouse, this.camera);
 
