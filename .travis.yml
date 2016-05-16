@@ -16,10 +16,12 @@ before_install:
 install:
   - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib openpyxl=1.8.2 pandas nose flake8 pep8 ipython-notebook
   - source activate env_name
+  - pip install https://github.com/google/closure-linter/archive/master.zip
   - pip install sphinx sphinx-bootstrap-theme coverage coveralls
   - pip install -e '.[all]' --no-use-wheel
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
+  - gjslint emperor/support_files/js/*.js tests/javascript_tests/*.js
   # execute the full test suite
   - python tests/all_tests.py
   # we just check coverage in the latest version of NumPy
