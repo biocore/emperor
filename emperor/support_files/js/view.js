@@ -16,7 +16,6 @@ define([
  *
  * @param {DecompositionModel} decomp a DecompositionModel object that will be
  * represented on screen.
-
  *
  **/
 function DecompositionView(decomp) {

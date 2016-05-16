@@ -224,7 +224,6 @@ define([
   EmperorController.prototype.render = function() {
     var scope = this;
     $.each(this.sceneViews, function(i, sv) {
-      console.log(i, sv);
       if (sv.checkUpdate()) {
         scope.renderer.setViewport(0, 0, scope.width, scope.height);
         scope.renderer.clear();
