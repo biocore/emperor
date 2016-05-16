@@ -429,8 +429,8 @@ define([
    * @param {float} height the container height.
    */
   ColorViewController.prototype.resize = function(width, height) {
-    // call super, most of the header and body resizing logic is done there
-    EmperorAttributeABC.prototype.resize.call(this, width, height);
+    this.$body.height(this.$canvas.height()-this.$header.height());
+    this.$body.width(this.$canvas.width());
 
     if (this.$scaled.is(':checked')) {
       this.$scaleDiv.css('height', (this.$body.height() / 2) + 'px');
@@ -439,9 +439,8 @@ define([
     else {
       this.$gridDiv.css('height', '100%');
     }
-    if (this.bodyGrid !== undefined) {
-      this.bodyGrid.resizeCanvas();
-    }
+    // call super, most of the header and body resizing logic is done there
+    EmperorAttributeABC.prototype.resize.call(this, width, height);
   };
 
   /**
