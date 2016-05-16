@@ -19,6 +19,7 @@ install:
   - pip install https://github.com/google/closure-linter/archive/master.zip
   - pip install sphinx sphinx-bootstrap-theme coverage coveralls
   - pip install -e '.[all]' --no-use-wheel
+  - npm install -g jsdoc
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
   - gjslint emperor/support_files/js/*.js tests/javascript_tests/*.js
@@ -27,5 +28,6 @@ script:
   # we just check coverage in the latest version of NumPy
   - if [ ${WITH_COVERAGE} ]; then nosetests emperor --with-coverage --cover-package=emperor --cover-inclusive tests; fi
   - make -C doc html
+  - jsdoc emperor/support_files/js/ -d doc/jsdoc -c jsdoc-config.json -r
 after_success:
   - coveralls

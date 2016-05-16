@@ -1,0 +1,17 @@
+{
+    "tags": {
+        "allowUnknownTags": false,
+        "dictionaries": ["closure"]
+    },
+    "source": {
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins": ["plugins/markdown",
+                "plugins/summarize",
+                "plugins/underscore"],
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true
+    }
+}
