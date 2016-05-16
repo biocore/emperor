@@ -15,6 +15,8 @@ from jinja2 import DictLoader
 from jinja2.environment import Environment
 from random import sample
 from sys import argv
+from string import ascii_letters
+from random import choice
 
 import numpy as np
 
@@ -43,10 +45,11 @@ coords_ids = listify(np.arange(N))
 coords = np.random.randn(N, 10).tolist()
 pct_var = (1/np.exp(np.arange(10))).tolist()
 
-md_headers = ['SampleID', 'DOB']
+md_headers = ['SampleID', 'DOB', 'Strings']
 metadata = []
 for _id in coords_ids:
-    metadata.append([_id, ''.join(sample(categories, 1))])
+    metadata.append([_id, ''.join(sample(categories, 1)), ''.join(choice(
+        ascii_letters) for x in range(10))])
 
 with open('new-emperor.html', 'w') as f:
     f.write(template.render(coords_ids=coords_ids, coords=coords,

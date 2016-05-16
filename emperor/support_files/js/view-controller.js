@@ -389,6 +389,8 @@ define([
       // make the columns fit the available space whenever the window resizes
       // http://stackoverflow.com/a/29835739
       this.bodyGrid.setColumns(this.bodyGrid.getColumns());
+      // Resize the slickgrid canvas for the new body size.
+      this.bodyGrid.resizeCanvas();
     }
   };
 
