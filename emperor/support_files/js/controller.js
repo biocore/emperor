@@ -94,6 +94,8 @@ define([
 
     $(function() {
       scope.buildUI();
+      // Hide the loading splashscreen
+      scope.$divId.find('.loading').hide();
     });
 
     // once the object finishes loading, resize the contents so everything fits
