@@ -143,6 +143,38 @@ define([
         event.preventDefault();  //cancel system double-click event
     });
 
+    //Add info div as bottom of canvas
+    this.$info = $('<div>');
+    this.$info.css('position', 'absolute')
+      .css('bottom', 0)
+      .css('height', 16)
+      .css('width', '100%')
+      .css('padding-left', 10)
+      .css('padding-right', 10)
+      .css('font-size', 12)
+      .css('background-color', 'rgb(238, 238, 238)')
+      .css('border', '1px solid black')
+      .css('font-family', 'Verdana,Arial,sans-serif')
+      .hide();
+    $(this.renderer.domElement).parent().append(this.$info);
+
+    // register callback for populating info with clicked sample name
+    // set the timeout for fading out the info div
+    var infoDuration = 2500;
+    var infoTimeout = setTimeout(function() {
+        scope.$info.fadeOut();
+      }, infoDuration);
+
+    this.on('click', function(n, i) {
+      clearTimeout(infoTimeout);
+      scope.$info.text(n);
+
+      // reset the timeout for fading out the info div
+      infoTimeout = setTimeout(function() {
+        scope.$info.fadeOut();
+        scope.$info.text('');
+      }, infoDuration);
+    });
   };
 
   /**
@@ -387,15 +419,15 @@ define([
    **/
   ScenePlotView3D.prototype._eventCallback = function(eventType, event) {
     event.preventDefault();
-
     // don't do anything if no subscribers
     if (this._subscribers[eventType].length === 0) {
       return;
     }
 
     var element = this.renderer.domElement;
-    this._mouse.x = ((event.clientX - element.offsetLeft) / element.width) * 2 - 1;
-    this._mouse.y = -((event.clientY - element.offsetTop) / element.height) * 2 + 1;
+    var offset = $(element).offset();
+    this._mouse.x = ((event.clientX - offset.left) / element.width) * 2 - 1;
+    this._mouse.y = -((event.clientY - offset.top) / element.height) * 2 + 1;
 
     this._raycaster.setFromCamera(this._mouse, this.camera);
 
