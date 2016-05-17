@@ -85,7 +85,7 @@ function(_, trajectory) {
      * file (mappingFileHeaders).
      */
     this.mappingFileData = mappingFileData;
-    /*
+    /**
      * @type {Object[]}
      * an Array of Objects where the indices are the
      * sample identifiers and each of the objects has the following properties:
@@ -109,9 +109,31 @@ function(_, trajectory) {
      */
     this.trajectoryCategory = trajectoryCategory;
 
+    /**
+     * @type {Float}
+     * A floating point value determining what the minimum separation between
+     * samples along the gradients is. Will be null until it is initialized to
+     * the values according to the input data.
+     * @default null
+     */
     this.minimumDelta = null;
+    /**
+     * @type {Integer}
+     * Maximum length the groups of samples have along a gradient.
+     * @default null
+     */
     this.maximumTrajectoryLength = null;
+    /*
+     * @type {Integer}
+     * The current frame being served by the director
+     * @default -1
+     */
     this.currentFrame = -1;
+    /**
+     * @type {Array}
+     * Array where each element in the trajectory is a trajectory with the
+     * interpolated points in it.
+     */
     this.trajectories = new Array();
 
     this.initializeTrajectories();
