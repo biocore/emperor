@@ -1,10 +1,10 @@
 define([
-    "jquery",
-    "underscore",
-    "viewcontroller",
-    "shape-editor",
-    "shapes"
-], function ($, _, ViewControllers, Shape, shapes) {
+    'jquery',
+    'underscore',
+    'viewcontroller',
+    'shape-editor',
+    'shapes'
+], function($, _, ViewControllers, Shape, shapes) {
 
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
@@ -82,8 +82,8 @@ define([
     /**
    * Helper function to set the shape of plottable
    *
-   * @param {scope} object, the scope where the plottables exist
-   * @param {shape} string, string representation of the shape to be applied
+   * @param {scope} object , the scope where the plottables exist
+   * @param {shape} string , string representation of the shape to be applied
    * to the plottables.
    * @param {group} array of objects, list of object that should be changed in
    * scope

@@ -1,10 +1,10 @@
 define([
-    "jquery",
-    "underscore",
-    "view",
-    "slickgrid",
-    "chosen"
-], function ($, _, DecompositionView, SlickGrid, Chosen) {
+    'jquery',
+    'underscore',
+    'view',
+    'slickgrid',
+    'chosen'
+], function($, _, DecompositionView, SlickGrid, Chosen) {
 
   /**
    * @name EmperorViewControllerABC
@@ -51,7 +51,7 @@ define([
    * EmperorViewControllerABC.
    *
    */
-  function EmperorViewControllerABC(container, title, description){
+  function EmperorViewControllerABC(container, title, description) {
     this.$container = $(container);
     this.title = title;
     this.description = description;
@@ -60,12 +60,12 @@ define([
     this.$body = null;
     this.$header = null;
     this.active = false;
-    this.identifier = "EMPtab-" + Math.round(1000000 * Math.random());
+    this.identifier = 'EMPtab-' + Math.round(1000000 * Math.random());
     this.enabled = true;
 
     if (this.$container.length < 1) {
-      throw new Error("Emperor requires a valid container, " +
-          this.$container + " does not exist in the DOM.");
+      throw new Error('Emperor requires a valid container, ' +
+          this.$container + ' does not exist in the DOM.');
     }
 
     // the canvas contains both the header and the body, note that for all
@@ -91,7 +91,7 @@ define([
 
     // inherit the size of the container minus the space being used for the
     // header
-    this.$body.height(this.$canvas.height()-this.$header.height());
+    this.$body.height(this.$canvas.height() - this.$header.height());
     this.$body.width(this.$canvas.width());
 
     this.$canvas.append(this.$header);
@@ -105,12 +105,12 @@ define([
    *
    * @param {Boolean} [trulse] option to enable tab.
    */
-  EmperorViewControllerABC.prototype.setEnabled = function(trulse){
-    if(typeof(trulse) === "boolean"){
+  EmperorViewControllerABC.prototype.setEnabled = function(trulse) {
+    if (typeof(trulse) === 'boolean') {
       this.enabled = trulse;
     }
-    else{
-      throw new Error("`trulse` can only be of boolean type");
+    else {
+      throw new Error('`trulse` can only be of boolean type');
     }
   };
 
@@ -120,13 +120,13 @@ define([
    * @param {Boolean} [trulse] option to activate tab
    * (i.e. move tab to foreground).
    */
-  EmperorViewControllerABC.prototype.setActive = function(trulse){
-    if(this.enabled === true){
-      if(typeof(trulse) === "boolean"){
+  EmperorViewControllerABC.prototype.setActive = function(trulse) {
+    if (this.enabled === true) {
+      if (typeof(trulse) === 'boolean') {
         this.active = trulse;
       }
-      else{
-        throw new Error("`trulse` can only be of boolean type");
+      else {
+        throw new Error('`trulse` can only be of boolean type');
       }
     }
   };
@@ -145,12 +145,12 @@ define([
     // for the horizontal menus
     var padding = 10;
     this.$canvas.height(height);
-    this.$canvas.width(width-padding);
+    this.$canvas.width(width - padding);
 
-    this.$header.width(width-padding);
+    this.$header.width(width - padding);
 
     // the body has to account for the size used by the header
-    this.$body.width(width-padding);
+    this.$body.width(width - padding);
     this.$body.height(height - this.$header.height());
   };
 
@@ -169,7 +169,7 @@ define([
    *
    * @param {Object} parsed JSON string representation of an instance.
    */
-  EmperorViewControllerABC.prototype.fromJSON = function(jsonString){
+  EmperorViewControllerABC.prototype.fromJSON = function(jsonString) {
     throw Error('Not implemented');
   };
 
@@ -228,18 +228,18 @@ define([
    *
    */
   function EmperorAttributeABC(container, title, description,
-      decompViewDict, options){
+      decompViewDict, options) {
     EmperorViewControllerABC.call(this, container, title, description);
-    if (decompViewDict === undefined){
+    if (decompViewDict === undefined) {
       throw Error('The decomposition view dictionary cannot be undefined');
     }
-    for(var dv in decompViewDict){
-      if(!dv instanceof DecompositionView){
+    for (var dv in decompViewDict) {
+      if (!dv instanceof DecompositionView) {
         throw Error('The decomposition view dictionary ' +
             'can only have decomposition views');
       }
     }
-    if (_.size(decompViewDict) <= 0){
+    if (_.size(decompViewDict) <= 0) {
       throw Error('The decomposition view dictionary cannot be empty');
     }
     // Picks the first key in the dictionary as the active key
@@ -258,7 +258,7 @@ define([
     var scope = this;
 
     // http://stackoverflow.com/a/6602002
-    this.$select = $("<select>");
+    this.$select = $('<select>');
     _.each(dm.md_headers, function(header) {
       scope.$select.append($('<option>').attr('value', header).text(header));
     });
@@ -270,10 +270,10 @@ define([
       scope._buildGrid(options);
 
       // setup chosen
-      scope.$select.chosen({width: "100%", search_contains: true});
+      scope.$select.chosen({width: '100%', search_contains: true});
 
       // only subclasses will provide this callback
-      if(options.categorySelectionCallback !== undefined){
+      if (options.categorySelectionCallback !== undefined) {
         scope.$select.chosen().change(options.categorySelectionCallback);
 
         // now that we have the chosen selector and the table fire a callback
@@ -293,12 +293,12 @@ define([
    *
    * @params {String} [m] Metadata column name to control.
    */
-  EmperorAttributeABC.prototype.setMetadataField = function(m){
+  EmperorAttributeABC.prototype.setMetadataField = function(m) {
     // FIXME: this should be validated against decompViewDict i.e. we should be
     // verifying that the metadata field indeed exists in the decomposition
     // model
     this.metadataField = m;
-  }
+  };
 
   /**
    * Retrieves the metadata field currently being controlled
@@ -306,41 +306,41 @@ define([
    * @return {String} Returns a key corresponding to the active
    * decomposition view.
    */
-  EmperorAttributeABC.prototype.getActiveDecompViewKey = function(){
+  EmperorAttributeABC.prototype.getActiveDecompViewKey = function() {
     return this.activeViewKey;
-  }
+  };
 
   /**
    * Changes the metadata column name to control.
    *
    * @params {String} [k] Key corresponding to active decomposition view.
    */
-  EmperorAttributeABC.prototype.setActiveDecompViewKey = function(k){
+  EmperorAttributeABC.prototype.setActiveDecompViewKey = function(k) {
     // FIXME: this should be validated against decompViewDict i.e. we should be
     // verifying that the key indeed exists
     this.activeViewKey = k;
-  }
+  };
 
   /**
    * Retrieves the underlying data in the slick grid
    * @return {Array} Returns an array of objects
    * displayed by the body grid.
    */
-  EmperorAttributeABC.prototype.getSlickGridDataset = function(){
+  EmperorAttributeABC.prototype.getSlickGridDataset = function() {
     return this.bodyGrid.getData();
-  }
+  };
 
   /**
    * Changes the underlying data in the slick grid
    *
    * @params {Array} [data] data.
    */
-  EmperorAttributeABC.prototype.setSlickGridDataset = function(data){
+  EmperorAttributeABC.prototype.setSlickGridDataset = function(data) {
     // Re-render
     this.bodyGrid.setData(data);
     this.bodyGrid.invalidate();
     this.bodyGrid.render();
-  }
+  };
 
   /**
    * Method in charge of initializing the SlickGrid object
@@ -349,14 +349,14 @@ define([
    * of this object.
    *
    */
-  EmperorAttributeABC.prototype._buildGrid = function(options){
+  EmperorAttributeABC.prototype._buildGrid = function(options) {
     var columns = [{id: 'field1', name: '', field: 'category'}];
     var gridOptions = {editable: true, enableAddRow: false,
       enableCellNavigation: true, forceFitColumns: true,
       enableColumnReorder: false, autoEdit: true};
 
     // If there's a custom slickgrid column then add it to the object
-    if(options.slickGridColumn !== undefined){
+    if (options.slickGridColumn !== undefined) {
       columns.unshift(options.slickGridColumn);
     }
 
@@ -368,7 +368,7 @@ define([
 
     // subscribe to events when a cell is changed
     this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
-  }
+  };
 
   /**
    * Resizes the container and the individual elements.
@@ -385,7 +385,7 @@ define([
 
     // the whole code is asynchronous, so there may be situations where
     // bodyGrid doesn't exist yet, so check before trying to modify the object
-    if (this.bodyGrid !== undefined){
+    if (this.bodyGrid !== undefined) {
       // make the columns fit the available space whenever the window resizes
       // http://stackoverflow.com/a/29835739
       this.bodyGrid.setColumns(this.bodyGrid.getColumns());
@@ -406,7 +406,7 @@ define([
     // Convert SlickGrid list of objects to single object
     var gridData = this.bodyGrid.getData();
     var jsonData = {};
-    for(var i = 0; i < gridData.length; i++) {
+    for (var i = 0; i < gridData.length; i++) {
       jsonData[gridData[i].category] = gridData[i].value;
     }
     json.data = jsonData;

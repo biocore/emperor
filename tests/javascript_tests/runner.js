@@ -94,7 +94,7 @@
 
                     response += 'expected: ' + details.expected + ', but was: ' + details.actual;
                     if (details.source) {
-                        response += "\n" + details.source;
+                        response += '\n' + details.source;
                     }
                 }
 
@@ -113,19 +113,19 @@
                         console.log('    ' + current_test_assertions[i]);
                     }
                 }
-                else{
-                    console.log(name+' ('+result.duration+' ms) ... ok');
+                else {
+                    console.log(name + ' (' + result.duration + ' ms) ... ok');
                 }
 
                 current_test_assertions.length = 0;
             });
 
             QUnit.moduleDone(function(result) {
-                console.log('')
+                console.log('');
             });
 
             QUnit.done(function(result) {
-                console.log('Took ' + result.runtime +  'ms to run ' + result.total + ' tests. ' + result.passed + ' passed, ' + result.failed + ' failed.');
+                console.log('Took ' + result.runtime + 'ms to run ' + result.total + ' tests. ' + result.passed + ' passed, ' + result.failed + ' failed.');
 
                 if (typeof window.callPhantom === 'function') {
                     window.callPhantom({

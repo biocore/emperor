@@ -1,4 +1,4 @@
-requirejs(['underscore', 'trajectory'], function(_, trajectory){
+requirejs(['underscore', 'trajectory'], function(_, trajectory) {
   $(document).ready(function() {
     var TrajectoryOfSamples = trajectory.TrajectoryOfSamples;
     var getMinimumDelta = trajectory.getMinimumDelta;
@@ -13,12 +13,12 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
     // these are expected results needed for multiple tests
     var crunchedDataTwoCategories, crunchedDataOneCategory;
 
-    module("Trajectory", {
+    module('Trajectory', {
 
-      setup: function(){
+      setup: function() {
         // setup function
-        mappingFileHeaders = ['SampleID','LinkerPrimerSequence','Treatment','DOB'];
-        mappingFileData = { 'PC.481': ['PC.481','YATGCTGCCTCCCGTAGGAGT','Control','20070314'],'PC.607': ['PC.607','YATGCTGCCTCCCGTAGGAGT','Fast','20071112'],'PC.634': ['PC.634','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.635': ['PC.635','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.593': ['PC.593','YATGCTGCCTCCCGTAGGAGT','Control','20071210'],'PC.636': ['PC.636','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.355': ['PC.355','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.354': ['PC.354','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.356': ['PC.356','YATGCTGCCTCCCGTAGGAGT','Control','20061126'] };
+        mappingFileHeaders = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
+        mappingFileData = { 'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'], 'PC.607': ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'], 'PC.634': ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.593': ['PC.593', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'], 'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.355': ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'], 'PC.354': ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'], 'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126'] };
         coordinatesData = new Array();
         coordinatesData['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647, 'P1': -0.276542, 'P2': -0.144964, 'P3': 0.066647, 'P4': -0.067711, 'P5': 0.176070, 'P6': 0.072969, 'P7': -0.229889, 'P8': -0.046599 };
         coordinatesData['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136, 'P1': -0.237661, 'P2': 0.046053, 'P3': -0.138136, 'P4': 0.159061, 'P5': -0.247485, 'P6': -0.115211, 'P7': -0.112864, 'P8': 0.064794 };
@@ -32,40 +32,40 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
 
         sampleNames = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354'];
         gradientPoints = [1, 4, 6, 8, 11];
-        coordinates = [{'x':0, 'y':0, 'z':0}, {'x':1, 'y':1, 'z':1},
-        {'x':-9, 'y':-9, 'z':-9}, {'x':3, 'y':3, 'z':3},
-        {'x':8, 'y':8, 'z':8}];
+        coordinates = [{'x': 0, 'y': 0, 'z': 0}, {'x': 1, 'y': 1, 'z': 1},
+        {'x': -9, 'y': -9, 'z': -9}, {'x': 3, 'y': 3, 'z': 3},
+        {'x': 8, 'y': 8, 'z': 8}];
 
-        crunchedDataOneCategory = {"YATGCTGCCTCCCGTAGGAGT": [
-          { "name": "PC.356", "value": "20061126", "x": 0.22882, "y": -0.130142, "z": -0.287149},
-          { "name": "PC.355", "value": "20061218", "x": 0.170518, "y": -0.194113, "z": -0.030897},
-          { "name": "PC.354", "value": "20061218", "x": 0.280399, "y": -0.006013, "z": 0.023485},
-          { "name": "PC.481", "value": "20070314", "x": 0.042263, "y": -0.013968, "z": 0.063531},
-          { "name": "PC.607", "value": "20071112", "x": -0.09133, "y": 0.424147, "z": -0.135627},
-          { "name": "PC.593", "value": "20071210", "x": 0.232873, "y": 0.139788, "z": 0.322871},
-          { "name": "PC.634", "value": "20080116", "x": -0.349339, "y": -0.120788, "z": 0.115275},
-          { "name": "PC.635", "value": "20080116", "x": -0.237661, "y": 0.046053, "z": -0.138136},
-          { "name": "PC.636", "value": "20080116", "x": -0.276542, "y": -0.144964, "z": 0.066647}
+        crunchedDataOneCategory = {'YATGCTGCCTCCCGTAGGAGT': [
+          { 'name': 'PC.356', 'value': '20061126', 'x': 0.22882, 'y': -0.130142, 'z': -0.287149},
+          { 'name': 'PC.355', 'value': '20061218', 'x': 0.170518, 'y': -0.194113, 'z': -0.030897},
+          { 'name': 'PC.354', 'value': '20061218', 'x': 0.280399, 'y': -0.006013, 'z': 0.023485},
+          { 'name': 'PC.481', 'value': '20070314', 'x': 0.042263, 'y': -0.013968, 'z': 0.063531},
+          { 'name': 'PC.607', 'value': '20071112', 'x': -0.09133, 'y': 0.424147, 'z': -0.135627},
+          { 'name': 'PC.593', 'value': '20071210', 'x': 0.232873, 'y': 0.139788, 'z': 0.322871},
+          { 'name': 'PC.634', 'value': '20080116', 'x': -0.349339, 'y': -0.120788, 'z': 0.115275},
+          { 'name': 'PC.635', 'value': '20080116', 'x': -0.237661, 'y': 0.046053, 'z': -0.138136},
+          { 'name': 'PC.636', 'value': '20080116', 'x': -0.276542, 'y': -0.144964, 'z': 0.066647}
         ]
         };
 
-        crunchedDataTwoCategories = expectedResult = {"Control": [
-          {"name": "PC.356", "value": "20061126", "x": 0.22882, "y": -0.130142, "z": -0.287149},
-          {"name": "PC.355", "value": "20061218", "x": 0.170518, "y": -0.194113, "z": -0.030897},
-          {"name": "PC.354", "value": "20061218", "x": 0.280399, "y": -0.006013, "z": 0.023485},
-          {"name": "PC.481", "value": "20070314", "x": 0.042263, "y": -0.013968, "z": 0.063531},
-          {"name": "PC.593", "value": "20071210", "x": 0.232873, "y": 0.139788, "z": 0.322871}
+        crunchedDataTwoCategories = expectedResult = {'Control': [
+          {'name': 'PC.356', 'value': '20061126', 'x': 0.22882, 'y': -0.130142, 'z': -0.287149},
+          {'name': 'PC.355', 'value': '20061218', 'x': 0.170518, 'y': -0.194113, 'z': -0.030897},
+          {'name': 'PC.354', 'value': '20061218', 'x': 0.280399, 'y': -0.006013, 'z': 0.023485},
+          {'name': 'PC.481', 'value': '20070314', 'x': 0.042263, 'y': -0.013968, 'z': 0.063531},
+          {'name': 'PC.593', 'value': '20071210', 'x': 0.232873, 'y': 0.139788, 'z': 0.322871}
         ],
-        "Fast": [
-        {"name": "PC.607", "value": "20071112", "x": -0.09133, "y": 0.424147, "z": -0.135627},
-        {"name": "PC.634", "value": "20080116", "x": -0.349339, "y": -0.120788, "z": 0.115275},
-        {"name": "PC.635", "value": "20080116", "x": -0.237661, "y": 0.046053, "z": -0.138136},
-        {"name": "PC.636", "value": "20080116", "x": -0.276542, "y": -0.144964, "z": 0.066647}
+        'Fast': [
+        {'name': 'PC.607', 'value': '20071112', 'x': -0.09133, 'y': 0.424147, 'z': -0.135627},
+        {'name': 'PC.634', 'value': '20080116', 'x': -0.349339, 'y': -0.120788, 'z': 0.115275},
+        {'name': 'PC.635', 'value': '20080116', 'x': -0.237661, 'y': 0.046053, 'z': -0.138136},
+        {'name': 'PC.636', 'value': '20080116', 'x': -0.276542, 'y': -0.144964, 'z': 0.066647}
         ]
         };
       },
 
-      teardown: function(){
+      teardown: function() {
         // teardown function
         mappingFileHeaders = null;
         mappingFileData = null;
@@ -84,7 +84,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * and check that the attributes are set correctly.
      *
      */
-    test("Test constructor", function() {
+    test('Test constructor', function() {
       var trajectory;
 
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
@@ -92,15 +92,15 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
           10);
       deepEqual(trajectory.sampleNames, ['PC.636', 'PC.635', 'PC.356',
           'PC.481', 'PC.354'], 'Sample names are set correctly');
-      equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata '+
+      equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata ' +
           'category name is set correctly');
-      deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient '+
+      deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient ' +
           'point values are set correctly');
-      deepEqual(trajectory.coordinates, [{'x':0, 'y':0, 'z':0},
-          {'x':1, 'y':1, 'z':1}, {'x':-9, 'y':-9, 'z':-9},
-          {'x':3, 'y':3, 'z':3}, {'x':8, 'y':8, 'z':8}], "Coordinates"+
-          " values are set correctly");
-      equal(trajectory.minimumDelta, 2, "Minimum delta is set correctly");
+      deepEqual(trajectory.coordinates, [{'x': 0, 'y': 0, 'z': 0},
+          {'x': 1, 'y': 1, 'z': 1}, {'x': -9, 'y': -9, 'z': -9},
+          {'x': 3, 'y': 3, 'z': 3}, {'x': 8, 'y': 8, 'z': 8}], 'Coordinates'+
+          ' values are set correctly');
+      equal(trajectory.minimumDelta, 2, 'Minimum delta is set correctly');
       equal(trajectory.suppliedN, 10, 'Value of N is set correctly');
 
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
@@ -108,16 +108,16 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
           coordinates, 2);
       deepEqual(trajectory.sampleNames, ['PC.636', 'PC.635', 'PC.356',
           'PC.481', 'PC.354'], 'Sample names are set correctly');
-      equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata '+
+      equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata ' +
           'category name is set correctly');
-      deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient'+
+      deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient' +
           ' point values are set correctly');
-      deepEqual(trajectory.coordinates, [{'x':0, 'y':0, 'z':0},
-          {'x':1, 'y':1, 'z':1}, {'x':-9, 'y':-9, 'z':-9},
-          {'x':3, 'y':3, 'z':3}, {'x':8, 'y':8, 'z':8}], "Coordinates"+
-          " values are set correctly");
-      equal(trajectory.minimumDelta, 2, "Minimum delta is set correctly");
-      equal(trajectory.suppliedN, 5, "Default value of N is set to 5");
+      deepEqual(trajectory.coordinates, [{'x': 0, 'y': 0, 'z': 0},
+          {'x': 1, 'y': 1, 'z': 1}, {'x': -9, 'y': -9, 'z': -9},
+          {'x': 3, 'y': 3, 'z': 3}, {'x': 8, 'y': 8, 'z': 8}], 'Coordinates'+
+          ' values are set correctly');
+      equal(trajectory.minimumDelta, 2, 'Minimum delta is set correctly');
+      equal(trajectory.suppliedN, 5, 'Default value of N is set to 5');
     });
 
     /**
@@ -126,17 +126,17 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * constructing with bad arguments.
      *
      */
-    test("Test constructor exceptions", function(){
+    test('Test constructor exceptions', function() {
       var result;
 
       // check this happens for all the properties
       throws(
-          function (){
+          function() {
             result = new TrajectoryOfSamples(sampleNames, 'foo', [1, 2, 3],
                 coordinates);
           },
           Error,
-          'An error is raised if the number of coordinates does not '+
+          'An error is raised if the number of coordinates does not ' +
           'correspond to the number of gradient points'
           );
     });
@@ -147,50 +147,50 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * correctly
      *
      */
-    test("Test _generateInterpolatedCoordinates", function(){
+    test('Test _generateInterpolatedCoordinates', function() {
 
       var trajectory;
-      var expectedInterpolatedCoordinates = [{ "x": 0, "y": 0, "z": 0},
-      { "x": 0.1, "y": 0.1, "z": 0.1},
-      { "x": 0.2, "y": 0.2, "z": 0.2},
-      { "x": 0.30000000000000004, "y": 0.30000000000000004, "z": 0.30000000000000004},
-      { "x": 0.4, "y": 0.4, "z": 0.4},
-      { "x": 0.5, "y": 0.5, "z": 0.5},
-      { "x": 0.6000000000000001, "y": 0.6000000000000001, "z": 0.6000000000000001},
-      { "x": 0.7000000000000001, "y": 0.7000000000000001, "z": 0.7000000000000001},
-      { "x": 0.8, "y": 0.8, "z": 0.8},
-      { "x": 0.9, "y": 0.9, "z": 0.9},
-      { "x": 1, "y": 1, "z": 1},
-      { "x": 0, "y": 0, "z": 0},
-      { "x": -1, "y": -1, "z": -1},
-      { "x": -2, "y": -2, "z": -2},
-      { "x": -3, "y": -3, "z": -3},
-      { "x": -4, "y": -4, "z": -4},
-      { "x": -5, "y": -5, "z": -5},
-      { "x": -6, "y": -6, "z": -6},
-      { "x": -7, "y": -7, "z": -7},
-      { "x": -8, "y": -8, "z": -8},
-      { "x": -9, "y": -9, "z": -9},
-      { "x": -7.8, "y": -7.8, "z": -7.8},
-      { "x": -6.6, "y": -6.6, "z": -6.6},
-      { "x": -5.4, "y": -5.4, "z": -5.4},
-      { "x": -4.2, "y": -4.2, "z": -4.2},
-      { "x": -3, "y": -3, "z": -3},
-      { "x": -1.8000000000000007, "y": -1.8000000000000007, "z": -1.8000000000000007},
-      { "x": -0.5999999999999996, "y": -0.5999999999999996, "z": -0.5999999999999996},
-      { "x": 0.5999999999999996, "y": 0.5999999999999996, "z": 0.5999999999999996},
-      { "x": 1.799999999999999, "y": 1.799999999999999, "z": 1.799999999999999},
-      { "x": 3, "y": 3, "z": 3},
-      { "x": 3.5, "y": 3.5, "z": 3.5},
-      { "x": 4, "y": 4, "z": 4},
-      { "x": 4.5, "y": 4.5, "z": 4.5},
-      { "x": 5, "y": 5, "z": 5},
-      { "x": 5.5, "y": 5.5, "z": 5.5},
-      { "x": 6, "y": 6, "z": 6},
-      { "x": 6.5, "y": 6.5, "z": 6.5},
-      { "x": 7, "y": 7, "z": 7},
-      { "x": 7.5, "y": 7.5, "z": 7.5},
-      { "x": 8, "y": 8, "z": 8}];
+      var expectedInterpolatedCoordinates = [{ 'x': 0, 'y': 0, 'z': 0},
+      { 'x': 0.1, 'y': 0.1, 'z': 0.1},
+      { 'x': 0.2, 'y': 0.2, 'z': 0.2},
+      { 'x': 0.30000000000000004, 'y': 0.30000000000000004, 'z': 0.30000000000000004},
+      { 'x': 0.4, 'y': 0.4, 'z': 0.4},
+      { 'x': 0.5, 'y': 0.5, 'z': 0.5},
+      { 'x': 0.6000000000000001, 'y': 0.6000000000000001, 'z': 0.6000000000000001},
+      { 'x': 0.7000000000000001, 'y': 0.7000000000000001, 'z': 0.7000000000000001},
+      { 'x': 0.8, 'y': 0.8, 'z': 0.8},
+      { 'x': 0.9, 'y': 0.9, 'z': 0.9},
+      { 'x': 1, 'y': 1, 'z': 1},
+      { 'x': 0, 'y': 0, 'z': 0},
+      { 'x': -1, 'y': -1, 'z': -1},
+      { 'x': -2, 'y': -2, 'z': -2},
+      { 'x': -3, 'y': -3, 'z': -3},
+      { 'x': -4, 'y': -4, 'z': -4},
+      { 'x': -5, 'y': -5, 'z': -5},
+      { 'x': -6, 'y': -6, 'z': -6},
+      { 'x': -7, 'y': -7, 'z': -7},
+      { 'x': -8, 'y': -8, 'z': -8},
+      { 'x': -9, 'y': -9, 'z': -9},
+      { 'x': -7.8, 'y': -7.8, 'z': -7.8},
+      { 'x': -6.6, 'y': -6.6, 'z': -6.6},
+      { 'x': -5.4, 'y': -5.4, 'z': -5.4},
+      { 'x': -4.2, 'y': -4.2, 'z': -4.2},
+      { 'x': -3, 'y': -3, 'z': -3},
+      { 'x': -1.8000000000000007, 'y': -1.8000000000000007, 'z': -1.8000000000000007},
+      { 'x': -0.5999999999999996, 'y': -0.5999999999999996, 'z': -0.5999999999999996},
+      { 'x': 0.5999999999999996, 'y': 0.5999999999999996, 'z': 0.5999999999999996},
+      { 'x': 1.799999999999999, 'y': 1.799999999999999, 'z': 1.799999999999999},
+      { 'x': 3, 'y': 3, 'z': 3},
+      { 'x': 3.5, 'y': 3.5, 'z': 3.5},
+      { 'x': 4, 'y': 4, 'z': 4},
+      { 'x': 4.5, 'y': 4.5, 'z': 4.5},
+      { 'x': 5, 'y': 5, 'z': 5},
+      { 'x': 5.5, 'y': 5.5, 'z': 5.5},
+      { 'x': 6, 'y': 6, 'z': 6},
+      { 'x': 6.5, 'y': 6.5, 'z': 6.5},
+      { 'x': 7, 'y': 7, 'z': 7},
+      { 'x': 7.5, 'y': 7.5, 'z': 7.5},
+      { 'x': 8, 'y': 8, 'z': 8}];
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
           gradientPoints, coordinates, 2,
           10);
@@ -201,24 +201,24 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
           'Check the interpolated coordinates are computed correctly');
       deepEqual(trajectory._intervalValues, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
           1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3,
-          3, 3, 3, 3, 3, 3, 3, 3] , 'Check the intervals array is '+
+          3, 3, 3, 3, 3, 3, 3, 3] , 'Check the intervals array is ' +
           'created properyl');
 
-      expectedInterpolatedCoordinates = [{"x": 0, "y": 0, "z": 0},
-      {"x": 0.25, "y": 0.25, "z": 0.25},
-      {"x": 0.5, "y": 0.5, "z": 0.5},
-      {"x": 0.75, "y": 0.75, "z": 0.75},
-      {"x": 1, "y": 1, "z": 1},
-      {"x": -2.3333333333333335, "y": -2.3333333333333335, "z": -2.3333333333333335},
-      {"x": -5.666666666666667, "y": -5.666666666666667, "z": -5.666666666666667},
-      {"x": -9, "y": -9, "z": -9},
-      {"x": -5, "y": -5, "z": -5},
-      {"x": -1, "y": -1, "z": -1},
-      {"x": 3, "y": 3, "z": 3},
-      {"x": 4.25, "y": 4.25, "z": 4.25},
-      {"x": 5.5, "y": 5.5, "z": 5.5},
-      {"x": 6.75, "y": 6.75, "z": 6.75},
-      {"x": 8, "y": 8, "z": 8 }];
+      expectedInterpolatedCoordinates = [{'x': 0, 'y': 0, 'z': 0},
+      {'x': 0.25, 'y': 0.25, 'z': 0.25},
+      {'x': 0.5, 'y': 0.5, 'z': 0.5},
+      {'x': 0.75, 'y': 0.75, 'z': 0.75},
+      {'x': 1, 'y': 1, 'z': 1},
+      {'x': -2.3333333333333335, 'y': -2.3333333333333335, 'z': -2.3333333333333335},
+      {'x': -5.666666666666667, 'y': -5.666666666666667, 'z': -5.666666666666667},
+      {'x': -9, 'y': -9, 'z': -9},
+      {'x': -5, 'y': -5, 'z': -5},
+      {'x': -1, 'y': -1, 'z': -1},
+      {'x': 3, 'y': 3, 'z': 3},
+      {'x': 4.25, 'y': 4.25, 'z': 4.25},
+      {'x': 5.5, 'y': 5.5, 'z': 5.5},
+      {'x': 6.75, 'y': 6.75, 'z': 6.75},
+      {'x': 8, 'y': 8, 'z': 8 }];
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
           gradientPoints, coordinates, 2,
           3);
@@ -236,25 +236,25 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * index (edge cases).
      *
      */
-    test('Test representativeCoordinatesAtIndex edge cases', function(){
+    test('Test representativeCoordinatesAtIndex edge cases', function() {
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
           gradientPoints, coordinates, 2,
           3);
       deepEqual(trajectory.representativeCoordinatesAtIndex(0),
-          [{'x':0, 'y':0, 'z':0}],
+          [{'x': 0, 'y': 0, 'z': 0}],
           'Returns an empty array for index 0');
 
-      var expectedCoordinates = [{'x':0, 'y':0, 'z':0},
-      {'x':1, 'y':1, 'z':1},
-      {'x':-9, 'y':-9, 'z':-9},
-      {'x':3, 'y':3, 'z':3},
-      {'x':8, 'y':8, 'z':8}];
+      var expectedCoordinates = [{'x': 0, 'y': 0, 'z': 0},
+      {'x': 1, 'y': 1, 'z': 1},
+      {'x': -9, 'y': -9, 'z': -9},
+      {'x': 3, 'y': 3, 'z': 3},
+      {'x': 8, 'y': 8, 'z': 8}];
       // the interpolated array is 18 samples long
       deepEqual(trajectory.representativeCoordinatesAtIndex(18),
-          expectedCoordinates, 'Returns an array with only the '+
+          expectedCoordinates, 'Returns an array with only the ' +
           'original coordinates');
       deepEqual(trajectory.representativeCoordinatesAtIndex(100),
-          expectedCoordinates, 'Returns an array with only the '+
+          expectedCoordinates, 'Returns an array with only the ' +
           'original coordinates');
     });
 
@@ -264,16 +264,16 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * index.
      *
      */
-    test('Test representativeCoordinatesAtIndex', function(){
+    test('Test representativeCoordinatesAtIndex', function() {
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
           gradientPoints, coordinates, 2,
           3);
 
-      var expectedCoordinates = [{'x':0, 'y':0, 'z':0},
-      {'x':1, 'y':1, 'z':1},
-      {'x':-9, 'y':-9, 'z':-9},
-      {'x':3, 'y':3, 'z':3},
-      {'x':8, 'y':8, 'z':8}];
+      var expectedCoordinates = [{'x': 0, 'y': 0, 'z': 0},
+      {'x': 1, 'y': 1, 'z': 1},
+      {'x': -9, 'y': -9, 'z': -9},
+      {'x': 3, 'y': 3, 'z': 3},
+      {'x': 8, 'y': 8, 'z': 8}];
 
       var expectedInterpolatedCoordinates = [{'x': 0, 'y': 0, 'z': 0},
       {'x': 0.25, 'y': 0.25, 'z': 0.25},
@@ -289,15 +289,15 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
       {'x': 4.25, 'y': 4.25, 'z': 4.25},
       {'x': 5.5, 'y': 5.5, 'z': 5.5},
       {'x': 6.75, 'y': 6.75, 'z': 6.75},
-      {'x': 8, 'y': 8, 'z': 8}]
+      {'x': 8, 'y': 8, 'z': 8}];
 
       deepEqual(trajectory.representativeCoordinatesAtIndex(3),
-          [{"x": 0, "y": 0, "z": 0},
-          {"x": 0.75, "y": 0.75, "z": 0.75}],
+          [{'x': 0, 'y': 0, 'z': 0},
+          {'x': 0.75, 'y': 0.75, 'z': 0.75}],
           'Coordinates are retrieved correctly at index 3');
       deepEqual(trajectory.representativeCoordinatesAtIndex(11),
-          [{'x':0, 'y':0, 'z':0}, {'x':1, 'y':1, 'z':1},
-          {'x':-9, 'y':-9, 'z':-9}, {'x':3, 'y':3, 'z':3},
+          [{'x': 0, 'y': 0, 'z': 0}, {'x': 1, 'y': 1, 'z': 1},
+          {'x': -9, 'y': -9, 'z': -9}, {'x': 3, 'y': 3, 'z': 3},
           {'x': 4.25, 'y': 4.25, 'z': 4.25}],
           'Coordinates are retrieved correctly at index 11');
 
@@ -309,21 +309,21 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * delta correctly.
      *
      */
-    test('Test calculateNumberOfPointsForDelta', function(){
+    test('Test calculateNumberOfPointsForDelta', function() {
       var trajectory;
 
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
           gradientPoints, coordinates, 2,
           10);
-      equal(trajectory.calculateNumberOfPointsForDelta(3), 15, 'Number of '+
+      equal(trajectory.calculateNumberOfPointsForDelta(3), 15, 'Number of ' +
           'points for delta is calculated correctly');
-      equal(trajectory.calculateNumberOfPointsForDelta(8), 40, 'Number of '+
+      equal(trajectory.calculateNumberOfPointsForDelta(8), 40, 'Number of ' +
           'points for delta is calculated correctly');
-      equal(trajectory.calculateNumberOfPointsForDelta(7), 35, 'Number of '+
+      equal(trajectory.calculateNumberOfPointsForDelta(7), 35, 'Number of ' +
           'points for delta is calculated correctly');
-      equal(trajectory.calculateNumberOfPointsForDelta(11), 55, 'Number of '+
+      equal(trajectory.calculateNumberOfPointsForDelta(11), 55, 'Number of ' +
           'points for delta is calculated correctly');
-      equal(trajectory.calculateNumberOfPointsForDelta(1), 5, 'Number of '+
+      equal(trajectory.calculateNumberOfPointsForDelta(1), 5, 'Number of ' +
           'points for delta is calculated correctly');
     });
 
@@ -332,29 +332,29 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * Test linearInterpolation function.
      *
      */
-    test('Test linearInterpolation', function(){
+    test('Test linearInterpolation', function() {
       var result;
       result = linearInterpolation(0, 0, 0, 1, 1, 1, 5);
-      expectedResult = [{ "x": 0, "y": 0, "z": 0},
-      {"x": 0.2, "y": 0.2, "z": 0.2},
-      { "x": 0.4, "y": 0.4, "z": 0.4 },
-      { "x": 0.6000000000000001, "y": 0.6000000000000001,
-        "z": 0.6000000000000001 },
-      { "x": 0.8, "y": 0.8, "z": 0.8 },
-      { "x": 1, "y": 1, "z": 1}];
-      deepEqual(result, expectedResult, 'Linear interpolation is computed '+
-          'correctly')
+      expectedResult = [{ 'x': 0, 'y': 0, 'z': 0},
+      {'x': 0.2, 'y': 0.2, 'z': 0.2},
+      { 'x': 0.4, 'y': 0.4, 'z': 0.4 },
+      { 'x': 0.6000000000000001, 'y': 0.6000000000000001,
+        'z': 0.6000000000000001 },
+      { 'x': 0.8, 'y': 0.8, 'z': 0.8 },
+      { 'x': 1, 'y': 1, 'z': 1}];
+      deepEqual(result, expectedResult, 'Linear interpolation is computed ' +
+          'correctly');
 
         result = linearInterpolation(0, 0, 0, -1, -1, -1, 5);
-      expectedResult = [{ "x": 0, "y": 0, "z": 0},
-      {"x": -0.2, "y": -0.2, "z": -0.2},
-      { "x": -0.4, "y": -0.4, "z": -0.4 },
-      { "x": -0.6000000000000001, "y": -0.6000000000000001,
-        "z": -0.6000000000000001 },
-      { "x": -0.8, "y": -0.8, "z": -0.8 },
-      { "x": -1, "y": -1, "z": -1}];
-      deepEqual(result, expectedResult, 'Linear interpolation is computed '+
-          'correctly')
+      expectedResult = [{ 'x': 0, 'y': 0, 'z': 0},
+      {'x': -0.2, 'y': -0.2, 'z': -0.2},
+      { 'x': -0.4, 'y': -0.4, 'z': -0.4 },
+      { 'x': -0.6000000000000001, 'y': -0.6000000000000001,
+        'z': -0.6000000000000001 },
+      { 'x': -0.8, 'y': -0.8, 'z': -0.8 },
+      { 'x': -1, 'y': -1, 'z': -1}];
+      deepEqual(result, expectedResult, 'Linear interpolation is computed ' +
+          'correctly');
     });
 
     /**
@@ -362,21 +362,21 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * Test distanceBetweenPoints function.
      *
      */
-    test('Test distanceBetweenPoints', function(){
+    test('Test distanceBetweenPoints', function() {
       var result;
       result = distanceBetweenPoints(0, 0, 0, 1, 1, 1);
-      equal(result, Math.sqrt(3),'Distance between points is computed'+
+      equal(result, Math.sqrt(3), 'Distance between points is computed' +
           'correctly');
 
       result = distanceBetweenPoints(-4, -3, -2, 84, 2, 11);
-      equal(result, 89.09545442950498, 'Distance between points is computed '+
+      equal(result, 89.09545442950498, 'Distance between points is computed ' +
           'correctly');
 
       result = distanceBetweenPoints(0, 0, 0, 0, 0, 0);
       equal(result, 0, 'Distance between points is computed correctly');
 
       result = distanceBetweenPoints(-3, 17, -8888, 11, 0, 1);
-      equal(result, 8889.027280867125, 'Distance between points is computed '+
+      equal(result, 8889.027280867125, 'Distance between points is computed ' +
           'correctly');
 
     });
@@ -386,7 +386,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * Test getSampleNamesAndDataForSortedTrajectories function.
      *
      */
-    test('Test getSampleNamesAndDataForSortedTrajectories', function(){
+    test('Test getSampleNamesAndDataForSortedTrajectories', function() {
       var result, expectedResult;
 
       result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
@@ -394,7 +394,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
           coordinatesData,
           'Treatment',
           'DOB');
-      deepEqual(result, crunchedDataTwoCategories, 'The data is computed '+
+      deepEqual(result, crunchedDataTwoCategories, 'The data is computed ' +
           'correctly for two trajectories');
 
       result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
@@ -402,7 +402,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
           coordinatesData,
           'LinkerPrimerSequence',
           'DOB');
-      deepEqual(result, crunchedDataOneCategory, 'The data is computed '+
+      deepEqual(result, crunchedDataOneCategory, 'The data is computed ' +
           'correctly for a single trajectory');
     });
 
@@ -412,8 +412,8 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * appropriate errors.
      *
      */
-    test('Test getSampleNamesAndDataForSortedTrajectories exceptions', function(){
-      throws(function(){
+    test('Test getSampleNamesAndDataForSortedTrajectories exceptions', function() {
+      throws(function() {
         result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
             mappingFileData,
             coordinatesData,
@@ -421,7 +421,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
             'BAZ');
       }, Error, 'Error is thrown when a category is not found');
 
-      throws(function(){
+      throws(function() {
         result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
             mappingFileData,
             coordinatesData,
@@ -429,7 +429,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
             'DOB');
       }, Error, 'Error is thrown when a category is not found');
 
-      throws(function(){
+      throws(function() {
         result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
             mappingFileData,
             coordinatesData,
@@ -444,14 +444,14 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory){
      * Test getMinimumDelta function computes data correctly.
      *
      */
-    test('Test getMinimumDelta function', function(){
+    test('Test getMinimumDelta function', function() {
       var result;
       result = getMinimumDelta(crunchedDataOneCategory);
-      equal(result, 92, 'The minimum delta is computed correctly for one '+
+      equal(result, 92, 'The minimum delta is computed correctly for one ' +
           'category');
 
       result = getMinimumDelta(crunchedDataTwoCategories);
-      equal(result, 92, 'The minimum delta is computed correctly for one '+
+      equal(result, 92, 'The minimum delta is computed correctly for one ' +
           'category');
     });
 

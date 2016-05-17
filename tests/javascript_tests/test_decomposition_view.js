@@ -1,16 +1,16 @@
 requirejs([
-    "jquery",
-    "underscore",
-    "model",
-    "view"
-], function ($, _, model, DecompositionView) {
+    'jquery',
+    'underscore',
+    'model',
+    'view'
+], function($, _, model, DecompositionView) {
   $(document).ready(function() {
     var DecompositionModel = model.DecompositionModel;
 
-    module("Decomposition View", {
-      setup: function(){
+    module('Decomposition View', {
+      setup: function() {
         // setup function
-        name = "pcoa";
+        name = 'pcoa';
         ids = ['PC.636', 'PC.635'];
         coords = [
           [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
@@ -26,7 +26,7 @@ requirejs([
             metadata);
       },
 
-      teardown: function(){
+      teardown: function() {
         // teardown function
         name = null;
         ids = null;
@@ -43,10 +43,10 @@ requirejs([
      * Test that the Decomposition View object is initialized correctly
      *
      */
-    test("Test constructor", function() {
+    test('Test constructor', function() {
       var obs;
       var dv = new DecompositionView(decomp);
-      var _name = "pcoa";
+      var _name = 'pcoa';
       var _ids = ['PC.636', 'PC.635'];
       var _coords = [
         [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
@@ -62,13 +62,13 @@ requirejs([
       var exp = new DecompositionModel(_name, _ids, _coords, _pct_var,
           _md_headers, _metadata);
 
-      deepEqual(dv.decomp, exp, "decomp set correctly");
-      equal(dv.count, 2, "count set correctly");
-      equal(dv.visibleCount, 2, "visibleCount set correctly");
+      deepEqual(dv.decomp, exp, 'decomp set correctly');
+      equal(dv.count, 2, 'count set correctly');
+      equal(dv.visibleCount, 2, 'visibleCount set correctly');
       deepEqual(dv.visibleDimensions, [0, 1, 2],
-          "visibleDimensions set correctly");
-      deepEqual(dv.tubes, [], "tubes set correctly");
-      deepEqual(dv.labels, [], "labels set correctly");
+          'visibleDimensions set correctly');
+      deepEqual(dv.tubes, [], 'tubes set correctly');
+      deepEqual(dv.labels, [], 'labels set correctly');
       /*
          I'm unsure on how to test this, so right now just testing what I think
          makes sense to test
@@ -77,13 +77,13 @@ requirejs([
       dv.markers[0].position.y,
       dv.markers[0].position.z];
       exp = [-0.276542, -0.144964, 0.066647];
-      deepEqual(obs, exp, "First marker position set correctly");
+      deepEqual(obs, exp, 'First marker position set correctly');
       obs = [dv.markers[1].position.x,
       dv.markers[1].position.y,
       dv.markers[1].position.z];
       exp = [-0.237661, 0.046053, -0.138136];
-      deepEqual(obs, exp, "Second marker position set correctly");
-      deepEqual(dv.lines, [], "lines set correctly");
+      deepEqual(obs, exp, 'Second marker position set correctly');
+      deepEqual(dv.lines, [], 'lines set correctly');
       /*
          TODO: How do we test this?
          */
@@ -95,19 +95,19 @@ requirejs([
      * Test that changeVisibleDimensions updates the meshes position
      *
      */
-    test("Test changeVisibleDimensions", function(){
+    test('Test changeVisibleDimensions', function() {
       var dv = new DecompositionView(decomp);
       dv.changeVisibleDimensions([2, 3, 4]);
       obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
       dv.markers[0].position.z];
       exp = [0.066647, -0.067711, 0.176070];
-      deepEqual(obs, exp, "First marker position updated correctly");
+      deepEqual(obs, exp, 'First marker position updated correctly');
       obs = [dv.markers[1].position.x,
       dv.markers[1].position.y,
       dv.markers[1].position.z];
       exp = [-0.138136, 0.159061, -0.247485];
-      deepEqual(obs, exp, "Second marker position updated correctly");
+      deepEqual(obs, exp, 'Second marker position updated correctly');
     });
 
     /**
@@ -116,11 +116,11 @@ requirejs([
      * dimensions passes is different the 3
      *
      */
-    test("Test changeVisibleDimensions excepts", function(){
+    test('Test changeVisibleDimensions excepts', function() {
       throws(
-          function(){
+          function() {
             var dv = new DecompositionView(decomp);
-            dv.changeVisibleDimensions([2, 3, 4, 5])
+            dv.changeVisibleDimensions([2, 3, 4, 5]);
           },
           Error,
           'An error is raised if the number of dimensions is not 3'

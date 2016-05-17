@@ -1,8 +1,8 @@
 define([
-    "three",
-    "orbitcontrols",
-    "draw"
-], function (THREE, OrbitControls, draw) {
+    'three',
+    'orbitcontrols',
+    'draw'
+], function(THREE, OrbitControls, draw) {
   var makeLine = draw.makeLine;
   var makeLabel = draw.makeLabel;
   /**
@@ -53,7 +53,7 @@ define([
    *
    **/
   ScenePlotView3D = function(renderer, decViews, container, xView, yView,
-                             width, height){
+                             width, height) {
     var scope = this;
 
     // convert to jquery object for consistency with the rest of the objects
@@ -72,7 +72,7 @@ define([
     // Set up the camera
     // Note: if we change the near parameter to something smaller than this
     // the raytracing will not work as expected.
-    this.camera = new THREE.PerspectiveCamera(35, width/height,
+    this.camera = new THREE.PerspectiveCamera(35, width / height,
                                               0.0001, 10000);
     this.camera.position.set(0, 0, 6);
 
@@ -80,12 +80,12 @@ define([
     this.scene = new THREE.Scene();
     this.scene.add(this.camera);
     this.light = new THREE.DirectionalLight(0x999999, 2);
-    this.light.position.set(1,1,1).normalize();
+    this.light.position.set(1, 1, 1).normalize();
     this.camera.add(this.light);
 
     // Add all the meshes to the scene, iterate through all keys in
     // decomposition view dictionary
-    for(var decViewName in this.decViews){
+    for (var decViewName in this.decViews) {
       for (var j = 0; j < this.decViews[decViewName].markers.length; j++) {
         this.scene.add(this.decViews[decViewName].markers[j]);
       }
@@ -125,7 +125,7 @@ define([
     // Add callback call when sample is clicked double and single click
     // together from: http://stackoverflow.com/a/7845282
     var DELAY = 200, clicks = 0, timer = null;
-    $container.on("click", function(event) {
+    $container.on('click', function(event) {
         clicks++;
         if (clicks === 1) {
             timer = setTimeout(function() {
@@ -139,7 +139,7 @@ define([
             clicks = 0;
         }
     })
-    .on("dblclick", function(event) {
+    .on('dblclick', function(event) {
         event.preventDefault();  //cancel system double-click event
     });
 
@@ -183,33 +183,33 @@ define([
    * this method will populate the dimensionRanges attributes.
    *
    **/
-  ScenePlotView3D.prototype._unionRanges = function(){
+  ScenePlotView3D.prototype._unionRanges = function() {
     var scope = this;
 
     // means we already have the data, so let's say goodbye
-    if (this.dimensionRanges.max.length !== 0){
+    if (this.dimensionRanges.max.length !== 0) {
       return;
     }
 
-    _.each(this.decViews, function(decView, name){
+    _.each(this.decViews, function(decView, name) {
       // get each decomposition object
       var decomp = decView.decomp;
 
-      if ( scope.dimensionRanges.max.length === 0 ){
+      if (scope.dimensionRanges.max.length === 0) {
         scope.dimensionRanges.max = decomp.dimensionRanges.max.slice();
         scope.dimensionRanges.min = decomp.dimensionRanges.min.slice();
       }
       else {
         // when we have more than one decomposition view we need to figure out
         // the absolute largest range that views span over
-        _.each(decomp.dimensionRanges.max, function(value, index){
+        _.each(decomp.dimensionRanges.max, function(value, index) {
           var vMax = decomp.dimensionRanges.max[index],
               vMin = decomp.dimensionRanges.min[index];
 
-          if (vMax > scope.dimensionRanges.max[index]){
+          if (vMax > scope.dimensionRanges.max[index]) {
             scope.dimensionRanges.max[index] = vMax;
           }
-          if (vMin < scope.dimensionRanges.min[index]){
+          if (vMin < scope.dimensionRanges.min[index]) {
             scope.dimensionRanges.min[index] = vMin;
           }
         });
@@ -229,7 +229,7 @@ define([
    * dimension.
    *
    **/
-  ScenePlotView3D.prototype._dimensionsIterator = function(action){
+  ScenePlotView3D.prototype._dimensionsIterator = function(action) {
     this._unionRanges();
 
     // shortcut to the index of the visible dimension and the range object
@@ -259,12 +259,12 @@ define([
    * dimensionRanges property.
    *
    **/
-  ScenePlotView3D.prototype.drawAxesWithColor = function(color){
+  ScenePlotView3D.prototype.drawAxesWithColor = function(color) {
     var scope = this, axisLine;
 
     this.removeAxes();
 
-    this._dimensionsIterator(function(start, end, index){
+    this._dimensionsIterator(function(start, end, index) {
       axisLine = makeLine(start, end, color, 3, false);
       axisLine.name = scope._axisPrefix + index;
 
@@ -285,7 +285,7 @@ define([
    * each axis.
    *
    **/
-  ScenePlotView3D.prototype.drawAxesLabelsWithColor = function(color){
+  ScenePlotView3D.prototype.drawAxesLabelsWithColor = function(color) {
     var scope = this, axisLabel, decomp, firstKey, text;
 
     this.removeAxesLabels();
@@ -296,7 +296,7 @@ define([
     firstKey = _.keys(this.decViews)[0];
     decomp = this.decViews[firstKey].decomp;
 
-    this._dimensionsIterator(function(start, end, index){
+    this._dimensionsIterator(function(start, end, index) {
 
       // construct a label of the format: AbbNam (xx.xx %)
       text = decomp.abbreviatedName + ' (' +
@@ -321,8 +321,8 @@ define([
    * @param {num} an integer specifying the number of iterations to perform.
    *
    **/
-  ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix, num){
-    for (var i = 0; i < num; i++){
+  ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix, num) {
+    for (var i = 0; i < num; i++) {
       var axisLine = this.scene.getObjectByName(prefix + i);
       this.scene.remove(axisLine);
     }
@@ -333,7 +333,7 @@ define([
    * Remove the axis lines from the scene
    *
    **/
-  ScenePlotView3D.prototype.removeAxes = function(){
+  ScenePlotView3D.prototype.removeAxes = function() {
     this._removeObjectsWithPrefix(this._axisPrefix, 3);
   };
 
@@ -342,7 +342,7 @@ define([
    * Remove the axis labels from the scene
    *
    **/
-  ScenePlotView3D.prototype.removeAxesLabels = function(){
+  ScenePlotView3D.prototype.removeAxesLabels = function() {
     this._removeObjectsWithPrefix(this._axisLabelPrefix, 3);
   };
 
@@ -354,7 +354,7 @@ define([
    * @param {winAspect} ratio of width to height of the scene.
    *
    **/
-  ScenePlotView3D.prototype.setCameraAspectRatio = function(winAspect){
+  ScenePlotView3D.prototype.setCameraAspectRatio = function(winAspect) {
     this.camera.aspect = winAspect;
     this.camera.updateProjectionMatrix();
   };
@@ -369,12 +369,12 @@ define([
    * @param {height} New scene height.
    *
    **/
-  ScenePlotView3D.prototype.resize = function(xView, yView, width, height){
+  ScenePlotView3D.prototype.resize = function(xView, yView, width, height) {
     this.xView = xView;
     this.yView = yView;
     this.width = width;
     this.height = height;
-    this.setCameraAspectRatio(width/height);
+    this.setCameraAspectRatio(width / height);
     this.needsUpdate = true;
   };
 
@@ -391,14 +391,14 @@ define([
       return true;
     }
     return this.needsUpdate;
-   }
+   };
 
   /**
    *
    * Convenience method to re-render the contents of the scene.
    *
    **/
-  ScenePlotView3D.prototype.render = function(){
+  ScenePlotView3D.prototype.render = function() {
     this.renderer.setViewport(this.xView, this.yView, this.width, this.height);
     this.renderer.render(this.scene, this.camera);
     var camera = this.camera;

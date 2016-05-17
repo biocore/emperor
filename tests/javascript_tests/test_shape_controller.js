@@ -1,27 +1,27 @@
 requirejs([
-    "jquery",
-    "underscore",
-    "model",
-    "view",
-    "viewcontroller",
-    "three",
-    "shape-controller",
-    "shape-editor",
-    "shapes"
+    'jquery',
+    'underscore',
+    'model',
+    'view',
+    'viewcontroller',
+    'three',
+    'shape-controller',
+    'shape-editor',
+    'shapes'
 ], function($, _, model, DecompositionView, viewcontroller, THREE,
             ShapeController, ShapeEditor, shapes) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var DecompositionModel = model.DecompositionModel;
 
-    module("Shape Controller", {
+    module('Shape Controller', {
       setup: function() {
         // setup function
         this.shapesAvailable = ['Sphere', 'Cube', 'Cone', 'Icosahedron', 'Cylinder'];
         this.sharedDecompositionViewDict = {};
 
         // setup function
-        var name = "pcoa";
+        var name = 'pcoa';
         var ids = ['PC.636', 'PC.635'];
         coords = [
           [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
@@ -38,7 +38,7 @@ requirejs([
         var dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.scatter = dv;
 
-        name = "biplot";
+        name = 'biplot';
         ids = ['tax_1', 'tax_2'];
         coords = [
           [-1, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
@@ -61,7 +61,7 @@ requirejs([
       }
     });
 
-    test("Shapes dropdown", function() {
+    test('Shapes dropdown', function() {
       var values = [];
       shapes.$shapesDropdown.find('option').each(function() {
           values.push($(this).attr('value'));
@@ -69,7 +69,7 @@ requirejs([
       deepEqual(values, this.shapesAvailable);
     });
 
-    test("Constructor tests", function(assert) {
+    test('Constructor tests', function(assert) {
       var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
 
       assert.ok(ShapeController.prototype instanceof EmperorAttributeABC);
@@ -81,7 +81,7 @@ requirejs([
       equal(testColumn.field, 'value');
     });
 
-    test("Test getGeometry", function(){
+    test('Test getGeometry', function() {
       var geom, range;
 
       range = {'min': [-2, -1, -3], 'max': [3, 8, 9]};
@@ -108,42 +108,42 @@ requirejs([
       equal(geom.parameters.height, 0.09);
     });
 
-    test("Check getGeometry raises an exception with unknown shape", function(){
+    test('Check getGeometry raises an exception with unknown shape', function() {
       var range = {'min': [-2, -1, -3], 'max': [3, 8, 9]};
       throws(function() {
         shapes.getGeometry('Geometry McGeometryface', range);
       }, Error, 'Throw error if unknown shape given');
     });
 
-    test("Testing setPlottableAttributes helper function", function(assert) {
+    test('Testing setPlottableAttributes helper function', function(assert) {
       // testing with one plottable
       var idx = 0;
-      plottables = [{idx:idx}];
+      plottables = [{idx: idx}];
       equal(this.dv.markers[idx].geometry.type, 'SphereGeometry');
-      equal(this.dv.markers[idx+1].geometry.type, 'SphereGeometry');
+      equal(this.dv.markers[idx + 1].geometry.type, 'SphereGeometry');
       ShapeController.prototype.setPlottableAttributes(this.dv, 'Cube', plottables);
       equal(this.dv.markers[idx].geometry.type, 'BoxGeometry');
-      equal(this.dv.markers[idx+1].geometry.type, 'SphereGeometry');
+      equal(this.dv.markers[idx + 1].geometry.type, 'SphereGeometry');
       equal(this.dv.needsUpdate, true);
 
       // testing with multiple plottable
-      plottables = [{idx:idx}, {idx:idx+1}];
+      plottables = [{idx: idx}, {idx: idx + 1}];
       ShapeController.prototype.setPlottableAttributes(this.dv, 'Cylinder', plottables);
       equal(this.dv.markers[idx].geometry.type, 'CylinderGeometry');
-      equal(this.dv.markers[idx+1].geometry.type, 'CylinderGeometry');
+      equal(this.dv.markers[idx + 1].geometry.type, 'CylinderGeometry');
       equal(this.dv.needsUpdate, true);
     });
 
-    test("Testing setPlottableAttributes unknown shape", function(assert) {
+    test('Testing setPlottableAttributes unknown shape', function(assert) {
       // testing with one plottable
-      plottables = [{idx:idx}];
+      plottables = [{idx: idx}];
       throws(function() {
         ShapeController.prototype.setPlottableAttributes(this.dv, 'WEIRD', plottables);
       }, Error, 'Throw error if unknown shape given');
 
     });
 
-    test("Testing toJSON", function() {
+    test('Testing toJSON', function() {
       var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
       var controller = new ShapeController(container, this.sharedDecompositionViewDict);
 
@@ -152,7 +152,7 @@ requirejs([
       deepEqual(obs, exp);
     });
 
-    test("Testing fromJSON", function() {
+    test('Testing fromJSON', function() {
       var json = {'category': 'SampleID', 'data': {'PC.636': 'Cube', 'PC.635': 'Sphere'}};
 
       var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
@@ -161,7 +161,7 @@ requirejs([
       controller.fromJSON(json);
       var idx = 0;
       equal(controller.decompViewDict.scatter.markers[idx].geometry.type, 'BoxGeometry');
-      equal(controller.decompViewDict.scatter.markers[idx+1].geometry.type, 'SphereGeometry');
+      equal(controller.decompViewDict.scatter.markers[idx + 1].geometry.type, 'SphereGeometry');
     });
 
   });

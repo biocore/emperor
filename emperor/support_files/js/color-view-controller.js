@@ -1,11 +1,11 @@
 define([
-    "jquery",
-    "underscore",
-    "view",
-    "viewcontroller",
-    "color-editor",
-    "chroma"
-], function ($, _, DecompositionView, ViewControllers, Color, chroma) {
+    'jquery',
+    'underscore',
+    'view',
+    'viewcontroller',
+    'color-editor',
+    'chroma'
+], function($, _, DecompositionView, ViewControllers, Color, chroma) {
 
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
@@ -53,7 +53,7 @@ define([
    * by all the tabs in the application. This argument is passed by reference.
    *
    **/
-  function ColorViewController(container, decompViewDict){
+  function ColorViewController(container, decompViewDict) {
     var helpmenu = 'Change the colors of the attributes on the plot, such as ' +
       'spheres, vectors and ellipsoids.';
     var title = 'Color';
@@ -63,7 +63,7 @@ define([
     var name, value, colorItem;
 
     // Create scale div and checkbox for whether using scalar data or not
-    this.$scaleDiv = $("<div>");
+    this.$scaleDiv = $('<div>');
     this.$colorScale = $("<svg width='90%' height='100%' style='display:block;margin:auto;'></svg>");
     this.$scaleDiv.append(this.$colorScale);
     this.$scaled = $("<input type='checkbox'>");
@@ -170,7 +170,7 @@ define([
 
     // the chosen select can only be set when the document is ready
     $(function() {
-      scope.$colormapSelect.chosen({width: "100%", search_contains: true});
+      scope.$colormapSelect.chosen({width: '100%', search_contains: true});
       scope.$colormapSelect.chosen().change(options.categorySelectionCallback);
       scope.$scaled.on('change', options.categorySelectionCallback);
     });
@@ -202,7 +202,7 @@ define([
        plottables = plottables.concat(plotList[i].plottables);
      }
      return plottables;
-   }
+   };
 
 
   /**
@@ -228,8 +228,8 @@ define([
     var colors = {}, gradientSVG;
     scaled = scaled || false;
 
-    if (_.findWhere(ColorViewController.Colormaps, {id: map}) === undefined){
-      throw new Error("Could not find " + map + " as a colormap.");
+    if (_.findWhere(ColorViewController.Colormaps, {id: map}) === undefined) {
+      throw new Error('Could not find ' + map + ' as a colormap.');
     }
 
     // 1 color and continuous coloring should return the first element in map
@@ -316,7 +316,7 @@ define([
 
     // Get list of only numeric values, error if none
     numericValues = [];
-    for(var i = 0; i < values.length; i++) {
+    for (var i = 0; i < values.length; i++) {
       if (!isNaN(values[i])) {
         numericValues.push(Number(values[i]));
       }
@@ -377,11 +377,11 @@ define([
     var total = values.length;
     var interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
     var colors = {};
-    for(var i = 0; i < values.length; i++) {
+    for (var i = 0; i < values.length; i++) {
       colors[values[i]] = interpolator(i / total).hex();
     }
     return colors;
-  }
+  };
 
   /**
    * Converts the current instance into a JSON string.
@@ -393,7 +393,7 @@ define([
     json.colormap = this.$colormapSelect.val();
     json.continuous = this.$scaled.is(':checked');
     return json;
-  }
+  };
 
   /**
    * Decodes JSON string and modifies its own instance variables accordingly.
@@ -427,7 +427,7 @@ define([
       var data = decompViewDict.setCategory(json.data, this.setPlottableAttributes, json.category);
     }
     this.setSlickGridDataset(data);
-  }
+  };
 
   /**
    * Resizes the container and the individual elements.
@@ -439,7 +439,7 @@ define([
    * @param {float} height the container height.
    */
   ColorViewController.prototype.resize = function(width, height) {
-    this.$body.height(this.$canvas.height()-this.$header.height());
+    this.$body.height(this.$canvas.height() - this.$header.height());
     this.$body.width(this.$canvas.width());
 
     if (this.$scaled.is(':checked')) {
@@ -456,13 +456,13 @@ define([
   /**
    * Helper function to set the color of plottable
    *
-   * @param {scope} object, the scope where the plottables exist
-   * @param {color} string, hexadecimal representation of a color, which will
+   * @param {scope} object , the scope where the plottables exist
+   * @param {color} string , hexadecimal representation of a color, which will
    * be applied to the plottables
    * @param {group} array of objects, list of object that should be changed in
    * scope
    */
-  ColorViewController.prototype.setPlottableAttributes = function(scope, color, group){
+  ColorViewController.prototype.setPlottableAttributes = function(scope, color, group) {
     var idx;
 
     _.each(group, function(element) {
@@ -518,10 +518,10 @@ define([
 
 
   // taken from the qiime/colors.py module; a total of 24 colors
-  ColorViewController._qiimeDiscrete = ["#ff0000", "#0000ff", "#f27304",
-  "#008000", "#91278d", "#ffff00", "#7cecf4", "#f49ac2", "#5da09e", "#6b440b",
-  "#808080", "#f79679", "#7da9d8", "#fcc688", "#80c99b", "#a287bf", "#fff899",
-  "#c49c6b", "#c0c0c0", "#ed008a", "#00b6ff", "#a54700", "#808000", "#008080"];
+  ColorViewController._qiimeDiscrete = ['#ff0000', '#0000ff', '#f27304',
+  '#008000', '#91278d', '#ffff00', '#7cecf4', '#f49ac2', '#5da09e', '#6b440b',
+  '#808080', '#f79679', '#7da9d8', '#fcc688', '#80c99b', '#a287bf', '#fff899',
+  '#c49c6b', '#c0c0c0', '#ed008a', '#00b6ff', '#a54700', '#808000', '#008080'];
 
   return ColorViewController;
 });

@@ -1,99 +1,112 @@
 define([
-    "underscore",
-    "trajectory"
+    'underscore',
+    'trajectory'
 ],
-function (_, trajectory){
-  var getSampleNamesAndDataForSortedTrajectories = trajectory.getSampleNamesAndDataForSortedTrajectories;
+function(_, trajectory) {
+  var getSampleNamesAndDataForSortedTrajectories =
+    trajectory.getSampleNamesAndDataForSortedTrajectories;
   var getMinimumDelta = trajectory.getMinimumDelta;
   var TrajectoryOfSamples = trajectory.TrajectoryOfSamples;
 
   /**
    *
-   * @name AnimationDirector
+   * @class AnimationDirector
    *
-   * @class This class represents an animation director for PCoA plots in the
-   * Emperor visualization software.
-   *
-   * @property {float} [minimumDelta=null] A floating point value determining
-   * what the minimum separation between samples along the gradients is. Will
-   * be null until it is initialized to the values according to the inputed
-   * data.
-   * @property {int} [maximumTrajectoryLength=null] Maximum length that the
-   * groups
-   * of samples have along a gradient.
-   * @property {int} [currentFrame=-1] The current frame being served by the
-   * director.
-   * @property {Array} [trajectories=Array(0)] Array where each element in the
-   * trajectory is a trajectory with the interpolated points in it.
-   *
-   */
-
-  /**
-   *
-   * @name AnimationDirector
-   *
-   * @class This object represents an animation director, as the name implies,
+   * This object represents an animation director, as the name implies,
    * is an object that manages an animation. Takes the for a plot (mapping file
    * and coordinates) as well as the metadata categories we want to animate
    * over.  This object gets called in the main emperor module when an
    * animation starts and an instance will only be alive for one animation
    * cycle i. e. until the cycle hits the final frame of the animation.
    *
-   * @param {mappingFileHeaders} an Array of strings containing metadata
-   * mapping file headers (required).
-   * @param {mappingFileData} an Array where the indices are sample identifiers
-   * and each of the contained elements is an Array of strings where the first
-   * element corresponds to the first data for the first column in the mapping
-   * file (mappingFileHeaders) (required).
-   * @param {coordinatesData} an Array of Objects where the indices are the
-   * sample identifiers and each of the objects has the following properties:
-   * x, y, z, name, color, P1, P2, P3, ... PN where N is the number of
-   * dimensions in this dataset (required).
-   * @param {gradientCategory} a string with the name of the mapping file
+   * @param {String[]} mappingFileHeaders an Array of strings containing
+   * metadata mapping file headers.
+   * @param {Object[]} mappingFileData an Array where the indices are sample
+   * identifiers and each of the contained elements is an Array of strings where
+   * the first element corresponds to the first data for the first column in the
+   * mapping file (mappingFileHeaders).
+   * @param {Object[]} coordinatesData an Array of Objects where the indices are
+   * the sample identifiers and each of the objects has the following
+   * properties: x, y, z, name, color, P1, P2, P3, ... PN where N is the number
+   * of dimensions in this dataset.
+   * @param {String} gradientCategory a string with the name of the mapping file
    * header where the data that spreads the samples over a gradient is
    * contained, usually time or days_since_epoch. Note that this should be an
-   * all numeric category (required).
-   * @param {trajectoryCategory} a string with the name of the mapping file
-   * header where the data that groups the samples is contained, this will
-   * usually be BODY_SITE, HOST_SUBJECT_ID, etc. (required).
+   * all numeric category.
+   * @param {String} trajectoryCategory a string with the name of the mapping
+   * file header where the data that groups the samples is contained, this will
+   * usually be BODY_SITE, HOST_SUBJECT_ID, etc..
    *
-   * @return returns an animation director if the parameters passed in were all
-   * valid.
+   * @return {AnimationDirector} returns an animation director if the parameters
+   * passed in were all valid.
    *
-   * Note that this class will raise an Error in any of the following cases:
+   * @throws {Error} Note that this class will raise an Error in any of the
+   * following cases:
    * - One of the input arguments is undefined.
    * - If gradientCategory is not in the mappingFileHeaders.
    * - If trajectoryCategory is not in the mappingFileHeaders.
-   *
+   * @constructs AnimationDirector
    */
   function AnimationDirector(mappingFileHeaders, mappingFileData,
                              coordinatesData, gradientCategory,
-                             trajectoryCategory){
+                             trajectoryCategory) {
 
     // all arguments are required
     if (mappingFileHeaders === undefined || mappingFileData === undefined ||
       coordinatesData === undefined || gradientCategory === undefined ||
       trajectoryCategory === undefined) {
-      throw new Error("All arguments are required");
+      throw new Error('All arguments are required');
     }
 
     var index;
 
     index = mappingFileHeaders.indexOf(gradientCategory);
     if (index == -1) {
-      throw new Error("Could not find the gradient category in the mapping"+
-                      " file");
+      throw new Error('Could not find the gradient category in the mapping'+
+                      ' file');
     }
     index = mappingFileHeaders.indexOf(trajectoryCategory);
     if (index == -1) {
-      throw new Error("Could not find the trajectory category in the mapping"+
-                      " file");
+      throw new Error('Could not find the trajectory category in the mapping'+
+                      ' file');
     }
 
+    /**
+     * @type {String[]}
+     mappingFileHeaders an Array of strings containing metadata mapping file
+     headers.
+     */
     this.mappingFileHeaders = mappingFileHeaders;
+    /**
+     * @type {Object[]}
+     *an Array where the indices are sample identifiers
+     * and each of the contained elements is an Array of strings where the first
+     * element corresponds to the first data for the first column in the mapping
+     * file (mappingFileHeaders).
+     */
     this.mappingFileData = mappingFileData;
+    /*
+     * @type {Object[]}
+     * an Array of Objects where the indices are the
+     * sample identifiers and each of the objects has the following properties:
+     * x, y, z, name, color, P1, P2, P3, ... PN where N is the number of
+     * dimensions in this dataset.
+     */
     this.coordinatesData = coordinatesData;
+    /**
+     * @type {String}
+     *a string with the name of the mapping file
+     * header where the data that spreads the samples over a gradient is
+     * contained, usually time or days_since_epoch. Note that this should be an
+     * all numeric category
+     */
     this.gradientCategory = gradientCategory;
+    /**
+     * @type {String}
+     * a string with the name of the mapping file
+     * header where the data that groups the samples is contained, this will
+     * usually be BODY_SITE, HOST_SUBJECT_ID, etc..
+     */
     this.trajectoryCategory = trajectoryCategory;
 
     this.minimumDelta = null;
@@ -112,7 +125,7 @@ function (_, trajectory){
    * Initializes the trajectories that the director manages.
    *
    */
-  AnimationDirector.prototype.initializeTrajectories = function(){
+  AnimationDirector.prototype.initializeTrajectories = function() {
 
     var chewedData = null, trajectoryBuffer = null, minimumDelta;
     var sampleNamesBuffer = new Array(), gradientPointsBuffer = new Array();
@@ -124,9 +137,9 @@ function (_, trajectory){
         this.mappingFileHeaders, this.mappingFileData, this.coordinatesData,
         this.trajectoryCategory, this.gradientCategory);
 
-    if (chewedData === null){
-      throw new Error("Error initializing the trajectories, could not "+
-                      "compute the data");
+    if (chewedData === null) {
+      throw new Error('Error initializing the trajectories, could not ' +
+                      'compute the data');
     }
 
     // calculate the minimum delta per step
@@ -134,7 +147,7 @@ function (_, trajectory){
 
     // we have to iterate over the keys because chewedData is a dictionary-like
     // object, if possible this should be changed in the future to be an Array
-    for (var key in chewedData){
+    for (var key in chewedData) {
 
       // re-initalize the arrays, essentially dropping all the previously
       // existing information
@@ -147,7 +160,7 @@ function (_, trajectory){
 
       // each of the keys is a trajectory name i. e. CONTROL, TREATMENT, etc
       // we are going to generate buffers so we can initialize the trajectory
-      for (var index = 0; index < chewedDataBuffer.length; index++){
+      for (var index = 0; index < chewedDataBuffer.length; index++) {
         // list of sample identifiers
         sampleNamesBuffer.push(chewedDataBuffer[index]['name']);
 
@@ -155,17 +168,17 @@ function (_, trajectory){
         gradientPointsBuffer.push(chewedDataBuffer[index]['value']);
 
         // x, y and z values for the coordinates data
-        coordinatesBuffer.push({'x':chewedDataBuffer[index]['x'],
-                                'y':chewedDataBuffer[index]['y'],
-                                'z':chewedDataBuffer[index]['z']});
+        coordinatesBuffer.push({'x': chewedDataBuffer[index]['x'],
+                                'y': chewedDataBuffer[index]['y'],
+                                'z': chewedDataBuffer[index]['z']});
       }
 
       // Don't add a trajectory unless it has more than one sample in the
       // gradient. For example, there's no reason why we should animate a
       // trajectory that has 3 samples at timepoint 0 ([0, 0, 0]) or a
       // trajectory that has just one sample at timepoint 0 ([0])
-      if (sampleNamesBuffer.length <=1 ||
-          _.uniq(gradientPointsBuffer).length <= 1){
+      if (sampleNamesBuffer.length <= 1 ||
+          _.uniq(gradientPointsBuffer).length <= 1) {
         continue;
       }
 
@@ -177,52 +190,54 @@ function (_, trajectory){
 
     }
     return;
-  }
+  };
 
   /**
    *
    * Retrieves the lengths of all the trajectories and figures out which of
    * them is the longest one, then assigns that value to the
    * maximumTrajectoryLength property.
+   * @return {Integer} Maximum trajectory length
    *
    */
-  AnimationDirector.prototype.getMaximumTrajectoryLength = function (){
-    if(this.maximumTrajectoryLength === null){
+  AnimationDirector.prototype.getMaximumTrajectoryLength = function() {
+    if (this.maximumTrajectoryLength === null) {
       this._computeN();
     }
 
     return this.maximumTrajectoryLength;
-  }
+  };
 
   /**
    *
    * Helper function to compute the maximum length of the trajectories that the
    * director is in charge of.
+   * @private
    *
    */
-  AnimationDirector.prototype._computeN = function (){
+  AnimationDirector.prototype._computeN = function() {
     var arrayOfLengths = new Array();
 
     // retrieve the length of all the trajectories
-    for (var index = 0; index < this.trajectories.length; index++){
+    for (var index = 0; index < this.trajectories.length; index++) {
       arrayOfLengths.push(
           this.trajectories[index].interpolatedCoordinates.length);
     }
 
     // assign the value of the maximum value for these lengths
     this.maximumTrajectoryLength = _.max(arrayOfLengths);
-  }
+  };
 
   /**
    *
    * Helper method to update the value of the currentFrame property.
    *
    */
-  AnimationDirector.prototype.updateFrame = function (){
+  AnimationDirector.prototype.updateFrame = function() {
     if (this.animationCycleFinished() === false) {
       this.currentFrame = this.currentFrame + 1;
     }
-  }
+  };
 
   /**
    *
@@ -231,9 +246,9 @@ function (_, trajectory){
    * animation still has frames to go.
    *
    */
-  AnimationDirector.prototype.animationCycleFinished = function (){
+  AnimationDirector.prototype.animationCycleFinished = function() {
     return this.currentFrame > this.getMaximumTrajectoryLength();
-  }
+  };
 
   return AnimationDirector;
 });
