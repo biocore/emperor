@@ -1,25 +1,25 @@
 requirejs([
-    "jquery",
-    "underscore",
-    "model",
-    "view",
-    "scene3d",
-    "three",
-    "svgrenderer",
-    "orbitcontrols"
-], function ($, _, model, DecompositionView, ScenePlotView3D, THREE, SVGRenderer, OrbitControls) {
+    'jquery',
+    'underscore',
+    'model',
+    'view',
+    'scene3d',
+    'three',
+    'svgrenderer',
+    'orbitcontrols'
+], function($, _, model, DecompositionView, ScenePlotView3D, THREE, SVGRenderer, OrbitControls) {
   var DecompositionModel = model.DecompositionModel;
   $(document).ready(function() {
     module('ScenePlotView3D', {
 
-      setup: function(){
+      setup: function() {
         // global variable shared
         this.sharedDecompositionViewDict = {};
 
         var div = $('<div id="fooligans"></div>');
         div.appendTo(document.body);
 
-        var name = "pcoa";
+        var name = 'pcoa';
         var ids = ['PC.636', 'PC.635'];
         var coords = [[-0.276542, -0.144964, 0.066647, -0.067711, 0.176070,
         0.072969, -0.229889, -0.046599],
@@ -35,7 +35,7 @@ requirejs([
         var dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.scatter = dv;
 
-        name = "biplot";
+        name = 'biplot';
         ids = ['tax_1', 'tax_2'];
         coords = [
           [-1, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
@@ -53,12 +53,12 @@ requirejs([
         this.sharedDecompositionViewDict.biplot = dv;
       },
 
-      teardown: function(){
+      teardown: function() {
         // created as global during the setup function
         this.sharedDecompositionViewDict = undefined;
 
         // appended to the body during setup
-        $("#fooligans").remove();
+        $('#fooligans').remove();
       }
 
     });
@@ -68,7 +68,7 @@ requirejs([
      * Test the constructor for ScenePlotView3D
      *
      */
-    test('Test the constructor', function(assert){
+    test('Test the constructor', function(assert) {
 
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
@@ -128,7 +128,7 @@ requirejs([
       equal(spv.checkUpdate(), true);
     });
 
-    test('Test the draw axes', function(assert){
+    test('Test the draw axes', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -140,7 +140,7 @@ requirejs([
 
       var line;
 
-      for (var i = 0; i < 3; i++){
+      for (var i = 0; i < 3; i++) {
         line = spv.scene.getObjectByName('emperor-axis-line-' + i);
         equal(line.material.color.r, 0);
         equal(line.material.color.g, 1);
@@ -148,7 +148,7 @@ requirejs([
       }
     });
 
-    test('Test removing axes', function(assert){
+    test('Test removing axes', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -160,14 +160,14 @@ requirejs([
 
       var line;
 
-      for (var i = 0; i < 3; i++){
+      for (var i = 0; i < 3; i++) {
         line = spv.scene.getObjectByName('emperor-axis-line-' + i);
         assert.equal(line, undefined);
       }
     });
 
 
-    test('Test the draw axes labels', function(assert){
+    test('Test the draw axes labels', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -181,7 +181,7 @@ requirejs([
                               [-1, 0.046053, -0.138136],
                               [-1, -0.144964, 0.066647]];
 
-      for (var i = 0; i < 3; i++){
+      for (var i = 0; i < 3; i++) {
         label = spv.scene.getObjectByName('emperor-axis-label-' + i);
 
         equal(label.position.x, positions[i][0]);
@@ -194,7 +194,7 @@ requirejs([
       }
     });
 
-    test('Test removing axes labels', function(assert){
+    test('Test removing axes labels', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -206,7 +206,7 @@ requirejs([
 
       var label;
 
-      for (var i = 0; i < 3; i++){
+      for (var i = 0; i < 3; i++) {
         label = spv.scene.getObjectByName('emperor-axis-label-' + i);
         assert.equal(label, undefined);
       }
@@ -218,7 +218,7 @@ requirejs([
      * Test the setCameraAspectRatio method for ScenePlotView3D
      *
      */
-    test('Test setCameraAspectRatio', function(){
+    test('Test setCameraAspectRatio', function() {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
@@ -239,7 +239,7 @@ requirejs([
      * Test the resize method for ScenePlotView3D
      *
      */
-    test('Test resize', function(){
+    test('Test resize', function() {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
@@ -252,7 +252,7 @@ requirejs([
       equal(spv.width, 200);
       equal(spv.height, 300);
 
-      equal(spv.needsUpdate, true)
+      equal(spv.needsUpdate, true);
 
       spv.resize(8, 6, 75, 309);
 
@@ -268,7 +268,7 @@ requirejs([
      * Test the render method for ScenePlotView3D
      *
      */
-    test('Test render', function(assert){
+    test('Test render', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
@@ -289,15 +289,15 @@ requirejs([
      * Test exceptions are correctly raised on unknown events
      *
      */
-    test('Test off exceptions', function(){
+    test('Test off exceptions', function() {
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                     'fooligans', 0, 0, 20, 20);
 
       // check this happens for all the properties
       throws(
-        function (){
-          spv.off('does not exist', function(a, b){ return a;});
+        function() {
+          spv.off('does not exist', function(a, b) { return a;});
         }, Error, 'An error is raised if the event is unknown'
       );
     });
@@ -307,15 +307,15 @@ requirejs([
      * Test exceptions are correctly raised on unknown events
      *
      */
-    test('Test on exceptions', function(){
+    test('Test on exceptions', function() {
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                     'fooligans', 0, 0, 20, 20);
 
       // check this happens for all the properties
       throws(
-        function (){
-          spv.on('does not exist', function(a, b){ return a;});
+        function() {
+          spv.on('does not exist', function(a, b) { return a;});
         }, Error, 'An error is raised if the event is unknown'
       );
     });
@@ -343,7 +343,7 @@ requirejs([
      * Test the 'click' callback is resolved
      *
      */
-    test('Verifying click works', function(){
+    test('Verifying click works', function() {
       // for the test to pass, two assertions should be made
       expect(2);
 
@@ -351,7 +351,7 @@ requirejs([
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                     'fooligans', 0, 0, 20, 20);
 
-      spv.on('click', function(a, b){
+      spv.on('click', function(a, b) {
         equal(a, 'Meshy McMeshface');
         deepEqual(b, {'name': 'Meshy McMeshface'});
       });
@@ -364,10 +364,10 @@ requirejs([
         'width': 20,
         'height': 20
       };
-      mockEvent.preventDefault = function(){};
+      mockEvent.preventDefault = function() {};
 
       var meshy = {'object': {'name': 'Meshy McMeshface'}};
-      spv._raycaster.intersectObjects = function(){ return [meshy]; };
+      spv._raycaster.intersectObjects = function() { return [meshy]; };
       spv._eventCallback('click', mockEvent);
     });
 
@@ -376,7 +376,7 @@ requirejs([
      * Test the 'dblclick' callback is resolved
      *
      */
-    test('Verifying double click works', function(){
+    test('Verifying double click works', function() {
       // for the test to pass, two assertions should be made
       expect(2);
 
@@ -384,7 +384,7 @@ requirejs([
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                     'fooligans', 0, 0, 20, 20);
 
-      spv.on('dblclick', function(a, b){
+      spv.on('dblclick', function(a, b) {
         equal(a, 'Meshy McMeshface');
         deepEqual(b, {'name': 'Meshy McMeshface'});
       });
@@ -397,10 +397,10 @@ requirejs([
         'width': 20,
         'height': 20
       };
-      mockEvent.preventDefault = function(){};
+      mockEvent.preventDefault = function() {};
 
       var meshy = {'object': {'name': 'Meshy McMeshface'}};
-      spv._raycaster.intersectObjects = function(){ return [meshy]; };
+      spv._raycaster.intersectObjects = function() { return [meshy]; };
       spv._eventCallback('dblclick', mockEvent);
     });
 
@@ -409,16 +409,16 @@ requirejs([
      * Check we can add/remove subscribers
      *
      */
-    test('Check removal and addition of subscribers', function(){
+    test('Check removal and addition of subscribers', function() {
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                     'fooligans', 0, 0, 20, 20);
 
-      var a = function (){
+      var a = function() {
         return 42;
       };
 
-      var b = function (){
+      var b = function() {
         return 'forty two';
       };
 

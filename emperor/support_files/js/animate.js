@@ -1,8 +1,8 @@
 define([
-    "underscore",
-    "trajectory"
+    'underscore',
+    'trajectory'
 ],
-function (_, trajectory){
+function(_, trajectory) {
   var getSampleNamesAndDataForSortedTrajectories = trajectory.getSampleNamesAndDataForSortedTrajectories;
   var getMinimumDelta = trajectory.getMinimumDelta;
   var TrajectoryOfSamples = trajectory.TrajectoryOfSamples;
@@ -68,26 +68,26 @@ function (_, trajectory){
    */
   function AnimationDirector(mappingFileHeaders, mappingFileData,
                              coordinatesData, gradientCategory,
-                             trajectoryCategory){
+                             trajectoryCategory) {
 
     // all arguments are required
     if (mappingFileHeaders === undefined || mappingFileData === undefined ||
       coordinatesData === undefined || gradientCategory === undefined ||
       trajectoryCategory === undefined) {
-      throw new Error("All arguments are required");
+      throw new Error('All arguments are required');
     }
 
     var index;
 
     index = mappingFileHeaders.indexOf(gradientCategory);
     if (index == -1) {
-      throw new Error("Could not find the gradient category in the mapping"+
-                      " file");
+      throw new Error('Could not find the gradient category in the mapping'+
+                      ' file');
     }
     index = mappingFileHeaders.indexOf(trajectoryCategory);
     if (index == -1) {
-      throw new Error("Could not find the trajectory category in the mapping"+
-                      " file");
+      throw new Error('Could not find the trajectory category in the mapping'+
+                      ' file');
     }
 
     this.mappingFileHeaders = mappingFileHeaders;
@@ -112,7 +112,7 @@ function (_, trajectory){
    * Initializes the trajectories that the director manages.
    *
    */
-  AnimationDirector.prototype.initializeTrajectories = function(){
+  AnimationDirector.prototype.initializeTrajectories = function() {
 
     var chewedData = null, trajectoryBuffer = null, minimumDelta;
     var sampleNamesBuffer = new Array(), gradientPointsBuffer = new Array();
@@ -124,9 +124,9 @@ function (_, trajectory){
         this.mappingFileHeaders, this.mappingFileData, this.coordinatesData,
         this.trajectoryCategory, this.gradientCategory);
 
-    if (chewedData === null){
-      throw new Error("Error initializing the trajectories, could not "+
-                      "compute the data");
+    if (chewedData === null) {
+      throw new Error('Error initializing the trajectories, could not '+
+                      'compute the data');
     }
 
     // calculate the minimum delta per step
@@ -134,7 +134,7 @@ function (_, trajectory){
 
     // we have to iterate over the keys because chewedData is a dictionary-like
     // object, if possible this should be changed in the future to be an Array
-    for (var key in chewedData){
+    for (var key in chewedData) {
 
       // re-initalize the arrays, essentially dropping all the previously
       // existing information
@@ -147,7 +147,7 @@ function (_, trajectory){
 
       // each of the keys is a trajectory name i. e. CONTROL, TREATMENT, etc
       // we are going to generate buffers so we can initialize the trajectory
-      for (var index = 0; index < chewedDataBuffer.length; index++){
+      for (var index = 0; index < chewedDataBuffer.length; index++) {
         // list of sample identifiers
         sampleNamesBuffer.push(chewedDataBuffer[index]['name']);
 
@@ -155,17 +155,17 @@ function (_, trajectory){
         gradientPointsBuffer.push(chewedDataBuffer[index]['value']);
 
         // x, y and z values for the coordinates data
-        coordinatesBuffer.push({'x':chewedDataBuffer[index]['x'],
-                                'y':chewedDataBuffer[index]['y'],
-                                'z':chewedDataBuffer[index]['z']});
+        coordinatesBuffer.push({'x': chewedDataBuffer[index]['x'],
+                                'y': chewedDataBuffer[index]['y'],
+                                'z': chewedDataBuffer[index]['z']});
       }
 
       // Don't add a trajectory unless it has more than one sample in the
       // gradient. For example, there's no reason why we should animate a
       // trajectory that has 3 samples at timepoint 0 ([0, 0, 0]) or a
       // trajectory that has just one sample at timepoint 0 ([0])
-      if (sampleNamesBuffer.length <=1 ||
-          _.uniq(gradientPointsBuffer).length <= 1){
+      if (sampleNamesBuffer.length <= 1 ||
+          _.uniq(gradientPointsBuffer).length <= 1) {
         continue;
       }
 
@@ -177,7 +177,7 @@ function (_, trajectory){
 
     }
     return;
-  }
+  };
 
   /**
    *
@@ -186,13 +186,13 @@ function (_, trajectory){
    * maximumTrajectoryLength property.
    *
    */
-  AnimationDirector.prototype.getMaximumTrajectoryLength = function (){
-    if(this.maximumTrajectoryLength === null){
+  AnimationDirector.prototype.getMaximumTrajectoryLength = function() {
+    if (this.maximumTrajectoryLength === null) {
       this._computeN();
     }
 
     return this.maximumTrajectoryLength;
-  }
+  };
 
   /**
    *
@@ -200,29 +200,29 @@ function (_, trajectory){
    * director is in charge of.
    *
    */
-  AnimationDirector.prototype._computeN = function (){
+  AnimationDirector.prototype._computeN = function() {
     var arrayOfLengths = new Array();
 
     // retrieve the length of all the trajectories
-    for (var index = 0; index < this.trajectories.length; index++){
+    for (var index = 0; index < this.trajectories.length; index++) {
       arrayOfLengths.push(
           this.trajectories[index].interpolatedCoordinates.length);
     }
 
     // assign the value of the maximum value for these lengths
     this.maximumTrajectoryLength = _.max(arrayOfLengths);
-  }
+  };
 
   /**
    *
    * Helper method to update the value of the currentFrame property.
    *
    */
-  AnimationDirector.prototype.updateFrame = function (){
+  AnimationDirector.prototype.updateFrame = function() {
     if (this.animationCycleFinished() === false) {
       this.currentFrame = this.currentFrame + 1;
     }
-  }
+  };
 
   /**
    *
@@ -231,9 +231,9 @@ function (_, trajectory){
    * animation still has frames to go.
    *
    */
-  AnimationDirector.prototype.animationCycleFinished = function (){
+  AnimationDirector.prototype.animationCycleFinished = function() {
     return this.currentFrame > this.getMaximumTrajectoryLength();
-  }
+  };
 
   return AnimationDirector;
 });

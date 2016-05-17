@@ -1,8 +1,8 @@
 define([
-    "jquery",
-    "underscore",
+    'jquery',
+    'underscore',
 ],
-function ($, _) {
+function($, _) {
   /**
    *
    * @name Plottable
@@ -38,12 +38,12 @@ function ($, _) {
     this.idx = idx === undefined ? -1 : idx;
     this.ci = ci === undefined ? [] : ci;
 
-    if (this.ci.length !== 0){
-      if (this.ci.length !== this.coordinates.length){
-        throw new Error("The number of confidence intervals doesn't match with"+
-                        " the number of dimensions in the coordinates "+
-                        "attribute. coords: " + this.coordinates.length +
-                        " ci: " + this.ci.length);
+    if (this.ci.length !== 0) {
+      if (this.ci.length !== this.coordinates.length) {
+        throw new Error("The number of confidence intervals doesn't match with" +
+                        ' the number of dimensions in the coordinates '+
+                        'attribute. coords: ' + this.coordinates.length +
+                        ' ci: ' + this.ci.length);
       }
     }
   };
@@ -55,22 +55,22 @@ function ($, _) {
    * @return a string describing the Plottable object.
    *
    */
-  Plottable.prototype.toString = function(){
+  Plottable.prototype.toString = function() {
     var ret = 'Sample: ' + this.name + ' located at: (' +
               this.coordinates.join(', ') + ') metadata: [' +
-              this.metadata.join(', ')+']';
+              this.metadata.join(', ') + ']';
 
-    if (this.idx === -1){
+    if (this.idx === -1) {
       ret = ret + ' without index';
     }
-    else{
+    else {
       ret = ret + ' at index: ' + this.idx;
     }
 
-    if (this.ci.length === 0){
+    if (this.ci.length === 0) {
       ret = ret + ' and without confidence intervals.';
     }
-    else{
+    else {
       ret = ret + ' and with confidence intervals at (' + this.ci.join(', ') +
         ').';
     }
@@ -116,7 +116,7 @@ function ($, _) {
    * are in md_headers order.
    *
   **/
-  function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata){
+  function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata) {
     var num_coords;
     this.abbreviatedName = name;
     this.ids = ids;
@@ -127,9 +127,9 @@ function ($, _) {
       Check that the number of coordnates set provided are the same as the
       number of samples
     */
-    if(this.ids.length !== coords.length){
-      throw new Error("The number of coordinates differs from the number of " +
-                      "samples. Coords: " + coords.length + " samples: " +
+    if (this.ids.length !== coords.length) {
+      throw new Error('The number of coordinates differs from the number of ' +
+                      'samples. Coords: ' + coords.length + ' samples: ' +
                       this.ids.length);
     }
 
@@ -137,41 +137,41 @@ function ($, _) {
       Check that all the coords set have the same number of coordinates
     */
     num_coords = coords[0].length;
-    var res = _.find(coords, function(c){return c.length !== num_coords;});
-    if(res !== undefined){
-      throw new Error("Not all samples have the same number of coordinates");
+    var res = _.find(coords, function(c) {return c.length !== num_coords;});
+    if (res !== undefined) {
+      throw new Error('Not all samples have the same number of coordinates');
     }
 
     /*
       Check that we have the percentage explained values for all coordinates
     */
-    if(pct_var.length !== num_coords){
-      throw new Error("The number of percentage explained values does not " +
-                      "match the number of coordinates. Perc expl: " +
-                      pct_var.length + " Num coord: " + num_coords);
+    if (pct_var.length !== num_coords) {
+      throw new Error('The number of percentage explained values does not ' +
+                      'match the number of coordinates. Perc expl: ' +
+                      pct_var.length + ' Num coord: ' + num_coords);
     }
 
     /*
       Check that we have the metadata for all samples
     */
-    if(this.ids.length !== metadata.length){
-      throw new Error("The number of metadata rows and the the number of " +
-                      "samples do not match. Samples: " + this.ids.length +
-                      " Metadata rows: " + metadata.length);
+    if (this.ids.length !== metadata.length) {
+      throw new Error('The number of metadata rows and the the number of ' +
+                      'samples do not match. Samples: ' + this.ids.length +
+                      ' Metadata rows: ' + metadata.length);
     }
 
     /*
       Check that we have all the metadata categories in all rows
     */
-    res = _.find(metadata, function(m){
+    res = _.find(metadata, function(m) {
                   return m.length !== md_headers.length;
     });
-    if(res !== undefined){
-      throw new Error("Not all metadata rows have the same number of values");
+    if (res !== undefined) {
+      throw new Error('Not all metadata rows have the same number of values');
     }
 
     this.plottable = new Array(ids.length);
-    for (var i = 0; i < ids.length; i++){
+    for (var i = 0; i < ids.length; i++) {
       this.plottable[i] = new Plottable(ids[i], metadata[i], coords[i], i);
     }
 
@@ -200,7 +200,7 @@ function ($, _) {
   **/
   DecompositionModel.prototype.getPlottableByID = function(id) {
     idx = this.ids.indexOf(id);
-    if(idx === -1){
+    if (idx === -1) {
       throw new Error(id + ' is not found in the Decomposition Model ids');
     }
     return this.plottable[idx];
@@ -215,9 +215,9 @@ function ($, _) {
    * @return an Array of plottable objects for the given ids
    *
   **/
-  DecompositionModel.prototype.getPlottableByIDs = function(idArray){
+  DecompositionModel.prototype.getPlottableByIDs = function(idArray) {
     dm = this;
-    return _.map(idArray, function(id){return dm.getPlottableByID(id);});
+    return _.map(idArray, function(id) {return dm.getPlottableByID(id);});
   };
 
   /**
@@ -230,9 +230,9 @@ function ($, _) {
    * the md_headers array
    *
   **/
-  DecompositionModel.prototype._getMetadataIndex = function(category){
+  DecompositionModel.prototype._getMetadataIndex = function(category) {
     var md_idx = this.md_headers.indexOf(category);
-    if(md_idx === -1){
+    if (md_idx === -1) {
       throw new Error('The header ' + category +
                       ' is not found in the metadata categories');
     }
@@ -250,14 +250,14 @@ function ($, _) {
    *
   **/
   DecompositionModel.prototype.getPlottablesByMetadataCategoryValue = function(
-      category, value){
+      category, value) {
 
     var md_idx = this._getMetadataIndex(category);
-    var res = _.filter(this.plottable, function(pl){
+    var res = _.filter(this.plottable, function(pl) {
       return pl.metadata[md_idx] === value; });
 
-    if(res.length === 0){
-      throw new Error('The value ' +  value +
+    if (res.length === 0) {
+      throw new Error('The value ' + value +
                       ' is not found in the metadata category ' + category);
     }
     return res;
@@ -272,10 +272,10 @@ function ($, _) {
    * @return an Array of the available values for the given metadata header
    *
   **/
-  DecompositionModel.prototype.getUniqueValuesByCategory = function(category){
+  DecompositionModel.prototype.getUniqueValuesByCategory = function(category) {
     var md_idx = this._getMetadataIndex(category);
     return _.uniq(
-      _.map(this.plottable, function(pl){return pl.metadata[md_idx];}));
+      _.map(this.plottable, function(pl) {return pl.metadata[md_idx];}));
   };
 
   /**
@@ -288,7 +288,7 @@ function ($, _) {
    * @return An array with the results of executing func over all plottables
    *
    */
-  DecompositionModel.prototype.apply = function(func){
+  DecompositionModel.prototype.apply = function(func) {
     return _.map(this.plottable, func);
   };
 
@@ -306,14 +306,14 @@ function ($, _) {
    * newly seen plottable object.
    *
    **/
-  DecompositionModel._minMaxReduce = function(accumulator, plottable){
+  DecompositionModel._minMaxReduce = function(accumulator, plottable) {
 
     // iterate over every dimension
-    _.each(plottable.coordinates, function(value, index){
-      if (value > accumulator.max[index]){
+    _.each(plottable.coordinates, function(value, index) {
+      if (value > accumulator.max[index]) {
         accumulator.max[index] = value;
       }
-      else if (value < accumulator.min[index]){
+      else if (value < accumulator.min[index]) {
         accumulator.min[index] = value;
       }
     });
@@ -328,14 +328,14 @@ function ($, _) {
    * @return a string describing the Decomposition object.
    *
    */
-  DecompositionModel.prototype.toString = function(){
+  DecompositionModel.prototype.toString = function() {
     return 'name: ' + this.abbreviatedName + '\n' +
-      'Metadata headers: [' + this.md_headers.join(', ') + ']\n'+
-      'Plottables:\n' +  _.map(this.plottable, function(plt){
+      'Metadata headers: [' + this.md_headers.join(', ') + ']\n' +
+      'Plottables:\n' + _.map(this.plottable, function(plt) {
         return plt.toString();
       }).join('\n');
   };
 
-  return { "DecompositionModel": DecompositionModel,
-           "Plottable": Plottable};
+  return { 'DecompositionModel': DecompositionModel,
+           'Plottable': Plottable};
 });

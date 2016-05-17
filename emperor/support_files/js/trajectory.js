@@ -1,6 +1,6 @@
 define([
-    "underscore",
-], function (_){
+    'underscore',
+], function(_) {
   /**
    *
    * @name TrajectoryOfSamples
@@ -50,7 +50,7 @@ define([
    **/
   function TrajectoryOfSamples(sampleNames, metadataCategoryName,
                                gradientPoints, coordinates, minimumDelta,
-                               suppliedN, maxN){
+                               suppliedN, maxN) {
     this.sampleNames = sampleNames;
     this.metadataCategoryName = metadataCategoryName;
 
@@ -69,8 +69,8 @@ define([
     this.maxN = maxN !== undefined ? maxN : 10;
 
     if (this.coordinates.length != this.gradientPoints.length) {
-      throw new Error("The number of coordinate points and gradient points is"+
-          "different, make sure these values are consistent.");
+      throw new Error('The number of coordinate points and gradient points is'+
+          'different, make sure these values are consistent.');
     }
 
     // initialize as an empty array but fill it up upon request
@@ -86,30 +86,30 @@ define([
    * interpolated arrays.
    *
    */
-  TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function(){
+  TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function() {
     var pointsPerStep = 0, delta = 0;
     var interpolatedCoordinatesBuffer = new Array(),
     intervalBuffer = new Array();
     var currInterpolation;
 
     // iterate over the gradient points to compute the interpolated distances
-    for (var index = 0; index < this.gradientPoints.length-1; index++){
+    for (var index = 0; index < this.gradientPoints.length - 1; index++) {
 
       // calculate the absolute difference of the current pair of points
-      delta = Math.abs(Math.abs(this.gradientPoints[index])-Math.abs(
-            this.gradientPoints[index+1]));
+      delta = Math.abs(Math.abs(this.gradientPoints[index]) - Math.abs(
+            this.gradientPoints[index + 1]));
 
       pointsPerStep = this.calculateNumberOfPointsForDelta(delta);
-      if (pointsPerStep > this.maxN){
+      if (pointsPerStep > this.maxN) {
         pointsPerStep = this.maxN;
       }
 
       currInterpolation = linearInterpolation(this.coordinates[index]['x'],
           this.coordinates[index]['y'],
           this.coordinates[index]['z'],
-          this.coordinates[index+1]['x'],
-          this.coordinates[index+1]['y'],
-          this.coordinates[index+1]['z'],
+          this.coordinates[index + 1]['x'],
+          this.coordinates[index + 1]['y'],
+          this.coordinates[index + 1]['z'],
           pointsPerStep);
 
       // extend to include these interpolated points, do not include the last
@@ -131,7 +131,7 @@ define([
     this._intervalValues = intervalBuffer;
 
     return;
-  }
+  };
 
   /**
    *
@@ -149,9 +149,9 @@ define([
    * differential
    *
    */
-  TrajectoryOfSamples.prototype.calculateNumberOfPointsForDelta = function(delta){
-    return Math.floor((delta*this.suppliedN)/this.minimumDelta);
-  }
+  TrajectoryOfSamples.prototype.calculateNumberOfPointsForDelta = function(delta) {
+    return Math.floor((delta * this.suppliedN) / this.minimumDelta);
+  };
 
   /**
    *
@@ -168,25 +168,25 @@ define([
    * a rect line if these were part of the original set of coordinates.
    *
    */
-  TrajectoryOfSamples.prototype.representativeCoordinatesAtIndex = function(idx){
+  TrajectoryOfSamples.prototype.representativeCoordinatesAtIndex = function(idx) {
 
-    if (idx === 0){
+    if (idx === 0) {
       return [this.coordinates[0]];
     }
 
     // we only need to show the edges and none of the interpolated points
-    if (this.interpolatedCoordinates.length-1 <= idx){
+    if (this.interpolatedCoordinates.length - 1 <= idx) {
       return this.coordinates;
     }
 
-    var output = this.coordinates.slice(0, this._intervalValues[idx]+1);
+    var output = this.coordinates.slice(0, this._intervalValues[idx] + 1);
     output = output.concat(this.interpolatedCoordinates[idx]);
 
     return output;
-  }
+  };
 
   /**
-   * 
+   *
    * Function to interpolate a certain number of steps between two three
    * dimensional points.
    *
@@ -205,29 +205,29 @@ define([
    *
    */
 
-  function linearInterpolation( x_1, y_1, z_1, x_2, y_2, z_2, steps){
-    var xAbs = Math.abs(x_1-x_2);
-    var yAbs = Math.abs(y_1-y_2);
-    var zAbs = Math.abs(z_1-z_2);
-    var xDiff = x_2-x_1;
-    var yDiff = y_2-y_1;
-    var zDiff = z_2-z_1;
+  function linearInterpolation(x_1, y_1, z_1, x_2, y_2, z_2, steps) {
+    var xAbs = Math.abs(x_1 - x_2);
+    var yAbs = Math.abs(y_1 - y_2);
+    var zAbs = Math.abs(z_1 - z_2);
+    var xDiff = x_2 - x_1;
+    var yDiff = y_2 - y_1;
+    var zDiff = z_2 - z_1;
 
     // and apparetnly this makes takes no effect whatsoever
-    var length = Math.sqrt(xAbs*xAbs + yAbs*yAbs + zAbs*zAbs);
-    var xStep = xDiff/steps;
-    var yStep = yDiff/steps;
-    var zStep = zDiff/steps;
+    var length = Math.sqrt(xAbs * xAbs + yAbs * yAbs + zAbs * zAbs);
+    var xStep = xDiff / steps;
+    var yStep = yDiff / steps;
+    var zStep = zDiff / steps;
 
     var newx = 0;
     var newy = 0;
     var newz = 0;
     var result = new Array();
 
-    for( var s = 0; s <= steps; s++ ){
-      newx = x_1+(xStep*s);
-      newy = y_1+(yStep*s);
-      newz = z_1+(zStep*s);
+    for (var s = 0; s <= steps; s++) {
+      newx = x_1 + (xStep * s);
+      newy = y_1 + (yStep * s);
+      newz = z_1 + (zStep * s);
 
       result.push({'x': newx, 'y': newy, 'z': newz});
     }
@@ -252,17 +252,17 @@ define([
    * @return floating point value of the distance between the two points
    *
    */
-  function distanceBetweenPoints( x_1, y_1, z_1, x_2, y_2, z_2){
+  function distanceBetweenPoints(x_1, y_1, z_1, x_2, y_2, z_2) {
     var xs = 0;
     var ys = 0;
     var zs = 0;
 
     // Math.pow is faster than simple multiplication
-    xs = Math.pow(Math.abs(x_2-x_1), 2);
-    ys = Math.pow(Math.abs(y_2-y_1), 2);
-    zs = Math.pow(Math.abs(z_2-z_1), 2);
+    xs = Math.pow(Math.abs(x_2 - x_1), 2);
+    ys = Math.pow(Math.abs(y_2 - y_1), 2);
+    zs = Math.pow(Math.abs(z_2 - z_1), 2);
 
-    return Math.sqrt(xs+ys+zs);
+    return Math.sqrt(xs + ys + zs);
   }
 
   /**
@@ -297,7 +297,7 @@ define([
       mappingFileData,
       coordinatesData,
       trajectoryCategory,
-      gradientCategory){
+      gradientCategory) {
     var gradientIndex = mappingFileHeaders.indexOf(gradientCategory);
     var trajectoryIndex = mappingFileHeaders.indexOf(trajectoryCategory);
 
@@ -306,20 +306,20 @@ define([
 
     // this is the most utterly annoying thing ever
     if (gradientIndex === -1) {
-      throw new Error("Gradient category not found in mapping file header");
+      throw new Error('Gradient category not found in mapping file header');
     }
     if (trajectoryIndex === -1) {
-      throw new Error("Trajectory category not found in mapping file header");
+      throw new Error('Trajectory category not found in mapping file header');
     }
 
-    for (var sampleId in mappingFileData){
+    for (var sampleId in mappingFileData) {
 
       trajectoryBuffer = mappingFileData[sampleId][trajectoryIndex];
       gradientBuffer = mappingFileData[sampleId][gradientIndex];
 
       // check if there's already an element for this trajectory, if not
       // initialize a new array for this element of the processed data
-      if (chewedSampleData[trajectoryBuffer] === undefined){
+      if (chewedSampleData[trajectoryBuffer] === undefined) {
         chewedSampleData[trajectoryBuffer] = new Array();
       }
       chewedSampleData[trajectoryBuffer].push({'name': sampleId,
@@ -330,12 +330,12 @@ define([
 
     // we need this custom sorting function to make the values be sorted in
     // ascending order but accounting for the data structure that we just built
-    var sortingFunction = function (a, b){
-      return parseFloat(a["value"]) - parseFloat(b["value"]);
-    }
+    var sortingFunction = function(a, b) {
+      return parseFloat(a['value']) - parseFloat(b['value']);
+    };
 
     // sort all the values using the custom anonymous function
-    for (var key in chewedSampleData){
+    for (var key in chewedSampleData) {
       chewedSampleData[key].sort(sortingFunction);
     }
 
@@ -359,20 +359,20 @@ define([
    * the gradient.
    *
    */
-  function getMinimumDelta(sampleData){
-    if (sampleData === undefined){
-      throw new Error("The sample data cannot be undefined");
+  function getMinimumDelta(sampleData) {
+    if (sampleData === undefined) {
+      throw new Error('The sample data cannot be undefined');
     }
 
     var bufferArray = new Array(), deltasArray = new Array();
 
     // go over all the data and compute the deltas for all trajectories
-    for (var key in sampleData){
-      for (var index = 0; index < sampleData[key].length; index++){
+    for (var key in sampleData) {
+      for (var index = 0; index < sampleData[key].length; index++) {
         bufferArray.push(sampleData[key][index]['value']);
       }
-      for (var index = 0; index < bufferArray.length-1; index++){
-        deltasArray.push(Math.abs(bufferArray[index+1]-bufferArray[index]));
+      for (var index = 0; index < bufferArray.length - 1; index++) {
+        deltasArray.push(Math.abs(bufferArray[index + 1] - bufferArray[index]));
       }
 
       // clean buffer array
@@ -380,7 +380,7 @@ define([
     }
 
     // remove all the deltas of zero so we don't skew our results
-    deltasArray = _.filter(deltasArray, function(num){ return num !== 0; });
+    deltasArray = _.filter(deltasArray, function(num) { return num !== 0; });
 
     // return the minimum of these values
     return _.min(deltasArray);

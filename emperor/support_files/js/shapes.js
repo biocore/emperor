@@ -21,14 +21,14 @@ define(['jquery', 'three'], function($, THREE) {
    * appropriate for the data presented on screen.
    *
    **/
-  function getGeometry(shapeName, ranges){
+  function getGeometry(shapeName, ranges) {
 
     // this is a heauristic tested on numerous plots since 2013, based off of
     // the old implementation of emperor. We select the dimensions of all the
     // geometries based on this factor.
     var factor = (ranges.max[0] - ranges.min[0]) * 0.012;
 
-    switch(shapeName){
+    switch (shapeName) {
       case SPHERE:
         return new THREE.SphereGeometry(factor, 8, 8);
       case CUBE:
@@ -41,12 +41,12 @@ define(['jquery', 'three'], function($, THREE) {
         return new THREE.CylinderGeometry(factor * 0.4, factor * 0.4,
                                           1.5 * factor, 10);
       default:
-        throw Error("Unknown geometry requested: " + shapeName);
+        throw Error('Unknown geometry requested: ' + shapeName);
     }
   }
 
   var $shapesDropdown = $('<select>');
-  _.each(shapes, function(shape){
+  _.each(shapes, function(shape) {
     $shapesDropdown.append(new Option(shape, shape));
   });
 

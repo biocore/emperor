@@ -1,15 +1,15 @@
 define([
-    "jquery",
-    "underscore",
-    "contextmenu",
-    "three",
-    "view",
-    "scene3d",
-    "colorviewcontroller",
-    "visibilitycontroller",
-    "shapecontroller",
-    "filesaver"
-], function ($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
+    'jquery',
+    'underscore',
+    'contextmenu',
+    'three',
+    'view',
+    'scene3d',
+    'colorviewcontroller',
+    'visibilitycontroller',
+    'shapecontroller',
+    'filesaver'
+], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController, ShapeController,
              FileSaver) {
 
@@ -29,7 +29,7 @@ define([
    * external applications like SAGE2.
    *
    **/
-  EmperorController = function(dm, divId, webglcanvas){
+  EmperorController = function(dm, divId, webglcanvas) {
     var scope = this;
 
     // Constants
@@ -58,11 +58,11 @@ define([
     this.rendererBackgroundColor = new THREE.Color();
     this.rendererBackgroundColor.setHex('0x000000');
 
-    if (webglcanvas !== undefined){
+    if (webglcanvas !== undefined) {
         this.renderer = new THREE.WebGLRenderer({canvas: webglcanvas,
                                                  antialias: true});
     }
-    else{
+    else {
         this.renderer = new THREE.WebGLRenderer({antialias: true});
     }
 
@@ -132,7 +132,7 @@ define([
    * @param {height} the height of the entire plotting space
    *
    **/
-  EmperorController.prototype.resize = function(width, height){
+  EmperorController.prototype.resize = function(width, height) {
     // update the available space we have
     this.width = width;
     this.height = height;
@@ -201,8 +201,8 @@ define([
     // resize the height of the containing DIV tag (we don't need to resize the
     // width as this is already taken care of since it just has to fit the
     // available space).
-    _.each(this.controllers, function(controller, index){
-      if(controller !== undefined){
+    _.each(this.controllers, function(controller, index) {
+      if (controller !== undefined) {
         $('#' + controller.identifier).height(tabHeight);
 
         var w = $('#' + controller.identifier).width(),
@@ -261,7 +261,7 @@ define([
                                // document.ready() wouldn't work either as the
                                // resize callback couldn't be executed on a tab
                                // that didn't exist yet.
-                               activate: function(event, ui){
+                               activate: function(event, ui) {
                                  scope.resize(scope.$divId.width(),
                                               scope.$divId.height());
                                }});
@@ -285,7 +285,7 @@ define([
           icon: 'paste',
           callback: function(key, opts) {
             if (!FileReader) {
-              alert("Your browser does not support file loading. We recommend using Google Chrome for full functionality.");
+              alert('Your browser does not support file loading. We recommend using Google Chrome for full functionality.');
               return;
             }
             var file = $('<input type="file">');
@@ -298,13 +298,13 @@ define([
                 try {
                   var json = JSON.parse(e.target.result);
                 } catch (err) {
-                  alert("File given is not a JSON parsable file.");
+                  alert('File given is not a JSON parsable file.');
                   return;
                 }
                 try {
                   scope.loadConfig(json);
                 } catch (err) {
-                  alert("Error loading settings from file: " + err.message);
+                  alert('Error loading settings from file: ' + err.message);
                   return;
                 }
               };
@@ -313,7 +313,7 @@ define([
             file.click();
           }
         },
-        "sep1": "---------",
+        'sep1': '---------',
         'saveImage': {
           name: 'Save Image (PNG)',
           icon: 'edit',
@@ -346,7 +346,7 @@ define([
     for (var i = 0; i < this.sceneViews.length; i++) {
       this.sceneViews[i].render();
     }
-    var c = this.renderer.domElement.toDataURL("image/" + type);
+    var c = this.renderer.domElement.toDataURL('image/' + type);
     // Create DOM-less download link and click it to start download
     var download = $('<a href="' + c + '" download="emperor.' + type + '">');
     download.get(0).click();
@@ -377,8 +377,8 @@ define([
     });
 
     // Save the file
-    var blob = new Blob([JSON.stringify(saveinfo)], {type: "text/json"});
-    saveAs(blob, "emperor-settings.json");
+    var blob = new Blob([JSON.stringify(saveinfo)], {type: 'text/json'});
+    saveAs(blob, 'emperor-settings.json');
    };
 
   /**
@@ -416,7 +416,7 @@ define([
    * @param {function} [viewConstructor] Constructor of the view controller.
    *
    **/
-  EmperorController.prototype.addTab = function(dvdict, viewConstructor){
+  EmperorController.prototype.addTab = function(dvdict, viewConstructor) {
     // nothing but a temporary id
     var id = (Math.round(1000000 * Math.random())).toString();
 
@@ -435,7 +435,7 @@ define([
     // now add the list element linking to the container div with the proper
     // title
     this._$tabsList.append("<li><a href='#" + obj.identifier + "'>" +
-        obj.title + "</a></li>");
+        obj.title + '</a></li>');
 
     return obj;
   };
