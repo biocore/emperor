@@ -24,7 +24,7 @@ define([
    *
    */
   function EmperorViewControllerABC(container, title, description) {
-    /** 
+    /**
      * @type {Node}
      * jQuery element for the parent container.
      */
@@ -251,7 +251,7 @@ define([
      * @type {Object}
      * This is object is keyed by unique identifiers and the values are
      * DecompositionView objects referring to a set of objects presented on
-     * screen. This dictionary will usually be shared by all the tabs in the 
+     * screen. This dictionary will usually be shared by all the tabs in the
      * application. This argument is passed by reference.
      */
     this.decompViewDict = decompViewDict;
@@ -294,14 +294,16 @@ define([
 
         // now that we have the chosen selector and the table fire a callback
         // to initialize the data grid
-        options.categorySelectionCallback(null, {selected: scope.$select.val()});
+        options.categorySelectionCallback(
+          null, {selected: scope.$select.val()});
       }
 
     });
 
     return this;
   }
-  EmperorAttributeABC.prototype = Object.create(EmperorViewControllerABC.prototype);
+  EmperorAttributeABC.prototype = Object.create(
+    EmperorViewControllerABC.prototype);
   EmperorAttributeABC.prototype.constructor = EmperorViewControllerABC;
 
   /**
@@ -446,7 +448,8 @@ define([
 
     // fetch and set the SlickGrid-formatted data
     var k = this.getActiveDecompViewKey();
-    var data = this.decompViewDict[k].setCategory(json.data, this.setPlottableAttributes, json.category);
+    var data = this.decompViewDict[k].setCategory(
+      json.data, this.setPlottableAttributes, json.category);
     this.setSlickGridDataset(data);
     // set all to needsUpdate
     this.decompViewDict[k].needsUpdate = true;
