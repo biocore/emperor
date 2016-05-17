@@ -3,68 +3,49 @@ define([
     'trajectory'
 ],
 function(_, trajectory) {
-  var getSampleNamesAndDataForSortedTrajectories = trajectory.getSampleNamesAndDataForSortedTrajectories;
+  var getSampleNamesAndDataForSortedTrajectories =
+    trajectory.getSampleNamesAndDataForSortedTrajectories;
   var getMinimumDelta = trajectory.getMinimumDelta;
   var TrajectoryOfSamples = trajectory.TrajectoryOfSamples;
 
   /**
    *
-   * @name AnimationDirector
+   * @class AnimationDirector
    *
-   * @class This class represents an animation director for PCoA plots in the
-   * Emperor visualization software.
-   *
-   * @property {float} [minimumDelta=null] A floating point value determining
-   * what the minimum separation between samples along the gradients is. Will
-   * be null until it is initialized to the values according to the inputed
-   * data.
-   * @property {int} [maximumTrajectoryLength=null] Maximum length that the
-   * groups
-   * of samples have along a gradient.
-   * @property {int} [currentFrame=-1] The current frame being served by the
-   * director.
-   * @property {Array} [trajectories=Array(0)] Array where each element in the
-   * trajectory is a trajectory with the interpolated points in it.
-   *
-   */
-
-  /**
-   *
-   * @name AnimationDirector
-   *
-   * @class This object represents an animation director, as the name implies,
+   * This object represents an animation director, as the name implies,
    * is an object that manages an animation. Takes the for a plot (mapping file
    * and coordinates) as well as the metadata categories we want to animate
    * over.  This object gets called in the main emperor module when an
    * animation starts and an instance will only be alive for one animation
    * cycle i. e. until the cycle hits the final frame of the animation.
    *
-   * @param {mappingFileHeaders} an Array of strings containing metadata
-   * mapping file headers (required).
-   * @param {mappingFileData} an Array where the indices are sample identifiers
-   * and each of the contained elements is an Array of strings where the first
-   * element corresponds to the first data for the first column in the mapping
-   * file (mappingFileHeaders) (required).
-   * @param {coordinatesData} an Array of Objects where the indices are the
-   * sample identifiers and each of the objects has the following properties:
-   * x, y, z, name, color, P1, P2, P3, ... PN where N is the number of
-   * dimensions in this dataset (required).
-   * @param {gradientCategory} a string with the name of the mapping file
+   * @param {String[]} mappingFileHeaders an Array of strings containing
+   * metadata mapping file headers.
+   * @param {Object[]} mappingFileData an Array where the indices are sample
+   * identifiers and each of the contained elements is an Array of strings where
+   * the first element corresponds to the first data for the first column in the
+   * mapping file (mappingFileHeaders).
+   * @param {Object[]} coordinatesData an Array of Objects where the indices are
+   * the sample identifiers and each of the objects has the following
+   * properties: x, y, z, name, color, P1, P2, P3, ... PN where N is the number
+   * of dimensions in this dataset.
+   * @param {String} gradientCategory a string with the name of the mapping file
    * header where the data that spreads the samples over a gradient is
    * contained, usually time or days_since_epoch. Note that this should be an
-   * all numeric category (required).
-   * @param {trajectoryCategory} a string with the name of the mapping file
-   * header where the data that groups the samples is contained, this will
-   * usually be BODY_SITE, HOST_SUBJECT_ID, etc. (required).
+   * all numeric category.
+   * @param {String} trajectoryCategory a string with the name of the mapping
+   * file header where the data that groups the samples is contained, this will
+   * usually be BODY_SITE, HOST_SUBJECT_ID, etc..
    *
-   * @return returns an animation director if the parameters passed in were all
-   * valid.
+   * @return {AnimationDirector} returns an animation director if the parameters
+   * passed in were all valid.
    *
-   * Note that this class will raise an Error in any of the following cases:
+   * @throws {Error} Note that this class will raise an Error in any of the
+   * following cases:
    * - One of the input arguments is undefined.
    * - If gradientCategory is not in the mappingFileHeaders.
    * - If trajectoryCategory is not in the mappingFileHeaders.
-   *
+   * @constructs AnimationDirector
    */
   function AnimationDirector(mappingFileHeaders, mappingFileData,
                              coordinatesData, gradientCategory,
@@ -90,10 +71,42 @@ function(_, trajectory) {
                       ' file');
     }
 
+    /**
+     * @type {String[]}
+     mappingFileHeaders an Array of strings containing metadata mapping file
+     headers.
+     */
     this.mappingFileHeaders = mappingFileHeaders;
+    /**
+     * @type {Object[]}
+     *an Array where the indices are sample identifiers
+     * and each of the contained elements is an Array of strings where the first
+     * element corresponds to the first data for the first column in the mapping
+     * file (mappingFileHeaders).
+     */
     this.mappingFileData = mappingFileData;
+    /*
+     * @type {Object[]}
+     * an Array of Objects where the indices are the
+     * sample identifiers and each of the objects has the following properties:
+     * x, y, z, name, color, P1, P2, P3, ... PN where N is the number of
+     * dimensions in this dataset.
+     */
     this.coordinatesData = coordinatesData;
+    /**
+     * @type {String}
+     *a string with the name of the mapping file
+     * header where the data that spreads the samples over a gradient is
+     * contained, usually time or days_since_epoch. Note that this should be an
+     * all numeric category
+     */
     this.gradientCategory = gradientCategory;
+    /**
+     * @type {String}
+     * a string with the name of the mapping file
+     * header where the data that groups the samples is contained, this will
+     * usually be BODY_SITE, HOST_SUBJECT_ID, etc..
+     */
     this.trajectoryCategory = trajectoryCategory;
 
     this.minimumDelta = null;
@@ -125,7 +138,7 @@ function(_, trajectory) {
         this.trajectoryCategory, this.gradientCategory);
 
     if (chewedData === null) {
-      throw new Error('Error initializing the trajectories, could not '+
+      throw new Error('Error initializing the trajectories, could not ' +
                       'compute the data');
     }
 
@@ -184,6 +197,7 @@ function(_, trajectory) {
    * Retrieves the lengths of all the trajectories and figures out which of
    * them is the longest one, then assigns that value to the
    * maximumTrajectoryLength property.
+   * @return {Integer} Maximum trajectory length
    *
    */
   AnimationDirector.prototype.getMaximumTrajectoryLength = function() {
@@ -198,6 +212,7 @@ function(_, trajectory) {
    *
    * Helper function to compute the maximum length of the trajectories that the
    * director is in charge of.
+   * @private
    *
    */
   AnimationDirector.prototype._computeN = function() {
