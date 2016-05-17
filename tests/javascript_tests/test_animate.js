@@ -1,4 +1,4 @@
-requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector){
+requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector) {
   $(document).ready(function() {
 
     // these variables are reused throughout this test suite
@@ -6,10 +6,10 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
 
     module('Animate', {
 
-      setup: function(){
+      setup: function() {
         // setup function
-        mappingFileHeaders = ['SampleID','LinkerPrimerSequence','Treatment','DOB'];
-        mappingFileData = { 'PC.481': ['PC.481','YATGCTGCCTCCCGTAGGAGT','Control','20070314'],'PC.607': ['PC.607','YATGCTGCCTCCCGTAGGAGT','Fast','20071112'],'PC.634': ['PC.634','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.635': ['PC.635','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.593': ['PC.593','YATGCTGCCTCCCGTAGGAGT','Control','20071210'],'PC.636': ['PC.636','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.355': ['PC.355','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.354': ['PC.354','YATGCTGCCTCCCGTAGGAGT','Control','20061218'],'PC.356': ['PC.356','YATGCTGCCTCCCGTAGGAGT','Control','20061126'] };
+        mappingFileHeaders = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
+        mappingFileData = { 'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'], 'PC.607': ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'], 'PC.634': ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.593': ['PC.593', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'], 'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.355': ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'], 'PC.354': ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'], 'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126'] };
         coordinatesData = new Array();
         coordinatesData['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647, 'P1': -0.276542, 'P2': -0.144964, 'P3': 0.066647, 'P4': -0.067711, 'P5': 0.176070, 'P6': 0.072969, 'P7': -0.229889, 'P8': -0.046599 };
         coordinatesData['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136, 'P1': -0.237661, 'P2': 0.046053, 'P3': -0.138136, 'P4': 0.159061, 'P5': -0.247485, 'P6': -0.115211, 'P7': -0.112864, 'P8': 0.064794 };
@@ -21,7 +21,7 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
         coordinatesData['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': -0.091330, 'y': 0.424147, 'z': -0.135627, 'P1': -0.091330, 'P2': 0.424147, 'P3': -0.135627, 'P4': -0.057519, 'P5': 0.151363, 'P6': -0.025394, 'P7': 0.051731, 'P8': -0.038738 };
         coordinatesData['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': -0.349339, 'y': -0.120788, 'z': 0.115275, 'P1': -0.349339, 'P2': -0.120788, 'P3': 0.115275, 'P4': 0.069495, 'P5': -0.025372, 'P6': 0.067853, 'P7': 0.244448, 'P8': -0.059883 };
 
-        mappingFileDataShort = { 'PC.481': ['PC.481','YATGCTGCCTCCCGTAGGAGT','Control','20070314'],'PC.635': ['PC.635','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.636': ['PC.636','YATGCTGCCTCCCGTAGGAGT','Fast','20080116'],'PC.356': ['PC.356','YATGCTGCCTCCCGTAGGAGT','Fast','20061126'] };
+        mappingFileDataShort = { 'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'], 'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20061126'] };
         coordinatesDataShort = new Array();
         coordinatesDataShort['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647, 'P1': -0.276542, 'P2': -0.144964, 'P3': 0.066647, 'P4': -0.067711, 'P5': 0.176070, 'P6': 0.072969, 'P7': -0.229889, 'P8': -0.046599 };
         coordinatesDataShort['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136, 'P1': -0.237661, 'P2': 0.046053, 'P3': -0.138136, 'P4': 0.159061, 'P5': -0.247485, 'P6': -0.115211, 'P7': -0.112864, 'P8': 0.064794 };
@@ -31,11 +31,11 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
         // trajectories with only one unique timepoint in different cases
         // (1) all timepoints with the same value
         // (2) a single timepoint
-        mappingFileHeadersUnique = ['SampleID','LinkerPrimerSequence','Treatment','DOB'];
-        mappingFileDataUnique = { 'PC.481': ['PC.481','YATGCTGCCTCCCGTAGGAGT','A','0'],'PC.607': ['PC.607','YATGCTGCCTCCCGTAGGAGT','B','0'],'PC.634': ['PC.634','YATGCTGCCTCCCGTAGGAGT','B','0'],'PC.635': ['PC.635','YATGCTGCCTCCCGTAGGAGT','C','0'],'PC.593': ['PC.593','YATGCTGCCTCCCGTAGGAGT','C','1'],'PC.636': ['PC.636','YATGCTGCCTCCCGTAGGAGT','C','2'],'PC.355': ['PC.355','YATGCTGCCTCCCGTAGGAGT','D','-9999'],'PC.354': ['PC.354','YATGCTGCCTCCCGTAGGAGT','D','0'],'PC.356': ['PC.356','YATGCTGCCTCCCGTAGGAGT','D','100000'] };
+        mappingFileHeadersUnique = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
+        mappingFileDataUnique = { 'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'A', '0'], 'PC.607': ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'B', '0'], 'PC.634': ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'B', '0'], 'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'C', '0'], 'PC.593': ['PC.593', 'YATGCTGCCTCCCGTAGGAGT', 'C', '1'], 'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'C', '2'], 'PC.355': ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'D', '-9999'], 'PC.354': ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'D', '0'], 'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'D', '100000'] };
       },
 
-      teardown: function(){
+      teardown: function() {
         // teardown function
         mappingFileHeaders = null;
         mappingFileData = null;
@@ -52,66 +52,66 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
      */
     test('Test constructor', function() {
 
-      var director = new AnimationDirector(mappingFileHeaders,mappingFileData,
+      var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
           coordinatesData, 'DOB',
           'Treatment', 1000, 10);
 
       // a quick run through all the properties
-      equal(director.mappingFileHeaders, mappingFileHeaders, 'The mapping '+
+      equal(director.mappingFileHeaders, mappingFileHeaders, 'The mapping ' +
           'file headers are set correctly');
-      equal(director.mappingFileData, mappingFileData, 'The mapping file '+
+      equal(director.mappingFileData, mappingFileData, 'The mapping file ' +
           'data is set correctly');
-      equal(director.coordinatesData, coordinatesData, 'The coordinates data'+
+      equal(director.coordinatesData, coordinatesData, 'The coordinates data' +
           ' is set correctly');
-      equal(director.gradientCategory, 'DOB', 'The gradientCategory is set'+
+      equal(director.gradientCategory, 'DOB', 'The gradientCategory is set' +
           ' correctly');
-      equal(director.trajectoryCategory, 'Treatment', 'The '+
+      equal(director.trajectoryCategory, 'Treatment', 'The ' +
           'trajectoryCategory is set correctly');
-      equal(director.minimumDelta, 92, 'The minimum delta is computed'+
+      equal(director.minimumDelta, 92, 'The minimum delta is computed' +
           'correctly');
-      equal(director.maximumTrajectoryLength, 26, 'The maximum trajectory '+
+      equal(director.maximumTrajectoryLength, 26, 'The maximum trajectory ' +
           'length value is correct');
       equal(director.currentFrame, -1, 'The current frame is correct');
-      equal(director.trajectories.length, 2, 'The number of trajectories is '+
+      equal(director.trajectories.length, 2, 'The number of trajectories is ' +
           'correct');
-      equal(director.trajectories[0].metadataCategoryName, 'Control', 'The'+
+      equal(director.trajectories[0].metadataCategoryName, 'Control', 'The' +
           'metadata category name is set correctly for the trajectory 1');
-      equal(director.trajectories[1].metadataCategoryName, 'Fast', 'The'+
+      equal(director.trajectories[1].metadataCategoryName, 'Fast', 'The' +
           'metadata category name is set correctly for the trajectory 1');
 
       // check the trajectories are overall ok -- reason why I added this, because they are not :P
       deepEqual(director.trajectories[0].representativeCoordinatesAtIndex(1000),
-          [{"x": 0.22882, "y": -0.130142, "z": -0.287149},
-          {"x": 0.170518, "y": -0.194113, "z": -0.030897},
-          {"x": 0.280399, "y": -0.006013, "z": 0.023485},
-          {"x": 0.042263, "y": -0.013968, "z": 0.063531},
-          {"x": 0.232873, "y": 0.139788, "z": 0.322871}],
+          [{'x': 0.22882, 'y': -0.130142, 'z': -0.287149},
+          {'x': 0.170518, 'y': -0.194113, 'z': -0.030897},
+          {'x': 0.280399, 'y': -0.006013, 'z': 0.023485},
+          {'x': 0.042263, 'y': -0.013968, 'z': 0.063531},
+          {'x': 0.232873, 'y': 0.139788, 'z': 0.322871}],
           'Control');
       deepEqual(director.trajectories[1].representativeCoordinatesAtIndex(1000),
-          [{"x": -0.09133, "y": 0.424147, "z": -0.135627},
-          {"x": -0.349339, "y": -0.120788, "z": 0.115275},
-          {"x": -0.237661, "y": 0.046053, "z": -0.138136},
-          {"x": -0.276542, "y": -0.144964, "z": 0.066647}],
+          [{'x': -0.09133, 'y': 0.424147, 'z': -0.135627},
+          {'x': -0.349339, 'y': -0.120788, 'z': 0.115275},
+          {'x': -0.237661, 'y': 0.046053, 'z': -0.138136},
+          {'x': -0.276542, 'y': -0.144964, 'z': 0.066647}],
           'Fast');
-      equal(director.trajectories.length, 2, 'The number of trajectories is '+
+      equal(director.trajectories.length, 2, 'The number of trajectories is ' +
           'correct');
     });
 
-    test('Test useless trajectories are removed', function(){
+    test('Test useless trajectories are removed', function() {
       var director = new AnimationDirector(mappingFileHeadersUnique,
           mappingFileDataUnique,
           coordinatesData, 'DOB',
           'Treatment', 1000, 10);
-      equal(director.trajectories.length, 2, 'The number of trajectories is '+
+      equal(director.trajectories.length, 2, 'The number of trajectories is ' +
           'correct');
-      equal(director.trajectories[0].metadataCategoryName, 'C', 'The '+
+      equal(director.trajectories[0].metadataCategoryName, 'C', 'The ' +
           'category name (C) is assigned correctly');
-      equal(director.trajectories[1].metadataCategoryName, 'D', 'The '+
+      equal(director.trajectories[1].metadataCategoryName, 'D', 'The ' +
           'category name (D) is assigned correctly');
       deepEqual(director.trajectories[0].gradientPoints,
-          ["0", "1", "2"], 'Correct time points (C)')
+          ['0', '1', '2'], 'Correct time points (C)');
         deepEqual(director.trajectories[1].gradientPoints,
-            ["-9999", "0", "100000"], 'Correct time points (D)')
+            ['-9999', '0', '100000'], 'Correct time points (D)');
     });
 
     /**
@@ -125,7 +125,7 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
 
       // check this happens for all the properties
       throws(
-          function (){
+          function() {
             result = new AnimationDirector(mappingFileData, coordinatesData,
                 'DOB', 'Treatment', 1000);
           },
@@ -134,7 +134,7 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
           );
 
       throws(
-          function (){
+          function() {
             result = new AnimationDirector(mappingFileHeaders,
                 coordinatesData, 'DOB',
                 'Treatment', 1000);
@@ -144,7 +144,7 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
           );
 
       throws(
-          function (){
+          function() {
             result = new AnimationDirector(mappingFileHeaders,
                 mappingFileData, coordinatesData,
                 'Treatment', 1000);
@@ -154,7 +154,7 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
           );
 
       throws(
-          function (){
+          function() {
             result = new AnimationDirector(mappingFileHeaders,
                 mappingFileData, 'DOB', 1000);
           },
@@ -163,7 +163,7 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
           );
 
       throws(
-          function (){
+          function() {
             result = new AnimationDirector(mappingFileHeaders, mappingFileData,
                 'DOB', 'Treatment');
           },
@@ -184,20 +184,20 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
           coordinatesData, 'DOB',
           'Treatment', 1000);
       equal(director.getMaximumTrajectoryLength(), 26,
-          'Test for the correct getMaximumTrajectoryLength value to be '+
+          'Test for the correct getMaximumTrajectoryLength value to be ' +
           'returned');
       var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
           coordinatesData, 'DOB',
           'Treatment', 10000);
       equal(director.getMaximumTrajectoryLength(), 26,
-          'Test for the correct getMaximumTrajectoryLength value to be '+
+          'Test for the correct getMaximumTrajectoryLength value to be ' +
           'returned');
       var director = new AnimationDirector(mappingFileHeaders,
           mappingFileData, coordinatesData,
           'DOB', 'LinkerPrimerSequence',
           1000);
       equal(director.getMaximumTrajectoryLength(), 41,
-          'Test for the correct getMaximumTrajectoryLength value to be '+
+          'Test for the correct getMaximumTrajectoryLength value to be ' +
           'returned');
     });
 
@@ -219,7 +219,7 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
       for (var i = 1; i < 1000; i++) {
         director.updateFrame();
       }
-      equal(director.currentFrame, 27, 'The current frame is stopped at the'+
+      equal(director.currentFrame, 27, 'The current frame is stopped at the' +
           ' maximum trajectory length');
     });
 
@@ -228,16 +228,16 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
      * Test that the animation object gets the correct number of trajectories.
      *
      */
-    test('Test the trajectories are initialized correctly', function(){
+    test('Test the trajectories are initialized correctly', function() {
       var director = new AnimationDirector(mappingFileHeaders,
           mappingFileData, coordinatesData,
           'DOB', 'Treatment', 1000);
-      equal(director.trajectories.length, 2,'Correct number of trajectories');
+      equal(director.trajectories.length, 2, 'Correct number of trajectories');
 
       var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
           coordinatesData, 'DOB',
           'LinkerPrimerSequence', 1000);
-      equal(director.trajectories.length, 1,'Correct number of trajectories');
+      equal(director.trajectories.length, 1, 'Correct number of trajectories');
 
     });
 
@@ -246,12 +246,12 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
      * Test that the animation object ignores one-sample trajectories
      *
      */
-    test('Test that tricky trajectories are initialized correctly', function(){
+    test('Test that tricky trajectories are initialized correctly', function() {
       var director = new AnimationDirector(mappingFileHeaders,
           mappingFileDataShort,
           coordinatesDataShort,
           'DOB', 'Treatment', 1000);
-      equal(director.trajectories.length, 1,'Correct number of trajectories');
+      equal(director.trajectories.length, 1, 'Correct number of trajectories');
 
     });
   });

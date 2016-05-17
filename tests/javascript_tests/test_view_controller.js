@@ -1,18 +1,18 @@
 requirejs([
-    "jquery",
-    "underscore",
-    "model",
-    "view",
-    "viewcontroller",
-    "slickgrid"
-], function ($, _, model, DecompositionView, viewcontroller, SlickGrid) {
+    'jquery',
+    'underscore',
+    'model',
+    'view',
+    'viewcontroller',
+    'slickgrid'
+], function($, _, model, DecompositionView, viewcontroller, SlickGrid) {
   var EmperorViewControllerABC = viewcontroller.EmperorViewControllerABC;
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
   var DecompositionModel = model.DecompositionModel;
 
   $(document).ready(function() {
 
-    module("EmperorViewControllerABC", {
+    module('EmperorViewControllerABC', {
     });
 
     /**
@@ -20,18 +20,18 @@ requirejs([
      * Test that the constructor for EmperorViewControllerABC.
      *
      */
-    test("Constructor tests", function(assert) {
+    test('Constructor tests', function(assert) {
 
       var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
       var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
 
       equal(controller.title, 'foo', 'Check the title is correctly set');
-      equal(controller.description, 'bar', 'Check the description is correctly'+
+      equal(controller.description, 'bar', 'Check the description is correctly' +
           ' set');
-      equal(controller.$container.id, container.id, 'Check the id of the '+
+      equal(controller.$container.id, container.id, 'Check the id of the ' +
           'parent is correct');
       equal(controller.active, false, 'Check the active property');
-      equal(controller.identifier.slice(0, 7), 'EMPtab-', 'Check the identifier'+
+      equal(controller.identifier.slice(0, 7), 'EMPtab-', 'Check the identifier' +
           ' property');
       parseFloat(controller.identifier.slice(7));
       equal(controller.enabled, true, 'Check the enabled property');
@@ -54,7 +54,7 @@ requirejs([
      * Test the enabled method
      *
      */
-    test('Test the enabled method works', function(){
+    test('Test the enabled method works', function() {
 
       var container = $('<div id="does-not-exist"></div>');
       var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
@@ -63,7 +63,7 @@ requirejs([
       controller.setEnabled(false);
       equal(controller.enabled, false);
 
-      throws(function(){
+      throws(function() {
         controller.setEnabled('shenanigans');
       }, Error, 'setEnabled can only take a boolean');
     });
@@ -73,7 +73,7 @@ requirejs([
      * Test the enabled method
      *
      */
-    test('Test the setActive method works', function(){
+    test('Test the setActive method works', function() {
 
       var container = $('<div id="does-not-exist"></div>');
       var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
@@ -82,7 +82,7 @@ requirejs([
       controller.setActive(true);
       equal(controller.active, true);
 
-      throws(function(){
+      throws(function() {
         controller.setActive('shenanigans');
       }, Error, 'setActive can only take a boolean');
     });
@@ -92,7 +92,7 @@ requirejs([
      * Test the resize method.
      *
      */
-    test('Test the resize method', function(){
+    test('Test the resize method', function() {
 
       var container = $('<div id="does-not-exist"></div>');
       var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
@@ -117,30 +117,30 @@ requirejs([
      * Test the resize, toJSON and fromJSON methods raise the appropriate errors.
      *
      */
-    test('Test resize, toJSON and fromJSON methods', function(){
+    test('Test resize, toJSON and fromJSON methods', function() {
 
       var container = $('<div id="does-not-exist"></div>');
       var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
 
-      throws(function(){
+      throws(function() {
         controller.fromJSON('{foo:11}');
       }, Error, 'Cannot call this abstract method');
 
-      throws(function(){
+      throws(function() {
         controller.toJSON();
       }, Error, 'Cannot call this abstract method');
     });
 
 
-    module("EmperorAttributeABC", {
+    module('EmperorAttributeABC', {
 
-      setup: function(){
+      setup: function() {
         this.sharedDecompositionViewDict = {};
         var $slickid = $('<div id="fooligans"></div>');
         $slickid.appendTo(document.body);
 
         // setup function
-        name = "pcoa";
+        name = 'pcoa';
         ids = ['PC.636', 'PC.635'];
         coords = [
           [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
@@ -157,7 +157,7 @@ requirejs([
         var dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.pcoa = dv;
 
-        name = "biplot";
+        name = 'biplot';
         ids = ['tax_1', 'tax_2'];
         coords = [
           [-1, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
@@ -176,9 +176,9 @@ requirejs([
 
         // Slickgrid
         var columns = [
-        {id: "pc1", name: "pc1", field: "pc1"},
-        {id: "pc2", name: "pc2", field: "pc2"},
-        {id: "pc3", name: "pc3", field: "pc3"},
+        {id: 'pc1', name: 'pc1', field: 'pc1'},
+        {id: 'pc2', name: 'pc2', field: 'pc2'},
+        {id: 'pc3', name: 'pc3', field: 'pc3'},
         ];
 
         this.options = {
@@ -186,15 +186,15 @@ requirejs([
           enableColumnReorder: false
         };
         var data = [];
-        data.push({'pc1':1, 'pc2':1, 'pc3':1});
-        data.push({'pc1':1, 'pc2':1, 'pc3':2});
+        data.push({'pc1': 1, 'pc2': 1, 'pc3': 1});
+        data.push({'pc1': 1, 'pc2': 1, 'pc3': 2});
 
-        grid = new Slick.Grid("#fooligans", data, columns, this.options);
+        grid = new Slick.Grid('#fooligans', data, columns, this.options);
         this.decomp = decomp;
       },
-      teardown: function(){
+      teardown: function() {
         this.sharedDecompositionViewDict = undefined;
-        $("#fooligans").remove();
+        $('#fooligans').remove();
         this.decomp = undefined;
       }
     });
@@ -204,7 +204,7 @@ requirejs([
      * Test the constructor for EmperorViewControllerABC.
      *
      */
-    test("Constructor tests", function(assert) {
+    test('Constructor tests', function(assert) {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
 
@@ -220,7 +220,7 @@ requirejs([
      * Test to see if the grid is being built correctly
      *
      */
-    asyncTest("Constructor test buildGrid", function(assert){
+    asyncTest('Constructor test buildGrid', function(assert) {
       var options = {};
       options.slickGridColumn = {id: 'title', name: 'spam', field: 'test',
         sortable: false, maxWidth: 10, minWidth: 10};
@@ -229,7 +229,7 @@ requirejs([
           this.sharedDecompositionViewDict,
           options);
 
-      $(function(){
+      $(function() {
         var testColumn = attr.bodyGrid.getColumns()[0];
         equal(testColumn.name, 'spam');
         equal(testColumn.field, 'test');
@@ -243,17 +243,17 @@ requirejs([
      * Tests to make sure the exceptions are being raised as expected
      *
      */
-    test("Constructor test exceptions", function(assert) {
+    test('Constructor test exceptions', function(assert) {
       var dv = new DecompositionView(this.decomp);
 
-      throws(function(){
+      throws(function() {
         new EmperorAttributeABC(container, 'foo', 'bar',
-            {1:1, 2:2}, {});
+            {1: 1, 2: 2}, {});
 
       }, Error, 'The decomposition view dictionary ' +
       'can only have decomposition views');
 
-      throws(function(){
+      throws(function() {
         new EmperorAttributeABC(container, 'foo', 'bar',
             {}, {});
       }, Error, 'The decomposition view dictionary cannot be empty');
@@ -264,7 +264,7 @@ requirejs([
      * Test to see if the grid is being built correctly
      *
      */
-    asyncTest('Test resize', function(){
+    asyncTest('Test resize', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist" style="height:20px; width:21px"></div>');
 
@@ -272,7 +272,7 @@ requirejs([
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           this.sharedDecompositionViewDict, {});
 
-      $(function(){
+      $(function() {
         attr.resize(20, 30);
         equal(attr.$body.width(), 10); // because of padding
         equal(attr.$body.height(), 30 - attr.$header.height());
@@ -287,7 +287,7 @@ requirejs([
      * Test set metadata field
      *
      */
-    test('Test setMetadataField', function(){
+    test('Test setMetadataField', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
@@ -301,7 +301,7 @@ requirejs([
      * Test get active decomposition view key
      *
      */
-    test('Test getActiveDecompViewKey', function(){
+    test('Test getActiveDecompViewKey', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
@@ -314,7 +314,7 @@ requirejs([
      * Test set active decomposition view key
      *
      */
-    test('Test setActiveDecompViewKey', function(){
+    test('Test setActiveDecompViewKey', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
@@ -330,17 +330,17 @@ requirejs([
      * Test get/set slick grid dataset.
      *
      */
-    asyncTest('Test setSlickGridDataset', function(){
+    asyncTest('Test setSlickGridDataset', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           {'scatter': dv, 'biplot': dv}, {});
 
-      $(function(){
-        attr.setSlickGridDataset([{'pc1':1, 'pc2':2, 'pc3':3},
-            {'pc1':1, 'pc2':1, 'pc3':2}]);
-        deepEqual(attr.getSlickGridDataset(), [{'pc1':1, 'pc2':2, 'pc3':3},
-            {'pc1':1, 'pc2':1, 'pc3':2}]);
+      $(function() {
+        attr.setSlickGridDataset([{'pc1': 1, 'pc2': 2, 'pc3': 3},
+            {'pc1': 1, 'pc2': 1, 'pc3': 2}]);
+        deepEqual(attr.getSlickGridDataset(), [{'pc1': 1, 'pc2': 2, 'pc3': 3},
+            {'pc1': 1, 'pc2': 1, 'pc3': 2}]);
 
         start(); // qunit
       });

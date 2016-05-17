@@ -1,4 +1,4 @@
-define(['underscore'], function(_){
+define(['underscore'], function(_) {
   /**
    *
    * Sorting function that deals with alpha and numeric elements
@@ -11,27 +11,27 @@ define(['underscore'], function(_){
    * @return a truncated string of taxonomies
    *
    */
-  function naturalSort(list){
+  function naturalSort(list) {
     var numericPart = [], alphaPart = [], result = [];
 
     // separate the numeric and the alpha elements of the array
-    for(var index = 0; index < list.length; index++){
-      if(isNaN(parseFloat(list[index]))){
-        alphaPart.push(list[index])
+    for (var index = 0; index < list.length; index++) {
+      if (isNaN(parseFloat(list[index]))) {
+        alphaPart.push(list[index]);
       }
-      else{
-        numericPart.push(list[index])
+      else {
+        numericPart.push(list[index]);
       }
     }
 
     // ignore casing of the strings, taken from:
     // http://stackoverflow.com/a/9645447/379593
-    alphaPart.sort(function (a, b) {
+    alphaPart.sort(function(a, b) {
       return a.toLowerCase().localeCompare(b.toLowerCase());
     });
 
     // sort in ascending order
-    numericPart.sort(function(a,b){return parseFloat(a)-parseFloat(b)})
+    numericPart.sort(function(a, b) {return parseFloat(a) - parseFloat(b)});
 
       return result.concat(alphaPart, numericPart);
   }
@@ -47,17 +47,17 @@ define(['underscore'], function(_){
    * @return string representation of the node object.
    *
    */
-  function truncateLevel(lineage, levelIndex){
-    if (levelIndex===0){
+  function truncateLevel(lineage, levelIndex) {
+    if (levelIndex === 0) {
       return lineage;
     }
     var levels = lineage.split(';');
     var taxaLabel = '';
-    for( var i = 0; (i<levelIndex && i<levels.length); i++){
+    for (var i = 0; (i < levelIndex && i < levels.length); i++) {
       var level = levels[i];
-      if(level[level.length-1]=='_'){
-        taxaLabel += ";"+level;
-      }else{
+      if (level[level.length - 1] == '_') {
+        taxaLabel += ';'+ level;
+      }else {
         taxaLabel = level;
       }
     }
@@ -96,8 +96,8 @@ define(['underscore'], function(_){
    *
    * Credits go to this SO answer http://stackoverflow.com/a/5306111
    */
-  function escapeRegularExpression(regex){
-    return regex.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  function escapeRegularExpression(regex) {
+    return regex.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
   }
 
   /**
@@ -111,7 +111,7 @@ define(['underscore'], function(_){
    * @return string without namespace.
    *
    */
-  function cleanHTML(htmlString){
+  function cleanHTML(htmlString) {
     return htmlString.replace(' xmlns="http://www.w3.org/1999/xhtml"', '');
   }
 

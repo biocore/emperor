@@ -1,9 +1,9 @@
 define([
-    "jquery",
-    "underscore",
-    "three",
-    "shapes"
-], function ($, _, THREE, shapes) {
+    'jquery',
+    'underscore',
+    'three',
+    'shapes'
+], function($, _, THREE, shapes) {
 /**
  *
  * @name DecompositionView
@@ -44,7 +44,7 @@ function DecompositionView(decomp) {
  * Helper method to initialize the base THREE.js objects.
  *
  **/
-DecompositionView.prototype._initBaseView = function(){
+DecompositionView.prototype._initBaseView = function() {
   var mesh, x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2];
   var scope = this;
@@ -83,15 +83,15 @@ DecompositionView.prototype._initBaseView = function(){
  * to the principal coordinate to show
  *
 **/
-DecompositionView.prototype.changeVisibleDimensions = function(newDims){
-  if(newDims.length !== 3){
-    throw new Error("Only three dimensions can be shown at the same time");
+DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
+  if (newDims.length !== 3) {
+    throw new Error('Only three dimensions can be shown at the same time');
   }
 
   this.visibleDimensions = newDims;
 
   var x = newDims[0], y = newDims[1], z = newDims[2], dv = this;
-  this.decomp.apply(function(plottable){
+  this.decomp.apply(function(plottable) {
     mesh = dv.markers[plottable.idx];
     mesh.position.set(plottable.coordinates[x],
                       plottable.coordinates[y],
@@ -105,7 +105,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
  * Change the plottables attributes based on the metadata category using the
  * provided setPlottableAttributes function
  *
- * @param {attributes} key:value pairs of elements and values to change in
+ * @param {attributes} key :value pairs of elements and values to change in
  * plottables
  * @param {setPlottableAttributes} helper function to change the values of
  * plottables, in general this should be implemented in the controller but it
@@ -118,7 +118,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims){
 **/
 DecompositionView.prototype.setCategory = function(attributes,
                                                    setPlottableAttributes,
-                                                   category){
+                                                   category) {
   var scope = this, dataView = [], plottables;
 
   _.each(attributes, function(value, key) {
@@ -129,7 +129,7 @@ DecompositionView.prototype.setCategory = function(attributes,
      *
      **/
     plottables = scope.decomp.getPlottablesByMetadataCategoryValue(category, key);
-    if (setPlottableAttributes !== null){
+    if (setPlottableAttributes !== null) {
       setPlottableAttributes(scope, value, plottables);
     }
 
@@ -141,7 +141,7 @@ DecompositionView.prototype.setCategory = function(attributes,
 };
 
 /* Change the color for a set of plottables - group: list of plottables */
-DecompositionView.prototype.setGroupColor = function(color, group){
+DecompositionView.prototype.setGroupColor = function(color, group) {
   var idx;
   var scope = this;
 

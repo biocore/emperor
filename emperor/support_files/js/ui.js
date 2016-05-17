@@ -1,4 +1,4 @@
-define(['underscore', 'util'], function(_, util){
+define(['underscore', 'util'], function(_, util) {
   var naturalSort = util.naturalSort;
   /**
    *
@@ -12,19 +12,19 @@ define(['underscore', 'util'], function(_, util){
    * @return a DOM document object where the table has been formated.
    *
    */
-  function buildColorSelectorTable(headers, data, category, id){
+  function buildColorSelectorTable(headers, data, category, id) {
     var categoryIndex, table, values = [], row, cell, div;
 
     categoryIndex = headers.indexOf(category);
 
-    if (categoryIndex === -1){
+    if (categoryIndex === -1) {
       throw new Error('The category to build the table does not exist');
     }
 
-    id = (id === undefined) ? '' : id+'-';
+    id = (id === undefined) ? '' : id + '-';
 
     // get all values of this category from the mapping file
-    values = _.map(data, function(sample){ return sample[categoryIndex] });
+    values = _.map(data, function(sample) { return sample[categoryIndex] });
     values = _.uniq(values);
     values = naturalSort(values);
 
@@ -34,7 +34,7 @@ define(['underscore', 'util'], function(_, util){
     table.className = 'emperor-tab-table';
 
     // we want to go in this order to have the first rows at the top
-    for (var i=values.length-1; i >= 0; i--){
+    for (var i = values.length - 1; i >= 0; i--) {
       row = table.insertRow();
 
       // add the name of the category to the right of the color box
@@ -45,7 +45,7 @@ define(['underscore', 'util'], function(_, util){
       // create the div with the color selector
       cell = row.insertCell();
       div = document.createElement('div');
-      div.id = id+'row-'+i+'-column-'+categoryIndex;
+      div.id = id + 'row-' + i + '-column-' + categoryIndex;
       div.className = 'colorbox';
       div.setAttribute('name', values[i]);
       cell.appendChild(div);

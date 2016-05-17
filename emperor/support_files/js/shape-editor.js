@@ -1,9 +1,9 @@
 define([
-    "jquery",
-    "underscore",
-    "view",
-    "viewcontroller",
-    "shapes"
+    'jquery',
+    'underscore',
+    'view',
+    'viewcontroller',
+    'shapes'
 ],
 function($, _, DecompositionView, ViewControllers, shapes) {
 
@@ -91,7 +91,7 @@ function($, _, DecompositionView, ViewControllers, shapes) {
    *
    */
   function ShapeFormatter(row, cell, value, columnDef, dataContext) {
-    return "<div>" + value + "</div>";
+    return '<div>' + value + '</div>';
   }
 
   return {'ShapeEditor': ShapeEditor, 'ShapeFormatter': ShapeFormatter};

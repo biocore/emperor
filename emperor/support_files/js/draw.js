@@ -1,4 +1,4 @@
-define(['underscore', 'three'], function(_, THREE){
+define(['underscore', 'three'], function(_, THREE) {
   /**
    *
    * @name THREE.EmperorTrajectory
@@ -12,21 +12,21 @@ define(['underscore', 'three'], function(_, THREE){
    *
    */
   THREE.EmperorTrajectory = THREE.Curve.create(
-      function ( points) {
+      function(points) {
         this.points = (points == undefined) ? [] : points;
       },
 
-      function ( t ) {
+      function(t ) {
         var points = this.points;
-        var index = ( points.length - 1 ) * t;
+        var index = (points.length - 1) * t;
         var floorIndex = Math.floor(index);
 
-        if(floorIndex == points.length-1){
+        if (floorIndex == points.length - 1) {
           return points[floorIndex];
         }
 
         var floorPoint = points[floorIndex];
-        var ceilPoint = points[floorIndex+1];
+        var ceilPoint = points[floorIndex + 1];
 
         return floorPoint.clone().lerp(ceilPoint, index - floorIndex);
       }
@@ -48,18 +48,18 @@ define(['underscore', 'three'], function(_, THREE){
    * @param {color} Integer in hexadecimal base that specifies the color of the
    * line.
    * @param {width} Float with the width of the line being drawn.
-   * @param {transparent} Bool, whether the line will be transparent or not.
+   * @param {transparent} Bool , whether the line will be transparent or not.
    *
    * @return THREE.Line object.
    *
    **/
-  function makeLine(start, end, color, width, transparent){
+  function makeLine(start, end, color, width, transparent) {
     // based on the example described in:
     // https://github.com/mrdoob/three.js/wiki/Drawing-lines
     var material, geometry, line;
 
     // make the material transparent and with full opacity
-    material = new THREE.LineBasicMaterial({color:color, linewidth:width});
+    material = new THREE.LineBasicMaterial({color: color, linewidth: width});
     material.matrixAutoUpdate = true;
     material.transparent = transparent;
     material.opacity = 1.0;
@@ -88,7 +88,7 @@ define(['underscore', 'three'], function(_, THREE){
    * @return THREE.Sprite object with the text displaying in it.
    *
    **/
-  function makeLabel(position, text, color){
+  function makeLabel(position, text, color) {
     var canvas = document.createElement('canvas');
     var size = 512;
     canvas.width = size;
@@ -97,7 +97,7 @@ define(['underscore', 'three'], function(_, THREE){
     context.fillStyle = '#ffffff';
     context.textAlign = 'center';
     context.font = '30px Arial';
-    context.fillText(text, size/2, size/2);
+    context.fillText(text, size / 2, size / 2);
 
     var amap = new THREE.Texture(canvas);
     amap.needsUpdate = true;
@@ -125,32 +125,32 @@ define(['underscore', 'three'], function(_, THREE){
    * a legend.
    *
    */
-  function formatSVGLegend(labels, colors){
-    var labels_svg='', pos_y=1, increment=40, max_len=0, rect_width,
-    font_size=12;
+  function formatSVGLegend(labels, colors) {
+    var labels_svg = '', pos_y = 1, increment = 40, max_len = 0, rect_width,
+    font_size = 12;
 
-    for (var i=0; i<labels.length; i++){
+    for (var i = 0; i < labels.length; i++) {
       // add the rectangle with the corresponding color
-      labels_svg += '<rect height="27" width="27" y="'+pos_y+
-        '" x="5" style="stroke-width:1;stroke:rgb(0,0,0)" fill="'+
-        colors[i]+'"/>';
+      labels_svg += '<rect height="27" width="27" y="' + pos_y +
+        '" x="5" style="stroke-width:1;stroke:rgb(0,0,0)" fill="' +
+        colors[i] + '"/>';
 
       // add the name of the category
-      labels_svg += '<text xml:space="preserve" y="'+(pos_y+20)+'" x="40" '+
-        'font-size="'+font_size+'" stroke-width="0" stroke="#000000" '+
-        'fill="#000000">'+labels[i]+'</text>';
+      labels_svg += '<text xml:space="preserve" y="' + (pos_y + 20) + '" x="40" ' +
+        'font-size="' + font_size + '" stroke-width="0" stroke="#000000" ' +
+        'fill="#000000">' + labels[i] + '</text>';
 
       pos_y += increment;
     }
 
     // get the name with the maximum number of characters and get the length
-    max_len = _.max(labels, function(a){return a.length}).length
+    max_len = _.max(labels, function(a) {return a.length}).length;
 
       // duplicate the size of the rectangle to make sure it fits the labels
-      rect_width = font_size*max_len*2;
+      rect_width = font_size * max_len * 2;
 
-    labels_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+
-      rect_width+'" height="'+(pos_y-10)+'"><g>'+labels_svg+'</g></svg>';
+    labels_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' +
+      rect_width + '" height="' + (pos_y - 10) + '"><g>' + labels_svg + '</g></svg>';
 
     return labels_svg;
   }

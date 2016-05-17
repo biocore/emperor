@@ -1,11 +1,11 @@
 define([
-    "jquery",
-    "underscore",
-    "view",
-    "viewcontroller",
-    "spectrum"
+    'jquery',
+    'underscore',
+    'view',
+    'viewcontroller',
+    'spectrum'
 ],
-function ($, _, DecompositionView, ViewControllers, spectrum) {
+function($, _, DecompositionView, ViewControllers, spectrum) {
 
   /**
    *
@@ -25,12 +25,12 @@ function ($, _, DecompositionView, ViewControllers, spectrum) {
    * SlickGrid object.
    *
    */
-  function ColorEditor(args){
+  function ColorEditor(args) {
     var $input;
     var defaultValue;
     var scope = this;
 
-    this.init = function(){
+    this.init = function() {
       // make the background look exactly the same when the color is being
       // edited
       $(args.container).css('background-color', '#eeeeee');
