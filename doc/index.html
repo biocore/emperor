@@ -24,12 +24,14 @@
         margin: 60px 0;
       }
 
-      .navbar-nav {
-        width: 100%;
-        text-align: center;
-        > li {
-          float: none;
-          display: inline-block;
+      @media (min-width: 768px) {
+        .navbar .navbar-nav {
+            display: inline-block;
+            float: none;
+        }
+        
+        .navbar .navbar-collapse {
+            text-align: center;
         }
       }
     </style>
@@ -51,9 +53,9 @@
 
       <div class="masthead">
         <a href="index.html"><p align="center"><img src="img/emperor_heading.png" alt="Emperor Logo"></p></a>
-        <nav class="nabvar navbar-default">
+        <nav class="nabvar navbar-default" role="navigation">
           <div class="container-fluid">
-            <div class="navbar-collapse collapse">
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
               <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Home</a></li>
                 <li class="dropdown">
