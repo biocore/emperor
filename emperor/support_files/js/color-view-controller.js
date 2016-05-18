@@ -1,4 +1,3 @@
-/** @module viewControllers */
 define([
     'jquery',
     'underscore',
