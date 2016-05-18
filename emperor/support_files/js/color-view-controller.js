@@ -39,15 +39,36 @@ define([
     var name, value, colorItem;
 
     // Create scale div and checkbox for whether using scalar data or not
+    /**
+     * @type {Node}
+     *  jQuery object holding the colorbar div
+     */
     this.$scaleDiv = $('<div>');
-    this.$colorScale = $("<svg width='90%' height='100%' style='display:block;margin:auto;'></svg>");
+    /**
+     * @type {Node}
+     *  jQuery object holding the SVG colorbar
+     */
+    this.$colorScale = $("<svg width='90%' height='100%' " +
+                         "'style='display:block;margin:auto;'></svg>");
     this.$scaleDiv.append(this.$colorScale);
+    /**
+     * @type {Node}
+     *  jQuery object holding the continuous value checkbox
+     */
     this.$scaled = $("<input type='checkbox'>");
+    /**
+     * @type {Node}
+     *  jQuery object holding the continuous value label
+     */
     this.$scaledLabel = $("<label for='scaled'>Continuous values</label>");
 
     // this class uses a colormap selector, so populate it before calling super
     // because otherwise the categorySelectionCallback will be called before the
     // data is populated
+    /**
+     * @type {Node}
+     *  jQuery object holding the select box for the colormaps
+     */
     this.$colormapSelect = $("<select class='emperor-tab-drop-down'>");
     var currType = ColorViewController.Colormaps[0].type;
     var selectOpts = $('<optgroup>').attr('label', currType);
@@ -100,19 +121,25 @@ define([
           }
           var scaled = scope.$scaled.is(':checked');
           // getting all unique values per categories
-          var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
+          var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(
+            category);
           // getting color for each uniqueVals
-          var colorInfo = ColorViewController.getColorList(uniqueVals, colorScheme, discrete, scaled);
+          var colorInfo = ColorViewController.getColorList(
+            uniqueVals, colorScheme, discrete, scaled);
           var attributes = colorInfo[0];
           // fetch the slickgrid-formatted data
-          var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
+          var data = decompViewDict.setCategory(
+            attributes, scope.setPlottableAttributes, category);
 
           if (scaled) {
-            plottables = ColorViewController._nonNumericPlottables(uniqueVals, data);
-            // Set SlickGrid for color of non-numeric values and show color bar for rest
-            // if there are non numeric categories
+            plottables = ColorViewController._nonNumericPlottables(
+              uniqueVals, data);
+            // Set SlickGrid for color of non-numeric values and show color bar
+            // for rest if there are non numeric categories
             if (plottables.length > 0) {
-              scope.setSlickGridDataset([{category: 'Non-numeric values', value: '#64655d', plottables: plottables}]);
+              scope.setSlickGridDataset(
+                [{category: 'Non-numeric values', value: '#64655d',
+                  plottables: plottables}]);
             }
             else {
               scope.setSlickGridDataset([]);
@@ -315,15 +342,21 @@ define([
     for (var s = min; s <= max; s += step) {
       stopColors.push(interpolator(s).hex());
     }
-    var gradientSVG = '<defs><linearGradient id="Gradient" x1="0" x2="0" y1="1" y2="0">';
+    var gradientSVG = '<defs>';
+    gradientSVG += '<linearGradient id="Gradient" x1="0" x2="0" y1="1" y2="0">';
     for (var pos = 0; pos < stopColors.length; pos++) {
-      gradientSVG += '<stop offset="' + pos + '%" stop-color="' + stopColors[pos] + '"/>';
+      gradientSVG += '<stop offset="' + pos + '%" stop-color="' +
+        stopColors[pos] + '"/>';
     }
-    gradientSVG += '</linearGradient></defs><rect id="gradientRect" width="20" height="95%" fill="url(#Gradient)"/>';
-    // Note the plus sign before min, midm and max drops any extra zeroes at the end.
-    gradientSVG += '<text x="25" y="12px" font-family="sans-serif" font-size="12px" text-anchor="start">' + max + '</text>';
-    gradientSVG += '<text x="25" y="50%" font-family="sans-serif" font-size="12px" text-anchor="start">' + mid + '</text>';
-    gradientSVG += '<text x="25" y="95%" font-family="sans-serif" font-size="12px" text-anchor="start">' + min + '</text>';
+    gradientSVG += '</linearGradient></defs><rect id="gradientRect" ' +
+      'width="20" height="95%" fill="url(#Gradient)"/>';
+
+    gradientSVG += '<text x="25" y="12px" font-family="sans-serif" ' +
+      'font-size="12px" text-anchor="start">' + max + '</text>';
+    gradientSVG += '<text x="25" y="50%" font-family="sans-serif" ' +
+      'font-size="12px" text-anchor="start">' + mid + '</text>';
+    gradientSVG += '<text x="25" y="95%" font-family="sans-serif" ' +
+      'font-size="12px" text-anchor="start">' + min + '</text>';
     return [colors, gradientSVG];
   };
 
@@ -389,11 +422,13 @@ define([
       // Get the current SlickGrid data and update with the saved color
       var data = this.bodyGrid.getData();
       data[0].value = json.data['Non-numeric values'];
-      this.setPlottableAttributes(decompViewDict, json.data['Non-numeric values'], data[0].plottables);
+      this.setPlottableAttributes(
+        decompViewDict, json.data['Non-numeric values'], data[0].plottables);
 
     }
     else {
-      var data = decompViewDict.setCategory(json.data, this.setPlottableAttributes, json.category);
+      var data = decompViewDict.setCategory(
+        json.data, this.setPlottableAttributes, json.category);
     }
     this.setSlickGridDataset(data);
   };
@@ -431,7 +466,8 @@ define([
    * @param {group} array of objects, list of object that should be changed in
    * scope
    */
-  ColorViewController.prototype.setPlottableAttributes = function(scope, color, group) {
+  ColorViewController.prototype.setPlottableAttributes =
+  function(scope, color, group) {
     var idx;
 
     _.each(group, function(element) {
@@ -444,12 +480,13 @@ define([
   var DISCRETE = 'Discrete';
   var SEQUENTIAL = 'Sequential';
   var DIVERGING = 'Diverging';
-  /** @static
+  /**
     * @type {Object}
     * Color maps available, along with what type of colormap they are.
     */
   ColorViewController.Colormaps = [
-    {id: 'discrete-coloring-qiime', name: 'Classic QIIME Colors', type: DISCRETE},
+    {id: 'discrete-coloring-qiime', name: 'Classic QIIME Colors',
+     type: DISCRETE},
     {id: 'Paired', name: 'Paired', type: DISCRETE},
     {id: 'Accent', name: 'Accent', type: DISCRETE},
     {id: 'Dark2', name: 'Dark', type: DISCRETE},
@@ -491,7 +528,7 @@ define([
 
 
   // taken from the qiime/colors.py module; a total of 24 colors
-  /** @static */
+  /** @private */
   ColorViewController._qiimeDiscrete = ['#ff0000', '#0000ff', '#f27304',
   '#008000', '#91278d', '#ffff00', '#7cecf4', '#f49ac2', '#5da09e', '#6b440b',
   '#808080', '#f79679', '#7da9d8', '#fcc688', '#80c99b', '#a287bf', '#fff899',
