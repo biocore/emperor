@@ -8,14 +8,20 @@ define([
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
 
-  /*
-   * @name ScaleViewController
+  /**
+   * @class ScaleViewController
+   *
+   * Alters the scale of points displayed on the screen.
    *
    * @param {Node} container Container node to create the controller in.
-   * @params {Object} decompViewDict This object is keyed by unique
+   * @param {Object} decompViewDict This object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
    * set of objects presented on screen. This dictionary will usually be shared
    * by all the tabs in the application. This argument is passed by reference.
+   *
+   * @return {ScaleViewController}
+   * @constructs ScaleViewController
+   * @extends EmperorAttributeABC
    *
    **/
   function ScaleViewController(container, decompViewDict) {
@@ -71,9 +77,10 @@ define([
    * Helper function to set the scale of plottable
    *
    * @param {Object} scope The scope where the plottables exist
-   * @param {Boolean} scale New scale of the plottables
+   * @param {Boolean} scale New scaling factor of the plottables
+   * (1.0 being standard scale)
    * @param {Object[]} group list of mesh objects that should be changed
-   * scope
+   * in scope
    */
   ScaleViewController.prototype.setPlottableAttributes = function(
       scope, scale, group) {
