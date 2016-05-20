@@ -10,29 +10,39 @@ function($, _, DecompositionView, ViewControllers) {
    *
    * @name Scale
    *
-   * @class This class represents a dropdown editor defined by the SlickGrid
+   * @class This class represents a range editor defined by the SlickGrid
    * project.
    *
-   * @property {$input} object containing the dropdown
+   * @property {Node} $input Node containing the jQuery slider
+   * @property {Node} $viewval Node containing the textbox for showing the
+   * slider value
    * @property {defaultValue} initial value of the cell being edited.
    *
    * Note, this object is heavily based on classes in slick.editors.js and in
-   * the documentation that can be found here:
-   *    https://github.com/mleibman/SlickGrid/wiki/Writing-custom-cell-editors
-   *
-   * Also see ScaleFormatter, a function in charge of formatting a dropdown for
-   * the SlickGrid object.
+   * the documentation that can be found [here]{@link
+   * https://github.com/mleibman/SlickGrid/wiki/Writing-custom-cell-editors}.
    *
    */
   function ScaleEditor(args) {
-    var $input;
+    var $input, $viewval;
     var defaultValue;
     var scope = this;
 
     this.init = function() {
-      $input = $('<input type="range" value="1" min="0.1" max="5" step="0.1">');
-      console.log("THIS " + $input);
-      $input.appendTo(args.container);
+      $viewval = $('<input type="text" value="1.0" readonly style="border:0;width:25px;">');
+      var $sliderDiv = $('<div style="width:115px;display:inline-block;background-color:rgb(238, 238, 238)">');
+      $input = $sliderDiv.slider({
+        range: "max",
+        min: 0.1,
+        max: 5.0,
+        value: 1.0,
+        step: 0.1,
+        slide: function(event, ui) {
+          $viewval.val(ui.value);
+        }
+      });
+      $sliderDiv.appendTo(args.container);
+      $viewval.appendTo(args.container);
     };
 
     this.destroy = function() {
@@ -52,14 +62,12 @@ function($, _, DecompositionView, ViewControllers) {
     };
 
     this.serializeValue = function() {
-      return $input.val();
+      return $viewval.val();
     };
 
     this.loadValue = function(item) {
       defaultValue = item[args.column.field];
       $input.val(defaultValue);
-      $input[0].defaultValue = defaultValue;
-      $input.select();
     };
 
     this.applyValue = function(item, state) {
