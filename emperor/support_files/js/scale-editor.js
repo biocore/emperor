@@ -8,31 +8,41 @@ function($, _, DecompositionView, ViewControllers) {
 
   /**
    *
-   * @name Scale
+   * @class Scale
    *
-   * @class This class represents a range editor defined by the SlickGrid
+   * This class represents a range editor defined by the SlickGrid
    * project.
-   *
-   * @property {Node} $input Node containing the jQuery slider
-   * @property {Node} $viewval Node containing the textbox for showing the
-   * slider value
-   * @property {defaultValue} initial value of the cell being edited.
-   *
    * Note, this object is heavily based on classes in slick.editors.js and in
    * the documentation that can be found [here]{@link
    * https://github.com/mleibman/SlickGrid/wiki/Writing-custom-cell-editors}.
    *
    */
   function ScaleEditor(args) {
-    var $input, $viewval;
+    /**
+     * Node containing the jQuery slider
+     * @type {Node}
+     */
+    var $input;
+    /**
+     * Node containing the textbox for showing the slider value
+     * @type {Node}
+     */
+    var $viewval;
+    /**
+     * Initial value of the cell being edited.
+     * @type {Float}
+     */
     var defaultValue;
     var scope = this;
 
+    /* @constructor */
     this.init = function() {
-      $viewval = $('<input type="text" value="1.0" readonly style="border:0;width:25px;">');
-      var $sliderDiv = $('<div style="width:115px;display:inline-block;background-color:rgb(238, 238, 238)">');
+      $viewval = $('<input type="text" value="1.0" readonly ' +
+                   'style="border:0;width:25px;">');
+      var $sliderDiv = $('<div style="width:115px;display:inline-block;' +
+                         'background-color:rgb(238, 238, 238)">');
       $input = $sliderDiv.slider({
-        range: "max",
+        range: 'max',
         min: 0.1,
         max: 5.0,
         value: 1.0,
