@@ -37,18 +37,19 @@ function($, _, DecompositionView, ViewControllers) {
 
     /* @constructor */
     this.init = function() {
-      $viewval = $('<input type="text" value="1.0" readonly ' +
-                   'style="border:0;width:25px;">');
+      $viewval = $('<input type="text" value="' + args.item.value +
+                   '" readonly  style="border:0;width:25px;">');
       var $sliderDiv = $('<div style="width:115px;display:inline-block;' +
                          'background-color:rgb(238, 238, 238)">');
       $input = $sliderDiv.slider({
         range: 'max',
         min: 0.1,
         max: 5.0,
-        value: 1.0,
+        value: args.item.value,
         step: 0.1,
         slide: function(event, ui) {
           $viewval.val(ui.value);
+          args.item.value = ui.value;
         }
       });
       $sliderDiv.appendTo(args.container);
@@ -68,7 +69,7 @@ function($, _, DecompositionView, ViewControllers) {
     };
 
     this.isValueChanged = function() {
-      return $input.val() !== defaultValue;
+      return $viewval.val() !== defaultValue;
     };
 
     this.serializeValue = function() {

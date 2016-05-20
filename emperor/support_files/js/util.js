@@ -88,6 +88,27 @@ define(['underscore'], function(_) {
 
   /**
    *
+   * Split list of string values into numeric and non-numeric values
+   * @param {String[]} values The values to check
+   * @return {Numeric[]} Array of numeric values, converted to numbers
+   * @return {String[]} Array of non-numeric values, still as strings
+   */
+   function splitNumericValues(values) {
+    var numeric = [];
+    var nonNumeric = [];
+    _.each(values, function(element) {
+        if (!isNaN(element) && isFinite(+element) && Number(element) !== 0) {
+          numeric.push(+element);
+        }
+        else {
+          nonNumeric.push(element);
+        }
+      });
+    return [numeric, nonNumeric]
+   }
+
+  /**
+   *
    * Escape special characters in a string for use in a regular expression.
    *
    * @param {regex} string to escape for use in a regular expression.
@@ -118,5 +139,5 @@ define(['underscore'], function(_) {
   return {'truncateLevel': truncateLevel, 'naturalSort': naturalSort,
           'convertXMLToString': convertXMLToString,
           'escapeRegularExpression': escapeRegularExpression,
-          'cleanHTML': cleanHTML};
+          'cleanHTML': cleanHTML, 'splitNumericValues': splitNumericValues};
 });
