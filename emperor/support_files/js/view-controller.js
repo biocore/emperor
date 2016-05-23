@@ -29,18 +29,18 @@ define([
      * jQuery element for the parent container.
      */
     this.$container = $(container);
-    /*
+    /**
      * @type {String}
      * Human-readable title of the tab.
      */
     this.title = title;
-    /*
+    /**
      * @type {String}
      * Human-readable description of the tab.
      */
     this.description = description;
 
-    /*
+    /**
      * @type {Node}
      * jQuery element for the canvas, which contains the header and the body.
      */
@@ -57,7 +57,7 @@ define([
      * displayed in a tab.
      */
     this.$header = null;
-    /*
+    /**
      * @type {Boolean}
      * Indicates whether the tab is front most
      * @default false
@@ -255,7 +255,7 @@ define([
      * application. This argument is passed by reference.
      */
     this.decompViewDict = decompViewDict;
-    /*
+    /**
      * @type {Node}
      * jQuery element for the div containing the slickgrid of sample information
      */
@@ -378,11 +378,11 @@ define([
       columns.unshift(options.slickGridColumn);
     }
 
-    /*
-    * @type {Slick.Grid}
-    * Container that lists the metadata categories described under the
-    * `metadataField` column and the attribute that can be modified.
-    */
+    /**
+     * @type {Slick.Grid}
+     * Container that lists the metadata categories described under the
+     * `metadataField` column and the attribute that can be modified.
+     */
     this.bodyGrid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
 
     // hide the header row of the grid
