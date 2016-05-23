@@ -183,7 +183,7 @@ define([
   ColorViewController.prototype.constructor = EmperorAttributeABC;
 
 
-  /*
+  /**
    * Helper for building the plottables for non-numeric data
    *
    * @param {String[]} uniqueVals Array of unique values for the category
