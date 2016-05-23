@@ -480,9 +480,9 @@ define([
   var SEQUENTIAL = 'Sequential';
   var DIVERGING = 'Diverging';
   /**
-    * @type {Object}
-    * Color maps available, along with what type of colormap they are.
-    */
+   * @type {Object}
+   * Color maps available, along with what type of colormap they are.
+   */
   ColorViewController.Colormaps = [
     {id: 'discrete-coloring-qiime', name: 'Classic QIIME Colors',
      type: DISCRETE},
