@@ -525,7 +525,6 @@ define([
     {id: 'PRGn', name: 'Purple-Green', type: DIVERGING}
   ];
 
-
   // taken from the qiime/colors.py module; a total of 24 colors
   /** @private */
   ColorViewController._qiimeDiscrete = ['#ff0000', '#0000ff', '#f27304',
