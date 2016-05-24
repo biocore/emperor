@@ -28,6 +28,5 @@ script:
   # we just check coverage in the latest version of NumPy
   - if [ ${WITH_COVERAGE} ]; then nosetests emperor --with-coverage --cover-package=emperor --cover-inclusive tests; fi
   - make -C doc html
-  - jsdoc emperor/support_files/js/ -d doc/jsdoc -c jsdoc-config.json -r
 after_success:
   - coveralls
