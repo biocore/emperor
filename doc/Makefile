@@ -53,7 +53,7 @@ clean:
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	jsdoc ../emperor/support_files/js/ -d $(BUILDDIR)/jsdoc -c ../jsdoc-config.json -r
+	jsdoc ../emperor/support_files/js/ -d $(BUILDDIR)/jsdoc -c jsdoc-config.json -r
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
