@@ -21,7 +21,7 @@ define([
    * set of objects presented on screen. This dictionary will usually be shared
    * by all the tabs in the application. This argument is passed by reference.
    *
-   * @return VisibilityController
+   * @return {VisibilityController} An instance of VisibilityController
    * @constructs VisibilityController
    * @extends EmperorAttributeABC
    */
