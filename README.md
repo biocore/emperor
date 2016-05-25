@@ -8,6 +8,7 @@ Emperor
 Emperor is a next-generation tool for the analysis and visualization of large microbial ecology datasets; amongst many features Emperor provides a modern user interface that will rapidly adjust to your daily workflow.
 
 To start using Emperor, please refer to the [installation notes](INSTALL.md).
+
 Before contributing code to Emperor, please familiarize yourself with the [contributing guidelines](CONTRIBUTING.md).
 
 ## Usage examples
