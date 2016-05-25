@@ -57,7 +57,7 @@ define(['underscore'], function(_) {
     for (var i = 0; (i < levelIndex && i < levels.length); i++) {
       var level = levels[i];
       if (level[level.length - 1] == '_') {
-        taxaLabel += ';'+ level;
+        taxaLabel += ';' + level;
       }else {
         taxaLabel = level;
       }
