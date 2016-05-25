@@ -20,7 +20,7 @@ define([
    * @param {Node} container Div where the scene will be rendered.
    * @param {Float} xView Horizontal position of the rendered scene in the
    * container element.
-   * @param {Float} yView Vertical position of the rendered sciene in the
+   * @param {Float} yView Vertical position of the rendered scene in the
    * container element.
    * @param {Float} width The width of the renderer
    * @param {Float} height The height of the renderer
@@ -37,23 +37,23 @@ define([
     this.decViews = decViews;
     this.renderer = renderer;
     /**
+     * Horizontal position of the scene.
      * @type {Float}
-     * Horizontal position of the scene.s
      */
     this.xView = xView;
     /**
-     * @type {Float}
      * Vertical position of the scene.
+     * @type {Float}
      */
     this.yView = yView;
     /**
-     * @type {Float}
      * Width of the scene.
+     * @type {Float}
      */
     this.width = width;
     /**
-     * @type {Float}
      * Height of the scene.
+     * @type {Float}
      */
     this.height = height;
 
@@ -65,8 +65,8 @@ define([
     // Note: if we change the near parameter to something smaller than this
     // the raytracing will not work as expected.
     /**
-     * @type {THREE.PerspectiveCamera}
      * Camera used to display the scene.
+     * @type {THREE.PerspectiveCamera}
      */
     this.camera = new THREE.PerspectiveCamera(35, width / height,
                                               0.0001, 10000);
@@ -76,9 +76,9 @@ define([
     this.scene = new THREE.Scene();
     this.scene.add(this.camera);
     /**
-     * @type {THREE.DirectionalLight}
      * Object used to light the scene, by default is set to a light and
      * transparent color (0x99999999).
+     * @type {THREE.DirectionalLight}
      */
     this.light = new THREE.DirectionalLight(0x999999, 2);
     this.light.position.set(1, 1, 1).normalize();
@@ -94,8 +94,8 @@ define([
 
     // use get(0) to retrieve the native DOM object
     /**
-     * @type {THREE.OrbitControls}
      * Object used to interact with the scene. By default it uses the mouse.
+     * @type {THREE.OrbitControls}
      */
     this.control = new THREE.OrbitControls(this.camera,
                                            $container.get(0));
@@ -110,20 +110,20 @@ define([
     this.control.enableDamping = true;
     this.control.dampingFactor = 0.3;
     /**
-     * @type {Boolean}
      * True when changes have occured that require re-rendering of the canvas
+     * @type {Boolean}
      */
     this.needsUpdate = true;
     /**
-     * @type {Integer[]}
      * Array of integers indicating the index of the visible dimension at each
      * axis ([x, y, z]).
+     * @type {Integer[]}
      */
     this.visibleDimensions = [0, 1, 2];
     /**
-     * @type {Object}
      * Object with "min" and "max" attributes each of which is an array with
      * the ranges that covers all of the decomposition views.
+     * @type {Object}
      */
     this.dimensionRanges = {'max': [], 'min': []};
     this.drawAxesWithColor(0xFFFFFF);
@@ -134,8 +134,8 @@ define([
 
     // initialize subscribers for event callbacks
     /**
-     * @type {String[]}
      * Events allowed for callbacks. DO NOT EDIT.
+     * @type {String[]}
      */
     this.EVENTS = ['click', 'dblclick'];
     /** @private */
