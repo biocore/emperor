@@ -2,16 +2,14 @@
 define(['underscore', 'three'], function(_, THREE) {
   /**
    *
-   * @class THREE.EmperorTrajectory
+   * @class EmperorTrajectory
    *
    * This class represents the internal logic for a linearly interpolated
-   * tube/trajectory in THREE.js the object itself is a subclass of the
-   * THREE.Curve.
+   * tube/trajectory in THREE.js
    *
    * [This answer]{@link http://stackoverflow.com/a/18580832/379593} on
    * StackOverflow helped a lot.
-   * @return {THREE.EmperorTrajectory}
-   * @constructs THREE.EmperorTrajectory
+   * @return {EmperorTrajectory}
    * @extends THREE.Curve
    */
   THREE.EmperorTrajectory = THREE.Curve.create(
