@@ -6,7 +6,8 @@ requirejs([
     'viewcontroller',
     'slickgrid',
     'visibilitycontroller'
-], function($, _, model, DecompositionView, viewcontroller, SlickGrid, VisibilityController) {
+], function($, _, model, DecompositionView, viewcontroller, SlickGrid,
+            VisibilityController) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var DecompositionModel = model.DecompositionModel;
@@ -30,8 +31,8 @@ requirejs([
         md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
         metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
-        var decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-            metadata);
+        var decomp = new DecompositionModel(name, ids, coords, pct_var,
+                                            md_headers, metadata);
         var dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.scatter = dv;
 
@@ -47,8 +48,8 @@ requirejs([
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
-        this.decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-            metadata);
+        this.decomp = new DecompositionModel(name, ids, coords, pct_var,
+                                             md_headers, metadata);
         this.dv = new DecompositionView(this.decomp);
         this.sharedDecompositionViewDict.biplot = this.dv;
 
@@ -77,11 +78,13 @@ requirejs([
     });
 
     test('Constructor tests', function(assert) {
-      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
 
       assert.ok(VisibilityController.prototype instanceof EmperorAttributeABC);
 
-      var controller = new VisibilityController(container, this.sharedDecompositionViewDict);
+      var controller = new VisibilityController(container,
+          this.sharedDecompositionViewDict);
       equal(controller.title, 'Visibility');
 
       var testColumn = controller.bodyGrid.getColumns()[0];
@@ -97,22 +100,26 @@ requirejs([
       plottables = [{idx: idx}];
       equal(this.dv.markers[idx].visible, true);
       equal(this.dv.markers[idx + 1].visible, true);
-      VisibilityController.prototype.setPlottableAttributes(this.dv, false, plottables);
+      VisibilityController.prototype.setPlottableAttributes(this.dv, false,
+                                                            plottables);
       equal(this.dv.needsUpdate, true);
 
       // testing with multiple plottable
       plottables = [{idx: idx}, {idx: idx + 1}];
       equal(this.dv.markers[idx].visible, false);
       equal(this.dv.markers[idx + 1].visible, true);
-      VisibilityController.prototype.setPlottableAttributes(this.dv, true, plottables);
+      VisibilityController.prototype.setPlottableAttributes(this.dv, true,
+                                                            plottables);
       equal(this.dv.markers[idx].visible, true);
       equal(this.dv.markers[idx + 1].visible, true);
       equal(this.dv.needsUpdate, true);
     });
 
     test('Testing toJSON', function() {
-      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
-      var controller = new VisibilityController(container, this.sharedDecompositionViewDict);
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new VisibilityController(container,
+          this.sharedDecompositionViewDict);
 
       var obs = controller.toJSON();
       var exp = {category: 'SampleID', data: {'PC.636': true, 'PC.635': true}};
@@ -120,9 +127,12 @@ requirejs([
     });
 
     test('Testing fromJSON', function() {
-      var json = {category: 'SampleID', data: {'PC.636': false, 'PC.635': true}};
-      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
-      var controller = new VisibilityController(container, this.sharedDecompositionViewDict);
+      var json = {category: 'SampleID',
+                  data: {'PC.636': false, 'PC.635': true}};
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new VisibilityController(container,
+          this.sharedDecompositionViewDict);
       controller.fromJSON(json);
 
       var idx = 0;
