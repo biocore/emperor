@@ -1,7 +1,7 @@
 // Module to avoid duplication of shape sources between controller and
 // editor/formatter. This allows one central dict and dropdown of available
 // shapes.
-define(['jquery', 'three'], function($, THREE) {
+define(['jquery', 'three', 'underscore'], function($, THREE, _) {
 
   var SPHERE = 'Sphere', CUBE = 'Cube', CONE = 'Cone',
       ICOSAHEDRON = 'Icosahedron', CYLINDER = 'Cylinder';
