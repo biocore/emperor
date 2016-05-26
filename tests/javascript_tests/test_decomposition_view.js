@@ -53,9 +53,11 @@ requirejs([
         -0.229889, -0.046599],
         [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
         -0.112864, 0.064794]];
-      var _pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-      10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
-      var _md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
+      var _pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
+                      11.217215823, 10.024774995, 8.22835130237, 7.55971173665,
+                      6.24945796136];
+      var _md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                         'DOB'];
       var _metadata = [
         ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
@@ -87,7 +89,8 @@ requirejs([
       /*
          TODO: How do we test this?
          */
-      // deepEqual(dv._genericSphere, undefined, "_genericSphere set correctly");
+      // deepEqual(dv._genericSphere, undefined,
+      //           "_genericSphere set correctly");
     });
 
     /**
