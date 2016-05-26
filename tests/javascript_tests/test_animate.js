@@ -1,4 +1,8 @@
-requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector) {
+requirejs([
+    'underscore',
+    'jquery',
+    'animate'
+], function(_, $, AnimationDirector) {
   $(document).ready(function() {
 
     // these variables are reused throughout this test suite
@@ -8,31 +12,96 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
 
       setup: function() {
         // setup function
-        mappingFileHeaders = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
-        mappingFileData = { 'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'], 'PC.607': ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'], 'PC.634': ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.593': ['PC.593', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'], 'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.355': ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'], 'PC.354': ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'], 'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126'] };
+        mappingFileHeaders = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                              'DOB'];
+        mappingFileData = {
+          'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+          'PC.607': ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
+          'PC.634': ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+          'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+          'PC.593': ['PC.593', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
+          'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+          'PC.355': ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+          'PC.354': ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+          'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126']
+        };
         coordinatesData = new Array();
-        coordinatesData['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647, 'P1': -0.276542, 'P2': -0.144964, 'P3': 0.066647, 'P4': -0.067711, 'P5': 0.176070, 'P6': 0.072969, 'P7': -0.229889, 'P8': -0.046599 };
-        coordinatesData['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136, 'P1': -0.237661, 'P2': 0.046053, 'P3': -0.138136, 'P4': 0.159061, 'P5': -0.247485, 'P6': -0.115211, 'P7': -0.112864, 'P8': 0.064794 };
-        coordinatesData['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': 0.228820, 'y': -0.130142, 'z': -0.287149, 'P1': 0.228820, 'P2': -0.130142, 'P3': -0.287149, 'P4': 0.086450, 'P5': 0.044295, 'P6': 0.206043, 'P7': 0.031000, 'P8': 0.071992 };
-        coordinatesData['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': 0.042263, 'y': -0.013968, 'z': 0.063531, 'P1': 0.042263, 'P2': -0.013968, 'P3': 0.063531, 'P4': -0.346121, 'P5': -0.127814, 'P6': 0.013935, 'P7': 0.030021, 'P8': 0.140148 };
-        coordinatesData['PC.354'] = { 'name': 'PC.354', 'color': 0, 'x': 0.280399, 'y': -0.006013, 'z': 0.023485, 'P1': 0.280399, 'P2': -0.006013, 'P3': 0.023485, 'P4': -0.046811, 'P5': -0.146624, 'P6': 0.005670, 'P7': -0.035430, 'P8': -0.255786 };
-        coordinatesData['PC.593'] = { 'name': 'PC.593', 'color': 0, 'x': 0.232873, 'y': 0.139788, 'z': 0.322871, 'P1': 0.232873, 'P2': 0.139788, 'P3': 0.322871, 'P4': 0.183347, 'P5': 0.020466, 'P6': 0.054059, 'P7': -0.036625, 'P8': 0.099824 };
-        coordinatesData['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x': 0.170518, 'y': -0.194113, 'z': -0.030897, 'P1': 0.170518, 'P2': -0.194113, 'P3': -0.030897, 'P4': 0.019809, 'P5': 0.155100, 'P6': -0.279924, 'P7': 0.057609, 'P8': 0.024248 };
-        coordinatesData['PC.607'] = { 'name': 'PC.607', 'color': 0, 'x': -0.091330, 'y': 0.424147, 'z': -0.135627, 'P1': -0.091330, 'P2': 0.424147, 'P3': -0.135627, 'P4': -0.057519, 'P5': 0.151363, 'P6': -0.025394, 'P7': 0.051731, 'P8': -0.038738 };
-        coordinatesData['PC.634'] = { 'name': 'PC.634', 'color': 0, 'x': -0.349339, 'y': -0.120788, 'z': 0.115275, 'P1': -0.349339, 'P2': -0.120788, 'P3': 0.115275, 'P4': 0.069495, 'P5': -0.025372, 'P6': 0.067853, 'P7': 0.244448, 'P8': -0.059883 };
+        coordinatesData['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x':
+        -0.276542, 'y': -0.144964, 'z': 0.066647, 'P1': -0.276542, 'P2':
+        -0.144964, 'P3': 0.066647, 'P4': -0.067711, 'P5': 0.176070, 'P6':
+        0.072969, 'P7': -0.229889, 'P8': -0.046599 };
+        coordinatesData['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x':
+        -0.237661, 'y': 0.046053, 'z': -0.138136, 'P1': -0.237661, 'P2':
+        0.046053, 'P3': -0.138136, 'P4': 0.159061, 'P5': -0.247485, 'P6':
+        -0.115211, 'P7': -0.112864, 'P8': 0.064794 };
+        coordinatesData['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x':
+        0.228820, 'y': -0.130142, 'z': -0.287149, 'P1': 0.228820, 'P2':
+        -0.130142, 'P3': -0.287149, 'P4': 0.086450, 'P5': 0.044295, 'P6':
+        0.206043, 'P7': 0.031000, 'P8': 0.071992 };
 
-        mappingFileDataShort = { 'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'], 'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'], 'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20061126'] };
+        coordinatesData['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x':
+        0.042263, 'y': -0.013968, 'z': 0.063531, 'P1': 0.042263, 'P2':
+        -0.013968, 'P3': 0.063531, 'P4': -0.346121, 'P5': -0.127814, 'P6':
+        0.013935, 'P7': 0.030021, 'P8': 0.140148 }; coordinatesData['PC.354'] =
+        { 'name': 'PC.354', 'color': 0, 'x': 0.280399, 'y': -0.006013, 'z':
+        0.023485, 'P1': 0.280399, 'P2': -0.006013, 'P3': 0.023485, 'P4':
+        -0.046811, 'P5': -0.146624, 'P6': 0.005670, 'P7': -0.035430, 'P8':
+        -0.255786 };
+        coordinatesData['PC.593'] = { 'name': 'PC.593', 'color': 0,
+        'x': 0.232873, 'y': 0.139788, 'z': 0.322871, 'P1': 0.232873, 'P2':
+        0.139788, 'P3': 0.322871, 'P4': 0.183347, 'P5': 0.020466, 'P6':
+        0.054059, 'P7': -0.036625, 'P8': 0.099824 };
+        coordinatesData['PC.355'] = { 'name': 'PC.355', 'color': 0, 'x':
+        0.170518, 'y': -0.194113, 'z': -0.030897, 'P1': 0.170518, 'P2':
+        -0.194113, 'P3': -0.030897, 'P4': 0.019809, 'P5': 0.155100, 'P6':
+        -0.279924, 'P7': 0.057609, 'P8': 0.024248 };
+        coordinatesData['PC.607'] = { 'name': 'PC.607', 'color': 0,
+        'x': -0.091330, 'y': 0.424147, 'z': -0.135627, 'P1': -0.091330, 'P2':
+        0.424147, 'P3': -0.135627, 'P4': -0.057519, 'P5': 0.151363, 'P6':
+        -0.025394, 'P7': 0.051731, 'P8': -0.038738 };
+        coordinatesData['PC.634'] = { 'name': 'PC.634', 'color': 0,
+        'x': -0.349339, 'y': -0.120788, 'z': 0.115275, 'P1': -0.349339,
+        'P2': -0.120788, 'P3': 0.115275, 'P4': 0.069495, 'P5': -0.025372,
+        'P6': 0.067853, 'P7': 0.244448, 'P8': -0.059883 };
+
+        mappingFileDataShort = { 'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT',
+        'Control', '20070314'], 'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT',
+        'Fast', '20080116'], 'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT',
+        'Fast', '20080116'], 'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT',
+        'Fast', '20061126'] };
         coordinatesDataShort = new Array();
-        coordinatesDataShort['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x': -0.276542, 'y': -0.144964, 'z': 0.066647, 'P1': -0.276542, 'P2': -0.144964, 'P3': 0.066647, 'P4': -0.067711, 'P5': 0.176070, 'P6': 0.072969, 'P7': -0.229889, 'P8': -0.046599 };
-        coordinatesDataShort['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x': -0.237661, 'y': 0.046053, 'z': -0.138136, 'P1': -0.237661, 'P2': 0.046053, 'P3': -0.138136, 'P4': 0.159061, 'P5': -0.247485, 'P6': -0.115211, 'P7': -0.112864, 'P8': 0.064794 };
-        coordinatesDataShort['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x': 0.228820, 'y': -0.130142, 'z': -0.287149, 'P1': 0.228820, 'P2': -0.130142, 'P3': -0.287149, 'P4': 0.086450, 'P5': 0.044295, 'P6': 0.206043, 'P7': 0.031000, 'P8': 0.071992 };
-        coordinatesDataShort['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x': 0.042263, 'y': -0.013968, 'z': 0.063531, 'P1': 0.042263, 'P2': -0.013968, 'P3': 0.063531, 'P4': -0.346121, 'P5': -0.127814, 'P6': 0.013935, 'P7': 0.030021, 'P8': 0.140148 };
+        coordinatesDataShort['PC.636'] = { 'name': 'PC.636', 'color': 0, 'x':
+        -0.276542, 'y': -0.144964, 'z': 0.066647, 'P1': -0.276542, 'P2':
+        -0.144964, 'P3': 0.066647, 'P4': -0.067711, 'P5': 0.176070, 'P6':
+        0.072969, 'P7': -0.229889, 'P8': -0.046599 };
+        coordinatesDataShort['PC.635'] = { 'name': 'PC.635', 'color': 0, 'x':
+        -0.237661, 'y': 0.046053, 'z': -0.138136, 'P1': -0.237661, 'P2':
+        0.046053, 'P3': -0.138136, 'P4': 0.159061, 'P5': -0.247485, 'P6':
+        -0.115211, 'P7': -0.112864, 'P8': 0.064794 };
+        coordinatesDataShort['PC.356'] = { 'name': 'PC.356', 'color': 0, 'x':
+        0.228820, 'y': -0.130142, 'z': -0.287149, 'P1': 0.228820, 'P2':
+        -0.130142, 'P3': -0.287149, 'P4': 0.086450, 'P5': 0.044295, 'P6':
+        0.206043, 'P7': 0.031000, 'P8': 0.071992 };
+        coordinatesDataShort['PC.481'] = { 'name': 'PC.481', 'color': 0, 'x':
+        0.042263, 'y': -0.013968, 'z': 0.063531, 'P1': 0.042263, 'P2':
+        -0.013968, 'P3': 0.063531, 'P4': -0.346121, 'P5': -0.127814, 'P6':
+        0.013935, 'P7': 0.030021, 'P8': 0.140148 };
 
         // trajectories with only one unique timepoint in different cases
         // (1) all timepoints with the same value
         // (2) a single timepoint
-        mappingFileHeadersUnique = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
-        mappingFileDataUnique = { 'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'A', '0'], 'PC.607': ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'B', '0'], 'PC.634': ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'B', '0'], 'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'C', '0'], 'PC.593': ['PC.593', 'YATGCTGCCTCCCGTAGGAGT', 'C', '1'], 'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'C', '2'], 'PC.355': ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'D', '-9999'], 'PC.354': ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'D', '0'], 'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'D', '100000'] };
+        mappingFileHeadersUnique = ['SampleID', 'LinkerPrimerSequence',
+                                    'Treatment', 'DOB'];
+        mappingFileDataUnique = {
+          'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'A', '0'],
+          'PC.607': ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'B', '0'],
+          'PC.634': ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'B', '0'],
+          'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'C', '0'],
+          'PC.593': ['PC.593', 'YATGCTGCCTCCCGTAGGAGT', 'C', '1'],
+          'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'C', '2'],
+          'PC.355': ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'D', '-9999'],
+          'PC.354': ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'D', '0'],
+          'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'D', '100000'] };
       },
 
       teardown: function() {
@@ -79,7 +148,8 @@ requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector)
       equal(director.trajectories[1].metadataCategoryName, 'Fast', 'The' +
           'metadata category name is set correctly for the trajectory 1');
 
-      // check the trajectories are overall ok -- reason why I added this, because they are not :P
+      // check the trajectories are overall ok -- reason why I added this,
+      // because they are not :P
       deepEqual(director.trajectories[0].representativeCoordinatesAtIndex(1000),
           [{'x': 0.22882, 'y': -0.130142, 'z': -0.287149},
           {'x': 0.170518, 'y': -0.194113, 'z': -0.030897},
