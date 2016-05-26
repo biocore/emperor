@@ -216,11 +216,15 @@ define([
    * @param {String[]} values list of objects to generate a color for, usually a
    * category in a given metadata column.
    * @param {String} [map = {'discrete-coloring-qiime'|'Viridis'}] name of the
-   * color map to use, see ColorViewController.Colormaps
+   * color map to use see ColorViewController.Colormaps
+   * @see ColorViewController.Colormaps
    * @param {Boolean} discrete Whether to treat colormap requested as a
    * discrete set of colors or use interpolation to create gradient of colors
    * @param {Boolean} [scaled = false] Whether to use a scaled colormap or
    * equidistant colors for each value
+   * @see ColorViewController.getDiscreteColors
+   * @see ColorViewController.getInterpolatedColors
+   * @see ColorViewController.getScaledColors
    *
    * @return {Object} colors The object containing the hex colors keyed to
    * each sample
@@ -270,6 +274,7 @@ define([
    * category in a given metadata column.
    * @param {String} [map = 'discrete-coloring-qiime'] name of the color map to
    * use, see ColorViewController.Colormaps
+   * @see ColorViewController.Colormaps
    *
    * @return {Object} colors The object containing the hex colors keyed to
    * each sample
