@@ -140,8 +140,9 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
  * values of plottables, in general this should be implemented in the
  * controller but it can be nullable if not needed. setPlottableAttributes
  * should receive: the scope where the plottables exist, the value to be
- * applied to the plottables and the plotables to change. For more info see:
+ * applied to the plottables and the plotables to change. For more info
  * see ColorViewController.setPlottableAttribute
+ * @see ColorViewController.setPlottableAttribute
  * @param {string} category The category/column in the mapping file
  *
  * @return {object[]} Array of objects to be consumed by Slick grid.

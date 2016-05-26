@@ -62,12 +62,12 @@ function(_, trajectory) {
 
     index = mappingFileHeaders.indexOf(gradientCategory);
     if (index == -1) {
-      throw new Error('Could not find the gradient category in the mapping'+
+      throw new Error('Could not find the gradient category in the mapping' +
                       ' file');
     }
     index = mappingFileHeaders.indexOf(trajectoryCategory);
     if (index == -1) {
-      throw new Error('Could not find the trajectory category in the mapping'+
+      throw new Error('Could not find the trajectory category in the mapping' +
                       ' file');
     }
 

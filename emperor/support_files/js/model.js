@@ -13,9 +13,9 @@ function($, _) {
    * @param {string[]} metadata An Array of strings with the metadata values.
    * @param {float[]} coordinates An Array of floats indicating the position in
    * space where this sample is located.
-   * @param {integer} [idx=-1] An integer representing the index where the
+   * @param {integer} [idx = -1] An integer representing the index where the
    * object is located in a DecompositionModel.
-   * @param {float[]} [ci=[]] An array of floats indicating the confidence
+   * @param {float[]} [ci = []] An array of floats indicating the confidence
    * intervals in each dimension.
    *
    * @return {Plottable}
@@ -52,8 +52,8 @@ function($, _) {
 
     if (this.ci.length !== 0) {
       if (this.ci.length !== this.coordinates.length) {
-        throw new Error("The number of confidence intervals doesn't match with" +
-                        ' the number of dimensions in the coordinates '+
+        throw new Error("The number of confidence intervals doesn't match " +
+                        'with the number of dimensions in the coordinates ' +
                         'attribute. coords: ' + this.coordinates.length +
                         ' ci: ' + this.ci.length);
       }
@@ -120,7 +120,8 @@ function($, _) {
    * @constructs DecompositionModel
    *
    */
-  function DecompositionModel(name, ids, coords, pct_var, md_headers, metadata) {
+  function DecompositionModel(name, ids, coords, pct_var, md_headers,
+                              metadata) {
     var num_coords;
     /**
      * Abbreviated name of the ordination method used to create the data.

@@ -22,7 +22,7 @@ install:
   - npm install -g jsdoc
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
-  - gjslint --custom_jsdoc_tags module,function,constructs,alias emperor/support_files/js/*.js tests/javascript_tests/*.js
+  - gjslint --custom_jsdoc_tags module,function,constructs,alias,default emperor/support_files/js/*.js tests/javascript_tests/*.js
   # execute the full test suite
   - python tests/all_tests.py
   # we just check coverage in the latest version of NumPy

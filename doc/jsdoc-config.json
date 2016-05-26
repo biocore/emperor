@@ -14,6 +14,7 @@
         "monospaceLinks": true
     },
     "opts": {
-        "recurse": true
+        "recurse": true,
+        "pedantic": true
     }
 }
