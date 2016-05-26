@@ -1,4 +1,8 @@
-/** @module shape-controller */
+/**
+ * SlickGrid shape editor and formatter.
+ *
+ * @module SlickGridShapes
+ */
 define([
     'jquery',
     'underscore',
@@ -9,24 +13,25 @@ define([
 function($, _, DecompositionView, ViewControllers, shapes) {
 
   /**
+   * @class ShapeEditor
+   *
    * This class represents a dropdown editor defined by the SlickGrid project.
    *
    * Note, this object is heavily based on classes in slick.editors.js and in
-   * the documentation that can be found
-   * [here]{@link https://github.com/mleibman/SlickGrid/wiki/Writing-custom-cell-editors}
+   * the documentation that can be found [here](https://github.com/mleibman/
+   * SlickGrid/wiki/Writing-custom-cell-editors)
    *
    * Also see ShapeFormatter, a function in charge of formatting a dropdown for
    * the SlickGrid object.
    *
-   * @param {Object} args Arguments passed by SlickGrid
-   * @function ShapeEditor
+   * @param {Object} args Arguments passed by SlickGrid.
+   * @alias module:SlickGridShapes.ShapeEditor
    */
   function ShapeEditor(args) {
     var $input;
     var defaultValue;
     var scope = this;
 
-    /** @constructor */
     this.init = function() {
       $input = shapes.$shapesDropdown;
       $input.appendTo(args.container);
@@ -76,7 +81,8 @@ function($, _, DecompositionView, ViewControllers, shapes) {
    * Function to format shape dropdown for the SlickGrid object.
    *
    * This formatter is heavily based in the examples found in
-   * [slick.formattters.js]{@link https://github.com/6pac/SlickGrid/blob/master/slick.formatters.js}.
+   * [slick.formattters.js](https://github.com/6pac/SlickGrid/blob/master/
+   * slick.formatters.js).
    *
    * @param {Object} row SlickGrid row.
    * @param {Object} cell SlickGrid cell.
