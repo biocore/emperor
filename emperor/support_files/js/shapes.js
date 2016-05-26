@@ -8,7 +8,7 @@ define(['jquery', 'three'], function($, THREE) {
 
   var shapes = [SPHERE, CUBE, CONE, ICOSAHEDRON, CYLINDER];
 
-  /*
+  /**
    *
    * Return a correctly sized geometry that matches the plotting space
    *
@@ -20,7 +20,7 @@ define(['jquery', 'three'], function($, THREE) {
    * @return {THREE.Geometry} The requested geometry object with a size
    * appropriate for the data presented on screen.
    * @function getGeometry
-   **/
+   */
   function getGeometry(shapeName, ranges) {
 
     // this is a heauristic tested on numerous plots since 2013, based off of
