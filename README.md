@@ -9,6 +9,8 @@ Emperor is a next-generation tool for the analysis and visualization of large mi
 
 To start using Emperor, please refer to the [installation notes](INSTALL.md).
 
+Before contributing code to Emperor, please familiarize yourself with the [contributing guidelines](CONTRIBUTING.md).
+
 ## Usage examples
 
 The main interface to create Emperor visualizations is the `make_emperor.py` script, inputing a mapping file and a PCoA data file, will generate an Emperor graphical user interface to analyze and visualize your data.

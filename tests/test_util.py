@@ -9,21 +9,25 @@ from __future__ import division
 
 from unittest import TestCase, main
 from os.path import exists, join, abspath, dirname
+from shutil import rmtree
 from tempfile import gettempdir
 
 from numpy import array
 from numpy.testing import assert_almost_equal
 
-from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
+from emperor.util import (keep_columns_from_mapping_file,
                           preprocess_mapping_file, preprocess_coords_file,
                           EmperorInputFilesError,
                           fill_mapping_field_from_mapping_file,
-                          sanitize_mapping_file, guess_coordinates_files)
+                          sanitize_mapping_file, guess_coordinates_files,
+                          nbinstall)
 
 
 class TopLevelTests(TestCase):
 
     def setUp(self):
+        self.files_to_delete = []
+
         self.mapping_file_data = MAPPING_FILE_DATA
         self.mapping_file_headers = ['SampleID', 'BarcodeSequence',
                                      'LinkerPrimerSequence', 'Treatment',
@@ -106,18 +110,9 @@ class TopLevelTests(TestCase):
         self.broken_mapping_file_data = BROKEN_MAPPING_FILE
         self.broken_mapping_file_data_2_values = BROKEN_MAPPING_FILE_2_VALUES
 
-    def test_copy_support_files(self):
-        """Test the support files are correctly copied to a file path"""
-        copy_support_files(self.support_files_filename)
-        self.assertTrue(exists(join(
-            self.support_files_filename, 'emperor_required_resources/')))
-
-        # related to https://github.com/qiime/emperor/issues/66
-        # the target path has spaces, the support files function will work fine
-        copy_support_files(self.support_files_filename_spaces)
-        self.assertTrue(exists(join(
-            self.support_files_filename_spaces,
-            'emperor_required_resources/')))
+    def tearDown(self):
+        for f in self.files_to_delete:
+            rmtree(f)
 
     def test_preprocess_mapping_file(self):
         """Check correct preprocessing of metadata is done"""
@@ -508,6 +503,18 @@ class TopLevelTests(TestCase):
                         'dir-with-only-hidden-files')
         fps = guess_coordinates_files(dir_path)
         self.assertItemsEqual(fps, [])
+
+    def test_nbinstall(self):
+        temp_dir = gettempdir()
+        target_path = join(temp_dir, 'share/jupyter/nbextensions/emperor/'
+                           'support_files')
+
+        # remove the whole tree
+        self.files_to_delete.append(join(temp_dir, 'share'))
+
+        nbinstall(prefix=temp_dir, user=None)
+
+        self.assertTrue(exists(target_path))
 
 
 MAPPING_FILE_DATA = [
