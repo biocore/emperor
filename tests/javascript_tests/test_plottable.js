@@ -13,8 +13,8 @@ requirejs(['jquery', 'model'], function($, model) {
 
     /**
      *
-     * Test that the Plottable object is initialized correctly, without optional
-     * arguments.
+     * Test that the Plottable object is initialized correctly, without
+     * optional arguments.
      *
      */
     test('Test constructor', function() {
@@ -22,7 +22,7 @@ requirejs(['jquery', 'model'], function($, model) {
 
       equal(plot.name, 'foo', 'The name matches!');
       deepEqual(plot.metadata, ['a', 'b', 'c'], 'The metadata match!');
-      deepEqual(plot.coordinates, [0.2, 0.3, 0.5, 0.2], 'The coordinates '+
+      deepEqual(plot.coordinates, [0.2, 0.3, 0.5, 0.2], 'The coordinates ' +
           'match!');
 
       // optional arguments get default values
@@ -41,7 +41,7 @@ requirejs(['jquery', 'model'], function($, model) {
 
       equal(plot.name, 'foo', 'The name matches!');
       deepEqual(plot.metadata, ['a', 'b', 'c'], 'The metadata matches!');
-      deepEqual(plot.coordinates, [0.2, 0.3, 0.5, 0.2], 'The coordinates '+
+      deepEqual(plot.coordinates, [0.2, 0.3, 0.5, 0.2], 'The coordinates ' +
           'match!');
 
       equal(plot.idx, 1, 'The index value was set correctly!');
@@ -52,17 +52,18 @@ requirejs(['jquery', 'model'], function($, model) {
 
       equal(plot.name, 'foo', 'The name matches!');
       deepEqual(plot.metadata, ['a', 'b', 'c'], 'The metadata matches!');
-      deepEqual(plot.coordinates, [0.2, 0.3, 0.5, 0.2], 'The coordinates '+
+      deepEqual(plot.coordinates, [0.2, 0.3, 0.5, 0.2], 'The coordinates ' +
           'match!');
 
       equal(plot.idx, 1, 'The index value was set correctly');
-      deepEqual(plot.ci, [3, 2, 3, 4], 'The confidence intervals were set '+
+      deepEqual(plot.ci, [3, 2, 3, 4], 'The confidence intervals were set ' +
           'correctly');
     });
 
     /**
      *
-     * Test that the Plottable object raises an exception with invalid arguments.
+     * Test that the Plottable object raises an exception with invalid
+     * arguments.
      *
      */
     test('Test constructor exceptions', function() {
