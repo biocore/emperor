@@ -140,7 +140,7 @@ define(['underscore', 'three'], function(_, THREE) {
 
       // add the name of the category
       labels_svg += '<text xml:space="preserve" y="' + (pos_y + 20) +
-        '" x="40" ' + 'font-size="' + font_size +
+        '" x="40" font-size="' + font_size +
         '" stroke-width="0" stroke="#000000" fill="#000000">' + labels[i] +
         '</text>';
 
