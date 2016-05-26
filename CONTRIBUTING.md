@@ -94,9 +94,9 @@ git push origin my-topic-branch
 Coding Guidelines
 -----------------
 
-For **Python** code, we adhere to the [PEP 8](http://www.python.org/dev/peps/pep-0008/) python coding guidelines for code and documentation standards. For **JavaScript** code, we adhere to the [Google closure](https://google.github.io/styleguide/javascriptguide.xml) javascript coding standards, and use [JSDoc](http://usejsdoc.org/) to compile all javascript documentation. When using the closure linter, we allow the module, function, and constructs custom JSDoc tags.
+For **Python** code, we adhere to the [PEP 8](http://www.python.org/dev/peps/pep-0008/) python coding guidelines for code and documentation standards. For **JavaScript** code, we adhere to the [Google closure](https://google.github.io/styleguide/javascriptguide.xml) javascript coding standards, and use [JSDoc](http://usejsdoc.org/) to compile all javascript documentation. When using the closure linter, we allow the `module`, `function`, `constructs` and `alias` custom JSDoc tags. For the most up to date version of the allowed JSDoc tags, see the [Travis configuration file](.travis.yml).
 
-Before submitting any code to Emperor, you should read these carefully and apply the guidelines in your code. As part of our automated testing, we make sure that all code passes linter standards and documentation compiles. We use the [gjslint](https://developers.google.com/closure/utilities/) linter to test javascript code with the `--custom_jsdoc_tags module,function,constructs` modifier, and the [flake8](https://pypi.python.org/pypi/flake8) linter to test python code.
+Before submitting any code to Emperor, you should read these carefully and apply the guidelines in your code. As part of our automated testing, we make sure that all code passes linter standards and documentation compiles. We use the [gjslint](https://developers.google.com/closure/utilities/) linter to test javascript code with the `--custom_jsdoc_tags module,function,constructs,alias` modifier, and the [flake8](https://pypi.python.org/pypi/flake8) linter to test python code.
 
 Testing Guidelines
 ------------------
