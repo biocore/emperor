@@ -1,57 +1,45 @@
+/** @module trajectory */
 define([
     'underscore',
 ], function(_) {
   /**
    *
-   * @name TrajectoryOfSamples
+   * @class TrajectoryOfSamples
    *
-   * @class Represents an ordered set of samples where each sample is indexed
-   * by the sample identifier and the order is as given by their position along
-   * the gradient.
+   * Represents an ordered set of samples and their position in PCoA space.
    *
-   * @property {Array} [sampleNames=Array()] array of sample identifiers.
-   * @property {Array} [gradientPoints=Array()] array of values where each of
-   * the samples exist in.
-   * @property {float} [minimumDelta=float] minimum differential between
-   * samples in the trajectory; the value is computed using the gradientPoints
-   * array.
-   * @property {float} [suppliedN=float] minimum number of frames a distance
-   * will have in the gradient.
-   * @property {Array} [interpolatedCoordinates=Array()] array of objects with
-   * the corresponding interpolated x, y and z values. The interpolation
-   * operation takes place between subsequent samples.
-   *
-   */
-
-
-  /**
-   *
-   * @name TrajectoryOfSamples
-   *
-   * @class Represents an ordered set of samples and their position in PCoA
-   * space.
-   *
-   * @param {sampleNames} an Array of strings where each string is a sample
-   * identifier.
-   * @param {metadataCategoryName} a string indicating the name of the category
-   * in the mapping file used to generate this trajectory.
-   * @param {gradientPoints} an Array of floating point values where each value
-   * corresponds to the position of the samples in the gradient.
-   * @param {coordinates} an Array of objects with x, y and z properties where
-   * each corresponds to the position of a sample in PCoA space.
-   * @param {minimumDelta} minimum differential between the ordered
+   * @param {string[]} sampleNames Array of sample identifiers.
+   * @param {string} metadataCategoryName The name of the category in the
+   * mapping file used to generate this trajectory.
+   * @param {float[]} gradientPoints The position of the samples in the
+   * gradient.
+   * @param {Object[]} coordinates Array of objects with x, y and z properties
+   * where each corresponds to the position of a sample in PCoA space.
+   * @param {float} minimumDelta Minimum differential between the ordered
    * gradientPoints this value must be non-zero. Note that this value should be
    * computed taking into account all the other trajectories that will be
    * animated together, usually by an AnimationDirector object.
-   * @param {suppliedN} a parameter that will determine how many points should
-   * should be found in the the trajectory.
-   * @param {maxN} maximum number of samples allowed per interpolation interval.
+   * @param {integer} [suppliedN = 5] Determines how many points should be found
+   * in the the trajectory.
+   * @param {integer} [maxN = 10] Maximum number of samples allowed per
+   * interpolation interval.
    *
+   * @return {TrajectoryOfSamples} An instance of TrajectoryOfSamples
+   * @constructs TrajectoryOfSamples
    **/
   function TrajectoryOfSamples(sampleNames, metadataCategoryName,
                                gradientPoints, coordinates, minimumDelta,
                                suppliedN, maxN) {
+    /**
+     * Sample identifiers
+     * @type {string[]}
+     */
     this.sampleNames = sampleNames;
+    /**
+     * The name of the category in the mapping file used to generate this
+     * trajectory.
+     * @type {string}
+     */
     this.metadataCategoryName = metadataCategoryName;
 
     // array of the values that samples have through the gradient
@@ -60,20 +48,39 @@ define([
     // the first three axes of the data points
     this.coordinates = coordinates;
 
-    // minimum distance in the gradient
+    /**
+     * Minimum differential between samples in the trajectory; the value is
+     * computed using the gradientPoints array.
+     * @type {float}
+     */
     this.minimumDelta = minimumDelta;
 
-    // this value determines how fast the animation will run for now let's use
-    // 5 and stick to it as a good default value; 60 was way too slow
+    /**
+     * Minimum number of frames a distance will have in the gradient.
+     * This value determines how fast the animation will run.
+     * For now we use 5 as a good default value; 60 was way too slow.
+     * @type {float}
+     * @default 5
+     */
     this.suppliedN = suppliedN !== undefined ? suppliedN : 5;
+    /**
+     * Maximum number of samples allowed per interpolation interval.
+     * @type {float}
+     * @default 10
+     */
     this.maxN = maxN !== undefined ? maxN : 10;
 
     if (this.coordinates.length != this.gradientPoints.length) {
-      throw new Error('The number of coordinate points and gradient points is'+
+      throw new Error('The number of coordinate points and gradient points is' +
           'different, make sure these values are consistent.');
     }
 
     // initialize as an empty array but fill it up upon request
+    /**
+     * Array of objects with the corresponding interpolated x, y and z values.
+     * The interpolation operation takes place between subsequent samples.
+     * @type {Object[]}
+     */
     this.interpolatedCoordinates = null;
     this._generateInterpolatedCoordinates();
 
@@ -84,6 +91,7 @@ define([
    *
    * Helper method to iterate over all the coordinates and generate
    * interpolated arrays.
+   * @private
    *
    */
   TrajectoryOfSamples.prototype._generateInterpolatedCoordinates = function() {
@@ -138,18 +146,14 @@ define([
    * Helper method to calculate the number of points that there should be for a
    * differential.
    *
-   * @param {delta} float value for which to determine the required number of
+   * @param {float} delta Value for which to determine the required number of
    * points.
-   * @param {suppliedN} int value, usually a constant defined by the
-   * TrajectoryOfSamples class.
-   * @param {minimumDelta} float value to represent the minimum differential
-   * found in a set of trajectories.
    *
-   * @return an integer representing the number of suggested frames for the
-   * differential
+   * @return {integer} The number of suggested frames for the differential
    *
    */
-  TrajectoryOfSamples.prototype.calculateNumberOfPointsForDelta = function(delta) {
+  TrajectoryOfSamples.prototype.calculateNumberOfPointsForDelta =
+      function(delta) {
     return Math.floor((delta * this.suppliedN) / this.minimumDelta);
   };
 
@@ -158,17 +162,17 @@ define([
    * Retrieve the representative coordinates needed for a trajectory to be
    * drawn.
    *
-   * @param {idx} int value for which to determine the required number of
-   * points.
-   *
-   * @return an Array containing the representative coordinates needed to draw
-   * a trajectory at the given index.
-   *
-   * Note that this implementation is naive and will return points that lay on
+   ** Note that this implementation is naive and will return points that lay on
    * a rect line if these were part of the original set of coordinates.
    *
+   * @param {integer} idx Value for which to determine the required number of
+   * points.
+   *
+   * @return {Array[]} Array containing the representative float x, y, z
+   * coordinates needed to draw a trajectory at the given index.
    */
-  TrajectoryOfSamples.prototype.representativeCoordinatesAtIndex = function(idx) {
+  TrajectoryOfSamples.prototype.representativeCoordinatesAtIndex =
+      function(idx) {
 
     if (idx === 0) {
       return [this.coordinates[0]];
@@ -193,15 +197,17 @@ define([
    * This code is based on the function found in:
    *     http://snipplr.com/view.php?codeview&id=47206
    *
-   * @param x_1 float initial value of a position in the first dimension
-   * @param y_1 float initial value of a position in the second dimension
-   * @param z_1 float initial value of a position in the third dimension
-   * @param x_2 float final value of a position in the first dimension
-   * @param y_2 float final value of a position in the second dimension
-   * @param z_2 float final value of a position in the third dimension
-   * @param steps integer number of steps that we want the interpolation to run
+   * @param {float} x_1 Initial value of a position in the first dimension
+   * @param {float} y_1 Initial value of a position in the second dimension
+   * @param {float} z_1 Initial value of a position in the third dimension
+   * @param {float} x_2 Final value of a position in the first dimension
+   * @param {float} y_2 Final value of a position in the second dimension
+   * @param {float} z_2 Final value of a position in the third dimension
+   * @param {integer} steps Number of steps that we want the interpolation to
+   * run
    *
-   * @return Array with a objects that have an x, y and z attributes
+   * @return {Object[]} Array of objects that have the x, y and z attributes
+   * @function linearInterpolation
    *
    */
 
@@ -240,16 +246,17 @@ define([
    * Function to compute the distance between two three dimensional points.
    *
    * This code is based on the function found in:
-   *     http://snipplr.com/view.php?codeview&id=47207
+   *     {@link http://snipplr.com/view.php?codeview&id=47207}
    *
-   * @param x_1 float initial value of a position in the first dimension
-   * @param y_1 float initial value of a position in the second dimension
-   * @param z_1 float initial value of a position in the third dimension
-   * @param x_2 float final value of a position in the first dimension
-   * @param y_2 float final value of a position in the second dimension
-   * @param z_2 float final value of a position in the third dimension
+   * @param {float} x_1 Initial value of a position in the first dimension
+   * @param {float} y_1 Initial value of a position in the second dimension
+   * @param {float} z_1 Initial value of a position in the third dimension
+   * @param {float} x_2 Final value of a position in the first dimension
+   * @param {float} y_2 Final value of a position in the second dimension
+   * @param {float} z_2 Final value of a position in the third dimension
    *
-   * @return floating point value of the distance between the two points
+   * @return {float} Value of the distance between the two points
+   * @function distanceBetweenPoints
    *
    */
   function distanceBetweenPoints(x_1, y_1, z_1, x_2, y_2, z_2) {
@@ -271,26 +278,29 @@ define([
    * coordinates to synthesize the information into an array. Mainly used by
    * the AnimationDirector object.
    *
-   * @param {mappingFileHeaders} an Array of strings containing metadata
-   * mapping file headers (required).
-   * @param {mappingFileData} an Array where the indices are sample identifiers
-   * and each of the contained elements is an Array of strings where the first
-   * element corresponds to the first data for the first column in the mapping
-   * file (mappingFileHeaders) (required).
-   * @param {coordinatesData} an Array of Objects where the indices are the
-   * sample identifiers and each of the objects has the following properties:
-   * x, y, z, name, color, P1, P2, P3, ... PN where N is the number of
-   * dimensions in this dataset (required).
-   * @param {trajectoryCategory} a string with the name of the mapping file
-   * header where the data that groups the samples is contained, this will
-   * usually be BODY_SITE, HOST_SUBJECT_ID, etc. (required).
-   * @param {gradientCategory} a string with the name of the mapping file
+   * @param {string[]} mappingFileHeaders The metadata mapping file headers.
+   * @param {Array[]} mappingFileData An Array where the indices are sample
+   * identifiers and each of the contained elements is an Array of strings where
+   * the first element corresponds to the first data for the first column in the
+   * mapping file (`mappingFileHeaders`).
+   * @param {Object[]} coordinatesData An Array of Objects where the indices are
+   * the sample identifiers and each of the objects has the following
+   * properties: x, y, z, name, color, P1, P2, P3, ... PN where N is the number
+   * of dimensions in this dataset.
+   * @param {string} trajectoryCategory a string with the name of the mapping
+   * file header where the data that groups the samples is contained, this will
+   * usually be BODY_SITE, HOST_SUBJECT_ID, etc..
+   * @param {string} gradientCategory a string with the name of the mapping file
    * header where the data that spreads the samples over a gradient is
    * contained, usually time or days_since_epoch. Note that this should be an
-   * all numeric category (required).
+   * all numeric category.
    *
-   * @return an array with the contained data indexed by the sample
+   * @return {Object[]} An Array with the contained data indexed by the sample
    * identifiers.
+   * @throws {Error} Any of the following:
+   *  * gradientIndex === -1
+   *  * trajectoryIndex === -1
+   * @function getSampleNamesAndDataForSortedTrajectories
    *
    */
   function getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
@@ -347,17 +357,18 @@ define([
    * Function to calculate the minimum delta from an array of wrangled data by
    * getSampleNamesAndDataForSortedTrajectories.
    *
-   * @param sampleData is an Array as computed from mapping file data and
-   * coordinates by getSampleNamesAndDataForSortedTrajectories.
-   *
-   * @return float value with the minimum difference between two samples across
-   * the defined gradient.
-   *
-   * This function will raise an Error in case the input data is undefined.
-   * This function will not take into account as a minimum delta zero values i.
-   * e.  the differential between two samples that lie at the same position in
+   * This function will not take into account as a minimum delta zero values
+   * i.e. the differential between two samples that lie at the same position in
    * the gradient.
    *
+   * @param {Object[]} sampleData An Array as computed from mapping file data
+   * and coordinates by getSampleNamesAndDataForSortedTrajectories.
+   *
+   * @return {float} The minimum difference between two samples across the
+   * defined gradient.
+   *
+   * @throws {Error} Input data is undefined.
+   * @function getMinimumDelta
    */
   function getMinimumDelta(sampleData) {
     if (sampleData === undefined) {
@@ -388,7 +399,8 @@ define([
 
   return {'TrajectoryOfSamples': TrajectoryOfSamples,
     'getMinimumDelta': getMinimumDelta,
-    'getSampleNamesAndDataForSortedTrajectories': getSampleNamesAndDataForSortedTrajectories,
+    'getSampleNamesAndDataForSortedTrajectories':
+      getSampleNamesAndDataForSortedTrajectories,
     'distanceBetweenPoints': distanceBetweenPoints,
     'linearInterpolation': linearInterpolation};
 });
