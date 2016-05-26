@@ -1,4 +1,3 @@
-/** @module shape-controller */
 define([
     'jquery',
     'underscore',

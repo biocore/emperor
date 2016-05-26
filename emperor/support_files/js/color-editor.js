@@ -26,6 +26,8 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
    * Also see ColorFormatter, a function in charge of formatting colors for the
    * SlickGrid object.
    *
+   * @param {object} args Arguments passed by SlickGrid.
+   *
    * @constructs ColorEditor
    * @alias module:SlickGridColors.ColorEditor
    *
