@@ -8,45 +8,26 @@ define([
 ], function($, _, ViewControllers, chroma, slickformatters, slickeditors) {
 
   // we only use the base attribute class, no need to get the base class
+  /** @private */
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
-
   /**
-   * @name VisibilityController
+   * @class VisibilityController
    *
-   * @class Manipulates and displays the visibility of objects on screen.
-   * @property {String} [title=""] Title of the controller.
-   * @property {Node} [header=div node] jQuery element for the header
-   * which contains the uppermost elements displayed in a tab.
-   * @property {Node} [body=div node] jQuery element for the body,
-   * which contains the lowermost elements displayed in tab.
-   * This goes below the header.
-   * @property {Node} [canvas=div node] jQuery element for the canvas,
-   * which contains the header and the body.
-   * @property {Node} [container=div node] jQuery element for the parent
-   * container.
-   * This only contains the canvas.
-   * @property {Boolean} [active=false] Indicates whether the tab is front most
-   * @property {String} [identifier="EMPtab-xxxxxxx"] Unique hash identifier
-   * for the tab instance.
-   * @property {Boolean} [enabled=true] Indicates if tab can be accessed.
-   * @property {String} [description=""] Human-readable description of the tab.
-   * @property {Node} [$select=chosen node] Drop-down menu to select the
-   * metadata category to visualize by.
-   **/
-
-  /*
-   * @name VisibilityController
+   * Manipulates and displays the visibility of objects on screen.
    *
-   * @param {Node} container, Container node to create the controller in.
-   * @params {Object} [decompViewDict] This object is keyed by unique
+   * @param {Node} container Container node to create the controller in.
+   * @param {Object} decompViewDict This object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
    * set of objects presented on screen. This dictionary will usually be shared
    * by all the tabs in the application. This argument is passed by reference.
    *
-   **/
+   * @return {VisibilityController} An instance of VisibilityController
+   * @constructs VisibilityController
+   * @extends EmperorAttributeABC
+   */
   function VisibilityController(container, decompViewDict) {
-    var helpmenu = 'Change the visibility of the attributes on the plot, such as ' +
-      'spheres, vectors and ellipsoids.';
+    var helpmenu = 'Change the visibility of the attributes on the plot, ' +
+                   'such as spheres, vectors and ellipsoids.';
     var title = 'Visibility';
 
     // Constant for width in slick-grid
@@ -66,14 +47,16 @@ define([
         var decompViewDict = scope.decompViewDict[k];
 
         // getting all unique values per categories
-        var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
+        var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(
+          category);
         // getting color for each uniqueVals
         var attributes = {};
         _.each(uniqueVals, function(value) {
           attributes[value] = true;
         });
         // fetch the slickgrid-formatted data
-        var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
+        var data = decompViewDict.setCategory(
+          attributes, scope.setPlottableAttributes, category);
 
         scope.setSlickGridDataset(data);
       },
@@ -94,12 +77,12 @@ define([
   /**
    * Helper function to set the visibility of plottable
    *
-   * @param {scope} object , the scope where the plottables exist
-   * @param {visible} bool , visibility of the plottables
-   * @param {group} array of objects, list of object that should be changed in
-   * scope
+   * @param {Object} scope the scope where the plottables exist
+   * @param {boolean} visible Visibility of the plottables
+   * @param {Object[]} group Array of objects that should be changed in scope
    */
-  VisibilityController.prototype.setPlottableAttributes = function(scope, visible, group) {
+  VisibilityController.prototype.setPlottableAttributes =
+      function(scope, visible, group) {
     var idx;
 
     _.each(group, function(element) {
