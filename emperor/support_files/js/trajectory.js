@@ -49,16 +49,16 @@ define([
     this.coordinates = coordinates;
 
     /**
-     *minimum differential between samples in the trajectory; the value is
+     * Minimum differential between samples in the trajectory; the value is
      * computed using the gradientPoints array.
      * @type {float}
      */
     this.minimumDelta = minimumDelta;
 
-    // this value determines how fast the animation will run for now let's use
-    // 5 and stick to it as a good default value; 60 was way too slow
     /**
      * Minimum number of frames a distance will have in the gradient.
+     * This value determines how fast the animation will run.
+     * For now we use 5 as a good default value; 60 was way too slow.
      * @type {float}
      * @default 5
      */
@@ -255,7 +255,7 @@ define([
    * @param {float} y_2 Final value of a position in the second dimension
    * @param {float} z_2 Final value of a position in the third dimension
    *
-   * @return floating point value of the distance between the two points
+   * @return {float} Value of the distance between the two points
    * @function distanceBetweenPoints
    *
    */
@@ -297,6 +297,9 @@ define([
    *
    * @return {Object[]} An Array with the contained data indexed by the sample
    * identifiers.
+   * @throws {Error} Any of the following:
+   *  * gradientIndex === -1
+   *  * trajectoryIndex === -1
    * @function getSampleNamesAndDataForSortedTrajectories
    *
    */
