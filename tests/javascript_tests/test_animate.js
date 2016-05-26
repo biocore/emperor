@@ -1,4 +1,8 @@
-requirejs(['underscore', 'jquery', 'animate'], function(_, $, AnimationDirector) {
+requirejs([
+    'underscore',
+    'jquery',
+    'animate'
+], function(_, $, AnimationDirector) {
   $(document).ready(function() {
 
     // these variables are reused throughout this test suite
