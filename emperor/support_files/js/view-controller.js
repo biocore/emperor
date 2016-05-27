@@ -172,7 +172,6 @@ define([
    * Converts the current instance into a JSON string.
    *
    * @return {Object} ready to serialize representation of self.
-   * @abstract
    */
   EmperorViewControllerABC.prototype.toJSON = function() {
     throw Error('Not implemented');
@@ -182,7 +181,6 @@ define([
    * Decodes JSON string and modifies its own instance variables accordingly.
    *
    * @param {Object} parsed JSON string representation of an instance.
-   * @abstract
    */
   EmperorViewControllerABC.prototype.fromJSON = function(jsonString) {
     throw Error('Not implemented');

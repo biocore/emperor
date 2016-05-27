@@ -125,6 +125,7 @@ define([
      * Menu tabs containers, note that we need them in this format to have
      * jQuery's UI tabs work properly. All the view controllers will be added
      * to this container, see the addTab method
+     * @see EmperorController.addTab
      * @type {node}
      * @private
      */
