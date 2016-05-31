@@ -191,7 +191,8 @@ requirejs([
      * the same number of elements
      *
      */
-    test('Test constructor excepts rows in coord different lengths', function() {
+    test('Test constructor excepts rows in coord different lengths',
+         function() {
       var result;
 
       throws(
@@ -224,8 +225,8 @@ requirejs([
 
     /**
      *
-     * Test the initializer raises an error if the number of elements in pct_var
-     * does not correspond to the number of coords.
+     * Test the initializer raises an error if the number of elements in
+     * pct_var does not correspond to the number of coords.
      *
      */
     test('Test constructor excepts num pct_var != num coords', function() {
@@ -245,8 +246,8 @@ requirejs([
 
     /**
      *
-     * Test the initializer raises an error if the number of rows in metadata is
-     * not the same as the number of ids
+     * Test the initializer raises an error if the number of rows in metadata
+     * is not the same as the number of ids
      *
      */
     test('Test constructor excepts num rows metadata != num ids', function() {
@@ -263,8 +264,8 @@ requirejs([
                 md_headers, err_metadata);
           },
           Error,
-          'An error is raised if the number of rows in the metadata parameter ' +
-          'does not correspond to the number of ids'
+          'An error is raised if the number of rows in the metadata parameter' +
+          ' does not correspond to the number of ids'
           );
     });
 
@@ -329,8 +330,8 @@ requirejs([
       var result;
       throws(
           function() {
-            var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-                metadata);
+            var dm = new DecompositionModel(name, ids, coords, pct_var,
+                                            md_headers, metadata);
             result = dm.getPlottableByID('Does_not_exist');
           },
           Error,
@@ -383,9 +384,10 @@ requirejs([
       var result;
       throws(
           function() {
-            var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-                metadata);
-            result = dm.getPlottableByIDs(['PC.636', 'PC.354', 'Does_not_exist']);
+            var dm = new DecompositionModel(name, ids, coords, pct_var,
+                                            md_headers, metadata);
+            result = dm.getPlottableByIDs(['PC.636', 'PC.354',
+                                           'Does_not_exist']);
           },
           Error,
           'An error is raised if one of the ids is not present in the ' +
@@ -415,8 +417,8 @@ requirejs([
       var result;
       throws(
           function() {
-            var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-                metadata);
+            var dm = new DecompositionModel(name, ids, coords, pct_var,
+                                            md_headers, metadata);
             result = dm._getMetadataIndex('Does_not_exist');
           },
           Error,
@@ -434,7 +436,8 @@ requirejs([
     test('Test getPlottablesByMetadataCategoryValue', function() {
       var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
           metadata);
-      var obs = dm.getPlottablesByMetadataCategoryValue('Treatment', 'Control');
+      var obs = dm.getPlottablesByMetadataCategoryValue('Treatment',
+                                                        'Control');
       var exp = [
         new Plottable(
             'PC.636',
@@ -474,8 +477,8 @@ requirejs([
 
     /**
      *
-     * Test getPlottablesByMetadataCategoryValue throws an error if the metadata
-     * header does not exist in the Decomposition Model object
+     * Test getPlottablesByMetadataCategoryValue throws an error if the
+     * metadata header does not exist in the Decomposition Model object.
      *
      */
     test('Test getPlottablesByMetadataCategoryValue excepts unrecognized ' +
@@ -483,13 +486,14 @@ requirejs([
           var result;
           throws(
               function() {
-                var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-                    metadata);
-                result = dm.getPlottablesByMetadataCategoryValue('foo', 'Control');
+                var dm = new DecompositionModel(name, ids, coords, pct_var,
+                                                md_headers, metadata);
+                result = dm.getPlottablesByMetadataCategoryValue('foo',
+                                                                 'Control');
               },
               Error,
-              'An error is raised if the metadata header does not exist in the ' +
-              'Decomposition Model object'
+              'An error is raised if the metadata header does not exist in ' +
+              'the Decomposition Model object'
               );
         });
 
@@ -499,18 +503,19 @@ requirejs([
      * values is not found in the given category
      *
      */
-    test('Tests getPlottablesByMetadataCategoryValue excepts unrecognized '+
+    test('Tests getPlottablesByMetadataCategoryValue excepts unrecognized ' +
         'metadata category value', function() {
           var result;
           throws(
               function() {
-                var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-                    metadata);
-                result = dm.getPlottablesByMetadataCategoryValue('Treatment', 'foo');
+                var dm = new DecompositionModel(name, ids, coords, pct_var,
+                                                md_headers, metadata);
+                result = dm.getPlottablesByMetadataCategoryValue('Treatment',
+                                                                 'foo');
               },
               Error,
-              'An error is raised if the metadata category value does not exist in ' +
-              'the Decomposition Model object'
+              'An error is raised if the metadata category value does not ' +
+              'exist in the Decomposition Model object'
               );
         });
 
@@ -559,13 +564,13 @@ requirejs([
           var result;
           throws(
               function() {
-                var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-                    metadata);
+                var dm = new DecompositionModel(name, ids, coords, pct_var,
+                                                md_headers, metadata);
                 result = dm.getUniqueValuesByCategory('Does_not_exist');
               },
               Error,
-              'An error is raised if the metadata category value does not exist in ' +
-              'the Decomposition Model object'
+              'An error is raised if the metadata category value does not ' +
+              'exist in the Decomposition Model object'
               );
         });
 
@@ -595,8 +600,8 @@ requirejs([
       var _pct_var = [0.5, 0.4, 0.1];
       var _md_headers = ['foo1', 'foo2', 'foo3'];
       var _metadata = [['a', 'b', 'c'], ['d', 'f', 'g']];
-      var dm = new DecompositionModel(name, _ids, _coords, _pct_var, _md_headers,
-          _metadata);
+      var dm = new DecompositionModel(name, _ids, _coords, _pct_var,
+                                      _md_headers, _metadata);
       var exp = 'name: pcoa\n' +
         'Metadata headers: [foo1, foo2, foo3]\n' +
         'Plottables:\n' +

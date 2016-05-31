@@ -26,13 +26,13 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
       elements = ['foo', 'Bar', 'BAZ', 'duck', 'duck', 'go'];
       res = naturalSort(elements);
-      deepEqual(res, ['Bar', 'BAZ', 'duck', 'duck', 'foo', 'go'], 'Arrays is ' +
-          'sorted correctly');
+      deepEqual(res, ['Bar', 'BAZ', 'duck', 'duck', 'foo', 'go'],
+                'Arrays is sorted correctly');
 
       elements = ['foo', 'foo', 'FOO', 'FoO', 'FOOOO', 'fOO'];
       res = naturalSort(elements);
-      deepEqual(res, ['foo', 'foo', 'FOO', 'FoO', 'fOO', 'FOOOO'], 'Arrays is ' +
-          'sorted correctly');
+      deepEqual(res, ['foo', 'foo', 'FOO', 'FoO', 'fOO', 'FOOOO'], 'Arrays ' +
+                'is sorted correctly');
 
       elements = ['a', 'c', 'X', 'Y', 'Z', 'y'];
       res = naturalSort(elements);
@@ -43,8 +43,8 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
     /**
      *
-     * Test that elements in the list are sorted correctly when only numbers are
-     * contained.
+     * Test that elements in the list are sorted correctly when only numbers
+     * are contained.
      *
      */
     test('Test naturalSort with numbers only', function() {
@@ -62,8 +62,8 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
       elements = ['-100', '0', '-0', '-200', '100', '100.001'];
       res = naturalSort(elements);
-      deepEqual(res, ['-200', '-100', '0', '-0', '100', '100.001'], 'Arrays is ' +
-          'sorted correctly');
+      deepEqual(res, ['-200', '-100', '0', '-0', '100', '100.001'],
+                'Arrays is sorted correctly');
 
     });
 
@@ -94,8 +94,8 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
     /**
      *
-     * Test that elements in the list are sorted correctly when there's a mixture
-     * of numbers and words.
+     * Test that elements in the list are sorted correctly when there's a
+     * mixture of numbers and words.
      *
      */
     test('Test naturalSort with numbers only', function() {
@@ -131,15 +131,16 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
       el.appendChild(document.createTextNode('Test'));
       el.className = 'test-div-class';
         equal(cleanHTML(convertXMLToString(el)),
-            cleanHTML('<div xmlns="http://www.w3.org/1999/xhtml" class="test-di' +
-              'v-class">Test</div>'),
+            cleanHTML('<div xmlns="http://www.w3.org/1999/xhtml" ' +
+                      'class="test-div-class">Test</div>'),
             'Test a div tag is converted correctly');
     });
 
     test('Test regular expressions are escaped correctly', function() {
       equal(escapeRegularExpression('some.sample.id'), 'some\\.sample\\.id');
       equal(escapeRegularExpression('some-sample.id'), 'some\\-sample\\.id');
-      equal(escapeRegularExpression('s/.*?ome.sample.id'), 's/\\.\\*\\?ome\\.sample\\.id');
+      equal(escapeRegularExpression('s/.*?ome.sample.id'),
+                                    's/\\.\\*\\?ome\\.sample\\.id');
     });
 
   });

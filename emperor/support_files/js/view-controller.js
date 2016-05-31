@@ -5,62 +5,75 @@ define([
     'slickgrid',
     'chosen'
 ], function($, _, DecompositionView, SlickGrid, Chosen) {
-
-  /**
-   * @name EmperorViewControllerABC
-   *
-   * @class Abstract base class for view controllers used in Emperor.
-   * This includes common functionality shared across all of the tab
-   * controllers.
-   *
-   * @property {String} [title=""] Title of the controller.
-   * @property {Node} [header=div node] jQuery element for the header
-   * which contains the uppermost elements displayed in a tab.
-   * @property {Node} [body=div node] jQuery element for the body,
-   * which contains the lowermost elements displayed in tab.
-   * This goes below the header.
-   * @property {Node} [gridDiv=div node] jQuery element for the div containing
-   * the slickgrid of sample information.
-   * @property {Node} [canvas=div node] jQuery element for the canvas,
-   * which contains the header and the body.
-   * @property {Node} [container=div node] jQuery element for the parent
-   * container.
-   * This only contains the canvas.
-   * @property {Boolean} [active=false] Indicates whether the tab is front most
-   * @property {String} [identifier="EMPtab-xxxxxxx"] Unique hash identifier
-   * for the tab instance.
-   * @property {Boolean} [enabled=true] Indicates if tab can be accessed.
-   * @property {String} [description=""] Human-readable description of the tab.
-   *
-   */
-
   /**
    *
-   * @name EmperorViewControllerABC
+   * @class EmperorViewControllerABC
    *
    * Initializes an abstract tab. This has to be contained in a DOM object and
    * will use the full size of that container.  The title represents the title
    * of the jQuery tab.  The description will be used as help text to describe
    * the functionality of each subclass tab.
    *
-   * @param {Node} [container] Container node to create the controller in.
-   * @param {String} [title] title of the tab.
-   * @param {String} [description] helper description.
+   * @param {Node} container Container node to create the controller in.
+   * @param {String} title title of the tab.
+   * @param {String} description helper description.
    *
    * @return {EmperorViewControllerABC} Returns an instance of the
    * EmperorViewControllerABC.
+   * @constructs EmperorViewControllerABC
    *
    */
   function EmperorViewControllerABC(container, title, description) {
+    /**
+     * @type {Node}
+     * jQuery element for the parent container.
+     */
     this.$container = $(container);
+    /**
+     * @type {String}
+     * Human-readable title of the tab.
+     */
     this.title = title;
+    /**
+     * @type {String}
+     * Human-readable description of the tab.
+     */
     this.description = description;
 
+    /**
+     * @type {Node}
+     * jQuery element for the canvas, which contains the header and the body.
+     */
     this.$canvas = null;
+    /**
+     * @type {Node}
+     * jQuery element for the body, which contains the lowermost elements
+     * displayed in tab. This goes below the header.
+     */
     this.$body = null;
+    /**
+     * @type {Node}
+     * jQuery element for the header which contains the uppermost elements
+     * displayed in a tab.
+     */
     this.$header = null;
+    /**
+     * @type {Boolean}
+     * Indicates whether the tab is front most
+     * @default false
+     */
     this.active = false;
+    /**
+     * @type {String}
+     * Unique hash identifier for the tab instance.
+     * @default "EMPtab-xxxxxxx"
+     */
     this.identifier = 'EMPtab-' + Math.round(1000000 * Math.random());
+    /**
+     * @type {Boolean}
+     * Indicates if tab can be accessed.
+     * @default true
+     */
     this.enabled = true;
 
     if (this.$container.length < 1) {
@@ -103,7 +116,7 @@ define([
   /**
    * Sets whether or not the tab can be modified or accessed.
    *
-   * @param {Boolean} [trulse] option to enable tab.
+   * @param {Boolean} trulse option to enable tab.
    */
   EmperorViewControllerABC.prototype.setEnabled = function(trulse) {
     if (typeof(trulse) === 'boolean') {
@@ -117,7 +130,7 @@ define([
   /**
    * Sets whether or not the tab is visible.
    *
-   * @param {Boolean} [trulse] option to activate tab
+   * @param {Boolean} trulse option to activate tab
    * (i.e. move tab to foreground).
    */
   EmperorViewControllerABC.prototype.setActive = function(trulse) {
@@ -137,8 +150,8 @@ define([
    * have height variable objects, once added their height shouldn't really
    * change.
    *
-   * @param {float} width the container width.
-   * @param {float} height the container height.
+   * @param {Float} width the container width.
+   * @param {Float} height the container height.
    */
   EmperorViewControllerABC.prototype.resize = function(width, height) {
     // This padding is required in order to make space
@@ -174,40 +187,21 @@ define([
   };
 
   /**
-   * @name EmperorAttributeABC
    *
-   * @class Abstract base class for view controllers that control attributes of
-   * the plots. Note, this class inherits from EmperorViewControllerABC.
-   *
-   * @property {Object} [decompViewDict] This is object is keyed by unique
-   * identifiers and the values are DecompositionView objects referring to a
-   * set of objects presented on screen. This dictionary will usually be shared
-   * by all the tabs in the application. This argument is passed by reference.
-   * @property {String} [activeViewKey=First Key in decompViewDict] This is the
-   * key of the active decomposition view.
-   * @property {String} [metadataField] Metadata column name.
-   * @property {Slick.Grid} [bodyGrid] Container that lists the metadata
-   * categories described under the `metadataField` column and the attribute
-   * that can be modified.
-   * @property {Object} [options] This is a dictionary of options used to build
-   * the view controller. Used to set attributes of the slick grid and the
-   * metadata category drop down.
-   *
-   */
-
-  /**
-   *
-   * @name EmperorViewControllerABC
+   * @class EmperorViewControllerABC
    *
    * Initializes an abstract tab for attributes i.e. shape, color, size, etc.
    * This has to be contained in a DOM object and will use the full size of
    * that container.
    *
-   * @params {Object} [decompViewDict] This is object is keyed by unique
+   * @param {Node} container Container node to create the controller in.
+   * @param {String} title title of the tab.
+   * @param {String} description helper description.
+   * @param {Object} decompViewDict This is object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
    * set of objects presented on screen. This dictionary will usually be shared
    * by all the tabs in the application. This argument is passed by reference.
-   * @params {Object} [options] This is a dictionary of options used to build
+   * @param {Object} options This is a dictionary of options used to build
    * the view controller. Used to set attributes of the slick grid and the
    * metadata category drop down. At the moment the constructor only expects
    * the following attributes:
@@ -225,6 +219,8 @@ define([
    *
    * @return {EmperorAttributeABC} Returns an instance of the
    * EmperorAttributeABC class.
+   * @constructs EmperorAttributeABC
+   * @extends EmperorViewControllerABC
    *
    */
   function EmperorAttributeABC(container, title, description,
@@ -243,15 +239,33 @@ define([
       throw Error('The decomposition view dictionary cannot be empty');
     }
     // Picks the first key in the dictionary as the active key
+    /**
+     * @type {String}
+     * This is the key of the active decomposition view.
+     */
     this.activeViewKey = Object.keys(decompViewDict)[0];
 
+    /**
+     * @type {Object}
+     * This is object is keyed by unique identifiers and the values are
+     * DecompositionView objects referring to a set of objects presented on
+     * screen. This dictionary will usually be shared by all the tabs in the
+     * application. This argument is passed by reference.
+     */
     this.decompViewDict = decompViewDict;
+    /**
+     * @type {Node}
+     * jQuery element for the div containing the slickgrid of sample information
+     */
     this.$gridDiv = $('<div name="emperor-grid-div"></div>');
     this.$gridDiv.css('margin', '0 auto');
     this.$gridDiv.css('width', '100%');
     this.$gridDiv.css('height', '100%');
     this.$body.append(this.$gridDiv);
-
+    /**
+     * @type {String}
+     * Metadata column name.
+     */
     this.metadataField = null;
 
     var dm = decompViewDict[this.activeViewKey].decomp;
@@ -278,20 +292,22 @@ define([
 
         // now that we have the chosen selector and the table fire a callback
         // to initialize the data grid
-        options.categorySelectionCallback(null, {selected: scope.$select.val()});
+        options.categorySelectionCallback(
+          null, {selected: scope.$select.val()});
       }
 
     });
 
     return this;
   }
-  EmperorAttributeABC.prototype = Object.create(EmperorViewControllerABC.prototype);
+  EmperorAttributeABC.prototype = Object.create(
+    EmperorViewControllerABC.prototype);
   EmperorAttributeABC.prototype.constructor = EmperorViewControllerABC;
 
   /**
    * Changes the metadata column name to control.
    *
-   * @params {String} [m] Metadata column name to control.
+   * @param {String} m Metadata column name to control.
    */
   EmperorAttributeABC.prototype.setMetadataField = function(m) {
     // FIXME: this should be validated against decompViewDict i.e. we should be
@@ -303,8 +319,7 @@ define([
   /**
    * Retrieves the metadata field currently being controlled
    *
-   * @return {String} Returns a key corresponding to the active
-   * decomposition view.
+   * @return {String} A key corresponding to the active decomposition view.
    */
   EmperorAttributeABC.prototype.getActiveDecompViewKey = function() {
     return this.activeViewKey;
@@ -313,7 +328,7 @@ define([
   /**
    * Changes the metadata column name to control.
    *
-   * @params {String} [k] Key corresponding to active decomposition view.
+   * @param {String} k Key corresponding to active decomposition view.
    */
   EmperorAttributeABC.prototype.setActiveDecompViewKey = function(k) {
     // FIXME: this should be validated against decompViewDict i.e. we should be
@@ -333,7 +348,7 @@ define([
   /**
    * Changes the underlying data in the slick grid
    *
-   * @params {Array} [data] data.
+   * @param {Array} data data.
    */
   EmperorAttributeABC.prototype.setSlickGridDataset = function(data) {
     // Re-render
@@ -345,8 +360,9 @@ define([
   /**
    * Method in charge of initializing the SlickGrid object
    *
-   * @params {Object} [options] additional options to initialize the slick grid
+   * @param {Object} [options] additional options to initialize the slick grid
    * of this object.
+   * @private
    *
    */
   EmperorAttributeABC.prototype._buildGrid = function(options) {
@@ -360,6 +376,11 @@ define([
       columns.unshift(options.slickGridColumn);
     }
 
+    /**
+     * @type {Slick.Grid}
+     * Container that lists the metadata categories described under the
+     * `metadataField` column and the attribute that can be modified.
+     */
     this.bodyGrid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
 
     // hide the header row of the grid
@@ -376,8 +397,8 @@ define([
    * Note, the consumer of this class, likely the main controller should call
    * the resize function any time a resizing event happens.
    *
-   * @param {float} width the container width.
-   * @param {float} height the container height.
+   * @param {Float} width the container width.
+   * @param {Float} height the container height.
    */
   EmperorAttributeABC.prototype.resize = function(width, height) {
     // call super, most of the header and body resizing logic is done there
@@ -416,7 +437,7 @@ define([
   /**
    * Decodes JSON string and modifies its own instance variables accordingly.
    *
-   * @param {Object} Parsed JSON string representation of self.
+   * @param {Object} json Parsed JSON string representation of self.
    *
    */
   EmperorAttributeABC.prototype.fromJSON = function(json) {
@@ -425,7 +446,8 @@ define([
 
     // fetch and set the SlickGrid-formatted data
     var k = this.getActiveDecompViewKey();
-    var data = this.decompViewDict[k].setCategory(json.data, this.setPlottableAttributes, json.category);
+    var data = this.decompViewDict[k].setCategory(
+      json.data, this.setPlottableAttributes, json.category);
     this.setSlickGridDataset(data);
     // set all to needsUpdate
     this.decompViewDict[k].needsUpdate = true;

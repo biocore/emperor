@@ -7,7 +7,8 @@ requirejs([
     'three',
     'svgrenderer',
     'orbitcontrols'
-], function($, _, model, DecompositionView, ScenePlotView3D, THREE, SVGRenderer, OrbitControls) {
+], function($, _, model, DecompositionView, ScenePlotView3D, THREE,
+            SVGRenderer, OrbitControls) {
   var DecompositionModel = model.DecompositionModel;
   $(document).ready(function() {
     module('ScenePlotView3D', {
@@ -25,11 +26,15 @@ requirejs([
         0.072969, -0.229889, -0.046599],
         [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485,
         -0.115211, -0.112864, 0.064794]];
-        var pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
-        var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
-        var metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
+        var pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
+                       11.217215823, 10.024774995, 8.22835130237,
+                       7.55971173665, 6.24945796136];
+        var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                          'DOB'];
+        var metadata = [
+          ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+          ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']
+        ];
         var decomp = new DecompositionModel(name, ids, coords, pct_var,
             md_headers, metadata);
         var dv = new DecompositionView(decomp);

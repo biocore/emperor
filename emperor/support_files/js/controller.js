@@ -15,49 +15,98 @@ define([
 
   /**
    *
-   * @name EmperorController
+   * @class EmperorController
    *       This is the application controller
    *
-   * @class Contains all the information on how the model is being presented to
-   *        the user.
+   * The application controller, contains all the information on how the model
+   * is being presented to the user.
    *
-   * @param {dm} a DecompositionModel object that will be
-   * represented on screen.
-   * @param {divid} the jQuery id correponding to the controller
-   * @param {webglcanvas} the canvas to use to render the information. This
-   * parameter is optional, and should rarely be set. But is useful for
-   * external applications like SAGE2.
+   * @param {DecompositionModel} dm An object that will be represented on
+   * screen.
+   * @param {string} divId The element id where the controller should
+   * instantiate itself.
+   * @param {node} [webglcanvas = undefined] the canvas to use to render the
+   * information. This parameter is optional, and should rarely be set. But is
+   * useful for external applications like SAGE2.
    *
-   **/
-  EmperorController = function(dm, divId, webglcanvas) {
+   * @return {EmperorController}
+   * @constructs EmperorController
+   *
+   */
+  function EmperorController(dm, divId, webglcanvas) {
     var scope = this;
 
-    // Constants
-    this.GRID_SCALE = 0.97;         // Scaling constant for grid dimensions
-    this.SCENE_VIEW_SCALE = 0.5;   // Scaling constant for scene plot view dimensions
-    this.SLICK_WIDTH = 25;         // Constant for width in slick-grid
+    /**
+     * Scaling constant for grid dimensions (read only).
+     * @type {float}
+     */
+    this.GRID_SCALE = 0.97;
 
+    /**
+     * Scaling constant for scene plot view dimensions
+     * @type {float}
+     */
+    this.SCENE_VIEW_SCALE = 0.5;
+    /**
+     * jQuery object where the object lives in.
+     * @type {node}
+     */
     this.$divId = $('#' + divId);
+    /**
+     * Width of the object.
+     * @type {float}
+     */
     this.width = this.$divId.width();
+    /**
+     * Height of the object.
+     * @type {float}
+     */
     this.height = this.$divId.height();
 
+    /**
+     * Ordination data being plotted.
+     * @type {DecompositionModel}
+     */
     this.dm = dm;
+    /**
+     * List of the scene plots views being rendered.
+     * @type {ScenePlotView3D[]}
+     */
     this.sceneViews = [];
 
-    // main divs where the content of the plots will be located
+    /**
+     * Internal div where the menus live in (jQuery object).
+     * @type {node}
+     */
     this.$plotSpace = $("<div class='emperor-plot-wrapper'></div>");
+    /**
+     * Internal div where the plots live in (jQuery object).
+     * @type {node}
+     */
     this.$plotMenu = $("<div class='emperor-plot-menu'></div>");
 
     this.$divId.append(this.$plotSpace);
     this.$divId.append(this.$plotMenu);
 
-    // holds a reference to all the tabs (view controllers) in the $plotMenu
+    /**
+     * Holds a reference to all the tabs (view controllers) in the `$plotMenu`.
+     * @type {object}
+     */
     this.controllers = {};
 
-    // set up the renderer
+    /**
+     * Background color of the scene.
+     * @type {THREE.Color}
+     * @default 0x00000000
+     */
     this.rendererBackgroundColor = new THREE.Color();
     this.rendererBackgroundColor.setHex('0x000000');
 
+    /**
+     * Object in charge of doing the rendering of the scenes.
+     * @type {THREE.Renderer}
+     */
+    this.renderer = null;
     if (webglcanvas !== undefined) {
         this.renderer = new THREE.WebGLRenderer({canvas: webglcanvas,
                                                  antialias: true});
@@ -72,11 +121,21 @@ define([
     this.renderer.sortObjects = true;
     this.$plotSpace.append(this.renderer.domElement);
 
-    // menu tabs containers, note that we need them in this format to have
-    // jQuery's UI tabs work properly. All the view controllers will be added
-    // to this container, see the addTab method
+    /**
+     * Menu tabs containers, note that we need them in this format to have
+     * jQuery's UI tabs work properly. All the view controllers will be added
+     * to this container, see the addTab method
+     * @see EmperorController.addTab
+     * @type {node}
+     * @private
+     */
     this._$tabsContainer = $("<div name='emperor-tabs-container'></div>");
     this._$tabsContainer.css('background-color', '#EEEEEE');
+    /**
+     * List of available tabs, lives inside `_$tabsContainer`.
+     * @type {node}
+     * @private
+     */
     this._$tabsList = $("<ul name='emperor-tabs-list'></ul>");
 
     // These will both live in the menu space. As of the writing of this code
@@ -85,15 +144,21 @@ define([
     this.$plotMenu.append(this._$tabsContainer);
     this._$tabsContainer.append(this._$tabsList);
 
-    // FIXME: This is a hack to go around the fact that the constructor takes
-    // a single decomposition model instead of a dictionary
+    /**
+     * Object with all the available decomposition views.
+     *
+     * FIXME: This is a hack to go around the fact that the constructor takes
+     * a single decomposition model instead of a dictionary
+     *
+     * @type {object}
+     */
     this.decViews = {'scatter': new DecompositionView(this.dm)};
 
     // default decomposition view uses the full window
     this.addView();
 
     $(function() {
-      scope.buildUI();
+      scope._buildUI();
       // Hide the loading splashscreen
       scope.$divId.find('.loading').hide();
     });
@@ -110,7 +175,7 @@ define([
    *
    * Helper method to add additional ScenePlotViews (i.e. another plot)
    *
-   **/
+   */
   EmperorController.prototype.addView = function() {
     if (this.sceneViews.length > 4) {
       throw Error('Cannot add another scene plot view');
@@ -131,7 +196,7 @@ define([
    * @param {width} the width of the entire plotting space
    * @param {height} the height of the entire plotting space
    *
-   **/
+   */
   EmperorController.prototype.resize = function(width, height) {
     // update the available space we have
     this.width = width;
@@ -220,9 +285,12 @@ define([
 
   /**
    *
-   * Helper method to render sceneViews
+   * Helper method to render sceneViews, gets called every time the browser
+   * indicates we can render a new frame, however it only triggers the
+   * appropriate rendering functions if something has changed since the last
+   * frame.
    *
-   **/
+   */
   EmperorController.prototype.render = function() {
     var scope = this;
     $.each(this.sceneViews, function(i, sv) {
@@ -236,10 +304,13 @@ define([
 
   /**
    *
-   * Helper method to assemble UI, completely independent of HTML template
+   * Helper method to assemble UI, completely independent of HTML template.
+   * This method is called when the object is constructed.
    *
-   **/
-  EmperorController.prototype.buildUI = function() {
+   * @private
+   *
+   */
+  EmperorController.prototype._buildUI = function() {
     var scope = this;
 
     //FIXME: This only works for 1 scene plot view
@@ -285,7 +356,8 @@ define([
           icon: 'paste',
           callback: function(key, opts) {
             if (!FileReader) {
-              alert('Your browser does not support file loading. We recommend using Google Chrome for full functionality.');
+              alert('Your browser does not support file loading. We ' +
+                    'recommend using Google Chrome for full functionality.');
               return;
             }
             var file = $('<input type="file">');
@@ -327,7 +399,8 @@ define([
     // Add shift+right click as the trigger for the context menu
     this.$plotSpace.on('contextmenu', function(e) {
       if (e.shiftKey) {
-        var contextDiv = $('#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper');
+        var contextDiv = $('#' + scope.$divId.attr('id') +
+                           ' .emperor-plot-wrapper');
         contextDiv.contextMenu({x: e.pageX, y: e.pageY});
       }
     });
@@ -337,9 +410,9 @@ define([
    *
    * Save the current canvas view to a new window
    *
-   * @param {string} [type] What type to save the file as. Default png.
+   * @param {string} [type = png] What format to save the file as.
    *
-   **/
+   */
   EmperorController.prototype.screenshot = function(type) {
     type = type || 'png';
     // Render all scenes so it's rendered in same context as save
@@ -362,7 +435,7 @@ define([
    * by calling toJSON on them, and the resulting object saved under the same
    * key as the controllers object.
    *
-   **/
+   */
    EmperorController.prototype.saveConfig = function() {
     var saveinfo = {};
     // Assuming single sceneview for now
@@ -383,17 +456,24 @@ define([
 
   /**
    *
-   * Load a settings file and set all controller variables
+   * Load a settings file and set all controller variables.
    *
-   * @param {object} [json] Emperor save information
+   * This method will trigger a rendering callback.
    *
-   **/
+   * @param {object} json Information about the emperor session to load.
+   *
+   */
    EmperorController.prototype.loadConfig = function(json) {
     //still assuming one sceneview for now
     var sceneview = this.sceneViews[0];
 
-    sceneview.camera.position.set(json.cameraPosition.x, json.cameraPosition.y, json.cameraPosition.z);
-    sceneview.camera.quaternion.set(json.cameraQuaternion._x, json.cameraQuaternion._y, json.cameraQuaternion._z, json.cameraQuaternion._w);
+    sceneview.camera.position.set(json.cameraPosition.x,
+                                  json.cameraPosition.y,
+                                  json.cameraPosition.z);
+    sceneview.camera.quaternion.set(json.cameraQuaternion._x,
+                                    json.cameraQuaternion._y,
+                                    json.cameraQuaternion._z,
+                                    json.cameraQuaternion._w);
 
     //must call updates to reset for camera move
     sceneview.camera.updateProjectionMatrix();
@@ -412,10 +492,11 @@ define([
    *
    * Helper method to resize the plots.
    *
-   * @param {Array} [dvdict] Dictionary of DecompositionViews.
-   * @param {function} [viewConstructor] Constructor of the view controller.
+   * @param {DecompositionView[]} dvdict Dictionary of DecompositionViews.
+   * @param {EmperorViewControllerABC} viewConstructor Constructor of the view
+   * controller.
    *
-   **/
+   */
   EmperorController.prototype.addTab = function(dvdict, viewConstructor) {
     // nothing but a temporary id
     var id = (Math.round(1000000 * Math.random())).toString();
