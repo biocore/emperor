@@ -105,7 +105,7 @@ define(['underscore'], function(_) {
           nonNumeric.push(element);
         }
       });
-    return [numeric, nonNumeric]
+    return [numeric, nonNumeric];
    }
 
   /**
