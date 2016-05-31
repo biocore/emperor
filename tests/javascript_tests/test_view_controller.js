@@ -22,17 +22,18 @@ requirejs([
      */
     test('Constructor tests', function(assert) {
 
-      var container = $('<div id="does-not-exist" style="height:11px; width:12px"></div>');
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
       var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
 
       equal(controller.title, 'foo', 'Check the title is correctly set');
-      equal(controller.description, 'bar', 'Check the description is correctly' +
-          ' set');
+      equal(controller.description, 'bar',
+            'Check the description is correctly set');
       equal(controller.$container.id, container.id, 'Check the id of the ' +
           'parent is correct');
       equal(controller.active, false, 'Check the active property');
-      equal(controller.identifier.slice(0, 7), 'EMPtab-', 'Check the identifier' +
-          ' property');
+      equal(controller.identifier.slice(0, 7), 'EMPtab-',
+            'Check the identifier property');
       parseFloat(controller.identifier.slice(7));
       equal(controller.enabled, true, 'Check the enabled property');
 
@@ -114,7 +115,8 @@ requirejs([
 
     /**
      *
-     * Test the resize, toJSON and fromJSON methods raise the appropriate errors.
+     * Test the resize, toJSON and fromJSON methods raise the appropriate
+     * errors.
      *
      */
     test('Test resize, toJSON and fromJSON methods', function() {
@@ -266,7 +268,8 @@ requirejs([
      */
     asyncTest('Test resize', function() {
       var dv = new DecompositionView(this.decomp);
-      var container = $('<div id="does-not-exist" style="height:20px; width:21px"></div>');
+      var container = $('<div id="does-not-exist" style="height:20px; ' +
+                        'width:21px"></div>');
 
       // verify the subclassing was set properly
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
