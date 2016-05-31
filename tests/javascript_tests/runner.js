@@ -17,7 +17,8 @@
  */
 
 /*jshint latedef:false */
-/*global phantom:false, require:false, console:false, window:false, QUnit:false */
+/*global phantom:false, require:false, console:false, window:false,
+  QUnit:false */
 
 (function() {
     'use strict';
@@ -26,14 +27,16 @@
 
     // arg[0]: scriptName, args[1...]: arguments
     if (args.length !== 2) {
-        console.error('Usage:\n  phantomjs runner.js [url-of-your-qunit-testsuite]');
+        console.error('Usage:\n  phantomjs runner.js ' +
+                      '[url-of-your-qunit-testsuite]');
         phantom.exit(1);
     }
 
     var url = args[1],
         page = require('webpage').create();
 
-    // Route `console.log()` calls from within the Page context to the main Phantom context (i.e. current `this`)
+    // Route `console.log()` calls from within the Page context to the main
+    // Phantom context (i.e. current `this`)
     page.onConsoleMessage = function(msg) {
         console.log(msg);
     };
@@ -61,11 +64,14 @@
             console.error('Unable to access network: ' + status);
             phantom.exit(1);
         } else {
-            // Cannot do this verification with the 'DOMContentLoaded' handler because it
-            // will be too late to attach it if a page does not have any script tags.
-            var qunitMissing = page.evaluate(function() { return (typeof QUnit === 'undefined' || !QUnit); });
+            // Cannot do this verification with the 'DOMContentLoaded' handler
+            // because it will be too late to attach it if a page does not have
+            // any script tags.
+            var qunitMissing = page.evaluate(function() {
+                return (typeof QUnit === 'undefined' || !QUnit);
+            });
             if (qunitMissing) {
-                console.error('The `QUnit` object is not present on this page.');
+                console.error('The `QUnit` object is not present.');
                 phantom.exit(1);
             }
 
@@ -75,7 +81,7 @@
 
     function addLogging() {
         window.document.addEventListener('DOMContentLoaded', function() {
-            var current_test_assertions = [];
+            var cur_test_asserts = [];
 
             QUnit.log(function(details) {
                 var response;
@@ -92,13 +98,14 @@
                         response += ', ';
                     }
 
-                    response += 'expected: ' + details.expected + ', but was: ' + details.actual;
+                    response += 'expected: ' + details.expected +
+                    ', but was: ' + details.actual;
                     if (details.source) {
                         response += '\n' + details.source;
                     }
                 }
 
-                current_test_assertions.push('Failed assertion: ' + response);
+                cur_test_asserts.push('Failed assertion: ' + response);
             });
 
             QUnit.testDone(function(result) {
@@ -109,15 +116,15 @@
                 if (result.failed) {
                     console.log('Test failed: ' + name);
 
-                    for (i = 0, len = current_test_assertions.length; i < len; i++) {
-                        console.log('    ' + current_test_assertions[i]);
+                    for (i = 0, len = cur_test_asserts.length; i < len; i++) {
+                        console.log('    ' + cur_test_asserts[i]);
                     }
                 }
                 else {
                     console.log(name + ' (' + result.duration + ' ms) ... ok');
                 }
 
-                current_test_assertions.length = 0;
+                cur_test_asserts.length = 0;
             });
 
             QUnit.moduleDone(function(result) {
@@ -125,7 +132,9 @@
             });
 
             QUnit.done(function(result) {
-                console.log('Took ' + result.runtime + 'ms to run ' + result.total + ' tests. ' + result.passed + ' passed, ' + result.failed + ' failed.');
+                console.log('Took ' + result.runtime + 'ms to run ' +
+                            result.total + ' tests. ' + result.passed +
+                            ' passed, ' + result.failed + ' failed.');
 
                 if (typeof window.callPhantom === 'function') {
                     window.callPhantom({

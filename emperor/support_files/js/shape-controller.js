@@ -11,22 +11,20 @@ define([
   var ShapeEditor = Shape.ShapeEditor;
   var ShapeFormatter = Shape.ShapeFormatter;
   /**
-   * @name ShapeController
+   * @class ShapeController
    *
-   * @inherits EmperorAttributeABC
+   * Manipulates and displays the shape of objects on screen.
    *
-   **/
-
-  /*
-   * @name ShapeController
-   *
-   * @param {Node} container, Container node to create the controller in.
-   * @params {Object} [decompViewDict] This is object is keyed by unique
+   * @param {Node} container Container node to create the controller in.
+   * @param {Object} decompViewDict This is object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
    * set of objects presented on screen. This dictionary will usually be shared
    * by all the tabs in the application. This argument is passed by reference.
    *
-   **/
+   * @return {ShapeController} An instance of ShapeController
+   * @constructs ShapeController
+   * @extends EmperorAttributeABC
+   */
   function ShapeController(container, decompViewDict) {
     var helpmenu = 'Change the shapes representing groups of data on the plot';
     var title = 'Shape';
@@ -50,7 +48,8 @@ define([
         var decompViewDict = scope.decompViewDict[k];
 
         // getting all unique values per categories
-        var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(category);
+        var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(
+          category);
 
         // Reset all to shapes to default
         var attributes = {};
@@ -58,7 +57,8 @@ define([
           attributes[uniqueVals[index]] = 'Sphere';
         }
         // fetch the slickgrid-formatted data
-        var data = decompViewDict.setCategory(attributes, scope.setPlottableAttributes, category);
+        var data = decompViewDict.setCategory(
+          attributes, scope.setPlottableAttributes, category);
 
         scope.setSlickGridDataset(data);
       },
@@ -79,16 +79,16 @@ define([
   ShapeController.prototype = Object.create(EmperorAttributeABC.prototype);
   ShapeController.prototype.constructor = EmperorAttributeABC;
 
-    /**
+  /**
    * Helper function to set the shape of plottable
    *
-   * @param {scope} object , the scope where the plottables exist
-   * @param {shape} string , string representation of the shape to be applied
+   * @param {Object} scope The scope where the plottables exist
+   * @param {string} shape String representation of the shape to be applied
    * to the plottables.
-   * @param {group} array of objects, list of object that should be changed in
-   * scope
+   * @param {Object[]} group Array of objects that should be changed in scope
    */
-  ShapeController.prototype.setPlottableAttributes = function(scope, shape, group) {
+  ShapeController.prototype.setPlottableAttributes =
+      function(scope, shape, group) {
     var idx;
 
     // get the appropriately sized geometry

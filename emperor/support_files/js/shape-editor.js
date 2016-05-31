@@ -1,3 +1,8 @@
+/**
+ * SlickGrid shape editor and formatter.
+ *
+ * @module SlickGridShapes
+ */
 define([
     'jquery',
     'underscore',
@@ -8,22 +13,19 @@ define([
 function($, _, DecompositionView, ViewControllers, shapes) {
 
   /**
+   * @class ShapeEditor
    *
-   * @name Shape
-   *
-   * @class This class represents a dropdown editor defined by the SlickGrid
-   * project.
-   *
-   * @property {$input} object containing the dropdown
-   * @property {defaultValue} initial value of the cell being edited.
+   * This class represents a dropdown editor defined by the SlickGrid project.
    *
    * Note, this object is heavily based on classes in slick.editors.js and in
-   * the documentation that can be found here:
-   *    https://github.com/mleibman/SlickGrid/wiki/Writing-custom-cell-editors
+   * the documentation that can be found [here](https://github.com/mleibman/
+   * SlickGrid/wiki/Writing-custom-cell-editors)
    *
    * Also see ShapeFormatter, a function in charge of formatting a dropdown for
    * the SlickGrid object.
    *
+   * @param {Object} args Arguments passed by SlickGrid.
+   * @alias module:SlickGridShapes.ShapeEditor
    */
   function ShapeEditor(args) {
     var $input;
@@ -78,17 +80,18 @@ function($, _, DecompositionView, ViewControllers, shapes) {
    *
    * Function to format shape dropdown for the SlickGrid object.
    *
-   * @param row SlickGrid row.
-   * @param cell SlickGrid cell.
-   * @param value the value in the row.
-   * @param columnDef SlickGrid column definition.
-   * @param dataContext data model of the SlickGrid object
-   *
-   * @return string with a div
-   *
    * This formatter is heavily based in the examples found in
-   * slick.formattters.js.
+   * [slick.formattters.js](https://github.com/6pac/SlickGrid/blob/master/
+   * slick.formatters.js).
    *
+   * @param {Object} row SlickGrid row.
+   * @param {Object} cell SlickGrid cell.
+   * @param {string} value the value in the row.
+   * @param {Objecy} columnDef SlickGrid column definition.
+   * @param {Object} dataContext data model of the SlickGrid object
+   *
+   * @return {string} The HTML of the div and value
+   * @function ShapeFormatter
    */
   function ShapeFormatter(row, cell, value, columnDef, dataContext) {
     return '<div>' + value + '</div>';
