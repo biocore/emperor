@@ -69,7 +69,7 @@ define([
      * @type {THREE.PerspectiveCamera}
      */
     this.camera = new THREE.PerspectiveCamera(35, width / height,
-                                              0.0001, 10000);
+                                              1, 100000);
     this.camera.position.set(0, 0, 6);
 
     //need to initialize the scene
@@ -171,10 +171,11 @@ define([
     this.$info.css('position', 'absolute')
       .css('bottom', 0)
       .css('height', 16)
-      .css('width', '100%')
+      .css('width', '50%')
       .css('padding-left', 10)
       .css('padding-right', 10)
       .css('font-size', 12)
+      .css('z-index', 10000)
       .css('background-color', 'rgb(238, 238, 238)')
       .css('border', '1px solid black')
       .css('font-family', 'Verdana,Arial,sans-serif')
@@ -191,6 +192,7 @@ define([
     this.on('click', function(n, i) {
       clearTimeout(infoTimeout);
       scope.$info.text(n);
+      scope.$info.show();
 
       // reset the timeout for fading out the info div
       infoTimeout = setTimeout(function() {
