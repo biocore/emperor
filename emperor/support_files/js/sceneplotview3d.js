@@ -62,14 +62,15 @@ define([
     this._axisLabelPrefix = 'emperor-axis-label-';
 
     // Set up the camera
-    // Note: if we change the near parameter to something smaller than this
-    // the raytracing will not work as expected.
+    var dimRanges = decViews.scatter.decomp.dimensionRanges;
+    var frontFrust = _.min([_.max(dimRanges.max) * 0.001, 1]);
+    var backFrust = _.max([_.max(dimRanges.max) * 100, 100]);
     /**
      * Camera used to display the scene.
      * @type {THREE.PerspectiveCamera}
      */
     this.camera = new THREE.PerspectiveCamera(35, width / height,
-                                              1, 100000);
+                                              frontFrust, backFrust);
     this.camera.position.set(0, 0, 6);
 
     //need to initialize the scene
