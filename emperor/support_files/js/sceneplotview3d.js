@@ -62,16 +62,16 @@ define([
     this._axisLabelPrefix = 'emperor-axis-label-';
 
     // Set up the camera
-    var dimRanges = decViews.scatter.decomp.dimensionRanges;
-    var frontFrust = _.min([_.max(dimRanges.max) * 0.001, 1]);
-    var backFrust = _.max([_.max(dimRanges.max) * 100, 100]);
+    var max = _.max(decViews.scatter.decomp.dimensionRanges.max);
+    var frontFrust = _.min([max * 0.001, 1]);
+    var backFrust = _.max([max * 100, 100]);
     /**
      * Camera used to display the scene.
      * @type {THREE.PerspectiveCamera}
      */
     this.camera = new THREE.PerspectiveCamera(35, width / height,
                                               frontFrust, backFrust);
-    this.camera.position.set(0, 0, 6);
+    this.camera.position.set(0, 0, max * 5);
 
     //need to initialize the scene
     this.scene = new THREE.Scene();
