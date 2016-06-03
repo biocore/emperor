@@ -197,9 +197,8 @@ define([
    ColorViewController._nonNumericPlottables = function(uniqueVals, data) {
      // Filter down to only non-numeric data
      var split = util.splitNumericValues(uniqueVals);
-     var nonNumeric = split[1];
      var plotList = data.filter(function(x) {
-       return $.inArray(x.category, nonNumeric) !== -1;
+       return $.inArray(x.category, split.nonNumeric) !== -1;
      });
      // Build list of plottables and return
      var plottables = [];
@@ -320,21 +319,20 @@ define([
 
     // Get list of only numeric values, error if none
     var split = util.splitNumericValues(values);
-    var numeric = split[0], nonNumeric = split[1];
-    if (numeric.length < 2) {
+    if (split.numeric.length < 2) {
       throw new Error('non-numeric category');
     }
-    min = _.min(numeric);
-    max = _.max(numeric);
+    min = _.min(split.numeric);
+    max = _.max(split.numeric);
     var interpolator = chroma.scale(map).domain([min, max]);
     var colors = {};
 
     // Color all the numeric values
-    _.each(numeric, function(element) {
+    _.each(split.numeric, function(element) {
       colors[element] = interpolator(element).hex();
     });
     //Gray out non-numeric values
-    _.each(nonNumeric, function(element) {
+    _.each(split.nonNumeric, function(element) {
       colors[element] = nanColor;
     });
     //build the SVG showing the gradient of colors for values

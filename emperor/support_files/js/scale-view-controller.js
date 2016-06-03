@@ -39,7 +39,7 @@ define([
      * jQuery node for label of $scaledValues
      * @type {Node}
      */
-    this.$scaledLabel = $('<label for="scaledValue">Scale by values</label>');
+    this.$scaledLabel = $('<label>Scale by values</label>');
 
     //Create global scale bar
     /**
@@ -125,7 +125,6 @@ define([
         sortable: false, maxWidth: SLICK_WIDTH,
         minWidth: SLICK_WIDTH,
         autoEdit: true,
-        //formatter: Slick.Formatters.Checkmark,
         editor: ScaleEditor.ScaleEditor}};
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
@@ -148,8 +147,7 @@ define([
    */
   ScaleViewController.prototype.toJSON = function() {
     var json = EmperorAttributeABC.prototype.toJSON.call(this);
-    var sliderVal = this.$globalDiv.children('input').val();
-    json.globalScale = sliderVal;
+    json.globalScale = this.$globalDiv.children('input').val();
     json.scaleVal = this.$scaledValue.is(':checked');
     return json;
   };
@@ -246,8 +244,7 @@ define([
     } else {
       //See if we have numeric values, fail if no
       var split = util.splitNumericValues(values);
-      var numeric = split[0], nonNumeric = split[1];
-      if (numeric.length < 1) {
+      if (split.numeric.length < 1) {
         alert('Not enough numeric values in category, can not scale by value!');
         this.$scaledValue.prop('checked', false);
         this.$scaledValue.trigger('change');
@@ -267,6 +264,7 @@ define([
       var max = _.max(numeric);
       var range = max - min;
       _.each(numeric, function(element) {
+          // Scale the values, then round to 4 decimaal places.
           scale[element] = Math.round(
             (1 + (element - min) * 4 / range) * 10000) / 10000;
         });

@@ -50,6 +50,11 @@ function($, _, DecompositionView, ViewControllers) {
         slide: function(event, ui) {
           $viewval.val(ui.value);
           args.item.value = ui.value;
+        },
+        stop: function(event, ui) {
+          // commit the changes as soon as a new color is selected
+          // http://stackoverflow.com/a/15513516/379593
+          Slick.GlobalEditorLock.commitCurrentEdit();
         }
       });
       $sliderDiv.appendTo(args.container);

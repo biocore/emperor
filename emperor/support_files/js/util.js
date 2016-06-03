@@ -91,21 +91,23 @@ define(['underscore'], function(_) {
    *
    * Split list of string values into numeric and non-numeric values
    * @param {String[]} values The values to check
-   * @return {Numeric[]} Array of numeric values, converted to numbers
-   * @return {String[]} Array of non-numeric values, still as strings
+   * @return {Object} Object with two keys, `numeric` and `nonNumeric`. Numeric
+   * holds an array of all numeric values fownd, converted to numbers.
+   * nonNumeric holds an array of the remaining values, still as strings.
    */
    function splitNumericValues(values) {
     var numeric = [];
     var nonNumeric = [];
     _.each(values, function(element) {
-        if (!isNaN(element) && isFinite(+element) && Number(element) !== 0) {
+        // http://stackoverflow.com/a/9716488
+        if (!isNaN(parseFloat(element)) && isFinite(element)) {
           numeric.push(+element);
         }
         else {
           nonNumeric.push(element);
         }
       });
-    return [numeric, nonNumeric];
+    return {numeric: numeric, nonNumeric: nonNumeric};
    }
 
   /**

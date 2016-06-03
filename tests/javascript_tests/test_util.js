@@ -138,16 +138,16 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
     test('Test splitNumericValues', function() {
       var values = ['1.112', 'stringvalue', '', 'Other String Value', '-2.2',
-                    '4', null, undefined, NaN, Infinity, -Infinity, [],
+                    '4', null, undefined, NaN, Infinity, -Infinity, 0, [],
                     ['string', 1.0], [1.0, 'string'], {}, {key: 'val'}];
-      var numeric = [1.112, -2.2, 4];
+      var numeric = [1.112, -2.2, 4, 0];
       var nonNumeric = ['stringvalue', '', 'Other String Value', null,
                         undefined, NaN, Infinity, -Infinity, [],
                         ['string', 1.0], [1.0, 'string'], {}, {key: 'val'}];
 
       var split = util.splitNumericValues(values);
-      deepEqual(split[0], numeric);
-      deepEqual(split[1], nonNumeric);
+      deepEqual(split.numeric, numeric);
+      deepEqual(split.nonNumeric, nonNumeric);
     });
 
     test('Test regular expressions are escaped correctly', function() {
