@@ -62,15 +62,16 @@ define([
     this._axisLabelPrefix = 'emperor-axis-label-';
 
     // Set up the camera
-    // Note: if we change the near parameter to something smaller than this
-    // the raytracing will not work as expected.
+    var max = _.max(decViews.scatter.decomp.dimensionRanges.max);
+    var frontFrust = _.min([max * 0.001, 1]);
+    var backFrust = _.max([max * 100, 100]);
     /**
      * Camera used to display the scene.
      * @type {THREE.PerspectiveCamera}
      */
     this.camera = new THREE.PerspectiveCamera(35, width / height,
-                                              0.0001, 10000);
-    this.camera.position.set(0, 0, 6);
+                                              frontFrust, backFrust);
+    this.camera.position.set(0, 0, max * 5);
 
     //need to initialize the scene
     this.scene = new THREE.Scene();
@@ -171,10 +172,11 @@ define([
     this.$info.css('position', 'absolute')
       .css('bottom', 0)
       .css('height', 16)
-      .css('width', '100%')
+      .css('width', '50%')
       .css('padding-left', 10)
       .css('padding-right', 10)
       .css('font-size', 12)
+      .css('z-index', 10000)
       .css('background-color', 'rgb(238, 238, 238)')
       .css('border', '1px solid black')
       .css('font-family', 'Verdana,Arial,sans-serif')
@@ -191,6 +193,7 @@ define([
     this.on('click', function(n, i) {
       clearTimeout(infoTimeout);
       scope.$info.text(n);
+      scope.$info.show();
 
       // reset the timeout for fading out the info div
       infoTimeout = setTimeout(function() {
