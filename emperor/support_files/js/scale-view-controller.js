@@ -82,11 +82,11 @@ define([
           dv.needsUpdate = true;
         }
       });
-    this.$globalDiv.append($sliderDiv);
     this.$globalDiv.append($viewval);
+    this.$globalDiv.append($sliderDiv);
 
     // Constant for width in slick-grid
-    var SLICK_WIDTH = 150, scope = this;
+    var SLICK_WIDTH = 30, scope = this;
 
     // Build the options dictionary
     var options = {'valueUpdatedCallback': function(e, args) {
@@ -186,11 +186,8 @@ define([
    * @param {float} height the container height.
    */
   ScaleViewController.prototype.resize = function(width, height) {
-    this.$body.height(this.$canvas.height() - this.$header.height());
-    this.$body.width(this.$canvas.width());
-
-    var $sliderDiv = this.$globalDiv.children('div');
-    $sliderDiv.css('width', this.$globalDiv.width() - 30 + 'px');
+    // call super, most of the header and body resizing logic is done there
+    EmperorAttributeABC.prototype.resize.call(this, width, height);
 
     //scale gridDiv based on whether global scaling available or not
     if (this.$scaledValue.is(':checked')) {
@@ -200,8 +197,6 @@ define([
       this.$gridDiv.css(
         'height', this.$body.height() - this.$globalDiv.height());
     }
-    // call super, most of the header and body resizing logic is done there
-    EmperorAttributeABC.prototype.resize.call(this, width, height);
   };
 
   /**

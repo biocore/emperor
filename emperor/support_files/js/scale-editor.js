@@ -24,6 +24,11 @@ function($, _, DecompositionView, ViewControllers) {
      */
     var $input;
     /**
+     * Node containing the parent div holding the slider info
+     * @type {Node}
+     */
+    var $parentDiv;
+    /**
      * Node containing the textbox for showing the slider value
      * @type {Node}
      */
@@ -37,9 +42,10 @@ function($, _, DecompositionView, ViewControllers) {
 
     /* @constructor */
     this.init = function() {
+      $parentDiv = $('<div style="flat:left;position:absolute;height:30px;width:200px;z-index:1000">');
       $viewval = $('<input type="text" value="' + args.item.value +
                    '" readonly  style="border:0;width:25px;">');
-      var $sliderDiv = $('<div style="width:115px;display:inline-block;' +
+      var $sliderDiv = $('<div style="width:200px;display:inline-block;' +
                          'background-color:rgb(238, 238, 238)">');
       $input = $sliderDiv.slider({
         range: 'max',
@@ -52,17 +58,23 @@ function($, _, DecompositionView, ViewControllers) {
           args.item.value = ui.value;
         },
         stop: function(event, ui) {
-          // commit the changes as soon as a new color is selected
+          // commit the changes as soon as a new scale is selected
           // http://stackoverflow.com/a/15513516/379593
           Slick.GlobalEditorLock.commitCurrentEdit();
         }
       });
-      $sliderDiv.appendTo(args.container);
+      $sliderDiv.appendTo($parentDiv);
       $viewval.appendTo(args.container);
+
+      // Calculate the position for the parent div and add it to the view
+      var container = $(args.container);
+      $parentDiv.css('top', '5px');
+      $parentDiv.css('left', container.width() + 5);
+      $parentDiv.appendTo(args.container);
     };
 
     this.destroy = function() {
-      $input.remove();
+      $parentDiv.remove();
     };
 
     this.focus = function() {
