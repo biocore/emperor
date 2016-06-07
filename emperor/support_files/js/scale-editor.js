@@ -42,7 +42,8 @@ function($, _, DecompositionView, ViewControllers) {
 
     /* @constructor */
     this.init = function() {
-      $parentDiv = $('<div style="flat:left;position:absolute;height:30px;width:200px;z-index:1000">');
+      $parentDiv = $('<div style="flat:left;position:absolute;height:30px;'
+                     'width:200px;z-index:1000">');
       $viewval = $('<input type="text" value="' + args.item.value +
                    '" readonly  style="border:0;width:25px;">');
       var $sliderDiv = $('<div style="width:200px;display:inline-block;' +
