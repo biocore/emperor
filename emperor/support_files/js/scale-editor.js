@@ -48,11 +48,13 @@ function($, _, DecompositionView, ViewControllers) {
 
     /* @constructor */
     this.init = function() {
+      var barLength = args.gridPosition.width - args.position.width - 10;
       $parentDiv = $('<div style="flat:left;position:absolute;height:30px;' +
-                     'width:200px;z-index:1000">');
+                     'width:' + barLength + 'px;z-index:1000">');
       $viewval = $('<input type="text" value="' + args.item.value +
                    '" readonly  style="border:0;width:25px;">');
-      var $sliderDiv = $('<div style="width:200px;display:inline-block;' +
+      var $sliderDiv = $('<div style="width:' + barLength +
+                         'px;display:inline-block;' +
                          'background-color:rgb(238, 238, 238)">');
       $input = $sliderDiv.slider({
         range: 'max',

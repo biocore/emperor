@@ -186,8 +186,8 @@ define([
    * @param {float} height the container height.
    */
   ScaleViewController.prototype.resize = function(width, height) {
-    // call super, most of the header and body resizing logic is done there
-    EmperorAttributeABC.prototype.resize.call(this, width, height);
+    this.$body.height(this.$canvas.height() - this.$header.height());
+    this.$body.width(this.$canvas.width());
 
     //scale gridDiv based on whether global scaling available or not
     if (this.$scaledValue.is(':checked')) {
@@ -195,8 +195,11 @@ define([
     }
     else {
       this.$gridDiv.css(
-        'height', this.$body.height() - this.$globalDiv.height());
+        'height', this.$body.height() - this.$globalDiv.height() - 10);
     }
+
+    // call super, most of the header and body resizing logic is done there
+    EmperorAttributeABC.prototype.resize.call(this, width, height);
   };
 
   /**
