@@ -64,9 +64,8 @@ define([
         step: 0.1,
         slide: function(event, ui) {
           $viewval.val(ui.value);
-          // Uncheck scale by value, since changing global
-          scope.$scaledValue.prop('checked', false);
-          scope.$scaledValue.trigger('change');
+        },
+        stop: function(event, ui) {
           // Update the slickgrid values with the new scale
           var data = scope.getSlickGridDataset();
           _.each(data, function(element) {
@@ -86,7 +85,7 @@ define([
     this.$globalDiv.append($sliderDiv);
 
     // Constant for width in slick-grid
-    var SLICK_WIDTH = 30, scope = this;
+    var SLICK_WIDTH = 50, scope = this;
 
     // Build the options dictionary
     var options = {'valueUpdatedCallback': function(e, args) {
@@ -106,6 +105,14 @@ define([
           category);
         // getting scale value for each point
         var scaled = scope.$scaledValue.is(':checked');
+        try {
+          var attributes = scope.getScale(uniqueVals, scaled);
+        } catch (err) {
+          // Do not fire off action, instead just reshow globalDiv so we don't
+          // lose the current scaling values.
+          scope.$scaledValue.prop('checked', false);
+          return;
+        }
         if (scaled) {
           scope.$globalDiv.hide();
         }
@@ -113,7 +120,6 @@ define([
           scope.$globalDiv.show();
         }
         scope.resize();
-        var attributes = scope.getScale(uniqueVals, scaled);
 
         // fetch the slickgrid-formatted data
         var data = decompViewDict.setCategory(
@@ -242,26 +248,24 @@ define([
     } else {
       //See if we have numeric values, fail if no
       var split = util.splitNumericValues(values);
-      if (split.numeric.length < 1) {
+      if (split.numeric.length < 2) {
         alert('Not enough numeric values in category, can not scale by value!');
-        this.$scaledValue.prop('checked', false);
-        this.$scaledValue.trigger('change');
         throw new Error('no numeric values');
       }
 
       // Alert if we have non-numerics and scale them to 0
-      if (nonNumeric.length > 0) {
-        _.each(nonNumeric, function(element) {
+      if (split.nonNumeric.length > 0) {
+        _.each(split.nonNumeric, function(element) {
           scale[element] = 0.0;
         });
         alert('Non-numeric values detected. These will be hidden!');
       }
 
       //scale remaining values between 1 and 5 scale
-      var min = _.min(numeric);
-      var max = _.max(numeric);
+      var min = _.min(split.numeric);
+      var max = _.max(split.numeric);
       var range = max - min;
-      _.each(numeric, function(element) {
+      _.each(split.numeric, function(element) {
           // Scale the values, then round to 4 decimaal places.
           scale[element] = Math.round(
             (1 + (element - min) * 4 / range) * 10000) / 10000;
