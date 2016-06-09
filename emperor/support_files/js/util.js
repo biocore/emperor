@@ -89,6 +89,29 @@ define(['underscore'], function(_) {
 
   /**
    *
+   * Split list of string values into numeric and non-numeric values
+   * @param {String[]} values The values to check
+   * @return {Object} Object with two keys, `numeric` and `nonNumeric`. Numeric
+   * holds an array of all numeric values fownd, converted to numbers.
+   * nonNumeric holds an array of the remaining values, still as strings.
+   */
+   function splitNumericValues(values) {
+    var numeric = [];
+    var nonNumeric = [];
+    _.each(values, function(element) {
+        // http://stackoverflow.com/a/9716488
+        if (!isNaN(parseFloat(element)) && isFinite(element)) {
+          numeric.push(+element);
+        }
+        else {
+          nonNumeric.push(element);
+        }
+      });
+    return {numeric: numeric, nonNumeric: nonNumeric};
+   }
+
+  /**
+   *
    * Escape special characters in a string for use in a regular expression.
    * Credits go to [this SO answer]{@link http://stackoverflow.com/a/5306111}
    *
@@ -120,5 +143,5 @@ define(['underscore'], function(_) {
   return {'truncateLevel': truncateLevel, 'naturalSort': naturalSort,
           'convertXMLToString': convertXMLToString,
           'escapeRegularExpression': escapeRegularExpression,
-          'cleanHTML': cleanHTML};
+          'cleanHTML': cleanHTML, 'splitNumericValues': splitNumericValues};
 });

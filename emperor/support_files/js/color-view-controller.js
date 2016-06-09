@@ -1,11 +1,12 @@
 define([
     'jquery',
     'underscore',
+    'util',
     'view',
     'viewcontroller',
     'color-editor',
     'chroma'
-], function($, _, DecompositionView, ViewControllers, Color, chroma) {
+], function($, _, util, DecompositionView, ViewControllers, Color, chroma) {
 
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
@@ -195,9 +196,9 @@ define([
    */
    ColorViewController._nonNumericPlottables = function(uniqueVals, data) {
      // Filter down to only non-numeric data
-     var nonNumeric = uniqueVals.filter(isNaN);
+     var split = util.splitNumericValues(uniqueVals);
      var plotList = data.filter(function(x) {
-       return $.inArray(x.category, nonNumeric) !== -1;
+       return $.inArray(x.category, split.nonNumeric) !== -1;
      });
      // Build list of plottables and return
      var plottables = [];
@@ -317,28 +318,23 @@ define([
     map = chroma.brewer[map];
 
     // Get list of only numeric values, error if none
-    numericValues = [];
-    for (var i = 0; i < values.length; i++) {
-      if (!isNaN(values[i])) {
-        numericValues.push(Number(values[i]));
-      }
-    }
-    if (numericValues.length < 2) {
+    var split = util.splitNumericValues(values);
+    if (split.numeric.length < 2) {
       throw new Error('non-numeric category');
     }
-    min = _.min(numericValues);
-    max = _.max(numericValues);
+    min = _.min(split.numeric);
+    max = _.max(split.numeric);
     var interpolator = chroma.scale(map).domain([min, max]);
     var colors = {};
-    for (var i = 0; i < values.length; i++) {
-      var val = Number(values[i]);
-      if (!isNaN(val)) {
-        colors[values[i]] = interpolator(val).hex();
-      } else {
-        //Gray out non-numeric values
-        colors[values[i]] = nanColor;
-      }
-    }
+
+    // Color all the numeric values
+    _.each(split.numeric, function(element) {
+      colors[element] = interpolator(element).hex();
+    });
+    //Gray out non-numeric values
+    _.each(split.nonNumeric, function(element) {
+      colors[element] = nanColor;
+    });
     //build the SVG showing the gradient of colors for values
     var mid = (min + max) / 2;
     var step = (max - min) / 100;
