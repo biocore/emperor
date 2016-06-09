@@ -48,7 +48,9 @@ function($, _, DecompositionView, ViewControllers) {
 
     /* @constructor */
     this.init = function() {
-      var barLength = args.gridPosition.width - args.position.width - 10;
+      var pos = args.grid.getActiveCell();
+      var metaColPos = args.grid.getCellNodeBox(pos.row, pos.cell + 1);
+      var barLength = metaColPos.right - metaColPos.left - 10;
       $parentDiv = $('<div style="flat:left;position:absolute;height:30px;' +
                      'width:' + barLength + 'px;z-index:1000">');
       $viewval = $('<input type="text" value="' + args.item.value +
