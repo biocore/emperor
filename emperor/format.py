@@ -44,7 +44,7 @@ def format_emperor_autograph(metadata_fp, coords_fp, language='HTML'):
     _languages = {'HTML': ('<!--', '-->'), 'Python': ('"""', '"""'),
                   'C': ('/*', '*/'), 'Bash': ('<<COMMENT', 'COMMENT')}
 
-    assert language in _languages.keys(), ('%s is not a supported language' %
+    assert language in list(_languages.keys()), ('%s is not a supported language' %
                                            language)
 
     autograph = []

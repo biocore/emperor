@@ -60,7 +60,7 @@ def scale_custom_coords(custom_axes,coords):
     to_mx = 2*max(coords[1][:,len(custom_axes)])
 
     # affine transformation for each custom axis
-    for i in xrange(len(custom_axes)):
+    for i in range(len(custom_axes)):
         from_mn = min(coords[1][:,i])
         from_mx = max(coords[1][:,i])
         coords[1][:,i] = (coords[1][:,i]  - from_mn) / (from_mx - from_mn)

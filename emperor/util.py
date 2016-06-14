@@ -252,7 +252,7 @@ def keep_columns_from_mapping_file(data, headers, columns, negate=False):
     headers = deepcopy(headers)
 
     if negate:
-        indices_of_interest = range(0, len(headers))
+        indices_of_interest = list(range(0, len(headers)))
     else:
         indices_of_interest = []
 
@@ -524,7 +524,7 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
             values_dict[colname] = []
         values_dict[colname].extend(vals)
 
-    for key, v in values_dict.items():
+    for key, v in list(values_dict.items()):
         for value in v:
             # variable that is going to contain the name of the column for
             # multiple subtitutions

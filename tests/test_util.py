@@ -121,9 +121,9 @@ class TopLevelTests(TestCase):
         out_data, out_headers = preprocess_mapping_file(
             self.mapping_file_data,
             self.mapping_file_headers, ['Treatment', 'DOB', 'Treatment&&DOB'])
-        self.assertEquals(out_headers,
+        self.assertEqual(out_headers,
                           ['SampleID', 'Treatment', 'DOB', 'Treatment&&DOB'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_A)
+        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_A)
 
         # test it has a different order in the concatenated columns i. e. the
         # value of DOB comes before the value of Treatment in the result
@@ -131,17 +131,17 @@ class TopLevelTests(TestCase):
             self.mapping_file_data,
             self.mapping_file_headers,
             ['Treatment', 'DOB', 'DOB&&Treatment'])
-        self.assertEquals(out_headers,
+        self.assertEqual(out_headers,
                           ['SampleID', 'Treatment', 'DOB', 'DOB&&Treatment'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_B)
+        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_B)
 
         # test it filter columns properly
         out_data, out_headers = preprocess_mapping_file(
             self.mapping_file_data,
             self.mapping_file_headers,
             ['Treatment'])
-        self.assertEquals(out_headers, ['SampleID', 'Treatment'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_C)
+        self.assertEqual(out_headers, ['SampleID', 'Treatment'])
+        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_C)
 
         # check it removes columns with unique values
         out_data, out_headers = preprocess_mapping_file(
@@ -149,10 +149,10 @@ class TopLevelTests(TestCase):
             self.mapping_file_headers,
             ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'],
             unique=True)
-        self.assertEquals(out_headers,
+        self.assertEqual(out_headers,
                           ['SampleID', 'LinkerPrimerSequence', 'Treatment',
                            'DOB'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_D)
+        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_D)
 
         # check it removes columns where there is only one value
         out_data, out_headers = preprocess_mapping_file(
@@ -160,10 +160,10 @@ class TopLevelTests(TestCase):
             self.mapping_file_headers,
             ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB', 'Description'],
             single=True)
-        self.assertEquals(out_headers,
+        self.assertEqual(out_headers,
                           ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB',
                            'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_E)
+        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_E)
 
         # keep only treatment concat treatment and DOB and remove all
         # categories with only one value and all with unique values for field
@@ -172,16 +172,16 @@ class TopLevelTests(TestCase):
             self.mapping_file_headers,
             ['Treatment', 'Treatment&&DOB'],
             unique=True, single=True)
-        self.assertEquals(out_headers,
+        self.assertEqual(out_headers,
                           ['SampleID', 'Treatment', 'Treatment&&DOB'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_F)
+        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_F)
 
         out_data, out_headers = preprocess_mapping_file(
             self.mapping_file_data,
             self.mapping_file_headers,
             ['Treatment', 'DOB'], clones=3)
-        self.assertEquals(out_data, MAPPING_FILE_DATA_DUPLICATED)
-        self.assertEquals(out_headers, ['SampleID', 'Treatment', 'DOB'])
+        self.assertEqual(out_data, MAPPING_FILE_DATA_DUPLICATED)
+        self.assertEqual(out_headers, ['SampleID', 'Treatment', 'DOB'])
 
         # check it doesn't remove columns because all are included in the list
         out_data, out_headers = preprocess_mapping_file(
@@ -190,11 +190,11 @@ class TopLevelTests(TestCase):
             ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
              'Treatment', 'DOB', 'Description'],
             unique=True)
-        self.assertEquals(out_headers,
+        self.assertEqual(out_headers,
                           ['SampleID', 'BarcodeSequence',
                            'LinkerPrimerSequence', 'Treatment', 'DOB',
                            'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
+        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
 
         # check it doesn't remove columns because all are included in the list
         out_data, out_headers = preprocess_mapping_file(
@@ -203,11 +203,11 @@ class TopLevelTests(TestCase):
             ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
              'Treatment', 'DOB', 'Description'],
             single=True)
-        self.assertEquals(out_headers,
+        self.assertEqual(out_headers,
                           ['SampleID', 'BarcodeSequence',
                            'LinkerPrimerSequence', 'Treatment', 'DOB',
                            'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
+        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
 
         # check it doesn't remove columns because all are included in the list
         out_data, out_headers = preprocess_mapping_file(
@@ -216,11 +216,11 @@ class TopLevelTests(TestCase):
             ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
              'Treatment', 'DOB', 'Description'],
             unique=True, single=True)
-        self.assertEquals(out_headers,
+        self.assertEqual(out_headers,
                           ['SampleID', 'BarcodeSequence',
                            'LinkerPrimerSequence', 'Treatment', 'DOB',
                            'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
+        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
 
         # make sure that when keeping columns that are all unique the
         # columns are basically intact i. e. everything in the dataset is kept
@@ -229,11 +229,11 @@ class TopLevelTests(TestCase):
             ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
              'Treatment', 'DOB', 'Description'],
             [None], unique=False)
-        self.assertEquals(out_headers,
+        self.assertEqual(out_headers,
                           ['SampleID', 'BarcodeSequence',
                            'LinkerPrimerSequence', 'Treatment', 'DOB',
                            'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
+        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
 
     def test_keep_columns_from_mapping_file(self):
         """Check correct selection of metadata is being done"""
@@ -241,23 +241,23 @@ class TopLevelTests(TestCase):
         # test it returns the same data
         out_data, out_headers = keep_columns_from_mapping_file(
             self.mapping_file_data, self.mapping_file_headers, [])
-        self.assertEquals(out_data, [[], [], [], [], [], [], [], [], []])
-        self.assertEquals(out_headers, [])
+        self.assertEqual(out_data, [[], [], [], [], [], [], [], [], []])
+        self.assertEqual(out_headers, [])
 
         # test it can filter a list of columns
         out_data, out_headers = keep_columns_from_mapping_file(
             self.mapping_file_data, self.mapping_file_headers,
             ['SampleID', 'LinkerPrimerSequence', 'Description'])
-        self.assertEquals(out_headers,
+        self.assertEqual(out_headers,
                           ['SampleID', 'LinkerPrimerSequence', 'Description'])
-        self.assertEquals(out_data, PRE_PROCESS_B)
+        self.assertEqual(out_data, PRE_PROCESS_B)
 
         # test correct negation of filtering
         out_data, out_headers = keep_columns_from_mapping_file(
             self.mapping_file_data, self.mapping_file_headers,
             ['LinkerPrimerSequence', 'Description'], True)
-        self.assertEquals(out_data, PRE_PROCESS_A)
-        self.assertEquals(out_headers,
+        self.assertEqual(out_data, PRE_PROCESS_A)
+        self.assertEqual(out_headers,
                           ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB'])
 
     def test_preprocess_coords_file(self):
@@ -276,18 +276,18 @@ class TopLevelTests(TestCase):
              [0.2, 0.1, -0.1, -0.2, 0.08],
              [-0.3, 0.04, -0.01,  0.06, -0.34]])
 
-        self.assertEquals(out_coords_header, self.coords_header)
-        self.assertEquals(out_coords_high, None)
-        self.assertEquals(out_coords_low, None)
+        self.assertEqual(out_coords_header, self.coords_header)
+        self.assertEqual(out_coords_high, None)
+        self.assertEqual(out_coords_low, None)
         assert_almost_equal(self.coords_eigenvalues, array([1, 2, 3, 4]))
         assert_almost_equal(self.coords_pct, array([40, 30, 20, 10]))
-        self.assertEquals(o_clones, 0)
+        self.assertEqual(o_clones, 0)
 
         # check each individual value because currently cogent assertEquals
         # fails when comparing the whole matrix at once
         for out_el, exp_el in zip(out_coords_data, expected_coords_data):
             for out_el_sub, exp_el_sub in zip(out_el, exp_el):
-                self.assertAlmostEquals(out_el_sub, exp_el_sub)
+                self.assertAlmostEqual(out_el_sub, exp_el_sub)
 
         # case for jackknifing, based on qiime/tests/test_util.summarize_pcoas
         out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
@@ -297,12 +297,12 @@ class TopLevelTests(TestCase):
                 self.jk_mapping_file_headers, self.jk_mapping_file_data,
                 jackknifing_method='sdev', pct_variation_below_one=True)
 
-        self.assertEquals(out_coords_header, ['1', '2', '3'])
+        self.assertEqual(out_coords_header, ['1', '2', '3'])
         assert_almost_equal(out_coords_data, array([[1.4, -0.0125, -1.425],
                                                     [-2.475, -4.025, 4.7]]))
         assert_almost_equal(out_eigenvals, array([0.81, 0.14, 0.05]))
         assert_almost_equal(out_pcts, array([0.8, 0.1, 0.1]))
-        self.assertEquals(o_clones, 0)
+        self.assertEqual(o_clones, 0)
 
         # test the coords are working fine
         assert_almost_equal(out_coords_low,
@@ -322,7 +322,7 @@ class TopLevelTests(TestCase):
                 self.jk_mapping_file_data_gradient, custom_axes=['Time'],
                 jackknifing_method='sdev', pct_variation_below_one=True)
 
-        self.assertEquals(out_coords_header,
+        self.assertEqual(out_coords_header,
                           ['PC.354', 'PC.355', 'PC.635', 'PC.636'])
         assert_almost_equal(out_coords_data,
                             array([[-2.4, 1.15, 0.55, -0.95, 0.85],
@@ -349,7 +349,7 @@ class TopLevelTests(TestCase):
                     2.49833445e-01],
                    [1.00000000e-05, 2.80995255e-02, 7.87797563e-02,
                     4.78713554e-02]]))
-        self.assertEquals(o_clones, 0)
+        self.assertEqual(o_clones, 0)
 
         # test that pct_variation_below_one is working
         out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
@@ -361,7 +361,7 @@ class TopLevelTests(TestCase):
                 self.jk_mapping_file_data_gradient, custom_axes=['Time'],
                 jackknifing_method='sdev', pct_variation_below_one=False)
 
-        self.assertEquals(out_coords_header,
+        self.assertEqual(out_coords_header,
                           ['PC.354', 'PC.355', 'PC.635', 'PC.636'])
         assert_almost_equal(
             out_coords_data,
@@ -388,7 +388,7 @@ class TopLevelTests(TestCase):
                 self.jk_mapping_file_headers, self.jk_mapping_file_data,
                 is_comparison=True, pct_variation_below_one=True)
 
-        self.assertEquals(out_coords_header,
+        self.assertEqual(out_coords_header,
                           ['1_0', '2_0', '3_0', '1_1', '2_1', '3_1', '1_2',
                            '2_2', '3_2', '1_3', '2_3', '3_3'])
         assert_almost_equal(
@@ -403,9 +403,9 @@ class TopLevelTests(TestCase):
                    [2.4, 4., -4.8]]))
         assert_almost_equal(out_eigenvals, self.jk_coords_eigenvalues[0])
         assert_almost_equal(out_pcts, self.jk_coords_pcts[0])
-        self.assertEquals(out_coords_low, None)
-        self.assertEquals(out_coords_high, None)
-        self.assertEquals(o_clones, 4)
+        self.assertEqual(out_coords_low, None)
+        self.assertEqual(out_coords_high, None)
+        self.assertEqual(o_clones, 4)
 
     def test_fill_mapping_field_from_mapping_file(self):
         """Check the values are being correctly filled in"""
@@ -414,7 +414,7 @@ class TopLevelTests(TestCase):
         out_data = fill_mapping_field_from_mapping_file(
             self.broken_mapping_file_data, self.mapping_file_headers_gradient,
             'Time:200;Weight:800')
-        self.assertEquals(out_data, [
+        self.assertEqual(out_data, [
             ['PC.354', 'Control', '3', '40', 'Control20061218'],
             ['PC.355', 'Control', '200', '44', 'Control20061218'],
             ['PC.635', 'Fast', '9', '800', 'Fast20080116'],
@@ -437,7 +437,7 @@ class TopLevelTests(TestCase):
             self.broken_mapping_file_data_2_values,
             self.mapping_file_headers_gradient,
             'Time:Treatment==Control=444;Time:Treatment==Fast=888')
-        self.assertEquals(out_data, [
+        self.assertEqual(out_data, [
             ['PC.354', 'Control', '3', '40', 'Control20061218'],
             ['PC.355', 'Control', '444', '44', 'Control20061218'],
             ['PC.635', 'Fast', '888', 'x', 'Fast20080116'],
@@ -472,11 +472,11 @@ class TopLevelTests(TestCase):
             ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
              'Treatment', 'DOB', 'Descr"""""iption'])
 
-        self.assertEquals(
+        self.assertEqual(
             o_sanitized_data,
             ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
              'Treatment', 'DOB', 'Description'])
-        self.assertEquals(o_sanitized_headers, [
+        self.assertEqual(o_sanitized_headers, [
             ['PC.354', "Dr. Bronners", 'Control', '20061218',
              'Control_mouse_I.D._354'],
             ['PC.355', 'AACTCGTCGATG', 'Control', '20061218',

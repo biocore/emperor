@@ -114,7 +114,7 @@ class TopLevelTests(TestCase):
         o_headers, o_otu_table = sort_taxa_table_by_pcoa_coords(
             self.coords_header, self.otu_table, self.otu_headers)
 
-        self.assertEquals(o_headers, ['PC.354', 'PC.356', 'PC.481', 'PC.593',
+        self.assertEqual(o_headers, ['PC.354', 'PC.356', 'PC.481', 'PC.593',
                                       'PC.355', 'PC.607', 'PC.634', 'PC.636',
                                       'PC.635'])
         assert_almost_equal(o_otu_table, OTU_TABLE_A)
@@ -122,7 +122,7 @@ class TopLevelTests(TestCase):
         # case with shuffled inputs and fewer samples
         o_headers, o_otu_table = sort_taxa_table_by_pcoa_coords(
             ['PC.354', 'PC.356', 'PC.635'], self.otu_table, self.otu_headers)
-        self.assertEquals(o_headers, ['PC.354', 'PC.356', 'PC.635'])
+        self.assertEqual(o_headers, ['PC.354', 'PC.356', 'PC.635'])
         assert_almost_equal(o_otu_table, array(
             [[0.01, 0.02, 0.04697987],
              [0., 0.02, 0.02013423],
@@ -138,7 +138,7 @@ class TopLevelTests(TestCase):
 
         # check it correctly sorts the files according to the suffix
         out_sorted = sort_comparison_filenames(self.coord_fps)
-        self.assertEquals(out_sorted, [
+        self.assertEqual(out_sorted, [
             'output_data/emperor/bray_curtis_pc_transformed_q1.txt',
             'output_data/emperor/bray_curtis_pc_transformed_q2.txt',
             'output_data/emperor/bray_curtis_pc_transformed_q3.txt',
@@ -172,7 +172,7 @@ class TopLevelTests(TestCase):
         # if files with garbage are passed in, the sorting should be still
         # consistent,putting the "garbaged" filenames at the beginning
         out_sorted = sort_comparison_filenames(self.coord_fps_garbage)
-        self.assertEquals(out_sorted, [
+        self.assertEqual(out_sorted, [
             'output_data/emperor/aaaaaaa.txt',
             'output_data/emperor/boom.txt',
             'output_data/emperor/another_file with some characters and '
@@ -213,7 +213,7 @@ class TopLevelTests(TestCase):
             'output_data_q44.txt/emperor/bray_curtis_pc_transformed_q11.txt',
             'output_dataq-5.txt/emperor/bray_curtis_pc_transformed_q3.txt',
             'output_data_q511.txt/emperor/bray_curtis_pc_transformed_q1.txt'])
-        self.assertEquals(out_sorted, [
+        self.assertEqual(out_sorted, [
             'output_data_q511.txt/emperor/bray_curtis_pc_transformed_q1.txt',
             'output_data/emperorq11.txt/bray_curtis_pc_transformed_q2.txt',
             'output_dataq-5.txt/emperor/bray_curtis_pc_transformed_q3.txt',
@@ -221,7 +221,7 @@ class TopLevelTests(TestCase):
             'output_data_q44.txt/emperor/bray_curtis_pc_transformed_q11.txt'])
 
         # make sure nothing happens when an empty list is passed
-        self.assertEquals(sort_comparison_filenames([]), [])
+        self.assertEqual(sort_comparison_filenames([]), [])
 
 
 COORDS = array(

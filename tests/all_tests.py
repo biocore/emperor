@@ -87,10 +87,10 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
         unittest_names.sort()
 
         for unittest_name in unittest_names:
-            print "Testing %s:\n" % unittest_name
+            print("Testing %s:\n" % unittest_name)
             command = '%s %s -v' % (python_name, unittest_name)
             stdout, stderr, return_value = console(command)
-            print stderr
+            print(stderr)
             if not unittest_good_pattern.search(stderr):
                 if application_not_found_pattern.search(stderr):
                     missing_application_tests.append(unittest_name)
@@ -104,39 +104,39 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
         o, e, r = console('phantomjs %s %s' % (runner, index))
 
         if o:
-            print o
+            print(o)
         if e:
-            print e
+            print(e)
 
         # if all the tests passed
         javascript_tests_passed = True if r == 0 else False
     else:
         javascript_tests_passed = True
 
-    print "==============\nResult summary\n=============="
+    print("==============\nResult summary\n==============")
 
     if not suppress_unit_tests:
-        print "\nUnit test result summary\n------------------------\n"
+        print("\nUnit test result summary\n------------------------\n")
         if bad_tests:
-            print ("\nFailed the following unit tests.\n%s"
-                   % '\n'.join(bad_tests))
+            print(("\nFailed the following unit tests.\n%s"
+                   % '\n'.join(bad_tests)))
 
         if missing_application_tests:
-            print ("\nFailed the following unit tests, in part or whole due "
+            print(("\nFailed the following unit tests, in part or whole due "
                    "to missing external applications.\nDepending on the "
                    "Emperor features you plan to use, this may not be "
-                   "critical.\n%s" % '\n'.join(missing_application_tests))
+                   "critical.\n%s" % '\n'.join(missing_application_tests)))
 
         if not(missing_application_tests or bad_tests):
-            print "\nAll unit tests passed.\n"
+            print("\nAll unit tests passed.\n")
 
     if not suppress_javascript_unit_tests:
         print ('\nJavaScript unit tests result summary\n'
                '------------------------------------\n')
         if javascript_tests_passed:
-            print 'All JavaScript unit tests passed.\n'
+            print('All JavaScript unit tests passed.\n')
         else:
-            print 'JavaScript unit tests failed, check the summary above.'
+            print('JavaScript unit tests failed, check the summary above.')
 
     # In case there were no failures of any type, exit with a return code of 0
     return_code = 1
