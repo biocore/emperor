@@ -8,7 +8,6 @@
 from __future__ import division
 
 from numpy import ndarray, ones, zeros, vstack
-from string import strip
 
 from os import listdir
 from os.path import abspath, dirname, join, isdir
@@ -514,11 +513,11 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     out_data = deepcopy(data)
 
     # parsing the input values
-    values = map(strip, values.split(';'))
+    values = [val.strip() for val in values.split(';')]
     values_dict = {}
     for v in values:
-        colname, vals = map(strip, v.split(':', 1))
-        vals = map(strip, vals.split(','))
+        colname, vals = [val for val in v.split(':', 1)]
+        vals = [val.strip() for val in vals.split(',')]
         assert len(vals) == 1, ("You can only pass 1 replacement value:"
                                 " {}".format(vals))
         if colname not in values_dict:

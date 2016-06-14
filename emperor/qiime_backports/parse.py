@@ -12,8 +12,6 @@ __email__ = "gregcaporaso@gmail.com"
 __status__ = "Development"
 
 
-from string import strip
-
 from numpy import asarray
 
 class QiimeParseError(Exception):
@@ -33,9 +31,8 @@ def parse_mapping_file(lines, strip_quotes=True, suppress_stripping=False):
         try:
             lines = open(lines,'U')
         except IOError:
-            raise QiimeParseError,\
-             ("A string was passed that doesn't refer "
-              "to an accessible filepath.")
+            raise QiimeParseError("A string was passed that doesn't refer "
+                                  "to an accessible filepath.")
         
     if strip_quotes:
         if suppress_stripping:
@@ -77,9 +74,9 @@ def parse_mapping_file(lines, strip_quotes=True, suppress_stripping=False):
                 tmp_line.extend(['']*(len(header)-len(tmp_line)))
             mapping_data.append(tmp_line)
     if not header:
-        raise QiimeParseError, "No header line was found in mapping file."
+        raise QiimeParseError("No header line was found in mapping file.")
     if not mapping_data:
-        raise QiimeParseError, "No data found in mapping file."
+        raise QiimeParseError("No data found in mapping file.")
     
     return mapping_data, header, comments
 
@@ -126,9 +123,8 @@ def parse_mapping_file_to_dict(*args, **kwargs):
 def process_otu_table_sample_ids(sample_id_fields):
     """ process the sample IDs line of an OTU table """
     if len(sample_id_fields) == 0:
-            raise ValueError, \
-             'Error parsing sample ID line in OTU table. Fields are %s' \
-             % ' '.join(sample_id_fields)
+            raise ValueError('Error parsing sample ID line in OTU table. '
+                             'Fields are %s' % ' '.join(sample_id_fields))
             
     # Detect if a metadata column is included as the last column. This
     # field will be named either 'Consensus Lineage' or 'OTU Metadata',
@@ -166,9 +162,9 @@ def parse_classic_otu_table(lines,count_map_f=int, remove_empty_rows=False):
                     sample_ids, has_metadata = process_otu_table_sample_ids(
                      line.strip().split('\t')[1:])
                 except ValueError:
-                    raise ValueError, \
-                     "Error parsing sample IDs in OTU table. Appears to be a"+\
-                     " legacy OTU table. Sample ID line:\n %s" % line
+                    raise ValueError("Error parsing sample IDs in OTU table. "
+                                     "Appears to be a legacy OTU table. Sample"
+                                     " ID line:\n %s" % line)
             elif not line.startswith('#'):
                 if not sample_ids:
                     # current line is the first non-space, non-comment line 
@@ -177,9 +173,8 @@ def parse_classic_otu_table(lines,count_map_f=int, remove_empty_rows=False):
                         sample_ids, has_metadata = process_otu_table_sample_ids(
                          line.strip().split('\t')[1:])
                     except ValueError:
-                        raise ValueError,\
-                         "Error parsing sample IDs in OTU table."+\
-                         " Sample ID line:\n %s" % line
+                        raise ValueError("Error parsing sample IDs in OTU "
+                                         "table. Sample ID line:\n %s" % line)
                 else:
                     # current line is OTU line in OTU table
                     fields = line.split('\t')
