@@ -118,9 +118,9 @@ class TopLevelTests(TestCase):
               0.00671141, 0.14765101, 0.01351351,
               0., 0.01342282, 0.00666667]]))
         self.assertEqual(o_lineages,
-                          ['Root;k__Bacteria;p__Firmicutes',
-                           'Root;k__Bacteria;p__Bacteroidetes',
-                           'Root;k__Bacteria;p__Tenericutes'])
+                         ['Root;k__Bacteria;p__Firmicutes',
+                          'Root;k__Bacteria;p__Bacteroidetes',
+                          'Root;k__Bacteria;p__Tenericutes'])
         assert_almost_equal(o_prevalence,
                             array([1., 0.6646394, 0.08185147]))
 
@@ -230,10 +230,10 @@ class TopLevelTests(TestCase):
                                     0.01, 0.02027027, 0.01360544, 0.01342282,
                                     0.02666667]]))
         self.assertEqual(o_otu_lineages,
-                          ['Root;k__Bacteria;p__Firmicutes',
-                           'Root;k__Bacteria;p__Bacteroidetes',
-                           'Root;k__Bacteria;p__Tenericutes',
-                           'Root;k__Bacteria;Other'])
+                         ['Root;k__Bacteria;p__Firmicutes',
+                          'Root;k__Bacteria;p__Bacteroidetes',
+                          'Root;k__Bacteria;p__Tenericutes',
+                          'Root;k__Bacteria;Other'])
         assert_almost_equal(o_prevalence,
                             array([1., 0.66471926, 0.08193196, 0.04374296]))
         self.assertEqual(lines, LINES)

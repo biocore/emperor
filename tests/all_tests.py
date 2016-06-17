@@ -63,8 +63,8 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
 
     test_dir = abspath(dirname(__file__))
 
-    unittest_good_pattern = re.compile('OK\s*$')
-    application_not_found_pattern = re.compile('ApplicationNotFoundError')
+    unittest_good_pattern = re.compile(b'OK\s*$')
+    application_not_found_pattern = re.compile(b'ApplicationNotFoundError')
     python_name = 'python'
     bad_tests = []
     missing_application_tests = []

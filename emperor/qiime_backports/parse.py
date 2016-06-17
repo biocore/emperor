@@ -96,11 +96,12 @@ def parse_metadata_state_descriptions(state_string):
     result = {}
     state_string = state_string.strip()
     if state_string:
-        cols = list(map(strip, state_string.split(';')))
+        cols = [s.strip()  for s in state_string.split(';')]
         for c in cols:
             # split on the first colon to account for category names with colons
-            colname, vals = list(map(strip, c.split(':', 1)))
-            vals = list(map(strip, vals.split(',')))
+            colname, vals = [s.strip() for s in c.split(':', 1)]
+
+            vals = [v.strip() for v in vals.split(',')]
             result[colname] = set(vals)
     return result
 
@@ -192,7 +193,7 @@ def parse_classic_otu_table(lines,count_map_f=int, remove_empty_rows=False):
                         if remove_empty_rows and (valid_fields>=0).all() and \
                            sum(valid_fields)==0.0:
                             continue
-                        metadata.append(list(map(strip, fields[-1].split(';'))))
+                        metadata.append([f.strip() for f in fields[-1].split(';')])
                     else:
                         # otherwise all columns are appended to otu_table
                         # added in a try/except to handle OTU tables containing
@@ -240,8 +241,8 @@ def parse_coords(lines):
         raise QiimeParseError("The line with the vector number was not found"
             ", this information is required in coordinates files")
 
-    lines = list(map(strip, lines[1:]))   #discard first line, which is a label
-    lines = [_f for _f in lines if _f] #remove any blank lines
+    lines = [l.strip() for l in lines[1:]] # discard first line, which is a label
+    lines = [_f for _f in lines if _f] # remove any blank lines
 
     # check on this information post removal of blank lines
     if not lines[-2].startswith('eigvals'):
@@ -258,8 +259,8 @@ def parse_coords(lines):
     #finally, dump the rest of the lines into a table
     header, result = [], []
     for line in lines[:-2]:
-        fields = list(map(strip, line.split('\t')))
+        fields = [f.strip() for f in line.split('\t')]
         header.append(fields[0])
-        result.append(list(map(float, fields[1:])))
+        result.append([float(f) for f in fields[1:]])
 
     return header, asarray(result), eigvals, pct_var

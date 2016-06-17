@@ -30,8 +30,8 @@ def get_custom_coords(axis_names,mapping, coords):
             # get index of column in mapping file
             col_idx = mapping[0].index(axis)
             # extract column data
-            col = zip(*mapping[1:])[col_idx]
-            sample_IDs = zip(*mapping[1:])[0]
+            col = list(zip(*mapping[1:]))[col_idx]
+            sample_IDs = list(zip(*mapping[1:]))[0]
             new_coords = array([])
             # load custom coord for this axis for each sample ID 
             for id in coords[0]:

@@ -115,8 +115,8 @@ class TopLevelTests(TestCase):
             self.coords_header, self.otu_table, self.otu_headers)
 
         self.assertEqual(o_headers, ['PC.354', 'PC.356', 'PC.481', 'PC.593',
-                                      'PC.355', 'PC.607', 'PC.634', 'PC.636',
-                                      'PC.635'])
+                                     'PC.355', 'PC.607', 'PC.634', 'PC.636',
+                                     'PC.635'])
         assert_almost_equal(o_otu_table, OTU_TABLE_A)
 
         # case with shuffled inputs and fewer samples

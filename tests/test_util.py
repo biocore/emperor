@@ -122,7 +122,7 @@ class TopLevelTests(TestCase):
             self.mapping_file_data,
             self.mapping_file_headers, ['Treatment', 'DOB', 'Treatment&&DOB'])
         self.assertEqual(out_headers,
-                          ['SampleID', 'Treatment', 'DOB', 'Treatment&&DOB'])
+                         ['SampleID', 'Treatment', 'DOB', 'Treatment&&DOB'])
         self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_A)
 
         # test it has a different order in the concatenated columns i. e. the
@@ -132,7 +132,7 @@ class TopLevelTests(TestCase):
             self.mapping_file_headers,
             ['Treatment', 'DOB', 'DOB&&Treatment'])
         self.assertEqual(out_headers,
-                          ['SampleID', 'Treatment', 'DOB', 'DOB&&Treatment'])
+                         ['SampleID', 'Treatment', 'DOB', 'DOB&&Treatment'])
         self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_B)
 
         # test it filter columns properly
@@ -150,8 +150,8 @@ class TopLevelTests(TestCase):
             ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'],
             unique=True)
         self.assertEqual(out_headers,
-                          ['SampleID', 'LinkerPrimerSequence', 'Treatment',
-                           'DOB'])
+                         ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                          'DOB'])
         self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_D)
 
         # check it removes columns where there is only one value
@@ -161,8 +161,8 @@ class TopLevelTests(TestCase):
             ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB', 'Description'],
             single=True)
         self.assertEqual(out_headers,
-                          ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB',
-                           'Description'])
+                         ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB',
+                          'Description'])
         self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_E)
 
         # keep only treatment concat treatment and DOB and remove all
@@ -173,7 +173,7 @@ class TopLevelTests(TestCase):
             ['Treatment', 'Treatment&&DOB'],
             unique=True, single=True)
         self.assertEqual(out_headers,
-                          ['SampleID', 'Treatment', 'Treatment&&DOB'])
+                         ['SampleID', 'Treatment', 'Treatment&&DOB'])
         self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_F)
 
         out_data, out_headers = preprocess_mapping_file(
@@ -191,9 +191,9 @@ class TopLevelTests(TestCase):
              'Treatment', 'DOB', 'Description'],
             unique=True)
         self.assertEqual(out_headers,
-                          ['SampleID', 'BarcodeSequence',
-                           'LinkerPrimerSequence', 'Treatment', 'DOB',
-                           'Description'])
+                         ['SampleID', 'BarcodeSequence',
+                          'LinkerPrimerSequence', 'Treatment', 'DOB',
+                          'Description'])
         self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
 
         # check it doesn't remove columns because all are included in the list
@@ -204,9 +204,9 @@ class TopLevelTests(TestCase):
              'Treatment', 'DOB', 'Description'],
             single=True)
         self.assertEqual(out_headers,
-                          ['SampleID', 'BarcodeSequence',
-                           'LinkerPrimerSequence', 'Treatment', 'DOB',
-                           'Description'])
+                         ['SampleID', 'BarcodeSequence',
+                          'LinkerPrimerSequence', 'Treatment', 'DOB',
+                          'Description'])
         self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
 
         # check it doesn't remove columns because all are included in the list
@@ -217,9 +217,9 @@ class TopLevelTests(TestCase):
              'Treatment', 'DOB', 'Description'],
             unique=True, single=True)
         self.assertEqual(out_headers,
-                          ['SampleID', 'BarcodeSequence',
-                           'LinkerPrimerSequence', 'Treatment', 'DOB',
-                           'Description'])
+                         ['SampleID', 'BarcodeSequence',
+                          'LinkerPrimerSequence', 'Treatment', 'DOB',
+                          'Description'])
         self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
 
         # make sure that when keeping columns that are all unique the
@@ -230,9 +230,9 @@ class TopLevelTests(TestCase):
              'Treatment', 'DOB', 'Description'],
             [None], unique=False)
         self.assertEqual(out_headers,
-                          ['SampleID', 'BarcodeSequence',
-                           'LinkerPrimerSequence', 'Treatment', 'DOB',
-                           'Description'])
+                         ['SampleID', 'BarcodeSequence',
+                          'LinkerPrimerSequence', 'Treatment', 'DOB',
+                          'Description'])
         self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
 
     def test_keep_columns_from_mapping_file(self):
@@ -249,7 +249,7 @@ class TopLevelTests(TestCase):
             self.mapping_file_data, self.mapping_file_headers,
             ['SampleID', 'LinkerPrimerSequence', 'Description'])
         self.assertEqual(out_headers,
-                          ['SampleID', 'LinkerPrimerSequence', 'Description'])
+                         ['SampleID', 'LinkerPrimerSequence', 'Description'])
         self.assertEqual(out_data, PRE_PROCESS_B)
 
         # test correct negation of filtering
@@ -258,7 +258,7 @@ class TopLevelTests(TestCase):
             ['LinkerPrimerSequence', 'Description'], True)
         self.assertEqual(out_data, PRE_PROCESS_A)
         self.assertEqual(out_headers,
-                          ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB'])
+                         ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB'])
 
     def test_preprocess_coords_file(self):
         """Check correct processing is applied to the coords"""
@@ -323,7 +323,7 @@ class TopLevelTests(TestCase):
                 jackknifing_method='sdev', pct_variation_below_one=True)
 
         self.assertEqual(out_coords_header,
-                          ['PC.354', 'PC.355', 'PC.635', 'PC.636'])
+                         ['PC.354', 'PC.355', 'PC.635', 'PC.636'])
         assert_almost_equal(out_coords_data,
                             array([[-2.4, 1.15, 0.55, -0.95, 0.85],
                                    [0.73333333, -2.4, -3.5, 4.25, 1.025],
@@ -362,7 +362,7 @@ class TopLevelTests(TestCase):
                 jackknifing_method='sdev', pct_variation_below_one=False)
 
         self.assertEqual(out_coords_header,
-                          ['PC.354', 'PC.355', 'PC.635', 'PC.636'])
+                         ['PC.354', 'PC.355', 'PC.635', 'PC.636'])
         assert_almost_equal(
             out_coords_data,
             array([[-2.4, 1.15, 0.55, -0.95, 0.85],
@@ -389,8 +389,8 @@ class TopLevelTests(TestCase):
                 is_comparison=True, pct_variation_below_one=True)
 
         self.assertEqual(out_coords_header,
-                          ['1_0', '2_0', '3_0', '1_1', '2_1', '3_1', '1_2',
-                           '2_2', '3_2', '1_3', '2_3', '3_3'])
+                         ['1_0', '2_0', '3_0', '1_1', '2_1', '3_1', '1_2',
+                          '2_2', '3_2', '1_3', '2_3', '3_3'])
         assert_almost_equal(
             out_coords_data,
             array([[1.2, 0.1, -1.2],
@@ -496,13 +496,16 @@ class TopLevelTests(TestCase):
         exp = [join(dir_path,
                     'unweighted_unifrac_pc_transformed_reference.txt'),
                join(dir_path, 'weighted_unifrac_pc_transformed_q1.txt')]
-        self.assertItemsEqual(fps, exp)
+        try:
+            self.assertItemsEqual(fps, exp)
+        except AttributeError:
+            self.assertCountEqual(fps, exp)
 
         # testing a directory with only files that should be ignored
         dir_path = join(abspath(dirname(__file__)), 'test_data',
                         'dir-with-only-hidden-files')
         fps = guess_coordinates_files(dir_path)
-        self.assertItemsEqual(fps, [])
+        self.assertEqual(fps, [])
 
     def test_nbinstall(self):
         temp_dir = gettempdir()

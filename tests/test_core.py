@@ -20,7 +20,7 @@ from _test_core_strings import PCOA_STRING, HTML_STRING
 
 class TopLevelTests(TestCase):
     def setUp(self):
-        or_f = StringIO(str(PCOA_STRING))
+        or_f = StringIO(PCOA_STRING)
         self.ord_res = OrdinationResults.read(or_f)
 
         data = \

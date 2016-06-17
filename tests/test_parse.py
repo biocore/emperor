@@ -10,7 +10,10 @@ from __future__ import division
 from unittest import TestCase, main
 from tempfile import mkstemp
 from os import close
-from io import StringIO
+try:
+    from StringIO import StringIO
+except:
+    from io import StringIO
 
 import numpy as np
 import numpy.testing as npt
@@ -70,7 +73,7 @@ class ParseTests(TestCase):
         npt.assert_almost_equal(obs[2], exp[2])
         npt.assert_almost_equal(obs[3], exp[3])
 
-ordination_results_file = """Eigvals\t3
+ordination_results_file = u"""Eigvals\t3
 4.94\t1.79\t1.50
 
 Proportion explained\t3
