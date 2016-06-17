@@ -23,7 +23,8 @@ install:
   - npm install -g jsdoc
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
-  - gjslint --custom_jsdoc_tags module,function,constructs,alias,default emperor/support_files/js/*.js tests/javascript_tests/*.js
+  # we can only run gjslint in a python 2.7.x environment
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'; fi
   # execute the full test suite
   - python tests/all_tests.py
   # we just check coverage in the latest version of NumPy
