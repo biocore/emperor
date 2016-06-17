@@ -29,8 +29,8 @@ def sample_ids_from_metadata_description(mapping_f,valid_states_str):
     sample_ids = get_sample_ids(map_data, map_header, valid_states)
 
     if len(sample_ids)<1:
-        raise ValueError("All samples have been filtered out for the criteria"+\
-            " described in the valid states")
+        raise ValueError("All samples have been filtered out for the criteria"
+                         " described in the valid states")
 
     return sample_ids
 
@@ -68,7 +68,7 @@ def get_sample_ids(map_data, map_header, states):
     good_ids = []
     for row in map_data:    #remember to exclude header
         include = True
-        for s, vals in list(states.items()):
+        for s, vals in states.items():
             curr_state = row[name_to_col[s]]
             include = include and (curr_state in vals or '*' in vals) \
                 and not '!'+curr_state in vals
@@ -115,6 +115,6 @@ def filter_mapping_file(map_data, map_header, good_sample_ids,
     headers.append(map_header[-1])
     result.append(to_keep[-1])
     
-    result = list(map(list,list(zip(*result))))
+    result = list(map(list, zip(*result)))
     
     return headers, result

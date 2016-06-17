@@ -524,7 +524,7 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
             values_dict[colname] = []
         values_dict[colname].extend(vals)
 
-    for key, v in list(values_dict.items()):
+    for key, v in values_dict.items():
         for value in v:
             # variable that is going to contain the name of the column for
             # multiple subtitutions
