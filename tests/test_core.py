@@ -15,12 +15,12 @@ import pandas as pd
 import numpy as np
 
 from emperor.core import Emperor
-from _test_core_strings import PCOA_STRING, HTML_STRING
+from . import _test_core_strings as tcs
 
 
 class TopLevelTests(TestCase):
     def setUp(self):
-        or_f = StringIO(PCOA_STRING)
+        or_f = StringIO(tcs.PCOA_STRING)
         self.ord_res = OrdinationResults.read(or_f)
 
         data = \
@@ -47,10 +47,10 @@ class TopLevelTests(TestCase):
         obs = str(emp)
 
         try:
-            self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
+            self.assertItemsEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
         except AttributeError:
-            self.assertCountEqual(HTML_STRING.split('\n'), obs.split('\n'))
-        self.assertEqual(HTML_STRING, obs)
+            self.assertCountEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
+        self.assertEqual(tcs.HTML_STRING, obs)
 
     def test_remote_url(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
@@ -66,11 +66,11 @@ class TopLevelTests(TestCase):
         obs = str(emp)
 
         try:
-            self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
+            self.assertItemsEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
         except AttributeError:
-            self.assertCountEqual(HTML_STRING.split('\n'), obs.split('\n'))
+            self.assertCountEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
 
-        self.assertEqual(HTML_STRING, obs)
+        self.assertEqual(tcs.HTML_STRING, obs)
 
 
 if __name__ == "__main__":

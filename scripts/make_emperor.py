@@ -8,5 +8,5 @@
 # ----------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    print ("This script has been deprecated, please see the online "
-           "documentation for more help.")
+    print("This script has been deprecated, please see the online "
+          "documentation for more help.")

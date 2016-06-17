@@ -131,8 +131,8 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
             print("\nAll unit tests passed.\n")
 
     if not suppress_javascript_unit_tests:
-        print ('\nJavaScript unit tests result summary\n'
-               '------------------------------------\n')
+        print('\nJavaScript unit tests result summary\n'
+              '------------------------------------\n')
         if javascript_tests_passed:
             print('All JavaScript unit tests passed.\n')
         else:
