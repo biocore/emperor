@@ -15,7 +15,7 @@ import pandas as pd
 import numpy as np
 
 from emperor.core import Emperor
-from ._test_core_strings import PCOA_STRING, HTML_STRING
+from _test_core_strings import PCOA_STRING, HTML_STRING
 
 
 class TopLevelTests(TestCase):
@@ -46,7 +46,10 @@ class TopLevelTests(TestCase):
 
         obs = str(emp)
 
-        self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
+        try:
+            self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
+        except AttributeError:
+            self.assertCountEqual(HTML_STRING.split('\n'), obs.split('\n'))
         self.assertEqual(HTML_STRING, obs)
 
     def test_remote_url(self):
@@ -62,7 +65,11 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.ord_res, self.mf)
         obs = str(emp)
 
-        self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
+        try:
+            self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
+        except AttributeError:
+            self.assertCountEqual(HTML_STRING.split('\n'), obs.split('\n'))
+
         self.assertEqual(HTML_STRING, obs)
 
 
