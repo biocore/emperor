@@ -53,7 +53,7 @@ Biplot	0	0
 Site constraints	0	0
 """
 
-HTML_STRING = """<script type="text/javascript">
+HTML_STRING = u"""<script type="text/javascript">
 
 if ($("#emperor-css").length == 0){{
     $("head").append([

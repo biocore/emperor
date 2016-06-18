@@ -12,8 +12,6 @@ __email__ = "gregcaporaso@gmail.com"
 __status__ = "Development"
 
 
-from string import strip
-
 from numpy import asarray
 
 class QiimeParseError(Exception):
@@ -33,9 +31,8 @@ def parse_mapping_file(lines, strip_quotes=True, suppress_stripping=False):
         try:
             lines = open(lines,'U')
         except IOError:
-            raise QiimeParseError,\
-             ("A string was passed that doesn't refer "
-              "to an accessible filepath.")
+            raise QiimeParseError("A string was passed that doesn't refer "
+                                  "to an accessible filepath.")
         
     if strip_quotes:
         if suppress_stripping:
@@ -72,14 +69,14 @@ def parse_mapping_file(lines, strip_quotes=True, suppress_stripping=False):
                 comments.append(line)
         else:
             # Will add empty string to empty fields
-            tmp_line = map(strip_f, line.split('\t'))
+            tmp_line = list(map(strip_f, line.split('\t')))
             if len(tmp_line)<len(header):
                 tmp_line.extend(['']*(len(header)-len(tmp_line)))
             mapping_data.append(tmp_line)
     if not header:
-        raise QiimeParseError, "No header line was found in mapping file."
+        raise QiimeParseError("No header line was found in mapping file.")
     if not mapping_data:
-        raise QiimeParseError, "No data found in mapping file."
+        raise QiimeParseError("No data found in mapping file.")
     
     return mapping_data, header, comments
 
@@ -99,11 +96,12 @@ def parse_metadata_state_descriptions(state_string):
     result = {}
     state_string = state_string.strip()
     if state_string:
-        cols = map(strip, state_string.split(';'))
+        cols = [s.strip()  for s in state_string.split(';')]
         for c in cols:
             # split on the first colon to account for category names with colons
-            colname, vals = map(strip, c.split(':', 1))
-            vals = map(strip, vals.split(','))
+            colname, vals = [s.strip() for s in c.split(':', 1)]
+
+            vals = [v.strip() for v in vals.split(',')]
             result[colname] = set(vals)
     return result
 
@@ -126,9 +124,8 @@ def parse_mapping_file_to_dict(*args, **kwargs):
 def process_otu_table_sample_ids(sample_id_fields):
     """ process the sample IDs line of an OTU table """
     if len(sample_id_fields) == 0:
-            raise ValueError, \
-             'Error parsing sample ID line in OTU table. Fields are %s' \
-             % ' '.join(sample_id_fields)
+            raise ValueError('Error parsing sample ID line in OTU table. '
+                             'Fields are %s' % ' '.join(sample_id_fields))
             
     # Detect if a metadata column is included as the last column. This
     # field will be named either 'Consensus Lineage' or 'OTU Metadata',
@@ -166,9 +163,9 @@ def parse_classic_otu_table(lines,count_map_f=int, remove_empty_rows=False):
                     sample_ids, has_metadata = process_otu_table_sample_ids(
                      line.strip().split('\t')[1:])
                 except ValueError:
-                    raise ValueError, \
-                     "Error parsing sample IDs in OTU table. Appears to be a"+\
-                     " legacy OTU table. Sample ID line:\n %s" % line
+                    raise ValueError("Error parsing sample IDs in OTU table. "
+                                     "Appears to be a legacy OTU table. Sample"
+                                     " ID line:\n %s" % line)
             elif not line.startswith('#'):
                 if not sample_ids:
                     # current line is the first non-space, non-comment line 
@@ -177,9 +174,8 @@ def parse_classic_otu_table(lines,count_map_f=int, remove_empty_rows=False):
                         sample_ids, has_metadata = process_otu_table_sample_ids(
                          line.strip().split('\t')[1:])
                     except ValueError:
-                        raise ValueError,\
-                         "Error parsing sample IDs in OTU table."+\
-                         " Sample ID line:\n %s" % line
+                        raise ValueError("Error parsing sample IDs in OTU "
+                                         "table. Sample ID line:\n %s" % line)
                 else:
                     # current line is OTU line in OTU table
                     fields = line.split('\t')
@@ -197,7 +193,7 @@ def parse_classic_otu_table(lines,count_map_f=int, remove_empty_rows=False):
                         if remove_empty_rows and (valid_fields>=0).all() and \
                            sum(valid_fields)==0.0:
                             continue
-                        metadata.append(map(strip, fields[-1].split(';')))
+                        metadata.append([f.strip() for f in fields[-1].split(';')])
                     else:
                         # otherwise all columns are appended to otu_table
                         # added in a try/except to handle OTU tables containing
@@ -245,8 +241,8 @@ def parse_coords(lines):
         raise QiimeParseError("The line with the vector number was not found"
             ", this information is required in coordinates files")
 
-    lines = map(strip, lines[1:])   #discard first line, which is a label
-    lines = filter(None, lines) #remove any blank lines
+    lines = [l.strip() for l in lines[1:]] # discard first line, which is a label
+    lines = [_f for _f in lines if _f] # remove any blank lines
 
     # check on this information post removal of blank lines
     if not lines[-2].startswith('eigvals'):
@@ -263,8 +259,8 @@ def parse_coords(lines):
     #finally, dump the rest of the lines into a table
     header, result = [], []
     for line in lines[:-2]:
-        fields = map(strip, line.split('\t'))
+        fields = [f.strip() for f in line.split('\t')]
         header.append(fields[0])
-        result.append(map(float, fields[1:]))
+        result.append([float(f) for f in fields[1:]])
 
     return header, asarray(result), eigvals, pct_var

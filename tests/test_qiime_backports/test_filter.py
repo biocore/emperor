@@ -11,7 +11,10 @@ __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
 __status__ = "Development"
  
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 from unittest import TestCase, main
 
 from emperor.qiime_backports.parse import (parse_mapping_file,

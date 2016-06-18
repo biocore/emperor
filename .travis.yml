@@ -1,6 +1,7 @@
 language: python
 python:
   - "2.7"
+  - "3.4"
 env:
   - NUMPY_VERSION=""  WITH_COVERAGE=1 # environment to test with the latest version of NumPy
   # test only with the latest stable releases of numpy i.e. 1.9.x and 1.10.x
@@ -22,7 +23,8 @@ install:
   - npm install -g jsdoc
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
-  - gjslint --custom_jsdoc_tags module,function,constructs,alias,default emperor/support_files/js/*.js tests/javascript_tests/*.js
+  # we can only run gjslint in a python 2.7.x environment
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'; fi
   # execute the full test suite
   - python tests/all_tests.py
   # we just check coverage in the latest version of NumPy

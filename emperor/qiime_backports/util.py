@@ -358,8 +358,8 @@ def _compute_jn_pcoa_avg_ranges(jn_flipped_matrices, method):
     elif method == "sdev":
         # calculate std error for each sample in each dimension
         sdevs = zeros(shape=[x,y])
-        for j in xrange(y):
-            for i in xrange(x):
+        for j in range(y):
+            for i in range(x):
                 vals = array([pcoa[i][j] for pcoa in jn_flipped_matrices])
                 sdevs[i,j] = vals.std(ddof=1)
         matrix_low = -sdevs/2

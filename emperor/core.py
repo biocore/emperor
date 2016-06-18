@@ -213,7 +213,7 @@ class Emperor(object):
             index_name = self.mf.index.name
 
         # format the metadata
-        headers = map(str, [index_name] + self.mf.columns.tolist())
+        headers = list(map(str, [index_name] + self.mf.columns.tolist()))
         metadata = self.mf.apply(lambda x: [str(x.name)] +
                                  x.astype('str').tolist(),
                                  axis=1).values.tolist()
@@ -224,7 +224,7 @@ class Emperor(object):
         coords = self.ordination.samples.values[:, :d].tolist()
 
         # avoid unicode strings
-        coord_ids = map(str, self.mf.index.tolist())
+        coord_ids = list(map(str, self.mf.index.tolist()))
 
         # yes, we could have used UUID, but we couldn't find an easier way to
         # test that deterministically and with this approach we can seed the

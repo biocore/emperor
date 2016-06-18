@@ -10,7 +10,10 @@ from __future__ import division
 from unittest import TestCase, main
 from tempfile import mkstemp
 from os import close
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except:
+    from io import StringIO
 
 import numpy as np
 import numpy.testing as npt
@@ -87,7 +90,7 @@ Biplot\t0\t0
 
 Site constraints\t0\t0"""
 
-qiime_pcoa_file = u"""pc vector number\t1\t2\t3
+qiime_pcoa_file = """pc vector number\t1\t2\t3
 A\t0.11\t0.09\t0.23
 B\t0.03\t0.07\t-0.26
 C\t0.12\t0.06\t-0.32

@@ -18,6 +18,7 @@ from unittest import TestCase, main
 
 from numpy.testing import assert_almost_equal
 from numpy import array, isnan, asarray, arange
+from builtins import chr as py_unichr
 
 from scipy.spatial import procrustes
 
@@ -178,7 +179,7 @@ class TopLevelTests(TestCase):
                             test.repeat(2).reshape(-1,2))
         test = [0,0]
         _result = idealfourths(test)
-        assert_almost_equal(isnan(_result).all(),True)
+        self.assertEqual(isnan(_result).all(), True)
 
 
 class MetadataMapTests(TestCase):
@@ -467,7 +468,7 @@ class MetadataMapTests(TestCase):
         self.assertTrue(is_valid_git_refname('refname/bar'))
         self.assertTrue(is_valid_git_refname('ref.nameslu/_eggs_/spam'))
         self.assertTrue(is_valid_git_refname('valid{0}char'.format(
-            unichr(40))))
+            py_unichr(40))))
         self.assertTrue(is_valid_git_refname('master@head'))
         self.assertTrue(is_valid_git_refname('bar{thing}foo'))
 
@@ -485,9 +486,9 @@ class MetadataMapTests(TestCase):
         self.assertFalse(is_valid_git_refname('ref..name'))
 
         self.assertFalse(is_valid_git_refname(u'invalid{0}char'.format(
-            unichr(177))))
+            py_unichr(177))))
         self.assertFalse(is_valid_git_refname('invalid{0}char'.format(
-            unichr(39))))
+            py_unichr(39))))
         self.assertFalse(is_valid_git_refname('ref~name/bar'))
         self.assertFalse(is_valid_git_refname('refname spam'))
         self.assertFalse(is_valid_git_refname('bar/foo/eggs~spam'))

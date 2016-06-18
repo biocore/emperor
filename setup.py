@@ -38,7 +38,7 @@ Gigascience. 2013 Nov 26;2(1):16.
 """
 
 base = {"numpy >= 1.7", "scipy >= 0.17.0", "click",
-        "scikit-bio >= 0.4.0", "jinja2"}
+        "scikit-bio >= 0.4.0, < 0.5.0", "jinja2", "future"}
 doc = {"Sphinx >= 1.2.2", "sphinx-bootstrap-theme"}
 test = {"nose >= 0.10.1", "pep8", "flake8"}
 all_deps = base | doc | test
