@@ -72,6 +72,20 @@ class TopLevelTests(TestCase):
 
         self.assertEqual(tcs.HTML_STRING, obs)
 
+    def test_standalone(self):
+        emp = Emperor(self.ord_res, self.mf, remote='./some-local-path/')
+        self.assertEqual(emp.base_url, './some-local-path/')
+
+        obs = emp.make_emperor(standalone=True)
+
+        try:
+            self.assertItemsEqual(tcs.STANDALONE_HTML_STRING.split('\n'),
+                                  obs.split('\n'))
+        except AttributeError:
+            self.assertCountEqual(tcs.STANDALONE_HTML_STRING.split('\n'),
+                                  obs.split('\n'))
+        self.assertEqual(tcs.STANDALONE_HTML_STRING, obs)
+
 
 if __name__ == "__main__":
     main()
