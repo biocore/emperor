@@ -54,7 +54,6 @@ Site constraints	0	0
 """
 
 HTML_STRING = u"""
-
 <script type="text/javascript">
 
 if ($("#emperor-css").length == 0){{
@@ -69,8 +68,6 @@ if ($("#emperor-css").length == 0){{
     ]);
 }}
 </script>
-
-
 
 <div id='emperor-notebook-0x9cb72f54' style="position: relative; width:100%; height:500px;">
   <div class='loading' style="position: absolute;top: 50%;left: 50%;margin-left: -229px; margin-top: -59px; z-index: 10000;height:118px;width:458px;padding:0px"><img src='https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/img/emperor.png' alt='Emperor resources missing. Expected them to be found in https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files'></div>
@@ -194,9 +191,7 @@ function($, model, EmperorController) {
 }); // END REQUIRE.JS block
 </script>"""
 
-STANDALONE_HTML_STRING = """
-
-<!DOCTYPE html>
+STANDALONE_HTML_STRING = """<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>Emperor</title>
