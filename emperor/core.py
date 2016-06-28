@@ -23,10 +23,11 @@ Classes
 # ----------------------------------------------------------------------------
 from __future__ import division
 
-from os.path import join
+from os.path import join, basename
 import numpy as np
 
-from jinja2 import Template
+from jinja2 import FileSystemLoader
+from jinja2.environment import Environment
 
 from emperor.util import get_emperor_support_files_dir
 
@@ -37,8 +38,13 @@ LOCAL_URL = "/nbextensions/emperor/support_files"
 
 STYLE_PATH = join(get_emperor_support_files_dir(), 'templates',
                   'style-template.html')
-MAIN_PATH = join(get_emperor_support_files_dir(), 'templates',
-                 'main-template.html')
+LOGIC_PATH = join(get_emperor_support_files_dir(), 'templates',
+                  'logic-template.html')
+
+STANDALONE_PATH = join(get_emperor_support_files_dir(), 'templates',
+                       'standalone-template.html')
+JUPYTER_PATH = join(get_emperor_support_files_dir(), 'templates',
+                    'jupyter-template.html')
 
 
 class Emperor(object):
@@ -194,15 +200,40 @@ class Emperor(object):
 
         return display(HTML(str(self)))
 
-    def _make_emperor(self):
-        """Private method to build an Emperor HTML string"""
-        output = []
+    def make_emperor(self, standalone=False):
+        """Build an emperor plot
 
-        with open(STYLE_PATH) as sty, open(MAIN_PATH) as mai:
-            style_template = Template(sty.read())
-            main_template = Template(mai.read())
+        Parameters
+        ----------
+        standalone : bool
+            Whether or not the produced plot should be a standalone HTML file.
 
-        output.append(style_template.render(base_url=self.base_url))
+        Returns
+        -------
+        str
+            Formatted emperor plot.
+
+
+        Notes
+        -----
+        The `standalone` argument is intended for the different use-cases that
+        Emperor can have, either as an embedded widget that lives inside, for
+        example, the Jupyter notebook, or alternatively as an HTML file that
+        refers to resources locally. In this case you will probably also want
+        to copy the emperor_required_resources, and change the `base_url`
+        attribute of the object.
+        """
+
+        loader = FileSystemLoader(join(get_emperor_support_files_dir(),
+                                       'templates'))
+
+        if standalone:
+            main_path = basename(STANDALONE_PATH)
+        else:
+            main_path = basename(JUPYTER_PATH)
+        env = Environment(loader=loader)
+
+        main_template = env.get_template(main_path)
 
         # there's a bug in old versions of Pandas that won't allow us to rename
         # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
@@ -234,8 +265,8 @@ class Emperor(object):
         plot = main_template.render(coords_ids=coord_ids, coords=coords,
                                     pct_var=pct_var, md_headers=headers,
                                     metadata=metadata, base_url=self.base_url,
-                                    plot_id=plot_id)
+                                    plot_id=plot_id,
+                                    logic_template_path=basename(LOGIC_PATH),
+                                    style_template_path=basename(STYLE_PATH))
 
-        output.append(plot)
-
-        return ''.join(output)
+        return plot

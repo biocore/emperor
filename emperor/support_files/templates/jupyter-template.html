@@ -1,0 +1,6 @@
+{# Load templates dynamically, so we can figure out the path on the fly #}
+{% set style_template = style_template_path %}
+{% include style_template %}
+
+{% set logic_template = logic_template_path %}
+{% include logic_template %}
