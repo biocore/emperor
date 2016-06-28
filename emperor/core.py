@@ -188,7 +188,7 @@ class Emperor(object):
                              "be a bool or str")
 
     def __str__(self):
-        return self._make_emperor()
+        return self.make_emperor()
 
     def _repr_html_(self):
         """Used to display a plot in the Jupyter notebook"""
