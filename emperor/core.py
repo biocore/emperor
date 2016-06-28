@@ -24,6 +24,7 @@ Classes
 from __future__ import division
 
 from os.path import join, basename
+from distutils.dir_util import copy_tree
 import numpy as np
 
 from jinja2 import FileSystemLoader
@@ -207,6 +208,9 @@ class Emperor(object):
         ----------
         standalone : bool
             Whether or not the produced plot should be a standalone HTML file.
+            If `True`, resources (JavaScript, CSS, etc.) will be copied to
+            `base_url`, therefore it is expected that `base_url` will be a
+            directory.
 
         Returns
         -------
@@ -230,6 +234,9 @@ class Emperor(object):
 
         if standalone:
             main_path = basename(STANDALONE_PATH)
+
+            # copy the required resources
+            copy_tree(get_emperor_support_files_dir(), self.base_url)
         else:
             main_path = basename(JUPYTER_PATH)
         env = Environment(loader=loader)
