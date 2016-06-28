@@ -118,11 +118,11 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
     if not suppress_unit_tests:
         print("\nUnit test result summary\n------------------------\n")
         if bad_tests:
-            print("\nFailed the following unit tests.\n%s"
+            print("\nThe following unit tests failed.\n%s"
                   % '\n'.join(bad_tests))
 
         if missing_application_tests:
-            print("\nFailed the following unit tests, in part or whole due "
+            print("\nThe following unit tests failed, in part or whole due "
                   "to missing external applications.\nDepending on the "
                   "Emperor features you plan to use, this may not be "
                   "critical.\n%s" % '\n'.join(missing_application_tests))
