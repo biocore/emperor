@@ -224,6 +224,7 @@ class Emperor(object):
         attribute of the object.
         """
 
+        # based on: http://stackoverflow.com/a/6196098
         loader = FileSystemLoader(join(get_emperor_support_files_dir(),
                                        'templates'))
 
