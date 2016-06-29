@@ -8,6 +8,8 @@
 from __future__ import division
 
 from unittest import TestCase, main
+from os.path import exists
+from shutil import rmtree
 from io import StringIO
 from skbio import OrdinationResults
 
@@ -36,8 +38,14 @@ class TopLevelTests(TestCase):
         headers = ['SampleID', 'Treatment', 'DOB', 'Description']
         self.mf = pd.DataFrame(data=data, columns=headers)
         self.mf.set_index('SampleID', inplace=True)
+        self.files_to_remove = []
 
         np.random.seed(111)
+
+    def tearDown(self):
+        for path in self.files_to_remove:
+            if exists(path):
+                rmtree(path)
 
     def test_str(self):
         emp = Emperor(self.ord_res, self.mf)
@@ -71,6 +79,26 @@ class TopLevelTests(TestCase):
             self.assertCountEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
 
         self.assertEqual(tcs.HTML_STRING, obs)
+
+    def test_standalone(self):
+        local_path = './some-local-path/'
+
+        emp = Emperor(self.ord_res, self.mf, remote=local_path)
+        self.assertEqual(emp.base_url, local_path)
+
+        obs = emp.make_emperor(standalone=True)
+
+        self.assertTrue(exists(local_path))
+
+        try:
+            self.assertItemsEqual(tcs.STANDALONE_HTML_STRING.split('\n'),
+                                  obs.split('\n'))
+        except AttributeError:
+            self.assertCountEqual(tcs.STANDALONE_HTML_STRING.split('\n'),
+                                  obs.split('\n'))
+        self.assertEqual(tcs.STANDALONE_HTML_STRING, obs)
+
+        self.files_to_remove.append(local_path)
 
 
 if __name__ == "__main__":
