@@ -43,7 +43,7 @@ class TopLevelTests(TestCase):
             filter_samples_from_coords(self.coords_header,
                                        self.coords_data,
                                        ['PC.636', 'PC.355'])
-        self.assertEquals(out_headers, ['PC.355', 'PC.636'])
+        self.assertEqual(out_headers, ['PC.355', 'PC.636'])
         assert_almost_equal(out_coords, array([[-0.2, -0.1, 0.06, -0.06],
                                                [0.1, -0.1, -0.2, 0.08]]))
 
@@ -54,7 +54,7 @@ class TopLevelTests(TestCase):
                                        ['PC.636', 'PC.355'],
                                        negate=True)
 
-        self.assertEquals(out_headers, ['PC.635', 'PC.354'])
+        self.assertEqual(out_headers, ['PC.635', 'PC.354'])
         assert_almost_equal(out_coords, array([[-0.3, 0.04, -0.1, 0.15],
                                                [0.04, -0.01, 0.06, -0.34]]))
 
@@ -63,7 +63,7 @@ class TopLevelTests(TestCase):
         # check it keeps the requested samples
         out_headers, out_coords = keep_samples_from_pcoa_data(
             self.coords_header, self.coords_data, ['PC.636', 'PC.355'])
-        self.assertEquals(out_headers, ['PC.355', 'PC.636'])
+        self.assertEqual(out_headers, ['PC.355', 'PC.636'])
         assert_almost_equal(out_coords, array([[-0.2, -0.1, 0.06, -0.06],
                                                [0.1, -0.1, -0.2, 0.08]]))
 

@@ -117,10 +117,10 @@ class TopLevelTests(TestCase):
              [0.03424658, 0.16107383, 0.02666667,
               0.00671141, 0.14765101, 0.01351351,
               0., 0.01342282, 0.00666667]]))
-        self.assertEquals(o_lineages,
-                          ['Root;k__Bacteria;p__Firmicutes',
-                           'Root;k__Bacteria;p__Bacteroidetes',
-                           'Root;k__Bacteria;p__Tenericutes'])
+        self.assertEqual(o_lineages,
+                         ['Root;k__Bacteria;p__Firmicutes',
+                          'Root;k__Bacteria;p__Bacteroidetes',
+                          'Root;k__Bacteria;p__Tenericutes'])
         assert_almost_equal(o_prevalence,
                             array([1., 0.6646394, 0.08185147]))
 
@@ -173,7 +173,7 @@ class TopLevelTests(TestCase):
               0., 0.00675676, 0., 0., 0.],
              [0., 0., 0.01333333, 0., 0., 0., 0., 0., 0.]]))
 
-        self.assertEquals(o_lineages, [
+        self.assertEqual(o_lineages, [
             'Root;k__Bacteria;p__Firmicutes',
             'Root;k__Bacteria;p__Bacteroidetes',
             'Root;k__Bacteria;p__Tenericutes', 'Root;k__Bacteria;Other',
@@ -229,24 +229,24 @@ class TopLevelTests(TestCase):
                                    [0.02739726, 0.04697987, 0.02, 0.04697987,
                                     0.01, 0.02027027, 0.01360544, 0.01342282,
                                     0.02666667]]))
-        self.assertEquals(o_otu_lineages,
-                          ['Root;k__Bacteria;p__Firmicutes',
-                           'Root;k__Bacteria;p__Bacteroidetes',
-                           'Root;k__Bacteria;p__Tenericutes',
-                           'Root;k__Bacteria;Other'])
+        self.assertEqual(o_otu_lineages,
+                         ['Root;k__Bacteria;p__Firmicutes',
+                          'Root;k__Bacteria;p__Bacteroidetes',
+                          'Root;k__Bacteria;p__Tenericutes',
+                          'Root;k__Bacteria;Other'])
         assert_almost_equal(o_prevalence,
                             array([1., 0.66471926, 0.08193196, 0.04374296]))
-        self.assertEquals(lines, LINES)
+        self.assertEqual(lines, LINES)
 
         # tests for correct outputs of empty inputs
         o_otu_coords, o_otu_table, o_otu_lineages, o_prevalence, lines =\
             preprocess_otu_table([], [], [], self.coords,
                                  self.coords_header, 4)
-        self.assertEquals(o_otu_coords, [])
-        self.assertEquals(o_otu_table, [])
-        self.assertEquals(o_otu_lineages, [])
-        self.assertEquals(o_prevalence, [])
-        self.assertEquals(lines, '')
+        self.assertEqual(o_otu_coords, [])
+        self.assertEqual(o_otu_table, [])
+        self.assertEqual(o_otu_lineages, [])
+        self.assertEqual(o_prevalence, [])
+        self.assertEqual(lines, '')
 
     def test_preprocess_otu_table_exceptions(self):
         """Check the exceptions are raised appropriately"""

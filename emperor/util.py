@@ -8,22 +8,16 @@
 from __future__ import division
 
 from numpy import ndarray, ones, zeros, vstack
-from string import strip
 
-from os import makedirs, listdir
-from os.path import abspath, dirname, join, exists, isdir
+from os import listdir
+from os.path import abspath, dirname, join, isdir
 from copy import deepcopy
-
-from qcli.util import qcli_system_call
 
 from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
                                                    remove_nans,
                                                    scale_custom_coords)
 from emperor.qiime_backports.parse import mapping_file_to_dict
-from emperor.qiime_backports.util import (MetadataMap, is_valid_git_refname,
-                                          is_valid_git_sha1, summarize_pcoas)
-
-from emperor import __version__ as emperor_library_version
+from emperor.qiime_backports.util import MetadataMap, summarize_pcoas
 
 
 class EmperorSupportFilesError(IOError):
@@ -39,29 +33,6 @@ class EmperorInputFilesError(IOError):
 class EmperorUnsupportedComputation(ValueError):
     """Exception for computations that lack a meaning"""
     pass
-
-
-# Based on qiime/qiime/util.py
-def get_emperor_library_version():
-    """Get Emperor version and the git SHA + current branch (if applicable)"""
-    emperor_dir = get_emperor_project_dir()
-    emperor_version = emperor_library_version
-
-    # more information could be retrieved following this pattern
-    sha_cmd = 'git --git-dir %s/.git rev-parse HEAD' % (emperor_dir)
-    sha_o, sha_e, sha_r = qcli_system_call(sha_cmd)
-    git_sha = sha_o.strip()
-
-    branch_cmd = 'git --git-dir %s/.git rev-parse --abbrev-ref HEAD' %\
-        (emperor_dir)
-    branch_o, branch_e, branch_r = qcli_system_call(branch_cmd)
-    git_branch = branch_o.strip()
-
-    # validate the output from both command calls
-    if is_valid_git_refname(git_branch) and is_valid_git_sha1(git_sha):
-        return '%s, %s@%s' % (emperor_version, git_branch, git_sha[0:7])
-    else:
-        return '%s' % emperor_version
 
 
 def get_emperor_project_dir():
@@ -80,39 +51,6 @@ def get_emperor_project_dir():
 def get_emperor_support_files_dir():
     """Returns the path for the support files of the project """
     return join(get_emperor_project_dir(), 'emperor/support_files/')
-
-
-def copy_support_files(file_path):
-    """Copy the support files to a named destination
-
-    Parameters
-    ----------
-    file_path: str
-        path where you want the support files to be copied to
-
-    Raises
-    ------
-    EmperorSupportFilesError
-        if a problem is found whilst trying to copy the files.
-    """
-    file_path = join(file_path, 'emperor_required_resources')
-
-    if not exists(file_path):
-        makedirs(file_path)
-
-    # shutil.copytree does not provide an easy way to copy the contents of a
-    # directory into another existing directory, hence the system call.
-    # use double quotes for the paths to escape any invalid chracter(s)/spaces
-    cmd = 'cp -R "%s/"* "%s"' % (get_emperor_support_files_dir(),
-                                 abspath(file_path))
-    cmd_o, cmd_e, cmd_r = qcli_system_call(cmd)
-
-    if cmd_e:
-        raise EmperorSupportFilesError(
-            "Error found whilst trying to copy the support files:\n{}\n"
-            "Could not execute: {}".format(cmd_e, cmd))
-
-    return
 
 
 def nbinstall(overwrite=False, user=True, prefix=None):
@@ -314,7 +252,7 @@ def keep_columns_from_mapping_file(data, headers, columns, negate=False):
     headers = deepcopy(headers)
 
     if negate:
-        indices_of_interest = range(0, len(headers))
+        indices_of_interest = list(range(0, len(headers)))
     else:
         indices_of_interest = []
 
@@ -575,11 +513,11 @@ def fill_mapping_field_from_mapping_file(data, headers, values,
     out_data = deepcopy(data)
 
     # parsing the input values
-    values = map(strip, values.split(';'))
+    values = [val.strip() for val in values.split(';')]
     values_dict = {}
     for v in values:
-        colname, vals = map(strip, v.split(':', 1))
-        vals = map(strip, vals.split(','))
+        colname, vals = [val for val in v.split(':', 1)]
+        vals = [val.strip() for val in vals.split(',')]
         assert len(vals) == 1, ("You can only pass 1 replacement value:"
                                 " {}".format(vals))
         if colname not in values_dict:

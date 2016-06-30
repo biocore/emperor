@@ -26,13 +26,6 @@ include the following citation:
 
 You can find the `Emperor paper here <http://www.gigasciencejournal.com/content/2/1/16/>`_, and the data presented in this paper can be found `here <http://gigadb.org/dataset/100068>`_.
 
-Scripts:
-========
-
-.. toctree::
-   :maxdepth: 2
-
-   scripts/make_emperor
 
 Classes:
 ========

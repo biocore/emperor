@@ -1,27 +1,32 @@
 language: python
 python:
   - "2.7"
+  - "3.4"
 env:
   - NUMPY_VERSION=""  WITH_COVERAGE=1 # environment to test with the latest version of NumPy
-  # test only with the latest stable releases of numpy i.e. 1.8.x and 1.7.x
-  - NUMPY_VERSION="<1.9"
-  - NUMPY_VERSION="<1.8"
+  # test only with the latest stable releases of numpy i.e. 1.9.x and 1.10.x
+  - NUMPY_VERSION="<1.10"
+  - NUMPY_VERSION="<1.11"
 before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda-2.2.2-Linux-x86_64.sh -O miniconda.sh
+  - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
-  - export PATH=/home/travis/anaconda/bin:$PATH
+  - export PATH=/home/travis/miniconda2/bin:$PATH
   # Update conda itself
   - conda update --yes conda
 install:
-  - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} scipy matplotlib openpyxl=1.8.2 pandas nose flake8 pep8 ipython-notebook
+  - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib openpyxl=1.8.2 pandas nose flake8 pep8 ipython-notebook
   - source activate env_name
+  - pip install https://github.com/google/closure-linter/archive/master.zip
   - pip install sphinx sphinx-bootstrap-theme coverage coveralls
-  - pip install -e '.[all]'
+  - pip install -e '.[all]' --no-use-wheel
+  - npm install -g jsdoc
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
+  # we can only run gjslint in a python 2.7.x environment
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'; fi
   # execute the full test suite
-  - python tests/all_tests.py --emperor_scripts_dir scripts
+  - python tests/all_tests.py
   # we just check coverage in the latest version of NumPy
   - if [ ${WITH_COVERAGE} ]; then nosetests emperor --with-coverage --cover-package=emperor --cover-inclusive tests; fi
   - make -C doc html

@@ -10,7 +10,10 @@ from __future__ import division
 from unittest import TestCase, main
 from tempfile import mkstemp
 from os import close
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except:
+    from io import StringIO
 
 import numpy as np
 import numpy.testing as npt
@@ -57,7 +60,7 @@ class ParseTests(TestCase):
         with open(fp, 'w') as f:
             f.write(qiime_pcoa_file)
 
-        with open(fp, 'U') as f:
+        with open(fp, 'r') as f:
             obs = parse_coords(f)
 
         exp = (['A', 'B', 'C'],
@@ -70,7 +73,7 @@ class ParseTests(TestCase):
         npt.assert_almost_equal(obs[2], exp[2])
         npt.assert_almost_equal(obs[3], exp[3])
 
-ordination_results_file = """Eigvals\t3
+ordination_results_file = u"""Eigvals\t3
 4.94\t1.79\t1.50
 
 Proportion explained\t3
