@@ -259,7 +259,7 @@ class Emperor(object):
 
         # format the coordinates
         d = self.dimensions
-        pct_var = self.ordination.proportion_explained[:d].tolist()
+        pct_var = (self.ordination.proportion_explained[:d] * 100).tolist()
         coords = self.ordination.samples.values[:, :d].tolist()
 
         # avoid unicode strings
