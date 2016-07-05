@@ -17,6 +17,7 @@ from string import ascii_letters
 
 import numpy as np, pandas as pd
 from emperor import Emperor
+from emperor.util import get_emperor_support_files_dir
 from skbio import OrdinationResults
 
 
@@ -50,7 +51,7 @@ res = OrdinationResults(short_method_name='PC', long_method_name='Principal '
                         samples=samples, proportion_explained=pct_var)
 
 
-viz = Emperor(res, mf, remote='../emperor/support_files/')
+viz = Emperor(res, mf, remote=get_emperor_support_files_dir())
 
 with open('new-emperor.html', 'w') as f:
     f.write(viz.make_emperor(standalone=True))
