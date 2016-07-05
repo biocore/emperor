@@ -88,8 +88,6 @@ class TopLevelTests(TestCase):
 
         obs = emp.make_emperor(standalone=True)
 
-        self.assertTrue(exists(local_path))
-
         try:
             self.assertItemsEqual(tcs.STANDALONE_HTML_STRING.split('\n'),
                                   obs.split('\n'))
@@ -98,8 +96,29 @@ class TopLevelTests(TestCase):
                                   obs.split('\n'))
         self.assertEqual(tcs.STANDALONE_HTML_STRING, obs)
 
+    def test_copy_support_files_use_base(self):
+        local_path = './some-local-path/'
+
+        emp = Emperor(self.ord_res, self.mf, remote=local_path)
+        self.assertEqual(emp.base_url, local_path)
+
+        emp.copy_support_files()
+
+        self.assertTrue(exists(local_path))
+
         self.files_to_remove.append(local_path)
 
+    def test_copy_support_files_use_target(self):
+        local_path = './some-local-path/'
+
+        emp = Emperor(self.ord_res, self.mf, remote=local_path)
+        self.assertEqual(emp.base_url, local_path)
+
+        emp.copy_support_files(target='./something-else')
+
+        self.assertTrue(exists('./something-else'))
+
+        self.files_to_remove.append(local_path)
 
 if __name__ == "__main__":
     main()
