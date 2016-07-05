@@ -63,17 +63,17 @@ class Emperor(object):
         scikit-bio.
     mapping_file: pd.DataFrame
         DataFrame object with the metadata associated to the samples in the
-        `ordination` object, should have an index set and it should match the
-        identifiers in the `ordination` object.
+        ``ordination`` object, should have an index set and it should match the
+        identifiers in the ``ordination`` object.
     dimensions: int, optional
         Number of dimensions to keep from the ordination data, defaults to 5.
     remote: bool or str, optional
         This parameter can have one of the following three behaviors according
-        to the value: (1) `str` - load the resources from a user-specified
-        remote location, (2) `False` - load the resources from the nbextensions
-        folder in the Jupyter installation or (3) `True` - load the resources
-        from the GitHub repository. This parameter defaults to `True`. See the
-        Notes section for more information.
+        to the value: (1) ``str`` - load the resources from a user-specified
+        remote location, (2) ``False`` - load the resources from the
+        nbextensions folder in the Jupyter installation or (3) ``True`` - load
+        the resources from the GitHub repository. This parameter defaults to
+        ``True``. See the Notes section for more information.
 
     Examples
     --------
@@ -122,7 +122,7 @@ class Emperor(object):
     ...                         0.])
     >>> p_explained = pd.Series(data=p_explained, index=ids)
 
-    And encapsulate it inside an `OrdinationResults` object:
+    And encapsulate it inside an ``OrdinationResults`` object:
 
     >>> ores = OrdinationResults(eigvals, samples=samples,
     ...                          proportion_explained=p_explained)
@@ -137,21 +137,21 @@ class Emperor(object):
     This object currently does not support the full range of actions that the
     GUI does support and should be considered experimental at the moment.
 
-    The `remote` parameter is intended for different use-cases, you should use
-    the first option "(1) - URL" when you want to load the data from a location
-    different than the GitHub repository or your Jupyter notebook resources
-    i.e. a custom URL. The second option "(2) - `False`" loads resources from
-    your local Jupyter installation, note that you **need** to execute
-    `nbinstall` at least once or the application will error, this option is
-    ideal for developers modifying the JavaScript source code, and in
+    The ``remote`` parameter is intended for different use-cases, you should
+    use the first option "(1) - URL" when you want to load the data from a
+    location different than the GitHub repository or your Jupyter notebook
+    resources i.e. a custom URL. The second option "(2) - ``False``" loads
+    resources from your local Jupyter installation, note that you **need** to
+    execute ``nbinstall`` at least once or the application will error, this
+    option is ideal for developers modifying the JavaScript source code, and in
     environments of limited internet connection. Finally, the third option "(3)
-    - `True`" should be used if you intend to embed an Emperor plot in a
+    - ``True``" should be used if you intend to embed an Emperor plot in a
     notebook and then publish it using http://nbviewer.jupyter.org.
 
     Raises
     ------
     ValueError
-        If the remote argument is not of `bool` or `str` type.
+        If the remote argument is not of ``bool`` or ``str`` type.
 
     References
     ----------
@@ -201,6 +201,21 @@ class Emperor(object):
 
         return display(HTML(str(self)))
 
+    def copy_support_files(self, target=None):
+        """Copies the support files to a target directory
+
+        Parameters
+        ----------
+        target : str
+            The path where resources should be copied to. By default it copies
+            the files to ``self.base_url``.
+        """
+        if target is None:
+            target = self.base_url
+
+        # copy the required resources
+        copy_tree(get_emperor_support_files_dir(), target)
+
     def make_emperor(self, standalone=False):
         """Build an emperor plot
 
@@ -208,9 +223,6 @@ class Emperor(object):
         ----------
         standalone : bool
             Whether or not the produced plot should be a standalone HTML file.
-            If `True`, resources (JavaScript, CSS, etc.) will be copied to
-            `base_url`, therefore it is expected that `base_url` will be a
-            directory.
 
         Returns
         -------
@@ -220,12 +232,15 @@ class Emperor(object):
 
         Notes
         -----
-        The `standalone` argument is intended for the different use-cases that
-        Emperor can have, either as an embedded widget that lives inside, for
-        example, the Jupyter notebook, or alternatively as an HTML file that
-        refers to resources locally. In this case you will probably also want
-        to copy the emperor_required_resources, and change the `base_url`
-        attribute of the object.
+        The ``standalone`` argument is intended for the different use-cases
+        that Emperor can have, either as an embedded widget that lives inside,
+        for example, the Jupyter notebook, or alternatively as an HTML file
+        that refers to resources locally. In this case you will need to copy
+        the support files by calling the ``copy_support_files`` method.
+
+        See Also
+        --------
+        emperor.core.Emperor.copy_support_files
         """
 
         # based on: http://stackoverflow.com/a/6196098
@@ -234,9 +249,6 @@ class Emperor(object):
 
         if standalone:
             main_path = basename(STANDALONE_PATH)
-
-            # copy the required resources
-            copy_tree(get_emperor_support_files_dir(), self.base_url)
         else:
             main_path = basename(JUPYTER_PATH)
         env = Environment(loader=loader)
