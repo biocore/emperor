@@ -53,6 +53,13 @@ define([
      *
      **/
     this.$_screePlotContainer = $('<div name="scree-plot">');
+    this.$_screePlotContainer.css({'display': 'inline-block',
+                                   'position': 'relative',
+                                   'width': '100%',
+                                   'padding-bottom': '100%',
+                                   'vertical-align': 'middle',
+                                   'overflow': 'hidden'});
+
     this.$body.append(this.$_screePlotContainer);
 
     // initialize interface elements here
@@ -76,7 +83,7 @@ define([
       return {'axis': 'PC ' + (index + 1), 'percent': val};
     });
 
-    // everything here is based on https://bl.ocks.org/mbostock/3885304
+    // this chart is based on https://bl.ocks.org/mbostock/3885304
     var margin = {top: 10, right: 10, bottom: 30, left: 40},
         width = this.$body.width() - margin.left - margin.right,
         height = (this.$body.height() * 0.40) - margin.top - margin.bottom;
@@ -96,29 +103,40 @@ define([
       .orient("left")
       .ticks(4);
 
+    // the container of the scree plot
     var svg = d3.select(this.$_screePlotContainer.get(0)).append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("preserveAspectRatio", "xMinYMin meet")
+      .attr("viewBox", (-margin.left) + ' ' +
+                       (-margin.top) + ' ' +
+                       (width + margin.left + margin.right) + ' ' +
+                       (height + margin.top + margin.bottom))
+      .style('display', 'inline-block')
+      .style('position', 'absolute')
+      .style('left', '0')
+      .style('top', '0')
+      .append("g");
 
     // creation of the chart itself
     x.domain(percents.map(function(d) { return d.axis; }));
     y.domain([0, d3.max(percents, function(d) { return d.percent; })]);
 
+    // create the x axis
     svg.append("g")
       .attr("font", "10px sans-serif")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
 
+    // create the y axis
     svg.append("g")
       .attr("font", "10px sans-serif")
       .call(yAxis)
       .append("text")
-      .attr('transform', 'translate(' + -30 + "," + height/2 + ") rotate(-90)")
+      .attr('transform', 'translate(' + (margin.left*(-0.8)) +
+                         ',' + height/2 + ') rotate(-90)')
       .style("text-anchor", "middle")
-      .text("Variation Explained");
+      .text("% Variation Explained");
 
+    // draw the bars in the chart
     svg.selectAll(".bar")
       .data(percents)
       .enter().append("rect")
@@ -128,10 +146,18 @@ define([
       .attr("y", function(d) { return y(d.percent); })
       .attr("height", function(d) { return height - y(d.percent); });
 
-    // set the axes style
+    // figure title
+    svg.append("text")
+      .attr("x", (width / 2))
+      .attr("y", 0)
+      .attr("text-anchor", "middle")
+      .text("Scree Plot");
+
+    // set the style for the axes lines and ticks
     svg.selectAll('axis,path,line')
       .style('fill', 'none')
       .style('stroke', 'black')
+      .style('stroke-width', '2')
       .style('shape-rendering', 'crispEdges');
 
     this.screePlot = svg;
