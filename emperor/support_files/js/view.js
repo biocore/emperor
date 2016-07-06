@@ -126,8 +126,9 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
                       plottable.coordinates[y],
                       plottable.coordinates[z]);
     mesh.updateMatrix();
-    this.needsUpdate = true;
   });
+
+  this.needsUpdate = true;
 };
 
 /**
