@@ -77,6 +77,7 @@ define([
    *
    **/
   AxesController.prototype._buildScreePlot = function (){
+    var scope = this;
     var percents = this.decompViewDict[this.activeViewKey].decomp.percExpl;
     percents = _.map(percents, function(val, index){
       // +1 to account for zero-indexing
@@ -140,11 +141,18 @@ define([
     svg.selectAll(".bar")
       .data(percents)
       .enter().append("rect")
+      .attr("name", function(d) { return d.axis; })
       .attr("fill", "steelblue")
       .attr("x", function(d) { return x(d.axis); })
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.percent); })
-      .attr("height", function(d) { return height - y(d.percent); });
+      .attr("height", function(d) { return height - y(d.percent); })
+      .on("mouseover", function(d) {
+        $(this).css('fill', 'teal');
+      })
+      .on("mouseout", function(d) {
+        $(this).css('fill', 'steelblue');
+      });
 
     // figure title
     svg.append("text")
@@ -161,6 +169,56 @@ define([
       .style('shape-rendering', 'crispEdges');
 
     this.screePlot = svg;
+
+    $.contextMenu({
+      selector: '#' + this.identifier + ' rect',
+      trigger: 'left',
+      items: {
+        'first-axis': {
+          name: 'Set as first axis',
+          callback: function(key, opts) {
+            var name = $(this).attr('name');
+            scope.updateVisibleAxes(name, 0);
+          }
+        },
+        'second-axis': {
+          name: 'Set as second axis',
+          callback: function(key, opts) {
+            var name = $(this).attr('name');
+            scope.updateVisibleAxes(name, 1);
+          }
+        },
+        'third-axis': {
+          name: 'Set as third axis',
+          callback: function(key, opts) {
+            var name = $(this).attr('name');
+            scope.updateVisibleAxes(name, 2);
+          }
+        },
+        'sep1': '---------',
+        'flip-axis': {
+          name: 'Flip axis orientation',
+          callback: function(key, opts) {
+            var name = $(this).attr('name');
+            scope.flipAxis(name);
+          }
+        }
+      }
+    });
+
+
+  }
+
+  AxesController.prototype.updateVisibleAxes = function (name, position){
+    var decView = this.decompViewDict[this.activeViewKey];
+    var visibleDimensions = decView.visibleDimensions;
+
+    visibleDimensions[position] = parseInt(name.split(' ')[1]) - 1;
+    decView.changeVisibleDimensions(visibleDimensions);
+  }
+
+  AxesController.prototype.flipAxis = function (name){
+    console.log('Flipping axis ' + name);
   }
 
   return AxesController;
