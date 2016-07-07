@@ -29,7 +29,7 @@
     if (args.length !== 2) {
         console.error('Usage:\n  phantomjs runner.js ' +
                       '[url-of-your-qunit-testsuite]');
-        phantom.exit(1);
+        exit(1);
     }
 
     var url = args[1],
@@ -54,7 +54,7 @@
                 result = message.data;
                 failed = !result || result.failed;
 
-                phantom.exit(failed ? 1 : 0);
+                exit(failed ? 1 : 0);
             }
         }
     };
@@ -62,7 +62,7 @@
     page.open(url, function(status) {
         if (status !== 'success') {
             console.error('Unable to access network: ' + status);
-            phantom.exit(1);
+            exit(1);
         } else {
             // Cannot do this verification with the 'DOMContentLoaded' handler
             // because it will be too late to attach it if a page does not have
@@ -72,7 +72,7 @@
             });
             if (qunitMissing) {
                 console.error('The `QUnit` object is not present.');
-                phantom.exit(1);
+                exit(1);
             }
 
             // Do nothing... the callback mechanism will handle everything!
@@ -145,4 +145,21 @@
             });
         }, false);
     }
+
+    /*
+     This function was taken from:
+     https://github.com/jonkemp/qunit-phantomjs-runner
+
+     It helps prevent some problems with the output produced by this script.
+     */
+    function exit(code) {
+        if (page) {
+            page.close();
+        }
+        setTimeout(function () {
+            phantom.exit(code);
+        }, 0);
+    }
+
+
 })();
