@@ -82,7 +82,7 @@ requirejs([
     });
 
     test('Constructor tests', function(assert) {
-      var container = $('<div id="does-not-exist" style="height:11px; ' +
+      var container = $('<div id="does-not-exist" style="height:1000px; ' +
                         'width:12px"></div>');
 
       assert.ok(AxesController.prototype instanceof EmperorViewControllerABC);
@@ -91,13 +91,13 @@ requirejs([
         container, this.sharedDecompositionViewDict);
       equal(controller.title, 'Axes');
 
-      equal(controller._flippedAxes, [0, 0, 0]);
+      deepEqual(controller._flippedAxes, [0, 0, 0]);
       equal(controller.$_screePlotContainer.attr('name'), 'scree-plot');
 
     });
 
     test('Testing toJSON', function() {
-      var container = $('<div id="does-not-exist" style="height:11px; ' +
+      var container = $('<div id="does-not-exist" style="height:1000px; ' +
                         'width:12px"></div>');
       var controller = new AxesController(
         container, this.sharedDecompositionViewDict);
@@ -110,7 +110,7 @@ requirejs([
     test('Testing fromJSON', function() {
       var json = {'flippedAxes': [1, 1, 0], 'visibleDimensions': [0, 1, 0]};
 
-      var container = $('<div id="does-not-exist" style="height:11px; ' +
+      var container = $('<div id="does-not-exist" style="height:1000px; ' +
                         'width:12px"></div>');
       var controller = new AxesController(
         container, this.sharedDecompositionViewDict);
