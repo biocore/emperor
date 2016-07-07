@@ -3,8 +3,9 @@ define([
     "underscore",
     "view",
     "viewcontroller",
-    "d3"
-], function ($, _, DecompositionView, ViewControllers, d3) {
+    "d3",
+    "contextmenu"
+], function ($, _, DecompositionView, ViewControllers, d3, contextmenu) {
 
   // we only use the base attribute class, no need to get the base class
   var EmperorViewControllerABC = ViewControllers.EmperorViewControllerABC;
@@ -332,7 +333,7 @@ define([
     axIndex = decView.visibleDimensions.indexOf(index);
 
     if(axIndex !== -1){
-      decView.flipAxisOrientation(index);
+      decView.flipVisibleDimension(index);
       this._flippedAxes[axIndex] = 1 ^ this._flippedAxes[axIndex];
       this.buildDisplayTable();
     }
