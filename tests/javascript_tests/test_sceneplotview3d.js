@@ -89,8 +89,8 @@ requirejs([
       assert.ok(spv.camera instanceof THREE.PerspectiveCamera);
       assert.ok(spv.light instanceof THREE.DirectionalLight);
 
-      equal(spv.xView, 0);
-      equal(spv.yView, 0);
+      deepEqual(spv.xView, 0);
+      deepEqual(spv.yView, 0);
 
       equal(spv.width, 20);
       equal(spv.height, 20);
@@ -110,7 +110,8 @@ requirejs([
 
       // pub/sub
       deepEqual(spv.EVENTS, ['click', 'dblclick']);
-      deepEqual(spv._subscribers, {'click': [], 'dblclick': []});
+      deepEqual(spv._subscribers.click.length, 1);
+      deepEqual(spv._subscribers.dblclick.length, 0);
 
     });
 
@@ -429,11 +430,11 @@ requirejs([
 
       spv.on('click', a);
       spv.on('click', b);
-      equal(spv._subscribers.click.length, 2);
+      equal(spv._subscribers.click.length, 3);
       spv.off('click', a);
-      equal(spv._subscribers.click.length, 1);
+      equal(spv._subscribers.click.length, 2);
       spv.off('click', b);
-      equal(spv._subscribers.click.length, 0);
+      equal(spv._subscribers.click.length, 1);
     });
 
   });
