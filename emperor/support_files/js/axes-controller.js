@@ -78,9 +78,15 @@ define([
      * @type {Node}
      * The display table where information about currently visible axes is
      * shown.
-     *
      */
     this.$table = null;
+
+    /**
+     * @type {Bool[]}
+     * Which axes are 'flipped', by default all are set to false.
+     * @private
+     */
+    this._flippedAxes = [0, 0, 0];
 
     // initialize interface elements here
     $(this).ready(function() {
@@ -105,17 +111,26 @@ define([
       this.$table.remove();
     }
 
-    var view = this.decompViewDict[this.activeViewKey];
+    var view = this.decompViewDict[this.activeViewKey], scope = this;
     var percents = view.decomp.percExpl;
     var names = ['First', 'Second', 'Third'];
 
     var table = "<table>";
-    table += "<col align='left'><col align='right'>";
+    table += "<col align='left'><col align='right'><col align='center'>";
     _.each(view.visibleDimensions, function(dimension, index){
       table += "<tr>";
+
+      // axis name
       table += "<td>" + names[index] +  " Axis" + "</td>";
+
+      // percentage of variation and name
       table += "<td>PC " + (dimension+1) + " - " +
                percents[dimension].toFixed(2) + "%</td>";
+
+      // whether or not the axis is flipped
+      table += "<td>Is" + (scope._flippedAxes[index] ?  "" : " Not") +
+               " Flipped</td>";
+
       table += "</tr>";
 
     });
@@ -123,7 +138,6 @@ define([
 
     this.$table = $(table);
     this.$table.css({"width": "inherit",
-                     "display": "table",
                      "padding-bottom": "10%"
     });
 
@@ -288,29 +302,40 @@ define([
   }
 
   /**
-   * Callback to change the visible axes in the current plot.
+   * Callback to reposition an axis into a new position.
    *
-   * @param {String} name The name of the axis to set as a new visible axis.
+   * @param {Integer} index The index of the dimension to set as a new visible
+   * axis, in the corresponding position indicated by `position`.
    * @param {Integer} position The position where the new axis will be set.
    */
-  AxesController.prototype.updateVisibleAxes = function (name, position){
+  AxesController.prototype.updateVisibleAxes = function (index, position){
     var decView = this.decompViewDict[this.activeViewKey];
     var visibleDimensions = decView.visibleDimensions;
 
-    visibleDimensions[position] = parseInt(name.split(' ')[1]) - 1;
+    visibleDimensions[position] = index;
     decView.changeVisibleDimensions(visibleDimensions);
+
+    this._flippedAxes[position] = 0;
+
+    this.buildDisplayTable();
   }
 
-  /*
+  /**
    * Callback to change the orientation of an axis
    *
-   * @param {String} name The name of the axis to re-orient, for example 'PC
-   * 1'.
-   *
-   **/
-  AxesController.prototype.flipAxis = function (name){
-    var decView = this.decompViewDict[this.activeViewKey];
-    decView.flipAxisOrientation(parseInt(name.split(' ')[1]) - 1);
+   * @param {Integer} index The index of the dimension to re-orient, note that
+   * if this index is not visible, this callback will take no effect.
+   */
+  AxesController.prototype.flipAxis = function (index){
+    var decView = this.decompViewDict[this.activeViewKey], axIndex;
+
+    axIndex = decView.visibleDimensions.indexOf(index);
+
+    if(axIndex !== -1){
+      decView.flipAxisOrientation(index);
+      this._flippedAxes[axIndex] = 1 ^ this._flippedAxes[axIndex];
+      this.buildDisplayTable();
+    }
   }
 
   return AxesController;
