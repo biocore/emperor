@@ -51,19 +51,25 @@ define([
      *
      * All bow to the power of the scree plot.
      *
+     * The style set here is important, allows for automatic resizing.
+     *
      **/
     this.$_screePlotContainer = $('<div name="scree-plot">');
     this.$_screePlotContainer.css({'display': 'inline-block',
                                    'position': 'relative',
                                    'width': '100%',
+                                   'height': '40%',
                                    'padding-bottom': '100%',
                                    'vertical-align': 'middle',
                                    'overflow': 'hidden'});
 
     this.$body.append(this.$_screePlotContainer);
 
+    this.$table = null;
+
     // initialize interface elements here
     $(this).ready(function() {
+      scope.buildDisplayTable();
       scope._buildScreePlot();
     });
 
@@ -71,6 +77,34 @@ define([
   }
   AxesController.prototype = Object.create(EmperorViewControllerABC.prototype);
   AxesController.prototype.constructor = EmperorViewControllerABC;
+
+  AxesController.prototype.buildDisplayTable = function (){
+    if(this.$table !== null){
+      this.$table.remove();
+    }
+
+    var view = this.decompViewDict[this.activeViewKey];
+    var percents = view.decomp.percExpl;
+    var names = ['First', 'Second', 'Third'];
+
+    var table = "<table><col align='left'><col align='right'>";
+    _.each(view.visibleDimensions, function(dimension, index){
+      table += "<tr>";
+      table += "<td>" + names[index] +  " Axis" + "</td>";
+      table += "<td>PC " + (dimension+1) + " - " + percents[dimension].toFixed(2) + "%</td>";
+      table += "</tr>";
+
+    });
+    table += "</table>";
+
+    this.$table = $(table);
+    this.$table.css({"width": "inherit",
+                     "display": "table",
+                     "padding-bottom": "10%"
+    });
+
+    this.$header.append(this.$table);
+  }
 
   /*
    *
@@ -179,6 +213,7 @@ define([
           callback: function(key, opts) {
             var name = $(this).attr('name');
             scope.updateVisibleAxes(name, 0);
+            scope.buildDisplayTable();
           }
         },
         'second-axis': {
@@ -186,6 +221,7 @@ define([
           callback: function(key, opts) {
             var name = $(this).attr('name');
             scope.updateVisibleAxes(name, 1);
+            scope.buildDisplayTable();
           }
         },
         'third-axis': {
@@ -193,6 +229,7 @@ define([
           callback: function(key, opts) {
             var name = $(this).attr('name');
             scope.updateVisibleAxes(name, 2);
+            scope.buildDisplayTable();
           }
         },
         'sep1': '---------',
@@ -205,8 +242,6 @@ define([
         }
       }
     });
-
-
   }
 
   AxesController.prototype.updateVisibleAxes = function (name, position){
@@ -218,7 +253,8 @@ define([
   }
 
   AxesController.prototype.flipAxis = function (name){
-    console.log('Flipping axis ' + name);
+    var decView = this.decompViewDict[this.activeViewKey];
+    decView.flipAxisOrientation(parseInt(name.split(' ')[1]) - 1);
   }
 
   return AxesController;
