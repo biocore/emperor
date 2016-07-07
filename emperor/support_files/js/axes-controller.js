@@ -338,5 +338,38 @@ define([
     }
   }
 
+  /**
+   * Converts the current instance into a JSON string.
+   *
+   * @return {Object} JSON ready representation of self.
+   */
+  AxesController.prototype.toJSON = function(){
+    var json = {};
+
+    var decView = this.decompViewDict[this.activeViewKey];
+
+    json.visibleDimensions = decView.visibleDimensions;
+    json.flippedAxes = this._flippedAxes;
+
+    return json;
+  }
+
+  /**
+   * Decodes JSON string and modifies its own instance variables accordingly.
+   *
+   * @param {Object} Parsed JSON string representation of self.
+   */
+  AxesController.prototype.fromJSON = function(json) {
+    var decView = this.decompViewDict[this.activeViewKey], scope = this;
+
+    decView.changeVisibleDimensions(json.visibleDimensions);
+
+    _.each(json.flippedAxes, function(element, index){
+      if(element){
+        scope.flipAxis(decView.visibleDimensions[index]);
+      }
+    });
+  }
+
   return AxesController;
 });
