@@ -119,9 +119,9 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
 
   this.visibleDimensions = newDims;
 
-  var x = newDims[0], y = newDims[1], z = newDims[2], dv = this;
+  var x = newDims[0], y = newDims[1], z = newDims[2], scope = this;
   this.decomp.apply(function(plottable) {
-    mesh = dv.markers[plottable.idx];
+    mesh = scope.markers[plottable.idx];
     mesh.position.set(plottable.coordinates[x],
                       plottable.coordinates[y],
                       plottable.coordinates[z]);
