@@ -141,7 +141,7 @@ requirejs([
       expa = dv.markers[0].position.toArray();
       expb = dv.markers[1].position.toArray();
       expa[1] = expa[1] * -1;
-      dv.flipAxisOrientation(1);
+      dv.flipVisibleDimension(1);
       obs = dv.markers[0].position.toArray();
       deepEqual(obs, expa, 'First marker position updated correctly');
 

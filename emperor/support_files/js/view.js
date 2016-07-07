@@ -133,25 +133,32 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
 
 /**
  *
- * Reorient the axes in the decomposition view
+ * Reorient one of the visible dimensions.
  *
- * @param {integer} index The index of the visible dimension to reorient.
+ * @param {integer} index The index of the dimension to re-orient, if this
+ * dimension is not visible i.e. not in `this.visibleDimensions`, then the
+ * method will return right away.
  *
  */
-DecompositionView.prototype.flipAxisOrientation = function(index){
+DecompositionView.prototype.flipVisibleDimension = function(index){
   var pos, scope = this;
 
-  this.decomp.apply(function(plottable) {
-    mesh = scope.markers[plottable.idx];
-    pos = mesh.position.toArray();
+  index = this.visibleDimensions.indexOf(index);
 
-    // flip the axis
-    pos[index] = pos[index] * -1;
+  if (index !== -1){
+    this.decomp.apply(function(plottable) {
+      mesh = scope.markers[plottable.idx];
+      pos = mesh.position.toArray();
 
-    mesh.position.set(pos[0], pos[1], pos[2]);
-    mesh.updateMatrix();
-  });
-  this.needsUpdate = true;
+      // flip the axis
+      pos[index] = pos[index] * -1;
+
+      mesh.position.set(pos[0], pos[1], pos[2]);
+      mesh.updateMatrix();
+    });
+
+    this.needsUpdate = true;
+  }
 }
 
 /**
