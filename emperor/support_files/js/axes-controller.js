@@ -93,13 +93,13 @@ define([
   AxesController.prototype = Object.create(EmperorViewControllerABC.prototype);
   AxesController.prototype.constructor = EmperorViewControllerABC;
 
-  /*
+  /**
    * Create a table to display the visible axis information.
    *
    * Note that when this method is executed the table is destroyed, if it
    * exists, and recreated with the appropriate information.
    *
-   **/
+   */
   AxesController.prototype.buildDisplayTable = function (){
     if(this.$table !== null){
       this.$table.remove();
@@ -130,12 +130,12 @@ define([
     this.$header.append(this.$table);
   }
 
-  /*
+  /**
    * Method to build the scree plot and updates the interface appropriately.
    *
    * @private
    *
-   **/
+   */
   AxesController.prototype._buildScreePlot = function (){
     var scope = this;
     var percents = this.decompViewDict[this.activeViewKey].decomp.percExpl;
@@ -284,13 +284,12 @@ define([
     });
   }
 
-  /*
+  /**
    * Callback to change the visible axes in the current plot.
    *
    * @param {String} name The name of the axis to set as a new visible axis.
    * @param {Integer} position The position where the new axis will be set.
-   *
-   **/
+   */
   AxesController.prototype.updateVisibleAxes = function (name, position){
     var decView = this.decompViewDict[this.activeViewKey];
     var visibleDimensions = decView.visibleDimensions;
