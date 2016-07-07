@@ -521,7 +521,7 @@ define([
                       this.EVENTS.join(', '));
     }
 
-    var pos = this._subscribers[eventType].find(handler);
+    var pos = this._subscribers[eventType].indexOf(handler);
     if (pos !== -1) {
       this._subscribers[eventType].splice(pos, 1);
     }
