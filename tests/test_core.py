@@ -17,7 +17,12 @@ import pandas as pd
 import numpy as np
 
 from emperor.core import Emperor
-from . import _test_core_strings as tcs
+
+# account for what's allowed in python 2 vs PY3K
+try:
+    from . import _test_core_strings as tcs
+except:
+    import _test_core_strings as tcs
 
 
 class TopLevelTests(TestCase):
