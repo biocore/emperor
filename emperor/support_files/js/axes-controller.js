@@ -1,11 +1,11 @@
 define([
-    "jquery",
-    "underscore",
-    "view",
-    "viewcontroller",
-    "d3",
-    "contextmenu"
-], function ($, _, DecompositionView, ViewControllers, d3, contextmenu) {
+    'jquery',
+    'underscore',
+    'view',
+    'viewcontroller',
+    'd3',
+    'contextmenu'
+], function($, _, DecompositionView, ViewControllers, d3, contextmenu) {
 
   // we only use the base attribute class, no need to get the base class
   var EmperorViewControllerABC = ViewControllers.EmperorViewControllerABC;
@@ -26,21 +26,21 @@ define([
    * @constructs AxesController
    * @extends EmperorViewControllerABC
    */
-  function AxesController(container, decompViewDict){
+  function AxesController(container, decompViewDict) {
     var helpmenu = 'Change the visible dimensions of the data';
     var title = 'Axes';
     var scope = this;
 
-    if (decompViewDict === undefined){
+    if (decompViewDict === undefined) {
       throw Error('The decomposition view dictionary cannot be undefined');
     }
-    for(var dv in decompViewDict){
-      if(!dv instanceof DecompositionView){
+    for (var dv in decompViewDict) {
+      if (!dv instanceof DecompositionView) {
         throw Error('The decomposition view dictionary ' +
             'can only have decomposition views');
       }
     }
-    if (_.size(decompViewDict) <= 0){
+    if (_.size(decompViewDict) <= 0) {
       throw Error('The decomposition view dictionary cannot be empty');
     }
     this.decompViewDict = decompViewDict;
@@ -107,8 +107,8 @@ define([
    * exists, and recreated with the appropriate information.
    *
    */
-  AxesController.prototype.buildDisplayTable = function (){
-    if(this.$table !== null){
+  AxesController.prototype.buildDisplayTable = function() {
+    if (this.$table !== null) {
       this.$table.remove();
     }
 
@@ -116,34 +116,34 @@ define([
     var percents = view.decomp.percExpl;
     var names = ['First', 'Second', 'Third'];
 
-    var table = "<table>";
-    table += "<col align='left'><col align='right'><col align='center'>";
-    _.each(view.visibleDimensions, function(dimension, index){
-      table += "<tr>";
+    var table = '<table>';
+    table += '<col align="left"><col align="right"><col align="center">';
+    _.each(view.visibleDimensions, function(dimension, index) {
+      table += '<tr>';
 
       // axis name
-      table += "<td>" + names[index] +  " Axis" + "</td>";
+      table += '<td>' + names[index] + ' Axis' + '</td>';
 
       // percentage of variation and name
-      table += "<td>PC " + (dimension+1) + " - " +
-               percents[dimension].toFixed(2) + "%</td>";
+      table += '<td>PC ' + (dimension + 1) + ' - ' +
+               percents[dimension].toFixed(2) + '%</td>';
 
       // whether or not the axis is flipped
-      table += "<td>Is" + (scope._flippedAxes[index] ?  "" : " Not") +
-               " Flipped</td>";
+      table += '<td>Is' + (scope._flippedAxes[index] ? '' : ' Not') +
+               ' Flipped</td>';
 
-      table += "</tr>";
+      table += '</tr>';
 
     });
-    table += "</table>";
+    table += '</table>';
 
     this.$table = $(table);
-    this.$table.css({"width": "inherit",
-                     "padding-bottom": "10%"
+    this.$table.css({'width': 'inherit',
+                     'padding-bottom': '10%'
     });
 
     this.$header.append(this.$table);
-  }
+  };
 
   /**
    * Method to build the scree plot and updates the interface appropriately.
@@ -151,10 +151,10 @@ define([
    * @private
    *
    */
-  AxesController.prototype._buildScreePlot = function (){
+  AxesController.prototype._buildScreePlot = function() {
     var scope = this;
     var percents = this.decompViewDict[this.activeViewKey].decomp.percExpl;
-    percents = _.map(percents, function(val, index){
+    percents = _.map(percents, function(val, index) {
       // +1 to account for zero-indexing
       return {'axis': 'PC ' + (index + 1), 'percent': val,
               'dimension-index': index};
@@ -174,17 +174,17 @@ define([
 
     var xAxis = d3.svg.axis()
       .scale(x)
-      .orient("bottom");
+      .orient('bottom');
 
     var yAxis = d3.svg.axis()
       .scale(y)
-      .orient("left")
+      .orient('left')
       .ticks(4);
 
     // the container of the scree plot
-    var svg = d3.select(this.$_screePlotContainer.get(0)).append("svg")
-      .attr("preserveAspectRatio", "xMinYMin meet")
-      .attr("viewBox", (-margin.left) + ' ' +
+    var svg = d3.select(this.$_screePlotContainer.get(0)).append('svg')
+      .attr('preserveAspectRatio', 'xMinYMin meet')
+      .attr('viewBox', (-margin.left) + ' ' +
                        (-margin.top) + ' ' +
                        (width + margin.left + margin.right) + ' ' +
                        (height + margin.top + margin.bottom))
@@ -192,51 +192,51 @@ define([
       .style('position', 'absolute')
       .style('left', '0')
       .style('top', '0')
-      .append("g");
+      .append('g');
 
     // creation of the chart itself
     x.domain(percents.map(function(d) { return d.axis; }));
     y.domain([0, d3.max(percents, function(d) { return d.percent; })]);
 
     // create the x axis
-    svg.append("g")
-      .attr("font", "10px sans-serif")
-      .attr("transform", "translate(0," + height + ")")
+    svg.append('g')
+      .attr('font', '10px sans-serif')
+      .attr('transform', 'translate(0,' + height + ')')
       .call(xAxis);
 
     // create the y axis
-    svg.append("g")
-      .attr("font", "10px sans-serif")
+    svg.append('g')
+      .attr('font', '10px sans-serif')
       .call(yAxis)
-      .append("text")
-      .attr('transform', 'translate(' + (margin.left*(-0.8)) +
-                         ',' + height/2 + ') rotate(-90)')
-      .style("text-anchor", "middle")
-      .text("% Variation Explained");
+      .append('text')
+      .attr('transform', 'translate(' + (margin.left * (-0.8)) +
+                         ',' + height / 2 + ') rotate(-90)')
+      .style('text-anchor', 'middle')
+      .text('% Variation Explained');
 
     // draw the bars in the chart
-    svg.selectAll(".bar")
+    svg.selectAll('.bar')
       .data(percents)
-      .enter().append("rect")
-      .attr("dimension-index", function(d) { return d['dimension-index']; })
-      .attr("fill", "steelblue")
-      .attr("x", function(d) { return x(d.axis); })
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.percent); })
-      .attr("height", function(d) { return height - y(d.percent); })
-      .on("mouseover", function(d) {
+      .enter().append('rect')
+      .attr('dimension-index', function(d) { return d['dimension-index']; })
+      .attr('fill', 'steelblue')
+      .attr('x', function(d) { return x(d.axis); })
+      .attr('width', x.rangeBand())
+      .attr('y', function(d) { return y(d.percent); })
+      .attr('height', function(d) { return height - y(d.percent); })
+      .on('mouseover', function(d) {
         $(this).css('fill', 'teal');
       })
-      .on("mouseout", function(d) {
+      .on('mouseout', function(d) {
         $(this).css('fill', 'steelblue');
       });
 
     // figure title
-    svg.append("text")
-      .attr("x", (width / 2))
-      .attr("y", 0)
-      .attr("text-anchor", "middle")
-      .text("Scree Plot");
+    svg.append('text')
+      .attr('x', (width / 2))
+      .attr('y', 0)
+      .attr('text-anchor', 'middle')
+      .text('Scree Plot');
 
     // set the style for the axes lines and ticks
     svg.selectAll('axis,path,line')
@@ -250,15 +250,15 @@ define([
     // This function creates a function callbacks
     //
     // The rationale to create this function, was to deal with the fact that
-    // three of the "context menu" options had the same behaviour, otherwise
+    // three of the 'context menu' options had the same behaviour, otherwise
     // we would have had to repeat the code in the returned function.
     //
-    var callbackFactory = function(callBackIndex){
+    var callbackFactory = function(callBackIndex) {
       return (function(key, opts) {
         var index = parseInt($(this).attr('dimension-index'));
         scope.updateVisibleAxes(index, callBackIndex);
       });
-    }
+    };
 
     /*
       Once we have created the plot, we bind each of the bars to a context
@@ -300,7 +300,7 @@ define([
         }
       }
     });
-  }
+  };
 
   /**
    * Callback to reposition an axis into a new position.
@@ -309,7 +309,7 @@ define([
    * axis, in the corresponding position indicated by `position`.
    * @param {Integer} position The position where the new axis will be set.
    */
-  AxesController.prototype.updateVisibleAxes = function (index, position){
+  AxesController.prototype.updateVisibleAxes = function(index, position) {
     var decView = this.decompViewDict[this.activeViewKey];
     var visibleDimensions = decView.visibleDimensions;
 
@@ -319,7 +319,7 @@ define([
     this._flippedAxes[position] = 0;
 
     this.buildDisplayTable();
-  }
+  };
 
   /**
    * Callback to change the orientation of an axis
@@ -327,24 +327,24 @@ define([
    * @param {Integer} index The index of the dimension to re-orient, note that
    * if this index is not visible, this callback will take no effect.
    */
-  AxesController.prototype.flipAxis = function (index){
+  AxesController.prototype.flipAxis = function(index) {
     var decView = this.decompViewDict[this.activeViewKey], axIndex;
 
     axIndex = decView.visibleDimensions.indexOf(index);
 
-    if(axIndex !== -1){
+    if (axIndex !== -1) {
       decView.flipVisibleDimension(index);
       this._flippedAxes[axIndex] = 1 ^ this._flippedAxes[axIndex];
       this.buildDisplayTable();
     }
-  }
+  };
 
   /**
    * Converts the current instance into a JSON string.
    *
    * @return {Object} JSON ready representation of self.
    */
-  AxesController.prototype.toJSON = function(){
+  AxesController.prototype.toJSON = function() {
     var json = {};
 
     var decView = this.decompViewDict[this.activeViewKey];
@@ -353,7 +353,7 @@ define([
     json.flippedAxes = this._flippedAxes;
 
     return json;
-  }
+  };
 
   /**
    * Decodes JSON string and modifies its own instance variables accordingly.
@@ -365,12 +365,12 @@ define([
 
     decView.changeVisibleDimensions(json.visibleDimensions);
 
-    _.each(json.flippedAxes, function(element, index){
-      if(element){
+    _.each(json.flippedAxes, function(element, index) {
+      if (element) {
         scope.flipAxis(decView.visibleDimensions[index]);
       }
     });
-  }
+  };
 
   return AxesController;
 });

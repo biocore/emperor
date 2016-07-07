@@ -140,12 +140,12 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
  * method will return right away.
  *
  */
-DecompositionView.prototype.flipVisibleDimension = function(index){
+DecompositionView.prototype.flipVisibleDimension = function(index) {
   var pos, scope = this;
 
   index = this.visibleDimensions.indexOf(index);
 
-  if (index !== -1){
+  if (index !== -1) {
     this.decomp.apply(function(plottable) {
       mesh = scope.markers[plottable.idx];
       pos = mesh.position.toArray();
@@ -159,7 +159,7 @@ DecompositionView.prototype.flipVisibleDimension = function(index){
 
     this.needsUpdate = true;
   }
-}
+};
 
 /**
  * Change the plottables attributes based on the metadata category using the
