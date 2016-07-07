@@ -123,9 +123,6 @@ requirejs([
       var decView = controller.decompViewDict[controller.activeViewKey];
       deepEqual(decView.visibleDimensions, [0, 1, 0]);
       deepEqual(controller._flippedAxes, [1, 1, 0]);
-
-      console.log(decView.decomp.percExpl);
-
     });
 
   });
