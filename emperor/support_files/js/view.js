@@ -132,6 +132,29 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
 };
 
 /**
+ *
+ * Reorient the axes in the decomposition view
+ *
+ * @param {integer} index The index of the visible dimension to reorient.
+ *
+ */
+DecompositionView.prototype.flipAxisOrientation = function(index){
+  var pos, scope = this;
+
+  this.decomp.apply(function(plottable) {
+    mesh = scope.markers[plottable.idx];
+    pos = mesh.position.toArray();
+
+    // flip the axis
+    pos[index] = pos[index] * -1;
+
+    mesh.position.set(pos[0], pos[1], pos[2]);
+    mesh.updateMatrix();
+  });
+  this.needsUpdate = true;
+}
+
+/**
  * Change the plottables attributes based on the metadata category using the
  * provided setPlottableAttributes function
  *
