@@ -113,6 +113,8 @@ requirejs([
       deepEqual(spv._subscribers.click.length, 1);
       deepEqual(spv._subscribers.dblclick.length, 0);
 
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     test('Test checkUpdate', function() {
@@ -132,6 +134,9 @@ requirejs([
 
       spv.decViews.scatter.needsUpdate = true;
       equal(spv.checkUpdate(), true);
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     test('Test the draw axes', function(assert) {
@@ -152,6 +157,9 @@ requirejs([
         equal(line.material.color.g, 1);
         equal(line.material.color.b, 0.058823529411764705);
       }
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     test('Test removing axes', function(assert) {
@@ -170,6 +178,9 @@ requirejs([
         line = spv.scene.getObjectByName('emperor-axis-line-' + i);
         assert.equal(line, undefined);
       }
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
 
@@ -198,6 +209,9 @@ requirejs([
         equal(label.material.color.g, 1);
         equal(label.material.color.b, 0.058823529411764705);
       }
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     test('Test removing axes labels', function(assert) {
@@ -216,6 +230,9 @@ requirejs([
         label = spv.scene.getObjectByName('emperor-axis-label-' + i);
         assert.equal(label, undefined);
       }
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
 
@@ -238,6 +255,8 @@ requirejs([
       spv.setCameraAspectRatio(1);
       equal(spv.camera.aspect, 1);
 
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     /**
@@ -267,6 +286,9 @@ requirejs([
 
       equal(spv.width, 75);
       equal(spv.height, 309);
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     /**
@@ -288,6 +310,9 @@ requirejs([
       // Update: turns out we cannot call the render method when we use the
       // SVGRenderer class. Would be great if we find a way around this problem.
       assert.ok(true);
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     /**
@@ -306,6 +331,9 @@ requirejs([
           spv.off('does not exist', function(a, b) { return a;});
         }, Error, 'An error is raised if the event is unknown'
       );
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     /**
@@ -324,6 +352,9 @@ requirejs([
           spv.on('does not exist', function(a, b) { return a;});
         }, Error, 'An error is raised if the event is unknown'
       );
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     /*
@@ -375,6 +406,9 @@ requirejs([
       var meshy = {'object': {'name': 'Meshy McMeshface'}};
       spv._raycaster.intersectObjects = function() { return [meshy]; };
       spv._eventCallback('click', mockEvent);
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     /**
@@ -408,6 +442,9 @@ requirejs([
       var meshy = {'object': {'name': 'Meshy McMeshface'}};
       spv._raycaster.intersectObjects = function() { return [meshy]; };
       spv._eventCallback('dblclick', mockEvent);
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
     /*
@@ -435,6 +472,9 @@ requirejs([
       equal(spv._subscribers.click.length, 2);
       spv.off('click', b);
       equal(spv._subscribers.click.length, 1);
+
+      // release the control back to the main page
+      spv.control.dispose();
     });
 
   });
