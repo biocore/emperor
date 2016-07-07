@@ -141,7 +141,8 @@ define([
     var percents = this.decompViewDict[this.activeViewKey].decomp.percExpl;
     percents = _.map(percents, function(val, index){
       // +1 to account for zero-indexing
-      return {'axis': 'PC ' + (index + 1), 'percent': val};
+      return {'axis': 'PC ' + (index + 1), 'percent': val,
+              'dimension-index': index};
     });
 
     // this chart is based on the example hosted in
@@ -202,7 +203,7 @@ define([
     svg.selectAll(".bar")
       .data(percents)
       .enter().append("rect")
-      .attr("name", function(d) { return d.axis; })
+      .attr("dimension-index", function(d) { return d['dimension-index']; })
       .attr("fill", "steelblue")
       .attr("x", function(d) { return x(d.axis); })
       .attr("width", x.rangeBand())
@@ -231,15 +232,29 @@ define([
 
     this.screePlot = svg;
 
+    // This function creates a function callbacks
+    //
+    // The rationale to create this function, was to deal with the fact that
+    // three of the "context menu" options had the same behaviour, otherwise
+    // we would have had to repeat the code in the returned function.
+    //
+    var callbackFactory = function(callBackIndex){
+      return (function(key, opts) {
+        var index = parseInt($(this).attr('dimension-index'));
+        scope.updateVisibleAxes(index, callBackIndex);
+      });
+    }
+
     /*
-      Once we have create the plot, we bind each of the bars to a context
+      Once we have created the plot, we bind each of the bars to a context
       menu, hence the selector searches for all the 'rect' tags inside the
       controller's div.
 
       The functionality itself is rather simple, each of the options in the
       context menu allows the user to select the clicked bar as the first,
-      second or third visible axis. With each of these changes, we re-build
-      the display table to reflect the currently visible data.
+      second or third visible axis. With each of these changes, we re-build the
+      display table to reflect the currently visible data (see
+      callbackFactory).
 
       Finally, there is one option that allows users to reorient the
       coordinates for that axis.
@@ -250,34 +265,22 @@ define([
       items: {
         'first-axis': {
           name: 'Set as first axis',
-          callback: function(key, opts) {
-            var name = $(this).attr('name');
-            scope.updateVisibleAxes(name, 0);
-            scope.buildDisplayTable();
-          }
+          callback: callbackFactory(0)
         },
         'second-axis': {
           name: 'Set as second axis',
-          callback: function(key, opts) {
-            var name = $(this).attr('name');
-            scope.updateVisibleAxes(name, 1);
-            scope.buildDisplayTable();
-          }
+          callback: callbackFactory(1)
         },
         'third-axis': {
           name: 'Set as third axis',
-          callback: function(key, opts) {
-            var name = $(this).attr('name');
-            scope.updateVisibleAxes(name, 2);
-            scope.buildDisplayTable();
-          }
+          callback: callbackFactory(2)
         },
         'sep1': '---------',
         'flip-axis': {
           name: 'Flip axis orientation',
           callback: function(key, opts) {
-            var name = $(this).attr('name');
-            scope.flipAxis(name);
+            var index = parseInt($(this).attr('dimension-index'));
+            scope.flipAxis(index);
           }
         }
       }
