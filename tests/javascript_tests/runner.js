@@ -156,7 +156,7 @@
         if (page) {
             page.close();
         }
-        setTimeout(function () {
+        setTimeout(function() {
             phantom.exit(code);
         }, 0);
     }
