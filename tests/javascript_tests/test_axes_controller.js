@@ -91,9 +91,6 @@ requirejs([
         container, this.sharedDecompositionViewDict);
       equal(controller.title, 'Axes');
 
-      var testColumn = controller.bodyGrid.getColumns()[0];
-      equal(testColumn.field, 'value');
-
       equal(controller._flippedAxes, [0, 0, 0]);
       equal(controller.$_screePlotContainer.attr('name'), 'scree-plot');
 
