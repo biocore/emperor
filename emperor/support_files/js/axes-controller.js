@@ -10,18 +10,21 @@ define([
   var EmperorViewControllerABC = ViewControllers.EmperorViewControllerABC;
 
   /**
-   * @name AxesController
+   * @class AxesController
    *
-   *  I know nothing about this ... yet :D
+   * Controls the axes that are displayed on screen as well as their
+   * orientation.
    *
-   **/
-
-  /*
-   * @name AxesController
+   * @param {Node} container Container node to create the controller in.
+   * @param {Object} decompViewDict This is object is keyed by unique
+   * identifiers and the values are DecompositionView objects referring to a
+   * set of objects presented on screen. This dictionary will usually be shared
+   * by all the tabs in the application. This argument is passed by reference.
    *
-   * I kinda know something about this, but not really
-   *
-   **/
+   * @return {AxesController}
+   * @constructs AxesController
+   * @extends EmperorViewControllerABC
+   */
   function AxesController(container, decompViewDict){
     var helpmenu = 'Change the visible dimensions of the data';
     var title = 'Axes';
@@ -44,16 +47,16 @@ define([
     // Picks the first key in the dictionary as the active key
     this.activeViewKey = Object.keys(decompViewDict)[0];
 
-
     EmperorViewControllerABC.call(this, container, title, helpmenu);
 
-    /*
-     *
-     * All bow to the power of the scree plot.
+    /**
+     * @type {Node}
+     * jQuery object containing the scree plot.
      *
      * The style set here is important, allows for automatic resizing.
      *
-     **/
+     * @private
+     */
     this.$_screePlotContainer = $('<div name="scree-plot">');
     this.$_screePlotContainer.css({'display': 'inline-block',
                                    'position': 'relative',
@@ -65,6 +68,18 @@ define([
 
     this.$body.append(this.$_screePlotContainer);
 
+    /**
+     * @type {Node}
+     * The SVG node where the scree plot lives. For use with D3.
+     */
+    this.svg = null;
+
+    /**
+     * @type {Node}
+     * The display table where information about currently visible axes is
+     * shown.
+     *
+     */
     this.$table = null;
 
     // initialize interface elements here
@@ -78,6 +93,13 @@ define([
   AxesController.prototype = Object.create(EmperorViewControllerABC.prototype);
   AxesController.prototype.constructor = EmperorViewControllerABC;
 
+  /*
+   * Create a table to display the visible axis information.
+   *
+   * Note that when this method is executed the table is destroyed, if it
+   * exists, and recreated with the appropriate information.
+   *
+   **/
   AxesController.prototype.buildDisplayTable = function (){
     if(this.$table !== null){
       this.$table.remove();
@@ -87,11 +109,13 @@ define([
     var percents = view.decomp.percExpl;
     var names = ['First', 'Second', 'Third'];
 
-    var table = "<table><col align='left'><col align='right'>";
+    var table = "<table>";
+    table += "<col align='left'><col align='right'>";
     _.each(view.visibleDimensions, function(dimension, index){
       table += "<tr>";
       table += "<td>" + names[index] +  " Axis" + "</td>";
-      table += "<td>PC " + (dimension+1) + " - " + percents[dimension].toFixed(2) + "%</td>";
+      table += "<td>PC " + (dimension+1) + " - " +
+               percents[dimension].toFixed(2) + "%</td>";
       table += "</tr>";
 
     });
@@ -107,7 +131,9 @@ define([
   }
 
   /*
+   * Method to build the scree plot and updates the interface appropriately.
    *
+   * @private
    *
    **/
   AxesController.prototype._buildScreePlot = function (){
@@ -118,7 +144,8 @@ define([
       return {'axis': 'PC ' + (index + 1), 'percent': val};
     });
 
-    // this chart is based on https://bl.ocks.org/mbostock/3885304
+    // this chart is based on the example hosted in
+    // https://bl.ocks.org/mbostock/3885304
     var margin = {top: 10, right: 10, bottom: 30, left: 40},
         width = this.$body.width() - margin.left - margin.right,
         height = (this.$body.height() * 0.40) - margin.top - margin.bottom;
@@ -204,6 +231,19 @@ define([
 
     this.screePlot = svg;
 
+    /*
+      Once we have create the plot, we bind each of the bars to a context
+      menu, hence the selector searches for all the 'rect' tags inside the
+      controller's div.
+
+      The functionality itself is rather simple, each of the options in the
+      context menu allows the user to select the clicked bar as the first,
+      second or third visible axis. With each of these changes, we re-build
+      the display table to reflect the currently visible data.
+
+      Finally, there is one option that allows users to reorient the
+      coordinates for that axis.
+     */
     $.contextMenu({
       selector: '#' + this.identifier + ' rect',
       trigger: 'left',
@@ -244,6 +284,13 @@ define([
     });
   }
 
+  /*
+   * Callback to change the visible axes in the current plot.
+   *
+   * @param {String} name The name of the axis to set as a new visible axis.
+   * @param {Integer} position The position where the new axis will be set.
+   *
+   **/
   AxesController.prototype.updateVisibleAxes = function (name, position){
     var decView = this.decompViewDict[this.activeViewKey];
     var visibleDimensions = decView.visibleDimensions;
@@ -252,6 +299,13 @@ define([
     decView.changeVisibleDimensions(visibleDimensions);
   }
 
+  /*
+   * Callback to change the orientation of an axis
+   *
+   * @param {String} name The name of the axis to re-orient, for example 'PC
+   * 1'.
+   *
+   **/
   AxesController.prototype.flipAxis = function (name){
     var decView = this.decompViewDict[this.activeViewKey];
     decView.flipAxisOrientation(parseInt(name.split(' ')[1]) - 1);
