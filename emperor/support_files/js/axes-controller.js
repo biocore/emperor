@@ -416,6 +416,8 @@ define([
 
     json.visibleDimensions = decView.visibleDimensions;
     json.flippedAxes = this._flippedAxes;
+    json.backgroundColor = decView.backgroundColor;
+    json.axesColor = decView.axesColor;
 
     return json;
   };
@@ -435,6 +437,9 @@ define([
         scope.flipAxis(decView.visibleDimensions[index]);
       }
     });
+
+    this.colorChanged('axes-color', json.axesColor);
+    this.colorChanged('background-color', json.backgroundColor);
   };
 
   return AxesController;
