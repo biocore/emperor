@@ -1,6 +1,6 @@
 /** @module trajectory */
 define([
-    'underscore',
+    'underscore'
 ], function(_) {
   /**
    *

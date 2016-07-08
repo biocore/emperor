@@ -363,7 +363,7 @@ define([
    */
   ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix) {
     var scope = this;
-    _.each(this.visibleDimensions, function(i){
+    _.each(this.visibleDimensions, function(i) {
       var axisLine = scope.scene.getObjectByName(prefix + i);
       scope.scene.remove(axisLine);
     });
@@ -445,8 +445,8 @@ define([
     // check if the visible dimensions have changed
     if (!_.isEqual(currentDimensions, this.visibleDimensions)) {
       // remove the current axes
-      this.removeAxesLabels();
       this.removeAxes();
+      this.removeAxesLabels();
 
       // get the new dimensions and re-display the data
       this.visibleDimensions = _.clone(currentDimensions);
@@ -457,7 +457,7 @@ define([
     }
 
     // check if we should change the axes color
-    if (axesColor !== this.axesColor){
+    if (axesColor !== this.axesColor) {
       this.drawAxesWithColor(axesColor);
       this.drawAxesLabelsWithColor(axesColor);
 
@@ -467,7 +467,7 @@ define([
     }
 
     // check if we should change the background color
-    if (backgroundColor !== this.backgroundColor){
+    if (backgroundColor !== this.backgroundColor) {
       this.renderer.setClearColor(new THREE.Color(backgroundColor));
       this.backgroundColor = _.clone(backgroundColor);
 

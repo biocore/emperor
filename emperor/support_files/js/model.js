@@ -1,6 +1,6 @@
 define([
     'jquery',
-    'underscore',
+    'underscore'
 ],
 function($, _) {
   /**

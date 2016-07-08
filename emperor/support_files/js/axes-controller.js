@@ -66,7 +66,7 @@ define([
                 allowEmpty: false,
                 showInitial: true,
                 clickoutFiresChange: true,
-                change: function(color){
+                change: function(color) {
                   // We let the controller deal with the callback, the only
                   // things we need are the name of the element triggerring
                   // the color change and the color as an integer (note that
@@ -342,7 +342,7 @@ define([
    */
   AxesController.prototype.updateVisibleAxes = function(index, position) {
     // update all the visible dimensions
-    _.each(this.decompViewDict, function(decView, key){
+    _.each(this.decompViewDict, function(decView, key) {
       var visibleDimensions = decView.visibleDimensions;
 
       visibleDimensions[position] = index;
@@ -364,7 +364,7 @@ define([
     var axIndex;
 
     // update all the visible dimensions
-    _.each(this.decompViewDict, function(decView, key){
+    _.each(this.decompViewDict, function(decView, key) {
 
       axIndex = decView.visibleDimensions.indexOf(index);
 
@@ -388,14 +388,14 @@ define([
   AxesController.prototype.colorChanged = function(name, color) {
     // for both cases update all the decomposition views and then set the
     // appropriate colors
-    if (name === 'axes-color'){
-      _.each(this.decompViewDict, function(decView){
+    if (name === 'axes-color') {
+      _.each(this.decompViewDict, function(decView) {
         decView.axesColor = color;
         decView.needsUpdate = true;
       });
     }
-    else if (name === 'background-color'){
-      _.each(this.decompViewDict, function(decView){
+    else if (name === 'background-color') {
+      _.each(this.decompViewDict, function(decView) {
         decView.backgroundColor = color;
         decView.needsUpdate = true;
       });
@@ -404,7 +404,7 @@ define([
       throw Error('Could not find "' + name + '" only two allowed inputs are' +
                   '"axes-color" and "background-color"');
     }
-  }
+  };
 
   /**
    * Converts the current instance into a JSON string.

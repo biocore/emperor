@@ -60,7 +60,7 @@ requirejs([
         var columns = [
         {id: 'pc1', name: 'pc1', field: 'pc1'},
         {id: 'pc2', name: 'pc2', field: 'pc2'},
-        {id: 'pc3', name: 'pc3', field: 'pc3'},
+        {id: 'pc3', name: 'pc3', field: 'pc3'}
         ];
 
         var options = {
