@@ -359,14 +359,14 @@ define([
    *
    * @param {String} prefix The label that will prepended to the iterating
    * index.
-   * @param {Integer} num Specifies the number of iterations to perform.
    *
    */
-  ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix, num) {
-    for (var i = 0; i < num; i++) {
-      var axisLine = this.scene.getObjectByName(prefix + i);
-      this.scene.remove(axisLine);
-    }
+  ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix) {
+    var scope = this;
+    _.each(this.visibleDimensions, function(i){
+      var axisLine = scope.scene.getObjectByName(prefix + i);
+      scope.scene.remove(axisLine);
+    });
   };
 
   /**
@@ -375,7 +375,7 @@ define([
    *
    */
   ScenePlotView3D.prototype.removeAxes = function() {
-    this._removeObjectsWithPrefix(this._axisPrefix, 3);
+    this._removeObjectsWithPrefix(this._axisPrefix);
   };
 
   /**
@@ -384,7 +384,7 @@ define([
    *
    */
   ScenePlotView3D.prototype.removeAxesLabels = function() {
-    this._removeObjectsWithPrefix(this._axisLabelPrefix, 3);
+    this._removeObjectsWithPrefix(this._axisLabelPrefix);
   };
 
   /**
