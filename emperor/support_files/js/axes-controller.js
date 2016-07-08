@@ -62,7 +62,6 @@ define([
     this.$_screePlotContainer.css({'display': 'inline-block',
                                    'position': 'relative',
                                    'width': '100%',
-                                   'height': 'inherit',
                                    'padding-bottom': '100%',
                                    'vertical-align': 'middle',
                                    'overflow': 'hidden'});
