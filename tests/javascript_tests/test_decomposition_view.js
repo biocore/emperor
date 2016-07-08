@@ -71,6 +71,9 @@ requirejs([
           'visibleDimensions set correctly');
       deepEqual(dv.tubes, [], 'tubes set correctly');
 
+      equal(dv.axesColor, 0xFFFFFF);
+      equal(dv.backgroundColor, 0x000000);
+
       /*
          I'm unsure on how to test this, so right now just testing what I think
          makes sense to test

@@ -41,6 +41,18 @@ function DecompositionView(decomp) {
    */
   this.visibleDimensions = [0, 1, 2]; // We default to the first three PCs
   /**
+   * Axes color.
+   * @type {integer}
+   * @default 0xFFFFFF (white)
+   */
+  this.axesColor = 0xFFFFFF;
+  /**
+   * Background color.
+   * @type {integer}
+   * @default 0x000000 (black)
+   */
+  this.backgroundColor = 0x000000;
+  /**
    * Tube objects on screen (used for animations)
    * @type {THREE.Mesh[]}
    */
