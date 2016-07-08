@@ -96,6 +96,9 @@ requirejs([
       equal(spv.height, 20);
       equal(spv.checkUpdate(), true);
 
+      equal(spv.axesColor, 0xFFFFFF);
+      equal(spv.backgroundColor, 0x000000);
+
       deepEqual(spv.visibleDimensions, [0, 1, 2]);
       deepEqual(spv.dimensionRanges.max, [-0.237661, 0.046053, 0.066647,
                                           0.159061, 0.17607, 0.072969,

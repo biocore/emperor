@@ -56,6 +56,18 @@ define([
      * @type {Float}
      */
     this.height = height;
+    /**
+     * Axes color.
+     * @type {integer}
+     * @default 0xFFFFFF (white)
+     */
+    this.axesColor = 0xFFFFFF;
+    /**
+     * Background color.
+     * @type {integer}
+     * @default 0x000000 (black)
+     */
+    this.backgroundColor = 0x000000;
 
     // used to name the axis lines/labels in the scene
     this._axisPrefix = 'emperor-axis-line-';
