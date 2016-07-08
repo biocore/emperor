@@ -50,6 +50,36 @@ define([
 
     EmperorViewControllerABC.call(this, container, title, helpmenu);
 
+    var colors = '<table style="width:inherit;">';
+    colors += '<tr><td>Axes and Labels Color</td>';
+    colors += '<td><input type="text" name="axes-color"/></td></tr>';
+    colors += '<tr><td>Background Color</td>';
+    colors += '<td><input type="text" name="background-color"/></td>';
+    colors += '</table>';
+    this.$body.append(colors);
+
+    var opts = {color: 'white',
+                preferredFormat: 'name',
+                palette: [['black', 'white']],
+                showPalette: true,
+                showInput: true,
+                allowEmpty: false,
+                showInitial: true,
+                clickoutFiresChange: true,
+                change: function(color){
+                  // We let the controller deal with the callback, the only
+                  // things we need are the name of the element triggerring
+                  // the color change and the color as an integer (note that
+                  // we are parsing from a string hence we have to indicate
+                  // the numerical base)
+                  scope.colorChanged($(this).attr('name'),
+                                     parseInt(color.toHex(), 16));
+                }
+    };
+    // spectrumify all the elements in the body that have a name ending in
+    // color
+    this.$body.find('[name$="color"]').spectrum(opts);
+
     /**
      * @type {Node}
      * jQuery object containing the scree plot.

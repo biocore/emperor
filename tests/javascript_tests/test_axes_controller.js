@@ -94,6 +94,8 @@ requirejs([
       deepEqual(controller._flippedAxes, [0, 0, 0]);
       equal(controller.$_screePlotContainer.attr('name'), 'scree-plot');
 
+      equal(controller.$body.find('[name="axes-color"]').length, 1);
+      equal(controller.$body.find('[name="background-color"]').length, 1);
     });
 
     test('Testing toJSON', function() {
