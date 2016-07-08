@@ -309,11 +309,13 @@ define([
    * @param {Integer} position The position where the new axis will be set.
    */
   AxesController.prototype.updateVisibleAxes = function(index, position) {
-    var decView = this.decompViewDict[this.activeViewKey];
-    var visibleDimensions = decView.visibleDimensions;
+    // update all the visible dimensions
+    _.each(this.decompViewDict, function(decView, key){
+      var visibleDimensions = decView.visibleDimensions;
 
-    visibleDimensions[position] = index;
-    decView.changeVisibleDimensions(visibleDimensions);
+      visibleDimensions[position] = index;
+      decView.changeVisibleDimensions(visibleDimensions);
+    });
 
     this._flippedAxes[position] = 0;
 
@@ -327,15 +329,20 @@ define([
    * if this index is not visible, this callback will take no effect.
    */
   AxesController.prototype.flipAxis = function(index) {
-    var decView = this.decompViewDict[this.activeViewKey], axIndex;
+    var axIndex;
 
-    axIndex = decView.visibleDimensions.indexOf(index);
+    // update all the visible dimensions
+    _.each(this.decompViewDict, function(decView, key){
 
-    if (axIndex !== -1) {
-      decView.flipVisibleDimension(index);
-      this._flippedAxes[axIndex] = 1 ^ this._flippedAxes[axIndex];
-      this.buildDisplayTable();
-    }
+      axIndex = decView.visibleDimensions.indexOf(index);
+
+      if (axIndex !== -1) {
+        decView.flipVisibleDimension(index);
+      }
+    });
+
+    this._flippedAxes[axIndex] = 1 ^ this._flippedAxes[axIndex];
+    this.buildDisplayTable();
   };
 
   /**
