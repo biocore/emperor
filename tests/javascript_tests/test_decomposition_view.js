@@ -70,11 +70,11 @@ requirejs([
       deepEqual(dv.visibleDimensions, [0, 1, 2],
           'visibleDimensions set correctly');
       deepEqual(dv.tubes, [], 'tubes set correctly');
-      deepEqual(dv.labels, [], 'labels set correctly');
+
       /*
          I'm unsure on how to test this, so right now just testing what I think
          makes sense to test
-         */
+       */
       obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
       dv.markers[0].position.z];

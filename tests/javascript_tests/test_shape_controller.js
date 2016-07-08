@@ -5,7 +5,7 @@ requirejs([
     'view',
     'viewcontroller',
     'three',
-    'shape-controller',
+    'shapecontroller',
     'shape-editor',
     'shapes'
 ], function($, _, model, DecompositionView, viewcontroller, THREE,

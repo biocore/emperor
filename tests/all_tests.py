@@ -19,7 +19,6 @@ import click
 import subprocess
 
 from os import walk
-from sys import exit
 from glob import glob
 from os.path import join, abspath, dirname, split
 
@@ -144,8 +143,7 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
        javascript_tests_passed):
         return_code = 0
 
-    return return_code
-
+    exit(return_code)
 
 if __name__ == "__main__":
-    exit(test())
+    test()
