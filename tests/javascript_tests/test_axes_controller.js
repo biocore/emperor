@@ -105,12 +105,14 @@ requirejs([
         container, this.sharedDecompositionViewDict);
 
       var obs = controller.toJSON();
-      var exp = {'flippedAxes': [0, 0, 0], 'visibleDimensions': [0, 1, 2]};
+      var exp = {'flippedAxes': [0, 0, 0], 'visibleDimensions': [0, 1, 2],
+                 'backgroundColor': 0x000000, 'axesColor': 0xFFFFFF};
       deepEqual(obs, exp);
     });
 
     test('Testing fromJSON', function() {
-      var json = {'flippedAxes': [1, 1, 0], 'visibleDimensions': [0, 1, 0]};
+      var json = {'flippedAxes': [1, 1, 0], 'visibleDimensions': [0, 1, 0],
+                  'backgroundColor': 0xFF00FF, 'axesColor': 0xFF000F};
 
       var container = $('<div id="does-not-exist" style="height:1000px; ' +
                         'width:12px"></div>');
@@ -122,6 +124,22 @@ requirejs([
       var decView = controller.decompViewDict[controller.activeViewKey];
       deepEqual(decView.visibleDimensions, [0, 1, 0]);
       deepEqual(controller._flippedAxes, [1, 1, 0]);
+
+      deepEqual(decView.backgroundColor, 0xFF00FF);
+      deepEqual(decView.axesColor, 0xFF000F);
+    });
+
+    test('Testing colorChanged', function() {
+      var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                        'width:12px"></div>');
+      var controller = new AxesController(
+        container, this.sharedDecompositionViewDict);
+
+      var decView = controller.decompViewDict[controller.activeViewKey];
+      controller.colorChanged('axes-color', 0xF0F0F0);
+      deepEqual(decView.axesColor, 0xF0F0F0);
+      controller.colorChanged('background-color', 0x101010);
+      deepEqual(decView.backgroundColor, 0x101010);
     });
 
   });

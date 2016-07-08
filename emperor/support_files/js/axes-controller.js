@@ -376,6 +376,35 @@ define([
   };
 
   /**
+   * Callback to change color of the axes or the background
+   *
+   * @param {String} name The name of the element to change, it can be either
+   * 'axes-color' or 'background-color'.
+   * @param {Integer} color The color to set to the `name`. Should be in an
+   * RGB-like format.
+   */
+  AxesController.prototype.colorChanged = function(name, color) {
+    // for both cases update all the decomposition views and then set the
+    // appropriate colors
+    if (name === 'axes-color'){
+      _.each(this.decompViewDict, function(decView){
+        decView.axesColor = color;
+        decView.needsUpdate = true;
+      });
+    }
+    else if (name === 'background-color'){
+      _.each(this.decompViewDict, function(decView){
+        decView.backgroundColor = color;
+        decView.needsUpdate = true;
+      });
+    }
+    else {
+      throw Error('Could not find "' + name + '" only two allowed inputs are' +
+                  '"axes-color" and "background-color"');
+    }
+  }
+
+  /**
    * Converts the current instance into a JSON string.
    *
    * @return {Object} JSON ready representation of self.
