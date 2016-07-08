@@ -223,6 +223,8 @@ define([
       .style('top', '0')
       .append('g');
 
+    this.$_screePlotContainer.height(height + margin.top + margin.bottom);
+
     // creation of the chart itself
     x.domain(percents.map(function(d) { return d.axis; }));
     y.domain([0, d3.max(percents, function(d) { return d.percent; })]);
