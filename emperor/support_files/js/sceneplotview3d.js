@@ -56,6 +56,18 @@ define([
      * @type {Float}
      */
     this.height = height;
+    /**
+     * Axes color.
+     * @type {integer}
+     * @default 0xFFFFFF (white)
+     */
+    this.axesColor = 0xFFFFFF;
+    /**
+     * Background color.
+     * @type {integer}
+     * @default 0x000000 (black)
+     */
+    this.backgroundColor = 0x000000;
 
     // used to name the axis lines/labels in the scene
     this._axisPrefix = 'emperor-axis-line-';
@@ -273,9 +285,9 @@ define([
       [range.min[x], range.min[y], range.max[z]]
     ];
 
-    action(start, ends[0], 0);
-    action(start, ends[1], 1);
-    action(start, ends[2], 2);
+    action(start, ends[0], x);
+    action(start, ends[1], y);
+    action(start, ends[2], z);
   };
 
   /**
@@ -347,14 +359,14 @@ define([
    *
    * @param {String} prefix The label that will prepended to the iterating
    * index.
-   * @param {Integer} num Specifies the number of iterations to perform.
    *
    */
-  ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix, num) {
-    for (var i = 0; i < num; i++) {
-      var axisLine = this.scene.getObjectByName(prefix + i);
-      this.scene.remove(axisLine);
-    }
+  ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix) {
+    var scope = this;
+    _.each(this.visibleDimensions, function(i) {
+      var axisLine = scope.scene.getObjectByName(prefix + i);
+      scope.scene.remove(axisLine);
+    });
   };
 
   /**
@@ -363,7 +375,7 @@ define([
    *
    */
   ScenePlotView3D.prototype.removeAxes = function() {
-    this._removeObjectsWithPrefix(this._axisPrefix, 3);
+    this._removeObjectsWithPrefix(this._axisPrefix);
   };
 
   /**
@@ -372,7 +384,7 @@ define([
    *
    */
   ScenePlotView3D.prototype.removeAxesLabels = function() {
-    this._removeObjectsWithPrefix(this._axisLabelPrefix, 3);
+    this._removeObjectsWithPrefix(this._axisLabelPrefix);
   };
 
   /**
@@ -414,12 +426,56 @@ define([
    *
    */
    ScenePlotView3D.prototype.checkUpdate = function() {
-    if (_.any(this.decViews, function(dv) {
+    var updateDimensions = false, updateColors = false,
+        currentDimensions, backgroundColor, axesColor;
+
+    // check if any of the decomposition views have changed
+    var updateData = _.any(this.decViews, function(dv) {
+      // note that we may be overwriting these variables, but we have a
+      // guarantee that if one of them changes for one of decomposition views,
+      // all of them will have changed, so grabbing one should be sufficient to
+      // perform the comparisons below
+      currentDimensions = dv.visibleDimensions;
+      backgroundColor = dv.backgroundColor;
+      axesColor = dv.axesColor;
+
       return dv.needsUpdate;
-    })) {
-      return true;
+    });
+
+    // check if the visible dimensions have changed
+    if (!_.isEqual(currentDimensions, this.visibleDimensions)) {
+      // remove the current axes
+      this.removeAxes();
+      this.removeAxesLabels();
+
+      // get the new dimensions and re-display the data
+      this.visibleDimensions = _.clone(currentDimensions);
+      this.drawAxesWithColor(this.axesColor);
+      this.drawAxesLabelsWithColor(this.axesColor);
+
+      updateDimensions = true;
     }
-    return this.needsUpdate;
+
+    // check if we should change the axes color
+    if (axesColor !== this.axesColor) {
+      this.drawAxesWithColor(axesColor);
+      this.drawAxesLabelsWithColor(axesColor);
+
+      this.axesColor = _.clone(axesColor);
+
+      updateColors = true;
+    }
+
+    // check if we should change the background color
+    if (backgroundColor !== this.backgroundColor) {
+      this.renderer.setClearColor(new THREE.Color(backgroundColor));
+      this.backgroundColor = _.clone(backgroundColor);
+
+      updateColors = true;
+    }
+
+    // if anything has changed, then trigger an update
+    return this.needsUpdate || updateData || updateDimensions || updateColors;
    };
 
   /**

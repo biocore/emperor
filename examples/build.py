@@ -31,7 +31,7 @@ if len(argv) > 1:
 categories = np.asarray(np.random.randint(1, 1000, N), str)
 
 coords_ids = listify(np.arange(N))
-coords = np.random.randn(N, 10).tolist()
+coords = (np.random.randn(N, 10) * 0.25).tolist()
 pct_var = 1/np.exp(np.arange(10))
 
 

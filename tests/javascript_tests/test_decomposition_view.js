@@ -71,6 +71,9 @@ requirejs([
           'visibleDimensions set correctly');
       deepEqual(dv.tubes, [], 'tubes set correctly');
 
+      equal(dv.axesColor, 0xFFFFFF);
+      equal(dv.backgroundColor, 0x000000);
+
       /*
          I'm unsure on how to test this, so right now just testing what I think
          makes sense to test
@@ -128,6 +131,27 @@ requirejs([
           Error,
           'An error is raised if the number of dimensions is not 3'
           );
+    });
+
+
+    /**
+     *
+     * Test that changeVisibleDimensions updates the meshes position
+     *
+     */
+    test('Test change flip axes', function() {
+      var dv = new DecompositionView(decomp);
+
+      expa = dv.markers[0].position.toArray();
+      expb = dv.markers[1].position.toArray();
+      expa[1] = expa[1] * -1;
+      dv.flipVisibleDimension(1);
+      obs = dv.markers[0].position.toArray();
+      deepEqual(obs, expa, 'First marker position updated correctly');
+
+      expb[1] = expb[1] * -1;
+      obs = dv.markers[1].position.toArray();
+      deepEqual(obs, expb, 'Second marker position updated correctly');
     });
 
   });

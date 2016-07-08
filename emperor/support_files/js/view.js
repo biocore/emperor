@@ -41,6 +41,18 @@ function DecompositionView(decomp) {
    */
   this.visibleDimensions = [0, 1, 2]; // We default to the first three PCs
   /**
+   * Axes color.
+   * @type {integer}
+   * @default 0xFFFFFF (white)
+   */
+  this.axesColor = 0xFFFFFF;
+  /**
+   * Background color.
+   * @type {integer}
+   * @default 0x000000 (black)
+   */
+  this.backgroundColor = 0x000000;
+  /**
    * Tube objects on screen (used for animations)
    * @type {THREE.Mesh[]}
    */
@@ -119,15 +131,46 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
 
   this.visibleDimensions = newDims;
 
-  var x = newDims[0], y = newDims[1], z = newDims[2], dv = this;
+  var x = newDims[0], y = newDims[1], z = newDims[2], scope = this;
   this.decomp.apply(function(plottable) {
-    mesh = dv.markers[plottable.idx];
+    mesh = scope.markers[plottable.idx];
     mesh.position.set(plottable.coordinates[x],
                       plottable.coordinates[y],
                       plottable.coordinates[z]);
     mesh.updateMatrix();
-    this.needsUpdate = true;
   });
+
+  this.needsUpdate = true;
+};
+
+/**
+ *
+ * Reorient one of the visible dimensions.
+ *
+ * @param {integer} index The index of the dimension to re-orient, if this
+ * dimension is not visible i.e. not in `this.visibleDimensions`, then the
+ * method will return right away.
+ *
+ */
+DecompositionView.prototype.flipVisibleDimension = function(index) {
+  var pos, scope = this;
+
+  index = this.visibleDimensions.indexOf(index);
+
+  if (index !== -1) {
+    this.decomp.apply(function(plottable) {
+      mesh = scope.markers[plottable.idx];
+      pos = mesh.position.toArray();
+
+      // flip the axis
+      pos[index] = pos[index] * -1;
+
+      mesh.position.set(pos[0], pos[1], pos[2]);
+      mesh.updateMatrix();
+    });
+
+    this.needsUpdate = true;
+  }
 };
 
 /**

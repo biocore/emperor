@@ -96,6 +96,9 @@ requirejs([
       equal(spv.height, 20);
       equal(spv.checkUpdate(), true);
 
+      equal(spv.axesColor, 0xFFFFFF);
+      equal(spv.backgroundColor, 0x000000);
+
       deepEqual(spv.visibleDimensions, [0, 1, 2]);
       deepEqual(spv.dimensionRanges.max, [-0.237661, 0.046053, 0.066647,
                                           0.159061, 0.17607, 0.072969,
@@ -133,6 +136,51 @@ requirejs([
       spv.needsUpdate = false;
 
       spv.decViews.scatter.needsUpdate = true;
+      equal(spv.checkUpdate(), true);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    test('Test checkUpdate background color', function() {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+      spv.needsUpdate = false;
+
+      spv.decViews.scatter.backgroundColor = 0x00FF00;
+      equal(spv.checkUpdate(), true);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    test('Test checkUpdate axes color', function() {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+      spv.needsUpdate = false;
+
+      spv.decViews.scatter.axesColor = 0x00FF00;
+      equal(spv.checkUpdate(), true);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    test('Test checkUpdate visible dimensions', function() {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+      spv.needsUpdate = false;
+
+      spv.decViews.scatter.visibleDimensions = [1, 2, 3];
       equal(spv.checkUpdate(), true);
 
       // release the control back to the main page

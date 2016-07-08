@@ -7,7 +7,7 @@ define([
     'jquery',
     'underscore',
     'view',
-    'viewcontroller',
+    'viewcontroller'
 ],
 function($, _, DecompositionView, ViewControllers) {
   /**

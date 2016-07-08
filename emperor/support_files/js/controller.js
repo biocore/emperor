@@ -8,11 +8,12 @@ define([
     'colorviewcontroller',
     'visibilitycontroller',
     'shapecontroller',
+    'axescontroller',
     'scaleviewcontroller',
     'filesaver'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController, ShapeController,
-             ScaleViewController, FileSaver) {
+             AxesController, ScaleViewController, FileSaver) {
 
   /**
    *
@@ -320,7 +321,9 @@ define([
     this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
                                               VisibilityController);
     this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
-        ShapeController);
+                                         ShapeController);
+    this.controllers.axes = this.addTab(this.sceneViews[0].decViews,
+                                        AxesController);
     this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
         ScaleViewController);
 
@@ -510,8 +513,8 @@ define([
 
     // dynamically instantiate the controller, see:
     // http://stackoverflow.com/a/8843181
-    var obj = new (Function.prototype.bind.apply(viewConstructor,
-          [null, '#' + id, dvdict]));
+    var params = [null, '#' + id, dvdict];
+    var obj = new (Function.prototype.bind.apply(viewConstructor, params));
 
     // set the identifier of the div to the one defined by the object
     $('#' + id).attr('id', obj.identifier);
@@ -519,7 +522,7 @@ define([
     // now add the list element linking to the container div with the proper
     // title
     this._$tabsList.append("<li><a href='#" + obj.identifier + "'>" +
-        obj.title + '</a></li>');
+                           obj.title + '</a></li>');
 
     return obj;
   };

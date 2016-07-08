@@ -95,6 +95,7 @@ requirejs.config({
   'chroma': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chroma.min',
   'filesaver': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/FileSaver.min',
   'blob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/Blob',
+  'd3': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/d3.min',
 
 
   /* THREE.js and plugins */
@@ -119,6 +120,7 @@ requirejs.config({
   'visibilitycontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/visibility-controller',
   'scaleviewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/scale-view-controller',
   'shapecontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shape-controller',
+  'axescontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/axes-controller',
   'shape-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shape-editor',
   'color-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/color-editor',
   'scale-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/scale-editor',
@@ -256,6 +258,7 @@ requirejs.config({
   'chroma': './some-local-path//vendor/js/chroma.min',
   'filesaver': './some-local-path//vendor/js/FileSaver.min',
   'blob': './some-local-path//vendor/js/Blob',
+  'd3': './some-local-path//vendor/js/d3.min',
 
 
   /* THREE.js and plugins */
@@ -280,6 +283,7 @@ requirejs.config({
   'visibilitycontroller': './some-local-path//js/visibility-controller',
   'scaleviewcontroller': './some-local-path//js/scale-view-controller',
   'shapecontroller': './some-local-path//js/shape-controller',
+  'axescontroller': './some-local-path//js/axes-controller',
   'shape-editor': './some-local-path//js/shape-editor',
   'color-editor': './some-local-path//js/color-editor',
   'scale-editor': './some-local-path//js/scale-editor',
