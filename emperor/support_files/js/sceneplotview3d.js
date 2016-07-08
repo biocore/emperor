@@ -426,12 +426,56 @@ define([
    *
    */
    ScenePlotView3D.prototype.checkUpdate = function() {
-    if (_.any(this.decViews, function(dv) {
+    var updateDimensions = false, updateColors = false,
+        currentDimensions, backgroundColor, axesColor;
+
+    // check if any of the decomposition views have changed
+    var updateData = _.any(this.decViews, function(dv) {
+      // note that we may be overwriting these variables, but we have a
+      // guarantee that if one of them changes for one of decomposition views,
+      // all of them will have changed, so grabbing one should be sufficient to
+      // perform the comparisons below
+      currentDimensions = dv.visibleDimensions;
+      backgroundColor = dv.backgroundColor;
+      axesColor = dv.axesColor;
+
       return dv.needsUpdate;
-    })) {
-      return true;
+    });
+
+    // check if the visible dimensions have changed
+    if (!_.isEqual(currentDimensions, this.visibleDimensions)) {
+      // remove the current axes
+      this.removeAxesLabels();
+      this.removeAxes();
+
+      // get the new dimensions and re-display the data
+      this.visibleDimensions = _.clone(currentDimensions);
+      this.drawAxesWithColor(this.axesColor);
+      this.drawAxesLabelsWithColor(this.axesColor);
+
+      updateDimensions = true;
     }
-    return this.needsUpdate;
+
+    // check if we should change the axes color
+    if (axesColor !== this.axesColor){
+      this.drawAxesWithColor(axesColor);
+      this.drawAxesLabelsWithColor(axesColor);
+
+      this.axesColor = _.clone(axesColor);
+
+      updateColors = true;
+    }
+
+    // check if we should change the background color
+    if (backgroundColor !== this.backgroundColor){
+      this.renderer.setClearColor(new THREE.Color(backgroundColor));
+      this.backgroundColor = _.clone(backgroundColor);
+
+      updateColors = true;
+    }
+
+    // if anything has changed, then trigger an update
+    return this.needsUpdate || updateData || updateDimensions || updateColors;
    };
 
   /**

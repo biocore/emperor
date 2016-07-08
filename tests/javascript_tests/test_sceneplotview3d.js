@@ -142,6 +142,51 @@ requirejs([
       spv.control.dispose();
     });
 
+    test('Test checkUpdate background color', function() {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+      spv.needsUpdate = false;
+
+      spv.decViews.scatter.backgroundColor = 0x00FF00;
+      equal(spv.checkUpdate(), true);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    test('Test checkUpdate axes color', function() {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+      spv.needsUpdate = false;
+
+      spv.decViews.scatter.axesColor = 0x00FF00;
+      equal(spv.checkUpdate(), true);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    test('Test checkUpdate visible dimensions', function() {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+      spv.needsUpdate = false;
+
+      spv.decViews.scatter.visibleDimensions = [1, 2, 3];
+      equal(spv.checkUpdate(), true);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
     test('Test the draw axes', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
