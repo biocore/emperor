@@ -8,5 +8,7 @@
 __version__ = "0.9.51-dev"  # noqa
 
 from emperor.core import Emperor
+from emperor.pandas import scatterplot
 
-__all__ = ['Emperor', 'biplots', 'format', 'filter', 'parse', 'sort', 'util']
+__all__ = ['Emperor', 'scatterplot', 'biplots', 'format', 'filter', 'parse',
+           'sort', 'util']
