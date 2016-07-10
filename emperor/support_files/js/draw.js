@@ -87,19 +87,24 @@ define(['underscore', 'three'], function(_, THREE) {
    * @param {string} text with the text to be shown on screen.
    * @param {integer} Color Hexadecimal base that represents the color of
    * the text.
+   * @param {float} [1] factor An optional scaling factor to determine the size
+   * of the labels.
    *
    * @return {THREE.Sprite} Object with the text displaying in it.
    * @function makeLabel
    **/
-  function makeLabel(position, text, color) {
+  function makeLabel(position, text, color, factor) {
     var canvas = document.createElement('canvas');
     var size = 512;
+
+    factor = (factor === undefined ? 1 : factor);
+
     canvas.width = size;
     canvas.height = size;
     var context = canvas.getContext('2d');
     context.fillStyle = '#ffffff';
     context.textAlign = 'center';
-    context.font = '30px Arial';
+    context.font = (30 * factor) + 'px Arial';
     context.fillText(text, size / 2, size / 2);
 
     var amap = new THREE.Texture(canvas);

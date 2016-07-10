@@ -327,7 +327,9 @@ define([
    *
    */
   ScenePlotView3D.prototype.drawAxesLabelsWithColor = function(color) {
-    var scope = this, axisLabel, decomp, firstKey, text;
+    var scope = this, axisLabel, decomp, firstKey, text, factor;
+
+    factor = (this.dimensionRanges.max[0] - this.dimensionRanges.min[0]) * 0.9;
 
     this.removeAxesLabels();
 
@@ -348,7 +350,7 @@ define([
       }
       text += ' (' + decomp.percExpl[index].toPrecision(4) + ' %)';
 
-      axisLabel = makeLabel(end, text, color);
+      axisLabel = makeLabel(end, text, color, factor);
       axisLabel.name = scope._axisLabelPrefix + index;
 
       scope.scene.add(axisLabel);
