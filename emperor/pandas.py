@@ -42,19 +42,22 @@ def scatterplot(df, x=None, y=None, z=None):
     if not isinstance(df, pd.DataFrame):
         raise ValueError("The argument is not a Pandas DataFrame")
 
-    cols = []
-    for col in [x, y, z]:
+    ordered = df.columns.tolist()
+    for col in [z, y, x]:
         if col is None:
             continue
-
-        if col is not None:
-            cols.append(col)
 
         if col not in df.columns:
             raise ValueError("'%s' is not a column in the DataFrame" % col)
 
         if not np.issubdtype(df[col].dtype, np.number):
             raise ValueError("'%s' is not a numeric column" % col)
+
+        # re-order x, y and z
+        ordered.remove(col)
+        ordered = [col] + ordered
+
+    df = df[ordered].copy()
 
     samples = df.select_dtypes(include=[np.number]).copy()
     samples.dropna(axis=0, how='any', inplace=True)
