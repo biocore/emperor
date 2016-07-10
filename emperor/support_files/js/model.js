@@ -121,7 +121,7 @@ function($, _) {
    *
    */
   function DecompositionModel(name, ids, coords, pct_var, md_headers,
-                              metadata) {
+                              metadata, axes_names) {
     var num_coords;
     /**
      * Abbreviated name of the ordination method used to create the data.
@@ -143,6 +143,11 @@ function($, _) {
      * @type {string[]}
      */
     this.md_headers = md_headers;
+    /**
+     * Names of the axes in the ordination
+     * @type {string[]}
+     */
+    this.axesNames = axesNames === undefined ? [] : axesNames;
 
     /*
       Check that the number of coordinates set provided are the same as the

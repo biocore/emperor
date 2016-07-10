@@ -340,8 +340,13 @@ define([
     this._dimensionsIterator(function(start, end, index) {
 
       // construct a label of the format: AbbNam (xx.xx %)
-      text = decomp.abbreviatedName + ' (' +
-             decomp.percExpl[index].toPrecision(4) + ' %)';
+      if ( decomp.axesNames.length === 0 ){
+        text = decomp.abbreviatedName;
+      }
+      else {
+        text = decomp.axesNames[index];
+      }
+      text += ' (' + decomp.percExpl[index].toPrecision(4) + ' %)';
 
       axisLabel = makeLabel(end, text, color);
       axisLabel.name = scope._axisLabelPrefix + index;
