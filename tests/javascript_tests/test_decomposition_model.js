@@ -148,6 +148,19 @@ requirejs([
                                          0.140148]);
 
       equal(dm.length, 9, 'Length set correctly');
+      deepEqual(dm.axesNames, []);
+    });
+
+    /**
+     *
+     * Test constructor with custom axesNames
+     *
+     */
+    test('Test axesNames', function() {
+      var names = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+          metadata, names);
+      deepEqual(dm.axesNames, names, 'Plottable retrieved successfully');
     });
 
     /**

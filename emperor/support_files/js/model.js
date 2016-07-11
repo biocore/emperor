@@ -121,7 +121,7 @@ function($, _) {
    *
    */
   function DecompositionModel(name, ids, coords, pct_var, md_headers,
-                              metadata, axes_names) {
+                              metadata, axesNames) {
     var num_coords;
     /**
      * Abbreviated name of the ordination method used to create the data.
