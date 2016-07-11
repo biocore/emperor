@@ -357,3 +357,21 @@ function($, model, EmperorController) {
 </script>
   </body>
 </html>"""
+
+
+MAP_PANDAS = """#SampleID	cat_a	cat_b	cat_c	num_1	num_2	num_3	num_4
+s1	foo	a	o	21	18	75	51
+s2	foo	b	p	3	42	44	36
+s3	bar	c	q	53	70	5	78
+s4	baz	d	r	47	13	72	72
+s5	FOO	e	s	13	50	1	56
+s6	FOO	f	o	13	56	39	5
+s7	foo	g	o	77	17	26	64
+s8	barosaurus	h	o	63	20	74	69
+s9	baz	i	p	20	32	39	16
+s10	baz	j	p	19	44	61	17
+s11	baz	k	q	47	25	37	42
+s12	baz	l	r	50	73	27	58
+s13	asdf	m	s	11	36	41	32
+s14	1234	n	s	9	32	42	25
+"""
