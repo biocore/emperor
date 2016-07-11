@@ -37,9 +37,10 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
     ----------
     df : pd.DataFrame
         Pandas DataFrame with the data to display
-    x, y, z : str
-        Column names in `df`, these will represent the order of the axes in the
-        final visualization.
+    x, y, z : str, optional
+        Column names in `df`, to use as first (``x``), second (``y``) and third
+        (``z``) axes. If these are not specified, axers are chosen according
+        to the variance (in decremental order).
     remote : bool
         Whether the JavaScript resources should be loaded locally or from
         GitHub
