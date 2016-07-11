@@ -273,6 +273,7 @@ class Emperor(object):
         d = self.dimensions
         pct_var = (self.ordination.proportion_explained[:d] * 100).tolist()
         coords = self.ordination.samples.values[:, :d].tolist()
+        names = self.ordination.samples.columns[:d].tolist()
 
         # avoid unicode strings
         coord_ids = list(map(str, self.mf.index.tolist()))
@@ -287,6 +288,7 @@ class Emperor(object):
                                     metadata=metadata, base_url=self.base_url,
                                     plot_id=plot_id,
                                     logic_template_path=basename(LOGIC_PATH),
-                                    style_template_path=basename(STYLE_PATH))
+                                    style_template_path=basename(STYLE_PATH),
+                                    axes_names=names)
 
         return plot
