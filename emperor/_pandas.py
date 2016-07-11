@@ -77,7 +77,7 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
 
     # sort columns by variance
     variance = samples.var().sort_values(ascending=False)
-    samples = samples[variance.index].copy()
+    samples = samples[variance.index]
 
     # re-order x, y and z
     ordered = samples.columns.tolist()
@@ -85,10 +85,10 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
         if col is not None:
             ordered.remove(col)
             ordered = [col] + ordered
-    samples = samples[ordered].copy()
+    samples = samples[ordered]
 
     # match up the metadata and coordinates
-    df = df.loc[samples.index].copy()
+    df = df.loc[samples.index]
 
     ores = OrdinationResults(short_method_name='', long_method_name='',
                              eigvals=np.zeros_like(samples.columns),
