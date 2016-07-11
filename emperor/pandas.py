@@ -86,8 +86,8 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
     samples = df.select_dtypes(include=[np.number]).copy()
     samples.dropna(axis=0, how='any', inplace=True)
 
-    if len(samples) < 3:
-        raise ValueError("Not enough rows without missing data")
+    if len(samples.columns) < 3:
+        raise ValueError("Not enough data to plot")
 
     # sort columns by variance
     variance = samples.var().sort_values(ascending=False)
