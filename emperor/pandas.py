@@ -44,6 +44,12 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
         Whether the JavaScript resources should be loaded locally or from
         GitHub
 
+    Returns
+    -------
+    emperor.core.Emperor
+        Emperor object with the numerical data as the `ordination` attribute
+        and the entire DataFrame as the `mf` attribute.
+
     Raises
     ------
     ValueError
