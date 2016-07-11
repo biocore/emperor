@@ -114,4 +114,5 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
     # HACK: scale the position of the samples to fit better within the screen
     ores.samples = ores.samples / ores.samples.max(axis=0)
 
-    return Emperor(ores, df, dimensions=8, remote=remote)
+    return Emperor(ores, df, dimensions=len(ores.samples.columns),
+                   remote=remote)
