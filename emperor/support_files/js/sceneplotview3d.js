@@ -342,15 +342,15 @@ define([
     this._dimensionsIterator(function(start, end, index) {
 
       // construct a label of the format: AbbNam (xx.xx %)
-      if ( decomp.abbreviatedName !== '' ){
+      if (decomp.abbreviatedName !== '') {
         text = decomp.abbreviatedName;
       }
       else {
         // when the labels get too long, it's a bit hard to look at
-        if (decomp.axesNames[index].length > 25){
+        if (decomp.axesNames[index].length > 25) {
           text = decomp.axesNames[index].slice(0, 20) + '...';
         }
-        else{
+        else {
           text = decomp.axesNames[index];
         }
       }
