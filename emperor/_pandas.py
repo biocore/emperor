@@ -1,19 +1,3 @@
-r"""
-Pandas Interface for Emperor
-============================
-
-This module provides a simple interface to visualize a Pandas DataFrame using
-the Emperor.
-
-.. currentmodule:: emperor.pandas
-
-Functions
----------
-.. autosummary::
-    :toctree: generated/
-
-    scatterplot
-"""
 # ----------------------------------------------------------------------------
 # Copyright (c) 2013--, emperor development team.
 #

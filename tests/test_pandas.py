@@ -13,7 +13,7 @@ import pandas as pd
 import numpy as np
 
 from emperor.core import Emperor
-from emperor.pandas import scatterplot
+from emperor._pandas import scatterplot
 
 # account for what's allowed in python 2 vs PY3K
 try:
