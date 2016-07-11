@@ -105,7 +105,7 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
     # match up the metadata and coordinates
     df = df.loc[samples.index].copy()
 
-    ores = OrdinationResults(short_method_name='Ax', long_method_name='Axis',
+    ores = OrdinationResults(short_method_name='', long_method_name='',
                              eigvals=np.zeros_like(samples.columns),
                              samples=samples, proportion_explained=variance)
 
