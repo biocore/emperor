@@ -21,7 +21,7 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
     ----------
     df : pd.DataFrame
         Pandas DataFrame with the data to display, this includes both
-        *metadata* and coordinates to position the samples in a 3D space.
+        *metadata* and *coordinates* to position the samples in a 3D space.
     x, y, z : str, optional
         Column names in `df`, to use as first (``x``), second (``y``) and third
         (``z``) axes in the visualization. If these are not specified, axes
@@ -47,7 +47,7 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
 
     Notes
     -----
-    If a row has missing data, that data pont will be removed from the
+    If a row has missing data, that data point will be removed from the
     visualization.
 
     See Also

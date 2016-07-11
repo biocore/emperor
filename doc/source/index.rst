@@ -28,7 +28,7 @@ Format Description:
 Citing Emperor
 ==============
 
-Remember to cite Emperor If you use it in any published research, please
+Remember to cite Emperor if you use it in any published research, please
 include the following citation:
 
 .. note::
