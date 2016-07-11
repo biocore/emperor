@@ -20,14 +20,15 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
     Parameters
     ----------
     df : pd.DataFrame
-        Pandas DataFrame with the data to display
+        Pandas DataFrame with the data to display, this includes both
+        *metadata* and coordinates to position the samples in a 3D space.
     x, y, z : str, optional
         Column names in `df`, to use as first (``x``), second (``y``) and third
-        (``z``) axes in the visualization. If these are not specified, axers
+        (``z``) axes in the visualization. If these are not specified, axes
         are chosen according to the variance (in decremental order).
-    remote : bool
+    remote : bool, optional
         Whether the JavaScript resources should be loaded locally or from
-        GitHub
+        GitHub. Defaults to ``True``.
 
     Returns
     -------
