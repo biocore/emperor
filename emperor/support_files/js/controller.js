@@ -350,6 +350,23 @@ define([
       selector: '#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper',
       trigger: 'none',
       items: {
+        'enableAutorotate': {
+          name: 'Enable autorotation',
+          callback : function(key, opts) {
+            _.each(scope.sceneViews, function(scene){
+              scene.control.autoRotate = true;
+            });
+          }
+        },
+        'disableAutorotate': {
+          name: 'Disable autorotation',
+          callback : function(key, opts) {
+            _.each(scope.sceneViews, function(scene){
+              scene.control.autoRotate = false;
+            });
+          }
+        },
+        'sep0': '----------------',
         'saveState': {
           name: 'Save current settings',
           icon: 'edit',
