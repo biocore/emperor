@@ -112,9 +112,7 @@ define([
      */
     this.control = new THREE.OrbitControls(this.camera,
                                            $container.get(0));
-    this.control.addEventListener('change', function() {
-      scope.needsUpdate = true;
-    });
+    this.control.enableKeys = false;
     this.control.rotateSpeed = 1.0;
     this.control.zoomSpeed = 1.2;
     this.control.panSpeed = 0.8;
@@ -122,6 +120,10 @@ define([
     this.control.enablePan = true;
     this.control.enableDamping = true;
     this.control.dampingFactor = 0.3;
+    this.control.addEventListener('change', function() {
+      scope.needsUpdate = true;
+    });
+    this.control.update();
     /**
      * True when changes have occured that require re-rendering of the canvas
      * @type {Boolean}
