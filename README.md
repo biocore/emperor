@@ -7,6 +7,12 @@ Emperor
 
 Emperor is a next-generation tool for the analysis and visualization of large microbial ecology datasets; amongst many features Emperor provides a modern user interface that will rapidly adjust to your daily workflow.
 
+**Emperor is undergoing a major restructuring of the code-base, you can keep
+track of our efforts [here](https://github.com/biocore/emperor/pull/405) and
+join development in the [`new-api`
+branch](https://github.com/biocore/emperor/tree/new-api). Updated documentation
+for this new version can be found here: http://emperor.microbio.me/uno/**
+
 To start using Emperor, please refer to the [installation notes](INSTALL.md).
 
 ## Usage examples
