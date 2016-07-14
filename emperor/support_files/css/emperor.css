@@ -1,15 +1,3 @@
-/*
- * __author__ = "Meg Pirrung"
- * __copyright__ = "Copyright 2013, Emperor"
- * __credits__ = ["Meg Pirrung", "Yoshiki Vazquez Baeza",
-                  "Antonio Gonzalez Pena", "Jackson Chen"]
- * __license__ = "BSD"
- * __version__ = "0.9.3-dev"
- * __maintainer__ = "Yoshiki Vazquez Baeza"
- * __email__ = "yoshiki89@gmail.com"
- * __status__ = "Development"
- */
-
 /* the plotting area */
 div.emperor-plot-wrapper {
   height: 100%;

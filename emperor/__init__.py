@@ -31,7 +31,7 @@ Functions
 #
 # The full license is in the file LICENSE.md, distributed with this software.
 # ----------------------------------------------------------------------------
-__version__ = "0.9.51-dev"  # noqa
+__version__ = "1.0.0-beta"  # noqa
 
 from emperor.core import Emperor
 from emperor._pandas import scatterplot
