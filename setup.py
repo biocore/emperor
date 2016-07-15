@@ -12,7 +12,7 @@ import sys
 from distutils.core import setup
 from glob import glob
 
-__version__ = "1.0.0-beta-1"
+__version__ = "1.0.0-beta-3"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
@@ -40,8 +40,8 @@ Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.
 Gigascience. 2013 Nov 26;2(1):16.
 """
 
-skbio_2 = "scikit-bio >= 0.4.0, < 0.5.0"
-skbio_3 = "scikit-bio >= 0.4.0"
+skbio_2 = "scikit-bio >= 0.4.1, < 0.5.0"
+skbio_3 = "scikit-bio >= 0.4.1"
 base = {"numpy >= 1.7", "scipy >= 0.17.0", "click", "pandas",
         "scikit-bio >= 0.4.0, < 0.5.0", "jinja2", "future"}
 doc = {"Sphinx >= 1.2.2", "sphinx-bootstrap-theme"}
