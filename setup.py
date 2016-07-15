@@ -63,7 +63,7 @@ setup(
     maintainer=__maintainer__,
     maintainer_email=__email__,
     url='http://github.com/biocore/emperor',
-    packages=['emperor', 'emperor/qiime_backports'],
+    packages=['emperor', 'emperor.qiime_backports'],
     scripts=glob('scripts/*py'),
     package_data={
         'emperor': ['support_files/vendor/js/three.js-plugins/*.js',
