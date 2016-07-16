@@ -1,8 +1,13 @@
 Emperor ChangeLog
 =================
 
-Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
---------------------------------------------------------
+# Emperor 1.0
+
+Introducing Emperor 1.0, an improved and new version of Emperor. Including
+a stable Python API and JavaScript API.
+
+Emperor 0.9.51-dev
+------------------
 
 ### Bug Fixes
 * Fix problem where the taxonomic vectors weren't scaled properly when the scale coordinates button was toggled  ([#386](https://github.com/biocore/emperor/issues/373).

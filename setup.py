@@ -7,10 +7,12 @@
 # The full license is in the file LICENSE.md, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import sys
+
 from distutils.core import setup
 from glob import glob
 
-__version__ = "0.9.51-dev"
+__version__ = "1.0.0beta4"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
@@ -38,11 +40,19 @@ Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.
 Gigascience. 2013 Nov 26;2(1):16.
 """
 
+skbio_2 = "scikit-bio >= 0.4.1, < 0.5.0"
+skbio_3 = "scikit-bio >= 0.4.1"
 base = {"numpy >= 1.7", "scipy >= 0.17.0", "click", "pandas",
-        "scikit-bio >= 0.4.0, < 0.5.0", "jinja2", "future"}
+        skbio_2, "jinja2", "future"}
 doc = {"Sphinx >= 1.2.2", "sphinx-bootstrap-theme"}
 test = {"nose >= 0.10.1", "pep8", "flake8"}
 all_deps = base | doc | test
+
+# prevent python2 from trying to install skbio >= 0.5.0 (which only works in
+# PY3K)
+if sys.version_info.major == 3:
+    base.remove(skbio_2)
+    base.add(skbio_3)
 
 setup(
     name='emperor',
@@ -53,7 +63,7 @@ setup(
     maintainer=__maintainer__,
     maintainer_email=__email__,
     url='http://github.com/biocore/emperor',
-    packages=['emperor', 'emperor/qiime_backports'],
+    packages=['emperor', 'emperor.qiime_backports'],
     scripts=glob('scripts/*py'),
     package_data={
         'emperor': ['support_files/vendor/js/three.js-plugins/*.js',
@@ -61,6 +71,10 @@ setup(
                     'support_files/vendor/css/*.css',
                     'support_files/vendor/css/*.png',
                     'support_files/vendor/css/images/*.png',
+                    'support_files/vendor/css/font/*.eot',
+                    'support_files/vendor/css/font/*.ttf',
+                    'support_files/vendor/css/font/*.woff',
+                    'support_files/vendor/css/font/*.woff2',
                     'support_files/img/*.png',
                     'support_files/img/*.ico',
                     'support_files/css/*.css',

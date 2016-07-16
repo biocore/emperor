@@ -50,13 +50,17 @@ define([
 
     EmperorViewControllerABC.call(this, container, title, helpmenu);
 
-    var colors = '<table style="width:inherit;">';
+    var colors = '<table style="width:inherit; border:none;">';
     colors += '<tr><td>Axes and Labels Color</td>';
     colors += '<td><input type="text" name="axes-color"/></td></tr>';
     colors += '<tr><td>Background Color</td>';
     colors += '<td><input type="text" name="background-color"/></td>';
     colors += '</table>';
     this.$body.append(colors);
+
+    // the jupyter notebook add style on the tables, so remove it
+    this.$body.find('tr').css('border', 'none');
+    this.$body.find('td').css('border', 'none');
 
     var opts = {color: 'white',
                 preferredFormat: 'name',
@@ -78,7 +82,9 @@ define([
     };
     // spectrumify all the elements in the body that have a name ending in
     // color
-    this.$body.find('[name$="color"]').spectrum(opts);
+    this.$body.find('[name="axes-color"]').spectrum(opts);
+    opts.color = 'black';
+    this.$body.find('[name="background-color"]').spectrum(opts);
 
     /**
      * @type {Node}
@@ -145,7 +151,7 @@ define([
     var percents = view.decomp.percExpl;
     var names = ['First', 'Second', 'Third'];
 
-    var table = '<table>';
+    var table = '<table style="border:none;">';
     table += '<col align="left"><col align="right"><col align="center">';
     _.each(view.visibleDimensions, function(dimension, index) {
       table += '<tr>';
@@ -172,6 +178,10 @@ define([
     });
 
     this.$header.append(this.$table);
+
+    // the jupyter notebook add style on the tables, so remove it
+    this.$header.find('tr').css('border', 'none');
+    this.$header.find('td').css('border', 'none');
   };
 
   /**
