@@ -333,6 +333,7 @@ define([
         },
         'sep1': '---------',
         'flip-axis': {
+          icon: 'exchange',
           name: 'Flip axis orientation',
           callback: function(key, opts) {
             var index = parseInt($(this).attr('dimension-index'));

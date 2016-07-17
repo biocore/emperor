@@ -491,7 +491,7 @@ define([
 
     // if autorotation is enabled, then update the controls to trigger an
     // update, it's an equivalent to asking for re-rendering
-    if (this.control.autoRotate){
+    if (this.control.autoRotate) {
       this.control.update();
     }
 
