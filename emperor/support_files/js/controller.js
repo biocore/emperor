@@ -350,16 +350,26 @@ define([
       selector: '#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper',
       trigger: 'none',
       items: {
+        'toggleAutorotate': {
+          name: 'Toggle autorotation',
+          icon: 'rotate-left',
+          callback: function(key, opts) {
+            _.each(scope.sceneViews, function(scene) {
+              scene.control.autoRotate = scene.control.autoRotate ^ true;
+            });
+          }
+        },
+        'sep0': '----------------',
         'saveState': {
           name: 'Save current settings',
-          icon: 'edit',
+          icon: 'save',
           callback: function(key, opts) {
             scope.saveConfig();
           }
         },
         'loadState': {
           name: 'Load saved settings',
-          icon: 'paste',
+          icon: 'folder-open-o',
           callback: function(key, opts) {
             if (!FileReader) {
               alert('Your browser does not support file loading. We ' +
@@ -394,7 +404,7 @@ define([
         'sep1': '---------',
         'saveImage': {
           name: 'Save Image (PNG)',
-          icon: 'edit',
+          icon: 'file-picture-o',
           callback: function(key, opts) {
             scope.screenshot();
           }

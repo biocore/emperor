@@ -489,6 +489,12 @@ define([
       updateColors = true;
     }
 
+    // if autorotation is enabled, then update the controls to trigger an
+    // update, it's an equivalent to asking for re-rendering
+    if (this.control.autoRotate) {
+      this.control.update();
+    }
+
     // if anything has changed, then trigger an update
     return this.needsUpdate || updateData || updateDimensions || updateColors;
    };
