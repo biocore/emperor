@@ -153,9 +153,15 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
  *
  */
 DecompositionView.prototype.flipVisibleDimension = function(index) {
-  var pos, scope = this;
+  var pos, scope = this, newMin, newMax;
 
   index = this.visibleDimensions.indexOf(index);
+
+  // update the ranges for this decomposition
+  newMin = this.decomp.dimensionRanges.max[index] *= -1;
+  newMax = this.decomp.dimensionRanges.min[index] *= -1;
+  this.decomp.dimensionRanges.max[index] = newMax;
+  this.decomp.dimensionRanges.min[index] = newMin;
 
   if (index !== -1) {
     this.decomp.apply(function(plottable) {
