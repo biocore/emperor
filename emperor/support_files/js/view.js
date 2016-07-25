@@ -41,6 +41,13 @@ function DecompositionView(decomp) {
    */
   this.visibleDimensions = [0, 1, 2]; // We default to the first three PCs
   /**
+   * Orientation of the axes, `-1` means the axis is flipped, `1` means the
+   * axis is not flipped.
+   * @type {integer[]}
+   * @default [1, 1, 1]
+   */
+  this.axesOrientation = [1, 1, 1];
+  /**
    * Axes color.
    * @type {integer}
    * @default 0xFFFFFF (white)
@@ -129,14 +136,38 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
     throw new Error('Only three dimensions can be shown at the same time');
   }
 
-  this.visibleDimensions = newDims;
+  // one by one, find and update the dimensions that are changing
+  for (var i = 0; i < 3; i++){
+    if (this.visibleDimensions[i] !== newDims[i]) {
+      // index represents the global position of the dimension
+      var index = this.visibleDimensions[i],
+          orientation = this.axesOrientation[i];
 
-  var x = newDims[0], y = newDims[1], z = newDims[2], scope = this;
+      // 1.- Correct the range of the ranges for the dimension that we are
+      // moving out of the scene i.e. the old dimension
+      var newMin = this.decomp.dimensionRanges.max[index] *= orientation;
+      var newMax = this.decomp.dimensionRanges.min[index] *= orientation;
+      this.decomp.dimensionRanges.max[index] = newMax;
+      this.decomp.dimensionRanges.min[index] = newMin;
+
+      // 2.- Set the orientation of the new dimension to be 1
+      this.axesOrientation[i] = 1;
+
+      // 3.- Update the visible dimensions to include the new value
+      this.visibleDimensions[i] = newDims[i];
+    }
+  }
+
+  var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
+      z = this.visibleDimensions[2], scope = this;
+
   this.decomp.apply(function(plottable) {
     mesh = scope.markers[plottable.idx];
-    mesh.position.set(plottable.coordinates[x],
-                      plottable.coordinates[y],
-                      plottable.coordinates[z]);
+
+    // always use the original data plus the axis orientation
+    mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
+                      plottable.coordinates[y] * scope.axesOrientation[1],
+                      plottable.coordinates[z] * scope.axesOrientation[2]);
     mesh.updateMatrix();
   });
 
@@ -157,21 +188,27 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
 
   index = this.visibleDimensions.indexOf(index);
 
-  // update the ranges for this decomposition
-  newMin = this.decomp.dimensionRanges.max[index] *= -1;
-  newMax = this.decomp.dimensionRanges.min[index] *= -1;
-  this.decomp.dimensionRanges.max[index] = newMax;
-  this.decomp.dimensionRanges.min[index] = newMin;
-
   if (index !== -1) {
+    var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
+        z = this.visibleDimensions[2];
+
+    // update the ranges for this decomposition
+    newMin = this.decomp.dimensionRanges.max[index] *= -1;
+    newMax = this.decomp.dimensionRanges.min[index] *= -1;
+    this.decomp.dimensionRanges.max[index] = newMax;
+    this.decomp.dimensionRanges.min[index] = newMin;
+
+    // and update the state of the orientation
+    this.axesOrientation[index] *= -1;
+
     this.decomp.apply(function(plottable) {
       mesh = scope.markers[plottable.idx];
       pos = mesh.position.toArray();
 
-      // flip the axis
-      pos[index] = pos[index] * -1;
-
-      mesh.position.set(pos[0], pos[1], pos[2]);
+      // always use the original data plus the axis orientation
+      mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
+                        plottable.coordinates[y] * scope.axesOrientation[1],
+                        plottable.coordinates[z] * scope.axesOrientation[2]);
       mesh.updateMatrix();
     });
 

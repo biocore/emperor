@@ -354,7 +354,8 @@ define([
   AxesController.prototype.updateVisibleAxes = function(index, position) {
     // update all the visible dimensions
     _.each(this.decompViewDict, function(decView, key) {
-      var visibleDimensions = decView.visibleDimensions;
+      // clone to avoid indirectly modifying by reference
+      var visibleDimensions = _.clone(decView.visibleDimensions);
 
       visibleDimensions[position] = index;
       decView.changeVisibleDimensions(visibleDimensions);
