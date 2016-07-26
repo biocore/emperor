@@ -266,7 +266,10 @@ define([
       // update the dimensions that changed.
 
       // if we have to compute the data, clean up the previously known ranges
-      this.dimensionRanges = {'min': [], 'max': []};
+      this.dimensionRanges.max = [];
+      this.dimensionRanges.max.length = 0;
+      this.dimensionRanges.min = [];
+      this.dimensionRanges.min.length = 0;
     }
 
     _.each(this.decViews, function(decView, name) {

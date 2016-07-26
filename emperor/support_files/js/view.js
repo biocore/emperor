@@ -143,12 +143,14 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
       var index = this.visibleDimensions[i],
           orientation = this.axesOrientation[i];
 
-      // 1.- Correct the range of the ranges for the dimension that we are
+      // 1.- Correct the limits of the ranges for the dimension that we are
       // moving out of the scene i.e. the old dimension
-      var newMin = this.decomp.dimensionRanges.max[index] *= orientation;
-      var newMax = this.decomp.dimensionRanges.min[index] *= orientation;
-      this.decomp.dimensionRanges.max[index] = newMax;
-      this.decomp.dimensionRanges.min[index] = newMin;
+      if (this.axesOrientation[i] === -1) {
+        var max = this.decomp.dimensionRanges.max[index];
+        var min = this.decomp.dimensionRanges.min[index];
+        this.decomp.dimensionRanges.max[index] = min * (-1);
+        this.decomp.dimensionRanges.min[index] = max * (-1);
+      }
 
       // 2.- Set the orientation of the new dimension to be 1
       this.axesOrientation[i] = 1;
@@ -186,20 +188,21 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
 DecompositionView.prototype.flipVisibleDimension = function(index) {
   var pos, scope = this, newMin, newMax;
 
-  index = this.visibleDimensions.indexOf(index);
+  // the index in the visible dimensions
+  var localIndex = this.visibleDimensions.indexOf(index);
 
-  if (index !== -1) {
+  if (localIndex !== -1) {
     var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
         z = this.visibleDimensions[2];
 
     // update the ranges for this decomposition
-    newMin = this.decomp.dimensionRanges.max[index] *= -1;
-    newMax = this.decomp.dimensionRanges.min[index] *= -1;
-    this.decomp.dimensionRanges.max[index] = newMax;
-    this.decomp.dimensionRanges.min[index] = newMin;
+    var max = this.decomp.dimensionRanges.max[index];
+    var min = this.decomp.dimensionRanges.min[index];
+    this.decomp.dimensionRanges.max[index] = min * (-1);
+    this.decomp.dimensionRanges.min[index] = max * (-1);
 
     // and update the state of the orientation
-    this.axesOrientation[index] *= -1;
+    this.axesOrientation[localIndex] *= -1;
 
     this.decomp.apply(function(plottable) {
       mesh = scope.markers[plottable.idx];
