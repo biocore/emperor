@@ -264,6 +264,7 @@ define([
     else {
       // TODO: If this entire function ever becomes a bottleneck we should only
       // update the dimensions that changed.
+      // See: https://github.com/biocore/emperor/issues/526
 
       // if we have to compute the data, clean up the previously known ranges
       this.dimensionRanges.max = [];
