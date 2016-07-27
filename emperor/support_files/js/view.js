@@ -137,7 +137,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
   }
 
   // one by one, find and update the dimensions that are changing
-  for (var i = 0; i < 3; i++){
+  for (var i = 0; i < 3; i++) {
     if (this.visibleDimensions[i] !== newDims[i]) {
       // index represents the global position of the dimension
       var index = this.visibleDimensions[i],

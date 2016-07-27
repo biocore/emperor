@@ -236,7 +236,7 @@ define([
       _.each(this.decViews, function(decView, name) {
         var decomp = decView.decomp;
 
-        for (var i = 0; i < decomp.dimensionRanges.max.length; i++){
+        for (var i = 0; i < decomp.dimensionRanges.max.length; i++) {
           // global
           var gMax = scope.dimensionRanges.max[i];
           var gMin = scope.dimensionRanges.min[i];
@@ -248,7 +248,7 @@ define([
           // when we detect a point outside the global ranges we break and
           // recompute them
           if (!(gMin <= lMin && lMin <= gMax) ||
-              !(gMin <= lMax && lMax <= gMax)){
+              !(gMin <= lMax && lMax <= gMax)) {
             computeRanges = true;
             break;
           }
@@ -535,7 +535,7 @@ define([
       this.control.update();
     }
 
-    if (updateData){
+    if (updateData) {
       this.drawAxesWithColor(this.axesColor);
       this.drawAxesLabelsWithColor(this.axesColor);
     }
