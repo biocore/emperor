@@ -74,6 +74,8 @@ requirejs([
       equal(dv.axesColor, 0xFFFFFF);
       equal(dv.backgroundColor, 0x000000);
 
+      deepEqual(dv.axesOrientation, [1, 1, 1]);
+
       /*
          I'm unsure on how to test this, so right now just testing what I think
          makes sense to test
@@ -114,6 +116,8 @@ requirejs([
       dv.markers[1].position.z];
       exp = [-0.138136, 0.159061, -0.247485];
       deepEqual(obs, exp, 'Second marker position updated correctly');
+
+      deepEqual(dv.axesOrientation, [1, 1, 1]);
     });
 
     /**
@@ -133,26 +137,82 @@ requirejs([
           );
     });
 
-
     /**
      *
      * Test that changeVisibleDimensions updates the meshes position
      *
      */
-    test('Test change flip axes', function() {
+    test('Test change flip axes', function(assert) {
       var dv = new DecompositionView(decomp);
 
-      expa = dv.markers[0].position.toArray();
-      expb = dv.markers[1].position.toArray();
+      // copy the arrays
+      expa = _.clone(dv.markers[0].position.toArray());
+      expb = _.clone(dv.markers[1].position.toArray());
+
+      // flip the orientation of the position
+      expb[1] = expb[1] * -1;
       expa[1] = expa[1] * -1;
+
+      // change the position of the decomposition view and ...
       dv.flipVisibleDimension(1);
+
+      // ... Check for the following things:
+      //
+      // 1.- The position themselves
+      // 2.- The ranges i.e. positions still fall within the dimensionRanges.
+      // 3.- The axis orientation vector
       obs = dv.markers[0].position.toArray();
       deepEqual(obs, expa, 'First marker position updated correctly');
 
-      expb[1] = expb[1] * -1;
+      assert.ok(obs[1] <= dv.decomp.dimensionRanges.max[1],
+                'Falls within range (max)');
+      assert.ok(obs[1] >= dv.decomp.dimensionRanges.min[1],
+                'Falls within range (min)');
+
       obs = dv.markers[1].position.toArray();
       deepEqual(obs, expb, 'Second marker position updated correctly');
+
+      assert.ok(obs[1] <= dv.decomp.dimensionRanges.max[1],
+                'Falls within range (max)');
+      assert.ok(obs[1] >= dv.decomp.dimensionRanges.min[1],
+                'Falls within range (min)');
+
+      deepEqual(dv.axesOrientation, [1, -1, 1]);
     });
 
+    /**
+     *
+     * Test that changeVisibleDimensions and flip axis
+     *
+     */
+    test('Test changing the orientations and then flipping a dimension',
+         function() {
+      var dv = new DecompositionView(decomp);
+
+      deepEqual(dv.axesOrientation, [1, 1, 1]);
+
+      dv.changeVisibleDimensions([2, 3, 4]);
+      obs = dv.markers[0].position.toArray();
+      exp = [0.066647, -0.067711, 0.176070];
+      deepEqual(obs, exp, 'First marker position updated correctly');
+
+      obs = dv.markers[1].position.toArray();
+      exp = [-0.138136, 0.159061, -0.247485];
+      deepEqual(obs, exp, 'Second marker position updated correctly');
+
+      deepEqual(dv.axesOrientation, [1, 1, 1]);
+
+      dv.flipVisibleDimension(3);
+
+      obs = dv.markers[0].position.toArray();
+      exp = [0.066647, 0.067711, 0.176070];
+      deepEqual(obs, exp, 'First marker position updated correctly');
+
+      obs = dv.markers[1].position.toArray();
+      exp = [-0.138136, -0.159061, -0.247485];
+      deepEqual(obs, exp, 'Second marker position updated correctly');
+
+      deepEqual(dv.axesOrientation, [1, -1, 1]);
+    });
   });
 });
