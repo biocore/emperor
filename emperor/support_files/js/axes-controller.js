@@ -8,7 +8,7 @@ define([
 ], function($, _, DecompositionView, ViewControllers, d3, contextmenu) {
 
   // we only use the base attribute class, no need to get the base class
-  var EmperorViewControllerABC = ViewControllers.EmperorViewControllerABC;
+  var EmperorViewController = ViewControllers.EmperorViewController;
 
   /**
    * @class AxesController
@@ -30,25 +30,8 @@ define([
     var helpmenu = 'Change the visible dimensions of the data';
     var title = 'Axes';
     var scope = this;
-
-    if (decompViewDict === undefined) {
-      throw Error('The decomposition view dictionary cannot be undefined');
-    }
-    for (var dv in decompViewDict) {
-      if (!dv instanceof DecompositionView) {
-        throw Error('The decomposition view dictionary ' +
-            'can only have decomposition views');
-      }
-    }
-    if (_.size(decompViewDict) <= 0) {
-      throw Error('The decomposition view dictionary cannot be empty');
-    }
-    this.decompViewDict = decompViewDict;
-
-    // Picks the first key in the dictionary as the active key
-    this.activeViewKey = Object.keys(decompViewDict)[0];
-
-    EmperorViewControllerABC.call(this, container, title, helpmenu);
+    EmperorViewController.call(this, container, title, helpmenu,
+                               decompViewDict);
 
     var colors = '<table style="width:inherit; border:none;">';
     colors += '<tr><td>Axes and Labels Color</td>';
@@ -132,8 +115,8 @@ define([
 
     return this;
   }
-  AxesController.prototype = Object.create(EmperorViewControllerABC.prototype);
-  AxesController.prototype.constructor = EmperorViewControllerABC;
+  AxesController.prototype = Object.create(EmperorViewController.prototype);
+  AxesController.prototype.constructor = EmperorViewController;
 
   /**
    * Create a table to display the visible axis information.

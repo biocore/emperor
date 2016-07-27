@@ -186,6 +186,86 @@ define([
     throw Error('Not implemented');
   };
 
+
+  /**
+   *
+   * @class EmperorViewController
+   *
+   * Base class for view controllers that use a dictionary of decomposition
+   * views, but that are not controlled by a metadata category, for those
+   * cases, see `EmperorAttributeABC`.
+   *
+   * @param {Node} container Container node to create the controller in.
+   * @param {String} title title of the tab.
+   * @param {String} description helper description.
+   * @param {Object} decompViewDict This is object is keyed by unique
+   * identifiers and the values are DecompositionView objects referring to a
+   * set of objects presented on screen. This dictionary will usually be shared
+   * by all the tabs in the application. This argument is passed by reference.
+   *
+   * @return {EmperorViewController} Returns an instance of the
+   * EmperorViewController class.
+   * @constructs EmperorViewController
+   * @extends EmperorViewControllerABC
+   *
+   */
+  function EmperorViewController(container, title, description,
+                                 decompViewDict) {
+    EmperorViewControllerABC.call(this, container, title, description);
+    if (decompViewDict === undefined) {
+      throw Error('The decomposition view dictionary cannot be undefined');
+    }
+    for (var dv in decompViewDict) {
+      if (!dv instanceof DecompositionView) {
+        throw Error('The decomposition view dictionary ' +
+            'can only have decomposition views');
+      }
+    }
+    if (_.size(decompViewDict) <= 0) {
+      throw Error('The decomposition view dictionary cannot be empty');
+    }
+    // Picks the first key in the dictionary as the active key
+    /**
+     * @type {String}
+     * This is the key of the active decomposition view.
+     */
+    this.activeViewKey = Object.keys(decompViewDict)[0];
+
+    /**
+     * @type {Object}
+     * This is object is keyed by unique identifiers and the values are
+     * DecompositionView objects referring to a set of objects presented on
+     * screen. This dictionary will usually be shared by all the tabs in the
+     * application. This argument is passed by reference.
+     */
+    this.decompViewDict = decompViewDict;
+
+    return this;
+  }
+  EmperorViewController.prototype = Object.create(
+      EmperorViewControllerABC.prototype);
+  EmperorViewController.prototype.constructor = EmperorViewControllerABC;
+
+  /**
+   * Retrieves the metadata field currently being controlled
+   *
+   * @return {String} A key corresponding to the active decomposition view.
+   */
+  EmperorViewController.prototype.getActiveDecompViewKey = function() {
+    return this.activeViewKey;
+  };
+
+  /**
+   * Changes the metadata column name to control.
+   *
+   * @param {String} k Key corresponding to active decomposition view.
+   */
+  EmperorViewController.prototype.setActiveDecompViewKey = function(k) {
+    // FIXME: this should be validated against decompViewDict i.e. we should be
+    // verifying that the key indeed exists
+    this.activeViewKey = k;
+  };
+
   /**
    *
    * @class EmperorViewControllerABC
@@ -220,39 +300,14 @@ define([
    * @return {EmperorAttributeABC} Returns an instance of the
    * EmperorAttributeABC class.
    * @constructs EmperorAttributeABC
-   * @extends EmperorViewControllerABC
+   * @extends EmperorViewController
    *
    */
   function EmperorAttributeABC(container, title, description,
       decompViewDict, options) {
-    EmperorViewControllerABC.call(this, container, title, description);
-    if (decompViewDict === undefined) {
-      throw Error('The decomposition view dictionary cannot be undefined');
-    }
-    for (var dv in decompViewDict) {
-      if (!dv instanceof DecompositionView) {
-        throw Error('The decomposition view dictionary ' +
-            'can only have decomposition views');
-      }
-    }
-    if (_.size(decompViewDict) <= 0) {
-      throw Error('The decomposition view dictionary cannot be empty');
-    }
-    // Picks the first key in the dictionary as the active key
-    /**
-     * @type {String}
-     * This is the key of the active decomposition view.
-     */
-    this.activeViewKey = Object.keys(decompViewDict)[0];
+    EmperorViewController.call(this, container, title, description,
+                               decompViewDict);
 
-    /**
-     * @type {Object}
-     * This is object is keyed by unique identifiers and the values are
-     * DecompositionView objects referring to a set of objects presented on
-     * screen. This dictionary will usually be shared by all the tabs in the
-     * application. This argument is passed by reference.
-     */
-    this.decompViewDict = decompViewDict;
     /**
      * @type {Node}
      * jQuery element for the div containing the slickgrid of sample information
@@ -301,8 +356,8 @@ define([
     return this;
   }
   EmperorAttributeABC.prototype = Object.create(
-    EmperorViewControllerABC.prototype);
-  EmperorAttributeABC.prototype.constructor = EmperorViewControllerABC;
+    EmperorViewController.prototype);
+  EmperorAttributeABC.prototype.constructor = EmperorViewController;
 
   /**
    * Changes the metadata column name to control.
@@ -314,26 +369,6 @@ define([
     // verifying that the metadata field indeed exists in the decomposition
     // model
     this.metadataField = m;
-  };
-
-  /**
-   * Retrieves the metadata field currently being controlled
-   *
-   * @return {String} A key corresponding to the active decomposition view.
-   */
-  EmperorAttributeABC.prototype.getActiveDecompViewKey = function() {
-    return this.activeViewKey;
-  };
-
-  /**
-   * Changes the metadata column name to control.
-   *
-   * @param {String} k Key corresponding to active decomposition view.
-   */
-  EmperorAttributeABC.prototype.setActiveDecompViewKey = function(k) {
-    // FIXME: this should be validated against decompViewDict i.e. we should be
-    // verifying that the key indeed exists
-    this.activeViewKey = k;
   };
 
   /**
@@ -402,7 +437,7 @@ define([
    */
   EmperorAttributeABC.prototype.resize = function(width, height) {
     // call super, most of the header and body resizing logic is done there
-    EmperorViewControllerABC.prototype.resize.call(this, width, height);
+    EmperorViewController.prototype.resize.call(this, width, height);
 
     // the whole code is asynchronous, so there may be situations where
     // bodyGrid doesn't exist yet, so check before trying to modify the object
@@ -454,5 +489,6 @@ define([
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,
-    'EmperorAttributeABC': EmperorAttributeABC};
+          'EmperorViewController': EmperorViewController,
+          'EmperorAttributeABC': EmperorAttributeABC};
 });
