@@ -10,10 +10,12 @@ define([
     'shapecontroller',
     'axescontroller',
     'scaleviewcontroller',
+    'animationscontroller',
     'filesaver'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController, ShapeController,
-             AxesController, ScaleViewController, FileSaver) {
+             AxesController, ScaleViewController, AnimationsController,
+             FileSaver) {
 
   /**
    *
@@ -325,7 +327,9 @@ define([
     this.controllers.axes = this.addTab(this.sceneViews[0].decViews,
                                         AxesController);
     this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
-        ScaleViewController);
+                                         ScaleViewController);
+    this.controllers.animations = this.addTab(this.sceneViews[0].decViews,
+                                              AnimationsController);
 
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',

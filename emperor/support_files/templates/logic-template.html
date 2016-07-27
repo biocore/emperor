@@ -44,16 +44,22 @@ requirejs.config({
   'controller': '{{ base_url }}/js/controller',
   'draw': '{{ base_url }}/js/draw',
   'scene3d': '{{ base_url }}/js/sceneplotview3d',
+  'shapes': '{{ base_url }}/js/shapes',
+
+  /* controllers */
   'viewcontroller': '{{ base_url }}/js/view-controller',
   'colorviewcontroller': '{{ base_url }}/js/color-view-controller',
   'visibilitycontroller': '{{ base_url }}/js/visibility-controller',
   'scaleviewcontroller': '{{ base_url }}/js/scale-view-controller',
   'shapecontroller': '{{ base_url }}/js/shape-controller',
   'axescontroller': '{{ base_url }}/js/axes-controller',
+  'animationscontroller': '{{ base_url }}/js/animations-controller',
+
+  /* editors */
   'shape-editor': '{{ base_url }}/js/shape-editor',
   'color-editor': '{{ base_url }}/js/color-editor',
-  'scale-editor': '{{ base_url }}/js/scale-editor',
-  'shapes': '{{ base_url }}/js/shapes'
+  'scale-editor': '{{ base_url }}/js/scale-editor'
+
 },
 /*
    Libraries that are not AMD compatible need shim to declare their
