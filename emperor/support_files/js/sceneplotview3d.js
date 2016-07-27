@@ -225,11 +225,52 @@ define([
    *
    */
   ScenePlotView3D.prototype._unionRanges = function() {
-    var scope = this;
+    var scope = this, computeRanges;
 
-    // means we already have the data, so let's say goodbye
-    if (this.dimensionRanges.max.length !== 0) {
+    // first check if there's any range data, if there isn't, then we need
+    // to compute it by looking at all the decompositions
+    computeRanges = scope.dimensionRanges.max.length === 0;
+
+    // if there's range data then check it lies within the global ranges
+    if (computeRanges === false) {
+      _.each(this.decViews, function(decView, name) {
+        var decomp = decView.decomp;
+
+        for (var i = 0; i < decomp.dimensionRanges.max.length; i++) {
+          // global
+          var gMax = scope.dimensionRanges.max[i];
+          var gMin = scope.dimensionRanges.min[i];
+
+          // local
+          var lMax = decomp.dimensionRanges.max[i];
+          var lMin = decomp.dimensionRanges.min[i];
+
+          // when we detect a point outside the global ranges we break and
+          // recompute them
+          if (!(gMin <= lMin && lMin <= gMax) ||
+              !(gMin <= lMax && lMax <= gMax)) {
+            computeRanges = true;
+            break;
+          }
+        }
+      });
+    }
+
+    if (computeRanges === false) {
+      // If at this point we still don't need to compute the data, it is safe
+      // to exit because all data still exists within the expected ranges
       return;
+    }
+    else {
+      // TODO: If this entire function ever becomes a bottleneck we should only
+      // update the dimensions that changed.
+      // See: https://github.com/biocore/emperor/issues/526
+
+      // if we have to compute the data, clean up the previously known ranges
+      this.dimensionRanges.max = [];
+      this.dimensionRanges.max.length = 0;
+      this.dimensionRanges.min = [];
+      this.dimensionRanges.min.length = 0;
     }
 
     _.each(this.decViews, function(decView, name) {
@@ -493,6 +534,11 @@ define([
     // update, it's an equivalent to asking for re-rendering
     if (this.control.autoRotate) {
       this.control.update();
+    }
+
+    if (updateData) {
+      this.drawAxesWithColor(this.axesColor);
+      this.drawAxesLabelsWithColor(this.axesColor);
     }
 
     // if anything has changed, then trigger an update
