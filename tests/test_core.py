@@ -124,6 +124,7 @@ class TopLevelTests(TestCase):
         self.assertTrue(exists('./something-else'))
 
         self.files_to_remove.append(local_path)
+        self.files_to_remove.append('./something-else')
 
 if __name__ == "__main__":
     main()
