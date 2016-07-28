@@ -4,7 +4,7 @@ define([
     'view',
     'viewcontroller',
 ], function($, _, DecompositionView, ViewControllers) {
-  var EmperorViewControllerABC = ViewControllers.EmperorViewControllerABC;
+  var EmperorViewController = ViewControllers.EmperorViewController;
 
   /**
    * @class AnimationsController
@@ -20,41 +20,71 @@ define([
    *
    * @return {AnimationsController}
    * @constructs AnimationsController
-   * @extends EmperorViewControllerABC
+   * @extends EmperorViewController
    */
   function AnimationsController(container, decompViewDict) {
     var helpmenu = 'Animate trajectories connecting samples in your data';
     var title = 'Animations';
-    var scope = this;
+    var scope = this, dm, label;
+    EmperorViewController.call(this, container, title, helpmenu,
+                               decompViewDict);
 
-    if (decompViewDict === undefined) {
-      console.log('herew we are');
-      throw Error('The decomposition view dictionary cannot be undefined');
-    }
-    for (var dv in decompViewDict) {
-      if (!dv instanceof DecompositionView) {
-        throw Error('The decomposition view dictionary ' +
-            'can only have decomposition views');
-      }
-    }
-    if (_.size(decompViewDict) <= 0) {
-      throw Error('The decomposition view dictionary cannot be empty');
-    }
-    this.decompViewDict = decompViewDict;
+    dm = decompViewDict[this.activeViewKey].decomp;
 
-    // Picks the first key in the dictionary as the active key
-    this.activeViewKey = Object.keys(decompViewDict)[0];
+    this.$gradientSelect = $("<select class='emperor-tab-drop-down'>");
+    this.$trajectorySelect = $("<select class='emperor-tab-drop-down'>");
 
-    EmperorViewControllerABC.call(this, container, title, helpmenu);
+    // http://stackoverflow.com/a/6602002
+    _.each(dm.md_headers, function(header) {
+      scope.$gradientSelect.append(
+          $('<option>').attr('value', header).text(header));
+      scope.$trajectorySelect.append(
+          $('<option>').attr('value', header).text(header));
+    });
+
+    // add a label to the chosen drop downs
+    label = $('<label>').text('Gradient').append(this.$gradientSelect);
+    this.$header.append(label);
+    label = $('<label>').text('Trajectory').append(this.$trajectorySelect);
+    this.$header.append(label);
+
+    this.$rewind = $('<button></button>');
+    this.$header.append(this.$rewind);
+
+    this.$play = $('<button></button>');
+    this.$header.append(this.$play);
+
+    this.$pause = $('<button></button>');
+    this.$header.append(this.$pause);
 
     // initialize interface elements here
     $(this).ready(function() {
+      // setup chosen
+      scope.$gradientSelect.chosen({width: '100%', search_contains: true});
+      scope.$trajectorySelect.chosen({width: '100%', search_contains: true});
+
+      scope.$gradientSelect.chosen().change(scope._gradientChanged);
+      scope.$trajectorySelect.chosen().change(scope._trajectoryChanged);
+
+      scope.$rewind.button({icons: { primary: "ui-icon-seek-first"}});
+      scope.$play.button({icons: { primary: "ui-icon-play"}});
+      scope.$pause.button({icons: { primary: "ui-icon-pause"}});
     });
 
     return this;
   }
-  AnimationsController.prototype = Object.create(EmperorViewControllerABC.prototype);
-  AnimationsController.prototype.constructor = EmperorViewControllerABC;
+  AnimationsController.prototype = Object.create(EmperorViewController.prototype);
+  AnimationsController.prototype.constructor = EmperorViewController;
+
+  AnimationsController.prototype._gradientChanged = function(evt, params) {
+    console.log('gradient category changed: ');
+    console.log(params);
+  }
+
+  AnimationsController.prototype._trajectoryChanged = function(evt, params) {
+    console.log('trajectory category changed: ');
+    console.log(params);
+  }
 
   /**
    * Converts the current instance into a JSON string.
