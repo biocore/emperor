@@ -7,6 +7,7 @@ requirejs([
     'slickgrid'
 ], function($, _, model, DecompositionView, viewcontroller, SlickGrid) {
   var EmperorViewControllerABC = viewcontroller.EmperorViewControllerABC;
+  var EmperorViewController = viewcontroller.EmperorViewController;
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
   var DecompositionModel = model.DecompositionModel;
 
@@ -133,6 +134,145 @@ requirejs([
       }, Error, 'Cannot call this abstract method');
     });
 
+    module('EmperorViewController', {
+
+      setup: function() {
+        this.sharedDecompositionViewDict = {};
+
+        // setup function
+        name = 'pcoa';
+        ids = ['PC.636', 'PC.635'];
+        coords = [
+          [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+          -0.229889, -0.046599],
+          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
+          -0.112864, 0.064794]];
+        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
+        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+        md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
+        metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
+        decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+            metadata);
+        var dv = new DecompositionView(decomp);
+        this.sharedDecompositionViewDict.pcoa = dv;
+
+        name = 'biplot';
+        ids = ['tax_1', 'tax_2'];
+        coords = [
+          [-1, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+          -0.229889, -0.046599],
+          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
+          -0.112864, 0.064794]];
+        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
+        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+        md_headers = ['SampleID', 'Gram'];
+        metadata = [['tax_1', '1'],
+        ['tax_2', '0']];
+        decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+            metadata);
+        dv = new DecompositionView(decomp);
+        this.sharedDecompositionViewDict.biplot = dv;
+        this.decomp = decomp;
+      },
+      teardown: function() {
+        this.sharedDecompositionViewDict = undefined;
+        this.decomp = undefined;
+      }
+    });
+
+    /**
+     *
+     * Test the constructor for EmperorViewController.
+     *
+     */
+    test('Constructor tests', function(assert) {
+      var container = $('<div id="does-not-exist"></div>');
+
+      // verify the subclassing was set properly
+      assert.ok(EmperorViewController.prototype instanceof
+                EmperorViewControllerABC);
+      var attr = new EmperorViewController(container, 'foo', 'bar',
+          this.sharedDecompositionViewDict);
+      equal(attr.activeViewKey, 'pcoa');
+    });
+
+    /**
+     *
+     * Tests to make sure the exceptions are being raised as expected
+     *
+     */
+    test('Constructor test exceptions', function(assert) {
+      var dv = new DecompositionView(this.decomp);
+
+      throws(function() {
+        new EmperorViewController(container, 'foo', 'bar',
+            {1: 1, 2: 2}, {});
+
+      }, Error, 'The decomposition view dictionary ' +
+      'can only have decomposition views');
+
+      throws(function() {
+        new EmperorViewController(container, 'foo', 'bar',
+            {}, {});
+      }, Error, 'The decomposition view dictionary cannot be empty');
+    });
+
+    /**
+     *
+     * Test get active decomposition view key
+     *
+     */
+    test('Test getActiveDecompViewKey', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorViewController(container, 'foo', 'bar',
+                                           {'scatter': dv});
+      equal(attr.getActiveDecompViewKey(), 'scatter');
+    });
+
+    /**
+     *
+     * Test get active decomposition view key
+     *
+     */
+    test('Test getActiveDecompViewKey exception', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorViewController(container, 'foo', 'bar',
+                                           {'scatter': dv});
+      throws(function() {
+        attr.setActiveDecompViewKey('KeyMcKeyFace');
+      }, Error, 'This key is not presen in the dictionary');
+    });
+
+    /**
+     *
+     * Test the active decomposition view can be correctly retrieved
+     *
+     */
+    test('Test getActiveView', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorViewController(container, 'foo', 'bar',
+                                           {'scatter': dv});
+      deepEqual(attr.getActiveView(), dv);
+    });
+
+    /**
+     *
+     * Test set active decomposition view key
+     *
+     */
+    test('Test setActiveDecompViewKey', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorViewController(container, 'foo', 'bar',
+          {'scatter': dv, 'biplot': dv});
+      equal(attr.getActiveDecompViewKey(), 'scatter');
+      attr.setActiveDecompViewKey('biplot');
+      equal(attr.getActiveDecompViewKey(), 'biplot');
+    });
 
     module('EmperorAttributeABC', {
 
@@ -212,7 +352,7 @@ requirejs([
 
       // verify the subclassing was set properly
       assert.ok(EmperorAttributeABC.prototype instanceof
-          EmperorViewControllerABC);
+                EmperorViewController);
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           this.sharedDecompositionViewDict, {});
     });
@@ -238,27 +378,6 @@ requirejs([
 
         start(); // qunit
       });
-    });
-
-    /**
-     *
-     * Tests to make sure the exceptions are being raised as expected
-     *
-     */
-    test('Constructor test exceptions', function(assert) {
-      var dv = new DecompositionView(this.decomp);
-
-      throws(function() {
-        new EmperorAttributeABC(container, 'foo', 'bar',
-            {1: 1, 2: 2}, {});
-
-      }, Error, 'The decomposition view dictionary ' +
-      'can only have decomposition views');
-
-      throws(function() {
-        new EmperorAttributeABC(container, 'foo', 'bar',
-            {}, {});
-      }, Error, 'The decomposition view dictionary cannot be empty');
     });
 
     /**
@@ -297,35 +416,6 @@ requirejs([
           {'scatter': dv}, {});
       attr.setMetadataField('cheese');
       equal(attr.metadataField, 'cheese');
-    });
-
-    /**
-     *
-     * Test get active decomposition view key
-     *
-     */
-    test('Test getActiveDecompViewKey', function() {
-      var dv = new DecompositionView(this.decomp);
-      var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-          {'scatter': dv}, {});
-      equal(attr.getActiveDecompViewKey(), 'scatter');
-    });
-
-    /**
-     *
-     * Test set active decomposition view key
-     *
-     */
-    test('Test setActiveDecompViewKey', function() {
-      var dv = new DecompositionView(this.decomp);
-      var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
-          {'scatter': dv, 'biplot': dv},
-          {});
-      equal(attr.getActiveDecompViewKey(), 'scatter');
-      attr.setActiveDecompViewKey('biplot');
-      equal(attr.getActiveDecompViewKey(), 'biplot');
     });
 
     /**
