@@ -202,7 +202,7 @@ requirejs([
      * Tests to make sure the exceptions are being raised as expected
      *
      */
-    test('Cosnstructor test exceptions', function(assert) {
+    test('Constructor test exceptions', function(assert) {
       var dv = new DecompositionView(this.decomp);
 
       throws(function() {

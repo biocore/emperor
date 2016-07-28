@@ -6,8 +6,6 @@ define([
     'd3',
     'contextmenu'
 ], function($, _, DecompositionView, ViewControllers, d3, contextmenu) {
-
-  // we only use the base attribute class, no need to get the base class
   var EmperorViewController = ViewControllers.EmperorViewController;
 
   /**

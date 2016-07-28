@@ -280,7 +280,7 @@ define([
 
   /**
    *
-   * @class EmperorViewControllerABC
+   * @class EmperorAttributeABC
    *
    * Initializes an abstract tab for attributes i.e. shape, color, size, etc.
    * This has to be contained in a DOM object and will use the full size of
