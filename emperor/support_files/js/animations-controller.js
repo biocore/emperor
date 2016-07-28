@@ -48,27 +48,66 @@ define([
     label = $('<label>').text('Trajectory').append(this.$trajectorySelect);
     this.$header.append(label);
 
+    // container of the sliders and buttons
+    this._$mediaContainer = $('<div name="button-container"></div>');
+    this._$mediaContainer.css({'padding-top': '10px',
+                               'width': 'inherit',
+                               'text-align': 'center'});
+    this.$body.append(this._$mediaContainer);
+
     this.$rewind = $('<button></button>');
-    this.$header.append(this.$rewind);
+    this._$mediaContainer.append(this.$rewind);
 
     this.$play = $('<button></button>');
-    this.$header.append(this.$play);
+    this._$mediaContainer.append(this.$play);
 
     this.$pause = $('<button></button>');
-    this.$header.append(this.$pause);
+    this._$mediaContainer.append(this.$pause);
+
+    // make the buttons squared
+    this._$mediaContainer.find('button').css({'width': '30px',
+                                              'height': '30px',
+                                              'margin': '0 auto',
+                                              'margin-left': '10px',
+                                              'margin-right': '10px'});
+
+    this._$mediaContainer.append($('<hr>'));
+
+    this._$speedLabel = $('<text name="speed">Speed (1x)</text>');
+    this._$mediaContainer.append(this._$speedLabel);
+
+    this.$speed = $('<div></div>').css('margin-top', '10px');
+    this._$mediaContainer.append(this.$speed);
 
     // initialize interface elements here
     $(this).ready(function() {
+      scope.$speed.slider({'min': 0.1,
+                           'max': 5,
+                           'step': 0.1,
+                           slide: function(event, ui) {
+                             scope._$speedLabel.text('Speed (' + ui.value +
+                                                     'x)');
+                           },
+                           change: function(event, ui) {
+                             scope._$speedLabel.text('Speed (' + ui.value +
+                                                     'x)');
+                             scope._sliderChanged();
+                           }});
+
       // setup chosen
       scope.$gradientSelect.chosen({width: '100%', search_contains: true});
       scope.$trajectorySelect.chosen({width: '100%', search_contains: true});
 
-      scope.$gradientSelect.chosen().change(scope._gradientChanged);
-      scope.$trajectorySelect.chosen().change(scope._trajectoryChanged);
+      scope.$gradientSelect.chosen().change(function (){
+                                              scope._gradientChanged();
+                                            });
+      scope.$trajectorySelect.chosen().change(function () {
+                                                scope._trajectoryChanged();
+                                              });
 
-      scope.$rewind.button({icons: { primary: "ui-icon-seek-first"}});
-      scope.$play.button({icons: { primary: "ui-icon-play"}});
-      scope.$pause.button({icons: { primary: "ui-icon-pause"}});
+      scope.$rewind.button({icons: {primary: "ui-icon-seek-first"}});
+      scope.$play.button({icons: {primary: "ui-icon-play"}});
+      scope.$pause.button({icons: {primary: "ui-icon-pause"}});
     });
 
     return this;
@@ -76,14 +115,16 @@ define([
   AnimationsController.prototype = Object.create(EmperorViewController.prototype);
   AnimationsController.prototype.constructor = EmperorViewController;
 
+  AnimationsController.prototype._sliderChanged = function(evt, ui) {
+
+  }
+
   AnimationsController.prototype._gradientChanged = function(evt, params) {
-    console.log('gradient category changed: ');
-    console.log(params);
+
   }
 
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
-    console.log('trajectory category changed: ');
-    console.log(params);
+
   }
 
   /**
