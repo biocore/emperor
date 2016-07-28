@@ -247,7 +247,7 @@ define([
   EmperorViewController.prototype.constructor = EmperorViewControllerABC;
 
   /**
-   * Retrieves the metadata field currently being controlled
+   * Retrieves the name of the currently active decomposition view.
    *
    * @return {String} A key corresponding to the active decomposition view.
    */
@@ -256,19 +256,31 @@ define([
   };
 
   /**
-   * Changes the metadata column name to control.
+   * Changes the currently active decomposition view.
    *
    * @param {String} k Key corresponding to active decomposition view.
+   * @throws {Error} The key must exist, otherwise an exception will be thrown.
    */
   EmperorViewController.prototype.setActiveDecompViewKey = function(k) {
-    // FIXME: this should be validated against decompViewDict i.e. we should be
-    // verifying that the key indeed exists
+    if (this.decompViewDict[k] === undefined) {
+      throw new Error('This key does not exist, "' + k + '" in the ' +
+                      'the decompViewDict.');
+    }
     this.activeViewKey = k;
   };
 
   /**
+   * Retrieves the currently active decomposition view.
    *
-   * @class EmperorViewControllerABC
+   * @return {DecompositionView} The currently active decomposition view.
+   */
+  EmperorViewController.prototype.getActiveView = function() {
+    return this.decompViewDict[this.getActiveDecompViewKey()];
+  };
+
+  /**
+   *
+   * @class EmperorAttributeABC
    *
    * Initializes an abstract tab for attributes i.e. shape, color, size, etc.
    * This has to be contained in a DOM object and will use the full size of

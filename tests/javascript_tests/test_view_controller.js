@@ -202,7 +202,7 @@ requirejs([
      * Tests to make sure the exceptions are being raised as expected
      *
      */
-    test('Cosnstructor test exceptions', function(assert) {
+    test('Constructor test exceptions', function(assert) {
       var dv = new DecompositionView(this.decomp);
 
       throws(function() {
@@ -229,6 +229,34 @@ requirejs([
       var attr = new EmperorViewController(container, 'foo', 'bar',
                                            {'scatter': dv});
       equal(attr.getActiveDecompViewKey(), 'scatter');
+    });
+
+    /**
+     *
+     * Test get active decomposition view key
+     *
+     */
+    test('Test getActiveDecompViewKey exception', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorViewController(container, 'foo', 'bar',
+                                           {'scatter': dv});
+      throws(function() {
+        attr.setActiveDecompViewKey('KeyMcKeyFace');
+      }, Error, 'This key is not presen in the dictionary');
+    });
+
+    /**
+     *
+     * Test the active decomposition view can be correctly retrieved
+     *
+     */
+    test('Test getActiveView', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorViewController(container, 'foo', 'bar',
+                                           {'scatter': dv});
+      deepEqual(attr.getActiveView(), dv);
     });
 
     /**
