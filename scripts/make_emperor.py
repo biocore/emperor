@@ -9,4 +9,4 @@
 
 if __name__ == "__main__":
     print("This script has been deprecated, please see the online "
-          "documentation for more help.")
+          "documentation at\n\thttp://emperor.microbio.me/uno/\n for more help.")
