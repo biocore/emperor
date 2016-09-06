@@ -11,27 +11,18 @@ within the examples folder.
 """
 from __future__ import division
 
-from jinja2 import DictLoader
-from jinja2.environment import Environment
-from random import sample
+from random import sample, choice
 from sys import argv
+from string import ascii_letters
 
-import numpy as np
+import numpy as np, pandas as pd
+from emperor import Emperor
+from emperor.util import get_emperor_support_files_dir
+from skbio import OrdinationResults
 
 
 def listify(a):
     return np.asarray(a, dtype='str').tolist()
-
-# From http://stackoverflow.com/a/6196098
-pages = ['../emperor/support_files/templates/main-template.html',
-         'template.html']
-env = Environment()
-templates = {}
-for name in pages:
-    with open(name, 'rb') as f:
-        templates[name] = f.read()
-env.loader = DictLoader(templates)
-template = env.get_template('template.html')
 
 N = 10
 if len(argv) > 1:
@@ -40,16 +31,27 @@ if len(argv) > 1:
 categories = np.asarray(np.random.randint(1, 1000, N), str)
 
 coords_ids = listify(np.arange(N))
-coords = np.random.randn(N, 10).tolist()
-pct_var = (1/np.exp(np.arange(10))).tolist()
+coords = (np.random.randn(N, 10) * 0.25).tolist()
+pct_var = 1/np.exp(np.arange(10))
 
-md_headers = ['SampleID', 'DOB']
+
+md_headers = ['SampleID', 'DOB', 'Strings']
 metadata = []
 for _id in coords_ids:
-    metadata.append([_id, ''.join(sample(categories, 1))])
+    metadata.append([_id, ''.join(sample(set(categories), 1)), ''.join(choice(
+        ascii_letters) for x in range(10))])
+
+samples = pd.DataFrame(index=coords_ids, data=coords)
+
+mf = pd.DataFrame(data=metadata, columns=md_headers)
+mf.set_index('SampleID', inplace=True)
+
+res = OrdinationResults(short_method_name='PC', long_method_name='Principal '
+                        'Coordinates Analysis', eigvals=pct_var,
+                        samples=samples, proportion_explained=pct_var)
+
+
+viz = Emperor(res, mf, remote=get_emperor_support_files_dir())
 
 with open('new-emperor.html', 'w') as f:
-    f.write(template.render(coords_ids=coords_ids, coords=coords,
-                            pct_var=pct_var, md_headers=md_headers,
-                            metadata=metadata, plot_id='testing',
-                            base_url='../emperor/support_files'))
+    f.write(viz.make_emperor(standalone=True))

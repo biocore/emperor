@@ -1,37 +1,35 @@
-define(['underscore'], function(_){
+/** @module utility-functions */
+define(['underscore'], function(_) {
   /**
    *
-   * Sorting function that deals with alpha and numeric elements
+   * Sorting function that deals with alpha and numeric elements.
    *
-   * This function takes a list of strings, divides it into two new lists, one
-   * that's alpha-only and one that's numeric only.
+   * @param {String[]} list A list of strings to sort
    *
-   * @param {string}  string of taxonomies
-   *
-   * @return a truncated string of taxonomies
-   *
+   * @return {String[]} The sorted list of strings
+   * @function naturalSort
    */
-  function naturalSort(list){
+  function naturalSort(list) {
     var numericPart = [], alphaPart = [], result = [];
 
     // separate the numeric and the alpha elements of the array
-    for(var index = 0; index < list.length; index++){
-      if(isNaN(parseFloat(list[index]))){
-        alphaPart.push(list[index])
+    for (var index = 0; index < list.length; index++) {
+      if (isNaN(parseFloat(list[index]))) {
+        alphaPart.push(list[index]);
       }
-      else{
-        numericPart.push(list[index])
+      else {
+        numericPart.push(list[index]);
       }
     }
 
     // ignore casing of the strings, taken from:
     // http://stackoverflow.com/a/9645447/379593
-    alphaPart.sort(function (a, b) {
+    alphaPart.sort(function(a, b) {
       return a.toLowerCase().localeCompare(b.toLowerCase());
     });
 
     // sort in ascending order
-    numericPart.sort(function(a,b){return parseFloat(a)-parseFloat(b)})
+    numericPart.sort(function(a, b) {return parseFloat(a) - parseFloat(b)});
 
       return result.concat(alphaPart, numericPart);
   }
@@ -42,22 +40,25 @@ define(['underscore'], function(_){
    * Utility function that splits the lineage into taxonomic levels
    * and returns the taxonomic level specified
    *
-   * @param {node} XML DOM object, usually as created by the document object.
+   * @param {String} lineage The taxonomic string, with levels seperated by
+   * semicolons.
+   * @param {Integer} levelIndex The taxonomic level to truncate to.
+   * 1 = Kingdom, 2 = Phylum, etc.
    *
-   * @return string representation of the node object.
-   *
+   * @return {String} The taxonomic string truncated to desired level.
+   * @function truncateLevel
    */
-  function truncateLevel(lineage, levelIndex){
-    if (levelIndex===0){
+  function truncateLevel(lineage, levelIndex) {
+    if (levelIndex === 0) {
       return lineage;
     }
     var levels = lineage.split(';');
     var taxaLabel = '';
-    for( var i = 0; (i<levelIndex && i<levels.length); i++){
+    for (var i = 0; (i < levelIndex && i < levels.length); i++) {
       var level = levels[i];
-      if(level[level.length-1]=='_'){
-        taxaLabel += ";"+level;
-      }else{
+      if (level[level.length - 1] == '_') {
+        taxaLabel += ';' + level;
+      }else {
         taxaLabel = level;
       }
     }
@@ -67,14 +68,14 @@ define(['underscore'], function(_){
   /**
    *
    * Utility function to convert an XML DOM documents to a string useful for
-   * unit testing
+   * unit testing. This code is based on
+   * [this SO answer]{@link http://stackoverflow.com/a/1750890}
    *
-   * @param {node} XML DOM object, usually as created by the document object.
+   * @param {Node} node XML DOM object, usually as created by the document
+   * object.
    *
-   * @return string representation of the node object.
-   *
-   * This code is based on this answer http://stackoverflow.com/a/1750890
-   *
+   * @return {String} Representation of the node object.
+   * @function convertXMLToString
    */
   function convertXMLToString(node) {
     if (typeof(XMLSerializer) !== 'undefined') {
@@ -88,16 +89,40 @@ define(['underscore'], function(_){
 
   /**
    *
-   * Escape special characters in a string for use in a regular expression.
-   *
-   * @param {regex} string to escape for use in a regular expression.
-   *
-   * @return string with escaped characters for use in a regular expression.
-   *
-   * Credits go to this SO answer http://stackoverflow.com/a/5306111
+   * Split list of string values into numeric and non-numeric values
+   * @param {String[]} values The values to check
+   * @return {Object} Object with two keys, `numeric` and `nonNumeric`. Numeric
+   * holds an array of all numeric values fownd, converted to numbers.
+   * nonNumeric holds an array of the remaining values, still as strings.
    */
-  function escapeRegularExpression(regex){
-    return regex.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+   function splitNumericValues(values) {
+    var numeric = [];
+    var nonNumeric = [];
+    _.each(values, function(element) {
+        // http://stackoverflow.com/a/9716488
+        if (!isNaN(parseFloat(element)) && isFinite(element)) {
+          numeric.push(+element);
+        }
+        else {
+          nonNumeric.push(element);
+        }
+      });
+    return {numeric: numeric, nonNumeric: nonNumeric};
+   }
+
+  /**
+   *
+   * Escape special characters in a string for use in a regular expression.
+   * Credits go to [this SO answer]{@link http://stackoverflow.com/a/5306111}
+   *
+   * @param {String} regex string to escape for use in a regular expression.
+   *
+   * @return {String} String with escaped characters for use in a regular
+   * expression.
+   * @function escapeRegularExpression
+   */
+  function escapeRegularExpression(regex) {
+    return regex.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
   }
 
   /**
@@ -106,17 +131,17 @@ define(['underscore'], function(_){
    * namespace tag in some browsers and not in others. Intended to facilitate
    * testing.
    *
-   * @param {htmlString} string to remove namespace from.
+   * @param {String} htmlString string to remove namespace from.
    *
-   * @return string without namespace.
-   *
+   * @return {String} String without namespace.
+   * @function cleanHTML
    */
-  function cleanHTML(htmlString){
+  function cleanHTML(htmlString) {
     return htmlString.replace(' xmlns="http://www.w3.org/1999/xhtml"', '');
   }
 
   return {'truncateLevel': truncateLevel, 'naturalSort': naturalSort,
           'convertXMLToString': convertXMLToString,
           'escapeRegularExpression': escapeRegularExpression,
-          'cleanHTML': cleanHTML};
+          'cleanHTML': cleanHTML, 'splitNumericValues': splitNumericValues};
 });

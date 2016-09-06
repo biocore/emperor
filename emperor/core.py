@@ -23,10 +23,12 @@ Classes
 # ----------------------------------------------------------------------------
 from __future__ import division
 
-from os.path import join
+from os.path import join, basename
+from distutils.dir_util import copy_tree
 import numpy as np
 
-from jinja2 import Template
+from jinja2 import FileSystemLoader
+from jinja2.environment import Environment
 
 from emperor.util import get_emperor_support_files_dir
 
@@ -37,8 +39,13 @@ LOCAL_URL = "/nbextensions/emperor/support_files"
 
 STYLE_PATH = join(get_emperor_support_files_dir(), 'templates',
                   'style-template.html')
-MAIN_PATH = join(get_emperor_support_files_dir(), 'templates',
-                 'main-template.html')
+LOGIC_PATH = join(get_emperor_support_files_dir(), 'templates',
+                  'logic-template.html')
+
+STANDALONE_PATH = join(get_emperor_support_files_dir(), 'templates',
+                       'standalone-template.html')
+JUPYTER_PATH = join(get_emperor_support_files_dir(), 'templates',
+                    'jupyter-template.html')
 
 
 class Emperor(object):
@@ -56,17 +63,17 @@ class Emperor(object):
         scikit-bio.
     mapping_file: pd.DataFrame
         DataFrame object with the metadata associated to the samples in the
-        `ordination` object, should have an index set and it should match the
-        identifiers in the `ordination` object.
+        ``ordination`` object, should have an index set and it should match the
+        identifiers in the ``ordination`` object.
     dimensions: int, optional
         Number of dimensions to keep from the ordination data, defaults to 5.
     remote: bool or str, optional
         This parameter can have one of the following three behaviors according
-        to the value: (1) `str` - load the resources from a user-specified
-        remote location, (2) `False` - load the resources from the nbextensions
-        folder in the Jupyter installation or (3) `True` - load the resources
-        from the GitHub repository. This parameter defaults to `True`. See the
-        Notes section for more information.
+        to the value: (1) ``str`` - load the resources from a user-specified
+        remote location, (2) ``False`` - load the resources from the
+        nbextensions folder in the Jupyter installation or (3) ``True`` - load
+        the resources from the GitHub repository. This parameter defaults to
+        ``True``. See the Notes section for more information.
 
     Examples
     --------
@@ -115,7 +122,7 @@ class Emperor(object):
     ...                         0.])
     >>> p_explained = pd.Series(data=p_explained, index=ids)
 
-    And encapsulate it inside an `OrdinationResults` object:
+    And encapsulate it inside an ``OrdinationResults`` object:
 
     >>> ores = OrdinationResults(eigvals, samples=samples,
     ...                          proportion_explained=p_explained)
@@ -130,21 +137,21 @@ class Emperor(object):
     This object currently does not support the full range of actions that the
     GUI does support and should be considered experimental at the moment.
 
-    The `remote` parameter is intended for different use-cases, you should use
-    the first option "(1) - URL" when you want to load the data from a location
-    different than the GitHub repository or your Jupyter notebook resources
-    i.e. a custom URL. The second option "(2) - `False`" loads resources from
-    your local Jupyter installation, note that you **need** to execute
-    `nbinstall` at least once or the application will error, this option is
-    ideal for developers modifying the JavaScript source code, and in
+    The ``remote`` parameter is intended for different use-cases, you should
+    use the first option "(1) - URL" when you want to load the data from a
+    location different than the GitHub repository or your Jupyter notebook
+    resources i.e. a custom URL. The second option "(2) - ``False``" loads
+    resources from your local Jupyter installation, note that you **need** to
+    execute ``nbinstall`` at least once or the application will error, this
+    option is ideal for developers modifying the JavaScript source code, and in
     environments of limited internet connection. Finally, the third option "(3)
-    - `True`" should be used if you intend to embed an Emperor plot in a
+    - ``True``" should be used if you intend to embed an Emperor plot in a
     notebook and then publish it using http://nbviewer.jupyter.org.
 
     Raises
     ------
     ValueError
-        If the remote argument is not of `bool` or `str` type.
+        If the remote argument is not of ``bool`` or ``str`` type.
 
     References
     ----------
@@ -182,7 +189,7 @@ class Emperor(object):
                              "be a bool or str")
 
     def __str__(self):
-        return self._make_emperor()
+        return self.make_emperor()
 
     def _repr_html_(self):
         """Used to display a plot in the Jupyter notebook"""
@@ -194,15 +201,59 @@ class Emperor(object):
 
         return display(HTML(str(self)))
 
-    def _make_emperor(self):
-        """Private method to build an Emperor HTML string"""
-        output = []
+    def copy_support_files(self, target=None):
+        """Copies the support files to a target directory
 
-        with open(STYLE_PATH) as sty, open(MAIN_PATH) as mai:
-            style_template = Template(sty.read())
-            main_template = Template(mai.read())
+        Parameters
+        ----------
+        target : str
+            The path where resources should be copied to. By default it copies
+            the files to ``self.base_url``.
+        """
+        if target is None:
+            target = self.base_url
 
-        output.append(style_template.render(base_url=self.base_url))
+        # copy the required resources
+        copy_tree(get_emperor_support_files_dir(), target)
+
+    def make_emperor(self, standalone=False):
+        """Build an emperor plot
+
+        Parameters
+        ----------
+        standalone : bool
+            Whether or not the produced plot should be a standalone HTML file.
+
+        Returns
+        -------
+        str
+            Formatted emperor plot.
+
+
+        Notes
+        -----
+        The ``standalone`` argument is intended for the different use-cases
+        that Emperor can have, either as an embedded widget that lives inside,
+        for example, the Jupyter notebook, or alternatively as an HTML file
+        that refers to resources locally. In this case you will need to copy
+        the support files by calling the ``copy_support_files`` method.
+
+        See Also
+        --------
+        emperor.core.Emperor.copy_support_files
+        """
+
+        # based on: http://stackoverflow.com/a/6196098
+        loader = FileSystemLoader(join(get_emperor_support_files_dir(),
+                                       'templates'))
+
+        if standalone:
+            main_path = basename(STANDALONE_PATH)
+        else:
+            main_path = basename(JUPYTER_PATH)
+        env = Environment(loader=loader)
+
+        main_template = env.get_template(main_path)
 
         # there's a bug in old versions of Pandas that won't allow us to rename
         # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
@@ -213,18 +264,19 @@ class Emperor(object):
             index_name = self.mf.index.name
 
         # format the metadata
-        headers = map(str, [index_name] + self.mf.columns.tolist())
+        headers = list(map(str, [index_name] + self.mf.columns.tolist()))
         metadata = self.mf.apply(lambda x: [str(x.name)] +
                                  x.astype('str').tolist(),
                                  axis=1).values.tolist()
 
         # format the coordinates
         d = self.dimensions
-        pct_var = self.ordination.proportion_explained[:d].tolist()
+        pct_var = (self.ordination.proportion_explained[:d] * 100).tolist()
         coords = self.ordination.samples.values[:, :d].tolist()
+        names = self.ordination.samples.columns[:d].tolist()
 
         # avoid unicode strings
-        coord_ids = map(str, self.mf.index.tolist())
+        coord_ids = list(map(str, self.mf.index.tolist()))
 
         # yes, we could have used UUID, but we couldn't find an easier way to
         # test that deterministically and with this approach we can seed the
@@ -234,8 +286,9 @@ class Emperor(object):
         plot = main_template.render(coords_ids=coord_ids, coords=coords,
                                     pct_var=pct_var, md_headers=headers,
                                     metadata=metadata, base_url=self.base_url,
-                                    plot_id=plot_id)
+                                    plot_id=plot_id,
+                                    logic_template_path=basename(LOGIC_PATH),
+                                    style_template_path=basename(STYLE_PATH),
+                                    axes_names=names)
 
-        output.append(plot)
-
-        return ''.join(output)
+        return plot

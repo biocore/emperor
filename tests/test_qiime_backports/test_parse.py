@@ -13,7 +13,10 @@ __status__ = "Development"
 
 from unittest import TestCase, main
 
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from numpy import array
 from numpy.testing import assert_almost_equal

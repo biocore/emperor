@@ -8,19 +8,26 @@
 from __future__ import division
 
 from unittest import TestCase, main
-from StringIO import StringIO
+from os.path import exists
+from shutil import rmtree
+from io import StringIO
 from skbio import OrdinationResults
 
 import pandas as pd
 import numpy as np
 
 from emperor.core import Emperor
-from _test_core_strings import PCOA_STRING, HTML_STRING
+
+# account for what's allowed in python 2 vs PY3K
+try:
+    from . import _test_core_strings as tcs
+except:
+    import _test_core_strings as tcs
 
 
 class TopLevelTests(TestCase):
     def setUp(self):
-        or_f = StringIO(unicode(PCOA_STRING))
+        or_f = StringIO(tcs.PCOA_STRING)
         self.ord_res = OrdinationResults.read(or_f)
 
         data = \
@@ -36,8 +43,14 @@ class TopLevelTests(TestCase):
         headers = ['SampleID', 'Treatment', 'DOB', 'Description']
         self.mf = pd.DataFrame(data=data, columns=headers)
         self.mf.set_index('SampleID', inplace=True)
+        self.files_to_remove = []
 
         np.random.seed(111)
+
+    def tearDown(self):
+        for path in self.files_to_remove:
+            if exists(path):
+                rmtree(path)
 
     def test_str(self):
         emp = Emperor(self.ord_res, self.mf)
@@ -46,8 +59,11 @@ class TopLevelTests(TestCase):
 
         obs = str(emp)
 
-        self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
-        self.assertEqual(HTML_STRING, obs)
+        try:
+            self.assertItemsEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
+        except AttributeError:
+            self.assertCountEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
+        self.assertEqual(tcs.HTML_STRING, obs)
 
     def test_remote_url(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
@@ -62,9 +78,53 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.ord_res, self.mf)
         obs = str(emp)
 
-        self.assertItemsEqual(HTML_STRING.split('\n'), obs.split('\n'))
-        self.assertEqual(HTML_STRING, obs)
+        try:
+            self.assertItemsEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
+        except AttributeError:
+            self.assertCountEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
 
+        self.assertEqual(tcs.HTML_STRING, obs)
+
+    def test_standalone(self):
+        local_path = './some-local-path/'
+
+        emp = Emperor(self.ord_res, self.mf, remote=local_path)
+        self.assertEqual(emp.base_url, local_path)
+
+        obs = emp.make_emperor(standalone=True)
+
+        try:
+            self.assertItemsEqual(tcs.STANDALONE_HTML_STRING.split('\n'),
+                                  obs.split('\n'))
+        except AttributeError:
+            self.assertCountEqual(tcs.STANDALONE_HTML_STRING.split('\n'),
+                                  obs.split('\n'))
+        self.assertEqual(tcs.STANDALONE_HTML_STRING, obs)
+
+    def test_copy_support_files_use_base(self):
+        local_path = './some-local-path/'
+
+        emp = Emperor(self.ord_res, self.mf, remote=local_path)
+        self.assertEqual(emp.base_url, local_path)
+
+        emp.copy_support_files()
+
+        self.assertTrue(exists(local_path))
+
+        self.files_to_remove.append(local_path)
+
+    def test_copy_support_files_use_target(self):
+        local_path = './some-local-path/'
+
+        emp = Emperor(self.ord_res, self.mf, remote=local_path)
+        self.assertEqual(emp.base_url, local_path)
+
+        emp.copy_support_files(target='./something-else')
+
+        self.assertTrue(exists('./something-else'))
+
+        self.files_to_remove.append(local_path)
+        self.files_to_remove.append('./something-else')
 
 if __name__ == "__main__":
     main()

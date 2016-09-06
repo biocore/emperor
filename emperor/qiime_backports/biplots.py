@@ -46,7 +46,7 @@ def make_biplot_scores_output(taxa):
     """
     output = []
     ndims = len(taxa['coord'][1])
-    header = '#Taxon\t' + '\t'.join(['pc%d' %(i+1) for i in xrange(ndims)])
+    header = '#Taxon\t' + '\t'.join(['pc%d' %(i+1) for i in range(ndims)])
     output.append(header)
     for i, taxon in enumerate(taxa['lineages']):
         line = taxon + '\t'

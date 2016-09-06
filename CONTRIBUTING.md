@@ -3,7 +3,7 @@ Contributing to Emperor
 
 [Emperor](http://biocore.github.io/emperor/) is an open source software package, and we welcome community contributions. You can find the source code and test code for Emperor under public revision control in the Emperor git repository on [GitHub](https://github.com/biocore/emperor). We very much welcome contributions.
 
-This document covers what you should do to get started with contributing to Emperor. You should read this whole document before considering submitting code to Emperor. This will save time for both you and the Emperor developers.  
+This document covers what you should do to get started with contributing to Emperor. You should read this whole document before considering submitting code to Emperor. This will save time for both you and the Emperor developers.
 
 Type of Submissions
 -------------------
@@ -94,8 +94,9 @@ git push origin my-topic-branch
 Coding Guidelines
 -----------------
 
-We adhere to the [PEP 8](http://www.python.org/dev/peps/pep-0008/) python coding guidelines for code and documentation standards. Before submitting any code to Emperor, you should read these carefully and apply the guidelines in your code.
+For **Python** code, we adhere to the [PEP 8](http://www.python.org/dev/peps/pep-0008/) python coding guidelines for code and documentation standards. For **JavaScript** code, we adhere to the [Google closure](https://google.github.io/styleguide/javascriptguide.xml) javascript coding standards, and use [JSDoc](http://usejsdoc.org/) to compile all javascript documentation. When using the closure linter, we allow the `module`, `function`, `constructs`, `alias`, and `default` custom JSDoc tags. For the most up to date version of the allowed JSDoc tags, see the [Travis configuration file](.travis.yml).
 
+Before submitting any code to Emperor, you should read these carefully and apply the guidelines in your code. As part of our automated testing, we make sure that all code passes linter standards and documentation compiles. We use the [gjslint](https://developers.google.com/closure/utilities/) linter to test javascript code with the `--custom_jsdoc_tags module,function,constructs,alias,default` modifier, and the [flake8](https://pypi.python.org/pypi/flake8) linter to test python code.
 
 Testing Guidelines
 ------------------
@@ -103,7 +104,8 @@ Testing Guidelines
 All code that is added to Emperor must be unit tested, and the unit test code must be submitted in the same pull request as the library code that you are submitting. We will only merge code that is unit tested and that passes the [continuous integration build](https://github.com/biocore/emperor/blob/master/.travis.yml), this build verifies that the:
 
 - Full test suite executes without errors (including JavaScript and script usage tests).
-- All the code in Emperor is PEP8-compliant.
+- All python code in Emperor is PEP8-compliant.
+- All javascript code in Emperor is google closure compliant.
 - All code is valid in Python 2.7.x.
 - The documentation can be built correctly.
 

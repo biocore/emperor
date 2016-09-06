@@ -34,7 +34,7 @@ class BiplotTests(TestCase):
         otu_names = list('abc')
     
         res = bp.get_taxa_coords(otu_table, [.4,.2,.1,.9])
-        otu_coords= range(3)
+        otu_coords= list(range(3))
         otu_coords[0] = .4*2/3 + .9*1/3
         otu_coords[1] = .4*1/4 + .2*1/4 + .1*1/4 + .9*1/4
         otu_coords[2] = .4*0/5 + .2*2/5 + .1*2/5 + .9*1/5

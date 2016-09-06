@@ -1,0 +1,124 @@
+<div id='{{ plot_id }}' style="position: relative; width:100%; height:500px;">
+  <div class='loading' style="position: absolute;top: 50%;left: 50%;margin-left: -229px; margin-top: -59px; z-index: 10000;height:118px;width:458px;padding:0px"><img src='{{ base_url }}/img/emperor.png' alt='Emperor resources missing. Expected them to be found in {{ base_url }}'></div>
+</div>
+</div>
+
+<script type="text/javascript">
+requirejs.config({
+// the left side is the module name, and the right side is the path
+// relative to the baseUrl attribute, do NOT include the .js extension
+'paths': {
+  /* jQuery */
+  'jquery': '{{ base_url }}/vendor/js/jquery-2.1.4.min',
+  'jqueryui': '{{ base_url }}/vendor/js/jquery-ui.min',
+  'jquery_drag': '{{ base_url }}/vendor/js/jquery.event.drag-2.2.min',
+
+  /* jQuery plugins */
+  'chosen': '{{ base_url }}/vendor/js/chosen.jquery.min',
+  'spectrum': '{{ base_url }}/vendor/js/spectrum.min',
+  'position': '{{ base_url }}/vendor/js/jquery.ui.position.min',
+  'contextmenu': '{{ base_url }}/vendor/js/jquery.contextMenu.min',
+
+  /* other libraries */
+  'underscore': '{{ base_url }}/vendor/js/underscore-min',
+  'chroma': '{{ base_url }}/vendor/js/chroma.min',
+  'filesaver': '{{ base_url }}/vendor/js/FileSaver.min',
+  'blob': '{{ base_url }}/vendor/js/Blob',
+  'd3': '{{ base_url }}/vendor/js/d3.min',
+
+
+  /* THREE.js and plugins */
+  'three': '{{ base_url }}/vendor/js/three.min',
+  'orbitcontrols': '{{ base_url }}/vendor/js/three.js-plugins/OrbitControls',
+
+  /* SlickGrid */
+  'slickcore': '{{ base_url }}/vendor/js/slick.core.min',
+  'slickgrid': '{{ base_url }}/vendor/js/slick.grid.min',
+  'slickformatters': '{{ base_url }}/vendor/js/slick.editors.min',
+  'slickeditors': '{{ base_url }}/vendor/js/slick.formatters.min',
+
+  /* Emperor's objects */
+  'util': '{{ base_url }}/js/util',
+  'model': '{{ base_url }}/js/model',
+  'view': '{{ base_url }}/js/view',
+  'controller': '{{ base_url }}/js/controller',
+  'draw': '{{ base_url }}/js/draw',
+  'scene3d': '{{ base_url }}/js/sceneplotview3d',
+  'viewcontroller': '{{ base_url }}/js/view-controller',
+  'colorviewcontroller': '{{ base_url }}/js/color-view-controller',
+  'visibilitycontroller': '{{ base_url }}/js/visibility-controller',
+  'scaleviewcontroller': '{{ base_url }}/js/scale-view-controller',
+  'shapecontroller': '{{ base_url }}/js/shape-controller',
+  'axescontroller': '{{ base_url }}/js/axes-controller',
+  'shape-editor': '{{ base_url }}/js/shape-editor',
+  'color-editor': '{{ base_url }}/js/color-editor',
+  'scale-editor': '{{ base_url }}/js/scale-editor',
+  'shapes': '{{ base_url }}/js/shapes'
+},
+/*
+   Libraries that are not AMD compatible need shim to declare their
+   dependencies.
+ */
+'shim': {
+  'jquery_drag': {
+    'deps': ['jquery', 'jqueryui']
+  },
+  'chosen': {
+    'deps': ['jquery'],
+    'exports': 'jQuery.fn.chosen'
+  },
+  'contextmenu' : {
+    'deps': ['jquery', 'jqueryui', 'position']
+  },
+  'filesaver' : {
+    'deps': ['blob']
+  },
+  'orbitcontrols': {
+    'deps': ['three']
+  },
+'slickcore': ['jqueryui'],
+'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
+              'slickeditors']
+}
+});
+
+requirejs(
+["jquery", "model", "controller"],
+function($, model, EmperorController) {
+  var DecompositionModel = model.DecompositionModel;
+
+  var div = $('#{{ plot_id }}');
+
+  var ids = {{ coords_ids }};
+  var coords = {{ coords }};
+  var pct_var = {{ pct_var | map('float') | list }};
+  var md_headers = {{ md_headers}};
+  var metadata = {{  metadata }};
+  var axesNames = {{ axes_names }};
+
+  var dm, ec;
+
+  function init() {
+    // Initialize the DecompositionModel
+    dm = new DecompositionModel(name, ids, coords, pct_var,
+                                md_headers, metadata, axesNames);
+    // Initialize the EmperorController
+    ec = new EmperorController(dm, '{{ plot_id }}');
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    ec.render();
+  }
+  $(window).resize(function() {
+    ec.resize(div.innerWidth(), div.innerHeight());
+  });
+
+  $(function(){
+    init();
+    animate();
+
+  });
+
+}); // END REQUIRE.JS block
+</script>

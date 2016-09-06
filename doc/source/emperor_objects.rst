@@ -1,1 +1,4 @@
-.. automodule:: emperor.core
+Emperor's public API
+====================
+
+.. automodule:: emperor
