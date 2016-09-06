@@ -10,10 +10,13 @@ define([
     'shapecontroller',
     'axescontroller',
     'scaleviewcontroller',
-    'filesaver'
+    'filesaver',
+    'svgrenderer',
+    'draw'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController, ShapeController,
-             AxesController, ScaleViewController, FileSaver) {
+             AxesController, ScaleViewController, FileSaver, SVGRenderer,
+             Draw) {
 
   /**
    *
@@ -402,13 +405,24 @@ define([
           }
         },
         'sep1': '---------',
-        'saveImage': {
-          name: 'Save Image (PNG)',
-          icon: 'file-picture-o',
-          callback: function(key, opts) {
-            scope.screenshot();
-          }
-        }
+        "fold1": {
+            "name": "Save Image",
+            icon: 'file-picture-o',
+            "items": {
+              'saveImagePNG': {
+                name: 'PNG',
+                callback: function(key, opts) {
+                  scope.screenshot('png');
+                }
+              },
+              'saveImageSVG': {
+                name: 'SVG + labels',
+                callback: function(key, opts) {
+                  scope.screenshot('svg');
+                }
+              }
+            }
+        },
       }
     });
 
@@ -431,14 +445,71 @@ define([
    */
   EmperorController.prototype.screenshot = function(type) {
     type = type || 'png';
-    // Render all scenes so it's rendered in same context as save
-    for (var i = 0; i < this.sceneViews.length; i++) {
-      this.sceneViews[i].render();
+
+    if (type === 'png') {
+      // Render all scenes so it's rendered in same context as save
+      for (var i = 0; i < this.sceneViews.length; i++) {
+        this.sceneViews[i].render();
+      }
+      var c = this.renderer.domElement.toDataURL('image/' + type);
+      // Create DOM-less download link and click it to start download
+      var download = $('<a href="' + c + '" download="emperor.' + type + '">');
+      download.get(0).click();
+    } else if (type === 'svg') {
+      // confirm box based on number of samples: better safe than sorry
+      if (this.dm.length >= 9000) {
+        if (confirm("This number of samples could take a long time and in " +
+           "some computers the browser will crash. If this happens we " +
+           "suggest to lower the number of segments or use the png " +
+           "implementation. Do you want to continue?") == false) {
+              return;
+        }
+      }
+
+      // generating SVG image
+      var svgRenderer = new THREE.SVGRenderer({ antialias: true, preserveDrawingBuffer: true });
+      svgRenderer.setSize(this.$plotSpace.width(), this.$plotSpace.height());
+      svgRenderer.setClearColor(this.renderer.getClearColor(), 1);
+      svgRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
+      svgRenderer.sortObjects = true;
+
+      // converting svgRenderer to string: http://stackoverflow.com/a/17415624
+      var XMLS = new XMLSerializer();
+      var svgfile = XMLS.serializeToString(svgRenderer.domElement);
+
+      // some browsers (Chrome) will add the namespace, some won't. Make sure
+      // that if it's not there, you add it to make sure the file can be opened
+      // in tools like Adobe Illustrator or in browsers like Safari or FireFox
+      if (svgfile.indexOf('xmlns="http://www.w3.org/2000/svg"') === -1){
+        // adding xmlns header to open in the browser
+        svgfile = svgfile.replace('viewBox=',
+                                  'xmlns="http://www.w3.org/2000/svg" viewBox=');
+      }
+
+      // hacking the background color by adding a rectangle
+      var index = svgfile.indexOf('viewBox="')+9;
+      var viewBox = svgfile.substring(index, svgfile.indexOf('"',index)).split(" ");
+      var background = '<rect id="background" height="' + viewBox[3] + '" width="' +
+                       viewBox[2] + '" y="' + viewBox[1] + '" x="' + viewBox[0] +
+                       '" stroke-width="0" stroke="#000000" fill="#' +
+                       this.renderer.getClearColor().getHexString() + '"/>'
+      index = svgfile.indexOf('>',index)+1;
+      svgfile = svgfile.substr(0, index) + background + svgfile.substr(index);
+
+      var blob = new Blob([svgfile], {type: 'image/svg+xml'});
+      saveAs(blob, 'emperor-image.svg');
+
+      // generating legend
+      var names = [], colors = [];
+      _.each(this.controllers.color.bodyGrid.getData(), function(element, idx) {
+        names.push(element.category);
+        colors.push(element.value);
+      });
+      var blob = new Blob([Draw.formatSVGLegend(names, colors)], {type: 'image/svg+xml'});
+      saveAs(blob, 'emperor-image-labels.svg');
+    } else {
+      console.log('Screenshot type not implemented')
     }
-    var c = this.renderer.domElement.toDataURL('image/' + type);
-    // Create DOM-less download link and click it to start download
-    var download = $('<a href="' + c + '" download="emperor.' + type + '">');
-    download.get(0).click();
   };
 
   /**
