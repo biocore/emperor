@@ -12,6 +12,8 @@ from os.path import exists, join, abspath, dirname
 from shutil import rmtree
 from tempfile import gettempdir
 
+import pandas as pd
+import numpy as np
 from numpy import array
 from numpy.testing import assert_almost_equal
 
@@ -20,7 +22,7 @@ from emperor.util import (keep_columns_from_mapping_file,
                           EmperorInputFilesError,
                           fill_mapping_field_from_mapping_file,
                           sanitize_mapping_file, guess_coordinates_files,
-                          nbinstall, uniform_transform, normal_transform)
+                          nbinstall, min_max_transform, zscore_transform)
 
 
 class TopLevelTests(TestCase):
@@ -114,12 +116,12 @@ class TopLevelTests(TestCase):
         for f in self.files_to_delete:
             rmtree(f)
 
-    def test_uniform_transform(self):
+    def test_min_max_transform(self):
         data = pd.DataFrame(index=list(range(10)),
                             data=np.arange(120).reshape(10, 12))
-        exp = np.asarray([np.arange(0, 1, 1 / 12) for i in range(10)])
-        obs = uniform_transform(data)
-        npt.assert_allclose(obs.values, exp.values)
+        exp = np.asarray([np.arange(0, 1.01, 1 / 11) for i in range(10)])
+        obs = min_max_transform(data)
+        assert_almost_equal(obs.values, exp)
 
         data = pd.DataFrame(index=list(range(10)),
                             data=np.vstack([np.arange(15).reshape(5, 3),
@@ -134,8 +136,8 @@ class TopLevelTests(TestCase):
                      [ 0.,  0.46428571,  1.],
                      [ 0.,  0.475     ,  1.],
                      [ 0.,  0.48076923,  1.]])
-        obs = uniform_transform(data)
-        npt.assert_allclose(obs.values, exp.values)
+        obs = min_max_transform(data)
+        assert_almost_equal(obs.values, exp)
 
     def test_zscore_transform(self):
         data = pd.DataFrame(index=list(range(10)),
@@ -143,7 +145,7 @@ class TopLevelTests(TestCase):
         exp = np.asarray([[-1.41421356, -0.70710678, 0., 0.70710678,
                            1.41421356]] * 10)
         obs = zscore_transform(data)
-        npt.assert_allclose(obs.values, exp.values)
+        assert_almost_equal(obs.values, exp)
 
         data = pd.DataFrame(index=list(range(10)),
                             data=np.vstack([np.arange(15).reshape(5, 3),
@@ -159,7 +161,7 @@ class TopLevelTests(TestCase):
                         [-1.20383097, -0.04080783,  1.24463879],
                         [-1.20874504, -0.03139597,  1.24014101]])
         obs = zscore_transform(data)
-        npt.assert_allclose(obs.values, exp.values)
+        assert_almost_equal(obs.values, exp)
 
     def test_preprocess_mapping_file(self):
         """Check correct preprocessing of metadata is done"""

@@ -8,6 +8,7 @@
 from __future__ import division
 
 from numpy import ndarray, ones, zeros, vstack
+from scipy.stats.mstats import zscore
 
 from os import listdir
 from os.path import abspath, dirname, join, isdir
@@ -652,3 +653,40 @@ def guess_coordinates_files(dir_path):
         coord_fps.append(filepath)
 
     return coord_fps
+
+
+def min_max_transform(df):
+    """Perform a min-max scaling per axis
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The dataframe to operate on. It is expected that this is
+        OrdinationResults.samples
+
+    Returns
+    -------
+    pd.DataFrame
+        The transformed coordinates
+    """
+    def f(v):
+        return (v - v.min()) / (v.max() - v.min())
+
+    return df.apply(f, axis=1)
+
+
+def zscore_transform(df):
+    """Perform a zscore transformation per axis
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The dataframe to operate on. It is expected that this is
+        OrdinationResults.samples
+
+    Returns
+    -------
+    pd.DataFrame
+        The transformed coordinates
+    """
+    return df.apply(zscore, axis=1)
