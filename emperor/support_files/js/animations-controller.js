@@ -127,6 +127,10 @@ define([
 
   }
 
+  AnimationsController.prototype._createDecomposition = function(gradient, trajectory){
+  
+  }
+
   /**
    * Converts the current instance into a JSON string.
    *
@@ -135,7 +139,7 @@ define([
   AnimationsController.prototype.toJSON = function() {
     var json = {};
 
-    console.error('Not implemented!');
+    console.error('AnimationsViewController.toJSON Not implemented!');
 
     return json;
   };
@@ -148,7 +152,7 @@ define([
   AnimationsController.prototype.fromJSON = function(json) {
     var scope = this;
 
-    console.error('Not implemented!');
+    console.error('AnimationsViewController.fromJSON Not implemented!');
   };
 
   return AnimationsController;
