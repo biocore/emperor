@@ -405,10 +405,10 @@ define([
           }
         },
         'sep1': '---------',
-        "fold1": {
-            "name": "Save Image",
+        'fold1': {
+            'name': 'Save Image',
             icon: 'file-picture-o',
-            "items": {
+            'items': {
               'saveImagePNG': {
                 name: 'PNG',
                 callback: function(key, opts) {
@@ -458,16 +458,17 @@ define([
     } else if (type === 'svg') {
       // confirm box based on number of samples: better safe than sorry
       if (this.dm.length >= 9000) {
-        if (confirm("This number of samples could take a long time and in " +
-           "some computers the browser will crash. If this happens we " +
-           "suggest to lower the number of segments or use the png " +
-           "implementation. Do you want to continue?") == false) {
+        if (confirm('This number of samples could take a long time and in ' +
+           'some computers the browser will crash. If this happens we ' +
+           'suggest to lower the number of segments or use the png ' +
+           'implementation. Do you want to continue?') == false) {
               return;
         }
       }
 
       // generating SVG image
-      var svgRenderer = new THREE.SVGRenderer({ antialias: true, preserveDrawingBuffer: true });
+      var svgRenderer = new THREE.SVGRenderer({ antialias: true,
+                                               preserveDrawingBuffer: true });
       svgRenderer.setSize(this.$plotSpace.width(), this.$plotSpace.height());
       svgRenderer.setClearColor(this.renderer.getClearColor(), 1);
       svgRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
@@ -480,20 +481,23 @@ define([
       // some browsers (Chrome) will add the namespace, some won't. Make sure
       // that if it's not there, you add it to make sure the file can be opened
       // in tools like Adobe Illustrator or in browsers like Safari or FireFox
-      if (svgfile.indexOf('xmlns="http://www.w3.org/2000/svg"') === -1){
+      if (svgfile.indexOf('xmlns="http://www.w3.org/2000/svg"') === -1) {
         // adding xmlns header to open in the browser
         svgfile = svgfile.replace('viewBox=',
-                                  'xmlns="http://www.w3.org/2000/svg" viewBox=');
+                                  'xmlns="http://www.w3.org/2000/svg" ' +
+                                  'viewBox=');
       }
 
       // hacking the background color by adding a rectangle
-      var index = svgfile.indexOf('viewBox="')+9;
-      var viewBox = svgfile.substring(index, svgfile.indexOf('"',index)).split(" ");
-      var background = '<rect id="background" height="' + viewBox[3] + '" width="' +
-                       viewBox[2] + '" y="' + viewBox[1] + '" x="' + viewBox[0] +
+      var index = svgfile.indexOf('viewBox="') + 9;
+      var viewBox = svgfile.substring(index,
+                                      svgfile.indexOf('"', index)).split(' ');
+      var background = '<rect id="background" height="' + viewBox[3] +
+                       '" width="' + viewBox[2] + '" y="' + viewBox[1] +
+                       '" x="' + viewBox[0] +
                        '" stroke-width="0" stroke="#000000" fill="#' +
-                       this.renderer.getClearColor().getHexString() + '"/>'
-      index = svgfile.indexOf('>',index)+1;
+                       this.renderer.getClearColor().getHexString() + '"/>';
+      index = svgfile.indexOf('>', index) + 1;
       svgfile = svgfile.substr(0, index) + background + svgfile.substr(index);
 
       var blob = new Blob([svgfile], {type: 'image/svg+xml'});
@@ -505,10 +509,11 @@ define([
         names.push(element.category);
         colors.push(element.value);
       });
-      var blob = new Blob([Draw.formatSVGLegend(names, colors)], {type: 'image/svg+xml'});
+      var blob = new Blob([Draw.formatSVGLegend(names, colors)],
+                          {type: 'image/svg+xml'});
       saveAs(blob, 'emperor-image-labels.svg');
     } else {
-      console.log('Screenshot type not implemented')
+      console.log('Screenshot type not implemented');
     }
   };
 
