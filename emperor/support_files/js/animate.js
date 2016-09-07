@@ -134,7 +134,7 @@ function(_, trajectory) {
      * Array where each element in the trajectory is a trajectory with the
      * interpolated points in it.
      */
-    this.trajectories = new Array();
+    this.trajectories = [];
 
     this.initializeTrajectories();
     this.getMaximumTrajectoryLength();
@@ -150,8 +150,8 @@ function(_, trajectory) {
   AnimationDirector.prototype.initializeTrajectories = function() {
 
     var chewedData = null, trajectoryBuffer = null, minimumDelta;
-    var sampleNamesBuffer = new Array(), gradientPointsBuffer = new Array();
-    var coordinatesBuffer = new Array();
+    var sampleNamesBuffer = [], gradientPointsBuffer = [];
+    var coordinatesBuffer = [];
     var chewedDataBuffer = null;
 
     // compute a dictionary from where we will extract the germane data
