@@ -70,6 +70,8 @@ requirejs(['draw'], function(draw) {
       equal(label.position.x, 0);
       equal(label.position.y, 0);
       equal(label.position.z, 0);
+
+      equal(label.text, 'foolibusters');
     });
 
     /**
@@ -87,6 +89,8 @@ requirejs(['draw'], function(draw) {
       equal(label.position.x, 0);
       equal(label.position.y, 0);
       equal(label.position.z, 0);
+
+      equal(label.text, 'foolibusters');
     });
 
     /**

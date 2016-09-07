@@ -119,6 +119,10 @@ define(['underscore', 'three'], function(_, THREE) {
     var sp = new THREE.Sprite(mat);
     sp.position.set(position[0], position[1], position[2]);
 
+    // add an extra attribute so we can render this properly when we use
+    // SVGRenderer
+    sp.text = text;
+
     return sp;
   }
 
