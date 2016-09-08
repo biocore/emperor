@@ -17,7 +17,8 @@ from string import ascii_letters
 
 import numpy as np, pandas as pd
 from emperor import Emperor
-from emperor.util import get_emperor_support_files_dir
+from emperor.util import (get_emperor_support_files_dir, min_max_transform,
+                          zscore_transform)
 from skbio import OrdinationResults
 
 
@@ -31,7 +32,7 @@ if len(argv) > 1:
 categories = np.asarray(np.random.randint(1, 1000, N), str)
 
 coords_ids = listify(np.arange(N))
-coords = (np.random.randn(N, 10) * 0.25).tolist()
+coords = (np.random.randn(N, 10) * 1000).tolist()
 pct_var = 1/np.exp(np.arange(10))
 
 
@@ -41,7 +42,7 @@ for _id in coords_ids:
     metadata.append([_id, ''.join(sample(set(categories), 1)), ''.join(choice(
         ascii_letters) for x in range(10))])
 
-samples = pd.DataFrame(index=coords_ids, data=coords)
+samples = min_max_transform(pd.DataFrame(index=coords_ids, data=coords))
 
 mf = pd.DataFrame(data=metadata, columns=md_headers)
 mf.set_index('SampleID', inplace=True)
