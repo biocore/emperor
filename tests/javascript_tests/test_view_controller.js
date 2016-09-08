@@ -194,7 +194,7 @@ requirejs([
                 EmperorViewControllerABC);
       var attr = new EmperorViewController(container, 'foo', 'bar',
           this.sharedDecompositionViewDict);
-      equal(attr.activeViewKey, 'pcoa');
+      deepEqual(_.keys(attr.decompViewDict), ['pcoa', 'biplot']);
     });
 
     /**
