@@ -267,6 +267,7 @@ define([
                       'the decompViewDict.');
     }
     this.activeViewKey = k;
+    this._rebuildMenu();
   };
 
   /**
@@ -277,6 +278,16 @@ define([
   EmperorViewController.prototype.getActiveView = function() {
     return this.decompViewDict[this.getActiveDecompViewKey()];
   };
+
+  EmperorViewController.prototype.addView = function(key, view) {
+    this.decompViewDict[key] = view;
+    this._rebuildMenu();
+  };
+
+  EmperorViewController.prototype.removeView = function(key){
+    this.decompViewDict[key] = undefined;
+    this._rebuildMenu();
+  }
 
   /**
    *
