@@ -482,12 +482,12 @@ define([
 
   EmperorViewController.prototype.addView = function(key, view) {
     this.decompViewDict[key] = view;
-    this._rebuildMenu();
+    this._updateMenu();
   };
 
   EmperorViewController.prototype.removeView = function(key){
     delete this.decompViewDict[key];
-    this._rebuildMenu();
+    this._updateMenu();
   }
 
 
