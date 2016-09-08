@@ -95,7 +95,7 @@ define([
         function(e, args) {
           var val = args.item.category, color = args.item.value;
           var group = args.item.plottables;
-          var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
+          var element = scope.getView();
           scope.setPlottableAttributes(element, color, group);
         },
       'categorySelectionCallback':
@@ -108,8 +108,7 @@ define([
                            .attr('data-type') == DISCRETE;
           var colorScheme = scope.$colormapSelect.val();
 
-          var k = scope.getActiveDecompViewKey();
-          var decompViewDict = scope.decompViewDict[k];
+          var decompViewDict = scope.getView();
 
           if (discrete) {
             scope.$scaled.prop('checked', false);
@@ -417,7 +416,7 @@ define([
     // Fetch and set the SlickGrid-formatted data
     // Need to take into account the existence of the non-numeric values grid
     // information from the continuous data.
-    var decompViewDict = this.decompViewDict[this.getActiveDecompViewKey()];
+    var decompViewDict = this.getView();
     if (this.$scaled.is(':checked')) {
       // Get the current SlickGrid data and update with the saved color
       var data = this.bodyGrid.getData();

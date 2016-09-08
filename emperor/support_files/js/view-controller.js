@@ -224,12 +224,6 @@ define([
     if (_.size(decompViewDict) <= 0) {
       throw Error('The decomposition view dictionary cannot be empty');
     }
-    // Picks the first key in the dictionary as the active key
-    /**
-     * @type {String}
-     * This is the key of the active decomposition view.
-     */
-    this.activeViewKey = Object.keys(decompViewDict)[0];
 
     /**
      * @type {Object}
@@ -246,48 +240,9 @@ define([
       EmperorViewControllerABC.prototype);
   EmperorViewController.prototype.constructor = EmperorViewControllerABC;
 
-  /**
-   * Retrieves the name of the currently active decomposition view.
-   *
-   * @return {String} A key corresponding to the active decomposition view.
-   */
-  EmperorViewController.prototype.getActiveDecompViewKey = function() {
-    return this.activeViewKey;
+  EmperorViewController.prototype.getView = function(){
+    return this.decompViewDict[Object.keys(this.decompViewDict)[0]];
   };
-
-  /**
-   * Changes the currently active decomposition view.
-   *
-   * @param {String} k Key corresponding to active decomposition view.
-   * @throws {Error} The key must exist, otherwise an exception will be thrown.
-   */
-  EmperorViewController.prototype.setActiveDecompViewKey = function(k) {
-    if (this.decompViewDict[k] === undefined) {
-      throw new Error('This key does not exist, "' + k + '" in the ' +
-                      'the decompViewDict.');
-    }
-    this.activeViewKey = k;
-    this._rebuildMenu();
-  };
-
-  /**
-   * Retrieves the currently active decomposition view.
-   *
-   * @return {DecompositionView} The currently active decomposition view.
-   */
-  EmperorViewController.prototype.getActiveView = function() {
-    return this.decompViewDict[this.getActiveDecompViewKey()];
-  };
-
-  EmperorViewController.prototype.addView = function(key, view) {
-    this.decompViewDict[key] = view;
-    this._rebuildMenu();
-  };
-
-  EmperorViewController.prototype.removeView = function(key){
-    this.decompViewDict[key] = undefined;
-    this._rebuildMenu();
-  }
 
   /**
    *
@@ -327,7 +282,7 @@ define([
    *
    */
   function EmperorAttributeABC(container, title, description,
-      decompViewDict, options) {
+                               decompViewDict, options) {
     EmperorViewController.call(this, container, title, description,
                                decompViewDict);
 
@@ -340,13 +295,8 @@ define([
     this.$gridDiv.css('width', '100%');
     this.$gridDiv.css('height', '100%');
     this.$body.append(this.$gridDiv);
-    /**
-     * @type {String}
-     * Metadata column name.
-     */
-    this.metadataField = null;
 
-    var dm = decompViewDict[this.activeViewKey].decomp;
+    var dm = this.getView().decomp;
     var scope = this;
 
     // http://stackoverflow.com/a/6602002
@@ -386,13 +336,30 @@ define([
    * Changes the metadata column name to control.
    *
    * @param {String} m Metadata column name to control.
+   *
+   * @throws {Error} Argument `m` must be a metadata category in one of the
+   * decomposition views.
    */
   EmperorAttributeABC.prototype.setMetadataField = function(m) {
-    // FIXME: this should be validated against decompViewDict i.e. we should be
-    // verifying that the metadata field indeed exists in the decomposition
-    // model
-    this.metadataField = m;
+    // loop through the metadata headers in the decompositon views
+    var res = _.find(this.decompViewDict, function(view){
+      console.log(view.decomp.md_headers);
+      return view.decomp.md_headers.indexOf(m) !== -1;
+    });
+
+    if (res === undefined) {
+      throw Error('Cannot set "' + m + '" as the metadata field, this column' +
+                  ' is not available in the decomposition views');
+    }
+
+    this.$select.val(m);
+    this.$select.trigger('chosen:updated');
+    this.$select.change();
   };
+
+  EmperorAttributeABC.prototype.getMetadataField = function(){
+    return this.$select.val();
+  }
 
   /**
    * Retrieves the underlying data in the slick grid
@@ -437,7 +404,7 @@ define([
     /**
      * @type {Slick.Grid}
      * Container that lists the metadata categories described under the
-     * `metadataField` column and the attribute that can be modified.
+     * metadata column and the attribute that can be modified.
      */
     this.bodyGrid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
 
@@ -480,7 +447,7 @@ define([
    */
   EmperorAttributeABC.prototype.toJSON = function() {
     var json = {};
-    json.category = this.$select.val();
+    json.category = this.getMetadataField();
 
     // Convert SlickGrid list of objects to single object
     var gridData = this.bodyGrid.getData();
@@ -499,17 +466,30 @@ define([
    *
    */
   EmperorAttributeABC.prototype.fromJSON = function(json) {
-    this.$select.val(json.category);
-    this.$select.trigger('chosen:updated');
+    this.setMetadataField(json.category);
 
     // fetch and set the SlickGrid-formatted data
-    var k = this.getActiveDecompViewKey();
-    var data = this.decompViewDict[k].setCategory(
+    var data = this.getView().setCategory(
       json.data, this.setPlottableAttributes, json.category);
     this.setSlickGridDataset(data);
     // set all to needsUpdate
-    this.decompViewDict[k].needsUpdate = true;
+    this.getView().needsUpdate = true;
   };
+
+  EmperorViewController.prototype._updateMenu = function(){
+
+  };
+
+  EmperorViewController.prototype.addView = function(key, view) {
+    this.decompViewDict[key] = view;
+    this._rebuildMenu();
+  };
+
+  EmperorViewController.prototype.removeView = function(key){
+    delete this.decompViewDict[key];
+    this._rebuildMenu();
+  }
+
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,
           'EmperorViewController': EmperorViewController,
