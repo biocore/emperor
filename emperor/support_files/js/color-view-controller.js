@@ -100,10 +100,16 @@ define([
         },
       'categorySelectionCallback':
         function(evt, params) {
+          // console.log(params);
+          console.log(JSON.parse(params.selected));
+          params = JSON.parse(params.selected);
+
           // we re-use this same callback regardless of whether the
           // color or the metadata category changed, maybe we can do
           // something better about this
-          var category = scope.$select.val();
+          var category = params.category;
+          var group = params.group;
+
           var discrete = $('option:selected', scope.$colormapSelect)
                            .attr('data-type') == DISCRETE;
           var colorScheme = scope.$colormapSelect.val();

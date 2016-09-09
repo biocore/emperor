@@ -301,9 +301,6 @@ define([
 
     // http://stackoverflow.com/a/6602002
     this.$select = $('<select>');
-    _.each(dm.md_headers, function(header) {
-      scope.$select.append($('<option>').attr('value', header).text(header));
-    });
     this.$header.append(this.$select);
 
     // there's a few attributes we can only set on "ready" so list them up here
@@ -311,8 +308,11 @@ define([
       // setup the slick grid
       scope._buildGrid(options);
 
+      scope._refreshMetadata();
+
       // setup chosen
-      scope.$select.chosen({width: '100%', search_contains: true});
+      scope.$select.chosen({width: '100%', search_contains: true,
+                            include_group_label_in_selected: true});
 
       // only subclasses will provide this callback
       if (options.categorySelectionCallback !== undefined) {
@@ -476,19 +476,34 @@ define([
     this.getView().needsUpdate = true;
   };
 
-  EmperorViewController.prototype._updateMenu = function(){
+  EmperorViewController.prototype._refreshMetadata = function(){
+    var scope = this, group, opt, val;
 
+    this.$select.empty();
+
+    _.each(this.decompViewDict, function(view, name){
+      group = $('<optgroup>').attr('label', name);
+      scope.$select.append(group);
+
+      _.each(view.decomp.md_headers, function(header){
+        // easiest way to send data on the callback is to encode everything
+        // as a JSON string
+        val = JSON.stringify({category: header, group: name});
+        group.append($('<option>').attr('value', val)
+                                  .text(header));
+      });
+    });
   };
 
   EmperorViewController.prototype.addView = function(key, view) {
     this.decompViewDict[key] = view;
-    this._updateMenu();
+    this._refreshMetadata();
   };
 
   EmperorViewController.prototype.removeView = function(key){
     delete this.decompViewDict[key];
-    this._updateMenu();
-  }
+    this._refreshMetadata();
+  };
 
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,
