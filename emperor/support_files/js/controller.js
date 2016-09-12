@@ -460,7 +460,7 @@ define([
       if (this.dm.length >= 9000) {
         if (confirm('This number of samples could take a long time and in ' +
            'some computers the browser will crash. If this happens we ' +
-           'suggest to use the png implementation. Do you want to '
+           'suggest to use the png implementation. Do you want to ' +
            'continue?') == false) {
           return;
         }
