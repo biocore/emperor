@@ -440,7 +440,7 @@ define([
    *
    * Save the current canvas view to a new window
    *
-   * @param {string} [type = png] What format to save the file as.
+   * @param {string} [type = png] Format to save the file as: ('png', 'svg')
    *
    */
   EmperorController.prototype.screenshot = function(type) {
@@ -460,15 +460,15 @@ define([
       if (this.dm.length >= 9000) {
         if (confirm('This number of samples could take a long time and in ' +
            'some computers the browser will crash. If this happens we ' +
-           'suggest to lower the number of segments or use the png ' +
-           'implementation. Do you want to continue?') == false) {
-              return;
+           'suggest to use the png implementation. Do you want to '
+           'continue?') == false) {
+          return;
         }
       }
 
       // generating SVG image
-      var svgRenderer = new THREE.SVGRenderer({ antialias: true,
-                                               preserveDrawingBuffer: true });
+      var svgRenderer = new THREE.SVGRenderer({antialias: true,
+                                               preserveDrawingBuffer: true});
       svgRenderer.setSize(this.$plotSpace.width(), this.$plotSpace.height());
       svgRenderer.setClearColor(this.renderer.getClearColor(), 1);
       svgRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
@@ -505,7 +505,7 @@ define([
 
       // generating legend
       var names = [], colors = [];
-      _.each(this.controllers.color.bodyGrid.getData(), function(element, idx) {
+      _.each(this.controllers.color.bodyGrid.getData(), function(element) {
         names.push(element.category);
         colors.push(element.value);
       });
@@ -513,7 +513,7 @@ define([
                           {type: 'image/svg+xml'});
       saveAs(blob, 'emperor-image-labels.svg');
     } else {
-      console.log('Screenshot type not implemented');
+      console.error();('Screenshot type not implemented');
     }
   };
 

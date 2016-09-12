@@ -1,5 +1,9 @@
 /**
  * @author mrdoob / http://mrdoob.com/
+ *
+ * This modified version has a two new methods: renderText and getTextNode,
+ * which allows us to insert text to the SVG renderer. The text has to be
+ * created using sprites and have the attribute text. 
  */
 
 THREE.SVGObject = function ( node ) {
