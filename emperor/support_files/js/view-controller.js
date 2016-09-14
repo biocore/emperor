@@ -241,6 +241,8 @@ define([
   EmperorViewController.prototype.constructor = EmperorViewControllerABC;
 
   EmperorViewController.prototype.getView = function(){
+    // we don't have the concept of decomposition view selection in this class,
+    // so select just the first decomposition available
     return this.decompViewDict[Object.keys(this.decompViewDict)[0]];
   };
 
@@ -308,7 +310,7 @@ define([
       // setup the slick grid
       scope._buildGrid(options);
 
-      scope._refreshMetadata();
+      scope.refreshMetadata();
 
       // setup chosen
       scope.$select.chosen({width: '100%', search_contains: true,
@@ -332,6 +334,24 @@ define([
     EmperorViewController.prototype);
   EmperorAttributeABC.prototype.constructor = EmperorViewController;
 
+  EmperorAttributeABC.prototype.decompositionName = function(cat){
+    return this.$select.find(':selected').parent().attr('label');
+  };
+
+  EmperorAttributeABC.prototype.getView = function(){
+    var view;
+
+    try {
+      view = this.decompViewDict[this.decompositionName()];
+    }
+    catch(TypeError) {
+      view = EmperorViewController.prototype.getView.call(this);
+    }
+
+    return view;
+  }
+
+
   /**
    * Changes the metadata column name to control.
    *
@@ -342,8 +362,9 @@ define([
    */
   EmperorAttributeABC.prototype.setMetadataField = function(m) {
     // loop through the metadata headers in the decompositon views
+    // FIXME: There's no good way to specify the current decomposition name
+    // this needs to be added to the interface.
     var res = _.find(this.decompViewDict, function(view){
-      console.log(view.decomp.md_headers);
       return view.decomp.md_headers.indexOf(m) !== -1;
     });
 
@@ -476,35 +497,38 @@ define([
     this.getView().needsUpdate = true;
   };
 
-  EmperorViewController.prototype._refreshMetadata = function(){
-    var scope = this, group, opt, val;
+  /**
+   *
+   * Re-builds the menu to select the metadata category of the controller
+   *
+   */
+  EmperorAttributeABC.prototype.refreshMetadata = function(){
+    var scope = this, group, opt, val, selected;
 
     this.$select.empty();
 
     _.each(this.decompViewDict, function(view, name){
       group = $('<optgroup>').attr('label', name);
+
       scope.$select.append(group);
 
       _.each(view.decomp.md_headers, function(header){
-        // easiest way to send data on the callback is to encode everything
-        // as a JSON string
-        val = JSON.stringify({category: header, group: name});
-        group.append($('<option>').attr('value', val)
-                                  .text(header));
+        group.append($('<option>').attr('value', header).text(header));
       });
     });
+
+    this.$select.trigger('chosen:updated');
   };
 
-  EmperorViewController.prototype.addView = function(key, view) {
+  EmperorAttributeABC.prototype.addView = function(key, view) {
     this.decompViewDict[key] = view;
-    this._refreshMetadata();
+    this.refreshMetadata();
   };
 
-  EmperorViewController.prototype.removeView = function(key){
+  EmperorAttributeABC.prototype.removeView = function(key){
     delete this.decompViewDict[key];
-    this._refreshMetadata();
+    this.refreshMetadata();
   };
-
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,
           'EmperorViewController': EmperorViewController,

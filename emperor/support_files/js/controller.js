@@ -10,10 +10,12 @@ define([
     'shapecontroller',
     'axescontroller',
     'scaleviewcontroller',
-    'filesaver'
+    'filesaver',
+    'viewcontroller'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
              ColorViewController, VisibilityController, ShapeController,
-             AxesController, ScaleViewController, FileSaver) {
+             AxesController, ScaleViewController, FileSaver, viewcontroller) {
+  var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
 
   /**
    *
@@ -172,6 +174,24 @@ define([
     });
 
   };
+
+  EmperorController.prototype.addDecompositionView = function(key, value) {
+    if ( !(value instanceof DecompositionView) ){
+      console.error("The value is not a decomposition view");
+    }
+
+    this.decViews[key] = value;
+
+    _.each(this.controllers, function(controller){
+      if ( controller instanceof EmperorAttributeABC ){
+        controller.refreshMetadata();
+      }
+    });
+
+    _.each(this.sceneViews, function(sv){
+      sv.refresh();
+    });
+  }
 
   /**
    *

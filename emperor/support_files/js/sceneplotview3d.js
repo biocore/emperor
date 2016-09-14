@@ -97,13 +97,7 @@ define([
     this.light.position.set(1, 1, 1).normalize();
     this.camera.add(this.light);
 
-    // Add all the meshes to the scene, iterate through all keys in
-    // decomposition view dictionary
-    for (var decViewName in this.decViews) {
-      for (var j = 0; j < this.decViews[decViewName].markers.length; j++) {
-        this.scene.add(this.decViews[decViewName].markers[j]);
-      }
-    }
+    this.refresh();
 
     // use get(0) to retrieve the native DOM object
     /**
@@ -216,6 +210,19 @@ define([
       }, infoDuration);
     });
   };
+
+  ScenePlotView3D.prototype.refresh = function() {
+
+    // Add all the meshes to the scene, iterate through all keys in
+    // decomposition view dictionary
+    for (var decViewName in this.decViews) {
+      for (var j = 0; j < this.decViews[decViewName].markers.length; j++) {
+        this.scene.add(this.decViews[decViewName].markers[j]);
+      }
+    }
+
+    this.needsUpdate = true;
+  }
 
   /**
    *
