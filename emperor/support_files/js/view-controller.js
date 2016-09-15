@@ -289,6 +289,14 @@ define([
                                decompViewDict);
 
     /**
+     * @type {Object}
+     * Dictionary-like object where keys are metadata categories and values are
+     * lists of metadata columns.
+     * @private
+     */
+    this._metadata = {};
+
+    /**
      * @type {Node}
      * jQuery element for the div containing the slickgrid of sample information
      */
@@ -499,51 +507,48 @@ define([
 
   /**
    *
-   * Re-builds the menu to select the metadata category of the controller
+   * Update the metadata selection menu.
+   *
+   * Performs some additional logic to avoid duplicating decomposition names.
+   *
+   * Note that decompositions won't be updated if they have the same name and
+   * same metadata headers, if the only things changing are coordinates, or
+   * metadata values, the changes should be performed directly on the objects
+   * themselves.
    *
    */
   EmperorAttributeABC.prototype.refreshMetadata = function(){
-    var scope = this, group, opt, val, selected, curr, headers;
-
-    // this.$select.empty();
-    curr = this._getCurrentMetadata();
+    var scope = this, group, hdrs;
 
     _.each(this.decompViewDict, function(view, name){
-      // if the key is in there and the values are the same
-      headers = view.decomp.md_headers;
-      if ( _.contains(_.keys(curr), name) &&
-           _.intersection(curr[name], headers).length == curr[name].length &&
-           curr[name].length == headers.length ){
+      // retrieve the metadata headers for this decomposition
+      hdrs = view.decomp.md_headers;
+
+      // Before we update the metadata view, we rectify that we don't have that
+      // information already. The order in this conditional matters as we hope
+      // to short-circuit if the name is not already present.  If that's not
+      // the case, we also check to ensure the lists are equivalent.
+      if ( _.contains(_.keys(scope._metadata), name) &&
+           _.intersection(scope._metadata[name], hdrs).length == hdrs.length &&
+           scope._metadata[name].length == hdrs.length ){
         return;
       }
+
+      // create the new category
+      scope._metadata[name] = [];
 
       group = $('<optgroup>').attr('label', name);
 
       scope.$select.append(group);
 
-      _.each(view.decomp.md_headers, function(header){
+      _.each(hdrs, function(header){
         group.append($('<option>').attr('value', header).text(header));
+        scope._metadata[name].append(header);
       });
     });
 
     this.$select.trigger('chosen:updated');
   };
-
-  EmperorAttributeABC.prototype._getCurrentMetadata = function(){
-    var groups = this.$select.find('optgroup'), headers, ret = {};
-
-    for (var i = 0; i < groups.length; i++){
-
-      ret[groups[i].label] = [];
-      headers = $(groups[i]).children();
-
-      for (var j = 0; j < headers.length; j++){
-        ret[groups[i].label].push(headers[j].value);
-      }
-    }
-
-    return ret;
-  }
 
   EmperorAttributeABC.prototype.addView = function(key, view) {
     this.decompViewDict[key] = view;
