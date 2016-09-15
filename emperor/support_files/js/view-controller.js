@@ -240,9 +240,15 @@ define([
       EmperorViewControllerABC.prototype);
   EmperorViewController.prototype.constructor = EmperorViewControllerABC;
 
+  /**
+   *
+   * Retrieve a view from the controller.
+   *
+   * This class does not operate on single decomposition views, hence this
+   * method retrieves the first available view.
+   *
+   */
   EmperorViewController.prototype.getView = function(){
-    // we don't have the concept of decomposition view selection in this class,
-    // so select just the first decomposition available
     return this.decompViewDict[Object.keys(this.decompViewDict)[0]];
   };
 
@@ -342,10 +348,20 @@ define([
     EmperorViewController.prototype);
   EmperorAttributeABC.prototype.constructor = EmperorViewController;
 
+  /**
+   *
+   * Get the name of the decomposition selected in the metadata menu.
+   *
+   */
   EmperorAttributeABC.prototype.decompositionName = function(cat){
     return this.$select.find(':selected').parent().attr('label');
   };
 
+  /**
+   *
+   * Get the view that's currently selected by the metadata menu.
+   *
+   */
   EmperorAttributeABC.prototype.getView = function(){
     var view;
 
@@ -358,7 +374,6 @@ define([
 
     return view;
   }
-
 
   /**
    * Changes the metadata column name to control.
@@ -548,16 +563,6 @@ define([
     });
 
     this.$select.trigger('chosen:updated');
-  };
-
-  EmperorAttributeABC.prototype.addView = function(key, view) {
-    this.decompViewDict[key] = view;
-    this.refreshMetadata();
-  };
-
-  EmperorAttributeABC.prototype.removeView = function(key){
-    delete this.decompViewDict[key];
-    this.refreshMetadata();
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,
