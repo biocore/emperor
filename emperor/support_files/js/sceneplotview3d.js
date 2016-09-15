@@ -218,6 +218,10 @@ define([
    */
   ScenePlotView3D.prototype.refresh = function() {
 
+    // Note that the internal logic of the THREE.Scene object prevents the
+    // objects from being re-added so we can simply iterate over all the
+    // decomposition views.
+
     // Add all the meshes to the scene, iterate through all keys in
     // decomposition view dictionary
     for (var decViewName in this.decViews) {

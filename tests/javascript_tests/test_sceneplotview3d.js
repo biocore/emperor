@@ -309,6 +309,62 @@ requirejs([
 
     /**
      *
+     * Test the refresh method for ScenePlotView3D
+     *
+     */
+    test('Test refresh', function() {
+
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      equal(spv.scene.children.length, 11);
+      spv.refresh();
+      equal(spv.scene.children.length, 11);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    /**
+     *
+     * Test the refresh method for ScenePlotView3D
+     *
+     */
+    test('Test refresh new objects', function() {
+
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      equal(spv.scene.children.length, 11);
+
+      name = 'pcoa';
+      ids = ['PC.636', 'PC.635'];
+      coords = [[-0.276542, -0.144964, 0.066647, -0.067711, 0.176070,
+                  0.072969, -0.229889, -0.046599],
+                [-0.237661, 0.046053, -0.138136,0.159061, -0.247485, -0.115211,
+                  -0.112864, 0.064794]];
+      pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
+                 10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+      md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
+      metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+      ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
+
+      decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                      metadata);
+      dv = new DecompositionView(decomp);
+
+      this.sharedDecompositionViewDict.pleep = dv;
+      spv.refresh();
+      equal(spv.scene.children.length, 13);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    /**
+     *
      * Test the resize method for ScenePlotView3D
      *
      */
