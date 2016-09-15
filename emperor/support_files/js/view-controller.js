@@ -503,11 +503,20 @@ define([
    *
    */
   EmperorAttributeABC.prototype.refreshMetadata = function(){
-    var scope = this, group, opt, val, selected;
+    var scope = this, group, opt, val, selected, curr, headers;
 
-    this.$select.empty();
+    // this.$select.empty();
+    curr = this._getCurrentMetadata();
 
     _.each(this.decompViewDict, function(view, name){
+      // if the key is in there and the values are the same
+      headers = view.decomp.md_headers;
+      if ( _.contains(_.keys(curr), name) &&
+           _.intersection(curr[name], headers).length == curr[name].length &&
+           curr[name].length == headers.length ){
+        return;
+      }
+
       group = $('<optgroup>').attr('label', name);
 
       scope.$select.append(group);
@@ -519,6 +528,22 @@ define([
 
     this.$select.trigger('chosen:updated');
   };
+
+  EmperorAttributeABC.prototype._getCurrentMetadata = function(){
+    var groups = this.$select.find('optgroup'), headers, ret = {};
+
+    for (var i = 0; i < groups.length; i++){
+
+      ret[groups[i].label] = [];
+      headers = $(groups[i]).children();
+
+      for (var j = 0; j < headers.length; j++){
+        ret[groups[i].label].push(headers[j].value);
+      }
+    }
+
+    return ret;
+  }
 
   EmperorAttributeABC.prototype.addView = function(key, view) {
     this.decompViewDict[key] = view;
