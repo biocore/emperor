@@ -558,7 +558,7 @@ define([
 
       _.each(hdrs, function(header){
         group.append($('<option>').attr('value', header).text(header));
-        scope._metadata[name].append(header);
+        scope._metadata[name].push(header);
       });
     });
 

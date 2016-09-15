@@ -159,7 +159,7 @@ define([
     this.decViews = {'scatter': new DecompositionView(this.dm)};
 
     // default decomposition view uses the full window
-    this.addView();
+    this.addSceneView();
 
     $(function() {
       scope._buildUI();
@@ -175,9 +175,26 @@ define([
 
   };
 
+  /**
+   *
+   * Add a new decomposition view
+   *
+   * @param {String} key New name for the decomposition view.
+   * @param {DecompositionView} value The decomposition view that will be
+   * added.
+   *
+   * @throws Error if `key` already exists, or if `value` is not a
+   * decomposition view.
+   *
+   */
   EmperorController.prototype.addDecompositionView = function(key, value) {
     if ( !(value instanceof DecompositionView) ){
       console.error("The value is not a decomposition view");
+    }
+
+    if ( _.contains(_.keys(this.decViews), key) ) {
+      throw Error('A decomposition view named "' + key + '" already exists,' +
+                  'cannot add an already existing decomposition.');
     }
 
     this.decViews[key] = value;
@@ -198,7 +215,7 @@ define([
    * Helper method to add additional ScenePlotViews (i.e. another plot)
    *
    */
-  EmperorController.prototype.addView = function() {
+  EmperorController.prototype.addSceneView = function() {
     if (this.sceneViews.length > 4) {
       throw Error('Cannot add another scene plot view');
     }
