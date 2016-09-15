@@ -97,6 +97,7 @@ define([
     this.light.position.set(1, 1, 1).normalize();
     this.camera.add(this.light);
 
+    // add all the objects to the current scene
     this.refresh();
 
     // use get(0) to retrieve the native DOM object
