@@ -211,6 +211,11 @@ define([
     });
   };
 
+  /**
+   *
+   * Reloads the plottable objects for all the decompostion views.
+   *
+   */
   ScenePlotView3D.prototype.refresh = function() {
 
     // Add all the meshes to the scene, iterate through all keys in
