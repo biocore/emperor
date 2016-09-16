@@ -97,10 +97,11 @@ requirejs.config({
   'blob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/Blob',
   'd3': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/d3.min',
 
-
   /* THREE.js and plugins */
   'three': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.min',
   'orbitcontrols': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/OrbitControls',
+  'projector': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/Projector',
+  'svgrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SVGRenderer',
 
   /* SlickGrid */
   'slickcore': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.core.min',
@@ -146,6 +147,12 @@ requirejs.config({
   },
   'orbitcontrols': {
     'deps': ['three']
+  },
+  'projector': {
+    'deps': ['three']
+  },
+  'svgrenderer': {
+    'deps': ['orbitcontrols', 'projector']
   },
 'slickcore': ['jqueryui'],
 'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
@@ -261,10 +268,11 @@ requirejs.config({
   'blob': './some-local-path//vendor/js/Blob',
   'd3': './some-local-path//vendor/js/d3.min',
 
-
   /* THREE.js and plugins */
   'three': './some-local-path//vendor/js/three.min',
   'orbitcontrols': './some-local-path//vendor/js/three.js-plugins/OrbitControls',
+  'projector': './some-local-path//vendor/js/three.js-plugins/Projector',
+  'svgrenderer': './some-local-path//vendor/js/three.js-plugins/SVGRenderer',
 
   /* SlickGrid */
   'slickcore': './some-local-path//vendor/js/slick.core.min',
@@ -310,6 +318,12 @@ requirejs.config({
   },
   'orbitcontrols': {
     'deps': ['three']
+  },
+  'projector': {
+    'deps': ['three']
+  },
+  'svgrenderer': {
+    'deps': ['orbitcontrols', 'projector']
   },
 'slickcore': ['jqueryui'],
 'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',

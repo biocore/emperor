@@ -1,5 +1,9 @@
 /**
  * @author mrdoob / http://mrdoob.com/
+ *
+ * This modified version has a two new methods: renderText and getTextNode,
+ * which allows us to insert text to the SVG renderer. The text has to be
+ * created using sprites and have the attribute text. 
  */
 
 THREE.SVGObject = function ( node ) {
@@ -44,7 +48,7 @@ THREE.SVGRenderer = function () {
 	_viewMatrix = new THREE.Matrix4(),
 	_viewProjectionMatrix = new THREE.Matrix4(),
 
-	_svgPathPool = [], _svgLinePool = [], _svgRectPool = [],
+	_svgPathPool = [], _svgLinePool = [], _svgRectPool = [], _svgTextPool = [],
 	_svgNode, _pathCount = 0, _lineCount = 0, _rectCount = 0,
 	_quality = 1;
 
@@ -159,7 +163,15 @@ THREE.SVGRenderer = function () {
 				_v1 = element;
 				_v1.x *= _svgWidthHalf; _v1.y *= - _svgHeightHalf;
 
-				renderSprite( _v1, element, material );
+				if ('text' in element.object) {
+
+					renderText( _v1, element, material );
+
+				} else {
+
+					renderSprite( _v1, element, material );
+
+				}
 
 			} else if ( element instanceof THREE.RenderableLine ) {
 
@@ -327,6 +339,26 @@ THREE.SVGRenderer = function () {
 
 	}
 
+	function renderText( v1, element, material ) {
+
+		var scaleX = element.scale.x * _svgWidthHalf;
+		var scaleY = element.scale.y * _svgHeightHalf;
+		var scaleZ = element.scale.y * _svgHeightHalf;
+
+		_svgNode = getTextNode( _rectCount ++ );
+
+		_svgNode.setAttribute( 'x', v1.x );
+		_svgNode.setAttribute( 'y', v1.y );
+		_svgNode.setAttribute( 'z', v1.z );
+		_svgNode.setAttribute( 'font-family', 'Verdana' );
+		_svgNode.setAttribute( 'font-size', parseInt( _svgWidthHalf / 40 ) );
+		_svgNode.setAttribute( 'fill',  material.color.getStyle() );
+		_svgNode.textContent = element.object.text;
+
+ 		_svg.appendChild( _svgNode );
+
+	}
+
 	function renderLine( v1, v2, element, material ) {
 
 		_svgNode = getLineNode( _lineCount ++ );
@@ -461,6 +493,26 @@ THREE.SVGRenderer = function () {
 		}
 
 		return _svgRectPool[ id ];
+
+	}
+
+	function getTextNode( id ) {
+
+		if ( _svgTextPool[ id ] == null ) {
+
+			_svgTextPool[ id ] = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+
+			if ( _quality == 0 ) {
+
+				_svgTextPool[ id ].setAttribute( 'shape-rendering', 'crispEdges' ); //optimizeSpeed
+
+			}
+
+			return _svgTextPool[ id ];
+
+		}
+
+		return _svgTextPool[ id ];
 
 	}
 
