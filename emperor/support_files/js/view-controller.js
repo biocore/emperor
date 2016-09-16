@@ -248,7 +248,7 @@ define([
    * method retrieves the first available view.
    *
    */
-  EmperorViewController.prototype.getView = function(){
+  EmperorViewController.prototype.getView = function() {
     return this.decompViewDict[Object.keys(this.decompViewDict)[0]];
   };
 
@@ -354,7 +354,7 @@ define([
    * Get the name of the decomposition selected in the metadata menu.
    *
    */
-  EmperorAttributeABC.prototype.decompositionName = function(cat){
+  EmperorAttributeABC.prototype.decompositionName = function(cat) {
     return this.$select.find(':selected').parent().attr('label');
   };
 
@@ -363,18 +363,18 @@ define([
    * Get the view that's currently selected by the metadata menu.
    *
    */
-  EmperorAttributeABC.prototype.getView = function(){
+  EmperorAttributeABC.prototype.getView = function() {
     var view;
 
     try {
       view = this.decompViewDict[this.decompositionName()];
     }
-    catch(TypeError) {
+    catch (TypeError) {
       view = EmperorViewController.prototype.getView.call(this);
     }
 
     return view;
-  }
+  };
 
   /**
    * Changes the selected value in the metadata menu.
@@ -388,7 +388,7 @@ define([
     // loop through the metadata headers in the decompositon views
     // FIXME: There's no good way to specify the current decomposition name
     // this needs to be added to the interface.
-    var res = _.find(this.decompViewDict, function(view){
+    var res = _.find(this.decompViewDict, function(view) {
       return view.decomp.md_headers.indexOf(m) !== -1;
     });
 
@@ -407,9 +407,9 @@ define([
    * Get the name of the selected category in the metadata menu.
    *
    */
-  EmperorAttributeABC.prototype.getMetadataField = function(){
+  EmperorAttributeABC.prototype.getMetadataField = function() {
     return this.$select.val();
-  }
+  };
 
   /**
    * Retrieves the underlying data in the slick grid
@@ -538,10 +538,10 @@ define([
    * themselves.
    *
    */
-  EmperorAttributeABC.prototype.refreshMetadata = function(){
+  EmperorAttributeABC.prototype.refreshMetadata = function() {
     var scope = this, group, hdrs;
 
-    _.each(this.decompViewDict, function(view, name){
+    _.each(this.decompViewDict, function(view, name) {
       // retrieve the metadata headers for this decomposition
       hdrs = view.decomp.md_headers;
 
@@ -549,9 +549,9 @@ define([
       // information already. The order in this conditional matters as we hope
       // to short-circuit if the name is not already present.  If that's not
       // the case, we also check to ensure the lists are equivalent.
-      if ( _.contains(_.keys(scope._metadata), name) &&
+      if (_.contains(_.keys(scope._metadata), name) &&
            _.intersection(scope._metadata[name], hdrs).length == hdrs.length &&
-           scope._metadata[name].length == hdrs.length ){
+           scope._metadata[name].length == hdrs.length) {
         return;
       }
 
@@ -562,7 +562,7 @@ define([
 
       scope.$select.append(group);
 
-      _.each(hdrs, function(header){
+      _.each(hdrs, function(header) {
         group.append($('<option>').attr('value', header).text(header));
         scope._metadata[name].push(header);
       });

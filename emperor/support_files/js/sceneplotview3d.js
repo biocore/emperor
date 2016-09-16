@@ -232,7 +232,7 @@ define([
     }
 
     this.needsUpdate = true;
-  }
+  };
 
   /**
    *

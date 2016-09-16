@@ -190,27 +190,27 @@ define([
    *
    */
   EmperorController.prototype.addDecompositionView = function(key, value) {
-    if ( !(value instanceof DecompositionView) ){
-      console.error("The value is not a decomposition view");
+    if (!(value instanceof DecompositionView)) {
+      console.error('The value is not a decomposition view');
     }
 
-    if ( _.contains(_.keys(this.decViews), key) ) {
+    if (_.contains(_.keys(this.decViews), key)) {
       throw Error('A decomposition view named "' + key + '" already exists,' +
                   'cannot add an already existing decomposition.');
     }
 
     this.decViews[key] = value;
 
-    _.each(this.controllers, function(controller){
-      if ( controller instanceof EmperorAttributeABC ){
+    _.each(this.controllers, function(controller) {
+      if (controller instanceof EmperorAttributeABC) {
         controller.refreshMetadata();
       }
     });
 
-    _.each(this.sceneViews, function(sv){
+    _.each(this.sceneViews, function(sv) {
       sv.refresh();
     });
-  }
+  };
 
   /**
    *
@@ -458,7 +458,7 @@ define([
                 }
               }
             }
-        },
+        }
       }
     });
 

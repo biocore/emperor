@@ -313,9 +313,9 @@ requirejs([
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           this.sharedDecompositionViewDict, {});
 
-      var met =  {"biplot": ["SampleID", "Gram"],
-                  "pcoa": ["SampleID", "LinkerPrimerSequence", "Treatment",
-                           "DOB"]};
+      var met = {'biplot': ['SampleID', 'Gram'],
+                  'pcoa': ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                           'DOB']};
 
       deepEqual(attr._metadata, met);
     });
@@ -368,7 +368,7 @@ requirejs([
     });
 
 
-    test('Test decompositionName method', function(){
+    test('Test decompositionName method', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
@@ -376,7 +376,7 @@ requirejs([
       equal(attr.decompositionName(), 'scatter');
     });
 
-    test('Test getView method', function(){
+    test('Test getView method', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
@@ -422,7 +422,7 @@ requirejs([
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           {'scatter': dv}, {});
-      throws(function(){
+      throws(function() {
               attr.setMetadataField('cheese');
              }, /cheese/, 'Raise error that contains the word cheese');
     });
