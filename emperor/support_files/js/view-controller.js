@@ -297,7 +297,8 @@ define([
     /**
      * @type {Object}
      * Dictionary-like object where keys are metadata categories and values are
-     * lists of metadata columns.
+     * lists of metadata columns. This object reflects the data presented in
+     * the metadata menu.
      * @private
      */
     this._metadata = {};
