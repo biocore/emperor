@@ -309,17 +309,17 @@ requirejs([
 
     /**
      *
-     * Test the refresh method for ScenePlotView3D
+     * Test the addDecompositionsToScene method for ScenePlotView3D
      *
      */
-    test('Test refresh', function() {
+    test('Test addDecompositionsToScene', function() {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                     'fooligans', 0, 0, 20, 20);
 
       equal(spv.scene.children.length, 11);
-      spv.refresh();
+      spv.addDecompositionsToScene();
       equal(spv.scene.children.length, 11);
 
       // release the control back to the main page
@@ -328,10 +328,10 @@ requirejs([
 
     /**
      *
-     * Test the refresh method for ScenePlotView3D
+     * Test the addDecompositionsToScene method for ScenePlotView3D
      *
      */
-    test('Test refresh new objects', function() {
+    test('Test addDecompositionsToScene new objects', function() {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
@@ -356,7 +356,7 @@ requirejs([
       dv = new DecompositionView(decomp);
 
       this.sharedDecompositionViewDict.pleep = dv;
-      spv.refresh();
+      spv.addDecompositionsToScene();
       equal(spv.scene.children.length, 13);
 
       // release the control back to the main page

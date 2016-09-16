@@ -98,7 +98,7 @@ define([
     this.camera.add(this.light);
 
     // add all the objects to the current scene
-    this.refresh();
+    this.addDecompositionsToScene();
 
     // use get(0) to retrieve the native DOM object
     /**
@@ -214,10 +214,10 @@ define([
 
   /**
    *
-   * Reloads the plottable objects for all the decompostion views.
+   * Adds all the decomposition views to the current scene.
    *
    */
-  ScenePlotView3D.prototype.refresh = function() {
+  ScenePlotView3D.prototype.addDecompositionsToScene = function() {
 
     // Note that the internal logic of the THREE.Scene object prevents the
     // objects from being re-added so we can simply iterate over all the

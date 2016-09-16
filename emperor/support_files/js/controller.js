@@ -208,7 +208,7 @@ define([
     });
 
     _.each(this.sceneViews, function(sv) {
-      sv.refresh();
+      sv.addDecompositionsToScene();
     });
   };
 
