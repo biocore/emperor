@@ -312,6 +312,12 @@ requirejs([
                 EmperorViewController);
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           this.sharedDecompositionViewDict, {});
+
+      var met =  {"biplot": ["SampleID", "Gram"],
+                  "pcoa": ["SampleID", "LinkerPrimerSequence", "Treatment",
+                           "DOB"]};
+
+      deepEqual(attr._metadata, met);
     });
 
     /**
@@ -361,6 +367,51 @@ requirejs([
       });
     });
 
+
+    test('Test decompositionName method', function(){
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, {});
+      equal(attr.decompositionName(), 'scatter');
+    });
+
+    test('Test getView method', function(){
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, {});
+      deepEqual(attr.getView(), dv);
+    });
+
+    /**
+     *
+     * Test get metadata field
+     *
+     */
+    test('Test getMetadataField', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, {});
+      equal(attr.getMetadataField(), 'SampleID');
+    });
+
+    /**
+     *
+     * Test set metadata field
+     *
+     */
+    test('Test getMetadataField', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, {});
+      attr.setMetadataField('Gram');
+      equal(attr.getMetadataField(), 'Gram');
+    });
+
+
     /**
      *
      * Test set metadata field
@@ -375,6 +426,7 @@ requirejs([
               attr.setMetadataField('cheese');
              }, /cheese/, 'Raise error that contains the word cheese');
     });
+
 
     /**
      *
@@ -396,5 +448,38 @@ requirejs([
         start(); // qunit
       });
     });
+
+
+    /**
+     *
+     * Test refresh metadata.
+     *
+     */
+    asyncTest('Test refreshMetadata', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var shared = {'scatter': this.sharedDecompositionViewDict.pcoa};
+      var scope = this;
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         shared, {});
+
+      $(function() {
+        // modify the decomposition view dictionary
+        shared.biplot = scope.sharedDecompositionViewDict.biplot;
+
+        deepEqual(attr._metadata, {'scatter': ['SampleID',
+                                               'LinkerPrimerSequence',
+                                               'Treatment', 'DOB']});
+        attr.refreshMetadata();
+        deepEqual(attr._metadata, {'scatter': ['SampleID',
+                                               'LinkerPrimerSequence',
+                                               'Treatment', 'DOB'],
+                                   'biplot': ['SampleID', 'Gram']});
+
+        start(); // qunit
+      });
+    });
+
+
   });
 });

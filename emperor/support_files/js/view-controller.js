@@ -376,7 +376,7 @@ define([
   }
 
   /**
-   * Changes the metadata column name to control.
+   * Changes the selected value in the metadata menu.
    *
    * @param {String} m Metadata column name to control.
    *
@@ -401,6 +401,11 @@ define([
     this.$select.change();
   };
 
+  /**
+   *
+   * Get the name of the selected category in the metadata menu.
+   *
+   */
   EmperorAttributeABC.prototype.getMetadataField = function(){
     return this.$select.val();
   }
