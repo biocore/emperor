@@ -12,8 +12,8 @@ define([
    * the functionality of each subclass tab.
    *
    * @param {Node} container Container node to create the controller in.
-   * @param {String} title title of the tab.
-   * @param {String} description helper description.
+   * @param {String} title Title of the tab.
+   * @param {String} description Helper description.
    *
    * @return {EmperorViewControllerABC} Returns an instance of the
    * EmperorViewControllerABC.
