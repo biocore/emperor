@@ -7,7 +7,8 @@
 # ----------------------------------------------------------------------------
 from __future__ import division
 
-from numpy import ndarray, ones, zeros, vstack
+import pandas as pd
+import numpy as np
 
 from os import listdir
 from os.path import abspath, dirname, join, isdir
@@ -363,7 +364,7 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
     # number PCoA files; zero for any case except for comparison plots
     clones = 0
 
-    if custom_axes and type(coords_data) == ndarray:
+    if custom_axes and type(coords_data) == np.ndarray:
             # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
             get_custom_coords(custom_axes, mapping_file, coords_file)
             remove_nans(coords_file)
@@ -397,8 +398,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
 
             # this opens support for as many custom axes as needed
             axes = len(custom_axes)
-            coords_low[:, 0:axes] = zeros([coords_low.shape[0], axes])
-            coords_high[:, 0:axes] = ones([coords_high.shape[0], axes])*0.00001
+            coords_low[:, 0:axes] = np.zeros([coords_low.shape[0], axes])
+            coords_high[:, 0:axes] = np.ones([coords_high.shape[0], axes])*0.00001
             coords_data = coords_file[1]
 
         if master_pcoa[3][0] < 1.0 and not pct_variation_below_one:
@@ -432,7 +433,7 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
                 coords_eigenvals = coords_eigenvals[index]
                 coords_pct = coords_pct[index]
             else:
-                out_coords = vstack((out_coords, coords_i))
+                out_coords = np.vstack((out_coords, coords_i))
 
         coords_file = [out_headers, out_coords]
 
@@ -652,3 +653,45 @@ def guess_coordinates_files(dir_path):
         coord_fps.append(filepath)
 
     return coord_fps
+
+def validate_and_process_custom_axes(mf, custom_axes):
+    """Validate and process mapping file for custom axes
+
+    Parameters
+    ----------
+    mf : pd.DataFrame
+        The sample metadata.
+    custom_axes : list of str
+        The custom axes to extract from the metadata.
+
+    Returns
+    -------
+    pd.DataFrame
+        A resulting DataFrame with the custom axes as numeric types.
+
+    Raises
+    ------
+    KeyError
+        When the category names in `custom_axes` are not present in `mf`.
+    ValueError
+        When there are non-numeric values in the categories selected by
+        `custom_axes`.
+    """
+    # avoid side-effects
+    mf = mf.copy()
+
+    headers = [mf.index.name] + mf.columns.tolist()
+    missing_headers = set(custom_axes).difference(set(headers))
+
+    if missing_headers:
+        raise KeyError("One or more headers are not present in the "
+                       "sample information: %s" % ', '.join(missing_headers))
+
+    for axis in custom_axes:
+        mf[axis] = pd.to_numeric(mf[axis], errors='coerce')
+
+        if np.any(mf[axis].apply(np.isnan)):
+            raise ValueError("The column '%s', has non numeric values. All "
+                             "values in a custom axis must be numeric.")
+
+    return mf
