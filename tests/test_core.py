@@ -148,6 +148,5 @@ class TopLevelTests(TestCase):
             emp.make_emperor(custom_axes=[':L'])
 
 
-
 if __name__ == "__main__":
     main()
