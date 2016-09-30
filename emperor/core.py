@@ -234,6 +234,11 @@ class Emperor(object):
         str
             Formatted emperor plot.
 
+        Raises
+        ------
+        KeyError
+            If one or more of the ``custom_axes`` names are not present in the
+            sample information.
 
         Notes
         -----
@@ -286,6 +291,12 @@ class Emperor(object):
         # TODO: This will be removed once the custom axes creation is moved to
         # the graphical user interface i.e. to the Axes tab.
         if custom_axes:
+            missing_headers = set(custom_axes).difference(set(headers))
+            if missing_headers:
+                raise KeyError("One or more headers are not present in the "
+                               "sample information: %s" %
+                               ', '.join(missing_headers))
+
             # vestigial qiime structures for metadata and coordinates
             mapping_file = [headers] + metadata
             coords_file = [coord_ids, coords]
