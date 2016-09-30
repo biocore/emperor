@@ -692,6 +692,6 @@ def validate_and_process_custom_axes(mf, custom_axes):
 
         if np.any(mf[axis].apply(np.isnan)):
             raise ValueError("The column '%s', has non numeric values. All "
-                             "values in a custom axis must be numeric.")
+                             "values in a custom axis must be numeric." % axis)
 
     return mf
