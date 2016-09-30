@@ -400,7 +400,7 @@ define([
 
       // account for custom axes (their percentage explained will be -1 to
       // indicate that this attribute is not meaningful).
-      if (decomp.percExpl[index] < 0) {
+      if (decomp.percExpl[index] >= 0) {
         text += ' (' + decomp.percExpl[index].toPrecision(4) + ' %)';
       }
 
