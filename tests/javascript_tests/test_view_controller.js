@@ -3,10 +3,12 @@ requirejs([
     'underscore',
     'model',
     'view',
+    'abcviewcontroller',
     'viewcontroller',
     'slickgrid'
-], function($, _, model, DecompositionView, viewcontroller, SlickGrid) {
-  var EmperorViewControllerABC = viewcontroller.EmperorViewControllerABC;
+], function($, _, model, DecompositionView, abcviewcontroller, viewcontroller,
+            SlickGrid) {
+  var EmperorViewControllerABC = abc.EmperorViewControllerABC;
   var EmperorViewController = viewcontroller.EmperorViewController;
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
   var DecompositionModel = model.DecompositionModel;
