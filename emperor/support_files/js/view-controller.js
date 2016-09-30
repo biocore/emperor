@@ -70,6 +70,7 @@ define([
    *
    */
   EmperorViewController.prototype.getView = function() {
+    // return the first decomposition view available in the dictionary
     return this.decompViewDict[Object.keys(this.decompViewDict)[0]];
   };
 
