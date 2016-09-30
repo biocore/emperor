@@ -30,7 +30,8 @@ import numpy as np
 from jinja2 import FileSystemLoader
 from jinja2.environment import Environment
 
-from emperor.util import get_emperor_support_files_dir
+from emperor.util import (get_emperor_support_files_dir,
+                          validate_and_process_custom_axes)
 from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
                                                    remove_nans,
                                                    scale_custom_coords)
@@ -239,6 +240,8 @@ class Emperor(object):
         KeyError
             If one or more of the ``custom_axes`` names are not present in the
             sample information.
+        ValueError
+            If any of the ``custom_axes`` have non-numeric values.
 
         Notes
         -----
@@ -291,14 +294,13 @@ class Emperor(object):
         # TODO: This will be removed once the custom axes creation is moved to
         # the graphical user interface i.e. to the Axes tab.
         if custom_axes:
-            missing_headers = set(custom_axes).difference(set(headers))
-            if missing_headers:
-                raise KeyError("One or more headers are not present in the "
-                               "sample information: %s" %
-                               ', '.join(missing_headers))
+            mf = validate_and_process_custom_axes(self.mf, custom_axes)
+
+            data = mf.apply(lambda x: [x.name] + x.tolist(),
+                            axis=1).values.tolist()
 
             # vestigial qiime structures for metadata and coordinates
-            mapping_file = [headers] + metadata
+            mapping_file = [headers] + data
             coords_file = [coord_ids, coords]
 
             # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351

@@ -439,6 +439,7 @@ requirejs.config({
   'controller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/controller',
   'draw': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/draw',
   'scene3d': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/sceneplotview3d',
+  'abcviewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/abc-view-controller',
   'viewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/view-controller',
   'colorviewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/color-view-controller',
   'visibilitycontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/visibility-controller',
