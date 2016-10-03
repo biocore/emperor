@@ -528,7 +528,6 @@ class TopLevelTests(TestCase):
         exp = pd.DataFrame(data=MAPPING_FILE_DATA_CONVERTED, columns=columns)
         pd.util.testing.assert_frame_equal(obs, exp)
 
-
     def test_custom_axes_non_existent_names(self):
         columns = ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
                    'Treatment', 'DOB', 'Description']

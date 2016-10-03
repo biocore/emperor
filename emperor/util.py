@@ -399,7 +399,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             # this opens support for as many custom axes as needed
             axes = len(custom_axes)
             coords_low[:, 0:axes] = np.zeros([coords_low.shape[0], axes])
-            coords_high[:, 0:axes] = np.ones([coords_high.shape[0], axes])*0.00001
+            coords_high[:, 0:axes] = \
+                np.ones([coords_high.shape[0], axes]) * 0.00001
             coords_data = coords_file[1]
 
         if master_pcoa[3][0] < 1.0 and not pct_variation_below_one:
@@ -653,6 +654,7 @@ def guess_coordinates_files(dir_path):
         coord_fps.append(filepath)
 
     return coord_fps
+
 
 def validate_and_process_custom_axes(mf, custom_axes):
     """Validate and process mapping file for custom axes
