@@ -399,8 +399,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             # this opens support for as many custom axes as needed
             axes = len(custom_axes)
             coords_low[:, 0:axes] = np.zeros([coords_low.shape[0], axes])
-            coords_high[:, 0:axes] = \
-                np.ones([coords_high.shape[0], axes]) * 0.00001
+            coords_high[:, 0:axes] = np.full((coords_high.shape[0], axes),
+                                             fill_value=0.00001)
             coords_data = coords_file[1]
 
         if master_pcoa[3][0] < 1.0 and not pct_variation_below_one:
@@ -686,14 +686,21 @@ def validate_and_process_custom_axes(mf, custom_axes):
     missing_headers = set(custom_axes).difference(set(headers))
 
     if missing_headers:
-        raise KeyError("One or more headers are not present in the "
-                       "sample information: %s" % ', '.join(missing_headers))
+        raise KeyError("One or more custom axes headers are not present in the"
+                       " sample information: %s" % ', '.join(missing_headers))
 
     for axis in custom_axes:
-        mf[axis] = pd.to_numeric(mf[axis], errors='coerce')
+        temp = pd.to_numeric(mf[axis], errors='coerce')
+        nans = np.isnan(temp)
 
-        if np.any(mf[axis].apply(np.isnan)):
-            raise ValueError("The column '%s', has non numeric values. All "
-                             "values in a custom axis must be numeric." % axis)
+        if np.any(nans):
+            # summarize the values that were not converted into a float
+            summary = mf[nans][axis].value_counts(dropna=False).to_string()
+            raise ValueError("All values in a custom axis must be numeric, "
+                             "this summary shows the invalid values and the "
+                             "number of times they were found in column '%s':"
+                             "\n%s" % (axis, summary))
+
+        mf[axis] = temp
 
     return mf
