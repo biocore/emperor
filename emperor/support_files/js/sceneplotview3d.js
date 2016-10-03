@@ -397,7 +397,12 @@ define([
           text = decomp.axesNames[index];
         }
       }
-      text += ' (' + decomp.percExpl[index].toPrecision(4) + ' %)';
+
+      // account for custom axes (their percentage explained will be -1 to
+      // indicate that this attribute is not meaningful).
+      if (decomp.percExpl[index] >= 0) {
+        text += ' (' + decomp.percExpl[index].toPrecision(4) + ' %)';
+      }
 
       axisLabel = makeLabel(end, text, color, factor);
       axisLabel.name = scope._axisLabelPrefix + index;
