@@ -37,14 +37,13 @@ define([
     var options = {'valueUpdatedCallback': function(e, args) {
       var visible = args.item.value;
       var group = args.item.plottables;
-      var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
+      var element = scope.getView();
       scope.setPlottableAttributes(element, visible, group);
     },
       'categorySelectionCallback': function(evt, params) {
         var category = scope.$select.val();
 
-        var k = scope.getActiveDecompViewKey();
-        var decompViewDict = scope.decompViewDict[k];
+        var decompViewDict = scope.getView();
 
         // getting all unique values per categories
         var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(
