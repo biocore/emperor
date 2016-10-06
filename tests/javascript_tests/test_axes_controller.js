@@ -3,13 +3,13 @@ requirejs([
     'underscore',
     'model',
     'view',
-    'viewcontroller',
+    'abcviewcontroller',
     'slickgrid',
     'axescontroller'
-], function($, _, model, DecompositionView, viewcontroller, SlickGrid,
+], function($, _, model, DecompositionView, abc, SlickGrid,
             AxesController) {
   $(document).ready(function() {
-    var EmperorViewControllerABC = viewcontroller.EmperorViewControllerABC;
+    var EmperorViewControllerABC = abc.EmperorViewControllerABC;
     var DecompositionModel = model.DecompositionModel;
 
     module('AxesController', {
@@ -121,7 +121,7 @@ requirejs([
 
       controller.fromJSON(json);
 
-      var decView = controller.decompViewDict[controller.activeViewKey];
+      var decView = controller.getView();
       deepEqual(decView.visibleDimensions, [0, 1, 0]);
       deepEqual(controller._flippedAxes, [1, 1, 0]);
 
@@ -135,7 +135,7 @@ requirejs([
       var controller = new AxesController(
         container, this.sharedDecompositionViewDict);
 
-      var decView = controller.decompViewDict[controller.activeViewKey];
+      var decView = controller.getView();
       controller.colorChanged('axes-color', 0xF0F0F0);
       deepEqual(decView.axesColor, 0xF0F0F0);
       controller.colorChanged('background-color', 0x101010);

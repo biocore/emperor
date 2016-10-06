@@ -26,10 +26,11 @@ requirejs.config({
   'blob': '{{ base_url }}/vendor/js/Blob',
   'd3': '{{ base_url }}/vendor/js/d3.min',
 
-
   /* THREE.js and plugins */
   'three': '{{ base_url }}/vendor/js/three.min',
   'orbitcontrols': '{{ base_url }}/vendor/js/three.js-plugins/OrbitControls',
+  'projector': '{{ base_url }}/vendor/js/three.js-plugins/Projector',
+  'svgrenderer': '{{ base_url }}/vendor/js/three.js-plugins/SVGRenderer',
 
   /* SlickGrid */
   'slickcore': '{{ base_url }}/vendor/js/slick.core.min',
@@ -44,6 +45,7 @@ requirejs.config({
   'controller': '{{ base_url }}/js/controller',
   'draw': '{{ base_url }}/js/draw',
   'scene3d': '{{ base_url }}/js/sceneplotview3d',
+  'abcviewcontroller': '{{ base_url }}/js/abc-view-controller',
   'viewcontroller': '{{ base_url }}/js/view-controller',
   'colorviewcontroller': '{{ base_url }}/js/color-view-controller',
   'visibilitycontroller': '{{ base_url }}/js/visibility-controller',
@@ -75,6 +77,12 @@ requirejs.config({
   },
   'orbitcontrols': {
     'deps': ['three']
+  },
+  'projector': {
+    'deps': ['three']
+  },
+  'svgrenderer': {
+    'deps': ['orbitcontrols', 'projector']
   },
 'slickcore': ['jqueryui'],
 'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',

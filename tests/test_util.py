@@ -12,6 +12,7 @@ from os.path import exists, join, abspath, dirname
 from shutil import rmtree
 from tempfile import gettempdir
 
+import pandas as pd
 from numpy import array
 from numpy.testing import assert_almost_equal
 
@@ -20,7 +21,7 @@ from emperor.util import (keep_columns_from_mapping_file,
                           EmperorInputFilesError,
                           fill_mapping_field_from_mapping_file,
                           sanitize_mapping_file, guess_coordinates_files,
-                          nbinstall)
+                          nbinstall, validate_and_process_custom_axes)
 
 
 class TopLevelTests(TestCase):
@@ -519,6 +520,46 @@ class TopLevelTests(TestCase):
 
         self.assertTrue(exists(target_path))
 
+    def test_custom_axes(self):
+        columns = ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
+                   'Treatment', 'DOB', 'Description']
+        mf = pd.DataFrame(data=MAPPING_FILE_DATA, columns=columns)
+        obs = validate_and_process_custom_axes(mf, ['DOB'])
+        exp = pd.DataFrame(data=MAPPING_FILE_DATA_CONVERTED, columns=columns)
+        pd.util.testing.assert_frame_equal(obs, exp)
+
+    def test_custom_axes_non_existent_names(self):
+        columns = ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
+                   'Treatment', 'DOB', 'Description']
+        mf = pd.DataFrame(data=MAPPING_FILE_DATA, columns=columns)
+
+        with self.assertRaises(KeyError):
+            validate_and_process_custom_axes(mf, [':L'])
+
+        with self.assertRaises(KeyError):
+            validate_and_process_custom_axes(mf, ['D0B'])
+
+    def test_custom_axes_non_numeric_values(self):
+        columns = ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
+                   'Treatment', 'DOB', 'Description']
+        mf = pd.DataFrame(data=MAPPING_FILE_DATA, columns=columns)
+
+        with self.assertRaises(ValueError):
+            validate_and_process_custom_axes(mf, ['Treatment'])
+
+        with self.assertRaises(ValueError):
+            validate_and_process_custom_axes(mf, ['SampleID'])
+
+    def test_custom_axes_non_numeric_values_mixed(self):
+        columns = ['SampleID', 'huey', 'dewey', 'louie', 'Description']
+        mf = pd.DataFrame(data=BROKEN_MAPPING_FILE, columns=columns)
+
+        with self.assertRaises(ValueError):
+            validate_and_process_custom_axes(mf, ['louie'])
+
+        with self.assertRaises(ValueError):
+            validate_and_process_custom_axes(mf, ['louie', 'dewey'])
+
 
 MAPPING_FILE_DATA = [
     ['PC.354', 'AGCACGAGCCTA', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218',
@@ -538,6 +579,26 @@ MAPPING_FILE_DATA = [
     ['PC.635', 'ACCGCAGAGTCA', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116',
      'Fasting_mouse_I.D._635'],
     ['PC.636', 'ACGGTGAGTGTC', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116',
+     'Fasting_mouse_I.D._636']]
+
+MAPPING_FILE_DATA_CONVERTED = [
+    ['PC.354', 'AGCACGAGCCTA', 'YATGCTGCCTCCCGTAGGAGT', 'Control', 20061218,
+     'Control_mouse_I.D._354'],
+    ['PC.355', 'AACTCGTCGATG', 'YATGCTGCCTCCCGTAGGAGT', 'Control', 20061218,
+     'Control_mouse_I.D._355'],
+    ['PC.356', 'ACAGACCACTCA', 'YATGCTGCCTCCCGTAGGAGT', 'Control', 20061126,
+     'Control_mouse_I.D._356'],
+    ['PC.481', 'ACCAGCGACTAG', 'YATGCTGCCTCCCGTAGGAGT', 'Control', 20070314,
+     'Control_mouse_I.D._481'],
+    ['PC.593', 'AGCAGCACTTGT', 'YATGCTGCCTCCCGTAGGAGT', 'Control', 20071210,
+     'Control_mouse_I.D._593'],
+    ['PC.607', 'AACTGTGCGTAC', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', 20071112,
+     'Fasting_mouse_I.D._607'],
+    ['PC.634', 'ACAGAGTCGGCT', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', 20080116,
+     'Fasting_mouse_I.D._634'],
+    ['PC.635', 'ACCGCAGAGTCA', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', 20080116,
+     'Fasting_mouse_I.D._635'],
+    ['PC.636', 'ACGGTGAGTGTC', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', 20080116,
      'Fasting_mouse_I.D._636']]
 
 PRE_PROCESS_A = [
