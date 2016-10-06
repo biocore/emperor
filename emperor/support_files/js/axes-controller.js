@@ -128,7 +128,7 @@ define([
       this.$table.remove();
     }
 
-    var view = this.decompViewDict[this.activeViewKey], scope = this;
+    var view = this.getView(), scope = this;
     var percents = view.decomp.percExpl;
     var names = ['First', 'Second', 'Third'];
 
@@ -173,7 +173,7 @@ define([
    */
   AxesController.prototype._buildScreePlot = function() {
     var scope = this;
-    var percents = this.decompViewDict[this.activeViewKey].decomp.percExpl;
+    var percents = this.getView().decomp.percExpl;
     percents = _.map(percents, function(val, index) {
       // +1 to account for zero-indexing
       return {'axis': 'PC ' + (index + 1), 'percent': val,
@@ -407,7 +407,7 @@ define([
   AxesController.prototype.toJSON = function() {
     var json = {};
 
-    var decView = this.decompViewDict[this.activeViewKey];
+    var decView = this.getView();
 
     json.visibleDimensions = decView.visibleDimensions;
     json.flippedAxes = this._flippedAxes;
@@ -423,7 +423,7 @@ define([
    * @param {Object} Parsed JSON string representation of self.
    */
   AxesController.prototype.fromJSON = function(json) {
-    var decView = this.decompViewDict[this.activeViewKey], scope = this;
+    var decView = this.getView(), scope = this;
 
     decView.changeVisibleDimensions(json.visibleDimensions);
 

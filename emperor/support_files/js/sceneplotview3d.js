@@ -97,13 +97,8 @@ define([
     this.light.position.set(1, 1, 1).normalize();
     this.camera.add(this.light);
 
-    // Add all the meshes to the scene, iterate through all keys in
-    // decomposition view dictionary
-    for (var decViewName in this.decViews) {
-      for (var j = 0; j < this.decViews[decViewName].markers.length; j++) {
-        this.scene.add(this.decViews[decViewName].markers[j]);
-      }
-    }
+    // add all the objects to the current scene
+    this.addDecompositionsToScene();
 
     // use get(0) to retrieve the native DOM object
     /**
@@ -215,6 +210,28 @@ define([
         scope.$info.text('');
       }, infoDuration);
     });
+  };
+
+  /**
+   *
+   * Adds all the decomposition views to the current scene.
+   *
+   */
+  ScenePlotView3D.prototype.addDecompositionsToScene = function() {
+
+    // Note that the internal logic of the THREE.Scene object prevents the
+    // objects from being re-added so we can simply iterate over all the
+    // decomposition views.
+
+    // Add all the meshes to the scene, iterate through all keys in
+    // decomposition view dictionary
+    for (var decViewName in this.decViews) {
+      for (var j = 0; j < this.decViews[decViewName].markers.length; j++) {
+        this.scene.add(this.decViews[decViewName].markers[j]);
+      }
+    }
+
+    this.needsUpdate = true;
   };
 
   /**

@@ -105,8 +105,7 @@ requirejs([
                         'width:12px"></div>');
       var controller = new ColorViewController(
         container, this.sharedDecompositionViewDict);
-      var k = controller.getActiveDecompViewKey();
-      var decompViewDict = controller.decompViewDict[k];
+      var decompViewDict = controller.getView();
 
       var colors = {'14.7': '#f7fbff',
                     '14.2': '#f3f8fd',

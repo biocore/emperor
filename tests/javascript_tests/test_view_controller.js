@@ -196,7 +196,7 @@ requirejs([
                 EmperorViewControllerABC);
       var attr = new EmperorViewController(container, 'foo', 'bar',
           this.sharedDecompositionViewDict);
-      equal(attr.activeViewKey, 'pcoa');
+      deepEqual(_.keys(attr.decompViewDict), ['pcoa', 'biplot']);
     });
 
     /**
@@ -222,58 +222,15 @@ requirejs([
 
     /**
      *
-     * Test get active decomposition view key
-     *
-     */
-    test('Test getActiveDecompViewKey', function() {
-      var dv = new DecompositionView(this.decomp);
-      var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorViewController(container, 'foo', 'bar',
-                                           {'scatter': dv});
-      equal(attr.getActiveDecompViewKey(), 'scatter');
-    });
-
-    /**
-     *
-     * Test get active decomposition view key
-     *
-     */
-    test('Test getActiveDecompViewKey exception', function() {
-      var dv = new DecompositionView(this.decomp);
-      var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorViewController(container, 'foo', 'bar',
-                                           {'scatter': dv});
-      throws(function() {
-        attr.setActiveDecompViewKey('KeyMcKeyFace');
-      }, Error, 'This key is not presen in the dictionary');
-    });
-
-    /**
-     *
      * Test the active decomposition view can be correctly retrieved
      *
      */
-    test('Test getActiveView', function() {
+    test('Test getView', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorViewController(container, 'foo', 'bar',
                                            {'scatter': dv});
-      deepEqual(attr.getActiveView(), dv);
-    });
-
-    /**
-     *
-     * Test set active decomposition view key
-     *
-     */
-    test('Test setActiveDecompViewKey', function() {
-      var dv = new DecompositionView(this.decomp);
-      var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorViewController(container, 'foo', 'bar',
-          {'scatter': dv, 'biplot': dv});
-      equal(attr.getActiveDecompViewKey(), 'scatter');
-      attr.setActiveDecompViewKey('biplot');
-      equal(attr.getActiveDecompViewKey(), 'biplot');
+      deepEqual(attr.getView(), dv);
     });
 
     module('EmperorAttributeABC', {
@@ -357,6 +314,12 @@ requirejs([
                 EmperorViewController);
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           this.sharedDecompositionViewDict, {});
+
+      var met = {'biplot': ['SampleID', 'Gram'],
+                  'pcoa': ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                           'DOB']};
+
+      deepEqual(attr._metadata, met);
     });
 
     /**
@@ -406,19 +369,66 @@ requirejs([
       });
     });
 
+
+    test('Test decompositionName method', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, {});
+      equal(attr.decompositionName(), 'scatter');
+    });
+
+    test('Test getView method', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, {});
+      deepEqual(attr.getView(), dv);
+    });
+
+    /**
+     *
+     * Test get metadata field
+     *
+     */
+    test('Test getMetadataField', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, {});
+      equal(attr.getMetadataField(), 'SampleID');
+    });
+
     /**
      *
      * Test set metadata field
      *
      */
-    test('Test setMetadataField', function() {
+    test('Test getMetadataField', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, {});
+      attr.setMetadataField('Gram');
+      equal(attr.getMetadataField(), 'Gram');
+    });
+
+
+    /**
+     *
+     * Test set metadata field
+     *
+     */
+    test('Test setMetadataField exceptions', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           {'scatter': dv}, {});
-      attr.setMetadataField('cheese');
-      equal(attr.metadataField, 'cheese');
+      throws(function() {
+              attr.setMetadataField('cheese');
+             }, /cheese/, 'Raise error that contains the word cheese');
     });
+
 
     /**
      *
@@ -440,5 +450,38 @@ requirejs([
         start(); // qunit
       });
     });
+
+
+    /**
+     *
+     * Test refresh metadata.
+     *
+     */
+    asyncTest('Test refreshMetadata', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var shared = {'scatter': this.sharedDecompositionViewDict.pcoa};
+      var scope = this;
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         shared, {});
+
+      $(function() {
+        // modify the decomposition view dictionary
+        shared.biplot = scope.sharedDecompositionViewDict.biplot;
+
+        deepEqual(attr._metadata, {'scatter': ['SampleID',
+                                               'LinkerPrimerSequence',
+                                               'Treatment', 'DOB']});
+        attr.refreshMetadata();
+        deepEqual(attr._metadata, {'scatter': ['SampleID',
+                                               'LinkerPrimerSequence',
+                                               'Treatment', 'DOB'],
+                                   'biplot': ['SampleID', 'Gram']});
+
+        start(); // qunit
+      });
+    });
+
+
   });
 });
