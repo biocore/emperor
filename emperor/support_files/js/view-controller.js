@@ -3,189 +3,10 @@ define([
     'underscore',
     'view',
     'slickgrid',
-    'chosen'
-], function($, _, DecompositionView, SlickGrid, Chosen) {
-  /**
-   *
-   * @class EmperorViewControllerABC
-   *
-   * Initializes an abstract tab. This has to be contained in a DOM object and
-   * will use the full size of that container.  The title represents the title
-   * of the jQuery tab.  The description will be used as help text to describe
-   * the functionality of each subclass tab.
-   *
-   * @param {Node} container Container node to create the controller in.
-   * @param {String} title title of the tab.
-   * @param {String} description helper description.
-   *
-   * @return {EmperorViewControllerABC} Returns an instance of the
-   * EmperorViewControllerABC.
-   * @constructs EmperorViewControllerABC
-   *
-   */
-  function EmperorViewControllerABC(container, title, description) {
-    /**
-     * @type {Node}
-     * jQuery element for the parent container.
-     */
-    this.$container = $(container);
-    /**
-     * @type {String}
-     * Human-readable title of the tab.
-     */
-    this.title = title;
-    /**
-     * @type {String}
-     * Human-readable description of the tab.
-     */
-    this.description = description;
-
-    /**
-     * @type {Node}
-     * jQuery element for the canvas, which contains the header and the body.
-     */
-    this.$canvas = null;
-    /**
-     * @type {Node}
-     * jQuery element for the body, which contains the lowermost elements
-     * displayed in tab. This goes below the header.
-     */
-    this.$body = null;
-    /**
-     * @type {Node}
-     * jQuery element for the header which contains the uppermost elements
-     * displayed in a tab.
-     */
-    this.$header = null;
-    /**
-     * @type {Boolean}
-     * Indicates whether the tab is front most
-     * @default false
-     */
-    this.active = false;
-    /**
-     * @type {String}
-     * Unique hash identifier for the tab instance.
-     * @default "EMPtab-xxxxxxx"
-     */
-    this.identifier = 'EMPtab-' + Math.round(1000000 * Math.random());
-    /**
-     * @type {Boolean}
-     * Indicates if tab can be accessed.
-     * @default true
-     */
-    this.enabled = true;
-
-    if (this.$container.length < 1) {
-      throw new Error('Emperor requires a valid container, ' +
-          this.$container + ' does not exist in the DOM.');
-    }
-
-    // the canvas contains both the header and the body, note that for all
-    // these divs the width should be 100% (whatever we have available), but
-    // the height is much trickier, see the resize method for more information
-    this.$canvas = $('<div name="emperor-view-controller-canvas"></div>');
-    this.$canvas.width('100%');
-    this.$container.append(this.$canvas);
-
-    this.$canvas.width(this.$container.width());
-    this.$canvas.height(this.$container.height());
-
-    // the margin and width properties are set this way to center all the
-    // contents of the divs themselves, see this SO answer:
-    // http://stackoverflow.com/a/114549
-    this.$header = $('<div name="emperor-view-controller-header"></div>');
-    this.$header.css('margin', '0 auto');
-    this.$header.css('width', '100%');
-
-    this.$body = $('<div name="emperor-view-controller-body"></div>');
-    this.$body.css('margin', '0 auto');
-    this.$body.css('width', '100%');
-
-    // inherit the size of the container minus the space being used for the
-    // header
-    this.$body.height(this.$canvas.height() - this.$header.height());
-    this.$body.width(this.$canvas.width());
-
-    this.$canvas.append(this.$header);
-    this.$canvas.append(this.$body);
-
-    return this;
-  }
-
-  /**
-   * Sets whether or not the tab can be modified or accessed.
-   *
-   * @param {Boolean} trulse option to enable tab.
-   */
-  EmperorViewControllerABC.prototype.setEnabled = function(trulse) {
-    if (typeof(trulse) === 'boolean') {
-      this.enabled = trulse;
-    }
-    else {
-      throw new Error('`trulse` can only be of boolean type');
-    }
-  };
-
-  /**
-   * Sets whether or not the tab is visible.
-   *
-   * @param {Boolean} trulse option to activate tab
-   * (i.e. move tab to foreground).
-   */
-  EmperorViewControllerABC.prototype.setActive = function(trulse) {
-    if (this.enabled === true) {
-      if (typeof(trulse) === 'boolean') {
-        this.active = trulse;
-      }
-      else {
-        throw new Error('`trulse` can only be of boolean type');
-      }
-    }
-  };
-
-  /**
-   * Resizes the container, note that the body will take whatever space is
-   * available after considering the size of the header. The header shouldn't
-   * have height variable objects, once added their height shouldn't really
-   * change.
-   *
-   * @param {Float} width the container width.
-   * @param {Float} height the container height.
-   */
-  EmperorViewControllerABC.prototype.resize = function(width, height) {
-    // This padding is required in order to make space
-    // for the horizontal menus
-    var padding = 10;
-    this.$canvas.height(height);
-    this.$canvas.width(width - padding);
-
-    this.$header.width(width - padding);
-
-    // the body has to account for the size used by the header
-    this.$body.width(width - padding);
-    this.$body.height(height - this.$header.height());
-  };
-
-  /**
-   *
-   * Converts the current instance into a JSON string.
-   *
-   * @return {Object} ready to serialize representation of self.
-   */
-  EmperorViewControllerABC.prototype.toJSON = function() {
-    throw Error('Not implemented');
-  };
-
-  /**
-   * Decodes JSON string and modifies its own instance variables accordingly.
-   *
-   * @param {Object} parsed JSON string representation of an instance.
-   */
-  EmperorViewControllerABC.prototype.fromJSON = function(jsonString) {
-    throw Error('Not implemented');
-  };
-
+    'chosen',
+    'abcviewcontroller'
+], function($, _, DecompositionView, SlickGrid, Chosen, abc) {
+  EmperorViewControllerABC = abc.EmperorViewControllerABC;
 
   /**
    *
@@ -224,12 +45,6 @@ define([
     if (_.size(decompViewDict) <= 0) {
       throw Error('The decomposition view dictionary cannot be empty');
     }
-    // Picks the first key in the dictionary as the active key
-    /**
-     * @type {String}
-     * This is the key of the active decomposition view.
-     */
-    this.activeViewKey = Object.keys(decompViewDict)[0];
 
     /**
      * @type {Object}
@@ -247,35 +62,16 @@ define([
   EmperorViewController.prototype.constructor = EmperorViewControllerABC;
 
   /**
-   * Retrieves the name of the currently active decomposition view.
    *
-   * @return {String} A key corresponding to the active decomposition view.
-   */
-  EmperorViewController.prototype.getActiveDecompViewKey = function() {
-    return this.activeViewKey;
-  };
-
-  /**
-   * Changes the currently active decomposition view.
+   * Retrieve a view from the controller.
    *
-   * @param {String} k Key corresponding to active decomposition view.
-   * @throws {Error} The key must exist, otherwise an exception will be thrown.
-   */
-  EmperorViewController.prototype.setActiveDecompViewKey = function(k) {
-    if (this.decompViewDict[k] === undefined) {
-      throw new Error('This key does not exist, "' + k + '" in the ' +
-                      'the decompViewDict.');
-    }
-    this.activeViewKey = k;
-  };
-
-  /**
-   * Retrieves the currently active decomposition view.
+   * This class does not operate on single decomposition views, hence this
+   * method retrieves the first available view.
    *
-   * @return {DecompositionView} The currently active decomposition view.
    */
-  EmperorViewController.prototype.getActiveView = function() {
-    return this.decompViewDict[this.getActiveDecompViewKey()];
+  EmperorViewController.prototype.getView = function() {
+    // return the first decomposition view available in the dictionary
+    return this.decompViewDict[Object.keys(this.decompViewDict)[0]];
   };
 
   /**
@@ -316,9 +112,18 @@ define([
    *
    */
   function EmperorAttributeABC(container, title, description,
-      decompViewDict, options) {
+                               decompViewDict, options) {
     EmperorViewController.call(this, container, title, description,
                                decompViewDict);
+
+    /**
+     * @type {Object}
+     * Dictionary-like object where keys are metadata categories and values are
+     * lists of metadata columns. This object reflects the data presented in
+     * the metadata menu.
+     * @private
+     */
+    this._metadata = {};
 
     /**
      * @type {Node}
@@ -329,20 +134,12 @@ define([
     this.$gridDiv.css('width', '100%');
     this.$gridDiv.css('height', '100%');
     this.$body.append(this.$gridDiv);
-    /**
-     * @type {String}
-     * Metadata column name.
-     */
-    this.metadataField = null;
 
-    var dm = decompViewDict[this.activeViewKey].decomp;
+    var dm = this.getView().decomp;
     var scope = this;
 
     // http://stackoverflow.com/a/6602002
     this.$select = $('<select>');
-    _.each(dm.md_headers, function(header) {
-      scope.$select.append($('<option>').attr('value', header).text(header));
-    });
     this.$header.append(this.$select);
 
     // there's a few attributes we can only set on "ready" so list them up here
@@ -350,8 +147,11 @@ define([
       // setup the slick grid
       scope._buildGrid(options);
 
+      scope.refreshMetadata();
+
       // setup chosen
-      scope.$select.chosen({width: '100%', search_contains: true});
+      scope.$select.chosen({width: '100%', search_contains: true,
+                            include_group_label_in_selected: true});
 
       // only subclasses will provide this callback
       if (options.categorySelectionCallback !== undefined) {
@@ -372,15 +172,65 @@ define([
   EmperorAttributeABC.prototype.constructor = EmperorViewController;
 
   /**
-   * Changes the metadata column name to control.
+   *
+   * Get the name of the decomposition selected in the metadata menu.
+   *
+   */
+  EmperorAttributeABC.prototype.decompositionName = function(cat) {
+    return this.$select.find(':selected').parent().attr('label');
+  };
+
+  /**
+   *
+   * Get the view that's currently selected by the metadata menu.
+   *
+   */
+  EmperorAttributeABC.prototype.getView = function() {
+    var view;
+
+    try {
+      view = this.decompViewDict[this.decompositionName()];
+    }
+    catch (TypeError) {
+      view = EmperorViewController.prototype.getView.call(this);
+    }
+
+    return view;
+  };
+
+  /**
+   * Changes the selected value in the metadata menu.
    *
    * @param {String} m Metadata column name to control.
+   *
+   * @throws {Error} Argument `m` must be a metadata category in one of the
+   * decomposition views.
    */
   EmperorAttributeABC.prototype.setMetadataField = function(m) {
-    // FIXME: this should be validated against decompViewDict i.e. we should be
-    // verifying that the metadata field indeed exists in the decomposition
-    // model
-    this.metadataField = m;
+    // loop through the metadata headers in the decompositon views
+    // FIXME: There's no good way to specify the current decomposition name
+    // this needs to be added to the interface.
+    var res = _.find(this.decompViewDict, function(view) {
+      return view.decomp.md_headers.indexOf(m) !== -1;
+    });
+
+    if (res === undefined) {
+      throw Error('Cannot set "' + m + '" as the metadata field, this column' +
+                  ' is not available in the decomposition views');
+    }
+
+    this.$select.val(m);
+    this.$select.trigger('chosen:updated');
+    this.$select.change();
+  };
+
+  /**
+   *
+   * Get the name of the selected category in the metadata menu.
+   *
+   */
+  EmperorAttributeABC.prototype.getMetadataField = function() {
+    return this.$select.val();
   };
 
   /**
@@ -426,7 +276,7 @@ define([
     /**
      * @type {Slick.Grid}
      * Container that lists the metadata categories described under the
-     * `metadataField` column and the attribute that can be modified.
+     * metadata column and the attribute that can be modified.
      */
     this.bodyGrid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
 
@@ -469,7 +319,7 @@ define([
    */
   EmperorAttributeABC.prototype.toJSON = function() {
     var json = {};
-    json.category = this.$select.val();
+    json.category = this.getMetadataField();
 
     // Convert SlickGrid list of objects to single object
     var gridData = this.bodyGrid.getData();
@@ -488,16 +338,59 @@ define([
    *
    */
   EmperorAttributeABC.prototype.fromJSON = function(json) {
-    this.$select.val(json.category);
-    this.$select.trigger('chosen:updated');
+    this.setMetadataField(json.category);
 
     // fetch and set the SlickGrid-formatted data
-    var k = this.getActiveDecompViewKey();
-    var data = this.decompViewDict[k].setCategory(
+    var data = this.getView().setCategory(
       json.data, this.setPlottableAttributes, json.category);
     this.setSlickGridDataset(data);
     // set all to needsUpdate
-    this.decompViewDict[k].needsUpdate = true;
+    this.getView().needsUpdate = true;
+  };
+
+  /**
+   *
+   * Update the metadata selection menu.
+   *
+   * Performs some additional logic to avoid duplicating decomposition names.
+   *
+   * Note that decompositions won't be updated if they have the same name and
+   * same metadata headers, if the only things changing are coordinates, or
+   * metadata values, the changes should be performed directly on the objects
+   * themselves.
+   *
+   */
+  EmperorAttributeABC.prototype.refreshMetadata = function() {
+    var scope = this, group, hdrs;
+
+    _.each(this.decompViewDict, function(view, name) {
+      // retrieve the metadata headers for this decomposition
+      hdrs = view.decomp.md_headers;
+
+      // Before we update the metadata view, we rectify that we don't have that
+      // information already. The order in this conditional matters as we hope
+      // to short-circuit if the name is not already present.  If that's not
+      // the case, we also check to ensure the lists are equivalent.
+      if (_.contains(_.keys(scope._metadata), name) &&
+           _.intersection(scope._metadata[name], hdrs).length == hdrs.length &&
+           scope._metadata[name].length == hdrs.length) {
+        return;
+      }
+
+      // create the new category
+      scope._metadata[name] = [];
+
+      group = $('<optgroup>').attr('label', name);
+
+      scope.$select.append(group);
+
+      _.each(hdrs, function(header) {
+        group.append($('<option>').attr('value', header).text(header));
+        scope._metadata[name].push(header);
+      });
+    });
+
+    this.$select.trigger('chosen:updated');
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,

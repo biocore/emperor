@@ -74,7 +74,7 @@ define([
           scope.setSlickGridDataset(data);
 
           //Update the scales for all meshes
-          var dv = scope.decompViewDict[scope.getActiveDecompViewKey()];
+          var dv = scope.getView();
           _.each(dv.markers, function(element) {
             element.scale.set(ui.value, ui.value, ui.value);
           });
@@ -91,14 +91,13 @@ define([
     var options = {'valueUpdatedCallback': function(e, args) {
       var scale = +args.item.value;
       var group = args.item.plottables;
-      var element = scope.decompViewDict[scope.getActiveDecompViewKey()];
+      var element = scope.getView();
       scope.setPlottableAttributes(element, scale, group);
     },
       'categorySelectionCallback': function(evt, params) {
         var category = scope.$select.val();
 
-        var k = scope.getActiveDecompViewKey();
-        var decompViewDict = scope.decompViewDict[k];
+        var decompViewDict = scope.getView();
 
         // getting all unique values per categories
         var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(
@@ -174,12 +173,11 @@ define([
     this.$scaledValue.trigger('change');
 
     // fetch and set the SlickGrid-formatted data
-    var k = this.getActiveDecompViewKey();
-    var data = this.decompViewDict[k].setCategory(
+    var data = this.getView().setCategory(
       json.data, this.setPlottableAttributes, json.category);
     this.setSlickGridDataset(data);
     // set all to needsUpdate
-    this.decompViewDict[k].needsUpdate = true;
+    this.getView().needsUpdate = true;
   };
 
   /**

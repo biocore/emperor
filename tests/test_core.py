@@ -126,5 +126,27 @@ class TopLevelTests(TestCase):
         self.files_to_remove.append(local_path)
         self.files_to_remove.append('./something-else')
 
+    def test_custom_axes(self):
+        emp = Emperor(self.ord_res, self.mf)
+        obs = emp.make_emperor(custom_axes=['DOB'])
+
+        with open('test.txt', 'w') as f:
+            f.write(obs)
+
+        try:
+            self.assertItemsEqual(tcs.HTML_STRING_CUSTOM_AXES.split('\n'),
+                                  obs.split('\n'))
+        except AttributeError:
+            self.assertCountEqual(tcs.HTML_STRING_CUSTOM_AXES.split('\n'),
+                                  obs.split('\n'))
+        self.assertEqual(tcs.HTML_STRING_CUSTOM_AXES, obs)
+
+    def test_custom_axes_missing_headers(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(KeyError):
+            emp.make_emperor(custom_axes=[':L'])
+
+
 if __name__ == "__main__":
     main()
