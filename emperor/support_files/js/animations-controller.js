@@ -29,7 +29,7 @@ define([
     EmperorViewController.call(this, container, title, helpmenu,
                                decompViewDict);
 
-    dm = decompViewDict[this.activeViewKey].decomp;
+    dm = this.getView().decomp;
 
     this.$gradientSelect = $("<select class='emperor-tab-drop-down'>");
     this.$trajectorySelect = $("<select class='emperor-tab-drop-down'>");
