@@ -330,3 +330,226 @@ class Emperor(object):
                                     axes_names=names)
 
         return plot
+
+
+class BiplotEmperor(object):
+    """Display principal coordinates analysis plots
+    Use this object to interactively display a biplot using the Emperor
+    GUI. IPython provides a rich display system that will let you display a
+    plot inline, without the need of creating a temprorary file or having to
+    write to disk.
+    Parameters
+    ----------
+    ordination: skbio.OrdinationResults
+        Object containing the computed values for an ordination method in
+        scikit-bio.
+    sample_mapping: pd.DataFrame
+        DataFrame object with the metadata associated to the samples in the
+        ``ordination`` object, should have an index set and it should match the
+        identifiers in the ``ordination`` object.
+    feature_mapping: pd.DataFrame
+        DataFrame object with the metadata associated to the features (i.e. OTUs)
+        in the ``ordination`` object, should have an index set and it should match
+        the identifiers in the ``ordination`` object.
+    dimensions: int, optional
+        Number of dimensions to keep from the ordination data, defaults to 5.
+    remote: bool or str, optional
+        This parameter can have one of the following three behaviors according
+        to the value: (1) ``str`` - load the resources from a user-specified
+        remote location, (2) ``False`` - load the resources from the
+        nbextensions folder in the Jupyter installation or (3) ``True`` - load
+        the resources from the GitHub repository. This parameter defaults to
+        ``True``. See the Notes section for more information.
+    Notes
+    -----
+    This object currently does not support the full range of actions that the
+    GUI does support and should be considered experimental at the moment.
+    The ``remote`` parameter is intended for different use-cases, you should
+    use the first option "(1) - URL" when you want to load the data from a
+    location different than the GitHub repository or your Jupyter notebook
+    resources i.e. a custom URL. The second option "(2) - ``False``" loads
+    resources from your local Jupyter installation, note that you **need** to
+    execute ``nbinstall`` at least once or the application will error, this
+    option is ideal for developers modifying the JavaScript source code, and in
+    environments of limited internet connection. Finally, the third option "(3)
+    - ``True``" should be used if you intend to embed an Emperor plot in a
+    notebook and then publish it using http://nbviewer.jupyter.org.
+    Raises
+    ------
+    ValueError
+        If the remote argument is not of ``bool`` or ``str`` type.
+    References
+    ----------
+    .. [1] EMPeror: a tool for visualizing high-throughput microbial community
+       data Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.  Gigascience.
+       2013 Nov 26;2(1):16.
+    """
+    def __init__(self, ordination, sample_mapping, feature_mapping,
+                 dimensions=5, remote=True):
+        self.ordination = ordination
+
+        self.sample_mapping = sample_mapping.copy()
+        self.feature_mapping = feature_mapping.copy()
+
+        # filter all metadata that we may have for which we don't have any
+        # coordinates this also ensures that the coordinates are in the
+        # same order as the metadata
+        self.mf = self.mf.loc[ordination.samples.index]
+
+        self._html = None
+
+        if ordination.proportion_explained.shape[0] < dimensions:
+            self.dimensions = ordination.proportion_explained.shape[0]
+        else:
+            self.dimensions = dimensions
+
+        if isinstance(remote, bool):
+            if remote:
+                self.base_url = REMOTE_URL
+            else:
+                self.base_url = LOCAL_URL
+        elif isinstance(remote, str):
+            self.base_url = remote
+        else:
+            raise ValueError("Unsupported type for `remote` argument, should "
+                             "be a bool or str")
+
+    def __str__(self):
+        return self.make_emperor()
+
+    def _repr_html_(self):
+        """Used to display a plot in the Jupyter notebook"""
+
+        # we import here as IPython shouldn't be a dependency of Emperor
+        # however if this method is called it will be from an IPython notebook
+        # otherwise the developer is responsible for calling this method
+        from IPython.display import display, HTML
+
+        return display(HTML(str(self)))
+
+    def copy_support_files(self, target=None):
+        """Copies the support files to a target directory
+        Parameters
+        ----------
+        target : str
+            The path where resources should be copied to. By default it copies
+            the files to ``self.base_url``.
+        """
+        if target is None:
+            target = self.base_url
+
+        # copy the required resources
+        copy_tree(get_emperor_support_files_dir(), target)
+
+    def make_emperor(self, standalone=False, custom_axes=None):
+        """Build an emperor plot
+        Parameters
+        ----------
+        standalone : bool
+            Whether or not the produced plot should be a standalone HTML file.
+        custom_axes : list of str, optional
+            Custom axes to embed in the ordination.
+        Returns
+        -------
+        str
+            Formatted emperor plot.
+        Raises
+        ------
+        KeyError
+            If one or more of the ``custom_axes`` names are not present in the
+            sample information.
+        ValueError
+            If any of the ``custom_axes`` have non-numeric values.
+        Notes
+        -----
+        The ``standalone`` argument is intended for the different use-cases
+        that Emperor can have, either as an embedded widget that lives inside,
+        for example, the Jupyter notebook, or alternatively as an HTML file
+        that refers to resources locally. In this case you will need to copy
+        the support files by calling the ``copy_support_files`` method.
+        See Also
+        --------
+        emperor.core.Emperor.copy_support_files
+        """
+
+        # based on: http://stackoverflow.com/a/6196098
+        loader = FileSystemLoader(join(get_emperor_support_files_dir(),
+                                       'templates'))
+
+        if standalone:
+            main_path = basename(STANDALONE_PATH)
+        else:
+            main_path = basename(JUPYTER_PATH)
+        env = Environment(loader=loader)
+
+        main_template = env.get_template(main_path)
+
+        # there's a bug in old versions of Pandas that won't allow us to rename
+        # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
+        # would overwrite the name and simply set it as None
+        if self.mf.index.name is None:
+            index_name = 'SampleID'
+        else:
+            index_name = self.mf.index.name
+
+        # format the metadata
+        sample_headers = list(map(str, [index_name] + self.sample_mapping.columns.tolist()))
+        sample_metadata = self.sample_mapping.apply(lambda x: [str(x.name)] +
+                                                    x.astype('str').tolist(),
+                                                    axis=1).values.tolist()
+
+        feature_headers = list(map(str, [index_name] + self.feature_mapping.columns.tolist()))
+        feature_metadata = self.feature_mapping.apply(lambda x: [str(x.name)] +
+                                                      x.astype('str').tolist(),
+                                                      axis=1).values.tolist()
+
+        # format the coordinates
+        d = self.dimensions
+        pct_var = (self.ordination.proportion_explained[:d] * 100).tolist()
+        coords = self.ordination.samples.values[:, :d].tolist()
+        names = self.ordination.samples.columns[:d].tolist()
+
+        # avoid unicode strings
+        coord_ids = list(map(str, self.sample_mapping.index.tolist()))
+        feature_ids = list(map(str, self.feature_mapping.index.tolist()))
+
+        # TODO: This will be removed once the custom axes creation is moved to
+        # the graphical user interface i.e. to the Axes tab.
+        if custom_axes:
+            mf = validate_and_process_custom_axes(self.sample_mapping, custom_axes)
+
+            data = sample_mapping.apply(lambda x: [x.name] + x.tolist(),
+                                        axis=1).values.tolist()
+
+            # vestigial qiime structures for metadata and coordinates
+            mapping_file = [headers] + data
+            coords_file = [coord_ids, coords]
+
+            # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
+            get_custom_coords(custom_axes, mapping_file, coords_file)
+            remove_nans(coords_file)
+            scale_custom_coords(custom_axes, coords_file)
+
+            # arguments are modified, so put them back out
+            _, coords = coords_file
+            coords = coords.tolist()
+
+            # custom axes are assigned -1 percent explained
+            pct_var = ([-1] * len(custom_axes)) + pct_var
+            names = custom_axes + names
+
+        # yes, we could have used UUID, but we couldn't find an easier way to
+        # test that deterministically and with this approach we can seed the
+        # random number generator and test accordingly
+        plot_id = 'emperor-notebook-' + str(hex(np.random.randint(2**32)))
+
+        plot = main_template.render(coords_ids=coord_ids, coords=coords,
+                                    feature_ids=coord_ids, feature_coords=coords,
+                                    pct_var=pct_var, md_headers=headers,
+                                    metadata=metadata, base_url=self.base_url,
+                                    plot_id=plot_id,
+                                    logic_template_path=basename(LOGIC_PATH),
+                                    style_template_path=basename(STYLE_PATH),
+                                    axes_names=names)
+
+        return plot
