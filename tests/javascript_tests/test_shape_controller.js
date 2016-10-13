@@ -161,8 +161,8 @@ requirejs([
                                            this.sharedDecompositionViewDict);
 
       var obs = controller.toJSON();
-      var exp = {category: 'SampleID',
-                 data: {'PC.636': 'Sphere', 'PC.635': 'Sphere'}
+      var exp = {category: 'DOB',
+                 data: {'20070314': 'Sphere', '20071112': 'Sphere'}
       };
       deepEqual(obs, exp);
     });

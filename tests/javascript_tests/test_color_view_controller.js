@@ -97,7 +97,7 @@ requirejs([
 
       // verify the color value is set properly
       equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
-      equal(controller.$select.val(), 'SampleID');
+      equal(controller.$select.val(), 'DOB');
     });
 
     test('Test _nonNumericPlottables', function() {
@@ -492,11 +492,10 @@ requirejs([
                                                            plottables);
 
       var obs = controller.toJSON();
-      var exp = {category: 'SampleID',
-                 colormap: 'discrete-coloring-qiime',
-                 continuous: false,
-                 data: {'PC.636': '#ff0000', 'PC.635': '#0000ff',
-                        'PC.634': '#f27304'}};
+      var exp = {'category': 'DOB',
+                 'colormap': 'discrete-coloring-qiime',
+                 'continuous': false,
+                 'data': { '20070314': '#ff0000', '20071112': '#0000ff'}};
       deepEqual(obs, exp);
     });
 

@@ -365,7 +365,9 @@ define([
 
     _.each(this.decompViewDict, function(view, name) {
       // retrieve the metadata headers for this decomposition
-      hdrs = view.decomp.md_headers;
+      hdrs = _.sortBy(view.decomp.md_headers, function(x){
+        return x.toLowerCase();
+      });
 
       // Before we update the metadata view, we rectify that we don't have that
       // information already. The order in this conditional matters as we hope

@@ -91,7 +91,7 @@ requirejs([
       equal(testColumn.field, 'value');
 
       // verify the visibility value is set properly
-      equal(controller.$select.val(), 'SampleID');
+      equal(controller.$select.val(), 'DOB');
     });
 
     test('Testing setPlottableAttributes helper function', function(assert) {
@@ -122,7 +122,7 @@ requirejs([
           this.sharedDecompositionViewDict);
 
       var obs = controller.toJSON();
-      var exp = {category: 'SampleID', data: {'PC.636': true, 'PC.635': true}};
+      var exp = {category: 'DOB', data: {'20070314': true, '20071112': true}};
       deepEqual(obs, exp);
     });
 
