@@ -8,5 +8,7 @@
 # ----------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    print("This script has been deprecated, please see the online "
-          "documentation at\n\thttp://emperor.microbio.me/uno/\n for more help.")
+    print("This script has been deprecated.")
+    print("For more help see the online documentation at")
+    print("\thttp://emperor.microbio.me/uno/")
+    
