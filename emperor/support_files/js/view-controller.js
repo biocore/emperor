@@ -155,12 +155,15 @@ define([
 
       // only subclasses will provide this callback
       if (options.categorySelectionCallback !== undefined) {
+
         scope.$select.chosen().change(options.categorySelectionCallback);
 
-        // now that we have the chosen selector and the table fire a callback
-        // to initialize the data grid
-        options.categorySelectionCallback(
-          null, {selected: scope.$select.val()});
+        // If the number of samples is not too large, fire a callback using the
+        // selector to initialize the data grid
+        if (dm.ids.length < 1000) {
+          options.categorySelectionCallback(
+            null, {selected: scope.$select.val()});
+        }
       }
 
     });
