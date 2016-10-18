@@ -552,19 +552,14 @@ define([
       updateColors = true;
     }
 
-    // if autorotation is enabled, then update the controls to trigger an
-    // update, it's an equivalent to asking for re-rendering
-    if (this.control.autoRotate) {
-      this.control.update();
-    }
-
     if (updateData) {
       this.drawAxesWithColor(this.axesColor);
       this.drawAxesLabelsWithColor(this.axesColor);
     }
 
     // if anything has changed, then trigger an update
-    return this.needsUpdate || updateData || updateDimensions || updateColors;
+    return (this.needsUpdate || updateData || updateDimensions ||
+            updateColors || this.control.autoRotate);
    };
 
   /**
@@ -576,10 +571,15 @@ define([
     this.renderer.setViewport(this.xView, this.yView, this.width, this.height);
     this.renderer.render(this.scene, this.camera);
     var camera = this.camera;
+
+    // if autorotation is enabled, then update the controls
+    this.control.update();
+
     //point all samples towards the camera
     _.each(this.decViews.scatter.markers, function(element) {
       element.quaternion.copy(camera.quaternion);
     });
+
     this.needsUpdate = false;
     $.each(this.decViews, function(key, val) {
       val.needsUpdate = false;
