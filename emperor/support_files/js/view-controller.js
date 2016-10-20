@@ -144,6 +144,8 @@ define([
 
     // there's a few attributes we can only set on "ready" so list them up here
     $(function() {
+      var placeholder = 'Select a ' + scope.title + ' Category';
+
       // setup the slick grid
       scope._buildGrid(options);
 
@@ -151,12 +153,11 @@ define([
 
       // setup chosen
       scope.$select.chosen({width: '100%', search_contains: true,
-                            include_group_label_in_selected: true});
+                            include_group_label_in_selected: true,
+                            placeholder_text_single: placeholder});
 
       // only subclasses will provide this callback
       if (options.categorySelectionCallback !== undefined) {
-
-        scope.$select.chosen().change(options.categorySelectionCallback);
 
         // If the number of samples is not too large, fire a callback using the
         // selector to initialize the data grid
@@ -164,6 +165,18 @@ define([
           options.categorySelectionCallback(
             null, {selected: scope.$select.val()});
         }
+        else {
+          // Disable interface controls (except the metadata selector) to
+          // prevent errors while no metadata category is selected. Once the
+          // user selects a metadata category, the controls will be enabled
+          // (see setSlickGridDataset).
+          scope.setEnabled(false);
+          scope.$select.val('');
+          scope.$select.prop('disabled', false).trigger('chosen:updated');
+        }
+
+        scope.$select.chosen().change(options.categorySelectionCallback);
+
       }
 
     });
@@ -251,6 +264,14 @@ define([
    * @param {Array} data data.
    */
   EmperorAttributeABC.prototype.setSlickGridDataset = function(data) {
+
+    // Accounts for cases where controllers are not auto-initialized to a
+    // metadata category. In these cases all controllers (except the metadata
+    // selector) are disabled to prevent interface errors.
+    if (this.getSlickGridDataset().length === 0 && this.enabled === false) {
+      this.setEnabled(true);
+    }
+
     // Re-render
     this.bodyGrid.setData(data);
     this.bodyGrid.invalidate();
@@ -367,7 +388,7 @@ define([
     var scope = this, group, hdrs;
 
     _.each(this.decompViewDict, function(view, name) {
-      // retrieve the metadata headers for this decomposition
+      // sort alphabetically the metadata headers (
       hdrs = _.sortBy(view.decomp.md_headers, function(x){
         return x.toLowerCase();
       });
@@ -396,6 +417,18 @@ define([
     });
 
     this.$select.trigger('chosen:updated');
+  };
+
+  /**
+   * Sets whether or not the tab can be modified or accessed.
+   *
+   * @param {Boolean} trulse option to enable tab.
+   */
+  EmperorAttributeABC.prototype.setEnabled = function(trulse) {
+    EmperorViewController.prototype.setEnabled.call(this, trulse);
+
+    this.$select.prop('disabled', !trulse).trigger("chosen:updated");
+    this.bodyGrid.setOptions({editable: trulse});
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,

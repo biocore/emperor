@@ -208,6 +208,17 @@ define([
      return plottables;
    };
 
+  /**
+   * Sets whether or not elements in the tab can be modified.
+   *
+   * @param {Boolean} trulse option to enable elements.
+   */
+  ColorViewController.prototype.setEnabled = function(trulse){
+    EmperorAttributeABC.prototype.setEnabled.call(this, trulse);
+
+    this.$colormapSelect.prop('disabled', !trulse).trigger("chosen:updated");
+    this.$scaled.prop('disabled', !trulse);
+  }
 
   /**
    *

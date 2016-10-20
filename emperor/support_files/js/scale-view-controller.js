@@ -207,6 +207,18 @@ define([
   };
 
   /**
+   * Sets whether or not elements in the tab can be modified.
+   *
+   * @param {Boolean} trulse option to enable elements.
+   */
+  ScaleViewController.prototype.setEnabled = function(trulse){
+    EmperorAttributeABC.prototype.setEnabled.call(this, trulse);
+
+    this.$scaledValue.prop('disabled', !trulse);
+    this.$sliderGlobal.slider('option', 'disabled', !trulse);
+  }
+
+  /**
    * Helper function to set the scale of plottable
    *
    * @param {Object} scope The scope where the plottables exist
