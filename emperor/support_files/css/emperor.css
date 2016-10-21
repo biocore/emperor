@@ -111,9 +111,9 @@ div#emperor-menu {
 
 div#emperor-menu-tabs {
   background: #eee;
-  height: 100%;
   margin: 0;
-  overflow: auto;
+  height:inherit;
+  /*overflow: none;*/
 }
 
 /* class used in the divs that contain the widgets for the menu tabs like:
@@ -122,9 +122,9 @@ div#emperor-menu-tabs {
 .emperor-tab-div{
   padding-top: 0px;
   padding-bottom: 0px;
-  height: 100%;
-  overflow: auto;
   align: center; /*align the contents to the center*/
+  height:inherit;
+  overflow:auto;
 }
 
 /* tables displayed inside any div of class emperor-tab-div should have the
@@ -186,7 +186,6 @@ div.colorbox {
 
 div.list{
   width: 100%;
-  height: 85%;
   overflow: auto;
 }
 

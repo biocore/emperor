@@ -1127,7 +1127,9 @@ function animationSpeedChanged(ui){
 
 /*Setup the interface elements required for the sidebar of the main interface*/
 function setJqueryUi() {
-  $("#emperor-menu-tabs").tabs();
+  $("#emperor-menu-tabs").tabs({heightStyle: "fill"});
+  // account for the tabs header height
+  $('.emperor-tab-div').height($(window).height()*0.95 - $('#emperor-menu-list').height())
   $("#plottype").buttonset();
   $("input[name='plottype']").change(togglePlots);
 
@@ -2129,6 +2131,8 @@ $(document).ready(function() {
   $(window).resize(function() {
     aspectReset();
     separator_draggable();
+    // account for the tabs header height
+    $('.emperor-tab-div').height($(window).height()*0.95 - $('#emperor-menu-list').height())
   });
 
   separator_draggable();
