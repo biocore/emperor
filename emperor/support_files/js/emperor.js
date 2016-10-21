@@ -2125,7 +2125,7 @@ $(document).ready(function() {
   var particles, geometry, parameters, i, h, color;
   var mouseX = 0, mouseY = 0;
 
-  var winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight), view_angle = 35, view_near = 0.0000001, view_far = 10000;
+  var winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight), view_angle = 35, view_near = 0.0001, view_far = 10000;
   var winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 
   $(window).resize(function() {
