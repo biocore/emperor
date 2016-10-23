@@ -59,6 +59,7 @@
  * @param {trajectoryCategory} a string with the name of the mapping file
  * header where the data that groups the samples is contained, this will
  * usually be BODY_SITE, HOST_SUBJECT_ID, etc. (required).
+ * @param {speed} how fast we want the animation to go.
  *
  * @return returns an animation director if the parameters passed in were all
  * valid.
@@ -70,7 +71,7 @@
  *
  */
 function AnimationDirector(mappingFileHeaders, mappingFileData, coordinatesData,
-                           gradientCategory, trajectoryCategory){
+                           gradientCategory, trajectoryCategory, speed){
 
   // all arguments are required
   if (mappingFileHeaders === undefined || mappingFileData === undefined ||
@@ -102,6 +103,7 @@ function AnimationDirector(mappingFileHeaders, mappingFileData, coordinatesData,
   this.maximumTrajectoryLength = null;
   this.currentFrame = -1;
   this.trajectories = new Array();
+  this.speed = speed;
 
   this.initializeTrajectories();
   this.getMaximumTrajectoryLength();
@@ -173,7 +175,8 @@ AnimationDirector.prototype.initializeTrajectories = function(){
 
     // create the trajectory object
     trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer, key,
-        gradientPointsBuffer, coordinatesBuffer, this.minimumDelta);
+        gradientPointsBuffer, coordinatesBuffer, this.minimumDelta,
+        this.speed);
 
     this.trajectories.push(trajectoryBuffer);
 
