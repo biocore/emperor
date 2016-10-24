@@ -1127,7 +1127,9 @@ function animationSpeedChanged(ui){
 
 /*Setup the interface elements required for the sidebar of the main interface*/
 function setJqueryUi() {
-  $("#emperor-menu-tabs").tabs();
+  $("#emperor-menu-tabs").tabs({heightStyle: "fill"});
+  // account for the tabs header height
+  $('.emperor-tab-div').height($(window).height()*0.95 - $('#emperor-menu-list').height())
   $("#plottype").buttonset();
   $("input[name='plottype']").change(togglePlots);
 
@@ -2123,12 +2125,14 @@ $(document).ready(function() {
   var particles, geometry, parameters, i, h, color;
   var mouseX = 0, mouseY = 0;
 
-  var winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight), view_angle = 35, view_near = 0.0000001, view_far = 10000;
+  var winWidth = Math.min(document.getElementById('pcoaPlotWrapper').offsetWidth,document.getElementById('pcoaPlotWrapper').offsetHeight), view_angle = 35, view_near = 0.0001, view_far = 10000;
   var winAspect = document.getElementById('pcoaPlotWrapper').offsetWidth/document.getElementById('pcoaPlotWrapper').offsetHeight;
 
   $(window).resize(function() {
     aspectReset();
     separator_draggable();
+    // account for the tabs header height
+    $('.emperor-tab-div').height($(window).height()*0.95 - $('#emperor-menu-list').height())
   });
 
   separator_draggable();

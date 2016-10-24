@@ -279,7 +279,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="emperor-menu">
     <div id="emperor-menu-tabs">
-        <ul>
+        <ul id="emperor-menu-list">
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
@@ -314,7 +314,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
+                        <div class="list" id="showbylist" style="height:100%;width:100%">
                         </div>
                     </td>
                 </tr>
@@ -344,7 +344,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
+                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
                         </div>
                     </td>
                 </tr>
@@ -528,7 +528,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="emperor-menu">
     <div id="emperor-menu-tabs">
-        <ul>
+        <ul id="emperor-menu-list">
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
@@ -575,7 +575,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
+                        <div class="list" id="showbylist" style="height:100%;width:100%">
                         </div>
                     </td>
                 </tr>
@@ -605,7 +605,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
+                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
                         </div>
                     </td>
                 </tr>
@@ -793,7 +793,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="emperor-menu">
     <div id="emperor-menu-tabs">
-        <ul>
+        <ul id="emperor-menu-list">
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
@@ -828,7 +828,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
+                        <div class="list" id="showbylist" style="height:100%;width:100%">
                         </div>
                     </td>
                 </tr>
@@ -858,7 +858,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
+                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
                         </div>
                     </td>
                 </tr>
@@ -1038,7 +1038,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="emperor-menu">
     <div id="emperor-menu-tabs">
-        <ul>
+        <ul id="emperor-menu-list">
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
@@ -1073,7 +1073,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
+                        <div class="list" id="showbylist" style="height:100%;width:100%">
                         </div>
                     </td>
                 </tr>
@@ -1103,7 +1103,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
+                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
                         </div>
                     </td>
                 </tr>
@@ -1287,7 +1287,7 @@ document.getElementById("logotable").style.display = 'none';
 
 <div id="emperor-menu">
     <div id="emperor-menu-tabs">
-        <ul>
+        <ul id="emperor-menu-list">
             <li><a href="#keytab">Key</a></li>
             <li><a href="#colorby">Colors</a></li>
             <li><a href="#showby">Visibility</a></li>
@@ -1322,7 +1322,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="showbylist" style="height:100%%;width:100%%">
+                        <div class="list" id="showbylist" style="height:100%;width:100%">
                         </div>
                     </td>
                 </tr>
@@ -1352,7 +1352,7 @@ document.getElementById("logotable").style.display = 'none';
                 </tr>
                 <tr>
                     <td>
-                        <div class="list" id="scalingbylist" style="height:100%%;width:100%%">
+                        <div class="list" id="scalingbylist" style="height:100%;width:100%">
                         </div>
                     </td>
                 </tr>
