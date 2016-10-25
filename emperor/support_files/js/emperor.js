@@ -2465,7 +2465,7 @@ $(document).ready(function() {
                                                       g_spherePositions,
                                                       gradientCategory,
                                                       trajectoryCategory,
-                                                      parseInt(50 * (1 /$('#animation-speed-slider').slider('value'))));
+                                                      $('#animation-speed-slider').slider('value'));
         $('#animation-speed-slider').slider('option', 'disabled', true);
         g_animationDirector.updateFrame();
 
@@ -2593,7 +2593,7 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width){
   // the line will contain the two vertices and the described material
   // we increase the number of points to have a smoother transition on
   // edges i. e. where the trajectory changes the direction it is going
-  lineGeometry = new THREE.TubeGeometry(path, (points.length-1)*3, g_radius,
+  lineGeometry = new THREE.TubeGeometry(path, (points.length-1)*3, g_radius * 0.4,
                                         g_segments, false, true);
 
   return new THREE.Mesh(lineGeometry, material);
