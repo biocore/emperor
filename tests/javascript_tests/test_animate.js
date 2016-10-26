@@ -66,7 +66,7 @@ $(document).ready(function() {
 
         var director = new AnimationDirector(mappingFileHeaders,mappingFileData,
                                              coordinatesData, 'DOB',
-                                             'Treatment', 1000, 10);
+                                             'Treatment', 8);
 
         // a quick run through all the properties
         equal(director.mappingFileHeaders, mappingFileHeaders, 'The mapping '+
@@ -81,7 +81,7 @@ $(document).ready(function() {
               'trajectoryCategory is set correctly');
         equal(director.minimumDelta, 92, 'The minimum delta is computed'+
               'correctly');
-        equal(director.maximumTrajectoryLength, 26, 'The maximum trajectory '+
+        equal(director.maximumTrajectoryLength, 109, 'The maximum trajectory '+
               'length value is correct');
         equal(director.currentFrame, -1, 'The current frame is correct');
         equal(director.trajectories.length, 2, 'The number of trajectories is '+
@@ -194,21 +194,21 @@ $(document).ready(function() {
 
         var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
                                              coordinatesData, 'DOB',
-                                             'Treatment', 1000);
-        equal(director.getMaximumTrajectoryLength(), 26,
+                                             'Treatment', 1);
+        equal(director.getMaximumTrajectoryLength(), 208,
               'Test for the correct getMaximumTrajectoryLength value to be '+
               'returned');
         var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
                                              coordinatesData, 'DOB',
-                                             'Treatment', 10000);
-        equal(director.getMaximumTrajectoryLength(), 26,
+                                             'Treatment', 5);
+        equal(director.getMaximumTrajectoryLength(), 122,
               'Test for the correct getMaximumTrajectoryLength value to be '+
               'returned');
         var director = new AnimationDirector(mappingFileHeaders,
                                              mappingFileData, coordinatesData,
                                              'DOB', 'LinkerPrimerSequence',
-                                             1000);
-        equal(director.getMaximumTrajectoryLength(), 41,
+                                             0.4);
+        equal(director.getMaximumTrajectoryLength(), 352,
               'Test for the correct getMaximumTrajectoryLength value to be '+
               'returned');
     });
@@ -222,16 +222,16 @@ $(document).ready(function() {
     test('Test the current frame is updated correctly', function() {
         var director = new AnimationDirector(mappingFileHeaders,
                                              mappingFileData, coordinatesData,
-                                             'DOB', 'Treatment', 1000);
+                                             'DOB', 'Treatment', 1);
         equal(director.currentFrame, -1, 'The current frame is set correctly');
         director.updateFrame();
         equal(director.currentFrame, 0, 'The current frame is set correctly');
 
         // make sure the value is topped at the maximum trajectory length
-        for (var i = 1; i < 1000; i++) {
+        for (var i = 1; i < 209; i++) {
             director.updateFrame();
         }
-        equal(director.currentFrame, 27, 'The current frame is stopped at the'+
+        equal(director.currentFrame, 208, 'The current frame is stopped at the'+
               ' maximum trajectory length');
     });
 
