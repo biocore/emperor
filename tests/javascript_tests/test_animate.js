@@ -182,6 +182,19 @@ $(document).ready(function() {
             Error,
             'An error is raised if no the number of frames is not passed'
         );
+
+        throws(
+          function (){
+              resul = new AnimationDirector(mappingFileHeaders,
+                                            mappingFileDataShort,
+                                            coordinatesDataShort,
+                                            'DOB', 'Treatment', -11);
+            },
+            Error,
+            'An error is raised if a negative speed is passed.'
+        )
+
+
     });
 
     /**
