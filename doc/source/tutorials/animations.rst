@@ -2,23 +2,28 @@
 
 .. index:: animations
 
-How to create an animation using Emperor
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Creating an animation using Emperor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In this tutorial we describe how to create a principal coordinates analysis
 (PCoA) plot, and display animated traces of the samples sorted by a metadata
-category.
+category. To do this, we will describe a `Synthetic Example` (explaining
+concepts) and a `Real Example` (that deals with the actual plot generation, and
+curation).
 
 To do this, we need to have two metadata categories, a *gradient* category, and
 a *trajectory* category. The *gradient* category determines the order in which
 samples are connected together, the *trajectory* category determines how
 samples are grouped together.
 
-In most cases these metadata columns already exist as part of your sample
-information, however you may need to do some curation to make these compatible
-with Emperor. As an example, in a longitudinal study where you wish to track
-the oral microbiome changes in a cohort of 3 mice over the course of 5 weeks,
-each sample will be described by the following columns:
+Synthetic Example
+=================
+
+In most cases the *trajectory* and *gradient* columns already exist as part of
+your sample information, however you may need to do some curation to make these
+compatible with Emperor. In this example, consider a longitudinal study where
+you wish to track the oral microbiome changes in a cohort of 3 mice over the
+course of 5 weeks, each sample will be described by the following columns:
 
 * ``cage_number``: the cage where each mice was housed, more than one mice could
   have resided in the same cage.
@@ -31,15 +36,22 @@ each sample will be described by the following columns:
 
 * ``mice_identifier``: where each mice is assigned a unique identifier.
 
-In the example above, we can use the ``week`` column as our *gradient* category,
-so as long as all the values are numerical. To be more precise, a column where
-values were indicated as ``pre-treatment, first, second, third and last`` would
-not be appropriate and instead would need to be converted into (for example):
-``-1, 1, 2, 3 and 4`` (remember we have 5 weeks of data).
+Here, we can use the ``week`` column as our *gradient* category, so as long as
+all the values are numerical. To be more precise, a column where values were
+indicated as ``pre-treatment, first, second, third and last`` would not be
+appropriate and instead would need to be converted into (for example): ``-1, 1,
+2, 3 and 4`` (remember we have 5 weeks of data).
 
 As for the *trajectory* category, the natural choice would be to use the
 ``mice_identifier`` column, because it uniquely identifies every mice, and
 should be the same throughout the experiment.
+
+All the remaining columns (``cage_number``, ``age_in_years`` and ``sex``), are
+not explicitly needed to create an animation, but can be used to change the
+color, visibility and size of the samples.
+
+The following figure shows what we expect to observe when we press the play
+button.
 
 .. figure:: trajectories.png
    :alt: Cartoon representation of the example above.
@@ -54,8 +66,12 @@ should be the same throughout the experiment.
 In the next section we will go through an example using published data from
 `Weingarden et al. 2015 <https://www.ncbi.nlm.nih.gov/pubmed/25825673>`_.
 
+Real Example
+============
+
+----
 Data
-====
+----
 
 This example will help us visualize the short and long-term changes of four
 patients as they undergo a fecal material transplant (FMT).  To contextualize
@@ -74,8 +90,9 @@ The files needed for this tutorial can be downloaded from this `link
 <http://emperor.microbio.me/animations-tutorial.zip>`_, download and unzip in
 your current working directory.
 
+----------
 Processing
-==========
+----------
 
 As discussed before, we will need to identify two columns that allow us to sort
 samples, and to group them. Notice that we want to focus on the observed
