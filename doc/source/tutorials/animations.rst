@@ -70,8 +70,12 @@ button (week numbers are only showed as a reference).
    ordination coloring samples by mice. On the center, the same ordination with
    a label for each sample, corresponding to the week where this sample was
    collected. On the right, samples connected by a line, where the order is
-   determined by the collection time (all trajectories begin at ``-1``.
+   determined by the collection time (all trajectories begin at ``-1``).
 
+From the trajectories, you can see that samples are connected according to the
+numerical order in the *gradient* category, and that missing data is simply
+ignored, for example the red samples are missing timepoint ``2``, therefore
+sample ``1`` is connected to sample ``3``.
 
 In the next section we will go through an example using published data from
 `Weingarden et al. 2015 <https://www.ncbi.nlm.nih.gov/pubmed/25825673>`_.
@@ -104,10 +108,10 @@ Processing
 ----------
 
 As discussed before, we will need to identify two columns that allow us to sort
-samples, and to group them. Notice that we want to focus on the observed
-changes in the microbiome of patients that undergo an FMT, therefore the
-subjects from the HMP data won't need to be animated, and the samples are
-instead used as a frame of reference.
+samples, and to group them. We only want to focus on the observed changes in
+the microbiome of patients that undergo an FMT, therefore the subjects from the
+HMP data won't need to be animated, and the samples are instead used as a frame
+of reference.
 
 Notice that in ``mapping-file.txt`` there are two columns that describe this
 information. First, as the *gradient* category, we can use
