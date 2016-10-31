@@ -7,7 +7,7 @@ Creating an animation using Emperor
 
 In this tutorial we describe how to create a principal coordinates analysis
 (PCoA) plot, and display animated traces of the samples sorted by a metadata
-category. To do this, we will describe a `Synthetic Example` (explaining
+category. For this purpose, we will describe a `Synthetic Example` (explaining
 concepts) and a `Real Example` (that deals with the actual plot generation, and
 curation).
 
@@ -21,9 +21,15 @@ Synthetic Example
 
 In most cases the *trajectory* and *gradient* columns already exist as part of
 your sample information, however you may need to do some curation to make these
-compatible with Emperor. In this example, consider a longitudinal study where
-you wish to track the oral microbiome changes in a cohort of 3 mice over the
-course of 5 weeks, each sample will be described by the following columns:
+compatible with Emperor.
+
+----
+Data
+----
+
+In this example, consider a longitudinal study where you wish to track the oral
+microbiome changes in a cohort of 3 mice over the course of 5 weeks, each
+sample will be described by the following columns:
 
 * ``cage_number``: the cage where each mice was housed, more than one mice could
   have resided in the same cage.
@@ -35,6 +41,10 @@ course of 5 weeks, each sample will be described by the following columns:
 * ``sex``: the sex of each mice.
 
 * ``mice_identifier``: where each mice is assigned a unique identifier.
+
+----------
+Processing
+----------
 
 Here, we can use the ``week`` column as our *gradient* category, so as long as
 all the values are numerical. To be more precise, a column where values were
@@ -51,16 +61,16 @@ not explicitly needed to create an animation, but can be used to change the
 color, visibility and size of the samples.
 
 The following figure shows what we expect to observe when we press the play
-button.
+button (week numbers are only showed as a reference).
 
 .. figure:: trajectories.png
    :alt: Cartoon representation of the example above.
 
-   Cartoon representation of the example we see above. On the left, the
-   unmodified ordination coloring samples by mice. On the center, the same
-   odination with a label for each sample, corresponding to the week where this
-   sample was collected. On the right, samples connected by a line, where
-   the order is determined by the collection time.
+   Cartoon representation of the synthetic example. On the left, the unmodified
+   ordination coloring samples by mice. On the center, the same ordination with
+   a label for each sample, corresponding to the week where this sample was
+   collected. On the right, samples connected by a line, where the order is
+   determined by the collection time (all trajectories begin at ``-1``.
 
 
 In the next section we will go through an example using published data from
@@ -87,8 +97,7 @@ For convenience, we combined the two datasets using `Qiita
 be logged in to access the studies.
 
 The files needed for this tutorial can be downloaded from this `link
-<http://emperor.microbio.me/animations-tutorial.zip>`_, download and unzip in
-your current working directory.
+<http://emperor.microbio.me/animations-tutorial.zip>`_.
 
 ----------
 Processing
@@ -126,14 +135,14 @@ As for the *trajectory* category, we will ignore all subjects but the ones that
 underwent a FMT, so for all other samples (both for the HMP and FMT), we will
 set the ``host_subject_id`` value to ``NA``. Again, we will create a new column
 to store this modified information, and we will name it
-``animations_trajectory``.
+``animations_subject``.
 
 .. note::
    The names of the columns can be arbitrarly chosen by the user, but we
    recommend clearly distinguishing the purpose.
 
 After you've done this, the result will be a new metadata mapping file that
-includes two new columns, ``animations_gradient`` and ``animations_trajectory``
+includes two new columns, ``animations_gradient`` and ``animations_subject``
 (for an example see ``mapping-file.animations.txt``). All that's left is to
 create the plot itself, to do that we will use ``make_emperor.py``::
 
@@ -143,7 +152,7 @@ After you do this, you can open the plot (by opening the file inside
 ``animations/index.html``), select ``body_habitat`` as a color category (under
 the Colors tab). Now, go to the animations tab on the right. Next, in the
 *Gradient Category* menu select *animations_gradient*, and in the *Trajectory
-Category* menu select *animations_trajectory*. Now you can click the play
+Category* menu select *animations_subject*. Now you can click the play
 button and visualize the changes in the microbiome of the four patients. As you
 do this, you can continue to interact with the plot, and change any colors as
 needed.
@@ -153,9 +162,8 @@ The resulting plot can be found `here
 a few presets that will be different from the plot that you generated above,
 however both plots are fundamentally the same.
 
-------------------
 Filtering out data
-------------------
+==================
 
 In some situations, we want to focus only one or a handful of the existing
 trajectories in a dataset. In such a case, you can hide any trajectories you
