@@ -1,8 +1,8 @@
 Emperor ChangeLog
 =================
 
-Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
---------------------------------------------------------
+Emperor 0.9.6
+-------------
 
 ### Bug Fixes
 * Fix problem where the taxonomic vectors weren't scaled properly when the scale coordinates button was toggled  ([#386](https://github.com/biocore/emperor/issues/373).
@@ -10,6 +10,8 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 * Fix bug where Emperor would try to animate trajectories with a single timepoint i.e. a single unique value in the gradient category.
 * Fix bug where the output saved to `--biplot_fp` would list the principal coordinate axes starting at zero instead of one ([#389](https://github.com/biocore/emperor/issues/389)).
 * Remove misleading "QIIME version" from `index.html` ([#447](https://github.com/biocore/emperor/issues/447)).
+* Fix problem where the speed slider in the *Animations* tab would not work correctly ([#546](https://github.com/biocore/emperor/pull/546)).
+* Fix problem bug that would prevent users from using the *Visibility* and *Scaling* controllers ([#420](https://github.com/biocore/emperor/issues/420)).
 
 ### Miscellaneous
 
@@ -24,6 +26,7 @@ Emperor 0.9.51-dev (changes since Emperor 0.9.5 go here)
 
 * Add a slider bar under the `Labels` tab to select different taxonomies for display.
 * Biplots now include arrows, which represent taxa variances. These can be turned off using the `Taxa arrow visibility` checkbox.
+* Add new tutorial on how to create animations ([#547](https://github.com/biocore/emperor/pull/547)).
 
 Emperor 0.9.51 (5 Feb 2015)
 ---------------------------
