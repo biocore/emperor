@@ -59,6 +59,8 @@
  * @param {trajectoryCategory} a string with the name of the mapping file
  * header where the data that groups the samples is contained, this will
  * usually be BODY_SITE, HOST_SUBJECT_ID, etc. (required).
+ * @param {speed} Positive real number determining the speed of an animation,
+ * this is reflected in the number of frames produced for each time interval.
  *
  * @return returns an animation director if the parameters passed in were all
  * valid.
@@ -70,7 +72,7 @@
  *
  */
 function AnimationDirector(mappingFileHeaders, mappingFileData, coordinatesData,
-                           gradientCategory, trajectoryCategory){
+                           gradientCategory, trajectoryCategory, speed){
 
   // all arguments are required
   if (mappingFileHeaders === undefined || mappingFileData === undefined ||
@@ -92,6 +94,11 @@ function AnimationDirector(mappingFileHeaders, mappingFileData, coordinatesData,
                     " file");
   }
 
+  // guard against logical problems with the trajectory object
+  if (speed <= 0) {
+    throw new Error("The animation speed cannot be less than or equal to zero");
+  }
+
   this.mappingFileHeaders = mappingFileHeaders;
   this.mappingFileData = mappingFileData;
   this.coordinatesData = coordinatesData;
@@ -102,6 +109,7 @@ function AnimationDirector(mappingFileHeaders, mappingFileData, coordinatesData,
   this.maximumTrajectoryLength = null;
   this.currentFrame = -1;
   this.trajectories = new Array();
+  this.speed = speed;
 
   this.initializeTrajectories();
   this.getMaximumTrajectoryLength();
@@ -120,6 +128,9 @@ AnimationDirector.prototype.initializeTrajectories = function(){
   var sampleNamesBuffer = new Array(), gradientPointsBuffer = new Array();
   var coordinatesBuffer = new Array();
   var chewedDataBuffer = null;
+
+  // frames we want projected in the trajectory's interval
+  var n = Math.floor((1 / (this.speed)) * 10);
 
   // compute a dictionary from where we will extract the germane data
   chewedData = getSampleNamesAndDataForSortedTrajectories(
@@ -173,7 +184,7 @@ AnimationDirector.prototype.initializeTrajectories = function(){
 
     // create the trajectory object
     trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer, key,
-        gradientPointsBuffer, coordinatesBuffer, this.minimumDelta);
+        gradientPointsBuffer, coordinatesBuffer, this.minimumDelta, n);
 
     this.trajectories.push(trajectoryBuffer);
 

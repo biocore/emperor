@@ -1311,6 +1311,7 @@ function setJqueryUi() {
     range: "max",
     min: 0.1,
     max: 5,
+    step: 0.1,
     value: 1,
     slide: function( event, ui ) {
       animationSpeedChanged(ui);
@@ -2454,18 +2455,19 @@ $(document).ready(function() {
       // if it's the 1st frame to  animate then the director will be null
       if (g_animationDirector === null) {
 
-	// retrieve the values from the interface
-	trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
-	gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
+        // retrieve the values from the interface
+        trajectoryCategory = document.getElementById('trajectory-category-drop-down')[document.getElementById('trajectory-category-drop-down').selectedIndex].value;
+        gradientCategory = document.getElementById('gradient-category-drop-down')[document.getElementById('gradient-category-drop-down').selectedIndex].value;
 
-	// initialize the animation director
-	g_animationDirector = new AnimationDirector(g_mappingFileHeaders,
-                                                    g_mappingFileData,
-                                                    g_spherePositions,
-                                                    gradientCategory,
-                                                    trajectoryCategory,
-                                                    10);
-	g_animationDirector.updateFrame();
+        // initialize the animation director
+        g_animationDirector = new AnimationDirector(g_mappingFileHeaders,
+                                                      g_mappingFileData,
+                                                      g_spherePositions,
+                                                      gradientCategory,
+                                                      trajectoryCategory,
+                                                      $('#animation-speed-slider').slider('value'));
+        $('#animation-speed-slider').slider('option', 'disabled', true);
+        g_animationDirector.updateFrame();
 
       }
       else{
@@ -2504,6 +2506,7 @@ $(document).ready(function() {
 	  g_animationDirector = null;
 	  g_isPlaying = false;
 	  document.getElementById("play-button").disabled="false";
+    $('#animation-speed-slider').slider('option', 'disabled', false);
 
 	}// animation cycle is done
       }// animation director is not null
@@ -2547,6 +2550,7 @@ function resetAnimation() {
   g_isPlaying = false;
   g_animationDirector = null;
   document.getElementById("play-button").disabled="false";
+  $('#animation-speed-slider').slider('option', 'disabled', false);
 
   for (var index = 0; index < g_animationLines.length; index++){
     g_mainScene.remove(g_animationLines[index]);
@@ -2589,7 +2593,7 @@ function drawTrajectoryLine(trajectory, currentFrame, color, width){
   // the line will contain the two vertices and the described material
   // we increase the number of points to have a smoother transition on
   // edges i. e. where the trajectory changes the direction it is going
-  lineGeometry = new THREE.TubeGeometry(path, (points.length-1)*3, g_radius,
+  lineGeometry = new THREE.TubeGeometry(path, (points.length-1)*3, g_radius * 0.4,
                                         g_segments, false, true);
 
   return new THREE.Mesh(lineGeometry, material);
