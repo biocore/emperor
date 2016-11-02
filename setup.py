@@ -10,7 +10,7 @@
 from distutils.core import setup
 from glob import glob
 
-__version__ = "0.9.6"
+__version__ = "0.9.60"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
