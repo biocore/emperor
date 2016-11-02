@@ -5,7 +5,7 @@
 #
 # The full license is in the file LICENSE.md, distributed with this software.
 # ----------------------------------------------------------------------------
-__version__ = "0.9.60"  # noqa
+__version__ = "0.9.60-dev"  # noqa
 
 from emperor.core import Emperor
 
