@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>emperor.core.Emperor &mdash; Emperor 0.9.51 documentation</title>
+    <title>emperor.core.Emperor &mdash; Emperor 0.9.60 documentation</title>
     
     <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.9.51',
+        VERSION:     '0.9.60',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -30,17 +30,17 @@
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="Emperor 0.9.51 documentation" href="../index.html" />
+    <link rel="top" title="Emperor 0.9.60 documentation" href="../index.html" />
     <link rel="up" title="Emperor 3D PCoA viewer (emperor.core)" href="../emperor_objects.html" />
     <link rel="next" title="File Formats" href="../formats.html" />
-    <link rel="prev" title="emperor.core.Emperor" href="" />
+    <link rel="prev" title="Emperor 3D PCoA viewer (emperor.core)" href="../emperor_objects.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body>
+  <body role="document">
   
   <a href="https://github.com/biocore/emperor"
      class="visible-desktop hidden-xs"><img
@@ -68,7 +68,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           Emperor</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.9.51</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.9.60</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -84,10 +84,14 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/animations.html">Creating an animation using Emperor</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/make_emperor.html"><em>make_emperor.py</em> &#8211; Create three dimensional PCoA plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/animations.html">Creating an animation using Emperor</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../emperor_objects.html">Emperor 3D PCoA viewer (<tt class="docutils literal"><span class="pre">emperor.core</span></tt>)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../emperor_objects.html">Emperor 3D PCoA viewer (<code class="docutils literal"><span class="pre">emperor.core</span></code>)</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../formats.html">File Formats</a></li>
@@ -138,7 +142,7 @@
 <h1>emperor.core.Emperor<a class="headerlink" href="#emperor-core-emperor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="emperor.core.Emperor">
-<em class="property">class </em><tt class="descclassname">emperor.core.</tt><tt class="descname">Emperor</tt><big>(</big><em>ordination</em>, <em>mapping_file_data</em>, <em>mapping_file_headers</em><big>)</big><a class="headerlink" href="#emperor.core.Emperor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">emperor.core.</code><code class="descname">Emperor</code><span class="sig-paren">(</span><em>ordination</em>, <em>mapping_file_data</em>, <em>mapping_file_headers</em><span class="sig-paren">)</span><a class="headerlink" href="#emperor.core.Emperor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display principal coordinates analysis plots</p>
 <p>Use this object to interactively display a PCoA plot using the Emperor
 GUI. IPython provides a rich display system that will let you display a
@@ -180,22 +184,22 @@ data Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.  Gigascience.
 </table>
 <p class="rubric">Examples</p>
 <p>Create an Emperor object and display it from the IPython notebook:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[[</span><span class="s">&#39;PC.354&#39;</span><span class="p">,</span> <span class="s">&#39;Control&#39;</span><span class="p">,</span> <span class="s">&#39;20061218&#39;</span><span class="p">,</span> <span class="s">&#39;Control_mouse_I.D._354&#39;</span><span class="p">],</span>
-<span class="gp">... </span><span class="p">[</span><span class="s">&#39;PC.355&#39;</span><span class="p">,</span> <span class="s">&#39;Control&#39;</span><span class="p">,</span> <span class="s">&#39;20061218&#39;</span><span class="p">,</span> <span class="s">&#39;Control_mouse_I.D._355&#39;</span><span class="p">],</span>
-<span class="gp">... </span><span class="p">[</span><span class="s">&#39;PC.356&#39;</span><span class="p">,</span> <span class="s">&#39;Control&#39;</span><span class="p">,</span> <span class="s">&#39;20061126&#39;</span><span class="p">,</span> <span class="s">&#39;Control_mouse_I.D._356&#39;</span><span class="p">],</span>
-<span class="gp">... </span><span class="p">[</span><span class="s">&#39;PC.481&#39;</span><span class="p">,</span> <span class="s">&#39;Control&#39;</span><span class="p">,</span> <span class="s">&#39;20070314&#39;</span><span class="p">,</span> <span class="s">&#39;Control_mouse_I.D._481&#39;</span><span class="p">],</span>
-<span class="gp">... </span><span class="p">[</span><span class="s">&#39;PC.593&#39;</span><span class="p">,</span> <span class="s">&#39;Control&#39;</span><span class="p">,</span> <span class="s">&#39;20071210&#39;</span><span class="p">,</span> <span class="s">&#39;Control_mouse_I.D._593&#39;</span><span class="p">],</span>
-<span class="gp">... </span><span class="p">[</span><span class="s">&#39;PC.607&#39;</span><span class="p">,</span> <span class="s">&#39;Fast&#39;</span><span class="p">,</span> <span class="s">&#39;20071112&#39;</span><span class="p">,</span> <span class="s">&#39;Fasting_mouse_I.D._607&#39;</span><span class="p">],</span>
-<span class="gp">... </span><span class="p">[</span><span class="s">&#39;PC.634&#39;</span><span class="p">,</span> <span class="s">&#39;Fast&#39;</span><span class="p">,</span> <span class="s">&#39;20080116&#39;</span><span class="p">,</span> <span class="s">&#39;Fasting_mouse_I.D._634&#39;</span><span class="p">],</span>
-<span class="gp">... </span><span class="p">[</span><span class="s">&#39;PC.635&#39;</span><span class="p">,</span> <span class="s">&#39;Fast&#39;</span><span class="p">,</span> <span class="s">&#39;20080116&#39;</span><span class="p">,</span> <span class="s">&#39;Fasting_mouse_I.D._635&#39;</span><span class="p">],</span>
-<span class="gp">... </span><span class="p">[</span><span class="s">&#39;PC.636&#39;</span><span class="p">,</span> <span class="s">&#39;Fast&#39;</span><span class="p">,</span> <span class="s">&#39;20080116&#39;</span><span class="p">,</span> <span class="s">&#39;Fasting_mouse_I.D._636&#39;</span><span class="p">]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;SampleID&#39;</span><span class="p">,</span> <span class="s">&#39;Treatment&#39;</span><span class="p">,</span> <span class="s">&#39;DOB&#39;</span><span class="p">,</span> <span class="s">&#39;Description&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ordination</span> <span class="o">=</span> <span class="n">OrdinationResults</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;unweighted_unifrac_pc.txt&#39;</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;PC.354&#39;</span><span class="p">,</span> <span class="s1">&#39;Control&#39;</span><span class="p">,</span> <span class="s1">&#39;20061218&#39;</span><span class="p">,</span> <span class="s1">&#39;Control_mouse_I.D._354&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.355&#39;</span><span class="p">,</span> <span class="s1">&#39;Control&#39;</span><span class="p">,</span> <span class="s1">&#39;20061218&#39;</span><span class="p">,</span> <span class="s1">&#39;Control_mouse_I.D._355&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.356&#39;</span><span class="p">,</span> <span class="s1">&#39;Control&#39;</span><span class="p">,</span> <span class="s1">&#39;20061126&#39;</span><span class="p">,</span> <span class="s1">&#39;Control_mouse_I.D._356&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.481&#39;</span><span class="p">,</span> <span class="s1">&#39;Control&#39;</span><span class="p">,</span> <span class="s1">&#39;20070314&#39;</span><span class="p">,</span> <span class="s1">&#39;Control_mouse_I.D._481&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.593&#39;</span><span class="p">,</span> <span class="s1">&#39;Control&#39;</span><span class="p">,</span> <span class="s1">&#39;20071210&#39;</span><span class="p">,</span> <span class="s1">&#39;Control_mouse_I.D._593&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.607&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;20071112&#39;</span><span class="p">,</span> <span class="s1">&#39;Fasting_mouse_I.D._607&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.634&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;20080116&#39;</span><span class="p">,</span> <span class="s1">&#39;Fasting_mouse_I.D._634&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.635&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;20080116&#39;</span><span class="p">,</span> <span class="s1">&#39;Fasting_mouse_I.D._635&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.636&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;20080116&#39;</span><span class="p">,</span> <span class="s1">&#39;Fasting_mouse_I.D._636&#39;</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SampleID&#39;</span><span class="p">,</span> <span class="s1">&#39;Treatment&#39;</span><span class="p">,</span> <span class="s1">&#39;DOB&#39;</span><span class="p">,</span> <span class="s1">&#39;Description&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ordination</span> <span class="o">=</span> <span class="n">OrdinationResults</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;unweighted_unifrac_pc.txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Now import the Emperor object and display it using IPython, note that this
 call will have no effect under an interactive Python session:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emperor</span> <span class="kn">import</span> <span class="n">Emperor</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emperor</span> <span class="k">import</span> <span class="n">Emperor</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Emperor</span><span class="p">(</span><span class="n">ordination</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -217,7 +221,7 @@ call will have no effect under an interactive Python session:</p>
     </p>
     <p>
         &copy; Copyright 2014, Emperor Development Team.<br/>
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.3.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.4.<br/>
     </p>
   </div>
 </footer>
