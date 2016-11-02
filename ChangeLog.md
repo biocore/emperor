@@ -1,8 +1,8 @@
 Emperor ChangeLog
 =================
 
-Emperor 0.9.6
--------------
+Emperor 0.9.6 (2 Nov 2016)
+--------------------------
 
 ### Bug Fixes
 * Fix problem where the taxonomic vectors weren't scaled properly when the scale coordinates button was toggled  ([#386](https://github.com/biocore/emperor/issues/373).
