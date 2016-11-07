@@ -486,7 +486,7 @@ requirejs([
      * Test setEnabled (false)
      *
      */
-    asyncTest('Test setEnabled false', function() {
+    asyncTest('Test setEnabled (false)', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
@@ -515,7 +515,7 @@ requirejs([
      * Test setEnabled (true)
      *
      */
-    asyncTest('Test setEnabled true', function() {
+    asyncTest('Test setEnabled (true)', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
@@ -535,7 +535,6 @@ requirejs([
         start(); // qunit
       });
     });
-
 
   });
 });
