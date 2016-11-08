@@ -98,6 +98,9 @@ requirejs([
       // verify the color value is set properly
       equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
       equal(controller.$select.val(), 'DOB');
+
+      equal(controller.$colormapSelect.is(':disabled'), false);
+      equal(controller.$scaled.is(':disabled'), false);
     });
 
     test('Test _nonNumericPlottables', function() {
@@ -537,6 +540,22 @@ requirejs([
       equal(controller.$select.val(), 'Mixed');
       equal(controller.$colormapSelect.val(), 'Viridis');
       equal(controller.$scaled.is(':checked'), true);
+    });
+
+    asyncTest('Test setEnabled', function() {
+      var container = $('<div style="height:11px; width:12px"></div>');
+      var controller = new ColorViewController(
+        container, this.sharedDecompositionViewDict);
+
+      $(function() {
+        // disable
+        controller.setEnabled(false);
+
+        equal(controller.$colormapSelect.is(':disabled'), true);
+        equal(controller.$scaled.is(':disabled'), true);
+
+        start(); // qunit
+      });
     });
   });
 });

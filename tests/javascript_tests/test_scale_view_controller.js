@@ -98,7 +98,10 @@ requirejs([
 
       // verify the checked value is set properly
       equal(controller.$scaledValue.is(':checked'), false);
-      equal(controller.$select.val(), 'SampleID');
+      equal(controller.$select.val(), 'DOB');
+
+      equal(controller.$scaledValue.is(':disabled'), false);
+      equal(controller.$sliderGlobal.is(':disabled'), false);
     });
 
     test('Testing setPlottableAttributes helper function', function(assert) {
@@ -141,8 +144,8 @@ requirejs([
         container, this.sharedDecompositionViewDict);
 
       var obs = controller.toJSON();
-      var exp = {category: 'SampleID', globalScale: '1.0', scaleVal: false,
-                 data: {'PC.636': 1, 'PC.635': 1, 'PC.634': 1}};
+      var exp = {category: 'DOB', globalScale: '1.0', scaleVal: false,
+                 data: {'20070314': 1, '20071112': 1}};
       deepEqual(obs, exp);
     });
 
@@ -209,5 +212,21 @@ requirejs([
       var exp = {'1': 1, 'no': 0, 'false': 0, 'something': 0, '2': 5};
       deepEqual(obs, exp);
     });
+
+    asyncTest('Test setEnabled (true)', function() {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScaleViewController(
+        container, this.sharedDecompositionViewDict);
+      $(function() {
+        controller.setEnabled(false);
+
+        equal(controller.$scaledValue.is(':disabled'), true);
+        equal(controller.$sliderGlobal.slider('option', 'disabled'), true);
+
+        start(); // qunit
+      });
+    });
+
   });
 });
