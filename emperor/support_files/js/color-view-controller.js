@@ -51,16 +51,19 @@ define([
     this.$colorScale = $("<svg width='90%' height='100%' " +
                          "'style='display:block;margin:auto;'></svg>");
     this.$scaleDiv.append(this.$colorScale);
+    this.$scaleDiv.hide();
     /**
      * @type {Node}
      *  jQuery object holding the continuous value checkbox
      */
     this.$scaled = $("<input type='checkbox'>");
+    this.$scaled.prop('hidden', true);
     /**
      * @type {Node}
      *  jQuery object holding the continuous value label
      */
     this.$scaledLabel = $("<label for='scaled'>Continuous values</label>");
+    this.$scaledLabel.prop('hidden', true);
 
     // this class uses a colormap selector, so populate it before calling super
     // because otherwise the categorySelectionCallback will be called before the
