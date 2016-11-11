@@ -88,9 +88,10 @@ define([
    */
   ShapeController.prototype._resetAttribute = function() {
     EmperorAttributeABC.prototype._resetAttribute.call(this);
+    var scope = this;
 
     _.each(this.decompViewDict, function(view) {
-      this.setPlottableAttributes(view, 'Sphere', view.decomp.plottable);
+      scope.setPlottableAttributes(view, 'Sphere', view.decomp.plottable);
       view.needsUpdate = true;
     });
   };

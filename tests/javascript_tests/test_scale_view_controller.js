@@ -195,6 +195,44 @@ requirejs([
       equal(controller.$scaledValue.is(':checked'), true);
     });
 
+    test('Testing toJSON (null)', function() {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScaleViewController(
+        container, this.sharedDecompositionViewDict);
+      controller.setMetadataField(null);
+
+      var obs = controller.toJSON();
+      var exp = {category: null, globalScale: '1.0', scaleVal: false,
+                 data: {}};
+      deepEqual(obs, exp);
+    });
+
+    test('Testing fromJSON (null)', function() {
+      var json = {category: null, globalScale: '1.0', scaleVal: false,
+                  data: {}};
+
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScaleViewController(
+        container, this.sharedDecompositionViewDict);
+
+      controller.fromJSON(json);
+      var idx = 0;
+      var scatter = controller.decompViewDict.scatter;
+      deepEqual(scatter.markers[0].scale.x, 1);
+      deepEqual(scatter.markers[0].scale.y, 1);
+      deepEqual(scatter.markers[0].scale.z, 1);
+      deepEqual(scatter.markers[1].scale.x, 1);
+      deepEqual(scatter.markers[1].scale.y, 1);
+      deepEqual(scatter.markers[1].scale.z, 1);
+      deepEqual(scatter.markers[2].scale.x, 1);
+      deepEqual(scatter.markers[2].scale.y, 1);
+      deepEqual(scatter.markers[2].scale.z, 1);
+      equal(controller.getMetadataField(), null);
+      equal(controller.$scaledValue.is(':checked'), false);
+    });
+
     test('Testing getScale', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');

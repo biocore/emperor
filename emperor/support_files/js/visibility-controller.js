@@ -83,9 +83,10 @@ define([
    */
   VisibilityController.prototype._resetAttribute = function() {
     EmperorAttributeABC.prototype._resetAttribute.call(this);
+    var scope = this;
 
     _.each(this.decompViewDict, function(view) {
-      this.setPlottableAttributes(view, true, view.decomp.plottable);
+      scope.setPlottableAttributes(view, true, view.decomp.plottable);
       view.needsUpdate = true;
     });
   };

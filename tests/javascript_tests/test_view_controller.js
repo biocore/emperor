@@ -405,15 +405,17 @@ requirejs([
      * Test set metadata field
      *
      */
-    test('Test getMetadataField', function() {
+    test('Test setMetadataField', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                          {'scatter': dv}, {});
       attr.setMetadataField('SampleID');
       equal(attr.getMetadataField(), 'SampleID');
-    });
 
+      attr.setMetadataField(null);
+      equal(attr.getMetadataField(), null);
+    });
 
     /**
      *

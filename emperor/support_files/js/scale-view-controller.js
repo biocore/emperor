@@ -155,12 +155,13 @@ define([
    */
   ScaleViewController.prototype._resetAttribute = function() {
     EmperorAttributeABC.prototype._resetAttribute.call(this);
+    var scope = this;
 
     _.each(this.decompViewDict, function(view) {
-      this.setPlottableAttributes(view, 1, view.decomp.plottable);
+      scope.setPlottableAttributes(view, 1, view.decomp.plottable);
       view.needsUpdate = true;
-      this.$scaledValue.prop('checked', false);
     });
+    this.$scaledValue.prop('checked', false);
   };
 
   /**

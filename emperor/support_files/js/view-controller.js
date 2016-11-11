@@ -223,7 +223,7 @@ define([
    * @private
    *
    */
-  EmperorAttributeABC.prototype._setDefault = function() {
+  EmperorAttributeABC.prototype._resetAttribute = function() {
   };
 
   /**

@@ -542,6 +542,40 @@ requirejs([
       equal(controller.$scaled.is(':checked'), true);
     });
 
+    test('Testing toJSON (null)', function() {
+      var container = $('<div style="height:11px; width:12px"></div>');
+      var controller = new ColorViewController(
+        container, this.sharedDecompositionViewDict);
+      controller.setMetadataField(null);
+
+      var obs = controller.toJSON();
+      var exp = {'category': null,
+                 'colormap': 'discrete-coloring-qiime',
+                 'continuous': false,
+                 'data': {}};
+      deepEqual(obs, exp);
+    });
+
+    test('Testing fromJSON (null)', function() {
+      var json = {category: null,
+                  colormap: 'discrete-coloring-qiime',
+                  continuous: false,
+                  data: {}};
+
+      var container = $('<div style="height:11px; width:12px"></div>');
+      var controller = new ColorViewController(
+        container, this.sharedDecompositionViewDict);
+
+      controller.fromJSON(json);
+      var markers = controller.decompViewDict.scatter.markers;
+      equal(markers[0].material.color.getHexString(), 'ff0000');
+      equal(markers[1].material.color.getHexString(), 'ff0000');
+      equal(markers[2].material.color.getHexString(), 'ff0000');
+      equal(controller.$select.val(), null);
+      equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
+      equal(controller.$scaled.is(':checked'), false);
+    });
+
     asyncTest('Test setEnabled', function() {
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(
@@ -553,6 +587,39 @@ requirejs([
 
         equal(controller.$colormapSelect.is(':disabled'), true);
         equal(controller.$scaled.is(':disabled'), true);
+
+        start(); // qunit
+      });
+    });
+
+    /**
+     *
+     * Test large dataset.
+     *
+     */
+    asyncTest('Test large dataset', function() {
+      var coords = [], metadata = [];
+      for (var i = 0; i < 1001; i++) {
+        coords.push([Math.random(), Math.random(), Math.random(),
+                     Math.random()]);
+        metadata.push([i, 'b ' + Math.random(), 'c ' + Math.random()]);
+      }
+
+      var d = new DecompositionModel('pcoa', _.range(1001), coords,
+                                     [45, 35, 15, 5],
+                                     ['SampleID', 'foo', 'bar'], metadata);
+      var dv = new DecompositionView(d);
+      var container = $('<div id="does-not-exist"></div>');
+      // create a dummy category selection callback
+      var options = {'categorySelectionCallback': function() {}};
+      var attr = new ColorViewController(container, {'scatter': dv});
+      $(function() {
+        // Controllers should be enabled
+        equal(attr.enabled, false);
+        equal(attr.$select.val(), null);
+        equal(attr.$select.is(':disabled'), false);
+        equal(attr.$colormapSelect.is(':disabled'), true);
+        equal(attr.$scaled.is(':disabled'), true);
 
         start(); // qunit
       });
