@@ -242,7 +242,7 @@ define([
       this._resetAttribute();
 
       this.$select.val('');
-      this.bodyGrid.setData([]);
+      this.setSlickGridDataset([]);
 
       this.setEnabled(false);
       this.$select.prop('disabled', false).trigger('chosen:updated');
