@@ -74,6 +74,23 @@ define([
   VisibilityController.prototype.constructor = EmperorAttributeABC;
 
   /**
+   *
+   * Private method to reset all objects to be visible.
+   *
+   * @extends EmperorAttributeABC
+   * @private
+   *
+   */
+  VisibilityController.prototype._resetAttribute = function() {
+    EmperorAttributeABC.prototype._resetAttribute.call(this);
+
+    _.each(this.decompViewDict, function(view) {
+      this.setPlottableAttributes(view, true, view.decomp.plottable);
+      view.needsUpdate = true;
+    });
+  };
+
+  /**
    * Helper function to set the visibility of plottable
    *
    * @param {Object} scope the scope where the plottables exist

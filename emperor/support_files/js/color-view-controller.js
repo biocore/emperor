@@ -213,12 +213,30 @@ define([
    *
    * @param {Boolean} trulse option to enable elements.
    */
-  ColorViewController.prototype.setEnabled = function(trulse){
+  ColorViewController.prototype.setEnabled = function(trulse) {
     EmperorAttributeABC.prototype.setEnabled.call(this, trulse);
 
-    this.$colormapSelect.prop('disabled', !trulse).trigger("chosen:updated");
+    this.$colormapSelect.prop('disabled', !trulse).trigger('chosen:updated');
     this.$scaled.prop('disabled', !trulse);
-  }
+  };
+
+  /**
+   *
+   * Private method to reset the color of all the objects in every
+   * decomposition view to red.
+   *
+   * @extends EmperorAttributeABC
+   * @private
+   *
+   */
+  ColorViewController.prototype._resetAttribute = function() {
+    EmperorAttributeABC.prototype._resetAttribute.call(this);
+
+    _.each(this.decompViewDict, function(view) {
+      view.setGroupColor(0xff0000, view.decomp.plottable);
+      view.needsUpdate = true;
+    });
+  };
 
   /**
    *
@@ -414,10 +432,19 @@ define([
    * @param {Object} Parsed JSON string representation of self.
    */
   ColorViewController.prototype.fromJSON = function(json) {
+    var data;
+
     // NOTE: We do not call super here because of the non-numeric values issue
     // Order here is important. We want to set all the extra controller
     // settings before we load from json, as they can override the JSON when set
-    var data;
+    this.setMetadataField(json.category);
+
+    // if the category is null, then there's nothing to set about the state
+    // of the controller
+    if (json.category === null) {
+      return;
+    }
+
     this.$select.val(json.category);
     this.$select.trigger('chosen:updated');
     this.$colormapSelect.val(json.colormap);
@@ -431,14 +458,14 @@ define([
     var decompViewDict = this.getView();
     if (this.$scaled.is(':checked')) {
       // Get the current SlickGrid data and update with the saved color
-      var data = this.bodyGrid.getData();
+      data = this.bodyGrid.getData();
       data[0].value = json.data['Non-numeric values'];
       this.setPlottableAttributes(
         decompViewDict, json.data['Non-numeric values'], data[0].plottables);
 
     }
     else {
-      var data = decompViewDict.setCategory(
+      data = decompViewDict.setCategory(
         json.data, this.setPlottableAttributes, json.category);
     }
     this.setSlickGridDataset(data);

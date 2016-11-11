@@ -215,14 +215,41 @@ define([
   };
 
   /**
+   *
+   * Private method to reset the attributes of the controller.
+   *
+   * Subclasses should implement this method as a way to reset the visual
+   * attributes of a given plot.
+   * @private
+   *
+   */
+  EmperorAttributeABC.prototype._setDefault = function() {
+  };
+
+  /**
    * Changes the selected value in the metadata menu.
    *
-   * @param {String} m Metadata column name to control.
+   * @param {String} m Metadata column name to control. When the category is
+   * ``null``, the metadata selector is set to an empty value, the body grid
+   * is emptied, and all the markers are reset to a default state (depends on
+   * the subclass).
    *
    * @throws {Error} Argument `m` must be a metadata category in one of the
    * decomposition views.
    */
   EmperorAttributeABC.prototype.setMetadataField = function(m) {
+    if (m === null) {
+      this._resetAttribute();
+
+      this.$select.val('');
+      this.bodyGrid.setData([]);
+
+      this.setEnabled(false);
+      this.$select.prop('disabled', false).trigger('chosen:updated');
+
+      return;
+    }
+
     // loop through the metadata headers in the decompositon views
     // FIXME: There's no good way to specify the current decomposition name
     // this needs to be added to the interface.
@@ -364,12 +391,15 @@ define([
   EmperorAttributeABC.prototype.fromJSON = function(json) {
     this.setMetadataField(json.category);
 
-    // fetch and set the SlickGrid-formatted data
-    var data = this.getView().setCategory(
-      json.data, this.setPlottableAttributes, json.category);
-    this.setSlickGridDataset(data);
-    // set all to needsUpdate
-    this.getView().needsUpdate = true;
+    // if the category is null, then we just reset the controller
+    if (json.category !== null) {
+      // fetch and set the SlickGrid-formatted data
+      var data = this.getView().setCategory(
+        json.data, this.setPlottableAttributes, json.category);
+      this.setSlickGridDataset(data);
+      // set all to needsUpdate
+      this.getView().needsUpdate = true;
+    }
   };
 
   /**
@@ -389,7 +419,7 @@ define([
 
     _.each(this.decompViewDict, function(view, name) {
       // sort alphabetically the metadata headers (
-      hdrs = _.sortBy(view.decomp.md_headers, function(x){
+      hdrs = _.sortBy(view.decomp.md_headers, function(x) {
         return x.toLowerCase();
       });
 
@@ -427,7 +457,7 @@ define([
   EmperorAttributeABC.prototype.setEnabled = function(trulse) {
     EmperorViewController.prototype.setEnabled.call(this, trulse);
 
-    this.$select.prop('disabled', !trulse).trigger("chosen:updated");
+    this.$select.prop('disabled', !trulse).trigger('chosen:updated');
     this.bodyGrid.setOptions({editable: trulse});
   };
 

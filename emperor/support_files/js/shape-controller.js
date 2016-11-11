@@ -79,6 +79,23 @@ define([
   ShapeController.prototype.constructor = EmperorAttributeABC;
 
   /**
+   *
+   * Private method to reset the shape of all the objects to spheres.
+   *
+   * @extends EmperorAttributeABC
+   * @private
+   *
+   */
+  ShapeController.prototype._resetAttribute = function() {
+    EmperorAttributeABC.prototype._resetAttribute.call(this);
+
+    _.each(this.decompViewDict, function(view) {
+      this.setPlottableAttributes(view, 'Sphere', view.decomp.plottable);
+      view.needsUpdate = true;
+    });
+  };
+
+  /**
    * Helper function to set the shape of plottable
    *
    * @param {Object} scope The scope where the plottables exist
