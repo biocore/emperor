@@ -3,32 +3,32 @@ import numpy as np
 import seaborn as sns
 
 
-def plot_3x3(ordination, offset, mapping, field, colors, null_kw=None, 
+def plot_3x3(ordination, offset, mapping, field, colors, null_kw=None,
              focus_kw=None):
     """Construct a 3 x 3 plot of PC combinations
-    
+
     Where X is a PCn / PCm plot, _ is a blank spot, and L is the legend.
-    
+
     Offset defines the starting offset for the rows. If zero, the layout
     is:
-    
+
     PC1v2 PC1v3 PC1v4 BLANK
     PC2v3 PC2v4 PC2v5 Legend
     PC3v4 PC3v5 PC3v6 BLANK
-    
+
     Parameters
     ----------
     ordination : OrdinationResults
         An OrdinationResults object
     offset : int
-        A starting offset 
+        A starting offset
     mapping : DataFrame
         The covariate information for the samples.
     field : str
         The field within the mapping file to use for coloring.
     colors : dict, str
         If a dict, it is expected to provide a mapping of category value to
-        a color; entries not in the mapping will be considered "null". If a 
+        a color; entries not in the mapping will be considered "null". If a
         str, the value is interpreted as the name of a color map and assumes
         a gradient is to be painted.
     null_kw : dict, optional
@@ -42,7 +42,7 @@ def plot_3x3(ordination, offset, mapping, field, colors, null_kw=None,
         null_kw = {}
     if focus_kw is None:
         focus_kw = {}
-        
+
     # resolve if this is discrete or continous
     if isinstance(colors, str):
         plot = _two_dimensional_gradient
@@ -52,35 +52,35 @@ def plot_3x3(ordination, offset, mapping, field, colors, null_kw=None,
         legend = _legend_discrete
 
     # full page, with square plots
-    fig, grid = plt.subplots(3, 4, sharex=False, sharey=False, 
+    fig, grid = plt.subplots(3, 4, sharex=False, sharey=False,
                              figsize=(24, 16))
     grid[0, 3].grid(False)
     grid[0, 3].set_axis_off()
     grid[2, 3].grid(False)
     grid[2, 3].set_axis_off()
-    
+
     for row in range(3):
         # y_pc is the axis in the ordination to put on the y-axis
         y_pc = row + offset
 
-        # the y-axis is consistent across a row so only label the 
+        # the y-axis is consistent across a row so only label the
         # first column
         row_ax = grid[row, 0]
         row_ax.set_ylabel(_pcoa_label(y_pc, ordination), fontsize=14)
-        
+
         for col in range(3):
             # x_pc is the axis in the ordination to put on the x-axis
             x_pc = row + col + offset + 1
-            
+
             # fetch the specific subplot, and plot
             ax = grid[row, col]
             ax.set_xlabel(_pcoa_label(x_pc, ordination), fontsize=14)
-            plot(ax, field, mapping, ordination, x_pc, y_pc, colors, null_kw, 
+            plot(ax, field, mapping, ordination, x_pc, y_pc, colors, null_kw,
                  focus_kw)
-     
+
     # establish the legend on the right side
     legend(grid[1, 3], field, mapping, ordination, colors, null_kw)
-    
+
     return (fig, grid)
 
 
@@ -90,7 +90,7 @@ def _pcoa_label(dim, ordination):
     return fmt % (dim + 1, ordination.proportion_explained[dim] * 100)
 
 
-def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis, 
+def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
                               colormap, null_kw, focus_kw):
     """Plot two axes
 
@@ -109,9 +109,9 @@ def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
     yaxis : iteger
         An axis to plot from the ordination.
     colormap : str
-        The colormap to use. 
+        The colormap to use.
     null_kw : dict
-        Additional arguments to the scatter plot for the samples in the 
+        Additional arguments to the scatter plot for the samples in the
         background.
     focus_kw : dict
         Additional arguments to the scatter plot for the samples in focus.
@@ -123,8 +123,8 @@ def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
 
     # discretize our color gradient, and determine which bin (i.e., color)
     # a given value is associated with
-    bins = np.arange(field_values.min(), 
-                     field_values.max(), 
+    bins = np.arange(field_values.min(),
+                     field_values.max(),
                      field_values.max() / 256)
 
     order = np.digitize(field_values, bins=bins, right=True)
@@ -138,7 +138,7 @@ def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
     x = x_full.loc[nonfield_samples]
     y = y_full.loc[nonfield_samples]
     ax.scatter(x, y, **null_kw)
-    
+
     # plot samples of interest
     x = x_full.loc[field_values.index].values
     y = y_full.loc[field_values.index].values
@@ -152,7 +152,7 @@ def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
     ax.set_xticklabels([])
 
 
-def _two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis, 
+def _two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis,
                               colors, null_kw, focus_kw):
     """Plot two axes
 
@@ -174,7 +174,7 @@ def _two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis,
         A mapping of a metadata value to a color. A category not present
         in the mapping is assumed to be "null."
     null_kw : dict
-        Additional arguments to the scatter plot for the samples in the 
+        Additional arguments to the scatter plot for the samples in the
         background.
     focus_kw : dict
         Additional arguments to the scatter plot for the samples in focus.
@@ -183,7 +183,7 @@ def _two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis,
     field_values = mapping[mapping[field].isin(set(colors))][field]
 
     nonfield_samples = set(mapping.index) - set(field_values.index)
-   
+
     # obtain the full vector of positions for each axis
     x_full = ordination.samples[xaxis]
     y_full = ordination.samples[yaxis]
@@ -192,11 +192,11 @@ def _two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis,
     x = x_full.loc[nonfield_samples]
     y = y_full.loc[nonfield_samples]
     ax.scatter(x, y, **null_kw)
-    
+
     # plot samples of interest
     for value in field_values.unique():
         value_index = field_values[field_values == value].index
-        
+
         x = x_full.loc[value_index].values
         y = y_full.loc[value_index].values
         ax.scatter(x, y, color=colors.get(value), **focus_kw)
@@ -223,14 +223,14 @@ def _legend_gradient(ax, field, mapping, ordination, colormap, null_kw):
     ordination : skbio.OrdinationResults
         The ordination object.
     colormap : str
-        The colormap to use. 
+        The colormap to use.
     null_kw : dict
-        Additional arguments to the scatter plot for the samples in the 
+        Additional arguments to the scatter plot for the samples in the
         background.
     """
     mapping = mapping.loc[ordination.samples.index]
     field_values = mapping[~mapping[field].isnull()][field]
-    
+
     # get a gradient
     gradient = np.linspace(0, 1, 256)
     gradient = np.vstack((gradient, gradient))
@@ -240,7 +240,7 @@ def _legend_gradient(ax, field, mapping, ordination, colormap, null_kw):
 
     # offset the histogram by a little bit so we can place the gradient below
     shift = 0.12 * counts.max()
-    counts, bins, patches = ax.hist(field_values, bins=bins, color='k', 
+    counts, bins, patches = ax.hist(field_values, bins=bins, color='k',
                                     bottom=shift)
 
     # move the ticks to the right side. generally the legend is on the
@@ -250,12 +250,14 @@ def _legend_gradient(ax, field, mapping, ordination, colormap, null_kw):
 
     # deal with the yticks. notably, we need to account for our histogram shift
     # while still allowing for space to show the gradient
-    ax.set_yticks([0 + shift, counts.max() / 2.0 + shift, counts.max() + shift])
-    ax.set_yticklabels([0, int(counts.max() / 2.0), int(counts.max())], 
+    ax.set_yticks([0 + shift, 
+                   counts.max() / 2.0 + shift, 
+                   counts.max() + shift])
+    ax.set_yticklabels([0, int(counts.max() / 2.0), int(counts.max())],
                        fontsize=12, rotation=45)
     ax.set_ylim(0, counts.max() + shift)
     ax.set_xlim(bins[0], bins[-1])
-    
+
     # plot the gradient in the space below the histogram
     ax.imshow(gradient, aspect='auto', cmap=colormap,
               extent=[bins[0], bins[-1], 0.0, shift - (shift * 0.2)])
@@ -280,7 +282,7 @@ def _legend_gradient(ax, field, mapping, ordination, colormap, null_kw):
             text = dot + dot * 0.02
         else:
             dot = bins[1]
-            text = bins[2] 
+            text = bins[2]
 
         n = mapping[field].isnull().sum()
         ax.scatter([dot], [base_y + shift * 0.75], color='k')
@@ -309,12 +311,12 @@ def _legend_discrete(ax, field, mapping, ordination, colors, null_kw):
     colors : dict
         A mapping of a metadata value to a color.
     null_kw : dict
-        Additional arguments to the scatter plot for the samples in the 
+        Additional arguments to the scatter plot for the samples in the
         background.
     """
-    unique_cats = [cat for cat in mapping[field].unique() 
+    unique_cats = [cat for cat in mapping[field].unique()
                    if cat in colors]
-    nonunique_cats = [cat for cat in mapping[field].unique() 
+    nonunique_cats = [cat for cat in mapping[field].unique()
                       if cat not in colors]
 
     legend_names = []
@@ -330,5 +332,5 @@ def _legend_discrete(ax, field, mapping, ordination, colors, null_kw):
     ax.set_xlim(0, 1)
     ax.grid(False)
     ax.set_axis_off()
-    
+
     ax.legend(legend_names, loc='center', prop={'size': 20})
