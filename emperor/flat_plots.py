@@ -21,12 +21,15 @@ def plot_3x3(ordination, offset, mapping, field, colors, null_kw=None,
     ordination : OrdinationResults
         An OrdinationResults object
     offset : int
-        A starting offset
+        The starting ordination axis (e.g., 0 in the above example as 0 maps
+        to PC1).
     mapping : DataFrame
-        The covariate information for the samples.
+        DataFrame object with the metadata associated to the samples in the
+        ``ordination`` object, should have an index set and it should match the
+        identifiers in the ``ordination`` object.
     field : str
         The field within the mapping file to use for coloring.
-    colors : dict, str
+    colors : dict or str
         If a dict, it is expected to provide a mapping of category value to
         a color; entries not in the mapping will be considered "null". If a
         str, the value is interpreted as the name of a color map and assumes
@@ -106,7 +109,7 @@ def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
         The ordination object.
     xaxis : integer
         An axis to plot from the ordination.
-    yaxis : iteger
+    yaxis : integer
         An axis to plot from the ordination.
     colormap : str
         The colormap to use.
@@ -116,6 +119,8 @@ def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
     focus_kw : dict
         Additional arguments to the scatter plot for the samples in focus.
     """
+    gap_to_frame = 0.01
+
     mapping = mapping.loc[ordination.samples.index]
     field_values = mapping[~mapping[field].isnull()][field]
 
@@ -125,7 +130,7 @@ def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
     # a given value is associated with
     bins = np.arange(field_values.min(),
                      field_values.max(),
-                     field_values.max() / 256)
+                     (field_values.max() - field_values.min()) / 256)
 
     order = np.digitize(field_values, bins=bins, right=True)
     colors = np.array(sns.color_palette(colormap, n_colors=len(bins) + 1))
@@ -145,8 +150,8 @@ def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
     ax.scatter(x, y, color=colors[order], **focus_kw)
 
     # finalize
-    ax.set_xlim(x_full.min() - 0.01, x_full.max() + 0.01)
-    ax.set_ylim(y_full.min() - 0.01, y_full.max() + 0.01)
+    ax.set_xlim(x_full.min() - gap_to_frame, x_full.max() + gap_to_frame)
+    ax.set_ylim(y_full.min() - gap_to_frame, y_full.max() + gap_to_frame)
     ax.grid(False)
     ax.set_yticklabels([])
     ax.set_xticklabels([])
@@ -168,7 +173,7 @@ def _two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis,
         The ordination object.
     xaxis : integer
         An axis to plot from the ordination.
-    yaxis : iteger
+    yaxis : integer
         An axis to plot from the ordination.
     colors : dict
         A mapping of a metadata value to a color. A category not present
@@ -179,6 +184,8 @@ def _two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis,
     focus_kw : dict
         Additional arguments to the scatter plot for the samples in focus.
     """
+    gap_to_frame = 0.01
+
     mapping = mapping.loc[ordination.samples.index]
     field_values = mapping[mapping[field].isin(set(colors))][field]
 
@@ -202,8 +209,8 @@ def _two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis,
         ax.scatter(x, y, color=colors.get(value), **focus_kw)
 
     # finalize
-    ax.set_xlim(x_full.min() - 0.01, x_full.max() + 0.01)
-    ax.set_ylim(y_full.min() - 0.01, y_full.max() + 0.01)
+    ax.set_xlim(x_full.min() - gap_to_frame, x_full.max() + gap_to_frame)
+    ax.set_ylim(y_full.min() - gap_to_frame, y_full.max() + gap_to_frame)
     ax.grid(False)
     ax.set_yticklabels([])
     ax.set_xticklabels([])

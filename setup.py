@@ -43,7 +43,7 @@ Gigascience. 2013 Nov 26;2(1):16.
 skbio_2 = "scikit-bio >= 0.4.1, < 0.5.0"
 skbio_3 = "scikit-bio >= 0.4.1"
 base = {"numpy >= 1.7", "scipy >= 0.17.0", "click", "pandas",
-        skbio_2, "jinja2", "future"}
+        skbio_2, "jinja2", "future", 'seaborn'}
 doc = {"Sphinx >= 1.2.2", "sphinx-bootstrap-theme"}
 test = {"nose >= 0.10.1", "pep8", "flake8"}
 all_deps = base | doc | test
