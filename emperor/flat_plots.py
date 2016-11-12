@@ -274,10 +274,11 @@ def _legend_gradient(ax, field, mapping, ordination, colormap, null_kw):
     if mapping[field].isnull().sum():
         base_y = counts.max()
         n_bins = len(bins)
-        n_bins_20p = int(n_bins * 0.2)
+        n_bins_40p = int(n_bins * 0.4)
 
-        if counts[:n_bins_20p].sum() > counts[-n_bins_20p:].sum():
-            # target right side
+        # if the histogram is heavily weighted on the left side, target the
+        # rightside
+        if counts[:n_bins_40p].sum() > counts[-n_bins_40p:].sum():
             dot = bins[-1] - bins[-1] * 0.25
             text = dot + dot * 0.02
         else:
