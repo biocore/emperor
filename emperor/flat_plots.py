@@ -250,8 +250,8 @@ def _legend_gradient(ax, field, mapping, ordination, colormap, null_kw):
 
     # deal with the yticks. notably, we need to account for our histogram shift
     # while still allowing for space to show the gradient
-    ax.set_yticks([0 + shift, 
-                   counts.max() / 2.0 + shift, 
+    ax.set_yticks([0 + shift,
+                   counts.max() / 2.0 + shift,
                    counts.max() + shift])
     ax.set_yticklabels([0, int(counts.max() / 2.0), int(counts.max())],
                        fontsize=12, rotation=45)
