@@ -1,6 +1,8 @@
 from unittest import TestCase, main
 
 import matplotlib.pyplot as plt
+from matplotlib import use
+use('Agg')  # noqa
 import pandas as pd
 import numpy as np
 
