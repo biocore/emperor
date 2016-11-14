@@ -15,9 +15,9 @@ define([
     'svgrenderer',
     'draw'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
-             ColorViewController, VisibilityController, ShapeController,
-             AxesController, ScaleViewController, FileSaver, viewcontroller,
-             SVGRenderer, Draw) {
+	     ColorViewController, VisibilityController, ShapeController,
+	     AxesController, ScaleViewController, FileSaver, viewcontroller,
+	     SVGRenderer, Draw) {
 
   /**
    *
@@ -39,7 +39,7 @@ define([
    * @constructs EmperorController
    *
    */
-  function EmperorController(dm, divId, webglcanvas) {
+  function EmperorController(dms, divId, webglcanvas) {
     var scope = this;
 
     /**
@@ -73,7 +73,7 @@ define([
      * Ordination data being plotted.
      * @type {DecompositionModel}
      */
-    this.dm = dm;
+    this.dms = dms;
     /**
      * List of the scene plots views being rendered.
      * @type {ScenePlotView3D[]}
@@ -114,11 +114,11 @@ define([
      */
     this.renderer = null;
     if (webglcanvas !== undefined) {
-        this.renderer = new THREE.WebGLRenderer({canvas: webglcanvas,
-                                                 antialias: true});
+	this.renderer = new THREE.WebGLRenderer({canvas: webglcanvas,
+						 antialias: true});
     }
     else {
-        this.renderer = new THREE.WebGLRenderer({antialias: true});
+	this.renderer = new THREE.WebGLRenderer({antialias: true});
     }
 
     this.renderer.setSize(this.width, this.height);
@@ -158,7 +158,13 @@ define([
      *
      * @type {object}
      */
-    this.decViews = {'scatter': new DecompositionView(this.dm)};
+    if(dms.length == 1){
+      this.decViews = {'scatter': new DecompositionView(this.dms[0])};
+    }else if(dms.length === 2){
+      this.decViews = {'scatter': new DecompositionView(this.dms[0]),
+		       'biplot': new DecompositionView(this.dms[2])};
+    }
+
 
     // default decomposition view uses the full window
     this.addSceneView();
@@ -196,14 +202,14 @@ define([
 
     if (_.contains(_.keys(this.decViews), key)) {
       throw Error('A decomposition view named "' + key + '" already exists,' +
-                  'cannot add an already existing decomposition.');
+		  'cannot add an already existing decomposition.');
     }
 
     this.decViews[key] = value;
 
     _.each(this.controllers, function(controller) {
       if (controller instanceof EmperorAttributeABC) {
-        controller.refreshMetadata();
+	controller.refreshMetadata();
       }
     });
 
@@ -223,7 +229,7 @@ define([
     }
 
     var spv = new ScenePlotView3D(this.renderer, this.decViews,
-                                  this.$plotSpace, 0, 0, 0, 0);
+				  this.$plotSpace, 0, 0, 0, 0);
     this.sceneViews.push(spv);
 
     // this will setup the appropriate sizes and widths
@@ -258,33 +264,33 @@ define([
     }
     else if (this.sceneViews.length === 2) {
       this.sceneViews[0].resize(0, 0, this.SCENE_VIEW_SCALE * plotWidth,
-          this.height);
+	  this.height);
       this.sceneViews[1].resize(this.SCENE_VIEW_SCALE * plotWidth, 0,
-          this.SCENE_VIEW_SCALE * plotWidth, this.height);
+	  this.SCENE_VIEW_SCALE * plotWidth, this.height);
     }
     else if (this.sceneViews.length === 3) {
       this.sceneViews[0].resize(0, 0,
-          this.SCENE_VIEW_SCALE * plotWidth,
-          this.SCENE_VIEW_SCALE * this.height);
+	  this.SCENE_VIEW_SCALE * plotWidth,
+	  this.SCENE_VIEW_SCALE * this.height);
       this.sceneViews[1].resize(this.SCENE_VIEW_SCALE * plotWidth, 0,
-          this.SCENE_VIEW_SCALE * plotWidth,
-          this.SCENE_VIEW_SCALE * this.height);
+	  this.SCENE_VIEW_SCALE * plotWidth,
+	  this.SCENE_VIEW_SCALE * this.height);
       this.sceneViews[2].resize(0, this.SCENE_VIEW_SCALE * this.height,
-          plotWidth, this.SCENE_VIEW_SCALE * this.height);
+	  plotWidth, this.SCENE_VIEW_SCALE * this.height);
     }
     else if (this.sceneViews.length === 4) {
       this.sceneViews[0].resize(0, 0, this.SCENE_VIEW_SCALE * plotWidth,
-          this.SCENE_VIEW_SCALE * this.height);
+	  this.SCENE_VIEW_SCALE * this.height);
       this.sceneViews[1].resize(this.SCENE_VIEW_SCALE * plotWidth, 0,
-          this.SCENE_VIEW_SCALE * plotWidth,
-          this.SCENE_VIEW_SCALE * this.height);
+	  this.SCENE_VIEW_SCALE * plotWidth,
+	  this.SCENE_VIEW_SCALE * this.height);
       this.sceneViews[2].resize(0, this.SCENE_VIEW_SCALE * this.height,
-          this.SCENE_VIEW_SCALE * plotWidth,
-          this.SCENE_VIEW_SCALE * this.height);
+	  this.SCENE_VIEW_SCALE * plotWidth,
+	  this.SCENE_VIEW_SCALE * this.height);
       this.sceneViews[3].resize(this.SCENE_VIEW_SCALE * plotWidth,
-          this.SCENE_VIEW_SCALE * this.height,
-          this.SCENE_VIEW_SCALE * plotWidth,
-          this.SCENE_VIEW_SCALE * this.height);
+	  this.SCENE_VIEW_SCALE * this.height,
+	  this.SCENE_VIEW_SCALE * plotWidth,
+	  this.SCENE_VIEW_SCALE * this.height);
     }
     else {
       throw Error('More than four views are currently not supported');
@@ -309,12 +315,12 @@ define([
     // available space).
     _.each(this.controllers, function(controller, index) {
       if (controller !== undefined) {
-        $('#' + controller.identifier).height(tabHeight);
+	$('#' + controller.identifier).height(tabHeight);
 
-        var w = $('#' + controller.identifier).width(),
-            h = $('#' + controller.identifier).height();
+	var w = $('#' + controller.identifier).width(),
+	    h = $('#' + controller.identifier).height();
 
-        controller.resize(w, h);
+	controller.resize(w, h);
       }
     });
 
@@ -336,9 +342,9 @@ define([
     var scope = this;
     $.each(this.sceneViews, function(i, sv) {
       if (sv.checkUpdate()) {
-        scope.renderer.setViewport(0, 0, scope.width, scope.height);
-        scope.renderer.clear();
-        sv.render();
+	scope.renderer.setViewport(0, 0, scope.width, scope.height);
+	scope.renderer.clear();
+	sv.render();
       }
     });
   };
@@ -356,31 +362,31 @@ define([
 
     //FIXME: This only works for 1 scene plot view
     this.controllers.color = this.addTab(this.sceneViews[0].decViews,
-                                         ColorViewController);
+					 ColorViewController);
     this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
-                                              VisibilityController);
+					      VisibilityController);
     this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
-                                         ShapeController);
+					 ShapeController);
     this.controllers.axes = this.addTab(this.sceneViews[0].decViews,
-                                        AxesController);
+					AxesController);
     this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
-        ScaleViewController);
+	ScaleViewController);
 
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
-                               // The tabs on the plot space only get resized
-                               // when they are visible, thus we subscribe to
-                               // the event that's fired after a user selects a
-                               // tab.  If you don't do this, the width and
-                               // height of each of the view controllers will
-                               // be wrong.  We also found that subscribing to
-                               // document.ready() wouldn't work either as the
-                               // resize callback couldn't be executed on a tab
-                               // that didn't exist yet.
-                               activate: function(event, ui) {
-                                 scope.resize(scope.$divId.width(),
-                                              scope.$divId.height());
-                               }});
+			       // The tabs on the plot space only get resized
+			       // when they are visible, thus we subscribe to
+			       // the event that's fired after a user selects a
+			       // tab.  If you don't do this, the width and
+			       // height of each of the view controllers will
+			       // be wrong.  We also found that subscribing to
+			       // document.ready() wouldn't work either as the
+			       // resize callback couldn't be executed on a tab
+			       // that didn't exist yet.
+			       activate: function(event, ui) {
+				 scope.resize(scope.$divId.width(),
+					      scope.$divId.height());
+			       }});
 
     // Set up the context menu
     this.$contextMenu = $.contextMenu({
@@ -389,85 +395,85 @@ define([
       selector: '#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper',
       trigger: 'none',
       items: {
-        'toggleAutorotate': {
-          name: 'Toggle autorotation',
-          icon: 'rotate-left',
-          callback: function(key, opts) {
-            _.each(scope.sceneViews, function(scene) {
-              scene.control.autoRotate = scene.control.autoRotate ^ true;
-            });
-          }
-        },
-        'sep0': '----------------',
-        'saveState': {
-          name: 'Save current settings',
-          icon: 'save',
-          callback: function(key, opts) {
-            scope.saveConfig();
-          }
-        },
-        'loadState': {
-          name: 'Load saved settings',
-          icon: 'folder-open-o',
-          callback: function(key, opts) {
-            if (!FileReader) {
-              alert('Your browser does not support file loading. We ' +
-                    'recommend using Google Chrome for full functionality.');
-              return;
-            }
-            var file = $('<input type="file">');
-            file.on('change', function(evt) {
-              var f = evt.target.files[0];
-              // With help from
-              // http://www.htmlgoodies.com/beyond/javascript/read-text-files-using-the-javascript-filereader.html
-              var r = new FileReader();
-              r.onload = function(e) {
-                try {
-                  var json = JSON.parse(e.target.result);
-                } catch (err) {
-                  alert('File given is not a JSON parsable file.');
-                  return;
-                }
-                try {
-                  scope.loadConfig(json);
-                } catch (err) {
-                  alert('Error loading settings from file: ' + err.message);
-                  return;
-                }
-              };
-              r.readAsText(f);
-            });
-            file.click();
-          }
-        },
-        'sep1': '---------',
-        'fold1': {
-            'name': 'Save Image',
-            icon: 'file-picture-o',
-            'items': {
-              'saveImagePNG': {
-                name: 'PNG',
-                callback: function(key, opts) {
-                  scope.screenshot('png');
-                }
-              },
-              'saveImageSVG': {
-                name: 'SVG + labels',
-                callback: function(key, opts) {
-                  scope.screenshot('svg');
-                }
-              }
-            }
-        }
+	'toggleAutorotate': {
+	  name: 'Toggle autorotation',
+	  icon: 'rotate-left',
+	  callback: function(key, opts) {
+	    _.each(scope.sceneViews, function(scene) {
+	      scene.control.autoRotate = scene.control.autoRotate ^ true;
+	    });
+	  }
+	},
+	'sep0': '----------------',
+	'saveState': {
+	  name: 'Save current settings',
+	  icon: 'save',
+	  callback: function(key, opts) {
+	    scope.saveConfig();
+	  }
+	},
+	'loadState': {
+	  name: 'Load saved settings',
+	  icon: 'folder-open-o',
+	  callback: function(key, opts) {
+	    if (!FileReader) {
+	      alert('Your browser does not support file loading. We ' +
+		    'recommend using Google Chrome for full functionality.');
+	      return;
+	    }
+	    var file = $('<input type="file">');
+	    file.on('change', function(evt) {
+	      var f = evt.target.files[0];
+	      // With help from
+	      // http://www.htmlgoodies.com/beyond/javascript/read-text-files-using-the-javascript-filereader.html
+	      var r = new FileReader();
+	      r.onload = function(e) {
+		try {
+		  var json = JSON.parse(e.target.result);
+		} catch (err) {
+		  alert('File given is not a JSON parsable file.');
+		  return;
+		}
+		try {
+		  scope.loadConfig(json);
+		} catch (err) {
+		  alert('Error loading settings from file: ' + err.message);
+		  return;
+		}
+	      };
+	      r.readAsText(f);
+	    });
+	    file.click();
+	  }
+	},
+	'sep1': '---------',
+	'fold1': {
+	    'name': 'Save Image',
+	    icon: 'file-picture-o',
+	    'items': {
+	      'saveImagePNG': {
+		name: 'PNG',
+		callback: function(key, opts) {
+		  scope.screenshot('png');
+		}
+	      },
+	      'saveImageSVG': {
+		name: 'SVG + labels',
+		callback: function(key, opts) {
+		  scope.screenshot('svg');
+		}
+	      }
+	    }
+	}
       }
     });
 
     // Add shift+right click as the trigger for the context menu
     this.$plotSpace.on('contextmenu', function(e) {
       if (e.shiftKey) {
-        var contextDiv = $('#' + scope.$divId.attr('id') +
-                           ' .emperor-plot-wrapper');
-        contextDiv.contextMenu({x: e.pageX, y: e.pageY});
+	var contextDiv = $('#' + scope.$divId.attr('id') +
+			   ' .emperor-plot-wrapper');
+	contextDiv.contextMenu({x: e.pageX, y: e.pageY});
       }
     });
   };
@@ -485,7 +491,7 @@ define([
     if (type === 'png') {
       // Render all scenes so it's rendered in same context as save
       for (var i = 0; i < this.sceneViews.length; i++) {
-        this.sceneViews[i].render();
+	this.sceneViews[i].render();
       }
       var c = this.renderer.domElement.toDataURL('image/' + type);
       // Create DOM-less download link and click it to start download
@@ -493,18 +499,18 @@ define([
       download.get(0).click();
     } else if (type === 'svg') {
       // confirm box based on number of samples: better safe than sorry
-      if (this.dm.length >= 9000) {
-        if (confirm('This number of samples could take a long time and in ' +
-           'some computers the browser will crash. If this happens we ' +
-           'suggest to use the png implementation. Do you want to ' +
-           'continue?') == false) {
-          return;
-        }
+      if (this.dms[0].length >= 9000) {
+	if (confirm('This number of samples could take a long time and in ' +
+	   'some computers the browser will crash. If this happens we ' +
+	   'suggest to use the png implementation. Do you want to ' +
+	   'continue?') == false) {
+	  return;
+	}
       }
 
       // generating SVG image
       var svgRenderer = new THREE.SVGRenderer({antialias: true,
-                                               preserveDrawingBuffer: true});
+					       preserveDrawingBuffer: true});
       svgRenderer.setSize(this.$plotSpace.width(), this.$plotSpace.height());
       svgRenderer.setClearColor(this.renderer.getClearColor(), 1);
       svgRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
@@ -518,21 +524,21 @@ define([
       // that if it's not there, you add it to make sure the file can be opened
       // in tools like Adobe Illustrator or in browsers like Safari or FireFox
       if (svgfile.indexOf('xmlns="http://www.w3.org/2000/svg"') === -1) {
-        // adding xmlns header to open in the browser
-        svgfile = svgfile.replace('viewBox=',
-                                  'xmlns="http://www.w3.org/2000/svg" ' +
-                                  'viewBox=');
+	// adding xmlns header to open in the browser
+	svgfile = svgfile.replace('viewBox=',
+				  'xmlns="http://www.w3.org/2000/svg" ' +
+				  'viewBox=');
       }
 
       // hacking the background color by adding a rectangle
       var index = svgfile.indexOf('viewBox="') + 9;
       var viewBox = svgfile.substring(index,
-                                      svgfile.indexOf('"', index)).split(' ');
+				      svgfile.indexOf('"', index)).split(' ');
       var background = '<rect id="background" height="' + viewBox[3] +
-                       '" width="' + viewBox[2] + '" y="' + viewBox[1] +
-                       '" x="' + viewBox[0] +
-                       '" stroke-width="0" stroke="#000000" fill="#' +
-                       this.renderer.getClearColor().getHexString() + '"/>';
+		       '" width="' + viewBox[2] + '" y="' + viewBox[1] +
+		       '" x="' + viewBox[0] +
+		       '" stroke-width="0" stroke="#000000" fill="#' +
+		       this.renderer.getClearColor().getHexString() + '"/>';
       index = svgfile.indexOf('>', index) + 1;
       svgfile = svgfile.substr(0, index) + background + svgfile.substr(index);
 
@@ -542,11 +548,11 @@ define([
       // generating legend
       var names = [], colors = [];
       _.each(this.controllers.color.bodyGrid.getData(), function(element) {
-        names.push(element.category);
-        colors.push(element.value);
+	names.push(element.category);
+	colors.push(element.value);
       });
       var blob = new Blob([Draw.formatSVGLegend(names, colors)],
-                          {type: 'image/svg+xml'});
+			  {type: 'image/svg+xml'});
       saveAs(blob, 'emperor-image-labels.svg');
     } else {
       console.error();('Screenshot type not implemented');
@@ -573,7 +579,7 @@ define([
     // Save settings for each controller in the view
      _.each(this.controllers, function(controller, index) {
       if (controller !== undefined) {
-        saveinfo[index] = controller.toJSON();
+	saveinfo[index] = controller.toJSON();
       }
     });
 
@@ -596,12 +602,12 @@ define([
     var sceneview = this.sceneViews[0];
 
     sceneview.camera.position.set(json.cameraPosition.x,
-                                  json.cameraPosition.y,
-                                  json.cameraPosition.z);
+				  json.cameraPosition.y,
+				  json.cameraPosition.z);
     sceneview.camera.quaternion.set(json.cameraQuaternion._x,
-                                    json.cameraQuaternion._y,
-                                    json.cameraQuaternion._z,
-                                    json.cameraQuaternion._w);
+				    json.cameraQuaternion._y,
+				    json.cameraQuaternion._z,
+				    json.cameraQuaternion._w);
 
     //must call updates to reset for camera move
     sceneview.camera.updateProjectionMatrix();
@@ -610,7 +616,7 @@ define([
     //load the rest of the controller settings
      _.each(this.controllers, function(controller, index) {
       if (controller !== undefined) {
-        controller.fromJSON(json[index]);
+	controller.fromJSON(json[index]);
       }
     });
     sceneview.needsUpdate = true;
@@ -630,7 +636,7 @@ define([
     var id = (Math.round(1000000 * Math.random())).toString();
 
     this._$tabsContainer.append("<div id='" + id +
-                                "' class='emperor-tab-div' ></div>");
+				"' class='emperor-tab-div' ></div>");
     $('#' + id).height(this.$plotMenu.height() - this._$tabsList.height());
 
     // dynamically instantiate the controller, see:
@@ -644,7 +650,7 @@ define([
     // now add the list element linking to the container div with the proper
     // title
     this._$tabsList.append("<li><a href='#" + obj.identifier + "'>" +
-                           obj.title + '</a></li>');
+			   obj.title + '</a></li>');
 
     return obj;
   };
