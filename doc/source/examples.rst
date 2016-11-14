@@ -15,12 +15,14 @@ line interface and graphical user interface).
 The main entry point for Emperor is the ``Emperor`` object, this
 object relies on two pieces of information:
 
-- ``DataFrame``: a Pandas DataFrame object that describes a series of samples
-  and any additional information that was measured for each of them. In the
-  context of QIIME and QIIME 2, this is referred to as the *sample metadata*.
+- **Sample metadata**: this data is represented as a Pandas ``DataFrame``
+  object that describes a series of samples and any additional information that
+  was measured for each of them. In the context of QIIME and QIIME 2, this is
+  referred to as the *mapping file*.
 
-- ``OrdinationResults``: a scikit-bio OrdinationResults object that describes
-  the position of a series of samples in an `n`-dimensional space.
+- **Coordinates data**: this data is represented as a scikit-bio
+  ``OrdinationResults`` object that describes the position of a series of
+  samples in an `n`-dimensional space.
 
 To try out the examples below, download a copy of the repository (`here
 <https://github.com/biocore/emperor/archive/new-api.zip>`_), and navigate
@@ -33,16 +35,17 @@ In `this notebook
 <http://nbviewer.jupyter.org/github/biocore/emperor/blob/new-api/examples/keyboard.ipynb>`_,
 we explore the simplest use-case, visualizing a previously computed principal
 coordinates analysis matrix. For this example, we processed the OTU table using
-Qiita (to compute a distance matrix and ordinated coordinates), so all we need
-to do is load the coordinates and metadata. To plot data, we use the
-``Emperor`` constructor.
+`Qiita <https://qiita.ucsd.edu/>`_ (to compute a distance matrix and ordinated
+coordinates), so all we need to do is load the coordinates and metadata. To
+plot data, we use the ``Emperor`` constructor.
 
 Note that, we load the metadata mapping file in such a way that no data types
 are inferred (this is to guarantee data integrity) however, so as long as your
 data is in a Pandas ``DataFrame``, you can load it in any way you find the most
 convenient.  Additionally, in the line where we call the ``Emperor``
 constructor, we specify ``remote=True``, this allows us to share the notebook
-via `nbviewer <http://nbviewer.jupyter.org>`_, and make the plot interactive.
+via `nbviewer <http://nbviewer.jupyter.org>`_, and make the plot interactive
+for anyone who accesses the notebook from their browser.
 
 Distance Metric Browser
 -----------------------
@@ -69,7 +72,7 @@ In the Jupyter Notebook
 Emperor has the ability to display its interface inline inside a Jupyter
 notebook. By **default**, plots are created such that if the notebook is shared
 with someone else (using GitHub, nbviewer, or by sharing the notebook file),
-the plots can be loaded without the needing any additional dependencies (in the
+the plots can be loaded without needing any additional dependencies (in the
 examples above that's why we set ``remote=True``).  Remember, that in order to
 do this, you will need to have access to an internet connection.  Alternatively
 when there's no internet connection available, you can use the `nbinstall`
@@ -99,3 +102,7 @@ in a variable named ``emp``::
    with open(join(output_folder, 'index.html'), 'w') as f:
        f.write(emp.make_emperor(standalone=True))
        emp.copy_support_files(output_folder)
+
+To view the plot, open the ``index.html`` file inside the ``plot`` folder. This
+will launch Emperor, but this time the interface will use the entire screen,
+as opposed to just a cell (like in the notebooks above).
