@@ -22,10 +22,6 @@ object relies on two pieces of information:
 - ``OrdinationResults``: a scikit-bio OrdinationResults object that describes
   the position of a series of samples in an `n`-dimensional space.
 
-The data for the following examples can be found in the examples folder in the
-repository (`see here
-<https://github.com/biocore/emperor/tree/new-api/examples/keyboard>`_).
-
 To try out the examples below, download a copy of the repository (`here
 <https://github.com/biocore/emperor/archive/new-api.zip>`_), and navigate
 inside the examples folder.
