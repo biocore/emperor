@@ -1,4 +1,6 @@
 r"""
+.. _emperor-python-docs:
+
 Emperor 3D PCoA viewer (:mod:`emperor`)
 ============================================
 
