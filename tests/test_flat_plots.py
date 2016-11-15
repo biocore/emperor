@@ -35,7 +35,7 @@ class PlotTests(TestCase):
         ordination.proportion_explained = [i for i in np.arange(0.1, 0.9, 0.1)]
         fig, grid = plot_3x3(ordination, 0, df, 'foo', 'viridis')
         self.assertEqual(grid.shape, (3, 4))
-        
+
         exp_row0 = [np.array([[2, 1], [5, 4], [8, 7]]),
                     np.array([[3, 1], [6, 4], [9, 7]]),
                     np.array([[1, 1], [1, 4], [1, 7]])]
@@ -48,7 +48,7 @@ class PlotTests(TestCase):
             null, gradient = grid[0, j].collections
             self.assertEqual(null.get_offsets().shape, (0, 2))
             npt.assert_equal(gradient.get_offsets(), exp_row0[j])
-        
+
     def test_two_dimensional_gradient(self):
         plt.figure()
         ax = plt.gca()
@@ -58,12 +58,12 @@ class PlotTests(TestCase):
         ordination.samples = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]],
                                           columns=[0, 1, 2])
         two_dimensional_gradient(ax, 'foo', df, ordination, 0, 1, 'viridis',
-                                  {}, {})
+                                 {}, {})
 
         null, gradient = ax.collections
-        npt.assert_equal(gradient.get_offsets(), np.array([[1, 2], 
-                                                           [4, 5], 
-                                                           [7, 8]])) 
+        npt.assert_equal(gradient.get_offsets(), np.array([[1, 2],
+                                                           [4, 5],
+                                                           [7, 8]]))
         npt.assert_equal(null.get_offsets(), np.zeros((0, 2)))
 
     def test_two_dimensional_discrete(self):
@@ -75,13 +75,13 @@ class PlotTests(TestCase):
         ordination.samples = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]],
                                           columns=[0, 1, 2])
         two_dimensional_discrete(ax, 'foo', df, ordination, 0, 1,
-                                  {1: 'red', 4: 'green', 7: 'blue'},
-                                  {}, {})
+                                 {1: 'red', 4: 'green', 7: 'blue'},
+                                 {}, {})
 
         null, red, green, blue = ax.collections
-        npt.assert_equal(red.get_offsets(), np.array([[1, 2]])) 
-        npt.assert_equal(green.get_offsets(), np.array([[4, 5]])) 
-        npt.assert_equal(blue.get_offsets(), np.array([[7, 8]])) 
+        npt.assert_equal(red.get_offsets(), np.array([[1, 2]]))
+        npt.assert_equal(green.get_offsets(), np.array([[4, 5]]))
+        npt.assert_equal(blue.get_offsets(), np.array([[7, 8]]))
         npt.assert_equal(null.get_offsets(), np.zeros((0, 2)))
 
     def test_legend_discrete(self):

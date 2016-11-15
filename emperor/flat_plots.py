@@ -20,9 +20,9 @@ def plot_3x3(ordination, offset, mapping, field, colors, null_kw=None,
     -----
     This is ridged and defined layout intended to faciliate examining a large
     number of PCs over different metadata categories. Specifically, the layout
-    constraints force the location of the plots and points within each plot 
+    constraints force the location of the plots and points within each plot
     to be consistent thereby making viewing of different metadata fields
-    easy as your perspective remains fixed. 
+    easy as your perspective remains fixed.
 
     Parameters
     ----------
