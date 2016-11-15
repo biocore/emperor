@@ -1,15 +1,13 @@
 from unittest import TestCase, main
 
 import matplotlib.pyplot as plt
-from matplotlib import use
-use('Agg')  # noqa
 import pandas as pd
 import numpy as np
 
-from emperor.flat_plots import (_two_dimensional_gradient,
-                                _two_dimensional_discrete,
-                                _legend_discrete,
-                                _legend_gradient, plot_3x3,
+from emperor.flat_plots import (two_dimensional_gradient,
+                                two_dimensional_discrete,
+                                legend_discrete,
+                                legend_gradient, plot_3x3,
                                 _pcoa_label)
 
 
@@ -44,7 +42,7 @@ class PlotTests(TestCase):
         ordination = mock()
         ordination.samples = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]],
                                           columns=[0, 1, 2])
-        _two_dimensional_gradient(ax, 'foo', df, ordination, 0, 1, 'viridis',
+        two_dimensional_gradient(ax, 'foo', df, ordination, 0, 1, 'viridis',
                                   {}, {})
 
     def test_two_dimensional_discrete(self):
@@ -55,7 +53,7 @@ class PlotTests(TestCase):
         ordination = mock()
         ordination.samples = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]],
                                           columns=[0, 1, 2])
-        _two_dimensional_discrete(ax, 'foo', df, ordination, 0, 1,
+        two_dimensional_discrete(ax, 'foo', df, ordination, 0, 1,
                                   {1: 'red', 4: 'green', 7: 'blue'},
                                   {}, {})
 
@@ -67,7 +65,7 @@ class PlotTests(TestCase):
         ordination = mock()
         ordination.samples = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]],
                                           columns=[0, 1, 2])
-        _legend_discrete(ax, 'foo', df, ordination,
+        legend_discrete(ax, 'foo', df, ordination,
                          {1: 'red', 4: 'green', 7: 'blue'}, {})
 
     def test_legend_gradient(self):
@@ -78,7 +76,7 @@ class PlotTests(TestCase):
         ordination = mock()
         ordination.samples = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]],
                                           columns=[0, 1, 2])
-        _legend_gradient(ax, 'foo', df, ordination, 'viridis', {})
+        legend_gradient(ax, 'foo', df, ordination, 'viridis', {})
 
 
 if __name__ == '__main__':

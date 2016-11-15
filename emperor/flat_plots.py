@@ -1,5 +1,3 @@
-from matplotlib import use
-use('Agg')  # noqa
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -17,6 +15,14 @@ def plot_3x3(ordination, offset, mapping, field, colors, null_kw=None,
     PC1v2 PC1v3 PC1v4 BLANK
     PC2v3 PC2v4 PC2v5 Legend
     PC3v4 PC3v5 PC3v6 BLANK
+
+    Notes
+    -----
+    This is ridged and defined layout intended to faciliate examining a large
+    number of PCs over different metadata categories. Specifically, the layout
+    constraints force the location of the plots and points within each plot 
+    to be consistent thereby making viewing of different metadata fields
+    easy as your perspective remains fixed. 
 
     Parameters
     ----------
@@ -50,11 +56,11 @@ def plot_3x3(ordination, offset, mapping, field, colors, null_kw=None,
 
     # resolve if this is discrete or continous
     if isinstance(colors, str):
-        plot = _two_dimensional_gradient
-        legend = _legend_gradient
+        plot = two_dimensional_gradient
+        legend = legend_gradient
     else:
-        plot = _two_dimensional_discrete
-        legend = _legend_discrete
+        plot = two_dimensional_discrete
+        legend = legend_discrete
 
     # full page, with square plots
     fig, grid = plt.subplots(3, 4, sharex=False, sharey=False,
@@ -95,8 +101,8 @@ def _pcoa_label(dim, ordination):
     return fmt % (dim + 1, ordination.proportion_explained[dim] * 100)
 
 
-def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
-                              colormap, null_kw, focus_kw):
+def two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
+                             colormap, null_kw, focus_kw):
     """Plot two axes
 
     Parameters
@@ -132,7 +138,7 @@ def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
     # a given value is associated with
     bins = np.arange(field_values.min(),
                      field_values.max(),
-                     (field_values.max() - field_values.min()) / 256)
+                     (field_values.max() - field_values.min()) / 256.0)
 
     order = np.digitize(field_values, bins=bins, right=True)
     colors = np.array(sns.color_palette(colormap, n_colors=len(bins) + 1))
@@ -159,8 +165,8 @@ def _two_dimensional_gradient(ax, field, mapping, ordination, xaxis, yaxis,
     ax.set_xticklabels([])
 
 
-def _two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis,
-                              colors, null_kw, focus_kw):
+def two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis,
+                             colors, null_kw, focus_kw):
     """Plot two axes
 
     Parameters
@@ -218,7 +224,7 @@ def _two_dimensional_discrete(ax, field, mapping, ordination, xaxis, yaxis,
     ax.set_xticklabels([])
 
 
-def _legend_gradient(ax, field, mapping, ordination, colormap, null_kw):
+def legend_gradient(ax, field, mapping, ordination, colormap, null_kw):
     """Create a gradient legend
 
     Parameters
@@ -305,7 +311,7 @@ def _legend_gradient(ax, field, mapping, ordination, colormap, null_kw):
     ax.spines['right'].set_visible(False)
 
 
-def _legend_discrete(ax, field, mapping, ordination, colors, null_kw):
+def legend_discrete(ax, field, mapping, ordination, colors, null_kw):
     """Create a discrete legend
 
     Parameters
