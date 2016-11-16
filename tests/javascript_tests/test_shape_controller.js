@@ -160,6 +160,7 @@ requirejs([
       var controller = new ShapeController(container,
                                            this.sharedDecompositionViewDict);
 
+      controller.setMetadataField('DOB');
       var obs = controller.toJSON();
       var exp = {category: 'DOB',
                  data: {'20070314': 'Sphere', '20071112': 'Sphere'}

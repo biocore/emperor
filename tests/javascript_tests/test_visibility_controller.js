@@ -91,7 +91,7 @@ requirejs([
       equal(testColumn.field, 'value');
 
       // verify the visibility value is set properly
-      equal(controller.$select.val(), 'DOB');
+      equal(controller.getMetadataField(), null);
     });
 
     test('Testing setPlottableAttributes helper function', function(assert) {
@@ -121,6 +121,7 @@ requirejs([
       var controller = new VisibilityController(container,
           this.sharedDecompositionViewDict);
 
+      controller.setMetadataField('DOB');
       var obs = controller.toJSON();
       var exp = {category: 'DOB', data: {'20070314': true, '20071112': true}};
       deepEqual(obs, exp);

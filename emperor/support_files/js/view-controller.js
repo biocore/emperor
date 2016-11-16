@@ -159,24 +159,15 @@ define([
       // only subclasses will provide this callback
       if (options.categorySelectionCallback !== undefined) {
 
-        // If the number of samples is not too large, fire a callback using the
-        // selector to initialize the data grid
-        if (dm.ids.length < 1000) {
-          options.categorySelectionCallback(
-            null, {selected: scope.$select.val()});
-        }
-        else {
-          // Disable interface controls (except the metadata selector) to
-          // prevent errors while no metadata category is selected. Once the
-          // user selects a metadata category, the controls will be enabled
-          // (see setSlickGridDataset).
-          scope.setEnabled(false);
-          scope.$select.val('');
-          scope.$select.prop('disabled', false).trigger('chosen:updated');
-        }
+        // Disable interface controls (except the metadata selector) to
+        // prevent errors while no metadata category is selected. Once the
+        // user selects a metadata category, the controls will be enabled
+        // (see setSlickGridDataset).
+        scope.setEnabled(false);
+        scope.$select.val('');
+        scope.$select.prop('disabled', false).trigger('chosen:updated');
 
         scope.$select.chosen().change(options.categorySelectionCallback);
-
       }
 
     });
@@ -292,8 +283,8 @@ define([
    */
   EmperorAttributeABC.prototype.setSlickGridDataset = function(data) {
 
-    // Accounts for cases where controllers are not auto-initialized to a
-    // metadata category. In these cases all controllers (except the metadata
+    // Accounts for cases where controllers have not been set to a metadata
+    // category. In these cases all controllers (except for the metadata
     // selector) are disabled to prevent interface errors.
     if (this.getSlickGridDataset().length === 0 && this.enabled === false) {
       this.setEnabled(true);

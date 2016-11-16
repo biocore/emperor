@@ -97,10 +97,10 @@ requirejs([
 
       // verify the color value is set properly
       equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
-      equal(controller.$select.val(), 'DOB');
+      equal(controller.$select.val(), null);
 
-      equal(controller.$colormapSelect.is(':disabled'), false);
-      equal(controller.$scaled.is(':disabled'), false);
+      equal(controller.$colormapSelect.is(':disabled'), true);
+      equal(controller.$scaled.is(':disabled'), true);
     });
 
     test('Test _nonNumericPlottables', function() {
@@ -108,6 +108,7 @@ requirejs([
                         'width:12px"></div>');
       var controller = new ColorViewController(
         container, this.sharedDecompositionViewDict);
+      controller.setMetadataField('DOB');
       var decompViewDict = controller.getView();
 
       var colors = {'14.7': '#f7fbff',
@@ -494,6 +495,7 @@ requirejs([
       ColorViewController.prototype.setPlottableAttributes(this.dv, '#00ff00',
                                                            plottables);
 
+      controller.setMetadataField('DOB');
       var obs = controller.toJSON();
       var exp = {'category': 'DOB',
                  'colormap': 'discrete-coloring-qiime',

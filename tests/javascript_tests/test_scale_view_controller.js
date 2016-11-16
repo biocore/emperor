@@ -98,9 +98,9 @@ requirejs([
 
       // verify the checked value is set properly
       equal(controller.$scaledValue.is(':checked'), false);
-      equal(controller.$select.val(), 'DOB');
+      equal(controller.$select.val(), null);
 
-      equal(controller.$scaledValue.is(':disabled'), false);
+      equal(controller.$scaledValue.is(':disabled'), true);
       equal(controller.$sliderGlobal.is(':disabled'), false);
     });
 
@@ -143,6 +143,7 @@ requirejs([
       var controller = new ScaleViewController(
         container, this.sharedDecompositionViewDict);
 
+      controller.setMetadataField('DOB');
       var obs = controller.toJSON();
       var exp = {category: 'DOB', globalScale: '1.0', scaleVal: false,
                  data: {'20070314': 1, '20071112': 1}};
