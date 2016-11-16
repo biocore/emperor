@@ -1,22 +1,14 @@
 Emperor
 =======
 
-[![Join the chat at https://gitter.im/biocore/emperor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/biocore/emperor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/biocore/emperor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/biocore/emperor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/biocore/emperor.png?branch=master)](https://travis-ci.org/biocore/emperor) [![Coverage Status](https://coveralls.io/repos/biocore/emperor/badge.svg)](https://coveralls.io/r/biocore/emperor)
 
-[![Build Status](https://travis-ci.org/biocore/emperor.png?branch=master)](https://travis-ci.org/biocore/emperor) [![Coverage Status](https://coveralls.io/repos/biocore/emperor/badge.svg)](https://coveralls.io/r/biocore/emperor)
-
-Emperor is a next-generation tool for the analysis and visualization of large microbial ecology datasets; amongst many features Emperor provides a modern user interface that will rapidly adjust to your daily workflow.
+Emperor is a next-generation tool for the analysis and visualization of large microbial ecology datasets; amongst its many features Emperor provides a modern user interface that will rapidly adjust to your data analysis workflow.
 
 To start using Emperor, please refer to the [installation notes](INSTALL.md).
 
 Before contributing code to Emperor, please familiarize yourself with the [contributing guidelines](CONTRIBUTING.md).
 
-## Usage examples
+## Usage
 
-We recommend using Emperor through its Python interface. The following, are two
-examples of how to do this:
-
-- [Visualizing data produced with scikit-bio](http://nbviewer.jupyter.org/github/biocore/emperor/blob/new-api/examples/keyboard.ipynb).
-- [Interactive Jupyter Widgets](http://nbviewer.jupyter.org/github/biocore/emperor/blob/new-api/examples/evident.ipynb).
-
-The data and notebooks can be found [here](https://github.com/biocore/emperor/tree/new-api/examples).
+You can start using Emperor through [QIIME2](https://qiime2.org)'s [interfaces](https://docs.qiime2.org/2.0.6/interfaces/) (the command line interface or the graphical user interface), or alternatively using the Python interface (compatible with the Jupyter notebook, see [this example](http://nbviewer.jupyter.org/github/biocore/emperor/blob/new-api/examples/keyboard.ipynb)). For more detalis, refer to our [online documentation](http://emperor.microbio.me/uno/).
