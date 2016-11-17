@@ -318,18 +318,23 @@ define([
     map = chroma.brewer[map];
 
     // Get list of only numeric values, error if none
-    var split = util.splitNumericValues(values);
+    var split = util.splitNumericValues(values), numbers;
     if (split.numeric.length < 2) {
       throw new Error('non-numeric category');
     }
-    min = _.min(split.numeric);
-    max = _.max(split.numeric);
+
+    // convert objects to numbers so we can map them to a color, we keep a copy
+    // of the untransformed object so we can search the metadata
+    numbers = _.map(split.numeric, parseFloat);
+    min = _.min(numbers);
+    max = _.max(numbers);
+
     var interpolator = chroma.scale(map).domain([min, max]);
     var colors = {};
 
     // Color all the numeric values
     _.each(split.numeric, function(element) {
-      colors[element] = interpolator(element).hex();
+      colors[element] = interpolator(+element).hex();
     });
     //Gray out non-numeric values
     _.each(split.nonNumeric, function(element) {
