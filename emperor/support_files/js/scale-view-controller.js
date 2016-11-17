@@ -146,6 +146,25 @@ define([
   ScaleViewController.prototype.constructor = EmperorAttributeABC;
 
   /**
+   *
+   * Private method to reset the scale of all the objects to one.
+   *
+   * @extends EmperorAttributeABC
+   * @private
+   *
+   */
+  ScaleViewController.prototype._resetAttribute = function() {
+    EmperorAttributeABC.prototype._resetAttribute.call(this);
+    var scope = this;
+
+    _.each(this.decompViewDict, function(view) {
+      scope.setPlottableAttributes(view, 1, view.decomp.plottable);
+      view.needsUpdate = true;
+    });
+    this.$scaledValue.prop('checked', false);
+  };
+
+  /**
    * Converts the current instance into a JSON string.
    *
    * @return {Object} JSON ready representation of self.
@@ -166,6 +185,15 @@ define([
     // Can't call super because select needs to be set first
     // Order here is important. We want to set all the extra controller
     // settings before we load from json, as they can override the JSON when set
+
+    this.setMetadataField(json.category);
+
+    // if the category is null, then there's nothing to set about the state
+    // of the controller
+    if (json.category === null) {
+      return;
+    }
+
     this.$select.val(json.category);
     this.$select.trigger('chosen:updated');
     this.$sliderGlobal.slider('value', json.globalScale);
@@ -204,6 +232,18 @@ define([
 
     // call super, most of the header and body resizing logic is done there
     EmperorAttributeABC.prototype.resize.call(this, width, height);
+  };
+
+  /**
+   * Sets whether or not elements in the tab can be modified.
+   *
+   * @param {Boolean} trulse option to enable elements.
+   */
+  ScaleViewController.prototype.setEnabled = function(trulse) {
+    EmperorAttributeABC.prototype.setEnabled.call(this, trulse);
+
+    this.$scaledValue.prop('disabled', !trulse);
+    this.$sliderGlobal.slider('option', 'disabled', !trulse);
   };
 
   /**

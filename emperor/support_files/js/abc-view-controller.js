@@ -111,9 +111,9 @@ define([
   }
 
   /**
-   * Sets whether or not the tab can be modified or accessed.
+   * Sets whether or not elements in the tab can be modified.
    *
-   * @param {Boolean} trulse option to enable tab.
+   * @param {Boolean} trulse option to enable elements.
    */
   EmperorViewControllerABC.prototype.setEnabled = function(trulse) {
     if (typeof(trulse) === 'boolean') {

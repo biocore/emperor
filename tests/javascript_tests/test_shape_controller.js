@@ -160,9 +160,10 @@ requirejs([
       var controller = new ShapeController(container,
                                            this.sharedDecompositionViewDict);
 
+      controller.setMetadataField('DOB');
       var obs = controller.toJSON();
-      var exp = {category: 'SampleID',
-                 data: {'PC.636': 'Sphere', 'PC.635': 'Sphere'}
+      var exp = {category: 'DOB',
+                 data: {'20070314': 'Sphere', '20071112': 'Sphere'}
       };
       deepEqual(obs, exp);
     });
@@ -181,6 +182,36 @@ requirejs([
       var idx = 0;
       equal(controller.decompViewDict.scatter.markers[idx].geometry.type,
             'BoxGeometry');
+      equal(controller.decompViewDict.scatter.markers[idx + 1].geometry.type,
+            'SphereGeometry');
+    });
+
+    test('Testing toJSON (null)', function() {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ShapeController(container,
+                                           this.sharedDecompositionViewDict);
+
+      controller.setMetadataField(null);
+      var obs = controller.toJSON();
+      var exp = {category: null,
+                 data: {}
+      };
+      deepEqual(obs, exp);
+    });
+
+    test('Testing fromJSON (null)', function() {
+      var json = {'category': null, 'data': {}};
+
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ShapeController(container,
+                                           this.sharedDecompositionViewDict);
+
+      controller.fromJSON(json);
+      var idx = 0;
+      equal(controller.decompViewDict.scatter.markers[idx].geometry.type,
+            'SphereGeometry');
       equal(controller.decompViewDict.scatter.markers[idx + 1].geometry.type,
             'SphereGeometry');
     });

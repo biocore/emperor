@@ -98,7 +98,10 @@ requirejs([
 
       // verify the checked value is set properly
       equal(controller.$scaledValue.is(':checked'), false);
-      equal(controller.$select.val(), 'SampleID');
+      equal(controller.$select.val(), null);
+
+      equal(controller.$scaledValue.is(':disabled'), true);
+      equal(controller.$sliderGlobal.is(':disabled'), false);
     });
 
     test('Testing setPlottableAttributes helper function', function(assert) {
@@ -140,9 +143,10 @@ requirejs([
       var controller = new ScaleViewController(
         container, this.sharedDecompositionViewDict);
 
+      controller.setMetadataField('DOB');
       var obs = controller.toJSON();
-      var exp = {category: 'SampleID', globalScale: '1.0', scaleVal: false,
-                 data: {'PC.636': 1, 'PC.635': 1, 'PC.634': 1}};
+      var exp = {category: 'DOB', globalScale: '1.0', scaleVal: false,
+                 data: {'20070314': 1, '20071112': 1}};
       deepEqual(obs, exp);
     });
 
@@ -192,6 +196,44 @@ requirejs([
       equal(controller.$scaledValue.is(':checked'), true);
     });
 
+    test('Testing toJSON (null)', function() {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScaleViewController(
+        container, this.sharedDecompositionViewDict);
+      controller.setMetadataField(null);
+
+      var obs = controller.toJSON();
+      var exp = {category: null, globalScale: '1.0', scaleVal: false,
+                 data: {}};
+      deepEqual(obs, exp);
+    });
+
+    test('Testing fromJSON (null)', function() {
+      var json = {category: null, globalScale: '1.0', scaleVal: false,
+                  data: {}};
+
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScaleViewController(
+        container, this.sharedDecompositionViewDict);
+
+      controller.fromJSON(json);
+      var idx = 0;
+      var scatter = controller.decompViewDict.scatter;
+      deepEqual(scatter.markers[0].scale.x, 1);
+      deepEqual(scatter.markers[0].scale.y, 1);
+      deepEqual(scatter.markers[0].scale.z, 1);
+      deepEqual(scatter.markers[1].scale.x, 1);
+      deepEqual(scatter.markers[1].scale.y, 1);
+      deepEqual(scatter.markers[1].scale.z, 1);
+      deepEqual(scatter.markers[2].scale.x, 1);
+      deepEqual(scatter.markers[2].scale.y, 1);
+      deepEqual(scatter.markers[2].scale.z, 1);
+      equal(controller.getMetadataField(), null);
+      equal(controller.$scaledValue.is(':checked'), false);
+    });
+
     test('Testing getScale', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
@@ -209,5 +251,55 @@ requirejs([
       var exp = {'1': 1, 'no': 0, 'false': 0, 'something': 0, '2': 5};
       deepEqual(obs, exp);
     });
+
+    asyncTest('Test setEnabled (true)', function() {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScaleViewController(
+        container, this.sharedDecompositionViewDict);
+      $(function() {
+        controller.setEnabled(false);
+
+        equal(controller.$scaledValue.is(':disabled'), true);
+        equal(controller.$sliderGlobal.slider('option', 'disabled'), true);
+
+        start(); // qunit
+      });
+    });
+
+    /**
+     *
+     * Test large dataset.
+     *
+     */
+    asyncTest('Test large dataset', function() {
+      var coords = [], metadata = [];
+      for (var i = 0; i < 1001; i++) {
+        coords.push([Math.random(), Math.random(), Math.random(),
+                     Math.random()]);
+        metadata.push([i, 'b ' + Math.random(), 'c ' + Math.random()]);
+      }
+
+      var d = new DecompositionModel('pcoa', _.range(1001), coords,
+                                     [45, 35, 15, 5],
+                                     ['SampleID', 'foo', 'bar'], metadata);
+      var dv = new DecompositionView(d);
+      var container = $('<div id="does-not-exist"></div>');
+      // create a dummy category selection callback
+      var options = {'categorySelectionCallback': function() {}};
+      var attr = new ScaleViewController(container, {'scatter': dv});
+      $(function() {
+        // Controllers should be enabled
+        equal(attr.enabled, false);
+        equal(attr.$select.val(), null);
+        equal(attr.$select.is(':disabled'), false);
+
+        equal(attr.$scaledValue.is(':disabled'), true);
+        equal(attr.$sliderGlobal.slider('option', 'disabled'), true);
+
+        start(); // qunit
+      });
+    });
+
   });
 });
