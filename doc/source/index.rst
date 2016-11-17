@@ -16,12 +16,14 @@ The :ref:`genindex` lists the contents of this documentation.
 
    emperor_objects
 
-Format Description:
-===================
+General Documentation:
+======================
 
 .. toctree::
    :maxdepth: 2
 
+   description
+   examples
    formats
 
 
