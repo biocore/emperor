@@ -608,7 +608,7 @@ define([
     sceneview.control.update();
 
     //load the rest of the controller settings
-     _.each(this.controllers, function(controller, index) {
+    _.each(this.controllers, function(controller, index) {
       if (controller !== undefined) {
         controller.fromJSON(json[index]);
       }

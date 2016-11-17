@@ -6,7 +6,7 @@ requirejs([
     'abcviewcontroller',
     'viewcontroller',
     'slickgrid'
-], function($, _, model, DecompositionView, abcviewcontroller, viewcontroller,
+], function($, _, model, DecompositionView, abc, viewcontroller,
             SlickGrid) {
   var EmperorViewControllerABC = abc.EmperorViewControllerABC;
   var EmperorViewController = viewcontroller.EmperorViewController;
@@ -315,9 +315,10 @@ requirejs([
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           this.sharedDecompositionViewDict, {});
 
-      var met = {'biplot': ['SampleID', 'Gram'],
-                  'pcoa': ['SampleID', 'LinkerPrimerSequence', 'Treatment',
-                           'DOB']};
+
+      var met = {'biplot': ['Gram', 'SampleID'],
+                 'pcoa': ['DOB', 'LinkerPrimerSequence', 'SampleID',
+                          'Treatment']};
 
       deepEqual(attr._metadata, met);
     });
@@ -396,7 +397,7 @@ requirejs([
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                          {'scatter': dv}, {});
-      equal(attr.getMetadataField(), 'SampleID');
+      equal(attr.getMetadataField(), 'Gram');
     });
 
     /**
@@ -404,15 +405,17 @@ requirejs([
      * Test set metadata field
      *
      */
-    test('Test getMetadataField', function() {
+    test('Test setMetadataField', function() {
       var dv = new DecompositionView(this.decomp);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                          {'scatter': dv}, {});
-      attr.setMetadataField('Gram');
-      equal(attr.getMetadataField(), 'Gram');
-    });
+      attr.setMetadataField('SampleID');
+      equal(attr.getMetadataField(), 'SampleID');
 
+      attr.setMetadataField(null);
+      equal(attr.getMetadataField(), null);
+    });
 
     /**
      *
@@ -469,19 +472,103 @@ requirejs([
         // modify the decomposition view dictionary
         shared.biplot = scope.sharedDecompositionViewDict.biplot;
 
-        deepEqual(attr._metadata, {'scatter': ['SampleID',
-                                               'LinkerPrimerSequence',
-                                               'Treatment', 'DOB']});
+        deepEqual(attr._metadata, {'scatter': ['DOB', 'LinkerPrimerSequence',
+                                               'SampleID', 'Treatment']});
         attr.refreshMetadata();
-        deepEqual(attr._metadata, {'scatter': ['SampleID',
-                                               'LinkerPrimerSequence',
-                                               'Treatment', 'DOB'],
-                                   'biplot': ['SampleID', 'Gram']});
+        deepEqual(attr._metadata, {'scatter': ['DOB', 'LinkerPrimerSequence',
+                                               'SampleID', 'Treatment'],
+                                   'biplot': ['Gram', 'SampleID']});
 
         start(); // qunit
       });
     });
 
+    /**
+     *
+     * Test setEnabled (false)
+     *
+     */
+    asyncTest('Test setEnabled (false)', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, {});
+      $(function() {
+        // disable
+        attr.setEnabled(false);
+
+        equal(attr.enabled, false);
+        equal(attr.$select.is(':disabled'), true);
+        equal(attr.bodyGrid.getOptions().editable, false);
+
+        // enable
+        attr.setEnabled(true);
+
+        equal(attr.enabled, true);
+        equal(attr.$select.is(':disabled'), false);
+        equal(attr.bodyGrid.getOptions().editable, true);
+
+        start(); // qunit
+      });
+    });
+
+    /**
+     *
+     * Test setEnabled (true)
+     *
+     */
+    asyncTest('Test setEnabled (true)', function() {
+      var dv = new DecompositionView(this.decomp);
+      var container = $('<div id="does-not-exist"></div>');
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, {});
+      $(function() {
+        // Controllers should be enabled
+        equal(attr.enabled, true);
+        equal(attr.$select.is(':disabled'), false);
+        equal(attr.bodyGrid.getOptions().editable, true);
+
+        // and they should remain the same after "enabling" them again
+        attr.setEnabled(true);
+        equal(attr.enabled, true);
+        equal(attr.$select.is(':disabled'), false);
+        equal(attr.bodyGrid.getOptions().editable, true);
+
+        start(); // qunit
+      });
+    });
+
+    /**
+     *
+     * Test large dataset.
+     *
+     */
+    asyncTest('Test large dataset', function() {
+      var coords = [], metadata = [];
+      for (var i = 0; i < 1001; i++) {
+        coords.push([Math.random(), Math.random(), Math.random(),
+                     Math.random()]);
+        metadata.push([i, 'b ' + Math.random(), 'c ' + Math.random()]);
+      }
+
+      var d = new DecompositionModel('pcoa', _.range(1001), coords,
+                                     [45, 35, 15, 5],
+                                     ['SampleID', 'foo', 'bar'], metadata);
+      var dv = new DecompositionView(d);
+      var container = $('<div id="does-not-exist"></div>');
+      // create a dummy category selection callback
+      var options = {'categorySelectionCallback': function() {}};
+      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+                                         {'scatter': dv}, options);
+      $(function() {
+        // Controllers should be enabled
+        equal(attr.enabled, false);
+        equal(attr.$select.val(), null);
+        equal(attr.$select.is(':disabled'), false);
+
+        start(); // qunit
+      });
+    });
 
   });
 });

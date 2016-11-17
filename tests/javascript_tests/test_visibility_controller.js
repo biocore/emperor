@@ -91,7 +91,7 @@ requirejs([
       equal(testColumn.field, 'value');
 
       // verify the visibility value is set properly
-      equal(controller.$select.val(), 'SampleID');
+      equal(controller.getMetadataField(), null);
     });
 
     test('Testing setPlottableAttributes helper function', function(assert) {
@@ -121,8 +121,9 @@ requirejs([
       var controller = new VisibilityController(container,
           this.sharedDecompositionViewDict);
 
+      controller.setMetadataField('DOB');
       var obs = controller.toJSON();
-      var exp = {category: 'SampleID', data: {'PC.636': true, 'PC.635': true}};
+      var exp = {category: 'DOB', data: {'20070314': true, '20071112': true}};
       deepEqual(obs, exp);
     });
 
@@ -138,6 +139,31 @@ requirejs([
       var idx = 0;
       equal(controller.decompViewDict.scatter.markers[idx].visible, false);
       equal(controller.decompViewDict.scatter.markers[idx + 1].visible, true);
+    });
+
+    test('Testing toJSON', function() {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new VisibilityController(container,
+          this.sharedDecompositionViewDict);
+      controller.setMetadataField(null);
+
+      var obs = controller.toJSON();
+      var exp = {category: null, data: {}};
+      deepEqual(obs, exp);
+    });
+
+    test('Testing fromJSON', function() {
+      var json = {category: null,
+                  data: {}};
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new VisibilityController(container,
+          this.sharedDecompositionViewDict);
+      controller.fromJSON(json);
+
+      equal(controller.decompViewDict.scatter.markers[0].visible, true);
+      equal(controller.decompViewDict.scatter.markers[1].visible, true);
     });
 
   });
