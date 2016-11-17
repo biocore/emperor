@@ -152,6 +152,10 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
       split = util.splitNumericValues(['+1', '0', 'foo', '-1', 'boaty']);
       deepEqual(split.numeric, ['+1', '0', '-1']);
       deepEqual(split.nonNumeric, ['foo', 'boaty']);
+
+      split = util.splitNumericValues(['1.0', '0.0.0', '0.0', '-3.0', 'boaty']);
+      deepEqual(split.numeric, ['1.0', '0.0', '-3.0']);
+      deepEqual(split.nonNumeric, ['0.0.0', 'boaty']);
     });
 
     test('Test regular expressions are escaped correctly', function() {
