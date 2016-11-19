@@ -91,6 +91,7 @@ requirejs([
 
       var controller = new ScaleViewController(
         container, this.sharedDecompositionViewDict);
+      controller.setMetadataField('SampleID');
       equal(controller.title, 'Scale');
 
       var testColumn = controller.bodyGrid.getColumns()[0];
@@ -98,10 +99,8 @@ requirejs([
 
       // verify the checked value is set properly
       equal(controller.$scaledValue.is(':checked'), false);
-      equal(controller.$select.val(), null);
-
-      equal(controller.$scaledValue.is(':disabled'), true);
-      equal(controller.$sliderGlobal.is(':disabled'), false);
+      equal(controller.$select.val(), 'SampleID');
+      equal(controller.getMetadataField(), 'SampleID');
     });
 
     test('Testing setPlottableAttributes helper function', function(assert) {
@@ -142,11 +141,11 @@ requirejs([
                         'width:12px"></div>');
       var controller = new ScaleViewController(
         container, this.sharedDecompositionViewDict);
+      controller.setMetadataField('SampleID');
 
-      controller.setMetadataField('DOB');
       var obs = controller.toJSON();
-      var exp = {category: 'DOB', globalScale: '1.0', scaleVal: false,
-                 data: {'20070314': 1, '20071112': 1}};
+      var exp = {category: 'SampleID', globalScale: '1.0', scaleVal: false,
+                 data: {'PC.636': 1, 'PC.635': 1, 'PC.634': 1}};
       deepEqual(obs, exp);
     });
 
@@ -247,8 +246,8 @@ requirejs([
       deepEqual(obs, exp);
 
       //test scaled values
-      var obs = controller.getScale(data, true);
-      var exp = {'1': 1, 'no': 0, 'false': 0, 'something': 0, '2': 5};
+      obs = controller.getScale(data, true);
+      exp = {'1.0': 1, 'no': 0, 'false': 0, 'something': 0, '2.0': 5};
       deepEqual(obs, exp);
     });
 

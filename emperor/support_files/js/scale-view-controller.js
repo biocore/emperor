@@ -278,7 +278,7 @@ define([
    * value
    */
   ScaleViewController.prototype.getScale = function(values, scaled) {
-    var scale = {};
+    var scale = {}, numbers, val;
     if (!scaled) {
       _.each(values, function(element) {
         scale[element] = 1.0;
@@ -299,14 +299,22 @@ define([
         alert('Non-numeric values detected. These will be hidden!');
       }
 
+      // convert objects to numbers so we can map them to a color, we keep a
+      // copy of the untransformed object so we can search the metadata
+      numbers = _.map(split.numeric, parseFloat);
+
       //scale remaining values between 1 and 5 scale
-      var min = _.min(split.numeric);
-      var max = _.max(split.numeric);
+      var min = _.min(numbers);
+      var max = _.max(numbers);
       var range = max - min;
+
       _.each(split.numeric, function(element) {
-          // Scale the values, then round to 4 decimaal places.
-          scale[element] = Math.round(
-            (1 + (element - min) * 4 / range) * 10000) / 10000;
+        // note these elements are not numbers
+        val = parseFloat(element);
+
+        // Scale the values, then round to 4 decimaal places.
+        scale[element] = Math.round(
+            (1 + (val - min) * 4 / range) * 10000) / 10000;
         });
     }
     return scale;
