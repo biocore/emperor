@@ -24,6 +24,7 @@ requirejs.config({
   'chroma': '{{ base_url }}/vendor/js/chroma.min',
   'filesaver': '{{ base_url }}/vendor/js/FileSaver.min',
   'blob': '{{ base_url }}/vendor/js/Blob',
+  'canvastoblob': '{{ base_url }}/vendor/js/canvas-ToBlob',
   'd3': '{{ base_url }}/vendor/js/d3.min',
 
   /* THREE.js and plugins */
@@ -31,6 +32,7 @@ requirejs.config({
   'orbitcontrols': '{{ base_url }}/vendor/js/three.js-plugins/OrbitControls',
   'projector': '{{ base_url }}/vendor/js/three.js-plugins/Projector',
   'svgrenderer': '{{ base_url }}/vendor/js/three.js-plugins/SVGRenderer',
+  'canvasrenderer': '{{ base_url }}/vendor/js/three.js-plugins/CanvasRenderer',
 
   /* SlickGrid */
   'slickcore': '{{ base_url }}/vendor/js/slick.core.min',
@@ -75,6 +77,9 @@ requirejs.config({
   'filesaver' : {
     'deps': ['blob']
   },
+  'canvastoblob' : {
+    'deps': ['blob']
+  },
   'orbitcontrols': {
     'deps': ['three']
   },
@@ -82,6 +87,9 @@ requirejs.config({
     'deps': ['three']
   },
   'svgrenderer': {
+    'deps': ['orbitcontrols', 'projector']
+  },
+  'canvasrenderer': {
     'deps': ['orbitcontrols', 'projector']
   },
 'slickcore': ['jqueryui'],

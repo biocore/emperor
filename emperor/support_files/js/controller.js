@@ -13,11 +13,13 @@ define([
     'filesaver',
     'viewcontroller',
     'svgrenderer',
-    'draw'
+    'draw',
+    'canvasrenderer',
+    'canvastoblob'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
-             ColorViewController, VisibilityController, ShapeController,
-             AxesController, ScaleViewController, FileSaver, viewcontroller,
-             SVGRenderer, Draw) {
+            ColorViewController, VisibilityController, ShapeController,
+            AxesController, ScaleViewController, FileSaver, viewcontroller,
+            SVGRenderer, Draw, CanvasRenderer, canvasToBlob) {
 
   /**
    *
@@ -446,7 +448,7 @@ define([
             icon: 'file-picture-o',
             'items': {
               'saveImagePNG': {
-                name: 'PNG',
+                name: 'PNG (high resolution)',
                 callback: function(key, opts) {
                   scope.screenshot('png');
                 }
@@ -480,6 +482,7 @@ define([
    *
    */
   EmperorController.prototype.screenshot = function(type) {
+    var img, renderer, factor = 5;
     type = type || 'png';
 
     if (type === 'png') {
@@ -487,17 +490,30 @@ define([
       for (var i = 0; i < this.sceneViews.length; i++) {
         this.sceneViews[i].render();
       }
-      var c = this.renderer.domElement.toDataURL('image/' + type);
-      // Create DOM-less download link and click it to start download
-      var download = $('<a href="' + c + '" download="emperor.' + type + '">');
-      download.get(0).click();
-    } else if (type === 'svg') {
+
+      var pngRenderer = new THREE.CanvasRenderer({antialias: true,
+                                                  preserveDrawingBuffer: true});
+      pngRenderer.autoClear = true;
+      pngRenderer.sortObjects = true;
+      pngRenderer.setSize(this.$plotSpace.width() * factor,
+                          this.$plotSpace.height() * factor);
+      pngRenderer.setClearColor(this.renderer.getClearColor(), 1);
+      pngRenderer.setPixelRatio(window.devicePixelRatio);
+      pngRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
+
+      // toBlob is only available in some browsers, that's why we use
+      // canvas-toBlob
+      pngRenderer.domElement.toBlob(function(blob) {
+        saveAs(blob, "emperor.png");
+      });
+    }
+    else if (type === 'svg') {
       // confirm box based on number of samples: better safe than sorry
       if (this.dm.length >= 9000) {
         if (confirm('This number of samples could take a long time and in ' +
            'some computers the browser will crash. If this happens we ' +
            'suggest to use the png implementation. Do you want to ' +
-           'continue?') == false) {
+           'continue?') === false) {
           return;
         }
       }
