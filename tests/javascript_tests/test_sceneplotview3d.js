@@ -581,5 +581,36 @@ requirejs([
       spv.control.dispose();
     });
 
+    /**
+     *
+     * Test the recenterCamera method for ScenePlotView3D
+     *
+     */
+    test('Test recenterCamera', function() {
+
+      var renderer = new THREE.SVGRenderer({antialias: true}), max;
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      spv.camera.rotation.set(1, 1, 1);
+      spv.camera.updateProjectionMatrix();
+      spv.camera.position.set(-1, 11, 0);
+      spv.camera.updateProjectionMatrix();
+      spv.needsUpdate = true;
+
+      max = _.max(spv.dimensionRanges.max);
+
+      spv.recenterCamera();
+
+      equal(spv.camera.rotation.x, 0);
+      equal(spv.camera.rotation.y, 0);
+      equal(spv.camera.rotation.z, 0);
+
+      equal(spv.camera.position.x, 0);
+      equal(spv.camera.position.y, 0);
+      equal(spv.camera.position.z, max * 5);
+
+      spv.control.dispose();
+    });
   });
 });

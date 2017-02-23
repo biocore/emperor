@@ -389,6 +389,15 @@ define([
       selector: '#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper',
       trigger: 'none',
       items: {
+        'recenterCamera': {
+          name: 'Recenter camera',
+          icon: 'home',
+          callback: function(key, opts) {
+            _.each(scope.sceneViews, function(scene) {
+              scene.recenterCamera();
+            });
+          }
+        },
         'toggleAutorotate': {
           name: 'Toggle autorotation',
           icon: 'rotate-left',
