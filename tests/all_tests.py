@@ -79,19 +79,19 @@ def main():
     # cases we are using absolute paths, to avoid unwanted failures.
     if opts.emperor_scripts_dir is None:
         emperor_scripts_dir = abspath(join(get_emperor_project_dir(),
-                                      'scripts/'))
+                                           'scripts/'))
 
         # let's try to guess cases for qiime-deploy type of installs
         if get_emperor_project_dir().endswith('/lib'):
             emperor_scripts_dir = abspath(join(get_emperor_project_dir()[:-3],
-                                          'scripts/'))
+                                               'scripts/'))
 
     else:
         emperor_scripts_dir = abspath(opts.emperor_scripts_dir)
 
     # make a sanity check
     if (suppress_unit_tests and suppress_script_usage_tests and
-       suppress_javascript_unit_tests):
+            suppress_javascript_unit_tests):
         option_parser.error("All tests have been suppresed. Nothing to run.")
 
     test_dir = abspath(dirname(__file__))
@@ -134,7 +134,7 @@ def main():
 
     # choose to run some of the script usage tests or all the available ones
     if (not suppress_script_usage_tests and exists(emperor_test_data_dir) and
-       exists(emperor_scripts_dir)):
+            exists(emperor_scripts_dir)):
         if script_usage_tests is not None:
             script_tests = script_usage_tests.split(',')
         else:
@@ -179,32 +179,32 @@ def main():
     if not suppress_unit_tests:
         print "\nUnit test result summary\n------------------------\n"
         if bad_tests:
-            print ("\nFailed the following unit tests.\n%s"
-                   % '\n'.join(bad_tests))
+            print("\nFailed the following unit tests.\n%s"
+                  % '\n'.join(bad_tests))
 
         if missing_application_tests:
-            print ("\nFailed the following unit tests, in part or whole due "
-                   "to missing external applications.\nDepending on the "
-                   "Emperor features you plan to use, this may not be "
-                   "critical.\n%s" % '\n'.join(missing_application_tests))
+            print("\nFailed the following unit tests, in part or whole due "
+                  "to missing external applications.\nDepending on the "
+                  "Emperor features you plan to use, this may not be "
+                  "critical.\n%s" % '\n'.join(missing_application_tests))
 
         if not(missing_application_tests or bad_tests):
             print "\nAll unit tests passed.\n"
 
     if not suppress_script_usage_tests:
         if exists(emperor_test_data_dir) and exists(emperor_scripts_dir):
-            print ("\nScript usage test result summary"
-                   "\n--------------------------------\n")
+            print("\nScript usage test result summary"
+                  "\n--------------------------------\n")
             print script_usage_result_summary
         else:
-            print ("\nCould not run script usage tests.\nThe Emperor scripts "
-                   "directory could not be automatically located, try "
-                   "supplying it manually using the --emperor_scripts_dir "
-                   "option.")
+            print("\nCould not run script usage tests.\nThe Emperor scripts "
+                  "directory could not be automatically located, try "
+                  "supplying it manually using the --emperor_scripts_dir "
+                  "option.")
 
     if not suppress_javascript_unit_tests:
-        print ('\nJavaScript unit tests result summary\n'
-               '------------------------------------\n')
+        print('\nJavaScript unit tests result summary\n'
+              '------------------------------------\n')
         if javascript_tests_passed:
             print 'All JavaScript unit tests passed.\n'
         else:
@@ -213,7 +213,7 @@ def main():
     # In case there were no failures of any type, exit with a return code of 0
     return_code = 1
     if (len(bad_tests) == 0 and len(missing_application_tests) == 0 and
-       script_usage_failures == 0 and javascript_tests_passed):
+            script_usage_failures == 0 and javascript_tests_passed):
         return_code = 0
 
     return return_code
