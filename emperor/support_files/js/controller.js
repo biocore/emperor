@@ -462,13 +462,22 @@ define([
       }
     });
 
-    // Add shift+right click as the trigger for the context menu
-    this.$plotSpace.on('contextmenu', function(e) {
-      if (e.shiftKey) {
-        var contextDiv = $('#' + scope.$divId.attr('id') +
-                           ' .emperor-plot-wrapper');
-        contextDiv.contextMenu({x: e.pageX, y: e.pageY});
-      }
+    // The context menu is only shown if there's a single right click. We
+    // intercept the clicking event and if it's followed by mouseup event then
+    // the context menu is shown, otherwise the event is sent to the THREE.js
+    // orbit controls callback. See: http://stackoverflow.com/a/20831728
+    this.$plotSpace.on('mousedown', function (evt) {
+      scope.$plotSpace.on('mouseup mousemove', function handler(evt) {
+        if (evt.type === 'mouseup') {
+          // 3 is the right click
+          if (evt.which === 3) {
+            var contextDiv = $('#' + scope.$divId.attr('id') +
+                               ' .emperor-plot-wrapper');
+            contextDiv.contextMenu({x: evt.pageX, y: evt.pageY});
+          }
+        }
+        scope.$plotSpace.off('mouseup mousemove', handler);
+      });
     });
   };
 
