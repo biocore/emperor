@@ -79,6 +79,15 @@ class Emperor(object):
         the resources from the GitHub repository. This parameter defaults to
         ``True``. See the Notes section for more information.
 
+    Attributes
+    ----------
+    width: str
+        Width of the plot when displayed in the Jupyter notebook (in CSS
+        units).
+    height: str
+        Height of the plot when displayed in the Jupyter notebook (in CSS
+        units).
+
     Examples
     --------
     Create an Emperor object and display it from the Jupyter notebook:
@@ -191,6 +200,11 @@ class Emperor(object):
         else:
             raise ValueError("Unsupported type for `remote` argument, should "
                              "be a bool or str")
+
+        # dimensions for the div containing the plot in the context of the
+        # Jupyter notebook, can be a "percent" or "number of pixels".
+        self.width = '100%'
+        self.height = '500px'
 
     def __str__(self):
         return self.make_emperor()
@@ -327,6 +341,8 @@ class Emperor(object):
                                     plot_id=plot_id,
                                     logic_template_path=basename(LOGIC_PATH),
                                     style_template_path=basename(STYLE_PATH),
-                                    axes_names=names)
+                                    axes_names=names,
+                                    width=self.width,
+                                    height=self.height)
 
         return plot

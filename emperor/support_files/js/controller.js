@@ -466,7 +466,7 @@ define([
     // intercept the clicking event and if it's followed by mouseup event then
     // the context menu is shown, otherwise the event is sent to the THREE.js
     // orbit controls callback. See: http://stackoverflow.com/a/20831728
-    this.$plotSpace.on('mousedown', function (evt) {
+    this.$plotSpace.on('mousedown', function(evt) {
       scope.$plotSpace.on('mouseup mousemove', function handler(evt) {
         if (evt.type === 'mouseup') {
           // 3 is the right click

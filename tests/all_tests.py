@@ -145,5 +145,6 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
 
     exit(return_code)
 
+
 if __name__ == "__main__":
     test()
