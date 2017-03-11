@@ -272,6 +272,7 @@ class TopLevelTests(TestCase):
                     self.lineages_broken, self.coords,
                     self.coords_header, 4)
 
+
 OTU_TABLE = ''.join([
     '\t'.join(['Taxon', 'PC.636', 'PC.635',
                'PC.356', 'PC.481', 'PC.354',
