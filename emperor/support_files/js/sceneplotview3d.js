@@ -672,5 +672,23 @@ define([
     }
   };
 
+  /**
+   *
+   * Recenter the position of the camera to the initial default.
+   *
+   */
+  ScenePlotView3D.prototype.recenterCamera = function() {
+    this.control.update();
+    this.camera.rotation.set(0, 0, 0);
+    this.camera.updateProjectionMatrix();
+
+    // reset the position of the this view
+    var max = _.max(this.dimensionRanges.max);
+
+    // 5 is inspired by the old emperor.js and by the init method of this class
+    this.camera.position.set(0, 0, max * 5);
+    this.needsUpdate = true;
+  };
+
   return ScenePlotView3D;
 });
