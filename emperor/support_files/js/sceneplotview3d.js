@@ -401,18 +401,12 @@ define([
 
     this._dimensionsIterator(function(start, end, index) {
 
-      // construct a label of the format: AbbNam (xx.xx %)
-      if (decomp.abbreviatedName !== '') {
-        text = decomp.abbreviatedName;
+      // when the labels get too long, it's a bit hard to look at
+      if (decomp.axesNames[index].length > 25) {
+        text = decomp.axesNames[index].slice(0, 20) + '...';
       }
       else {
-        // when the labels get too long, it's a bit hard to look at
-        if (decomp.axesNames[index].length > 25) {
-          text = decomp.axesNames[index].slice(0, 20) + '...';
-        }
-        else {
-          text = decomp.axesNames[index];
-        }
+        text = decomp.axesNames[index];
       }
 
       // account for custom axes (their percentage explained will be -1 to

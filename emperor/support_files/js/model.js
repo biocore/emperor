@@ -1,8 +1,9 @@
 define([
     'jquery',
-    'underscore'
+    'underscore',
+    'util'
 ],
-function($, _) {
+function($, _, util) {
   /**
    *
    * @class Plottable
@@ -143,11 +144,6 @@ function($, _) {
      * @type {string[]}
      */
     this.md_headers = md_headers;
-    /**
-     * Names of the axes in the ordination
-     * @type {string[]}
-     */
-    this.axesNames = axesNames === undefined ? [] : axesNames;
 
     /*
       Check that the number of coordinates set provided are the same as the
@@ -215,7 +211,28 @@ function($, _) {
                                     DecompositionModel._minMaxReduce,
                                     this.dimensionRanges);
 
+    /**
+     * Number of plottables in this decomposition model
+     * @type {integer}
+     */
     this.length = this.plottable.length;
+
+    /**
+     * Number of dimensions in this decomposition model
+     * @type {integer}
+     */
+    this.dimensions = this.dimensionRanges.min.length;
+
+    /**
+     * Names of the axes in the ordination
+     * @type {string[]}
+     */
+    this.axesNames = axesNames === undefined ? [] : axesNames;
+    // We call this after all the other attributes have been initialized so we
+    // can use that information safely. Fixes a problem with the ordination
+    // file format, see https://github.com/biocore/emperor/issues/562
+    this._fixAxesNames();
+
     // TODO:
     // this.edges = [];
     // this.plotEdge = false;
@@ -358,6 +375,51 @@ function($, _) {
 
     return accumulator;
   };
+
+  /**
+   *
+   * Fix the names of the axes.
+   *
+   * Account for missing axes names, and for uninformative names produced by
+   * scikit-bio. In both cases, if we have an abbreviated name, we will use
+   * that string as a prefix for the axes names.
+   *
+   **/
+  DecompositionModel.prototype._fixAxesNames = function() {
+    var expected = [], replacement = [], prefix, names, cast, i;
+
+    if (this.abbreviatedName === '') {
+      prefix = 'Axis ';
+    }
+    else {
+      prefix = this.abbreviatedName + ' ';
+    }
+
+    if (this.axesNames.length === 0) {
+      for (i = 0; i < this.dimensions; i++) {
+        replacement.push(prefix + (i+1));
+      }
+      this.axesNames = replacement;
+    }
+    else{
+      names = util.splitNumericValues(this.axesNames);
+
+      for (i = 0; i < names.numeric.length; i++) {
+        expected.push(i);
+
+        // don't zero-index, doesn't make sense for displaying purposes
+        replacement.push(prefix + (i + 1));
+      }
+
+      // to truly match scikit-bio's format, all the numeric names should come
+      // after the non-numeric names, and the numeric names should match the
+      // array of expected values.
+      if (_.isEqual(expected, names.numeric) &&
+          _.isEqual(this.axesNames, names.nonNumeric.concat(names.numeric))) {
+        this.axesNames = names.nonNumeric.concat(replacement);
+      }
+    }
+  }
 
   /**
    *
