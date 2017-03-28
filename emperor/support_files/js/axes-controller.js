@@ -39,7 +39,7 @@ define([
     colors += '</table>';
     this.$body.append(colors);
 
-    // the jupyter notebook add style on the tables, so remove it
+    // the jupyter notebook adds style on the tables, so remove it
     this.$body.find('tr').css('border', 'none');
     this.$body.find('td').css('border', 'none');
 
@@ -53,7 +53,7 @@ define([
                 clickoutFiresChange: true,
                 change: function(color) {
                   // We let the controller deal with the callback, the only
-                  // things we need are the name of the element triggerring
+                  // things we need are the name of the element triggering
                   // the color change and the color as an integer (note that
                   // we are parsing from a string hence we have to indicate
                   // the numerical base)
@@ -160,7 +160,7 @@ define([
 
     this.$header.append(this.$table);
 
-    // the jupyter notebook add style on the tables, so remove it
+    // the jupyter notebook adds style on the tables, so remove it
     this.$header.find('tr').css('border', 'none');
     this.$header.find('td').css('border', 'none');
   };
