@@ -51,6 +51,7 @@ define([
                 allowEmpty: false,
                 showInitial: true,
                 clickoutFiresChange: true,
+                hideAfterPaletteSelect:true,
                 change: function(color) {
                   // We let the controller deal with the callback, the only
                   // things we need are the name of the element triggering
