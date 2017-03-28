@@ -130,41 +130,79 @@ define([
     }
 
     var view = this.getView(), scope = this;
-    var percents = view.decomp.percExpl;
+    var $table = $('<table></table>'), $row, $td, widgets;
     var names = ['First', 'Second', 'Third'];
 
-    var table = '<table style="border:none;">';
-    table += '<col align="left"><col align="right"><col align="center">';
+    $table.css({'border': 'none',
+                'width': 'inherit',
+                'text-align': 'left',
+                'padding-bottom': '10%'});
+
+    $table.append('<tr><th>Axis</th><th>Visible</th><th>Invert</th></tr>');
+
     _.each(view.visibleDimensions, function(dimension, index) {
-      table += '<tr>';
+      widgets = scope._makeDimensionWidgets(index);
+
+      $row = $('<tr></tr>');
 
       // axis name
-      table += '<td>' + names[index] + ' Axis' + '</td>';
+      $row.append('<td>' + names[index] + '</td>');
 
-      // percentage of variation and name
-      table += '<td>PC ' + (dimension + 1) + ' - ' +
-               percents[dimension].toFixed(2) + '%</td>';
+      // visible dimension menu
+      $td = $('<td></td>');
+      $td.append(widgets.menu);
+      $row.append($td);
 
-      // whether or not the axis is flipped
-      table += '<td>Is' + (scope._flippedAxes[index] ? '' : ' Not') +
-               ' Flipped</td>';
+      // inverted checkbox
+      $td = $('<td></td>');
+      $td.append(widgets.checkbox);
+      $row.append($td);
 
-      table += '</tr>';
-
-    });
-    table += '</table>';
-
-    this.$table = $(table);
-    this.$table.css({'width': 'inherit',
-                     'padding-bottom': '10%'
+      $table.append($row);
     });
 
+    this.$table = $table;
     this.$header.append(this.$table);
 
     // the jupyter notebook adds style on the tables, so remove it
     this.$header.find('tr').css('border', 'none');
     this.$header.find('td').css('border', 'none');
   };
+
+  /**
+   *
+   *
+   *
+   */
+  AxesController.prototype._makeDimensionWidgets = function(position) {
+    var scope = this, $check, $menu;
+    var decomposition = scope.getView().decomp;
+    var visibleDimension = scope.getView().visibleDimensions[position];
+
+    $menu = $('<select>');
+    $check = $('<input type="checkbox">');
+
+    $check.prop('checked', scope._flippedAxes[visibleDimension]);
+
+    _.each(decomposition.axesNames, function(name, index) {
+      $menu.append($('<option>').attr('value', name).text(name));
+    });
+
+    $menu.on('change', function() {
+      var index = $(this).prop('selectedIndex');
+      scope.updateVisibleAxes(decomposition.axesNames[index], position);
+    });
+
+    $check.on('change', function() {
+      scope.flipAxis(visibleDimension);
+    });
+
+    $(function(){
+      $menu.val(decomposition.axesNames[visibleDimension]);
+    });
+
+    return {menu: $menu, checkbox: $check};
+  }
 
   /**
    * Method to build the scree plot and updates the interface appropriately.
