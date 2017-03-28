@@ -170,11 +170,18 @@ define([
   };
 
   /**
+   * Method to create dropdown menus and checkboxes
    *
+   * @param {Integer} position The position of the axis for which the widgets
+   * are being created.
    *
-   *
+   * @private
    */
   AxesController.prototype._makeDimensionWidgets = function(position) {
+    if (position > 2 || position < 0) {
+      throw Error('Cannot create widgets for position: ' + position);
+    }
+
     var scope = this, $check, $menu;
     var decomposition = scope.getView().decomp;
     var visibleDimension = scope.getView().visibleDimensions[position];
