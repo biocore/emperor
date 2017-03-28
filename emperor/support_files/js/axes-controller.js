@@ -175,9 +175,10 @@ define([
   AxesController.prototype._buildScreePlot = function() {
     var scope = this;
     var percents = this.getView().decomp.percExpl;
+    var names = this.getView().decomp.axesNames;
     percents = _.map(percents, function(val, index) {
       // +1 to account for zero-indexing
-      return {'axis': 'PC ' + (index + 1), 'percent': val,
+      return {'axis': names[index] + ' ', 'percent': val,
               'dimension-index': index};
     });
 
@@ -216,6 +217,10 @@ define([
       .append('g');
 
     this.$_screePlotContainer.height(height + margin.top + margin.bottom);
+
+    // Only keep dimensions resulting of an ordination i.e. with a positive
+    // percentage explained.
+    percents = percents.filter(function(x) { return x.percent >= 0; });
 
     // creation of the chart itself
     x.domain(percents.map(function(d) { return d.axis; }));
