@@ -397,11 +397,11 @@ function($, _, util) {
 
     if (this.axesNames.length === 0) {
       for (i = 0; i < this.dimensions; i++) {
-        replacement.push(prefix + (i+1));
+        replacement.push(prefix + (i + 1));
       }
       this.axesNames = replacement;
     }
-    else{
+    else {
       names = util.splitNumericValues(this.axesNames);
 
       for (i = 0; i < names.numeric.length; i++) {
@@ -419,7 +419,7 @@ function($, _, util) {
         this.axesNames = names.nonNumeric.concat(replacement);
       }
     }
-  }
+  };
 
   /**
    *
