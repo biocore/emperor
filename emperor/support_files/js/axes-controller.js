@@ -189,7 +189,8 @@ define([
     $menu = $('<select>');
     $check = $('<input type="checkbox">');
 
-    $check.prop('checked', scope._flippedAxes[visibleDimension]);
+    // if the axis is flipped, then show the checkmark
+    $check.prop('checked', scope._flippedAxes[position]);
 
     _.each(decomposition.axesNames, function(name, index) {
       $menu.append($('<option>').attr('value', name).text(name));
@@ -197,7 +198,7 @@ define([
 
     $menu.on('change', function() {
       var index = $(this).prop('selectedIndex');
-      scope.updateVisibleAxes(decomposition.axesNames[index], position);
+      scope.updateVisibleAxes(index, position);
     });
 
     $check.on('change', function() {
