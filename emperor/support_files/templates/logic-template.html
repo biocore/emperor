@@ -97,21 +97,29 @@ function($, model, EmperorController) {
 
   var div = $('#{{ plot_id }}');
 
-  var ids = {{ coords_ids }};
-  var coords = {{ coords }};
-  var pct_var = {{ pct_var | map('float') | list }};
-  var md_headers = {{ md_headers}};
-  var metadata = {{  metadata }};
-  var axesNames = {{ axes_names }};
+  var data = {
+    // coordinates information
+    'sample_ids': {{ coords_ids | tojson }},
+    'coordinates': {{ coords | tojson }},
+    'axes_names': {{ axes_names | tojson }},
+    'percents_explained': {{ pct_var | tojson }},
+
+    // sample information
+    'metadata_headers': {{ md_headers | tojson }},
+    'metadata': {{ metadata | tojson }}
+  }
 
   var dm, ec;
 
   function init() {
     // Initialize the DecompositionModel
-    dm = new DecompositionModel(name, ids, coords, pct_var,
-                                md_headers, metadata, axesNames);
+    dm = new DecompositionModel('', data['sample_ids'],
+                                data['coordinates'],
+                                data['percents_explained'],
+                                data['metadata_headers'], data['metadata'],
+                                data['axes_names']);
     // Initialize the EmperorController
-    ec = new EmperorController(dm, '{{ plot_id }}');
+    ec = new EmperorController(dm, {{ plot_id | tojson }});
   }
 
   function animate() {
