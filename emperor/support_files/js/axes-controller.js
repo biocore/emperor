@@ -320,61 +320,6 @@ define([
       .style('shape-rendering', 'crispEdges');
 
     this.screePlot = svg;
-
-    // This function creates a function callbacks
-    //
-    // The rationale to create this function, was to deal with the fact that
-    // three of the 'context menu' options had the same behaviour, otherwise
-    // we would have had to repeat the code in the returned function.
-    //
-    var callbackFactory = function(callBackIndex) {
-      return (function(key, opts) {
-        var index = parseInt($(this).attr('dimension-index'));
-        scope.updateVisibleAxes(index, callBackIndex);
-      });
-    };
-
-    /*
-      Once we have created the plot, we bind each of the bars to a context
-      menu, hence the selector searches for all the 'rect' tags inside the
-      controller's div.
-
-      The functionality itself is rather simple, each of the options in the
-      context menu allows the user to select the clicked bar as the first,
-      second or third visible axis. With each of these changes, we re-build the
-      display table to reflect the currently visible data (see
-      callbackFactory).
-
-      Finally, there is one option that allows users to reorient the
-      coordinates for that axis.
-     */
-    $.contextMenu({
-      selector: '#' + this.identifier + ' rect',
-      trigger: 'left',
-      items: {
-        'first-axis': {
-          name: 'Set as first axis',
-          callback: callbackFactory(0)
-        },
-        'second-axis': {
-          name: 'Set as second axis',
-          callback: callbackFactory(1)
-        },
-        'third-axis': {
-          name: 'Set as third axis',
-          callback: callbackFactory(2)
-        },
-        'sep1': '---------',
-        'flip-axis': {
-          icon: 'exchange',
-          name: 'Flip axis orientation',
-          callback: function(key, opts) {
-            var index = parseInt($(this).attr('dimension-index'));
-            scope.flipAxis(index);
-          }
-        }
-      }
-    });
   };
 
   /**
