@@ -298,8 +298,13 @@ class Emperor(object):
 
         # format the coordinates
         d = self.dimensions
+
+        # normalize the coordinates
+        coords = self.ordination.samples.values[:, :d]
+        coords /= np.max(np.abs(coords))
+
         pct_var = (self.ordination.proportion_explained[:d] * 100).tolist()
-        coords = self.ordination.samples.values[:, :d].tolist()
+        coords = coords.tolist()
         names = self.ordination.samples.columns[:d].tolist()
 
         # avoid unicode strings
