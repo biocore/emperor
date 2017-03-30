@@ -504,11 +504,6 @@ define([
     type = type || 'png';
 
     if (type === 'png') {
-      // Render all scenes so it's rendered in same context as save
-      for (var i = 0; i < this.sceneViews.length; i++) {
-        this.sceneViews[i].render();
-      }
-
       var pngRenderer = new THREE.CanvasRenderer({antialias: true,
                                                   preserveDrawingBuffer: true});
       pngRenderer.autoClear = true;
@@ -522,7 +517,7 @@ define([
       // toBlob is only available in some browsers, that's why we use
       // canvas-toBlob
       pngRenderer.domElement.toBlob(function(blob) {
-        saveAs(blob, "emperor.png");
+        saveAs(blob, 'emperor.png');
       });
     }
     else if (type === 'svg') {
@@ -579,12 +574,17 @@ define([
         names.push(element.category);
         colors.push(element.value);
       });
-      var blob = new Blob([Draw.formatSVGLegend(names, colors)],
-                          {type: 'image/svg+xml'});
+      blob = new Blob([Draw.formatSVGLegend(names, colors)],
+                      {type: 'image/svg+xml'});
       saveAs(blob, 'emperor-image-labels.svg');
     } else {
-      console.error();('Screenshot type not implemented');
+      console.error('Screenshot type not implemented');
     }
+
+    // re-render everything, sometimes after saving objects, the colors change
+    this.sceneViews.forEach(function(view) {
+      view.needsUpdate = true;
+    });
   };
 
   /**

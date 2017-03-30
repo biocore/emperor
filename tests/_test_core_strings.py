@@ -95,6 +95,7 @@ requirejs.config({
   'chroma': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chroma.min',
   'filesaver': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/FileSaver.min',
   'blob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/Blob',
+  'canvastoblob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/canvas-ToBlob',
   'd3': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/d3.min',
 
   /* THREE.js and plugins */
@@ -102,6 +103,7 @@ requirejs.config({
   'orbitcontrols': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/OrbitControls',
   'projector': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/Projector',
   'svgrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SVGRenderer',
+  'canvasrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/CanvasRenderer',
 
   /* SlickGrid */
   'slickcore': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.core.min',
@@ -146,6 +148,9 @@ requirejs.config({
   'filesaver' : {
     'deps': ['blob']
   },
+  'canvastoblob' : {
+    'deps': ['blob']
+  },
   'orbitcontrols': {
     'deps': ['three']
   },
@@ -153,6 +158,9 @@ requirejs.config({
     'deps': ['three']
   },
   'svgrenderer': {
+    'deps': ['orbitcontrols', 'projector']
+  },
+  'canvasrenderer': {
     'deps': ['orbitcontrols', 'projector']
   },
 'slickcore': ['jqueryui'],
@@ -267,6 +275,7 @@ requirejs.config({
   'chroma': './some-local-path//vendor/js/chroma.min',
   'filesaver': './some-local-path//vendor/js/FileSaver.min',
   'blob': './some-local-path//vendor/js/Blob',
+  'canvastoblob': './some-local-path//vendor/js/canvas-ToBlob',
   'd3': './some-local-path//vendor/js/d3.min',
 
   /* THREE.js and plugins */
@@ -274,6 +283,7 @@ requirejs.config({
   'orbitcontrols': './some-local-path//vendor/js/three.js-plugins/OrbitControls',
   'projector': './some-local-path//vendor/js/three.js-plugins/Projector',
   'svgrenderer': './some-local-path//vendor/js/three.js-plugins/SVGRenderer',
+  'canvasrenderer': './some-local-path//vendor/js/three.js-plugins/CanvasRenderer',
 
   /* SlickGrid */
   'slickcore': './some-local-path//vendor/js/slick.core.min',
@@ -318,6 +328,9 @@ requirejs.config({
   'filesaver' : {
     'deps': ['blob']
   },
+  'canvastoblob' : {
+    'deps': ['blob']
+  },
   'orbitcontrols': {
     'deps': ['three']
   },
@@ -325,6 +338,9 @@ requirejs.config({
     'deps': ['three']
   },
   'svgrenderer': {
+    'deps': ['orbitcontrols', 'projector']
+  },
+  'canvasrenderer': {
     'deps': ['orbitcontrols', 'projector']
   },
 'slickcore': ['jqueryui'],
@@ -418,6 +434,7 @@ requirejs.config({
   'chroma': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chroma.min',
   'filesaver': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/FileSaver.min',
   'blob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/Blob',
+  'canvastoblob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/canvas-ToBlob',
   'd3': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/d3.min',
 
   /* THREE.js and plugins */
@@ -425,6 +442,7 @@ requirejs.config({
   'orbitcontrols': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/OrbitControls',
   'projector': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/Projector',
   'svgrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SVGRenderer',
+  'canvasrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/CanvasRenderer',
 
   /* SlickGrid */
   'slickcore': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.core.min',
@@ -469,6 +487,9 @@ requirejs.config({
   'filesaver' : {
     'deps': ['blob']
   },
+  'canvastoblob' : {
+    'deps': ['blob']
+  },
   'orbitcontrols': {
     'deps': ['three']
   },
@@ -476,6 +497,9 @@ requirejs.config({
     'deps': ['three']
   },
   'svgrenderer': {
+    'deps': ['orbitcontrols', 'projector']
+  },
+  'canvasrenderer': {
     'deps': ['orbitcontrols', 'projector']
   },
 'slickcore': ['jqueryui'],
