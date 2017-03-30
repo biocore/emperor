@@ -52,8 +52,20 @@ class TopLevelTests(TestCase):
             if exists(path):
                 rmtree(path)
 
+    def test_dimensions(self):
+        emp = Emperor(self.ord_res, self.mf)
+        emp.width = '111px'
+        emp.height = '111px'
+
+        self.assertEqual(emp.width, '111px')
+        self.assertEqual(emp.height, '111px')
+
     def test_str(self):
         emp = Emperor(self.ord_res, self.mf)
+
+        self.assertEqual(emp.width, '100%')
+        self.assertEqual(emp.height, '500px')
+
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
                                        '/new-api/emperor/support_files')
 
