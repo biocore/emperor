@@ -298,9 +298,14 @@ class Emperor(object):
 
         # format the coordinates
         d = self.dimensions
-        pct_var = (self.ordination.proportion_explained[:d] * 100).tolist()
+
+        # convert to a list from the values property as old versions of pandas
+        # do not convert the elements of the Series/DataFrames to the nearest
+        # python type, causing errors when seralizing to JSON.
+        pct_var = (self.ordination.proportion_explained[:d] * 100)
+        pct_var = pct_var.values.tolist()
         coords = self.ordination.samples.values[:, :d].tolist()
-        names = self.ordination.samples.columns[:d].tolist()
+        names = self.ordination.samples.columns[:d].values.tolist()
 
         # avoid unicode strings
         coord_ids = list(map(str, self.mf.index.tolist()))
