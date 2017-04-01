@@ -78,12 +78,14 @@
           'd3': './vendor/js/d3.min',
           'filesaver': './vendor/js/FileSaver.min',
           'blob': './vendor/js/Blob',
+          'canvastoblob': './vendor/js/canvas-toBlob',
 
           /* THREE.js and plugins */
           'three': './vendor/js/three.min',
           'orbitcontrols': './vendor/js/three.js-plugins/OrbitControls',
           'projector': './vendor/js/three.js-plugins/Projector',
           'svgrenderer': './vendor/js/three.js-plugins/SVGRenderer',
+          'canvasrenderer': './vendor/js/three.js-plugins/CanvasRenderer',
 
           /* SlickGrid */
           'slickcore': './vendor/js/slick.core.min',
@@ -147,6 +149,9 @@
           'filesaver' : {
             'deps': ['blob']
           },
+          'canvastoblob' : {
+            'deps': ['blob']
+          },
           'orbitcontrols': {
             'deps': ['three']
           },
@@ -154,6 +159,9 @@
             'deps': ['three']
           },
           'svgrenderer': {
+            'deps': ['orbitcontrols', 'projector']
+          },
+          'canvasrenderer': {
             'deps': ['orbitcontrols', 'projector']
           },
         'slickcore': ['jqueryui'],
@@ -189,7 +197,7 @@
                       scaleviewcontroller, scaleeditor, controller,
                       draw, model, scene3d, trajectory, util, view,
                       abcviewcontroller, viewcontroller, visibilitycontroller,
-                      shapeeditor, shapes,
+                      shapeeditor, shapes, canvastoblob, canvasrenderer,
 
                       // test suites
                       test_plottable, test_decomposition_model,

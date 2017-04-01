@@ -102,7 +102,7 @@ define(['underscore', 'three'], function(_, THREE) {
     canvas.width = size;
     canvas.height = size;
     var context = canvas.getContext('2d');
-    context.fillStyle = '#ffffff';
+    context.fillStyle = '#' + color.toString(16);
     context.textAlign = 'center';
     context.font = (30 * factor) + 'px Arial';
     context.fillText(text, size / 2, size / 2);
