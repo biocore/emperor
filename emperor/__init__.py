@@ -33,11 +33,14 @@ Functions
 #
 # The full license is in the file LICENSE.md, distributed with this software.
 # ----------------------------------------------------------------------------
-__version__ = "1.0.0beta5"  # noqa
+
+import pkg_resources
 
 from emperor.core import Emperor
 from emperor._pandas import scatterplot
 from emperor.util import nbinstall
+
+__version__ = pkg_resources.get_distribution('emperor').version
 
 __all__ = ['Emperor', 'scatterplot', 'biplots', 'format', 'filter', 'parse',
            'sort', 'util', 'nbinstall']
