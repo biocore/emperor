@@ -142,9 +142,6 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.ord_res, self.mf)
         obs = emp.make_emperor(custom_axes=['DOB'])
 
-        with open('test.txt', 'w') as f:
-            f.write(obs)
-
         try:
             self.assertItemsEqual(tcs.HTML_STRING_CUSTOM_AXES.split('\n'),
                                   obs.split('\n'))

@@ -302,10 +302,14 @@ class Emperor(object):
         # normalize the coordinates
         coords = self.ordination.samples.values[:, :d]
         coords /= np.max(np.abs(coords))
-
-        pct_var = (self.ordination.proportion_explained[:d] * 100).tolist()
         coords = coords.tolist()
-        names = self.ordination.samples.columns[:d].tolist()
+
+        # convert to a list from the values property as old versions of pandas
+        # do not convert the elements of the Series/DataFrames to the nearest
+        # python type, causing errors when seralizing to JSON.
+        pct_var = (self.ordination.proportion_explained[:d] * 100)
+        pct_var = pct_var.values.tolist()
+        names = self.ordination.samples.columns[:d].values.tolist()
 
         # avoid unicode strings
         coord_ids = list(map(str, self.mf.index.tolist()))
