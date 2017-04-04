@@ -726,7 +726,7 @@ def resolve_stable_url(version, base_url):
     str
         A URL that points to the emperor's resources.
     """
-    if version.endswith("dev"):
+    if 'dev' in version:
         # this will need to be fixed when new-api is merged to master
         return base_url % 'new-api'
     else:

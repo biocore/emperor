@@ -571,6 +571,11 @@ class TopLevelTests(TestCase):
         obs = resolve_stable_url('1.0.0b7-dev', url)
         self.assertEqual(obs, url % 'new-api')
 
+    def test_resolve_stable_url_development_number(self):
+        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        obs = resolve_stable_url('1.0.0b7-dev0', url)
+        self.assertEqual(obs, url % 'new-api')
+
 
 MAPPING_FILE_DATA = [
     ['PC.354', 'AGCACGAGCCTA', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218',
