@@ -95,7 +95,7 @@ requirejs.config({
   'chroma': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chroma.min',
   'filesaver': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/FileSaver.min',
   'blob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/Blob',
-  'canvastoblob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/canvas-ToBlob',
+  'canvastoblob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/canvas-toBlob',
   'd3': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/d3.min',
 
   /* THREE.js and plugins */
@@ -283,7 +283,7 @@ requirejs.config({
   'chroma': './some-local-path//vendor/js/chroma.min',
   'filesaver': './some-local-path//vendor/js/FileSaver.min',
   'blob': './some-local-path//vendor/js/Blob',
-  'canvastoblob': './some-local-path//vendor/js/canvas-ToBlob',
+  'canvastoblob': './some-local-path//vendor/js/canvas-toBlob',
   'd3': './some-local-path//vendor/js/d3.min',
 
   /* THREE.js and plugins */
@@ -450,7 +450,7 @@ requirejs.config({
   'chroma': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chroma.min',
   'filesaver': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/FileSaver.min',
   'blob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/Blob',
-  'canvastoblob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/canvas-ToBlob',
+  'canvastoblob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/canvas-toBlob',
   'd3': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/d3.min',
 
   /* THREE.js and plugins */
