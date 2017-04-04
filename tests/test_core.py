@@ -46,8 +46,8 @@ class TopLevelTests(TestCase):
         self.files_to_remove = []
 
         # note that we don't test with remote=True because the url is resolved
-        # by emperor.util.resolve_stable_url, so it is bound to change depending
-        # on the environment executing the test
+        # by emperor.util.resolve_stable_url, so it is bound to change
+        # depending on the environment executing the test
         self.url = ('https://cdn.rawgit.com/biocore/emperor/new-api/emperor/'
                     'support_files')
 

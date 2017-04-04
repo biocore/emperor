@@ -720,7 +720,6 @@ def resolve_stable_url(version, base_url):
     base_url : str
         The URL where we pull resources from.
 
-
     Returns
     -------
     str
