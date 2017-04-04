@@ -21,7 +21,8 @@ from emperor.util import (keep_columns_from_mapping_file,
                           EmperorInputFilesError,
                           fill_mapping_field_from_mapping_file,
                           sanitize_mapping_file, guess_coordinates_files,
-                          nbinstall, validate_and_process_custom_axes)
+                          nbinstall, validate_and_process_custom_axes,
+                          resolve_stable_url)
 
 
 class TopLevelTests(TestCase):
@@ -559,6 +560,16 @@ class TopLevelTests(TestCase):
 
         with self.assertRaises(ValueError):
             validate_and_process_custom_axes(mf, ['louie', 'dewey'])
+
+    def test_resolve_stable_url_release(self):
+        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        obs = resolve_stable_url('1.0.0b7', url)
+        self.assertEqual(obs, url % '1.0.0-beta.7')
+
+    def test_resolve_stable_url_development(self):
+        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        obs = resolve_stable_url('1.0.0b7-dev', url)
+        self.assertEqual(obs, url % 'new-api')
 
 
 MAPPING_FILE_DATA = [

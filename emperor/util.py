@@ -704,3 +704,33 @@ def validate_and_process_custom_axes(mf, custom_axes):
         mf[axis] = temp
 
     return mf
+
+
+def resolve_stable_url(version, base_url):
+    """Resolve a stable URL for release versions of Emperor
+
+    If the plot is produced using a release version of Emperor, then we
+    point the URL to the release version, otherwise we point to the
+    development version of Emperor.
+
+    Parameters
+    ----------
+    version : str
+        Current version of emperor.
+    base_url : str
+        The URL where we pull resources from.
+
+
+    Returns
+    -------
+    str
+        A URL that points to the emperor's resources.
+    """
+    if version.endswith("dev"):
+        # this will need to be fixed when new-api is merged to master
+        return base_url % 'new-api'
+    else:
+        # version names are changed for git tags from betaxx to -beta.xx
+        if 'b' in version:
+            version = version.replace('b', '-beta.')
+        return base_url % version
