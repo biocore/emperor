@@ -26,6 +26,7 @@ from __future__ import division
 from os.path import join, basename
 from distutils.dir_util import copy_tree
 import numpy as np
+import pandas as pd
 
 from jinja2 import FileSystemLoader
 from jinja2.environment import Environment
@@ -206,6 +207,13 @@ class Emperor(object):
         self.width = '100%'
         self.height = '500px'
 
+        self.settings = {}
+
+        self.color = None
+        self.visibility = None
+        self.scale = None
+        self.shape = None
+
     def __str__(self):
         return self.make_emperor()
 
@@ -355,3 +363,91 @@ class Emperor(object):
                                     height=self.height)
 
         return plot
+
+    def _base_data_checks(self, category, data, data_type):
+
+        if not isinstance(category, str):
+            raise TypeError('Metadata category must be a string')
+
+        if category not in self.mf.columns:
+            raise KeyError('The category %s is not present in your metadata')
+
+        if data is not None:
+            if isinstance(data, pd.Series):
+                data = data.to_dict()
+
+            present = set(self.mf[category].value_counts().index)
+            given = set(data.keys())
+
+            if present.issubset(given):
+                raise ValueError('More categories present in the provided '
+                                 'data')
+            elif given.issubset(present):
+                raise ValueError('Some categories are not present in the '
+                                 'provided data')
+            else:
+                if not all(isinstance(k, data_type) for k in data.values()):
+                    raise TypeError('Values in the provided data must be '
+                                    'of type %s' % data_type)
+        else:
+            data = {}
+
+        return data
+
+    def color_by(self, category, data=None, colormap=None, continuous=False):
+        # first get the colors for the colormap
+        data = self._base_data_checks(category, data, str)
+
+        if colormap is None:
+            colormap = 'default-qiime-colors'
+        elif not isinstance(colormap, str):
+            raise TypeError('The colormap argument must be a string')
+
+        self.settings.update({"color": {
+            "category": category,
+            "colormap": colormap,
+            "continuous": continuous,
+            "data": data
+        }})
+
+    def vsibility_by(self, category, visibilities):
+        self._base_data_checks(category, visibilities)
+
+    def scale_by(self, category, scales):
+        self._base_data_checks(category, scales)
+
+    def shape_by(self, category, shapes):
+        self._base_data_checks(category, shapes)
+
+    def default_by(self, type, category):
+        pass
+
+    def _set_settings_data(self, settings):
+        pass
+
+    def _get_settings_data(self):
+        pass
+
+    # def _get_default_settings(self):
+    #     self.settings = {
+    #         "color": {
+    #         "category": None,
+    #         "colormap": "discrete-coloring-qiime",
+    #         "continuous": False,
+    #         "data": {}
+    #         },
+    #         "scale": {
+    #             "category": None,
+    #             "data": {},
+    #             "globalScale": "1.0",
+    #             "scaleVal": False
+    #         },
+    #         "shape": {
+    #             "category": None,
+    #             "data": {}
+    #         },
+    #         "visibility": {
+    #             "category": False,
+    #             "data": {}
+    #         }
+    #         }

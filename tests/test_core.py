@@ -60,11 +60,12 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.width, '111px')
         self.assertEqual(emp.height, '111px')
 
-    def test_str(self):
+    def test_initial(self):
         emp = Emperor(self.ord_res, self.mf)
 
         self.assertEqual(emp.width, '100%')
         self.assertEqual(emp.height, '500px')
+        self.assertEqual(emp.settings, {})
 
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
                                        '/new-api/emperor/support_files')
@@ -155,6 +156,130 @@ class TopLevelTests(TestCase):
 
         with self.assertRaises(KeyError):
             emp.make_emperor(custom_axes=[':L'])
+
+    def test_color_by_category(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        emp.color_by('DOB')
+        exp = {'color': {"category": 'DOB',
+                         "colormap": 'default-qiime-colors',
+                         "continuous": False,
+                         "data": {}
+                         }
+               }
+        self.assertEqual(emp.settings['color'], exp['color'])
+
+    def test_color_by_category_and_colormap(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        emp.color_by('DOB', colormap='Dark2')
+        exp = {'color': {"category": 'DOB',
+                         "colormap": 'Dark2',
+                         "continuous": False,
+                         "data": {}
+                         }
+               }
+        self.assertEqual(emp.settings['color'], exp['color'])
+
+    def test_color_by_category_continuous(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        emp.color_by('Treatment', colormap='Dark2', continuous=True)
+        exp = {'color': {"category": 'Treatment',
+                         "colormap": 'Dark2',
+                         "continuous": True,
+                         "data": {}
+                         }
+               }
+        self.assertEqual(emp.settings['color'], exp['color'])
+
+    def test_color_by_category_with_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+        data = {'20061126': '#ff00ff', '20061218': '#ff0000',
+                '20070314': '#00000f', '20071112': '#ee00ee',
+                '20071210': '#0000fa', '20080116': '#dedede'}
+
+        emp.color_by('Treatment', data=data, colormap='Dark2', continuous=True)
+        exp = {'color': {"category": 'Treatment',
+                         "colormap": 'Dark2',
+                         "continuous": True,
+                         "data": {'20061126': '#ff00ff',
+                                  '20061218': '#ff0000',
+                                  '20070314': '#00000f',
+                                  '20071112': '#ee00ee',
+                                  '20071210': '#0000fa',
+                                  '20080116': '#dedede'
+                                  }
+                         }
+               }
+        self.assertEqual(emp.settings['color'], exp['color'])
+
+    def test_color_by_category_with_data_series(self):
+        emp = Emperor(self.ord_res, self.mf)
+        data = {'20061126': '#ff00ff', '20061218': '#ff0000',
+                '20070314': '#00000f', '20071112': '#ee00ee',
+                '20071210': '#0000fa', '20080116': '#dedede'}
+        data = pd.Series(data)
+
+        emp.color_by('Treatment', data=data, colormap='Dark2', continuous=True)
+        exp = {'color': {"category": 'Treatment',
+                         "colormap": 'Dark2',
+                         "continuous": True,
+                         "data": {'20061126': '#ff00ff',
+                                  '20061218': '#ff0000',
+                                  '20070314': '#00000f',
+                                  '20071112': '#ee00ee',
+                                  '20071210': '#0000fa',
+                                  '20080116': '#dedede'
+                                  }
+                         }
+               }
+        self.assertEqual(emp.settings['color'], exp['color'])
+
+    def test_color_by_category_with_invalid_more_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        data = {'20061126': '#ff00ff', '20061218': '#ff0000',
+                '20070314': '#00000f', '20071112': '#ee00ee',
+                '20071210': '#0000fa', '20080116': '#dedede', 'foo': '#ff00fb'}
+        with self.assertRaises(ValueError):
+            emp.color_by('DOB', data=data)
+
+    def test_color_by_category_with_invalid_less_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+        data = {'20061126': '#ff00ff', '20061218': '#ff0000',
+                '20070314': '#00000f', '20071112': '#ee00ee',
+                '20071210': '#0000fa', '20080116': '#dedede'}
+        del data['20071210']
+        with self.assertRaises(ValueError):
+            emp.color_by('DOB', data=data)
+
+    def test_color_by_category_does_not_exist(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(KeyError):
+            emp.color_by('Boaty McBoatFace')
+
+    def test_color_by_category_not_str(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(TypeError):
+            emp.color_by([])
+
+        with self.assertRaises(TypeError):
+            emp.color_by(11)
+
+    def test_color_by_colormap_not_str(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(TypeError):
+            emp.color_by('DOB', colormap=11)
+
+        with self.assertRaises(TypeError):
+            emp.color_by('DOB', colormap=[])
+
+        with self.assertRaises(TypeError):
+            emp.color_by('DOB', colormap=(1, 2))
 
 
 if __name__ == "__main__":
