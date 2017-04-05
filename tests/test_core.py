@@ -214,61 +214,6 @@ class TopLevelTests(TestCase):
                }
         self.assertEqual(emp.settings['color'], exp['color'])
 
-    def test_color_by_category_with_data_series(self):
-        emp = Emperor(self.ord_res, self.mf)
-        data = {'20061126': '#ff00ff', '20061218': '#ff0000',
-                '20070314': '#00000f', '20071112': '#ee00ee',
-                '20071210': '#0000fa', '20080116': '#dedede'}
-        data = pd.Series(data)
-
-        emp.color_by('Treatment', data=data, colormap='Dark2', continuous=True)
-        exp = {'color': {"category": 'Treatment',
-                         "colormap": 'Dark2',
-                         "continuous": True,
-                         "data": {'20061126': '#ff00ff',
-                                  '20061218': '#ff0000',
-                                  '20070314': '#00000f',
-                                  '20071112': '#ee00ee',
-                                  '20071210': '#0000fa',
-                                  '20080116': '#dedede'
-                                  }
-                         }
-               }
-        self.assertEqual(emp.settings['color'], exp['color'])
-
-    def test_color_by_category_with_invalid_more_data(self):
-        emp = Emperor(self.ord_res, self.mf)
-
-        data = {'20061126': '#ff00ff', '20061218': '#ff0000',
-                '20070314': '#00000f', '20071112': '#ee00ee',
-                '20071210': '#0000fa', '20080116': '#dedede', 'foo': '#ff00fb'}
-        with self.assertRaises(ValueError):
-            emp.color_by('DOB', data=data)
-
-    def test_color_by_category_with_invalid_less_data(self):
-        emp = Emperor(self.ord_res, self.mf)
-        data = {'20061126': '#ff00ff', '20061218': '#ff0000',
-                '20070314': '#00000f', '20071112': '#ee00ee',
-                '20071210': '#0000fa', '20080116': '#dedede'}
-        del data['20071210']
-        with self.assertRaises(ValueError):
-            emp.color_by('DOB', data=data)
-
-    def test_color_by_category_does_not_exist(self):
-        emp = Emperor(self.ord_res, self.mf)
-
-        with self.assertRaises(KeyError):
-            emp.color_by('Boaty McBoatFace')
-
-    def test_color_by_category_not_str(self):
-        emp = Emperor(self.ord_res, self.mf)
-
-        with self.assertRaises(TypeError):
-            emp.color_by([])
-
-        with self.assertRaises(TypeError):
-            emp.color_by(11)
-
     def test_color_by_colormap_not_str(self):
         emp = Emperor(self.ord_res, self.mf)
 
@@ -280,6 +225,57 @@ class TopLevelTests(TestCase):
 
         with self.assertRaises(TypeError):
             emp.color_by('DOB', colormap=(1, 2))
+
+    def test_base_data_checks(self):
+        emp = Emperor(self.ord_res, self.mf)
+        data = {'20061126': '#ff00ff', '20061218': '#ff0000',
+                '20070314': '#00000f', '20071112': '#ee00ee',
+                '20071210': '#0000fa', '20080116': '#dedede'}
+        obs = emp._base_data_checks('DOB', data, str)
+        self.assertEqual(obs, data)
+
+    def test_base_data_checks_with_data_series(self):
+        emp = Emperor(self.ord_res, self.mf)
+        exp = {'20061126': '#ff00ff', '20061218': '#ff0000',
+               '20070314': '#00000f', '20071112': '#ee00ee',
+               '20071210': '#0000fa', '20080116': '#dedede'}
+        data = pd.Series(exp)
+
+        obs = emp._base_data_checks('DOB', data, str)
+        self.assertEqual(obs, exp)
+
+    def test_base_data_checks_category_with_invalid_more_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        data = {'20061126': '#ff00ff', '20061218': '#ff0000',
+                '20070314': '#00000f', '20071112': '#ee00ee',
+                '20071210': '#0000fa', '20080116': '#dedede', 'foo': '#ff00fb'}
+        with self.assertRaises(ValueError):
+            emp._base_data_checks('DOB', data, str)
+
+    def test_base_data_checks_category_with_invalid_less_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+        data = {'20061126': '#ff00ff', '20061218': '#ff0000',
+                '20070314': '#00000f', '20071112': '#ee00ee',
+                '20071210': '#0000fa', '20080116': '#dedede'}
+        del data['20071210']
+        with self.assertRaises(ValueError):
+            emp._base_data_checks('DOB', data, str)
+
+    def test_base_data_checks_category_does_not_exist(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(KeyError):
+            emp._base_data_checks('Boaty McBoatFace', None, str)
+
+    def test_base_data_checks_category_not_str(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(TypeError):
+            emp._base_data_checks([], None, str)
+
+        with self.assertRaises(TypeError):
+            emp._base_data_checks(11, None, str)
 
 
 if __name__ == "__main__":

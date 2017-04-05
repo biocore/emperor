@@ -364,7 +364,7 @@ class Emperor(object):
 
         return plot
 
-    def _base_data_checks(self, category, data, data_type):
+    def _base_data_checks(self, category, data, d_type):
 
         if not isinstance(category, str):
             raise TypeError('Metadata category must be a string')
@@ -379,16 +379,17 @@ class Emperor(object):
             present = set(self.mf[category].value_counts().index)
             given = set(data.keys())
 
-            if present.issubset(given):
-                raise ValueError('More categories present in the provided '
-                                 'data')
-            elif given.issubset(present):
-                raise ValueError('Some categories are not present in the '
-                                 'provided data')
+            if present != given:
+                if present.issubset(given):
+                    raise ValueError('More categories present in the provided '
+                                     'data')
+                elif given.issubset(present):
+                    raise ValueError('Some categories are not present in the '
+                                     'provided data')
             else:
-                if not all(isinstance(k, data_type) for k in data.values()):
+                if not all(isinstance(k, d_type) for k in data.values()):
                     raise TypeError('Values in the provided data must be '
-                                    'of type %s' % data_type)
+                                    'of type %s' % d_type)
         else:
             data = {}
 
