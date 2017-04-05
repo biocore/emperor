@@ -199,7 +199,8 @@ class TopLevelTests(TestCase):
                 '20070314': '#00000f', '20071112': '#ee00ee',
                 '20071210': '#0000fa', '20080116': '#dedede'}
 
-        emp.color_by('Treatment', data=data, colormap='Dark2', continuous=True)
+        emp.color_by('Treatment', colors=data, colormap='Dark2',
+                     continuous=True)
         exp = {'color': {"category": 'Treatment',
                          "colormap": 'Dark2',
                          "continuous": True,
@@ -225,6 +226,108 @@ class TopLevelTests(TestCase):
 
         with self.assertRaises(TypeError):
             emp.color_by('DOB', colormap=(1, 2))
+
+    def test_shape_by(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        emp.shape_by('DOB')
+        exp = {'shape': {"category": 'DOB',
+                         "data": {}
+                         }
+               }
+        self.assertEqual(emp.settings['shape'], exp['shape'])
+
+        emp.shape_by('Treatment')
+        exp = {'shape': {"category": 'Treatment',
+                         "data": {}
+                         }
+               }
+        self.assertEqual(emp.settings['shape'], exp['shape'])
+
+    def test_shape_by_with_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        exp = {'shape': {"category": 'DOB',
+                         "data": {'20061126': 'Sphere',
+                                  '20061218': 'Cube',
+                                  '20070314': 'Cylinder',
+                                  '20071112': 'Cube',
+                                  '20071210': 'Sphere',
+                                  '20080116': 'Icosahedron'
+                                  }
+                         }
+               }
+        data = exp['shape']['data']
+        emp.shape_by('DOB', data)
+        self.assertEqual(emp.settings['shape'], exp['shape'])
+
+    def test_shape_by_with_series_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        exp = {'shape': {"category": 'DOB',
+                         "data": {'20061126': 'Sphere',
+                                  '20061218': 'Cube',
+                                  '20070314': 'Cylinder',
+                                  '20071112': 'Cube',
+                                  '20071210': 'Sphere',
+                                  '20080116': 'Icosahedron'
+                                  }
+                         }
+               }
+        data = pd.Series(exp['shape']['data'])
+        emp.shape_by('DOB', data)
+        self.assertEqual(emp.settings['shape'], exp['shape'])
+
+    def test_visibility_by(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        emp.visibility_by('DOB')
+        exp = {'visibility': {"category": 'DOB',
+                              "data": {}
+                              }
+               }
+        self.assertEqual(emp.settings['visibility'], exp['visibility'])
+
+        emp.visibility_by('Treatment')
+        exp = {'visibility': {"category": 'Treatment',
+                              "data": {}
+                              }
+               }
+        self.assertEqual(emp.settings['visibility'], exp['visibility'])
+
+    def test_visibility_by_with_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        exp = {'visibility': {"category": 'DOB',
+                              "data": {'20061126': False,
+                                       '20061218': False,
+                                       '20070314': True,
+                                       '20071112': False,
+                                       '20071210': True,
+                                       '20080116': False
+                                       }
+                              }
+               }
+        data = exp['visibility']['data']
+        emp.visibility_by('DOB', data)
+        self.assertEqual(emp.settings['visibility'], exp['visibility'])
+
+    def test_visibility_by_with_series_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        exp = {'visibility': {"category": 'DOB',
+                              "data": {'20061126': False,
+                                       '20061218': False,
+                                       '20070314': True,
+                                       '20071112': False,
+                                       '20071210': True,
+                                       '20080116': False
+                                       }
+                              }
+               }
+        data = pd.Series(exp['visibility']['data'])
+        emp.visibility_by('DOB', data)
+        self.assertEqual(emp.settings['visibility'], exp['visibility'])
 
     def test_base_data_checks(self):
         emp = Emperor(self.ord_res, self.mf)

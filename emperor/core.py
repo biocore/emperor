@@ -365,12 +365,29 @@ class Emperor(object):
         return plot
 
     def _base_data_checks(self, category, data, d_type):
+        """Perform common checks in the methods that modify the plot
+
+        Parameters
+        ----------
+        category: str
+            The metadata category used for this attribute.
+        data: dict or pd.Series
+            Mapping of metadata value to attribute.
+        d_type: object
+            The required type in the ``data`` mappings.
+
+        Returns
+        -------
+        dict
+            Validated and consumable dictionary of attribute mappings.
+        """
 
         if not isinstance(category, str):
             raise TypeError('Metadata category must be a string')
 
         if category not in self.mf.columns:
-            raise KeyError('The category %s is not present in your metadata')
+            raise KeyError('The category %s is not present in your metadata' %
+                           category)
 
         if data is not None:
             if isinstance(data, pd.Series):
@@ -386,18 +403,19 @@ class Emperor(object):
                 elif given.issubset(present):
                     raise ValueError('Some categories are not present in the '
                                      'provided data')
-            else:
-                if not all(isinstance(k, d_type) for k in data.values()):
-                    raise TypeError('Values in the provided data must be '
-                                    'of type %s' % d_type)
+
+            # isinstance won't recognize numpy dtypes that are still valid
+            if not all(np.issubdtype(type(k), d_type) for k in data.values()):
+                raise TypeError('Values in the provided data must be '
+                                'of %s' % d_type)
         else:
             data = {}
 
         return data
 
-    def color_by(self, category, data=None, colormap=None, continuous=False):
+    def color_by(self, category, colors=None, colormap=None, continuous=False):
         # first get the colors for the colormap
-        data = self._base_data_checks(category, data, str)
+        colors = self._base_data_checks(category, colors, str)
 
         if colormap is None:
             colormap = 'default-qiime-colors'
@@ -408,20 +426,27 @@ class Emperor(object):
             "category": category,
             "colormap": colormap,
             "continuous": continuous,
-            "data": data
+            "data": colors
         }})
 
-    def vsibility_by(self, category, visibilities):
-        self._base_data_checks(category, visibilities)
+    def visibility_by(self, category, visibilities=None):
+        visibilities = self._base_data_checks(category, visibilities, bool)
 
-    def scale_by(self, category, scales):
-        self._base_data_checks(category, scales)
+        self.settings.update({"visibility": {
+            "category": category,
+            "data": visibilities
+        }})
 
-    def shape_by(self, category, shapes):
-        self._base_data_checks(category, shapes)
+    def scale_by(self, category, scales=None):
+        scales = self._base_data_checks(category, scales, int)
 
-    def default_by(self, type, category):
-        pass
+    def shape_by(self, category, shapes=None):
+        shapes = self._base_data_checks(category, shapes, str)
+
+        self.settings.update({"shape": {
+            "category": category,
+            "data": shapes
+        }})
 
     def _set_settings_data(self, settings):
         pass
