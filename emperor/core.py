@@ -405,7 +405,7 @@ class Emperor(object):
                                      'provided data')
 
             # isinstance won't recognize numpy dtypes that are still valid
-            if not all(np.issubdtype(type(k), d_type) for k in data.values()):
+            if not all(np.issubdtype(type(v), d_type) for v in data.values()):
                 raise TypeError('Values in the provided data must be '
                                 'of %s' % d_type)
         else:
@@ -437,8 +437,22 @@ class Emperor(object):
             "data": visibilities
         }})
 
-    def scale_by(self, category, scales=None):
-        scales = self._base_data_checks(category, scales, int)
+    def scale_by(self, category, scales=None, global_scale=1.0, scaled=False):
+        scales = self._base_data_checks(category, scales, float)
+
+        if (not isinstance(global_scale, (float, int)) or
+           isinstance(global_scale, bool)):
+            raise TypeError('The global scale argument must be a float or int')
+
+        if not isinstance(scaled, bool):
+            raise TypeError('The scaled argument must be a bool')
+
+        self.settings.update({"scale": {
+            "category": category,
+            "globalScale": str(global_scale),
+            "scaleVal": scaled,
+            "data": scales
+        }})
 
     def shape_by(self, category, shapes=None):
         shapes = self._base_data_checks(category, shapes, str)

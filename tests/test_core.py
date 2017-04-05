@@ -329,6 +329,109 @@ class TopLevelTests(TestCase):
         emp.visibility_by('DOB', data)
         self.assertEqual(emp.settings['visibility'], exp['visibility'])
 
+    def test_scale_by(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        emp.scale_by('DOB')
+        exp = {'scale': {"category": 'DOB',
+                         "data": {},
+                         "globalScale": "1.0",
+                         "scaleVal": False
+                         }
+               }
+        self.assertEqual(emp.settings['scale'], exp['scale'])
+
+        emp.scale_by('Treatment')
+        exp = {'scale': {"category": 'Treatment',
+                         "data": {},
+                         "globalScale": "1.0",
+                         "scaleVal": False
+                         }
+               }
+        self.assertEqual(emp.settings['scale'], exp['scale'])
+
+        emp.scale_by('Treatment', global_scale=3.5)
+        exp = {'scale': {"category": 'Treatment',
+                         "data": {},
+                         "globalScale": "3.5",
+                         "scaleVal": False
+                         }
+               }
+        self.assertEqual(emp.settings['scale'], exp['scale'])
+
+        emp.scale_by('Treatment', global_scale=3.5, scaled=True)
+        exp = {'scale': {"category": 'Treatment',
+                         "data": {},
+                         "globalScale": "3.5",
+                         "scaleVal": True
+                         }
+               }
+        self.assertEqual(emp.settings['scale'], exp['scale'])
+
+    def test_scale_by_with_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        exp = {'scale': {"category": 'DOB',
+                         "data": {'20061126': 5.0,
+                                  '20061218': 1.0,
+                                  '20070314': 1.0,
+                                  '20071112': 1.0,
+                                  '20071210': 0.5,
+                                  '20080116': 1.0
+                                  },
+                         "globalScale": "1.0",
+                         "scaleVal": False
+                         }
+               }
+        data = exp['scale']['data']
+        emp.scale_by('DOB', data)
+        self.assertEqual(emp.settings['scale'], exp['scale'])
+
+    def test_scale_by_with_series_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        exp = {'scale': {"category": 'DOB',
+                         "data": {'20061126': 1.0,
+                                  '20061218': 4.0,
+                                  '20070314': 3.0,
+                                  '20071112': 2.0,
+                                  '20071210': 1.0,
+                                  '20080116': 1.0
+                                  },
+                         "globalScale": "1.0",
+                         "scaleVal": False
+                         }
+               }
+        data = pd.Series(exp['scale']['data'])
+        emp.scale_by('DOB', data)
+        self.assertEqual(emp.settings['scale'], exp['scale'])
+
+    def test_scale_by_with_data_invalid_scale(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        data = {'20061126': 5.0, '20061218': 1.0, '20070314': 1.0,
+                '20071112': 1.0, '20071210': 0.5, '20080116': 1.0}
+
+        with self.assertRaises(TypeError):
+            emp.scale_by('DOB', data, global_scale=False)
+        with self.assertRaises(TypeError):
+            emp.scale_by('DOB', data, global_scale=(1, 2, 3))
+        with self.assertRaises(TypeError):
+            emp.scale_by('DOB', data, global_scale=[])
+
+    def test_scale_by_with_data_invalid_scaled(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        data = {'20061126': 5.0, '20061218': 1.0, '20070314': 1.0,
+                '20071112': 1.0, '20071210': 0.5, '20080116': 1.0}
+
+        with self.assertRaises(TypeError):
+            emp.scale_by('DOB', data, scaled=1)
+        with self.assertRaises(TypeError):
+            emp.scale_by('DOB', data, scaled=[])
+        with self.assertRaises(TypeError):
+            emp.scale_by('DOB', data, scaled=(1, 2))
+
     def test_base_data_checks(self):
         emp = Emperor(self.ord_res, self.mf)
         data = {'20061126': '#ff00ff', '20061218': '#ff0000',
