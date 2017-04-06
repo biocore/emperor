@@ -625,17 +625,21 @@ define([
    * @param {object} json Information about the emperor session to load.
    *
    */
-   EmperorController.prototype.loadConfig = function(json) {
+  EmperorController.prototype.loadConfig = function(json) {
     //still assuming one sceneview for now
     var sceneview = this.sceneViews[0];
 
-    sceneview.camera.position.set(json.cameraPosition.x,
-                                  json.cameraPosition.y,
-                                  json.cameraPosition.z);
-    sceneview.camera.quaternion.set(json.cameraQuaternion._x,
-                                    json.cameraQuaternion._y,
-                                    json.cameraQuaternion._z,
-                                    json.cameraQuaternion._w);
+    if (json.cameraPosition !== undefined) {
+      sceneview.camera.position.set(json.cameraPosition.x,
+                                    json.cameraPosition.y,
+                                    json.cameraPosition.z);
+    }
+    if (json.cameraQuaternion !== undefined) {
+      sceneview.camera.quaternion.set(json.cameraQuaternion._x,
+                                      json.cameraQuaternion._y,
+                                      json.cameraQuaternion._z,
+                                      json.cameraQuaternion._w);
+    }
 
     //must call updates to reset for camera move
     sceneview.camera.updateProjectionMatrix();
@@ -643,10 +647,11 @@ define([
 
     //load the rest of the controller settings
     _.each(this.controllers, function(controller, index) {
-      if (controller !== undefined) {
+      if (controller !== undefined && json[index] !== undefined) {
         controller.fromJSON(json[index]);
       }
     });
+
     sceneview.needsUpdate = true;
    };
 

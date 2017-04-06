@@ -453,8 +453,6 @@ define([
       return;
     }
 
-    this.$select.val(json.category);
-    this.$select.trigger('chosen:updated');
     this.$colormapSelect.val(json.colormap);
     this.$colormapSelect.trigger('chosen:updated');
     this.$scaled.prop('checked', json.continuous);
@@ -470,13 +468,15 @@ define([
       data[0].value = json.data['Non-numeric values'];
       this.setPlottableAttributes(
         decompViewDict, json.data['Non-numeric values'], data[0].plottables);
-
     }
     else {
       data = decompViewDict.setCategory(
         json.data, this.setPlottableAttributes, json.category);
     }
-    this.setSlickGridDataset(data);
+
+    if (!_.isEmpty(data)) {
+      this.setSlickGridDataset(data);
+    }
   };
 
   /**
