@@ -211,7 +211,7 @@ class TopLevelTests(TestCase):
     def test_color_by_category(self):
         emp = Emperor(self.ord_res, self.mf)
 
-        emp.color_by('DOB')
+        obs = emp.color_by('DOB')
         exp = {'color': {"category": 'DOB',
                          "colormap": 'discrete-coloring-qiime',
                          "continuous": False,
@@ -219,11 +219,12 @@ class TopLevelTests(TestCase):
                          }
                }
         self.assertEqual(emp.settings['color'], exp['color'])
+        self.assertEqual(obs.settings['color'], exp['color'])
 
     def test_color_by_category_and_colormap(self):
         emp = Emperor(self.ord_res, self.mf)
 
-        emp.color_by('DOB', colormap='Dark2')
+        obs = emp.color_by('DOB', colormap='Dark2')
         exp = {'color': {"category": 'DOB',
                          "colormap": 'Dark2',
                          "continuous": False,
@@ -231,11 +232,12 @@ class TopLevelTests(TestCase):
                          }
                }
         self.assertEqual(emp.settings['color'], exp['color'])
+        self.assertEqual(obs.settings['color'], exp['color'])
 
     def test_color_by_category_continuous(self):
         emp = Emperor(self.ord_res, self.mf)
 
-        emp.color_by('Treatment', colormap='Dark2', continuous=True)
+        obs = emp.color_by('Treatment', colormap='Dark2', continuous=True)
         exp = {'color': {"category": 'Treatment',
                          "colormap": 'Dark2',
                          "continuous": True,
@@ -243,6 +245,7 @@ class TopLevelTests(TestCase):
                          }
                }
         self.assertEqual(emp.settings['color'], exp['color'])
+        self.assertEqual(obs.settings['color'], exp['color'])
 
     def test_color_by_category_with_data(self):
         emp = Emperor(self.ord_res, self.mf)
@@ -250,8 +253,8 @@ class TopLevelTests(TestCase):
                 '20070314': '#00000f', '20071112': '#ee00ee',
                 '20071210': '#0000fa', '20080116': '#dedede'}
 
-        emp.color_by('Treatment', colors=data, colormap='Dark2',
-                     continuous=True)
+        obs = emp.color_by('Treatment', colors=data, colormap='Dark2',
+                           continuous=True)
         exp = {'color': {"category": 'Treatment',
                          "colormap": 'Dark2',
                          "continuous": True,
@@ -265,6 +268,7 @@ class TopLevelTests(TestCase):
                          }
                }
         self.assertEqual(emp.settings['color'], exp['color'])
+        self.assertEqual(obs.settings['color'], exp['color'])
 
     def test_color_by_colormap_not_str(self):
         emp = Emperor(self.ord_res, self.mf)
@@ -281,19 +285,21 @@ class TopLevelTests(TestCase):
     def test_shape_by(self):
         emp = Emperor(self.ord_res, self.mf)
 
-        emp.shape_by('DOB')
+        obs = emp.shape_by('DOB')
         exp = {'shape': {"category": 'DOB',
                          "data": {}
                          }
                }
         self.assertEqual(emp.settings['shape'], exp['shape'])
+        self.assertEqual(obs.settings['shape'], exp['shape'])
 
-        emp.shape_by('Treatment')
+        obs = emp.shape_by('Treatment')
         exp = {'shape': {"category": 'Treatment',
                          "data": {}
                          }
                }
         self.assertEqual(emp.settings['shape'], exp['shape'])
+        self.assertEqual(obs.settings['shape'], exp['shape'])
 
     def test_shape_by_with_data(self):
         emp = Emperor(self.ord_res, self.mf)
@@ -309,8 +315,9 @@ class TopLevelTests(TestCase):
                          }
                }
         data = exp['shape']['data']
-        emp.shape_by('DOB', data)
+        obs = emp.shape_by('DOB', data)
         self.assertEqual(emp.settings['shape'], exp['shape'])
+        self.assertEqual(obs.settings['shape'], exp['shape'])
 
     def test_shape_by_with_series_data(self):
         emp = Emperor(self.ord_res, self.mf)
@@ -326,25 +333,28 @@ class TopLevelTests(TestCase):
                          }
                }
         data = pd.Series(exp['shape']['data'])
-        emp.shape_by('DOB', data)
+        obs = emp.shape_by('DOB', data)
         self.assertEqual(emp.settings['shape'], exp['shape'])
+        self.assertEqual(obs.settings['shape'], exp['shape'])
 
     def test_visibility_by(self):
         emp = Emperor(self.ord_res, self.mf)
 
-        emp.visibility_by('DOB')
+        obs = emp.visibility_by('DOB')
         exp = {'visibility': {"category": 'DOB',
                               "data": {}
                               }
                }
         self.assertEqual(emp.settings['visibility'], exp['visibility'])
+        self.assertEqual(obs.settings['visibility'], exp['visibility'])
 
-        emp.visibility_by('Treatment')
+        obs = emp.visibility_by('Treatment')
         exp = {'visibility': {"category": 'Treatment',
                               "data": {}
                               }
                }
         self.assertEqual(emp.settings['visibility'], exp['visibility'])
+        self.assertEqual(obs.settings['visibility'], exp['visibility'])
 
     def test_visibility_by_with_data(self):
         emp = Emperor(self.ord_res, self.mf)
@@ -360,8 +370,9 @@ class TopLevelTests(TestCase):
                               }
                }
         data = exp['visibility']['data']
-        emp.visibility_by('DOB', data)
+        obs = emp.visibility_by('DOB', data)
         self.assertEqual(emp.settings['visibility'], exp['visibility'])
+        self.assertEqual(obs.settings['visibility'], exp['visibility'])
 
     def test_visibility_by_with_series_data(self):
         emp = Emperor(self.ord_res, self.mf)
@@ -377,13 +388,14 @@ class TopLevelTests(TestCase):
                               }
                }
         data = pd.Series(exp['visibility']['data'])
-        emp.visibility_by('DOB', data)
+        obs = emp.visibility_by('DOB', data)
         self.assertEqual(emp.settings['visibility'], exp['visibility'])
+        self.assertEqual(obs.settings['visibility'], exp['visibility'])
 
     def test_scale_by(self):
         emp = Emperor(self.ord_res, self.mf)
 
-        emp.scale_by('DOB')
+        obs = emp.scale_by('DOB')
         exp = {'scale': {"category": 'DOB',
                          "data": {},
                          "globalScale": "1.0",
@@ -391,8 +403,9 @@ class TopLevelTests(TestCase):
                          }
                }
         self.assertEqual(emp.settings['scale'], exp['scale'])
+        self.assertEqual(obs.settings['scale'], exp['scale'])
 
-        emp.scale_by('Treatment')
+        obs = emp.scale_by('Treatment')
         exp = {'scale': {"category": 'Treatment',
                          "data": {},
                          "globalScale": "1.0",
@@ -400,8 +413,9 @@ class TopLevelTests(TestCase):
                          }
                }
         self.assertEqual(emp.settings['scale'], exp['scale'])
+        self.assertEqual(obs.settings['scale'], exp['scale'])
 
-        emp.scale_by('Treatment', global_scale=3.5)
+        obs = emp.scale_by('Treatment', global_scale=3.5)
         exp = {'scale': {"category": 'Treatment',
                          "data": {},
                          "globalScale": "3.5",
@@ -409,8 +423,9 @@ class TopLevelTests(TestCase):
                          }
                }
         self.assertEqual(emp.settings['scale'], exp['scale'])
+        self.assertEqual(obs.settings['scale'], exp['scale'])
 
-        emp.scale_by('Treatment', global_scale=3.5, scaled=True)
+        obs = emp.scale_by('Treatment', global_scale=3.5, scaled=True)
         exp = {'scale': {"category": 'Treatment',
                          "data": {},
                          "globalScale": "3.5",
@@ -418,6 +433,7 @@ class TopLevelTests(TestCase):
                          }
                }
         self.assertEqual(emp.settings['scale'], exp['scale'])
+        self.assertEqual(obs.settings['scale'], exp['scale'])
 
     def test_scale_by_with_data(self):
         emp = Emperor(self.ord_res, self.mf)
@@ -435,8 +451,9 @@ class TopLevelTests(TestCase):
                          }
                }
         data = exp['scale']['data']
-        emp.scale_by('DOB', data)
+        obs = emp.scale_by('DOB', data)
         self.assertEqual(emp.settings['scale'], exp['scale'])
+        self.assertEqual(obs.settings['scale'], exp['scale'])
 
     def test_scale_by_with_series_data(self):
         emp = Emperor(self.ord_res, self.mf)
@@ -454,8 +471,9 @@ class TopLevelTests(TestCase):
                          }
                }
         data = pd.Series(exp['scale']['data'])
-        emp.scale_by('DOB', data)
+        obs = emp.scale_by('DOB', data)
         self.assertEqual(emp.settings['scale'], exp['scale'])
+        self.assertEqual(obs.settings['scale'], exp['scale'])
 
     def test_scale_by_with_data_invalid_scale(self):
         emp = Emperor(self.ord_res, self.mf)
