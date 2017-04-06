@@ -415,7 +415,55 @@ class Emperor(object):
         return data
 
     def color_by(self, category, colors=None, colormap=None, continuous=False):
-        # first get the colors for the colormap
+        """Set the coloring settings for the plot elements
+
+        Parameters
+        ----------
+        category: str
+            Name of the metadata column.
+        colors: dict or pd.Series, optional
+            Mapping of categories to a CSS color attribute. Defaults to the
+            colors described by ``colormap``.
+        colormap: str, optional
+            Name of the colormap to use. Supports continuous and discrete
+            colormaps, see the JavaScript documentation, see notes. Defaults
+            to QIIME's discrete colorscheme.
+        continuous: bool, optional
+            Whether or not the ``category`` should be interpreted as numeric.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        KeyError
+            If ``category`` is not part of the metadata.
+        TypeError
+            If ``category`` is not a string.
+        ValueError
+            If ``colors`` describes fewer or more categories than the ones
+            present in the ``category`` column.
+            If ``colors`` has colors in a non-string format.
+
+        Notes
+        -----
+        Colormaps in the Emperor graphical user interface are described in
+        [1]_ under the ``ColorViewController.Colormaps`` definition, the
+        acceptable values are the ones keyed by ``id``.
+
+        See Also
+        --------
+        emperor.core.Emperor.visibility_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.shape_by
+
+        References
+        ----------
+        .. [1] Emperor's colormaps http://emperor.microbio.me/uno/build/jsdoc/\
+color-view-controller.js.html
+        """
         colors = self._base_data_checks(category, colors, str)
 
         if colormap is None:
@@ -430,7 +478,41 @@ class Emperor(object):
             "data": colors
         }})
 
+        return self
+
     def visibility_by(self, category, visibilities=None):
+        """Set the visibility settings for the plot elements
+
+        Parameters
+        ----------
+        category: str
+            Name of the metadata column.
+        visibilities: dict or pd.Series, optional
+            Mapping of categories to a boolean values determining whether or
+            not that category should be visible.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        KeyError
+            If ``category`` is not part of the metadata.
+        TypeError
+            If ``category`` is not a string.
+        ValueError
+            If ``visibilities`` describes fewer or more categories than the
+            ones present in the ``category`` column.
+            If ``visibilities`` has visibilities in a non-string format.
+
+        See Also
+        --------
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.shape_by
+        """
         visibilities = self._base_data_checks(category, visibilities, bool)
 
         self.settings.update({"visibility": {
@@ -438,7 +520,48 @@ class Emperor(object):
             "data": visibilities
         }})
 
+        return self
+
     def scale_by(self, category, scales=None, global_scale=1.0, scaled=False):
+        """Set the scaling settings for the plot elements
+
+        Parameters
+        ----------
+        category: str
+            Name of the metadata column.
+        scales: dict or pd.Series, optional
+            Mapping of categories to numbers determining the size of the
+            elements in each category.
+        global_scale: int or float, optional
+            The size of all the elements.
+        scaled: bool
+            Whether or not the values in ``scales`` should be assumed to be
+            numeric and scaled in size according to their value.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        KeyError
+            If ``category`` is not part of the metadata.
+        TypeError
+            If ``category`` is not a string.
+            If ``global_scale`` is not a number.
+            If ``scaled`` is not a boolean value.
+        ValueError
+            If ``scales`` describes fewer or more categories than the ones
+            present in the ``category`` column.
+            If ``scales`` has sizes in a non-numeric format.
+
+        See Also
+        --------
+        emperor.core.Emperor.visibility_by
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.shape_by
+        """
         scales = self._base_data_checks(category, scales, float)
 
         if (not isinstance(global_scale, (float, int)) or
@@ -455,7 +578,50 @@ class Emperor(object):
             "data": scales
         }})
 
+        return self
+
     def shape_by(self, category, shapes=None):
+        """Set the shape settings for the plot elements
+
+        Parameters
+        ----------
+        category: str
+            Name of the metadata column.
+        shapes: dict or pd.Series, optional
+            Mapping of categories to string values determining the shape of
+            the objects. See the notes for the valid options.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        KeyError
+            If ``category`` is not part of the metadata.
+        TypeError
+            If ``category`` is not a string.
+        ValueError
+            If ``shapes`` describes fewer or more categories than the
+            ones present in the ``category`` column.
+            If ``shapes`` has shapes in a non-string format.
+
+        Notes
+        -----
+        Shapes in the Emperor graphical user interface are described in
+        [1]_ in the ``shapes`` variable, names should be title-case.
+
+        See Also
+        --------
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.visibility_by
+
+        References
+        ----------
+        .. [1] http://emperor.microbio.me/uno/build/jsdoc/shapes.js.html
+        """
         shapes = self._base_data_checks(category, shapes, str)
 
         self.settings.update({"shape": {
@@ -463,32 +629,4 @@ class Emperor(object):
             "data": shapes
         }})
 
-    def _set_settings_data(self, settings):
-        pass
-
-    def _get_settings_data(self):
-        pass
-
-    # def _get_default_settings(self):
-    #     self.settings = {
-    #         "color": {
-    #         "category": None,
-    #         "colormap": "discrete-coloring-qiime",
-    #         "continuous": False,
-    #         "data": {}
-    #         },
-    #         "scale": {
-    #             "category": None,
-    #             "data": {},
-    #             "globalScale": "1.0",
-    #             "scaleVal": False
-    #         },
-    #         "shape": {
-    #             "category": None,
-    #             "data": {}
-    #         },
-    #         "visibility": {
-    #             "category": False,
-    #             "data": {}
-    #         }
-    #         }
+        return self

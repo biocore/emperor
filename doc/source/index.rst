@@ -37,4 +37,4 @@ include the following citation:
 	**EMPeror: a tool for visualizing high-throughput microbial community data**. Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R. Gigascience. 2013 Nov 26;2(1):16.
 
 
-You can find the `Emperor paper here <http://www.gigasciencejournal.com/content/2/1/16/>`_, and the data presented in this paper can be found `here <http://gigadb.org/dataset/100068>`_.
+You can find the `Emperor paper here <https://gigascience.biomedcentral.com/articles/10.1186/2047-217X-2-16>`_, and the data presented in this paper can be found `here <http://gigadb.org/dataset/100068>`_.
