@@ -209,11 +209,6 @@ class Emperor(object):
 
         self.settings = {}
 
-        self.color = None
-        self.visibility = None
-        self.scale = None
-        self.shape = None
-
     def __str__(self):
         return self.make_emperor()
 
