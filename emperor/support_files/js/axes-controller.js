@@ -104,7 +104,7 @@ define([
      * Which axes are 'flipped', by default all are set to false.
      * @private
      */
-    this._flippedAxes = [0, 0, 0];
+    this._flippedAxes = [false, false, false];
 
     // initialize interface elements here
     $(this).ready(function() {
@@ -339,7 +339,7 @@ define([
       decView.changeVisibleDimensions(visibleDimensions);
     });
 
-    this._flippedAxes[position] = 0;
+    this._flippedAxes[position] = false;
 
     this.buildDisplayTable();
   };
@@ -363,7 +363,8 @@ define([
       }
     });
 
-    this._flippedAxes[axIndex] = 1 ^ this._flippedAxes[axIndex];
+    // needs to cast to boolean, because XOR returns an integer
+    this._flippedAxes[axIndex] = Boolean(true ^ this._flippedAxes[axIndex]);
     this.buildDisplayTable();
   };
 
