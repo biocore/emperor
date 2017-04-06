@@ -162,7 +162,7 @@ class TopLevelTests(TestCase):
 
         emp.color_by('DOB')
         exp = {'color': {"category": 'DOB',
-                         "colormap": 'default-qiime-colors',
+                         "colormap": 'discrete-coloring-qiime',
                          "continuous": False,
                          "data": {}
                          }

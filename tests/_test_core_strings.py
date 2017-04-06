@@ -185,7 +185,8 @@ function($, model, EmperorController) {
 
     // sample information
     'metadata_headers': ["SampleID", "Treatment", "DOB", "Description"],
-    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]]
+    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]],
+    'settings': {}
   }
 
   var dm, ec;
@@ -213,6 +214,9 @@ function($, model, EmperorController) {
     init();
     animate();
 
+    setTimeout(function() {
+      ec.loadConfig(data['settings']);
+    }, 1000);
   });
 
 }); // END REQUIRE.JS block
@@ -373,7 +377,8 @@ function($, model, EmperorController) {
 
     // sample information
     'metadata_headers': ["SampleID", "Treatment", "DOB", "Description"],
-    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]]
+    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]],
+    'settings': {}
   }
 
   var dm, ec;
@@ -401,6 +406,9 @@ function($, model, EmperorController) {
     init();
     animate();
 
+    setTimeout(function() {
+      ec.loadConfig(data['settings']);
+    }, 1000);
   });
 
 }); // END REQUIRE.JS block
@@ -540,7 +548,8 @@ function($, model, EmperorController) {
 
     // sample information
     'metadata_headers': ["SampleID", "Treatment", "DOB", "Description"],
-    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]]
+    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]],
+    'settings': {}
   }
 
   var dm, ec;
@@ -568,6 +577,9 @@ function($, model, EmperorController) {
     init();
     animate();
 
+    setTimeout(function() {
+      ec.loadConfig(data['settings']);
+    }, 1000);
   });
 
 }); // END REQUIRE.JS block

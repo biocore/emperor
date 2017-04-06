@@ -360,7 +360,8 @@ class Emperor(object):
                                     style_template_path=basename(STYLE_PATH),
                                     axes_names=names,
                                     width=self.width,
-                                    height=self.height)
+                                    height=self.height,
+                                    settings=self.settings)
 
         return plot
 
@@ -418,7 +419,7 @@ class Emperor(object):
         colors = self._base_data_checks(category, colors, str)
 
         if colormap is None:
-            colormap = 'default-qiime-colors'
+            colormap = 'discrete-coloring-qiime'
         elif not isinstance(colormap, str):
             raise TypeError('The colormap argument must be a string')
 
