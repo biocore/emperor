@@ -14,6 +14,10 @@ __version__ = "0.9.60-dev"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
+# I am adding a variety of lines
+# here and there
+# and also there
+
 # based on the text found in github.com/qiime/pynast
 classes = """
     Development Status :: 4 - Beta
