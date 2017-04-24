@@ -501,6 +501,88 @@ class TopLevelTests(TestCase):
         with self.assertRaises(TypeError):
             emp.scale_by('DOB', data, scaled=(1, 2))
 
+    def test_set_axes(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        obs = emp.set_axes([3, 2, 0])
+        exp = {'axes': {"visibleDimensions": [3, 2, 0],
+                        "flippedAxes": [False, False, False],
+                        "backgroundColor": 'black',
+                        "axesColor": 'white'
+                        }
+               }
+        self.assertEqual(obs.settings['axes'], exp['axes'])
+
+    def test_set_axes_flipping(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        obs = emp.set_axes(invert=[True, False, False])
+        exp = {'axes': {"visibleDimensions": [0, 1, 2],
+                        "flippedAxes": [True, False, False],
+                        "backgroundColor": 'black',
+                        "axesColor": 'white'
+                        }
+               }
+        self.assertEqual(obs.settings['axes'], exp['axes'])
+
+    def test_set_axes_color(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        obs = emp.set_axes(color='red')
+        exp = {'axes': {"visibleDimensions": [0, 1, 2],
+                        "flippedAxes": [False, False, False],
+                        "backgroundColor": 'black',
+                        "axesColor": 'red'
+                        }
+               }
+        self.assertEqual(obs.settings['axes'], exp['axes'])
+
+    def test_set_axes_errors_dimensions(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(ValueError):
+            emp.set_axes([3, 2, 0, 1])
+
+        with self.assertRaises(ValueError):
+            emp.set_axes([3, 2])
+
+        with self.assertRaises(ValueError):
+            emp.set_axes([3, 2, 11111])
+
+        with self.assertRaises(ValueError):
+            emp.set_axes([-3, -2, -1])
+
+        with self.assertRaises(TypeError):
+            emp.set_axes([1.1, 2, 3.0])
+
+    def test_set_background_color(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        obs = emp.set_background_color('yellow')
+        exp = {'axes': {"visibleDimensions": [0, 1, 2],
+                        "flippedAxes": [False, False, False],
+                        "backgroundColor": 'yellow',
+                        "axesColor": 'white'
+                        }
+               }
+        self.assertEqual(obs.settings['axes'], exp['axes'])
+
+    def test_set_background_and_axes(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        obs = emp.set_axes([3, 2, 0], [False, True, True], 'red')
+        self.assertEqual(obs, emp)
+
+        obs = emp.set_background_color('green')
+        self.assertEqual(obs, emp)
+
+        exp = {'axes': {"visibleDimensions": [3, 2, 0],
+                        "flippedAxes": [False, True, True],
+                        "backgroundColor": 'green',
+                        "axesColor": 'red'
+                        }
+               }
+        self.assertEqual(obs.settings['axes'], exp['axes'])
 
 if __name__ == "__main__":
     main()

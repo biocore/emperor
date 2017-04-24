@@ -625,3 +625,131 @@ color-view-controller.js.html
         }})
 
         return self
+
+    def set_axes(self, visible=None, invert=None, color='white'):
+        """Change visual aspects about visible dimensions in a plot
+
+        Parameters
+        ----------
+        visible: list of thee ints, optional
+            List of three indices of the dimensions that will be visible.
+        invert: list of bools, optional
+            List of three bools that determine whether each axis is inverted or
+            not.
+        color: str
+            Color of the axes lines in the plot, should be a name or value in
+            CSS format.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        ValueError
+            If the ``visible`` or ``invert`` arrays don't have exactly three
+            elements.
+            If the ``visible`` elements are out of range i.e. if an index is
+            not contained in the space defined by the dimensions property.
+        TypeError
+            If the indices in ``visible`` are not all integers.
+            If the values of ``invert`` are not all boolean.
+            If ``color`` is not a string.
+
+        Notes
+        -----
+        This method is internally coupled to the ``set_background_color``
+        method.
+
+        See Also
+        --------
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.shape_by
+        emperor.core.Emperor.set_background_color
+        """
+        if visible is None:
+            visible = [0, 1, 2]
+        if invert is None:
+            invert = [False, False, False]
+
+        if len(visible) != 3:
+            raise ValueError('Exactly three elements must be contained in the'
+                             ' visible array')
+        if len(invert) != 3:
+            raise ValueError('Exactly three elements must be contained in the'
+                             ' invert array')
+
+        if any([v >= self.dimensions or v < 0 for v in visible]):
+            raise ValueError('One or more of your visible dimensions are out '
+                             'of range.')
+
+        # prevent obscure JavaScript errors by validating the data
+        if any([not isinstance(v, int) for v in visible]):
+            raise TypeError('All axes indices should be integers')
+        if any([not isinstance(i, bool) for i in invert]):
+            raise TypeError('The elements in the invert argument should all '
+                            'be boolean')
+        if not isinstance(color, str):
+            raise TypeError('Colors should be a CSS color as a string')
+
+        # the background color and axes information are intertwined, so before
+        # updating the data, we need to retrieve the color if it exists
+        # see the code in set_background_color
+        bc = self.settings.get('axes', {}).get('backgroundColor', 'black')
+
+        self.settings.update({'axes': {
+            'visibleDimensions': visible,
+            'flippedAxes': invert,
+            'axesColor': color,
+            'backgroundColor': bc
+        }})
+
+        return self
+
+    def set_background_color(self, color='black'):
+        """Changes the background color of the plot
+
+        Parameters
+        ----------
+        color: str, optional
+            The background color. Color name or value in the CSS format.
+            Defaults to black.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Notes
+        -----
+        This method is tightly coupled to ``set_axes``.
+
+        Raises
+        ------
+        TypeError
+            If the color is not a string.
+
+        See Also
+        --------
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.shape_by
+        emperor.core.Emperor.set_axes
+        """
+
+        if not isinstance(color, str):
+            raise TypeError('The background color has to be a string')
+
+        # the background color and axes information are intertwined, so before
+        # updating the data, we need to make sure we have other values present
+        # see the code in set_axes
+        if 'axes' not in self.settings:
+            self.set_axes()
+
+        self.settings["axes"]["backgroundColor"] = color
+
+        return self
