@@ -368,7 +368,7 @@ define([
         this.ready();
       }
     }
-  }
+  };
 
   /**
    *
@@ -709,7 +709,7 @@ define([
     var params = [null, '#' + id, dvdict];
     var obj = new (Function.prototype.bind.apply(viewConstructor, params));
 
-    obj.ready = function () {
+    obj.ready = function() {
       scope._controllerHasFinishedLoading();
     };
 

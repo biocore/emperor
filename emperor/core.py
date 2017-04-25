@@ -444,9 +444,83 @@ class Emperor(object):
 
         Notes
         -----
-        Colormaps in the Emperor graphical user interface are described in
-        [1]_ under the ``ColorViewController.Colormaps`` definition, the
-        acceptable values are the ones keyed by ``id``.
+        Valid colormaps are listed below (under the `Code` column), for
+        examples see [1]_ or [2]_.
+
+        +----------+---------------------+------------+
+        | Code     | Name                | Type       |
+        +==========+=====================+============+
+        | Paired   | Paired              | Discrete   |
+        +----------+---------------------+------------+
+        | Accent   | Accent              | Discrete   |
+        +----------+---------------------+------------+
+        | Dark2    | Dark                | Discrete   |
+        +----------+---------------------+------------+
+        | Set1     | Set1                | Discrete   |
+        +----------+---------------------+------------+
+        | Set2     | Set2                | Discrete   |
+        +----------+---------------------+------------+
+        | Set3     | Set3                | Discrete   |
+        +----------+---------------------+------------+
+        | Pastel1  | Pastel1             | Discrete   |
+        +----------+---------------------+------------+
+        | Pastel2  | Pastel2             | Discrete   |
+        +----------+---------------------+------------+
+        | Viridis  | Viridis             | Sequential |
+        +----------+---------------------+------------+
+        | Reds     | Reds                | Sequential |
+        +----------+---------------------+------------+
+        | RdPu     | Red-Purple          | Sequential |
+        +----------+---------------------+------------+
+        | Oranges  | Oranges             | Sequential |
+        +----------+---------------------+------------+
+        | OrRd     | Orange-Red          | Sequential |
+        +----------+---------------------+------------+
+        | YlOrBr   | Yellow-Orange-Brown | Sequential |
+        +----------+---------------------+------------+
+        | YlOrRd   | Yellow-Orange-Red   | Sequential |
+        +----------+---------------------+------------+
+        | YlGn     | Yellow-Green        | Sequential |
+        +----------+---------------------+------------+
+        | YlGnBu   | Yellow-Green-Blue   | Sequential |
+        +----------+---------------------+------------+
+        | Greens   | Greens              | Sequential |
+        +----------+---------------------+------------+
+        | GnBu     | Green-Blue          | Sequential |
+        +----------+---------------------+------------+
+        | Blues    | Blues               | Sequential |
+        +----------+---------------------+------------+
+        | BuGn     | Blue-Green          | Sequential |
+        +----------+---------------------+------------+
+        | BuPu     | Blue-Purple         | Sequential |
+        +----------+---------------------+------------+
+        | Purples  | Purples             | Sequential |
+        +----------+---------------------+------------+
+        | PuRd     | Purple-Red          | Sequential |
+        +----------+---------------------+------------+
+        | PuBuGn   | Purple-Blue-Green   | Sequential |
+        +----------+---------------------+------------+
+        | Greys    | Greys               | Sequential |
+        +----------+---------------------+------------+
+        | Spectral | Spectral            | Diverging  |
+        +----------+---------------------+------------+
+        | RdBu     | Red-Blue            | Diverging  |
+        +----------+---------------------+------------+
+        | RdYlGn   | Red-Yellow-Green    | Diverging  |
+        +----------+---------------------+------------+
+        | RdYlB    | Red-Yellow-Blue     | Diverging  |
+        +----------+---------------------+------------+
+        | RdGy     | Red-Grey            | Diverging  |
+        +----------+---------------------+------------+
+        | PiYG     | Pink-Yellow-Green   | Diverging  |
+        +----------+---------------------+------------+
+        | BrBG     | Brown-Blue-Green    | Diverging  |
+        +----------+---------------------+------------+
+        | PuOr     | Purple-Orange       | Diverging  |
+        +----------+---------------------+------------+
+        | PRGn     | Purple-Green        | Diverging  |
+        +----------+---------------------+------------+
+
 
         See Also
         --------
@@ -456,8 +530,8 @@ class Emperor(object):
 
         References
         ----------
-        .. [1] Emperor's colormaps http://emperor.microbio.me/uno/build/jsdoc/\
-color-view-controller.js.html
+        .. [1] https://matplotlib.org/examples/color/colormaps_reference.html
+        .. [2] http://colorbrewer2.org/
         """
         colors = self._base_data_checks(category, colors, str)
 
@@ -604,18 +678,14 @@ color-view-controller.js.html
 
         Notes
         -----
-        Shapes in the Emperor graphical user interface are described in
-        [1]_ in the ``shapes`` variable, names should be title-case.
+        The valid shape names are ``"Sphere"``, ``"Cube"``, ``"Cone"``,
+        ``"Icosahedron"`` and ``"Cylinder"``.
 
         See Also
         --------
         emperor.core.Emperor.color_by
         emperor.core.Emperor.scale_by
         emperor.core.Emperor.visibility_by
-
-        References
-        ----------
-        .. [1] http://emperor.microbio.me/uno/build/jsdoc/shapes.js.html
         """
         shapes = self._base_data_checks(category, shapes, str)
 

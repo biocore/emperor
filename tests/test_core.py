@@ -584,5 +584,6 @@ class TopLevelTests(TestCase):
                }
         self.assertEqual(obs.settings['axes'], exp['axes'])
 
+
 if __name__ == "__main__":
     main()
