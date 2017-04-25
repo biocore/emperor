@@ -151,21 +151,8 @@ requirejs.config({
   'canvastoblob' : {
     'deps': ['blob']
   },
-  'orbitcontrols': {
-    'deps': ['three']
-  },
-  'projector': {
-    'deps': ['three']
-  },
-  'svgrenderer': {
-    'deps': ['orbitcontrols', 'projector']
-  },
-  'canvasrenderer': {
-    'deps': ['orbitcontrols', 'projector']
-  },
-'slickcore': ['jqueryui'],
-'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
-              'slickeditors']
+  'slickcore': ['jqueryui'],
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
 }
 });
 
@@ -339,21 +326,8 @@ requirejs.config({
   'canvastoblob' : {
     'deps': ['blob']
   },
-  'orbitcontrols': {
-    'deps': ['three']
-  },
-  'projector': {
-    'deps': ['three']
-  },
-  'svgrenderer': {
-    'deps': ['orbitcontrols', 'projector']
-  },
-  'canvasrenderer': {
-    'deps': ['orbitcontrols', 'projector']
-  },
-'slickcore': ['jqueryui'],
-'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
-              'slickeditors']
+  'slickcore': ['jqueryui'],
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
 }
 });
 
@@ -506,21 +480,8 @@ requirejs.config({
   'canvastoblob' : {
     'deps': ['blob']
   },
-  'orbitcontrols': {
-    'deps': ['three']
-  },
-  'projector': {
-    'deps': ['three']
-  },
-  'svgrenderer': {
-    'deps': ['orbitcontrols', 'projector']
-  },
-  'canvasrenderer': {
-    'deps': ['orbitcontrols', 'projector']
-  },
-'slickcore': ['jqueryui'],
-'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
-              'slickeditors']
+  'slickcore': ['jqueryui'],
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
 }
 });
 
