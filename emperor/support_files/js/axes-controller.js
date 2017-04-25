@@ -431,6 +431,13 @@ define([
       }
     });
 
+    this.$body.find('[name="axes-color"]').spectrum({
+      color: json.axesColor
+    });
+    this.$body.find('[name="background-color"]').spectrum({
+      color: json.backgroundColor
+    });
+
     this.colorChanged('axes-color', json.axesColor);
     this.colorChanged('background-color', json.backgroundColor);
   };
