@@ -85,7 +85,7 @@ define(['underscore', 'three'], function(_, THREE) {
    *
    * @param {float[]} position The x, y, and z location of the label.
    * @param {string} text with the text to be shown on screen.
-   * @param {integer, string} Color Hexadecimal base that represents the color
+   * @param {integer|string} Color Hexadecimal base that represents the color
    * of the text.
    * @param {float} [1] factor An optional scaling factor to determine the size
    * of the labels.
