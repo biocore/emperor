@@ -102,7 +102,7 @@ define(['underscore', 'three'], function(_, THREE) {
     canvas.width = size;
     canvas.height = size;
     var context = canvas.getContext('2d');
-    if (Number.isInteger(color)) {
+    if (_.isNumber(color)) {
       context.fillStyle = '#' + color.toString(16);
     }
     else {

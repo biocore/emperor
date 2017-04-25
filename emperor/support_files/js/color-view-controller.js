@@ -169,6 +169,14 @@ define([
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
                              decompViewDict, options);
+
+    // the base-class will try to execute the "ready" callback, so we prevent
+    // that by copying the property and setting the property to undefined.
+    // This controller is not ready until the colormapSelect has signaled that
+    // it is indeed ready.
+    var ready = this.ready;
+    this.ready = undefined;
+
     this.$header.append(this.$colormapSelect);
     this.$header.append(this.$scaled);
     this.$header.append(this.$scaledLabel);
@@ -176,6 +184,12 @@ define([
 
     // the chosen select can only be set when the document is ready
     $(function() {
+      scope.$colormapSelect.on('chosen:ready', function() {
+        if (ready !== null) {
+          ready();
+          scope.ready = ready;
+        }
+      });
       scope.$colormapSelect.chosen({width: '100%', search_contains: true});
       scope.$colormapSelect.chosen().change(options.categorySelectionCallback);
       scope.$scaled.on('change', options.categorySelectionCallback);

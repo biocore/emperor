@@ -214,9 +214,11 @@ function($, model, EmperorController) {
     init();
     animate();
 
-    setTimeout(function() {
+    ec.ready = function () {
+      // any other code that needs to be executed when emperor is loaded should
+      // go here
       ec.loadConfig(data['settings']);
-    }, 1000);
+    }
   });
 
 }); // END REQUIRE.JS block
@@ -406,9 +408,11 @@ function($, model, EmperorController) {
     init();
     animate();
 
-    setTimeout(function() {
+    ec.ready = function () {
+      // any other code that needs to be executed when emperor is loaded should
+      // go here
       ec.loadConfig(data['settings']);
-    }, 1000);
+    }
   });
 
 }); // END REQUIRE.JS block
@@ -577,9 +581,11 @@ function($, model, EmperorController) {
     init();
     animate();
 
-    setTimeout(function() {
+    ec.ready = function () {
+      // any other code that needs to be executed when emperor is loaded should
+      // go here
       ec.loadConfig(data['settings']);
-    }, 1000);
+    }
   });
 
 }); // END REQUIRE.JS block

@@ -97,6 +97,13 @@ define([
     this.$divId.append(this.$plotMenu);
 
     /**
+     * @type {Function}
+     * Callback to execute when all the view controllers have been successfully
+     * loaded.
+     */
+    this.ready = null;
+
+    /**
      * Holds a reference to all the tabs (view controllers) in the `$plotMenu`.
      * @type {object}
      */
@@ -347,6 +354,24 @@ define([
 
   /**
    *
+   * Helper method to check if all the view controllers have finished loading.
+   * Relies on the fact that each view controller announces when it is ready.
+   *
+   * @private
+   *
+   */
+  EmperorController.prototype._controllerHasFinishedLoading = function() {
+    this._seen += 1;
+
+    if (this._seen >= this._expected) {
+      if (this.ready !== null) {
+        this.ready();
+      }
+    }
+  }
+
+  /**
+   *
    * Helper method to assemble UI, completely independent of HTML template.
    * This method is called when the object is constructed.
    *
@@ -355,6 +380,11 @@ define([
    */
   EmperorController.prototype._buildUI = function() {
     var scope = this;
+
+    // this is the number of expected view controllers that will announce that
+    // all view controllers have been successfully loaded.
+    this._expected = 4;
+    this._seen = 0;
 
     //FIXME: This only works for 1 scene plot view
     this.controllers.color = this.addTab(this.sceneViews[0].decViews,
@@ -665,6 +695,8 @@ define([
    *
    */
   EmperorController.prototype.addTab = function(dvdict, viewConstructor) {
+    var scope = this;
+
     // nothing but a temporary id
     var id = (Math.round(1000000 * Math.random())).toString();
 
@@ -676,6 +708,10 @@ define([
     // http://stackoverflow.com/a/8843181
     var params = [null, '#' + id, dvdict];
     var obj = new (Function.prototype.bind.apply(viewConstructor, params));
+
+    obj.ready = function () {
+      scope._controllerHasFinishedLoading();
+    };
 
     // set the identifier of the div to the one defined by the object
     $('#' + id).attr('id', obj.identifier);
