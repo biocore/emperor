@@ -5,8 +5,10 @@ define([
     'view',
     'viewcontroller',
     'color-editor',
-    'chroma'
-], function($, _, util, DecompositionView, ViewControllers, Color, chroma) {
+    'chroma',
+    'three'
+], function($, _, util, DecompositionView, ViewControllers, Color, chroma,
+            THREE) {
 
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
