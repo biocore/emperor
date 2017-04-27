@@ -9,6 +9,7 @@ from __future__ import division
 
 import pandas as pd
 import numpy as np
+import warnings
 
 from os import listdir
 from os.path import abspath, dirname, join, isdir
@@ -33,6 +34,11 @@ class EmperorInputFilesError(IOError):
 
 class EmperorUnsupportedComputation(ValueError):
     """Exception for computations that lack a meaning"""
+    pass
+
+
+class EmperorWarning(UserWarning):
+    """Generic package warning"""
     pass
 
 
@@ -724,8 +730,18 @@ def resolve_stable_url(version, base_url):
     -------
     str
         A URL that points to the emperor's resources.
+
+    Notes
+    -----
+    An EmperorWarning is shown when development URLs are used.
     """
     if 'dev' in version:
+        warnings.warn("Plots generated with `remote=True` using a development "
+                      "version of Emperor, may fail to load in the future "
+                      "(only the logo may be displayed instead of the plot). "
+                      "To avoid this, use a release version of Emperor.",
+                      EmperorWarning)
+
         # this will need to be fixed when new-api is merged to master
         return base_url % 'new-api'
     else:
