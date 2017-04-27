@@ -207,7 +207,7 @@ class Emperor(object):
         self.width = '100%'
         self.height = '500px'
 
-        self.settings = {}
+        self._settings = {}
 
     def __str__(self):
         return self.make_emperor()
@@ -385,9 +385,10 @@ class Emperor(object):
             raise KeyError('The category %s is not present in your metadata' %
                            category)
 
-        if data is not None:
-            if isinstance(data, pd.Series):
-                data = data.to_dict()
+        if isinstance(data, pd.Series):
+            data = data.to_dict()
+
+        if data is not None and data:
 
             present = set(self.mf[category].value_counts().index)
             given = set(data.keys())
@@ -395,10 +396,13 @@ class Emperor(object):
             if present != given:
                 if present.issubset(given):
                     raise ValueError('More categories present in the provided '
-                                     'data')
+                                     'data, the following categories were '
+                                     'not found in the metadata: %s.' %
+                                     ', '.join(given - present))
                 elif given.issubset(present):
-                    raise ValueError('Some categories are not present in the '
-                                     'provided data')
+                    raise ValueError('The following categories are not present'
+                                     ' in the provided data: %s' %
+                                     ', '.join(present - given))
 
             # isinstance won't recognize numpy dtypes that are still valid
             if not all(np.issubdtype(type(v), d_type) for v in data.values()):
@@ -421,8 +425,8 @@ class Emperor(object):
             colors described by ``colormap``.
         colormap: str, optional
             Name of the colormap to use. Supports continuous and discrete
-            colormaps, see the JavaScript documentation, see notes. Defaults
-            to QIIME's discrete colorscheme.
+            colormaps, see the notes section. Defaults to QIIME's discrete
+            colorscheme.
         continuous: bool, optional
             Whether or not the ``category`` should be interpreted as numeric.
 
@@ -521,12 +525,13 @@ class Emperor(object):
         | PRGn     | Purple-Green        | Diverging  |
         +----------+---------------------+------------+
 
-
         See Also
         --------
         emperor.core.Emperor.visibility_by
         emperor.core.Emperor.scale_by
         emperor.core.Emperor.shape_by
+        emperor.core.Emperor.set_background_color
+        emperor.core.Emperor.set_axes
 
         References
         ----------
@@ -540,7 +545,7 @@ class Emperor(object):
         elif not isinstance(colormap, str):
             raise TypeError('The colormap argument must be a string')
 
-        self.settings.update({"color": {
+        self._settings.update({"color": {
             "category": category,
             "colormap": colormap,
             "continuous": continuous,
@@ -581,10 +586,12 @@ class Emperor(object):
         emperor.core.Emperor.color_by
         emperor.core.Emperor.scale_by
         emperor.core.Emperor.shape_by
+        emperor.core.Emperor.set_background_color
+        emperor.core.Emperor.set_axes
         """
         visibilities = self._base_data_checks(category, visibilities, bool)
 
-        self.settings.update({"visibility": {
+        self._settings.update({"visibility": {
             "category": category,
             "data": visibilities
         }})
@@ -630,6 +637,8 @@ class Emperor(object):
         emperor.core.Emperor.visibility_by
         emperor.core.Emperor.color_by
         emperor.core.Emperor.shape_by
+        emperor.core.Emperor.set_background_color
+        emperor.core.Emperor.set_axes
         """
         scales = self._base_data_checks(category, scales, float)
 
@@ -640,7 +649,7 @@ class Emperor(object):
         if not isinstance(scaled, bool):
             raise TypeError('The scaled argument must be a bool')
 
-        self.settings.update({"scale": {
+        self._settings.update({"scale": {
             "category": category,
             "globalScale": str(global_scale),
             "scaleVal": scaled,
@@ -686,10 +695,12 @@ class Emperor(object):
         emperor.core.Emperor.color_by
         emperor.core.Emperor.scale_by
         emperor.core.Emperor.visibility_by
+        emperor.core.Emperor.set_background_color
+        emperor.core.Emperor.set_axes
         """
         shapes = self._base_data_checks(category, shapes, str)
 
-        self.settings.update({"shape": {
+        self._settings.update({"shape": {
             "category": category,
             "data": shapes
         }})
@@ -770,7 +781,7 @@ class Emperor(object):
         # see the code in set_background_color
         bc = self.settings.get('axes', {}).get('backgroundColor', 'black')
 
-        self.settings.update({'axes': {
+        self._settings.update({'axes': {
             'visibleDimensions': visible,
             'flippedAxes': invert,
             'axesColor': color,
@@ -820,6 +831,40 @@ class Emperor(object):
         if 'axes' not in self.settings:
             self.set_axes()
 
-        self.settings["axes"]["backgroundColor"] = color
+        self._settings["axes"]["backgroundColor"] = color
 
         return self
+
+    @property
+    def settings(self):
+        """Dictionary to load default settings from, when displaying a plot"""
+        return self._settings
+
+    @settings.setter
+    def settings(self, setts):
+        if setts is None:
+            del self.settings
+            return
+
+        for key, val in setts.items():
+            if key == 'shape':
+                self.shape_by(val['category'], val['data'])
+            elif key == 'visibility':
+                self.visibility_by(val['category'], val['data'])
+            elif key == 'scale':
+                self.scale_by(val['category'], val['data'],
+                              float(val['globalScale']),
+                              val['scaleVal'])
+            elif key == 'axes':
+                self.set_axes(val['visibleDimensions'], val['flippedAxes'],
+                              val['axesColor'])
+                self.set_background_color(val['backgroundColor'])
+            elif key == 'color':
+                self.color_by(val['category'], val['data'], val['colormap'],
+                              val['continuous'])
+            else:
+                raise KeyError('Unrecognized settings key: %s' % key)
+
+    @settings.deleter
+    def settings(self):
+        self._settings = {}

@@ -8,6 +8,7 @@
 from __future__ import division
 
 from unittest import TestCase, main
+from copy import deepcopy
 from os.path import exists
 from shutil import rmtree
 from io import StringIO
@@ -583,6 +584,145 @@ class TopLevelTests(TestCase):
                         }
                }
         self.assertEqual(obs.settings['axes'], exp['axes'])
+
+    def test_del_settings(self):
+        exp_settings = {'scale': {"category": 'DOB',
+                                  "data": {'20061126': 5.0,
+                                           '20061218': 1.0,
+                                           '20070314': 1.0,
+                                           '20071112': 1.0,
+                                           '20071210': 0.5,
+                                           '20080116': 1.0
+                                           },
+                                  "globalScale": "1.0",
+                                  "scaleVal": False},
+                        'axes': {"visibleDimensions": [3, 2, 0],
+                                 "flippedAxes": [False, True, True],
+                                 "backgroundColor": 'blue',
+                                 "axesColor": 'red'
+                                 }
+                        }
+
+        emp = Emperor(self.ord_res, self.mf)
+
+        emp.set_axes([3, 2, 0], [False, True, True], 'red')
+        emp.set_background_color('blue')
+        emp.scale_by('DOB', exp_settings['scale']['data'])
+
+        self.assertEqual(emp.settings, exp_settings)
+        emp.settings = None
+        self.assertEqual(emp.settings, {})
+
+        del emp.settings
+        self.assertEqual(emp.settings, {})
+
+    def test_set_settings(self):
+        exp_settings = {'scale': {"category": 'DOB',
+                                  "data": {'20061126': 5.0,
+                                           '20061218': 1.0,
+                                           '20070314': 1.0,
+                                           '20071112': 1.0,
+                                           '20071210': 0.5,
+                                           '20080116': 1.0
+                                           },
+                                  "globalScale": "1.0",
+                                  "scaleVal": False},
+                        'axes': {"visibleDimensions": [3, 2, 0],
+                                 "flippedAxes": [False, True, True],
+                                 "backgroundColor": 'blue',
+                                 "axesColor": 'red'
+                                 }
+                        }
+
+        emp = Emperor(self.ord_res, self.mf)
+        emp.settings = deepcopy(exp_settings)
+
+        self.assertEqual(emp.settings, exp_settings)
+
+    def test_set_settings_all_keys(self):
+        exp_settings = {'scale': {"category": 'DOB',
+                                  "data": {'20061126': 5.0,
+                                           '20061218': 1.0,
+                                           '20070314': 1.0,
+                                           '20071112': 1.0,
+                                           '20071210': 0.5,
+                                           '20080116': 1.0
+                                           },
+                                  "globalScale": "1.0",
+                                  "scaleVal": False},
+                        'axes': {"visibleDimensions": [3, 2, 0],
+                                 "flippedAxes": [False, True, True],
+                                 "backgroundColor": 'blue',
+                                 "axesColor": 'red'
+                                 },
+                        'color': {"category": 'DOB',
+                                  "colormap": 'discrete-coloring-qiime',
+                                  "continuous": False,
+                                  "data": {}},
+                        'shape': {"category": 'DOB',
+                                  "data": {'20061126': 'Sphere',
+                                           '20061218': 'Cube',
+                                           '20070314': 'Cylinder',
+                                           '20071112': 'Cube',
+                                           '20071210': 'Sphere',
+                                           '20080116': 'Icosahedron'}},
+                        'visibility': {"category": 'DOB',
+                                       "data": {'20061126': False,
+                                                '20061218': False,
+                                                '20070314': True,
+                                                '20071112': False,
+                                                '20071210': True,
+                                                '20080116': False}}
+                        }
+
+        emp = Emperor(self.ord_res, self.mf)
+        emp.settings = deepcopy(exp_settings)
+        self.assertEqual(emp.settings, exp_settings)
+
+    def test_set_settings_invalid(self):
+        exp_settings = {'boaty': {"category": 'DOB',
+                                  "data": {'20061126': 5.0,
+                                           '20061218': 1.0,
+                                           '20070314': 1.0,
+                                           '20071112': 1.0,
+                                           '20071210': 0.5,
+                                           '20080116': 1.0
+                                           },
+                                  "globalScale": "1.0",
+                                  "scaleVal": False},
+                        'axes': {"visibleDimensions": [3, 2, 0],
+                                 "flippedAxes": [False, True, True],
+                                 "backgroundColor": 'blue',
+                                 "axesColor": 'red'
+                                 }
+                        }
+
+        emp = Emperor(self.ord_res, self.mf)
+        with self.assertRaises(KeyError):
+            emp.settings = deepcopy(exp_settings)
+
+    def test_set_settings_invalid_inner_value(self):
+        # 200000 should be invalid
+        exp_settings = {'scale': {"category": 200000,
+                                  "data": {'20061126': 5.0,
+                                           '20061218': 1.0,
+                                           '20070314': 1.0,
+                                           '20071112': 1.0,
+                                           '20071210': 0.5,
+                                           '20080116': 1.0
+                                           },
+                                  "globalScale": "1.0",
+                                  "scaleVal": False},
+                        'axes': {"visibleDimensions": [3, 2, 0],
+                                 "flippedAxes": [False, True, True],
+                                 "backgroundColor": 'blue',
+                                 "axesColor": 'red'
+                                 }
+                        }
+
+        emp = Emperor(self.ord_res, self.mf)
+        with self.assertRaises(TypeError):
+            emp.settings = deepcopy(exp_settings)
 
 
 if __name__ == "__main__":
