@@ -176,6 +176,13 @@ class TopLevelTests(TestCase):
         obs = emp._base_data_checks('DOB', data, str)
         self.assertEqual(obs, exp)
 
+    def test_base_data_checks_with_no_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+        obs = emp._base_data_checks('DOB', {}, str)
+        self.assertEqual(obs, {})
+        obs = emp._base_data_checks('DOB', pd.Series(), str)
+        self.assertEqual(obs, {})
+
     def test_base_data_checks_category_with_invalid_more_data(self):
         emp = Emperor(self.ord_res, self.mf)
 

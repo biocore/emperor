@@ -388,28 +388,28 @@ class Emperor(object):
         if isinstance(data, pd.Series):
             data = data.to_dict()
 
-        if data is not None and data:
+        # if no data is provide just return an empty dictionary
+        if data is None or not data:
+            return {}
 
-            present = set(self.mf[category].value_counts().index)
-            given = set(data.keys())
+        present = set(self.mf[category].value_counts().index)
+        given = set(data.keys())
 
-            if present != given:
-                if present.issubset(given):
-                    raise ValueError('More categories present in the provided '
-                                     'data, the following categories were '
-                                     'not found in the metadata: %s.' %
-                                     ', '.join(given - present))
-                elif given.issubset(present):
-                    raise ValueError('The following categories are not present'
-                                     ' in the provided data: %s' %
-                                     ', '.join(present - given))
+        if present != given:
+            if present.issubset(given):
+                raise ValueError('More categories present in the provided '
+                                 'data, the following categories were '
+                                 'not found in the metadata: %s.' %
+                                 ', '.join(given - present))
+            elif given.issubset(present):
+                raise ValueError('The following categories are not present'
+                                 ' in the provided data: %s' %
+                                 ', '.join(present - given))
 
-            # isinstance won't recognize numpy dtypes that are still valid
-            if not all(np.issubdtype(type(v), d_type) for v in data.values()):
-                raise TypeError('Values in the provided data must be '
-                                'of %s' % d_type)
-        else:
-            data = {}
+        # isinstance won't recognize numpy dtypes that are still valid
+        if not all(np.issubdtype(type(v), d_type) for v in data.values()):
+            raise TypeError('Values in the provided data must be '
+                            'of %s' % d_type)
 
         return data
 
