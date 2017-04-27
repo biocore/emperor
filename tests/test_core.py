@@ -364,6 +364,91 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.settings['visibility'], exp['visibility'])
         self.assertEqual(obs.settings['visibility'], exp['visibility'])
 
+    def test_visibility_by_with_list(self):
+        emp = Emperor(self.ord_res, self.mf)
+        obs = emp.visibility_by('DOB', ['20070314', '20071210'])
+        exp = {'visibility': {"category": 'DOB',
+                              "data": {'20061126': False,
+                                       '20061218': False,
+                                       '20070314': True,
+                                       '20071112': False,
+                                       '20071210': True,
+                                       '20080116': False
+                                       }
+                              }
+               }
+        self.assertEqual(emp.settings['visibility'], exp['visibility'])
+        self.assertEqual(obs.settings['visibility'], exp['visibility'])
+
+    def test_visibility_by_with_empty_list(self):
+        emp = Emperor(self.ord_res, self.mf)
+        obs = emp.visibility_by('DOB', ['20070314', '20071210'])
+        exp = {'visibility': {"category": 'DOB',
+                              "data": {'20061126': False,
+                                       '20061218': False,
+                                       '20070314': True,
+                                       '20071112': False,
+                                       '20071210': True,
+                                       '20080116': False
+                                       }
+                              }
+               }
+        self.assertEqual(emp.settings['visibility'], exp['visibility'])
+        self.assertEqual(obs.settings['visibility'], exp['visibility'])
+
+    def test_visibility_by_with_list_negate(self):
+        emp = Emperor(self.ord_res, self.mf)
+        obs = emp.visibility_by('DOB', ['20070314', '20071210'], negate=True)
+        exp = {'visibility': {"category": 'DOB',
+                              "data": {'20061126': True,
+                                       '20061218': True,
+                                       '20070314': False,
+                                       '20071112': True,
+                                       '20071210': False,
+                                       '20080116': True
+                                       }
+                              }
+               }
+        self.assertEqual(emp.settings['visibility'], exp['visibility'])
+        self.assertEqual(obs.settings['visibility'], exp['visibility'])
+
+    def test_visibility_by_with_empty_list_negate(self):
+        emp = Emperor(self.ord_res, self.mf)
+        obs = emp.visibility_by('DOB', [], negate=True)
+        exp = {'visibility': {"category": 'DOB',
+                              "data": {'20061126': True,
+                                       '20061218': True,
+                                       '20070314': True,
+                                       '20071112': True,
+                                       '20071210': True,
+                                       '20080116': True
+                                       }
+                              }
+               }
+        self.assertEqual(emp.settings['visibility'], exp['visibility'])
+        self.assertEqual(obs.settings['visibility'], exp['visibility'])
+
+    def test_visibility_by_and_negate(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        exp = {'visibility': {"category": 'DOB',
+                              "data": {'20061126': True,
+                                       '20061218': True,
+                                       '20070314': False,
+                                       '20071112': True,
+                                       '20071210': False,
+                                       '20080116': True
+                                       }
+                              }
+               }
+        data = {'20061126': False, '20061218': False, '20070314': True,
+                '20071112': False, '20071210': True, '20080116': False}
+
+        obs = emp.visibility_by('DOB', data, negate=True)
+
+        self.assertEqual(emp.settings['visibility'], exp['visibility'])
+        self.assertEqual(obs.settings['visibility'], exp['visibility'])
+
     def test_visibility_by_with_data(self):
         emp = Emperor(self.ord_res, self.mf)
 

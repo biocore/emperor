@@ -554,16 +554,20 @@ class Emperor(object):
 
         return self
 
-    def visibility_by(self, category, visibilities=None):
+    def visibility_by(self, category, visibilities=None, negate=False):
         """Set the visibility settings for the plot elements
 
         Parameters
         ----------
         category: str
             Name of the metadata column.
-        visibilities: dict or pd.Series, optional
-            Mapping of categories to a boolean values determining whether or
-            not that category should be visible.
+        visibilities: dict, list or pd.Series, optional
+            When this argument is a ``dict`` or ``pd.Series``, it is a mapping
+            of categories to a boolean values determining whether or not that
+            category should be visible. When this argument is a ``list``, only
+            categories present will be visible in the plot.
+        negate: bool
+            Whether or not to negate the values in ``visibilities``.
 
         Returns
         -------
@@ -589,7 +593,14 @@ class Emperor(object):
         emperor.core.Emperor.set_background_color
         emperor.core.Emperor.set_axes
         """
+        if isinstance(visibilities, list) and category in self.mf:
+            cats = self.mf[category].unique()
+            visibilities = {c: c in visibilities for c in cats}
+
         visibilities = self._base_data_checks(category, visibilities, bool)
+
+        # negate visibilities using XOR
+        visibilities = {k: v ^ negate for k, v in visibilities.items()}
 
         self._settings.update({"visibility": {
             "category": category,
