@@ -13,6 +13,7 @@ from shutil import rmtree
 from tempfile import gettempdir
 
 import pandas as pd
+import warnings
 from numpy import array
 from numpy.testing import assert_almost_equal
 
@@ -21,7 +22,11 @@ from emperor.util import (keep_columns_from_mapping_file,
                           EmperorInputFilesError,
                           fill_mapping_field_from_mapping_file,
                           sanitize_mapping_file, guess_coordinates_files,
-                          nbinstall, validate_and_process_custom_axes)
+                          nbinstall, validate_and_process_custom_axes,
+                          resolve_stable_url, EmperorWarning)
+
+
+warnings.simplefilter('always', category=EmperorWarning)
 
 
 class TopLevelTests(TestCase):
@@ -559,6 +564,34 @@ class TopLevelTests(TestCase):
 
         with self.assertRaises(ValueError):
             validate_and_process_custom_axes(mf, ['louie', 'dewey'])
+
+    def test_resolve_stable_url_release(self):
+        # we test that no warnings are raised
+        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        with warnings.catch_warnings(record=True) as w:
+            obs = resolve_stable_url('1.0.0b7', url)
+            self.assertTrue(len(w) == 0)
+            self.assertEqual(obs, url % '1.0.0-beta.7')
+
+    def test_resolve_stable_url_release_check_warning(self):
+        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            obs = resolve_stable_url('1.0.0b7-dev', url)
+
+            self.assertTrue(len(w) == 1)
+            self.assertTrue(issubclass(w[-1].category, EmperorWarning))
+            self.assertEqual(obs, url % 'new-api')
+
+    def test_resolve_stable_url_release_number_check_warning(self):
+        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            obs = resolve_stable_url('1.0.0b7-dev0', url)
+
+            self.assertTrue(len(w) == 1)
+            self.assertTrue(issubclass(w[-1].category, EmperorWarning))
+            self.assertEqual(obs, url % 'new-api')
 
 
 MAPPING_FILE_DATA = [

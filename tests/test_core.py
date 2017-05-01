@@ -46,6 +46,12 @@ class TopLevelTests(TestCase):
         self.mf.set_index('SampleID', inplace=True)
         self.files_to_remove = []
 
+        # note that we don't test with remote=True because the url is resolved
+        # by emperor.util.resolve_stable_url, so it is bound to change
+        # depending on the environment executing the test
+        self.url = ('https://cdn.rawgit.com/biocore/emperor/new-api/emperor/'
+                    'support_files')
+
         np.random.seed(111)
 
     def tearDown(self):
@@ -62,7 +68,7 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.height, '111px')
 
     def test_initial(self):
-        emp = Emperor(self.ord_res, self.mf)
+        emp = Emperor(self.ord_res, self.mf, remote=self.url)
 
         self.assertEqual(emp.width, '100%')
         self.assertEqual(emp.height, '500px')
@@ -89,7 +95,7 @@ class TopLevelTests(TestCase):
 
     def test_unnamed_index(self):
         self.mf.index.name = None
-        emp = Emperor(self.ord_res, self.mf)
+        emp = Emperor(self.ord_res, self.mf, remote=self.url)
         obs = str(emp)
 
         try:
@@ -141,7 +147,7 @@ class TopLevelTests(TestCase):
         self.files_to_remove.append('./something-else')
 
     def test_custom_axes(self):
-        emp = Emperor(self.ord_res, self.mf)
+        emp = Emperor(self.ord_res, self.mf, remote=self.url)
         obs = emp.make_emperor(custom_axes=['DOB'])
 
         try:

@@ -31,14 +31,15 @@ import pandas as pd
 from jinja2 import FileSystemLoader
 from jinja2.environment import Environment
 
+from emperor import __version__ as emperor_version
 from emperor.util import (get_emperor_support_files_dir,
-                          validate_and_process_custom_axes)
+                          validate_and_process_custom_axes, resolve_stable_url)
 from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
                                                    remove_nans,
                                                    scale_custom_coords)
 
 # we are going to use this remote location to load external resources
-REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/new-api/emperor'
+REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/%s/emperor'
               '/support_files')
 LOCAL_URL = "/nbextensions/emperor/support_files"
 
@@ -193,7 +194,8 @@ class Emperor(object):
 
         if isinstance(remote, bool):
             if remote:
-                self.base_url = REMOTE_URL
+                self.base_url = resolve_stable_url(emperor_version,
+                                                   REMOTE_URL)
             else:
                 self.base_url = LOCAL_URL
         elif isinstance(remote, str):
