@@ -29,6 +29,7 @@ import numpy as np
 
 from jinja2 import FileSystemLoader
 from jinja2.environment import Environment
+from skbio import OrdinationResults
 
 from emperor.util import (get_emperor_support_files_dir,
                           validate_and_process_custom_axes)
@@ -78,9 +79,13 @@ class Emperor(object):
         nbextensions folder in the Jupyter installation or (3) ``True`` - load
         the resources from the GitHub repository. This parameter defaults to
         ``True``. See the Notes section for more information.
+    jackknifed: list of OrdinationResults, optional
+        TODO
 
     Attributes
     ----------
+    jackknifed: list
+        TODO
     width: str
         Width of the plot when displayed in the Jupyter notebook (in CSS
         units).
@@ -173,8 +178,11 @@ class Emperor(object):
        2013 Nov 26;2(1):16.
 
     """
-    def __init__(self, ordination, mapping_file, dimensions=5, remote=True):
+    def __init__(self, ordination, mapping_file, dimensions=5, remote=True,
+                 jackknifed=None):
+
         self.ordination = ordination
+        self.jackknifed = jackknifed
 
         self.mf = mapping_file.copy()
 
@@ -182,6 +190,8 @@ class Emperor(object):
         # coordinates this also ensures that the coordinates are in the
         # same order as the metadata
         self.mf = self.mf.loc[ordination.samples.index]
+
+        self._validate_jackknifed()
 
         self._html = None
 
@@ -205,6 +215,100 @@ class Emperor(object):
         # Jupyter notebook, can be a "percent" or "number of pixels".
         self.width = '100%'
         self.height = '500px'
+
+    def _validate_jackknifed(self):
+        # bail if the value is non or an empty list
+        if self.jackknifed is None or self.jackknifed == []:
+            return
+
+        ok = all([isinstance(j, OrdinationResults) for j in self.jackknifed])
+        if not ok:
+            raise TypeError('All elements in the jackknifed array should be '
+                            'OrdinationResults instances.')
+
+        master = set(self.ordination.index)
+
+        for i, ord in enumerate(self.jackknifed):
+            other = set(ord.samples.index)
+
+            # samples must be represented identically
+            if master != other:
+                raise ValueError('The ordination at index (%d) does not '
+                                 'represent the exact same samples. Mismatches'
+                                 ' are: %s.' % ', '.join(master - other))
+
+    def _process_coordinates(self, headers, custom_axes):
+        """Helper function to turn coordinate data into a JSON-like object
+
+        Parameters
+        ----------
+        headers: list of str
+            List of metadata strings.
+        custom_axes: list of str
+            Name of categories to use as custom axes, should be a subset of
+            ``headers``.
+
+        Returns
+        -------
+        list of lists of float
+            coords
+        list of str
+            coordinate identifiers
+        list of float
+            percentage variation
+        list of str
+            axes names
+
+        Notes
+        -----
+        This method is exercised by testing the ``make_emperor`` method, and is
+        not intended to be used by end-users.
+        """
+
+        # format the coordinates
+        d = self.dimensions
+
+        # normalize the coordinates
+        coords = self.ordination.samples.values[:, :d]
+        coords /= np.max(np.abs(coords))
+        coords = coords.tolist()
+
+        # convert to a list from the values property as old versions of pandas
+        # do not convert the elements of the Series/DataFrames to the nearest
+        # python type, causing errors when seralizing to JSON.
+        pct_var = (self.ordination.proportion_explained[:d] * 100)
+        pct_var = pct_var.values.tolist()
+        names = self.ordination.samples.columns[:d].values.tolist()
+
+        # avoid unicode strings
+        coord_ids = [str(sid) for sid in self.mf.index]
+
+        # TODO: This will be removed once the custom axes creation is moved to
+        # the graphical user interface i.e. to the Axes tab.
+        if custom_axes:
+            mf = validate_and_process_custom_axes(self.mf, custom_axes)
+
+            data = mf.apply(lambda x: [x.name] + x.tolist(),
+                            axis=1).values.tolist()
+
+            # vestigial qiime structures for metadata and coordinates
+            mapping_file = [headers] + data
+            coords_file = [coord_ids, coords]
+
+            # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
+            get_custom_coords(custom_axes, mapping_file, coords_file)
+            remove_nans(coords_file)
+            scale_custom_coords(custom_axes, coords_file)
+
+            # arguments are modified, so put them back out
+            _, coords = coords_file
+            coords = coords.tolist()
+
+            # custom axes are assigned -1 percent explained
+            pct_var = ([-1] * len(custom_axes)) + pct_var
+            names = custom_axes + names
+
+        return coords, coord_ids, pct_var, names
 
     def __str__(self):
         return self.make_emperor()
@@ -296,48 +400,8 @@ class Emperor(object):
                                  x.astype('str').tolist(),
                                  axis=1).values.tolist()
 
-        # format the coordinates
-        d = self.dimensions
-
-        # normalize the coordinates
-        coords = self.ordination.samples.values[:, :d]
-        coords /= np.max(np.abs(coords))
-        coords = coords.tolist()
-
-        # convert to a list from the values property as old versions of pandas
-        # do not convert the elements of the Series/DataFrames to the nearest
-        # python type, causing errors when seralizing to JSON.
-        pct_var = (self.ordination.proportion_explained[:d] * 100)
-        pct_var = pct_var.values.tolist()
-        names = self.ordination.samples.columns[:d].values.tolist()
-
-        # avoid unicode strings
-        coord_ids = list(map(str, self.mf.index.tolist()))
-
-        # TODO: This will be removed once the custom axes creation is moved to
-        # the graphical user interface i.e. to the Axes tab.
-        if custom_axes:
-            mf = validate_and_process_custom_axes(self.mf, custom_axes)
-
-            data = mf.apply(lambda x: [x.name] + x.tolist(),
-                            axis=1).values.tolist()
-
-            # vestigial qiime structures for metadata and coordinates
-            mapping_file = [headers] + data
-            coords_file = [coord_ids, coords]
-
-            # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
-            get_custom_coords(custom_axes, mapping_file, coords_file)
-            remove_nans(coords_file)
-            scale_custom_coords(custom_axes, coords_file)
-
-            # arguments are modified, so put them back out
-            _, coords = coords_file
-            coords = coords.tolist()
-
-            # custom axes are assigned -1 percent explained
-            pct_var = ([-1] * len(custom_axes)) + pct_var
-            names = custom_axes + names
+        coords, coord_ids, pct_var, names = self._process_coordinates(
+            headers, custom_axes)
 
         # yes, we could have used UUID, but we couldn't find an easier way to
         # test that deterministically and with this approach we can seed the
