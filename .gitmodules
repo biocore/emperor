@@ -1,0 +1,3 @@
+[submodule "emperor/support_files/ili"]
+	path = emperor/support_files/ili
+	url = https://github.com/MolecularCartography/ili.git
