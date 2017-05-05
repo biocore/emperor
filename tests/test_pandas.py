@@ -54,13 +54,17 @@ class TopLevelTests(TestCase):
         cols = pd.Index(['num_1', 'num_4', 'num_3', 'num_2'], dtype='object')
         self.samples = pd.DataFrame(data=x, index=ind, columns=cols)
 
+        # note that we don't test with remote=True because the url is resolved
+        # by emperor.util.resolve_stable_url, so it is bound to change
+        # depending on the environment executing the test
+        self.url = ('https://cdn.rawgit.com/biocore/emperor/new-api/emperor/'
+                    'support_files')
+
     def test_scatterplot(self):
         emp = scatterplot(self.df)
 
         self.assertTrue(isinstance(emp, Emperor))
         self.assertEqual(emp.dimensions, 4)
-        self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/'
-                         'emperor/new-api/emperor/support_files')
 
         pd.util.testing.assert_frame_equal(self.df, emp.mf)
 
@@ -68,7 +72,8 @@ class TopLevelTests(TestCase):
                                            self.samples)
 
     def test_scatterplot_reordered(self):
-        emp = scatterplot(self.df, x='num_3', y='num_2', z='num_1')
+        emp = scatterplot(self.df, x='num_3', y='num_2', z='num_1',
+                          remote=self.url)
 
         self.assertTrue(isinstance(emp, Emperor))
         self.assertEqual(emp.dimensions, 4)
