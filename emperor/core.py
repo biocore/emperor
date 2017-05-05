@@ -32,10 +32,8 @@ from jinja2.environment import Environment
 from skbio import OrdinationResults
 
 from emperor.util import (get_emperor_support_files_dir,
-                          validate_and_process_custom_axes)
-from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
-                                                   remove_nans,
-                                                   scale_custom_coords)
+                          validate_and_process_custom_axes,
+                          preprocess_coords_file)
 
 # we are going to use this remote location to load external resources
 REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/new-api/emperor'
@@ -72,6 +70,8 @@ class Emperor(object):
         identifiers in the ``ordination`` object.
     dimensions: int, optional
         Number of dimensions to keep from the ordination data, defaults to 5.
+        Be aware that this value will determine the number of dimensions for
+        jackknifing or any other computations.
     remote: bool or str, optional
         This parameter can have one of the following three behaviors according
         to the value: (1) ``str`` - load the resources from a user-specified
@@ -216,100 +216,6 @@ class Emperor(object):
         self.width = '100%'
         self.height = '500px'
 
-    def _validate_jackknifed(self):
-        # bail if the value is non or an empty list
-        if self.jackknifed is None or self.jackknifed == []:
-            return
-
-        ok = all([isinstance(j, OrdinationResults) for j in self.jackknifed])
-        if not ok:
-            raise TypeError('All elements in the jackknifed array should be '
-                            'OrdinationResults instances.')
-
-        master = set(self.ordination.index)
-
-        for i, ord in enumerate(self.jackknifed):
-            other = set(ord.samples.index)
-
-            # samples must be represented identically
-            if master != other:
-                raise ValueError('The ordination at index (%d) does not '
-                                 'represent the exact same samples. Mismatches'
-                                 ' are: %s.' % ', '.join(master - other))
-
-    def _process_coordinates(self, headers, custom_axes):
-        """Helper function to turn coordinate data into a JSON-like object
-
-        Parameters
-        ----------
-        headers: list of str
-            List of metadata strings.
-        custom_axes: list of str
-            Name of categories to use as custom axes, should be a subset of
-            ``headers``.
-
-        Returns
-        -------
-        list of lists of float
-            coords
-        list of str
-            coordinate identifiers
-        list of float
-            percentage variation
-        list of str
-            axes names
-
-        Notes
-        -----
-        This method is exercised by testing the ``make_emperor`` method, and is
-        not intended to be used by end-users.
-        """
-
-        # format the coordinates
-        d = self.dimensions
-
-        # normalize the coordinates
-        coords = self.ordination.samples.values[:, :d]
-        coords /= np.max(np.abs(coords))
-        coords = coords.tolist()
-
-        # convert to a list from the values property as old versions of pandas
-        # do not convert the elements of the Series/DataFrames to the nearest
-        # python type, causing errors when seralizing to JSON.
-        pct_var = (self.ordination.proportion_explained[:d] * 100)
-        pct_var = pct_var.values.tolist()
-        names = self.ordination.samples.columns[:d].values.tolist()
-
-        # avoid unicode strings
-        coord_ids = [str(sid) for sid in self.mf.index]
-
-        # TODO: This will be removed once the custom axes creation is moved to
-        # the graphical user interface i.e. to the Axes tab.
-        if custom_axes:
-            mf = validate_and_process_custom_axes(self.mf, custom_axes)
-
-            data = mf.apply(lambda x: [x.name] + x.tolist(),
-                            axis=1).values.tolist()
-
-            # vestigial qiime structures for metadata and coordinates
-            mapping_file = [headers] + data
-            coords_file = [coord_ids, coords]
-
-            # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
-            get_custom_coords(custom_axes, mapping_file, coords_file)
-            remove_nans(coords_file)
-            scale_custom_coords(custom_axes, coords_file)
-
-            # arguments are modified, so put them back out
-            _, coords = coords_file
-            coords = coords.tolist()
-
-            # custom axes are assigned -1 percent explained
-            pct_var = ([-1] * len(custom_axes)) + pct_var
-            names = custom_axes + names
-
-        return coords, coord_ids, pct_var, names
-
     def __str__(self):
         return self.make_emperor()
 
@@ -322,6 +228,35 @@ class Emperor(object):
         from IPython.display import display, HTML
 
         return display(HTML(str(self)))
+
+    def _validate_jackknifed(self):
+        # bail if the value is non or an empty list
+        if self.jackknifed is None or self.jackknifed == []:
+            return
+
+        ok = all([isinstance(j, OrdinationResults) for j in self.jackknifed])
+        if not ok:
+            raise TypeError('All elements in the jackknifed array should be '
+                            'OrdinationResults instances.')
+
+        master = set(self.ordination.index)
+
+        aligned = []
+
+        for i, ord in enumerate(self.jackknifed):
+            other = set(ord.samples.index)
+
+            # samples must be represented identically
+            if master != other:
+                raise ValueError('The ordination at index (%d) does not '
+                                 'represent the exact same samples. Mismatches'
+                                 ' are: %s.' % ', '.join(master - other))
+
+            # we need to ensure the copy we have is aligned one-to-one with the
+            # *master* ordination, making copies might be inefficient for large
+            # datasets
+            aligned.append(ord.samples.loc[master].copy())
+        self.jackknifed = aligned
 
     def copy_support_files(self, target=None):
         """Copies the support files to a target directory
@@ -338,7 +273,8 @@ class Emperor(object):
         # copy the required resources
         copy_tree(get_emperor_support_files_dir(), target)
 
-    def make_emperor(self, standalone=False, custom_axes=None):
+    def make_emperor(self, standalone=False, custom_axes=None,
+                     jackknifing_method='IQR'):
         """Build an emperor plot
 
         Parameters
@@ -347,6 +283,12 @@ class Emperor(object):
             Whether or not the produced plot should be a standalone HTML file.
         custom_axes : list of str, optional
             Custom axes to embed in the ordination.
+        jackknifing_method : {'IQR', 'sdef'}, optional
+            Used only when plotting ellipsoids for jackknifed beta diversity
+            (i.e. using a directory of coord files instead of a single coord
+            file). Valid values are ``"IQR"`` (for inter-quartile ranges) and
+            ``"sdev"`` (for standard deviation). This argument is ignored if
+            ``self.jackknifed`` is ``None`` or an empty list.
 
         Returns
         -------
@@ -373,6 +315,7 @@ class Emperor(object):
         --------
         emperor.core.Emperor.copy_support_files
         """
+        low, high = None, None
 
         # based on: http://stackoverflow.com/a/6196098
         loader = FileSystemLoader(join(get_emperor_support_files_dir(),
@@ -386,31 +329,19 @@ class Emperor(object):
 
         main_template = env.get_template(main_path)
 
-        # there's a bug in old versions of Pandas that won't allow us to rename
-        # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
-        # would overwrite the name and simply set it as None
-        if self.mf.index.name is None:
-            index_name = 'SampleID'
-        else:
-            index_name = self.mf.index.name
-
-        # format the metadata
-        headers = list(map(str, [index_name] + self.mf.columns.tolist()))
-        metadata = self.mf.apply(lambda x: [str(x.name)] +
-                                 x.astype('str').tolist(),
-                                 axis=1).values.tolist()
-
-        coords, coord_ids, pct_var, names = self._process_coordinates(
-            headers, custom_axes)
+        coord_ids, coords, pct_var, low, high, headers, metadata, names = \
+            self._process_data(custom_axes, jackknifing_method)
 
         # yes, we could have used UUID, but we couldn't find an easier way to
         # test that deterministically and with this approach we can seed the
         # random number generator and test accordingly
         plot_id = 'emperor-notebook-' + str(hex(np.random.randint(2**32)))
 
+        # need to do something about low and high
         plot = main_template.render(coords_ids=coord_ids, coords=coords,
-                                    pct_var=pct_var, md_headers=headers,
-                                    metadata=metadata, base_url=self.base_url,
+                                    pct_var=pct_var, low=low, high=high,
+                                    md_headers=headers, metadata=metadata,
+                                    base_url=self.base_url,
                                     plot_id=plot_id,
                                     logic_template_path=basename(LOGIC_PATH),
                                     style_template_path=basename(STYLE_PATH),
@@ -419,3 +350,131 @@ class Emperor(object):
                                     height=self.height)
 
         return plot
+
+    def _process_data(self, custom_axes, jackknifing_method):
+        """Handle the coordinates data
+
+        Parameters
+        ----------
+        custom_axes : list of str, optional
+            Custom axes to embed in the ordination.
+        jackknifing_method : {'IQR', 'sdef'}, optional
+            Used only when plotting ellipsoids for jackknifed beta diversity
+            (i.e. using a directory of coord files instead of a single coord
+            file). Valid values are ``"IQR"`` (for inter-quartile ranges) and
+            ``"sdev"`` (for standard deviation). This argument is ignored if
+            ``self.jackknifed`` is ``None`` or an empty list.
+
+        Returns
+        -------
+        list of str
+            Sample identifiers in the ordination.
+        list of lists of floats
+            Matrix of coordinates in the ordination data with custom_axes if
+            provided.
+        list of float
+            either the eigenvalues of the input coordinates or the average
+            eigenvalues of the multiple coords that were passed in
+        list of lists floats
+            coordinates representing the lower edges of an ellipse; None if no
+            jackknifing is applied
+        list of lists of floats
+            coordinates representing the high edges of an ellipse; None if no
+            jackknifing is applied
+        list of str
+            Name of the metadata columns and the index name.
+        list of lists of str
+            Data in ``mf``.
+        list of str
+            Names of the dimensions in the resulting ordination.
+
+        Notes
+        -----
+        This method is exercised by testing the ``make_emperor`` method, and is
+        not intended to be used by end-users.
+        """
+        if self.jackknifed and len(custom_axes) > 1:
+            raise ValueError("Jackknifed plots are limited to one custom "
+                             "axis.")
+
+        # turn modern data into legacy data
+        dims = self.dimensions
+
+        c_headers, c_data, c_eigenvals, c_pct = [], [], [], []
+        if self.jackknifed:
+            for data in [self.ordination] + self.jackknifed:
+                c_headers.append(data.samples.index.tolist())
+
+                coords = self.ordination.samples.values[:, :dims]
+                c_data.append(coords / np.max(np.abs(coords)))
+
+                c_eigenvals.append(data.eigvals.values[:dims])
+
+                c_pct.append(data.proportion_explained[:dims] * 100)
+        else:
+            data = self.ordination
+            c_headers = data.samples.index.tolist()
+
+            coords = self.ordination.samples.values[:, :dims]
+            c_data = (coords / np.max(np.abs(coords)))
+
+            c_eigenvals = data.eigvals.values[:dims]
+
+            c_pct = data.proportion_explained[:dims] * 100
+
+        headers, metadata = _to_legacy_map(self.mf, custom_axes)
+
+        c_headers, c_data, _, c_pct, low, high, _ = \
+            preprocess_coords_file(c_headers, c_data, c_eigenvals, c_pct,
+                                   headers, metadata, custom_axes,
+                                   jackknifing_method, False)
+
+        names = self.ordination.samples.columns[:dims].tolist()
+        c_pct = c_pct.tolist()
+
+        if custom_axes:
+            names = custom_axes + names
+
+            c_pct = ([-1] * len(custom_axes)) + c_pct
+
+        if low is not None and high is not None:
+            low = low.tolist()
+            high = high.tolist()
+
+        return (self.ordination.samples.index.tolist(), c_data.tolist(),
+                c_pct, low, high, headers, metadata, names)
+
+
+def _to_legacy_map(mf, custom_axes=None):
+    """Helper function to convert Pandas dataframe to legacy QIIME structure
+
+    Parameters
+    ----------
+    mf : pd.DataFrame
+        Pandas dataframe indexed by the sample name (SampleID).
+    custom_axes : list of str, optional
+        Custom axes to embed in the ordination.
+
+    Returns
+    -------
+    list of str
+        Name of the metadata columns and the index name.
+    list of list of str
+        Data in ``mf``.
+    """
+    # there's a bug in old versions of Pandas that won't allow us to rename
+    # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
+    # would overwrite the name and simply set it as None
+    if mf.index.name is None:
+        index_name = 'SampleID'
+    else:
+        index_name = mf.index.name
+
+    if custom_axes:
+        mf = validate_and_process_custom_axes(mf, custom_axes)
+
+    headers = [str(c) for c in [index_name] + mf.columns.tolist()]
+    metadata = mf.apply(lambda x: [str(x.name)] +
+                        x.astype('str').tolist(),
+                        axis=1).values.tolist()
+    return headers, metadata
