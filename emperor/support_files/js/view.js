@@ -69,6 +69,9 @@ function DecompositionView(decomp) {
    * @type {THREE.Mesh[]}
    */
   this.markers = [];
+
+  this.ellipsoids = [];
+
   /**
    * Array of line objects shown on screen (used for procustes and vector
    * plots).
@@ -99,6 +102,9 @@ DecompositionView.prototype._initBaseView = function() {
 
   // get the correctly sized geometry
   var geometry = shapes.getGeometry('Sphere', this.decomp.dimensionRanges);
+  var radius = geometry.parameters.radius, hasConfidenceIntervals;
+
+  hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
   this.decomp.apply(function(plottable) {
     mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial());
@@ -113,9 +119,22 @@ DecompositionView.prototype._initBaseView = function() {
     mesh.position.set(plottable.coordinates[x], plottable.coordinates[y],
                       plottable.coordinates[z]);
 
-    mesh.updateMatrix();
-
     scope.markers.push(mesh);
+
+    if (hasConfidenceIntervals) {
+      // copy the current sphere and make it an ellipsoid
+      mesh = mesh.clone();
+
+      mesh.name = plottable.name + '_ci';
+      mesh.material.transparent = true;
+      mesh.material.opacity = 0.5;
+
+      mesh.scale.set(plottable.ci[x] / geometry.parameters.radius,
+                     plottable.ci[y] / geometry.parameters.radius,
+                     plottable.ci[z] / geometry.parameters.radius);
+
+      scope.ellipsoids.push(mesh);
+    }
   });
 
   // apply but to the adjacency list NOT IMPLEMENTED
@@ -161,7 +180,15 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
   }
 
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
-      z = this.visibleDimensions[2], scope = this;
+      z = this.visibleDimensions[2], scope = this, changePosition,
+      hasConfidenceIntervals, radius = 0;
+
+  hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
+
+  // we need the original radius to scale confidence intervals (if they exist)
+  if (hasConfidenceIntervals) {
+    radius = scope.ellipsoids[0].geometry.parameters.radius;
+  }
 
   this.decomp.apply(function(plottable) {
     mesh = scope.markers[plottable.idx];
@@ -171,6 +198,19 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
                       plottable.coordinates[y] * scope.axesOrientation[1],
                       plottable.coordinates[z] * scope.axesOrientation[2]);
     mesh.updateMatrix();
+
+    if (hasConfidenceIntervals) {
+      mesh = scope.ellipsoids[plottable.idx];
+
+      mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
+                        plottable.coordinates[y] * scope.axesOrientation[1],
+                        plottable.coordinates[z] * scope.axesOrientation[2]);
+
+      mesh.scale.set(plottable.ci[x]/radius, plottable.ci[y]/radius,
+                     plottable.ci[z]/radius);
+
+      mesh.updateMatrix();
+    }
   });
 
   this.needsUpdate = true;
@@ -186,14 +226,16 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
  *
  */
 DecompositionView.prototype.flipVisibleDimension = function(index) {
-  var pos, scope = this, newMin, newMax;
+  var scope = this, newMin, newMax;
 
   // the index in the visible dimensions
   var localIndex = this.visibleDimensions.indexOf(index);
 
   if (localIndex !== -1) {
     var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
-        z = this.visibleDimensions[2];
+        z = this.visibleDimensions[2], hasConfidenceIntervals;
+
+    hasConfidenceIntervals = scope.decomp.hasConfidenceIntervals();
 
     // update the ranges for this decomposition
     var max = this.decomp.dimensionRanges.max[index];
@@ -206,13 +248,22 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
 
     this.decomp.apply(function(plottable) {
       mesh = scope.markers[plottable.idx];
-      pos = mesh.position.toArray();
 
       // always use the original data plus the axis orientation
       mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
                         plottable.coordinates[y] * scope.axesOrientation[1],
                         plottable.coordinates[z] * scope.axesOrientation[2]);
       mesh.updateMatrix();
+
+      if (hasConfidenceIntervals) {
+        mesh = scope.ellipsoids[plottable.idx];
+
+        // always use the original data plus the axis orientation
+        mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
+                          plottable.coordinates[y] * scope.axesOrientation[1],
+                          plottable.coordinates[z] * scope.axesOrientation[2]);
+        mesh.updateMatrix();
+      }
     });
 
     this.needsUpdate = true;
@@ -271,15 +322,19 @@ DecompositionView.prototype.setCategory = function(attributes,
  *
  */
 DecompositionView.prototype.setGroupColor = function(color, group) {
-  var idx;
-  var scope = this;
+  var idx, scope = this, hasConfidenceIntervals;
+
+  hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
   _.each(group, function(element) {
     idx = element.idx;
     scope.markers[idx].material.color = new THREE.Color(color);
+
+    if (hasConfidenceIntervals) {
+      scope.ellipsoids[idx].material.color = new THREE.Color(color);
+    }
   });
 };
-this.needsUpdate = true;
 
   return DecompositionView;
 });
