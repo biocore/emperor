@@ -206,8 +206,8 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
                         plottable.coordinates[y] * scope.axesOrientation[1],
                         plottable.coordinates[z] * scope.axesOrientation[2]);
 
-      mesh.scale.set(plottable.ci[x]/radius, plottable.ci[y]/radius,
-                     plottable.ci[z]/radius);
+      mesh.scale.set(plottable.ci[x] / radius, plottable.ci[y] / radius,
+                     plottable.ci[z] / radius);
 
       mesh.updateMatrix();
     }

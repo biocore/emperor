@@ -269,7 +269,7 @@ function($, _, util) {
       return true;
     }
     return false;
-  }
+  };
 
   /**
    *

@@ -275,7 +275,7 @@ requirejs([
      * Test the initializer raises an error if no coordinates are provided.
      *
      */
-    test('Test constructor excepts when no coordinates are provided', function() {
+    test('Test constructor excepts when no coords are provided', function() {
       var result;
       throws(
           function() {

@@ -28,9 +28,12 @@ requirejs([
                                          13.7754129161, 11.217215823,
                                          10.024774995, 8.22835130237,
                                          7.55971173665, 6.24945796136]};
-        var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
-        var metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
+        var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                          'DOB'];
+        var metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control',
+                         '20070314'],
+                        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
+                         '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
         var dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.scatter = dv;
