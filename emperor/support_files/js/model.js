@@ -96,14 +96,21 @@ function($, _, util) {
    *
    * Models all the ordination data to be plotted.
    *
-   * @param {string} name A string containing the abbreviated name of the
-   * ordination method.
-   * @param {string[]} ids An array of strings where each string is a sample
-   * identifier
-   * @param {float[]} coords A 2D Array of floats where each row contains the
-   * coordinates of a sample. The rows are in ids order.
-   * @param {float[]} pct_var An Array of floats where each position contains
-   * the percentage explained by that axis
+   * @param {object} data An object with the following attributes (keys):
+   * - `name` A string containing the abbreviated name of the
+   *   ordination method.
+   * - `ids` An array of strings where each string is a sample
+   *   identifier
+   * - `coords` A 2D Array of floats where each row contains the
+   *   coordinates of a sample. The rows are in ids order.
+   * - `names` A 1D Array of strings where each element is the name of one of
+   *   the dimensions in the model.
+   * - `pct_var` An Array of floats where each position contains
+   *   the percentage explained by that axis
+   * - `low` A 1D Array of floats where each row contains the
+   *   coordinates of a sample. The rows are in ids order.
+   * - `high` A 1D Array of floats where each row contains the
+   *   coordinates of a sample. The rows are in ids order.
    * @param {float[]} md_headers An Array of string where each string is a
    * metadata column header
    * @param {string[]} metadata A 2D Array of strings where each row contains
@@ -121,29 +128,34 @@ function($, _, util) {
    * @constructs DecompositionModel
    *
    */
-  function DecompositionModel(name, ids, coords, pct_var, md_headers,
-                              metadata, axesNames) {
+  function DecompositionModel(data, md_headers, metadata) {
+    var coords = data.coordinates, ci = data.ci || [];
+
     var num_coords;
     /**
      * Abbreviated name of the ordination method used to create the data.
      * @type {string}
      */
-    this.abbreviatedName = name;
+    this.abbreviatedName = data.name || '';
     /**
      * List of sample name identifiers.
      * @type {string[]}
      */
-    this.ids = ids;
+    this.ids = data.sample_ids;
     /**
      * Percentage explained by each of the axes in the ordination.
      * @type {float[]}
      */
-    this.percExpl = pct_var;
+    this.percExpl = data.percents_explained;
     /**
      * Column names for the metadata in the samples.
      * @type {string[]}
      */
     this.md_headers = md_headers;
+
+    if (coords === undefined) {
+      throw new Error('Coordinates are required to initialize this object.');
+    }
 
     /*
       Check that the number of coordinates set provided are the same as the
@@ -167,10 +179,10 @@ function($, _, util) {
     /*
       Check that we have the percentage explained values for all coordinates
     */
-    if (pct_var.length !== num_coords) {
+    if (this.percExpl.length !== num_coords) {
       throw new Error('The number of percentage explained values does not ' +
                       'match the number of coordinates. Perc expl: ' +
-                      pct_var.length + ' Num coord: ' + num_coords);
+                      this.percExpl.length + ' Num coord: ' + num_coords);
     }
 
     /*
@@ -192,9 +204,11 @@ function($, _, util) {
       throw new Error('Not all metadata rows have the same number of values');
     }
 
-    this.plottable = new Array(ids.length);
-    for (var i = 0; i < ids.length; i++) {
-      this.plottable[i] = new Plottable(ids[i], metadata[i], coords[i], i);
+    this.plottable = new Array(this.ids.length);
+    for (i = 0; i < this.ids.length; i++) {
+      // note that ci[i] can be empty
+      this.plottable[i] = new Plottable(this.ids[i], metadata[i], coords[i], i,
+                                        ci[i]);
     }
 
     // use slice to make a copy of the array so we can modify it
@@ -227,7 +241,7 @@ function($, _, util) {
      * Names of the axes in the ordination
      * @type {string[]}
      */
-    this.axesNames = axesNames === undefined ? [] : axesNames;
+    this.axesNames = data.axes_names === undefined ? [] : data.axes_names;
     // We call this after all the other attributes have been initialized so we
     // can use that information safely. Fixes a problem with the ordination
     // file format, see https://github.com/biocore/emperor/issues/562
@@ -237,6 +251,24 @@ function($, _, util) {
     // this.edges = [];
     // this.plotEdge = false;
     // this.serialComparison = false;
+  }
+
+  /**
+   *
+   * Whether or not the plottables have confidence intervals
+   *
+   * @return {Boolean} `true` if the plottables have confidence intervals,
+   * `false` otherwise.
+   *
+   */
+  DecompositionModel.prototype.hasConfidenceIntervals = function() {
+    if (this.plottable.length <= 0) {
+      return false;
+    }
+    else if (this.plottable[0].ci.length > 0) {
+      return true;
+    }
+    return false;
   }
 
   /**

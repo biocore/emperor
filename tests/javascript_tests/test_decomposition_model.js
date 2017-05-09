@@ -14,10 +14,12 @@ requirejs([
     module('Decomposition Model', {
       setup: function() {
         // setup function
-        name = 'pcoa';
-        ids = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593',
-        'PC.355', 'PC.607', 'PC.634'];
-        coords = [
+        var name = 'pcoa';
+        this.data = {
+          name: 'pcoa',
+          sample_ids: ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354',
+                       'PC.593', 'PC.355', 'PC.607', 'PC.634'],
+          coordinates: [
           [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
           -0.229889, -0.046599],
           [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
@@ -35,11 +37,17 @@ requirejs([
           [-0.091330, 0.424147, -0.135627, -0.057519, 0.151363, -0.025394,
           0.051731, -0.038738],
           [-0.349339, -0.120788, 0.115275, 0.069495, -0.025372, 0.067853,
-          0.244448, -0.059883]];
-        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
-        md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
-        metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+          0.244448, -0.059883]],
+          percents_explained: [26.6887048633, 16.2563704022, 13.7754129161,
+                               11.217215823, 10.024774995, 8.22835130237,
+                               7.55971173665, 6.24945796136],
+          type: 'ordination',
+          axes_names: []
+        };
+        this.md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                           'DOB'];
+        this.metadata = [
+        ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
         ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
         ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
@@ -51,12 +59,9 @@ requirejs([
       },
       teardown: function() {
         // teardown function
-        name = null;
-        ids = null;
-        coords = null;
-        pct_var = null;
-        md_headers = null;
-        metadata = null;
+        this.data = null;
+        this.md_headers = null;
+        this.metadata = null;
       }
     });
 
@@ -67,9 +72,8 @@ requirejs([
      *
      */
     test('Test constructor', function() {
-
-      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-          metadata);
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
       equal(dm.abbreviatedName, 'pcoa', 'Abbreviated name set correctly');
 
       var exp = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
@@ -160,8 +164,10 @@ requirejs([
     test('Test axesNames', function() {
       var names = ['PC 1', 'PC 2', 'PC 3', 'PC 4', 'PC 5', 'PC 6', 'PC 7',
                    'PC 8', 'PC 9'];
-      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-          metadata, names);
+      this.data.axes_names = names;
+      this.data.name = undefined;
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
       deepEqual(dm.axesNames,
                 ['PC 1', 'PC 2', 'PC 3', 'PC 4', 'PC 5', 'PC 6', 'PC 7',
                  'PC 8', 'PC 9'], 'Axes correctly renamed');
@@ -178,7 +184,7 @@ requirejs([
 
       throws(
           function() {
-            err_coords = [
+            var err_coords = [
               [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
               -0.229889, -0.046599],
               [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
@@ -193,8 +199,9 @@ requirejs([
               -0.036625, 0.099824],
               [0.170518, -0.194113, -0.030897, 0.019809, 0.155100, -0.279924,
               0.057609, 0.024248]];
-            result = new DecompositionModel(name, ids, err_coords, pct_var,
-                md_headers, metadata);
+            this.data.coordinates = err_coords;
+            result = new DecompositionModel(this.data, this.md_headers,
+                                            this.metadata);
           },
           Error,
           'An error is raised if the number of rows in the coords parameter ' +
@@ -214,7 +221,7 @@ requirejs([
 
       throws(
           function() {
-            err_coords = [
+            var err_coords = [
               [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
               -0.229889, -0.046599],
               [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
@@ -232,8 +239,9 @@ requirejs([
               [-0.091330, 0.424147, -0.135627, -0.057519, 0.151363, -0.025394,
               0.051731, -0.038738],
               [-0.349339, -0.120788]];
-            result = new DecompositionModel(name, ids, err_coords, pct_var,
-                md_headers, metadata);
+            this.data.coordinates = err_coords;
+            result = new DecompositionModel(this.data, this.md_headers,
+                                            this.metadata);
           },
       Error,
       'An error is raised if all rows in coords does not have the same length'
@@ -250,14 +258,33 @@ requirejs([
       var result;
       throws(
           function() {
-            err_pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
+            var err_pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
             11.217215823, 10.024774995, 8.22835130237];
-            result = new DecompositionModel(name, ids, coords, err_pct_var,
-                md_headers, metadata);
+            this.data.percents_explained = err_pct_var;
+            result = new DecompositionModel(this.data, this.md_headers,
+                                            this.metadata);
           },
           Error,
           'An error is raised if the number of percentage explained does not ' +
           'correspond to the number of coords'
+          );
+    });
+
+    /**
+     *
+     * Test the initializer raises an error if no coordinates are provided.
+     *
+     */
+    test('Test constructor excepts when no coordinates are provided', function() {
+      var result;
+      throws(
+          function() {
+            this.data.coordinates = undefined;
+            result = new DecompositionModel(this.data, this.md_headers,
+                                            this.metadata);
+          },
+          Error,
+          'An error is raised if no coordinates are provided'
           );
     });
 
@@ -272,13 +299,13 @@ requirejs([
 
       throws(
           function() {
-            err_metadata = [
+            var err_metadata = [
               ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
               ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
               ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
               ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116']];
-            result = new DecompositionModel(name, ids, coords, pct_var,
-                md_headers, err_metadata);
+            result = new DecompositionModel(this.data, this.md_headers,
+                                            err_metadata);
           },
           Error,
           'An error is raised if the number of rows in the metadata parameter' +
@@ -307,8 +334,8 @@ requirejs([
               ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
               ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
               ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126']];
-            result = new DecompositionModel(name, ids, coords, pct_var,
-                md_headers, err_metadata);
+            result = new DecompositionModel(this.data, this.md_headers,
+                                            err_metadata);
           },
           Error,
           'An error is raised if the number of elements in each row in the ' +
@@ -322,8 +349,8 @@ requirejs([
      *
      */
     test('Test getPlottableByID', function() {
-      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-          metadata);
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
 
       var obs = dm.getPlottableByID('PC.636');
       var exp = new Plottable(
@@ -347,8 +374,8 @@ requirejs([
       var result;
       throws(
           function() {
-            var dm = new DecompositionModel(name, ids, coords, pct_var,
-                                            md_headers, metadata);
+            var dm = new DecompositionModel(this.data, this.md_headers,
+                                            this.metadata);
             result = dm.getPlottableByID('Does_not_exist');
           },
           Error,
@@ -363,8 +390,8 @@ requirejs([
      *
      */
     test('Test getPlottableByIDs', function() {
-      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-          metadata);
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
 
       var obs = dm.getPlottableByIDs(['PC.636', 'PC.354', 'PC.355']);
       var exp = [
@@ -401,8 +428,8 @@ requirejs([
       var result;
       throws(
           function() {
-            var dm = new DecompositionModel(name, ids, coords, pct_var,
-                                            md_headers, metadata);
+            var dm = new DecompositionModel(this.data, this.md_headers,
+                                            this.metadata);
             result = dm.getPlottableByIDs(['PC.636', 'PC.354',
                                            'Does_not_exist']);
           },
@@ -418,8 +445,8 @@ requirejs([
      *
      */
     test('Test _getMetadataIndex', function() {
-      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-          metadata);
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
       equal(dm._getMetadataIndex('Treatment'), 2,
           'Header index retrieved successfully');
     });
@@ -434,8 +461,8 @@ requirejs([
       var result;
       throws(
           function() {
-            var dm = new DecompositionModel(name, ids, coords, pct_var,
-                                            md_headers, metadata);
+            var dm = new DecompositionModel(this.data, this.md_headers,
+                                            this.metadata);
             result = dm._getMetadataIndex('Does_not_exist');
           },
           Error,
@@ -451,8 +478,8 @@ requirejs([
      *
      */
     test('Test getPlottablesByMetadataCategoryValue', function() {
-      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-          metadata);
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
       var obs = dm.getPlottablesByMetadataCategoryValue('Treatment',
                                                         'Control');
       var exp = [
@@ -503,8 +530,9 @@ requirejs([
           var result;
           throws(
               function() {
-                var dm = new DecompositionModel(name, ids, coords, pct_var,
-                                                md_headers, metadata);
+                var dm = new DecompositionModel(this.data,
+                                                this.md_headers,
+                                                this.metadata);
                 result = dm.getPlottablesByMetadataCategoryValue('foo',
                                                                  'Control');
               },
@@ -525,8 +553,9 @@ requirejs([
           var result;
           throws(
               function() {
-                var dm = new DecompositionModel(name, ids, coords, pct_var,
-                                                md_headers, metadata);
+                var dm = new DecompositionModel(this.data,
+                                                this.md_headers,
+                                                this.metadata);
                 result = dm.getPlottablesByMetadataCategoryValue('Treatment',
                                                                  'foo');
               },
@@ -562,8 +591,8 @@ requirejs([
      *
      */
     test('Test getUniqueValuesByCategory', function() {
-      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-          metadata);
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
       var obs = dm.getUniqueValuesByCategory('Treatment').sort();
       var exp = ['Control', 'Fast'];
 
@@ -581,8 +610,9 @@ requirejs([
           var result;
           throws(
               function() {
-                var dm = new DecompositionModel(name, ids, coords, pct_var,
-                                                md_headers, metadata);
+                var dm = new DecompositionModel(this.data,
+                                                this.md_headers,
+                                                this.metadata);
                 result = dm.getUniqueValuesByCategory('Does_not_exist');
               },
               Error,
@@ -598,9 +628,9 @@ requirejs([
      *
      */
     test('Test apply', function() {
-      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-          metadata);
-      var obs = dm.apply(function(pl) {return pl.name});
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
+      var obs = dm.apply(function(pl) {return pl.name;});
       var exp = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593',
       'PC.355', 'PC.607', 'PC.634'];
       deepEqual(obs, exp, 'Apply works as expected');
@@ -612,11 +642,11 @@ requirejs([
      *
      */
     test('Fix axes names for scikit-bio', function() {
-      var names = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+      this.data.axes_names = [0, 1, 2, 3, 4, 5, 6, 7, 8];
       var expected = ['pcoa 1', 'pcoa 2', 'pcoa 3', 'pcoa 4', 'pcoa 5',
                       'pcoa 6', 'pcoa 7', 'pcoa 8', 'pcoa 9'];
-      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-                                      metadata, names);
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
       deepEqual(dm.axesNames, expected, 'Integer names replaced correctly');
     });
 
@@ -626,11 +656,12 @@ requirejs([
      *
      */
     test('Fix axes names for scikit-bio (custom axes)', function() {
-      var names = ['days', 'ph', 0, 1, 2, 3, 4, 5, 6];
+      this.data.axes_names = ['days', 'ph', 0, 1, 2, 3, 4, 5, 6];
+      this.data.name = undefined;
       var expected = ['days', 'ph', 'Axis 1', 'Axis 2', 'Axis 3', 'Axis 4',
                       'Axis 5', 'Axis 6', 'Axis 7'];
-      var dm = new DecompositionModel('', ids, coords, pct_var, md_headers,
-                                      metadata, names);
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
       deepEqual(dm.axesNames, expected, 'Custon axes fixed correctly');
     });
 
@@ -640,10 +671,10 @@ requirejs([
      *
      */
     test('Do not fix axes names for scikit-bio', function() {
-      var names = ['days', 'ph', 0, 1, 20, 3, 4, 5, 6];
+      this.data.axes_names = ['days', 'ph', 0, 1, 20, 3, 4, 5, 6];
       var expected = ['days', 'ph', 0, 1, 20, 3, 4, 5, 6];
-      var dm = new DecompositionModel('', ids, coords, pct_var, md_headers,
-                                      metadata, names);
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
       deepEqual(dm.axesNames, expected, 'No changes are made');
     });
 
@@ -653,13 +684,13 @@ requirejs([
      *
      */
     test('Test toString', function() {
-      var _ids = ['samp1', 'samp2'];
-      var _coords = [[1, 2, 3], [4, 5, 6]];
-      var _pct_var = [0.5, 0.4, 0.1];
+      var data = {sample_ids: ['samp1', 'samp2'],
+                  coordinates: [[1, 2, 3], [4, 5, 6]],
+                  percents_explained: [0.5, 0.4, 0.1],
+                  name: 'pcoa'};
       var _md_headers = ['foo1', 'foo2', 'foo3'];
       var _metadata = [['a', 'b', 'c'], ['d', 'f', 'g']];
-      var dm = new DecompositionModel(name, _ids, _coords, _pct_var,
-                                      _md_headers, _metadata);
+      var dm = new DecompositionModel(data, _md_headers, _metadata);
       var exp = 'name: pcoa\n' +
         'Metadata headers: [foo1, foo2, foo3]\n' +
         'Plottables:\n' +
