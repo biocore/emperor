@@ -317,7 +317,9 @@ class Emperor(object):
         --------
         emperor.core.Emperor.copy_support_files
         """
-        low, high = None, None
+
+        if custom_axes is None:
+            custom_axes = []
 
         # based on: http://stackoverflow.com/a/6196098
         loader = FileSystemLoader(join(get_emperor_support_files_dir(),
@@ -331,7 +333,7 @@ class Emperor(object):
 
         main_template = env.get_template(main_path)
 
-        coord_ids, coords, pct_var, low, high, headers, metadata, names = \
+        coord_ids, coords, pct_var, ci, headers, metadata, names = \
             self._process_data(custom_axes, jackknifing_method)
 
         # yes, we could have used UUID, but we couldn't find an easier way to
@@ -341,13 +343,13 @@ class Emperor(object):
 
         # need to do something about low and high
         plot = main_template.render(coords_ids=coord_ids, coords=coords,
-                                    pct_var=pct_var, low=low, high=high,
+                                    pct_var=pct_var, ci=ci,
                                     md_headers=headers, metadata=metadata,
-                                    base_url=self.base_url,
                                     plot_id=plot_id,
+                                    axes_names=names,
+                                    base_url=self.base_url,
                                     logic_template_path=basename(LOGIC_PATH),
                                     style_template_path=basename(STYLE_PATH),
-                                    axes_names=names,
                                     width=self.width,
                                     height=self.height)
 
@@ -378,11 +380,8 @@ class Emperor(object):
             either the eigenvalues of the input coordinates or the average
             eigenvalues of the multiple coords that were passed in
         list of lists floats
-            coordinates representing the lower edges of an ellipse; None if no
-            jackknifing is applied
-        list of lists of floats
-            coordinates representing the high edges of an ellipse; None if no
-            jackknifing is applied
+            coordinates representing the span of each ellipse on every axis;
+            None if no jackknifing is applied
         list of str
             Name of the metadata columns and the index name.
         list of lists of str
@@ -402,12 +401,14 @@ class Emperor(object):
         # turn modern data into legacy data
         dims = self.dimensions
 
+        ci = None
+
         c_headers, c_data, c_eigenvals, c_pct = [], [], [], []
         if self.jackknifed:
             for data in [self.ordination] + self.jackknifed:
                 c_headers.append(data.samples.index.tolist())
 
-                coords = self.ordination.samples.values[:, :dims]
+                coords = data.samples.values[:, :dims]
                 c_data.append(coords / np.max(np.abs(coords)))
 
                 c_eigenvals.append(data.eigvals.values[:dims])
@@ -439,12 +440,11 @@ class Emperor(object):
 
             c_pct = ([-1] * len(custom_axes)) + c_pct
 
-        if low is not None and high is not None:
-            low = low.tolist()
-            high = high.tolist()
+        if low is not None or high is not None:
+            ci = np.abs(high - low).tolist()
 
         return (self.ordination.samples.index.tolist(), c_data.tolist(),
-                c_pct, low, high, headers, metadata, names)
+                c_pct, ci, headers, metadata, names)
 
 
 def _to_legacy_map(mf, custom_axes=None):
