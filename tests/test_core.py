@@ -27,8 +27,32 @@ except:
 
 class TopLevelTests(TestCase):
     def setUp(self):
+        self.maxDiff = None
         or_f = StringIO(tcs.PCOA_STRING)
         self.ord_res = OrdinationResults.read(or_f)
+
+        eigvals = self.ord_res.eigvals
+        samples = self.ord_res.samples
+        props = self.ord_res.proportion_explained
+
+        # make modified copies of the ordinations
+        a = OrdinationResults(eigvals=eigvals.copy(),
+                              samples=np.abs(samples).copy(),
+                              proportion_explained=props.copy(),
+                              short_method_name='PCoA',
+                              long_method_name='Princpal Coordinates Analysis')
+        b = OrdinationResults(eigvals=eigvals.copy(),
+                              samples=np.sin(samples).copy(),
+                              proportion_explained=props.copy(),
+                              short_method_name='PCoA',
+                              long_method_name='Princpal Coordinates Analysis')
+        c = OrdinationResults(eigvals=eigvals.copy(),
+                              samples=np.cos(samples.copy()),
+                              proportion_explained=props.copy(),
+                              short_method_name='PCoA',
+                              long_method_name='Princpal Coordinates Analysis')
+
+        self.jackknifed = [a, b, c]
 
         data = \
             [['PC.354', 'Control', '20061218', 'Ctrol_mouse_I.D._354'],
@@ -161,6 +185,32 @@ class TopLevelTests(TestCase):
 
         with self.assertRaises(KeyError):
             emp.make_emperor(custom_axes=[':L'])
+
+    def test_jackkifed_bad_data(self):
+        with self.assertRaises(TypeError):
+            Emperor(self.ord_res, self.mf, jackknifed=[1])
+
+        with self.assertRaises(TypeError):
+            Emperor(self.ord_res, self.mf, jackknifed=self.jackknifed + [1])
+
+    def test_jackkifed_bad_data_sample_ids(self):
+        self.jackknifed[0].samples.index = pd.Series(list('abcdefghi'))
+        with self.assertRaises(ValueError):
+            Emperor(self.ord_res, self.mf, jackknifed=self.jackknifed)
+
+    def test_jackknifed_make_emperor(self):
+        emp = Emperor(self.ord_res, self.mf, remote=self.url,
+                      jackknifed=self.jackknifed)
+
+        obs = str(emp.make_emperor())
+
+        try:
+            self.assertItemsEqual(tcs.HTML_STRING_JACKKNIFED.split('\n'),
+                                  obs.split('\n'))
+        except AttributeError:
+            self.assertCountEqual(tcs.HTML_STRING_JACKKNIFED.split('\n'),
+                                  obs.split('\n'))
+        self.assertEqual(tcs.HTML_STRING_JACKKNIFED, obs)
 
 
 if __name__ == "__main__":

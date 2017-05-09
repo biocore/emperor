@@ -72,7 +72,7 @@ class Emperor(object):
     dimensions: int, optional
         Number of dimensions to keep from the ordination data, defaults to 5.
         Be aware that this value will determine the number of dimensions for
-        jackknifing or any other computations.
+        all computations.
     remote: bool or str, optional
         This parameter can have one of the following three behaviors according
         to the value: (1) ``str`` - load the resources from a user-specified
@@ -81,12 +81,14 @@ class Emperor(object):
         the resources from the GitHub repository. This parameter defaults to
         ``True``. See the Notes section for more information.
     jackknifed: list of OrdinationResults, optional
-        TODO
+        A list of the OrdinationResults objects with the same sample
+        identifiers as the identifiers in ``ordination``.
 
     Attributes
     ----------
     jackknifed: list
-        TODO
+        List of OrdinationResults objects in the same sample-order as
+        ``self.ordination``.
     width: str
         Width of the plot when displayed in the Jupyter notebook (in CSS
         units).
@@ -241,23 +243,25 @@ class Emperor(object):
             raise TypeError('All elements in the jackknifed array should be '
                             'OrdinationResults instances.')
 
-        master = set(self.ordination.index)
+        master_ids = self.ordination.samples.index
+        master = set(self.ordination.samples.index)
 
         aligned = []
 
-        for i, ord in enumerate(self.jackknifed):
-            other = set(ord.samples.index)
+        for i, ord_res in enumerate(self.jackknifed):
+            other = set(ord_res.samples.index)
 
             # samples must be represented identically
             if master != other:
                 raise ValueError('The ordination at index (%d) does not '
                                  'represent the exact same samples. Mismatches'
-                                 ' are: %s.' % ', '.join(master - other))
+                                 ' are: %s.' % (i, ', '.join(master - other)))
 
             # we need to ensure the copy we have is aligned one-to-one with the
             # *master* ordination, making copies might be inefficient for large
             # datasets
-            aligned.append(ord.samples.loc[master].copy())
+            ord_res.samples = ord_res.samples.loc[master_ids].copy()
+            aligned.append(ord_res)
         self.jackknifed = aligned
 
     def copy_support_files(self, target=None):
@@ -425,7 +429,7 @@ class Emperor(object):
 
             c_pct = data.proportion_explained[:dims] * 100
 
-        headers, metadata = _to_legacy_map(self.mf, custom_axes)
+        headers, metadata = self._to_legacy_map(custom_axes)
 
         c_headers, c_data, _, c_pct, low, high, _ = \
             preprocess_coords_file(c_headers, c_data, c_eigenvals, c_pct,
@@ -446,37 +450,35 @@ class Emperor(object):
         return (self.ordination.samples.index.tolist(), c_data.tolist(),
                 c_pct, ci, headers, metadata, names)
 
+    def _to_legacy_map(self, custom_axes=None):
+        """Helper method to convert Pandas dataframe to legacy QIIME structure
 
-def _to_legacy_map(mf, custom_axes=None):
-    """Helper function to convert Pandas dataframe to legacy QIIME structure
+        Parameters
+        ----------
+        custom_axes : list of str, optional
+            Custom axes to embed in the ordination.
 
-    Parameters
-    ----------
-    mf : pd.DataFrame
-        Pandas dataframe indexed by the sample name (SampleID).
-    custom_axes : list of str, optional
-        Custom axes to embed in the ordination.
+        Returns
+        -------
+        list of str
+            Name of the metadata columns and the index name.
+        list of list of str
+            Data in ``mf``.
+        """
+        mf = self.mf
+        # there's a bug in old versions of Pandas that won't allow us to rename
+        # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
+        # would overwrite the name and simply set it as None
+        if mf.index.name is None:
+            index_name = 'SampleID'
+        else:
+            index_name = mf.index.name
 
-    Returns
-    -------
-    list of str
-        Name of the metadata columns and the index name.
-    list of list of str
-        Data in ``mf``.
-    """
-    # there's a bug in old versions of Pandas that won't allow us to rename
-    # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
-    # would overwrite the name and simply set it as None
-    if mf.index.name is None:
-        index_name = 'SampleID'
-    else:
-        index_name = mf.index.name
+        if custom_axes:
+            mf = validate_and_process_custom_axes(mf, custom_axes)
 
-    if custom_axes:
-        mf = validate_and_process_custom_axes(mf, custom_axes)
-
-    headers = [str(c) for c in [index_name] + mf.columns.tolist()]
-    metadata = mf.apply(lambda x: [str(x.name)] +
-                        x.astype('str').tolist(),
-                        axis=1).values.tolist()
-    return headers, metadata
+        headers = [str(c) for c in [index_name] + mf.columns.tolist()]
+        metadata = mf.apply(lambda x: [str(x.name)] +
+                            x.astype('str').tolist(),
+                            axis=1).values.tolist()
+        return headers, metadata
