@@ -345,6 +345,38 @@ requirejs([
 
     /**
      *
+     * Test hasConfidenceIntervals returns true
+     *
+     */
+    test('Test hasConfidenceIntervals (true)', function() {
+      this.data.ci = [[2, 1, 2, 0, 2, 2, 1, 1],
+                      [0, 1, 1, 0, 0, 1, 2, 0],
+                      [2, 1, 2, 1, 1, 1, 2, 0],
+                      [2, 0, 2, 2, 0, 0, 0, 2],
+                      [2, 1, 1, 0, 1, 2, 0, 2],
+                      [0, 2, 2, 2, 1, 2, 2, 2],
+                      [0, 0, 2, 0, 2, 0, 0, 2],
+                      [1, 2, 0, 0, 2, 0, 0, 1],
+                      [1, 0, 0, 1, 0, 0, 1, 1]];
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
+      equal(dm.hasConfidenceIntervals(), true);
+    });
+
+    /**
+     *
+     * Test hasConfidenceIntervals returns false
+     *
+     */
+    test('Test hasConfidenceIntervals (false)', function() {
+      this.data.ci = [];
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
+      equal(dm.hasConfidenceIntervals(), false);
+    });
+
+    /**
+     *
      * Test getPlottableByID returns the correct plottable object
      *
      */
