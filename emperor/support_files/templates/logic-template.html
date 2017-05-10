@@ -1,13 +1,14 @@
 <div id='{{ plot_id }}' style="position: relative; width:{{ width }}; height:{{ height }};">
   <div class='loading' style="position: absolute;top: 50%;left: 50%;margin-left: -229px; margin-top: -59px; z-index: 10000;height:118px;width:458px;padding:0px"><img src='{{ base_url }}/img/emperor.png' alt='Emperor resources missing. Expected them to be found in {{ base_url }}'></div>
 </div>
-</div>
 
 <script type="text/javascript">
 requirejs.config({
 // the left side is the module name, and the right side is the path
 // relative to the baseUrl attribute, do NOT include the .js extension
 'paths': {
+  'text': '{{ base_url }}/ili/js/lib/text.min',
+
   /* jQuery */
   'jquery': '{{ base_url }}/vendor/js/jquery-2.1.4.min',
   'jqueryui': '{{ base_url }}/vendor/js/jquery-ui.min',
@@ -18,6 +19,15 @@ requirejs.config({
   'spectrum': '{{ base_url }}/vendor/js/spectrum.min',
   'position': '{{ base_url }}/vendor/js/jquery.ui.position.min',
   'contextmenu': '{{ base_url }}/vendor/js/jquery.contextMenu.min',
+
+  /* bootstrap */
+  'bootstrap': '{{ base_url }}/ili/js/lib/bootstrap.min',
+
+  /* Bootstrap plugins */
+  'bootstrap_colorpicker': '{{ base_url }}/ili/js/lib/bootstrap-colorpicker.min',
+  'bootstrap_select': '{{ base_url }}/ili/js/lib/bootstrap-select.min',
+  'bootstrap_slider': '{{ base_url }}/ili/js/lib/bootstrap-slider.min',
+  'bootstrap_spinbox': '{{ base_url }}/ili/js/lib/jquery.bootstrap-touchspin.min',
 
   /* other libraries */
   'underscore': '{{ base_url }}/vendor/js/underscore-min',
@@ -33,6 +43,7 @@ requirejs.config({
   'projector': '{{ base_url }}/vendor/js/three.js-plugins/Projector',
   'svgrenderer': '{{ base_url }}/vendor/js/three.js-plugins/SVGRenderer',
   'canvasrenderer': '{{ base_url }}/vendor/js/three.js-plugins/CanvasRenderer',
+  'mtlloader': '{{ base_url }}/ili/js/lib/MTLLoader',
 
   /* SlickGrid */
   'slickcore': '{{ base_url }}/vendor/js/slick.core.min',
@@ -46,7 +57,7 @@ requirejs.config({
   'view': '{{ base_url }}/js/view',
   'controller': '{{ base_url }}/js/controller',
   'draw': '{{ base_url }}/js/draw',
-  'scene3d': '{{ base_url }}/js/sceneplotview3d',
+  'sceneview3d': '{{ base_url }}/js/sceneplotview3d',
   'abcviewcontroller': '{{ base_url }}/js/abc-view-controller',
   'viewcontroller': '{{ base_url }}/js/view-controller',
   'colorviewcontroller': '{{ base_url }}/js/color-view-controller',
@@ -57,20 +68,64 @@ requirejs.config({
   'shape-editor': '{{ base_url }}/js/shape-editor',
   'color-editor': '{{ base_url }}/js/color-editor',
   'scale-editor': '{{ base_url }}/js/scale-editor',
-  'shapes': '{{ base_url }}/js/shapes'
+  'shapes': '{{ base_url }}/js/shapes',
+
+  /* ili objects */
+  'appsettingscontroller': '{{ base_url }}/ili/js/AppSettingsController',
+  'colormaps': '{{ base_url }}/ili/js/ColorMaps',
+  'controlsgrid': '{{ base_url }}/ili/js/ControlsGrid',
+  'dragndrop': '{{ base_url }}/ili/js/DragAndDrop',
+  'eventsource': '{{ base_url }}/ili/js/EventSource',
+  'imageloader': '{{ base_url }}/ili/js/workers/ImageLoader',
+  'inputfilesprocessor': '{{ base_url }}/ili/js/InputFilesProcessor',
+  'main': '{{ base_url }}/ili/js/main',
+  'mapselector': '{{ base_url }}/ili/js/MapSelector',
+  'materialloader': '{{ base_url }}/ili/js/workers/MaterialLoader',
+  'scene2d': '{{ base_url }}/ili/js/Scene2D',
+  'scene3d': '{{ base_url }}/ili/js/Scene3D',
+  'spotlabel2d': '{{ base_url }}/ili/js/SpotLabel2D',
+  'spotlabel3d': '{{ base_url }}/ili/js/SpotLabel3D',
+  'spotlabelbase': '{{ base_url }}/ili/js/SpotLabelBase',
+  'spotscontroller': '{{ base_url }}/ili/js/SpotsController',
+  'tabcontroller2d': '{{ base_url }}/ili/js/TabController2D',
+  'tabcontroller3d': '{{ base_url }}/ili/js/TabController3D',
+  'tabcontrollerbase': '{{ base_url }}/ili/js/TabControllerBase',
+  'tabcontrollerexamples': '{{ base_url }}/ili/js/TabControllerExamples',
+  'tabcontrollermapping': '{{ base_url }}/ili/js/TabControllerMapping',
+  'tabcontrollerdocumentation': '{{ base_url }}/ili/js/TabControllerDocumentation',
+  'tabcontrollerspots': '{{ base_url }}/ili/js/TabControllerSpots',
+  'view2d': '{{ base_url }}/ili/js/View2D',
+  'view3d': '{{ base_url }}/ili/js/View3D',
+  'viewcontainer': '{{ base_url }}/ili/js/ViewContainer',
+  'viewgroup3d': '{{ base_url }}/ili/js/ViewGroup3D',
+  'viewlegend': '{{ base_url }}/ili/js/ViewLegend',
+  'workspace': '{{ base_url }}/ili/js/Workspace',
+  'utils': '{{ base_url }}/ili/js/utils',
+
+
 },
 /*
    Libraries that are not AMD compatible need shim to declare their
    dependencies.
  */
 'shim': {
-  'jquery_drag': {
-    'deps': ['jquery', 'jqueryui']
-  },
+  'jquery_drag': ['jquery', 'jqueryui'],
   'chosen': {
-    'deps': ['jquery'],
-    'exports': 'jQuery.fn.chosen'
+      deps: ['jquery'],
+      exports: 'jQuery.fn.chosen'
   },
+  'slickcore': ['jqueryui'],
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors'],
+  'bootstrap': ['jquery'],
+  'bootstrap_colorpicker': ['bootstrap'],
+  'bootstrap_select': ['bootstrap'],
+  'bootstrap_slider': {
+      deps: ['bootstrap'],
+      exports: 'Slider'
+  },
+  'bootstrap_spinbox': ['bootstrap', 'jqueryui'],
+
+  // emperor
   'contextmenu' : {
     'deps': ['jquery', 'jqueryui', 'position']
   },
@@ -79,9 +134,7 @@ requirejs.config({
   },
   'canvastoblob' : {
     'deps': ['blob']
-  },
-  'slickcore': ['jqueryui'],
-  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
+  }
 }
 });
 
@@ -89,7 +142,6 @@ requirejs(
 ["jquery", "model", "controller"],
 function($, model, EmperorController) {
   var DecompositionModel = model.DecompositionModel;
-
   var div = $('#{{ plot_id }}');
 
   var data = {
@@ -129,6 +181,15 @@ function($, model, EmperorController) {
     init();
     animate();
 
+    ec.ready = function () {
+      ec.controllers.visibility.bodyGrid.onCellChange.subscribe(function (e, args){
+        var visibilities = {};
+        args.item.plottables.forEach(function(plottable, index){
+          visibilities[plottable.name] = args.item.value;
+        });
+        ec.ili.spotVisibility = visibilities;
+      });
+    }
   });
 
 }); // END REQUIRE.JS block

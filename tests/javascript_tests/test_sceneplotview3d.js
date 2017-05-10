@@ -3,7 +3,7 @@ requirejs([
     'underscore',
     'model',
     'view',
-    'scene3d',
+    'sceneview3d',
     'three',
     'svgrenderer',
     'orbitcontrols'

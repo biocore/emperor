@@ -32,7 +32,7 @@ categories = np.asarray(np.random.randint(1, 1000, N), str)
 
 coords_ids = listify(np.arange(N))
 coords = (np.random.randn(N, 10) * 0.25).tolist()
-pct_var = 1/np.exp(np.arange(10))
+pct_var = pd.Series(np.abs(1/np.exp(np.arange(10))))
 
 
 md_headers = ['SampleID', 'DOB', 'Strings']
@@ -51,7 +51,7 @@ res = OrdinationResults(short_method_name='PC', long_method_name='Principal '
                         samples=samples, proportion_explained=pct_var)
 
 
-viz = Emperor(res, mf, remote=get_emperor_support_files_dir())
+viz = Emperor(res, mf, remote='./emperor/support_files/')
 
 with open('new-emperor.html', 'w') as f:
     f.write(viz.make_emperor(standalone=True))

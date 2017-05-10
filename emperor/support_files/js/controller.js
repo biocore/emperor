@@ -4,7 +4,7 @@ define([
     'contextmenu',
     'three',
     'view',
-    'scene3d',
+    'sceneview3d',
     'colorviewcontroller',
     'visibilitycontroller',
     'shapecontroller',
@@ -15,11 +15,12 @@ define([
     'svgrenderer',
     'draw',
     'canvasrenderer',
-    'canvastoblob'
+    'canvastoblob',
+    'main'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
             ColorViewController, VisibilityController, ShapeController,
             AxesController, ScaleViewController, FileSaver, viewcontroller,
-            SVGRenderer, Draw, CanvasRenderer, canvasToBlob) {
+            SVGRenderer, Draw, CanvasRenderer, canvasToBlob, ili) {
 
   /**
    *
@@ -92,9 +93,21 @@ define([
      * @type {node}
      */
     this.$plotMenu = $("<div class='emperor-plot-menu'></div>");
+    /**
+     * Internal div where `ili lives in (jQuery object).
+     * @type {node}
+     */
+    this.$ili = $("<div class='emperor-plot-wrapper'></div>");
 
+    this.$divId.append(this.$ili);
     this.$divId.append(this.$plotSpace);
     this.$divId.append(this.$plotMenu);
+
+    /**
+     * ili plot controller
+     * @type {ili}
+     */
+    this.ili = null;
 
     /**
      * Holds a reference to all the tabs (view controllers) in the `$plotMenu`.
@@ -169,6 +182,8 @@ define([
       scope._buildUI();
       // Hide the loading splashscreen
       scope.$divId.find('.loading').hide();
+
+      scope.ili = new ili(scope.$ili.get(0));
     });
 
     // once the object finishes loading, resize the contents so everything fits
