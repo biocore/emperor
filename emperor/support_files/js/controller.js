@@ -16,7 +16,7 @@ define([
     'draw',
     'canvasrenderer',
     'canvastoblob',
-    'main'
+    'ili'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
             ColorViewController, VisibilityController, ShapeController,
             AxesController, ScaleViewController, FileSaver, viewcontroller,
@@ -183,7 +183,7 @@ define([
       // Hide the loading splashscreen
       scope.$divId.find('.loading').hide();
 
-      scope.ili = new ili(scope.$ili.get(0));
+      scope.ili = new ili(scope.$ili.get(0), './emperor/support_files/ili/');
     });
 
     // once the object finishes loading, resize the contents so everything fits
