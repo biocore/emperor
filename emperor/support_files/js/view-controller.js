@@ -55,6 +55,14 @@ define([
      */
     this.decompViewDict = decompViewDict;
 
+    /**
+     * @type {Function}
+     * Callback to execute when all the elements in the UI for this controller
+     * have been loaded. Note, that this functionality needs to be implemented
+     * by subclasses, as EmperorViewController does not have any UI components.
+     */
+    this.ready = null;
+
     return this;
   }
   EmperorViewController.prototype = Object.create(
@@ -150,6 +158,16 @@ define([
       scope._buildGrid(options);
 
       scope.refreshMetadata();
+
+      // once this element is ready, it is safe to execute the "ready" callback
+      // if a subclass needs to wait on other elements, this attribute should
+      // be changed to null so this callback is effectively cancelled, for an
+      // example see the constructor of ColorViewController
+      scope.$select.on('chosen:ready', function() {
+        if (scope.ready !== null) {
+          scope.ready();
+        }
+      });
 
       // setup chosen
       scope.$select.chosen({width: '100%', search_contains: true,
