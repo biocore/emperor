@@ -171,6 +171,14 @@ define([
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
                              decompViewDict, options);
+
+    // the base-class will try to execute the "ready" callback, so we prevent
+    // that by copying the property and setting the property to undefined.
+    // This controller is not ready until the colormapSelect has signaled that
+    // it is indeed ready.
+    var ready = this.ready;
+    this.ready = undefined;
+
     this.$header.append(this.$colormapSelect);
     this.$header.append(this.$scaled);
     this.$header.append(this.$scaledLabel);
@@ -178,6 +186,12 @@ define([
 
     // the chosen select can only be set when the document is ready
     $(function() {
+      scope.$colormapSelect.on('chosen:ready', function() {
+        if (ready !== null) {
+          ready();
+          scope.ready = ready;
+        }
+      });
       scope.$colormapSelect.chosen({width: '100%', search_contains: true});
       scope.$colormapSelect.chosen().change(options.categorySelectionCallback);
       scope.$scaled.on('change', options.categorySelectionCallback);
@@ -455,8 +469,6 @@ define([
       return;
     }
 
-    this.$select.val(json.category);
-    this.$select.trigger('chosen:updated');
     this.$colormapSelect.val(json.colormap);
     this.$colormapSelect.trigger('chosen:updated');
     this.$scaled.prop('checked', json.continuous);
@@ -472,13 +484,15 @@ define([
       data[0].value = json.data['Non-numeric values'];
       this.setPlottableAttributes(
         decompViewDict, json.data['Non-numeric values'], data[0].plottables);
-
     }
     else {
       data = decompViewDict.setCategory(
         json.data, this.setPlottableAttributes, json.category);
     }
-    this.setSlickGridDataset(data);
+
+    if (!_.isEmpty(data)) {
+      this.setSlickGridDataset(data);
+    }
   };
 
   /**

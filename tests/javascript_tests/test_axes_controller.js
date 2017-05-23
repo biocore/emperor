@@ -91,7 +91,7 @@ requirejs([
         container, this.sharedDecompositionViewDict);
       equal(controller.title, 'Axes');
 
-      deepEqual(controller._flippedAxes, [0, 0, 0]);
+      deepEqual(controller._flippedAxes, [false, false, false]);
       equal(controller.$_screePlotContainer.attr('name'), 'scree-plot');
 
       equal(controller.$body.find('[name="axes-color"]').length, 1);
@@ -105,13 +105,15 @@ requirejs([
         container, this.sharedDecompositionViewDict);
 
       var obs = controller.toJSON();
-      var exp = {'flippedAxes': [0, 0, 0], 'visibleDimensions': [0, 1, 2],
+      var exp = {'flippedAxes': [false, false, false],
+                 'visibleDimensions': [0, 1, 2],
                  'backgroundColor': 0x000000, 'axesColor': 0xFFFFFF};
       deepEqual(obs, exp);
     });
 
     test('Testing fromJSON', function() {
-      var json = {'flippedAxes': [1, 1, 0], 'visibleDimensions': [0, 1, 0],
+      var json = {'flippedAxes': [true, true, false],
+                  'visibleDimensions': [0, 1, 0],
                   'backgroundColor': 0xFF00FF, 'axesColor': 0xFF000F};
 
       var container = $('<div id="does-not-exist" style="height:1000px; ' +
@@ -123,7 +125,7 @@ requirejs([
 
       var decView = controller.getView();
       deepEqual(decView.visibleDimensions, [0, 1, 0]);
-      deepEqual(controller._flippedAxes, [1, 1, 0]);
+      deepEqual(controller._flippedAxes, [true, true, false]);
 
       deepEqual(decView.backgroundColor, 0xFF00FF);
       deepEqual(decView.axesColor, 0xFF000F);

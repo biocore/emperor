@@ -76,6 +76,25 @@ requirejs(['draw'], function(draw) {
 
     /**
      *
+     * Test that makeLabel works correctly without a factor and a color name
+     *
+     */
+    test('Test makeLabel works correctly with color name', function(assert) {
+      var label = makeLabel([0, 0, 0], 'foolibusters', 'red');
+
+      equal(label.material.color.r, 1);
+      equal(label.material.color.g, 0);
+      equal(label.material.color.b, 0);
+
+      equal(label.position.x, 0);
+      equal(label.position.y, 0);
+      equal(label.position.z, 0);
+
+      equal(label.text, 'foolibusters');
+    });
+
+    /**
+     *
      * Test that makeLabel works correctly with a factor.
      *
      */

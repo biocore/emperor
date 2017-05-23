@@ -101,7 +101,8 @@ function($, model, EmperorController) {
 
     // sample information
     'metadata_headers': {{ md_headers | tojson }},
-    'metadata': {{ metadata | tojson }}
+    'metadata': {{ metadata | tojson }},
+    'settings': {{ settings | tojson }}
   }
 
   var dm, ec;
@@ -129,6 +130,11 @@ function($, model, EmperorController) {
     init();
     animate();
 
+    ec.ready = function () {
+      // any other code that needs to be executed when emperor is loaded should
+      // go here
+      ec.loadConfig(data['settings']);
+    }
   });
 
 }); // END REQUIRE.JS block
