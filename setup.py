@@ -12,7 +12,7 @@ import sys
 from distutils.core import setup
 from glob import glob
 
-__version__ = "1.0.0beta7-dev"
+__version__ = "1.0.0beta8"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
@@ -84,4 +84,5 @@ setup(
     install_requires=base,
     extras_require={'doc': doc, 'test': test, 'all': all_deps},
     long_description=long_description,
+    license='BSD-3-Clause',
     classifiers=classifiers)
