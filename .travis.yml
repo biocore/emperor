@@ -19,8 +19,10 @@ install:
   - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib openpyxl=1.8.2 pandas nose flake8 pep8 ipython-notebook
   - source activate env_name
   - pip install https://github.com/google/closure-linter/archive/master.zip
-  - pip install sphinx sphinx-bootstrap-theme coverage coveralls
-  - pip install -e '.[all]' --no-use-wheel
+  - pip install 'sphinx<1.6' sphinx-bootstrap-theme coverage coveralls
+  # install lockfile before to prevent a failure in travis
+  - pip install 'lockfile>=0.10.2'
+  - pip install -e '.[all]' --no-use-wheel --verbose
   - npm install -g jsdoc
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
