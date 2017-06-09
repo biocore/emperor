@@ -12,7 +12,7 @@ import sys
 from distutils.core import setup
 from glob import glob
 
-__version__ = "1.0.0beta5"
+__version__ = "1.0.0beta8-dev"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
@@ -43,8 +43,8 @@ Gigascience. 2013 Nov 26;2(1):16.
 skbio_2 = "scikit-bio >= 0.4.1, < 0.5.0"
 skbio_3 = "scikit-bio >= 0.4.1"
 base = {"numpy >= 1.7", "scipy >= 0.17.0", "click", "pandas",
-        skbio_2, "jinja2", "future"}
-doc = {"Sphinx >= 1.2.2", "sphinx-bootstrap-theme"}
+        skbio_2, "jinja2 >= 2.9", "future"}
+doc = {"Sphinx < 1.6", "sphinx-bootstrap-theme"}
 test = {"nose >= 0.10.1", "pep8", "flake8"}
 all_deps = base | doc | test
 
@@ -84,4 +84,5 @@ setup(
     install_requires=base,
     extras_require={'doc': doc, 'test': test, 'all': all_deps},
     long_description=long_description,
+    license='BSD-3-Clause',
     classifiers=classifiers)

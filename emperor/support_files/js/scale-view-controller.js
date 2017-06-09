@@ -146,6 +146,25 @@ define([
   ScaleViewController.prototype.constructor = EmperorAttributeABC;
 
   /**
+   *
+   * Private method to reset the scale of all the objects to one.
+   *
+   * @extends EmperorAttributeABC
+   * @private
+   *
+   */
+  ScaleViewController.prototype._resetAttribute = function() {
+    EmperorAttributeABC.prototype._resetAttribute.call(this);
+    var scope = this;
+
+    _.each(this.decompViewDict, function(view) {
+      scope.setPlottableAttributes(view, 1, view.decomp.plottable);
+      view.needsUpdate = true;
+    });
+    this.$scaledValue.prop('checked', false);
+  };
+
+  /**
    * Converts the current instance into a JSON string.
    *
    * @return {Object} JSON ready representation of self.
@@ -166,6 +185,15 @@ define([
     // Can't call super because select needs to be set first
     // Order here is important. We want to set all the extra controller
     // settings before we load from json, as they can override the JSON when set
+
+    this.setMetadataField(json.category);
+
+    // if the category is null, then there's nothing to set about the state
+    // of the controller
+    if (json.category === null) {
+      return;
+    }
+
     this.$select.val(json.category);
     this.$select.trigger('chosen:updated');
     this.$sliderGlobal.slider('value', json.globalScale);
@@ -207,6 +235,18 @@ define([
   };
 
   /**
+   * Sets whether or not elements in the tab can be modified.
+   *
+   * @param {Boolean} trulse option to enable elements.
+   */
+  ScaleViewController.prototype.setEnabled = function(trulse) {
+    EmperorAttributeABC.prototype.setEnabled.call(this, trulse);
+
+    this.$scaledValue.prop('disabled', !trulse);
+    this.$sliderGlobal.slider('option', 'disabled', !trulse);
+  };
+
+  /**
    * Helper function to set the scale of plottable
    *
    * @param {Object} scope The scope where the plottables exist
@@ -238,7 +278,7 @@ define([
    * value
    */
   ScaleViewController.prototype.getScale = function(values, scaled) {
-    var scale = {};
+    var scale = {}, numbers, val;
     if (!scaled) {
       _.each(values, function(element) {
         scale[element] = 1.0;
@@ -259,14 +299,22 @@ define([
         alert('Non-numeric values detected. These will be hidden!');
       }
 
+      // convert objects to numbers so we can map them to a color, we keep a
+      // copy of the untransformed object so we can search the metadata
+      numbers = _.map(split.numeric, parseFloat);
+
       //scale remaining values between 1 and 5 scale
-      var min = _.min(split.numeric);
-      var max = _.max(split.numeric);
+      var min = _.min(numbers);
+      var max = _.max(numbers);
       var range = max - min;
+
       _.each(split.numeric, function(element) {
-          // Scale the values, then round to 4 decimaal places.
-          scale[element] = Math.round(
-            (1 + (element - min) * 4 / range) * 10000) / 10000;
+        // note these elements are not numbers
+        val = parseFloat(element);
+
+        // Scale the values, then round to 4 decimaal places.
+        scale[element] = Math.round(
+            (1 + (val - min) * 4 / range) * 10000) / 10000;
         });
     }
     return scale;

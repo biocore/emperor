@@ -85,8 +85,8 @@ define(['underscore', 'three'], function(_, THREE) {
    *
    * @param {float[]} position The x, y, and z location of the label.
    * @param {string} text with the text to be shown on screen.
-   * @param {integer} Color Hexadecimal base that represents the color of
-   * the text.
+   * @param {integer|string} Color Hexadecimal base that represents the color
+   * of the text.
    * @param {float} [1] factor An optional scaling factor to determine the size
    * of the labels.
    *
@@ -95,14 +95,19 @@ define(['underscore', 'three'], function(_, THREE) {
    **/
   function makeLabel(position, text, color, factor) {
     var canvas = document.createElement('canvas');
-    var size = 512;
+    var size = 1024;
 
     factor = (factor === undefined ? 1 : factor);
 
     canvas.width = size;
     canvas.height = size;
     var context = canvas.getContext('2d');
-    context.fillStyle = '#ffffff';
+    if (_.isNumber(color)) {
+      context.fillStyle = '#' + color.toString(16);
+    }
+    else {
+      context.fillStyle = color;
+    }
     context.textAlign = 'center';
     context.font = (30 * factor) + 'px Arial';
     context.fillText(text, size / 2, size / 2);

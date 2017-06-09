@@ -15,6 +15,7 @@ dde2a06f2d990db8b09da65764cd27fc047db788
 """
 
 import re
+import sys
 import click
 import subprocess
 
@@ -25,14 +26,18 @@ from os.path import join, abspath, dirname, split
 from emperor import __version__
 
 
-def console(cmd):
+def console(cmd, stdout=None, stderr=None):
     """Small subprocess helper function
 
     Originally based on this SO answer:
     http://stackoverflow.com/a/33542403/379593
     """
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
+    if stdout is None:
+        stdout = subprocess.PIPE
+    if stderr is None:
+        stderr = subprocess.PIPE
+
+    process = subprocess.Popen(cmd, shell=True, stdout=stdout, stderr=stderr)
     o, e = process.communicate()
 
     return '' if o is None else o, '' if e is None else e, process.returncode
@@ -97,15 +102,15 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
                     bad_tests.append(unittest_name)
 
     if not suppress_javascript_unit_tests:
+        print("JavaScript Test Suite")
         runner = join(test_dir, 'javascript_tests', 'runner.js')
         index = join(test_dir, 'javascript_tests', 'index.html')
 
-        o, e, r = console('phantomjs %s %s' % (runner, index))
-
-        if o:
-            print(o.decode('utf-8'))
-        if e:
-            print(e.decode('utf-8'))
+        # phantomjs has some problems where the program will not terminate if
+        # an error occurs during the execution of the test suite. That's why
+        # all output is sent to standard output and standard error.
+        _, _, r = console('phantomjs %s %s' % (runner, index), sys.stdout,
+                          sys.stderr)
 
         # if all the tests passed
         javascript_tests_passed = True if r == 0 else False
@@ -144,6 +149,7 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
         return_code = 0
 
     exit(return_code)
+
 
 if __name__ == "__main__":
     test()

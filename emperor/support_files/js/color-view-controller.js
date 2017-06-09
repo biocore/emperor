@@ -5,8 +5,10 @@ define([
     'view',
     'viewcontroller',
     'color-editor',
-    'chroma'
-], function($, _, util, DecompositionView, ViewControllers, Color, chroma) {
+    'chroma',
+    'three'
+], function($, _, util, DecompositionView, ViewControllers, Color, chroma,
+            THREE) {
 
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
@@ -51,16 +53,19 @@ define([
     this.$colorScale = $("<svg width='90%' height='100%' " +
                          "'style='display:block;margin:auto;'></svg>");
     this.$scaleDiv.append(this.$colorScale);
+    this.$scaleDiv.hide();
     /**
      * @type {Node}
      *  jQuery object holding the continuous value checkbox
      */
     this.$scaled = $("<input type='checkbox'>");
+    this.$scaled.prop('hidden', true);
     /**
      * @type {Node}
      *  jQuery object holding the continuous value label
      */
     this.$scaledLabel = $("<label for='scaled'>Continuous values</label>");
+    this.$scaledLabel.prop('hidden', true);
 
     // this class uses a colormap selector, so populate it before calling super
     // because otherwise the categorySelectionCallback will be called before the
@@ -166,6 +171,14 @@ define([
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
                              decompViewDict, options);
+
+    // the base-class will try to execute the "ready" callback, so we prevent
+    // that by copying the property and setting the property to undefined.
+    // This controller is not ready until the colormapSelect has signaled that
+    // it is indeed ready.
+    var ready = this.ready;
+    this.ready = undefined;
+
     this.$header.append(this.$colormapSelect);
     this.$header.append(this.$scaled);
     this.$header.append(this.$scaledLabel);
@@ -173,6 +186,12 @@ define([
 
     // the chosen select can only be set when the document is ready
     $(function() {
+      scope.$colormapSelect.on('chosen:ready', function() {
+        if (ready !== null) {
+          ready();
+          scope.ready = ready;
+        }
+      });
       scope.$colormapSelect.chosen({width: '100%', search_contains: true});
       scope.$colormapSelect.chosen().change(options.categorySelectionCallback);
       scope.$scaled.on('change', options.categorySelectionCallback);
@@ -208,6 +227,35 @@ define([
      return plottables;
    };
 
+  /**
+   * Sets whether or not elements in the tab can be modified.
+   *
+   * @param {Boolean} trulse option to enable elements.
+   */
+  ColorViewController.prototype.setEnabled = function(trulse) {
+    EmperorAttributeABC.prototype.setEnabled.call(this, trulse);
+
+    this.$colormapSelect.prop('disabled', !trulse).trigger('chosen:updated');
+    this.$scaled.prop('disabled', !trulse);
+  };
+
+  /**
+   *
+   * Private method to reset the color of all the objects in every
+   * decomposition view to red.
+   *
+   * @extends EmperorAttributeABC
+   * @private
+   *
+   */
+  ColorViewController.prototype._resetAttribute = function() {
+    EmperorAttributeABC.prototype._resetAttribute.call(this);
+
+    _.each(this.decompViewDict, function(view) {
+      view.setGroupColor(0xff0000, view.decomp.plottable);
+      view.needsUpdate = true;
+    });
+  };
 
   /**
    *
@@ -318,18 +366,23 @@ define([
     map = chroma.brewer[map];
 
     // Get list of only numeric values, error if none
-    var split = util.splitNumericValues(values);
+    var split = util.splitNumericValues(values), numbers;
     if (split.numeric.length < 2) {
       throw new Error('non-numeric category');
     }
-    min = _.min(split.numeric);
-    max = _.max(split.numeric);
+
+    // convert objects to numbers so we can map them to a color, we keep a copy
+    // of the untransformed object so we can search the metadata
+    numbers = _.map(split.numeric, parseFloat);
+    min = _.min(numbers);
+    max = _.max(numbers);
+
     var interpolator = chroma.scale(map).domain([min, max]);
     var colors = {};
 
     // Color all the numeric values
     _.each(split.numeric, function(element) {
-      colors[element] = interpolator(element).hex();
+      colors[element] = interpolator(+element).hex();
     });
     //Gray out non-numeric values
     _.each(split.nonNumeric, function(element) {
@@ -403,12 +456,19 @@ define([
    * @param {Object} Parsed JSON string representation of self.
    */
   ColorViewController.prototype.fromJSON = function(json) {
+    var data;
+
     // NOTE: We do not call super here because of the non-numeric values issue
     // Order here is important. We want to set all the extra controller
     // settings before we load from json, as they can override the JSON when set
-    var data;
-    this.$select.val(json.category);
-    this.$select.trigger('chosen:updated');
+    this.setMetadataField(json.category);
+
+    // if the category is null, then there's nothing to set about the state
+    // of the controller
+    if (json.category === null) {
+      return;
+    }
+
     this.$colormapSelect.val(json.colormap);
     this.$colormapSelect.trigger('chosen:updated');
     this.$scaled.prop('checked', json.continuous);
@@ -420,17 +480,19 @@ define([
     var decompViewDict = this.getView();
     if (this.$scaled.is(':checked')) {
       // Get the current SlickGrid data and update with the saved color
-      var data = this.bodyGrid.getData();
+      data = this.bodyGrid.getData();
       data[0].value = json.data['Non-numeric values'];
       this.setPlottableAttributes(
         decompViewDict, json.data['Non-numeric values'], data[0].plottables);
-
     }
     else {
-      var data = decompViewDict.setCategory(
+      data = decompViewDict.setCategory(
         json.data, this.setPlottableAttributes, json.category);
     }
-    this.setSlickGridDataset(data);
+
+    if (!_.isEmpty(data)) {
+      this.setSlickGridDataset(data);
+    }
   };
 
   /**

@@ -401,18 +401,12 @@ define([
 
     this._dimensionsIterator(function(start, end, index) {
 
-      // construct a label of the format: AbbNam (xx.xx %)
-      if (decomp.abbreviatedName !== '') {
-        text = decomp.abbreviatedName;
+      // when the labels get too long, it's a bit hard to look at
+      if (decomp.axesNames[index].length > 25) {
+        text = decomp.axesNames[index].slice(0, 20) + '...';
       }
       else {
-        // when the labels get too long, it's a bit hard to look at
-        if (decomp.axesNames[index].length > 25) {
-          text = decomp.axesNames[index].slice(0, 20) + '...';
-        }
-        else {
-          text = decomp.axesNames[index];
-        }
+        text = decomp.axesNames[index];
       }
 
       // account for custom axes (their percentage explained will be -1 to
@@ -552,19 +546,14 @@ define([
       updateColors = true;
     }
 
-    // if autorotation is enabled, then update the controls to trigger an
-    // update, it's an equivalent to asking for re-rendering
-    if (this.control.autoRotate) {
-      this.control.update();
-    }
-
     if (updateData) {
       this.drawAxesWithColor(this.axesColor);
       this.drawAxesLabelsWithColor(this.axesColor);
     }
 
     // if anything has changed, then trigger an update
-    return this.needsUpdate || updateData || updateDimensions || updateColors;
+    return (this.needsUpdate || updateData || updateDimensions ||
+            updateColors || this.control.autoRotate);
    };
 
   /**
@@ -576,10 +565,15 @@ define([
     this.renderer.setViewport(this.xView, this.yView, this.width, this.height);
     this.renderer.render(this.scene, this.camera);
     var camera = this.camera;
+
+    // if autorotation is enabled, then update the controls
+    this.control.update();
+
     //point all samples towards the camera
     _.each(this.decViews.scatter.markers, function(element) {
       element.quaternion.copy(camera.quaternion);
     });
+
     this.needsUpdate = false;
     $.each(this.decViews, function(key, val) {
       val.needsUpdate = false;
@@ -670,6 +664,24 @@ define([
     if (pos !== -1) {
       this._subscribers[eventType].splice(pos, 1);
     }
+  };
+
+  /**
+   *
+   * Recenter the position of the camera to the initial default.
+   *
+   */
+  ScenePlotView3D.prototype.recenterCamera = function() {
+    this.control.update();
+    this.camera.rotation.set(0, 0, 0);
+    this.camera.updateProjectionMatrix();
+
+    // reset the position of the this view
+    var max = _.max(this.dimensionRanges.max);
+
+    // 5 is inspired by the old emperor.js and by the init method of this class
+    this.camera.position.set(0, 0, max * 5);
+    this.needsUpdate = true;
   };
 
   return ScenePlotView3D;

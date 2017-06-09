@@ -148,7 +148,8 @@ requirejs([
                                          0.140148]);
 
       equal(dm.length, 9, 'Length set correctly');
-      deepEqual(dm.axesNames, []);
+      deepEqual(dm.axesNames, ['pcoa 1', 'pcoa 2', 'pcoa 3', 'pcoa 4', 'pcoa 5',
+                               'pcoa 6', 'pcoa 7', 'pcoa 8']);
     });
 
     /**
@@ -157,10 +158,13 @@ requirejs([
      *
      */
     test('Test axesNames', function() {
-      var names = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+      var names = ['PC 1', 'PC 2', 'PC 3', 'PC 4', 'PC 5', 'PC 6', 'PC 7',
+                   'PC 8', 'PC 9'];
       var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
           metadata, names);
-      deepEqual(dm.axesNames, names, 'Plottable retrieved successfully');
+      deepEqual(dm.axesNames,
+                ['PC 1', 'PC 2', 'PC 3', 'PC 4', 'PC 5', 'PC 6', 'PC 7',
+                 'PC 8', 'PC 9'], 'Axes correctly renamed');
     });
 
     /**
@@ -600,6 +604,47 @@ requirejs([
       var exp = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593',
       'PC.355', 'PC.607', 'PC.634'];
       deepEqual(obs, exp, 'Apply works as expected');
+    });
+
+    /**
+     *
+     * Test axes names are fixed appropriately.
+     *
+     */
+    test('Fix axes names for scikit-bio', function() {
+      var names = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+      var expected = ['pcoa 1', 'pcoa 2', 'pcoa 3', 'pcoa 4', 'pcoa 5',
+                      'pcoa 6', 'pcoa 7', 'pcoa 8', 'pcoa 9'];
+      var dm = new DecompositionModel(name, ids, coords, pct_var, md_headers,
+                                      metadata, names);
+      deepEqual(dm.axesNames, expected, 'Integer names replaced correctly');
+    });
+
+    /**
+     *
+     * Test axes names are fixed appropriately with custom axes.
+     *
+     */
+    test('Fix axes names for scikit-bio (custom axes)', function() {
+      var names = ['days', 'ph', 0, 1, 2, 3, 4, 5, 6];
+      var expected = ['days', 'ph', 'Axis 1', 'Axis 2', 'Axis 3', 'Axis 4',
+                      'Axis 5', 'Axis 6', 'Axis 7'];
+      var dm = new DecompositionModel('', ids, coords, pct_var, md_headers,
+                                      metadata, names);
+      deepEqual(dm.axesNames, expected, 'Custon axes fixed correctly');
+    });
+
+    /**
+     *
+     * Test axes names are not modified because they don't match scikit-bio
+     *
+     */
+    test('Do not fix axes names for scikit-bio', function() {
+      var names = ['days', 'ph', 0, 1, 20, 3, 4, 5, 6];
+      var expected = ['days', 'ph', 0, 1, 20, 3, 4, 5, 6];
+      var dm = new DecompositionModel('', ids, coords, pct_var, md_headers,
+                                      metadata, names);
+      deepEqual(dm.axesNames, expected, 'No changes are made');
     });
 
     /**

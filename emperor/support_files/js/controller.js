@@ -14,11 +14,14 @@ define([
     'filesaver',
     'viewcontroller',
     'svgrenderer',
-    'draw'
+    'draw',
+    'canvasrenderer',
+    'canvastoblob'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
-             ColorViewController, VisibilityController, ShapeController,
-             AxesController, ScaleViewController, AnimationsController,
-             FileSaver, viewcontroller, SVGRenderer, Draw) {
+            ColorViewController, VisibilityController, ShapeController,
+            AxesController, ScaleViewController, AnimationsController,
+            FileSaver, viewcontroller, SVGRenderer, Draw, CanvasRenderer,
+            canvasToBlob) {
 
   /**
    *
@@ -94,6 +97,13 @@ define([
 
     this.$divId.append(this.$plotSpace);
     this.$divId.append(this.$plotMenu);
+
+    /**
+     * @type {Function}
+     * Callback to execute when all the view controllers have been successfully
+     * loaded.
+     */
+    this.ready = null;
 
     /**
      * Holds a reference to all the tabs (view controllers) in the `$plotMenu`.
@@ -346,6 +356,24 @@ define([
 
   /**
    *
+   * Helper method to check if all the view controllers have finished loading.
+   * Relies on the fact that each view controller announces when it is ready.
+   *
+   * @private
+   *
+   */
+  EmperorController.prototype._controllerHasFinishedLoading = function() {
+    this._seen += 1;
+
+    if (this._seen >= this._expected) {
+      if (this.ready !== null) {
+        this.ready();
+      }
+    }
+  };
+
+  /**
+   *
    * Helper method to assemble UI, completely independent of HTML template.
    * This method is called when the object is constructed.
    *
@@ -354,6 +382,11 @@ define([
    */
   EmperorController.prototype._buildUI = function() {
     var scope = this;
+
+    // this is the number of expected view controllers that will announce that
+    // all view controllers have been successfully loaded.
+    this._expected = 4;
+    this._seen = 0;
 
     //FIXME: This only works for 1 scene plot view
     this.controllers.color = this.addTab(this.sceneViews[0].decViews,
@@ -392,6 +425,15 @@ define([
       selector: '#' + scope.$divId.attr('id') + ' .emperor-plot-wrapper',
       trigger: 'none',
       items: {
+        'recenterCamera': {
+          name: 'Recenter camera',
+          icon: 'home',
+          callback: function(key, opts) {
+            _.each(scope.sceneViews, function(scene) {
+              scene.recenterCamera();
+            });
+          }
+        },
         'toggleAutorotate': {
           name: 'Toggle autorotation',
           icon: 'rotate-left',
@@ -449,7 +491,7 @@ define([
             icon: 'file-picture-o',
             'items': {
               'saveImagePNG': {
-                name: 'PNG',
+                name: 'PNG (high resolution)',
                 callback: function(key, opts) {
                   scope.screenshot('png');
                 }
@@ -465,13 +507,22 @@ define([
       }
     });
 
-    // Add shift+right click as the trigger for the context menu
-    this.$plotSpace.on('contextmenu', function(e) {
-      if (e.shiftKey) {
-        var contextDiv = $('#' + scope.$divId.attr('id') +
-                           ' .emperor-plot-wrapper');
-        contextDiv.contextMenu({x: e.pageX, y: e.pageY});
-      }
+    // The context menu is only shown if there's a single right click. We
+    // intercept the clicking event and if it's followed by mouseup event then
+    // the context menu is shown, otherwise the event is sent to the THREE.js
+    // orbit controls callback. See: http://stackoverflow.com/a/20831728
+    this.$plotSpace.on('mousedown', function(evt) {
+      scope.$plotSpace.on('mouseup mousemove', function handler(evt) {
+        if (evt.type === 'mouseup') {
+          // 3 is the right click
+          if (evt.which === 3) {
+            var contextDiv = $('#' + scope.$divId.attr('id') +
+                               ' .emperor-plot-wrapper');
+            contextDiv.contextMenu({x: evt.pageX, y: evt.pageY});
+          }
+        }
+        scope.$plotSpace.off('mouseup mousemove', handler);
+      });
     });
   };
 
@@ -483,24 +534,33 @@ define([
    *
    */
   EmperorController.prototype.screenshot = function(type) {
+    var img, renderer, factor = 5;
     type = type || 'png';
 
     if (type === 'png') {
-      // Render all scenes so it's rendered in same context as save
-      for (var i = 0; i < this.sceneViews.length; i++) {
-        this.sceneViews[i].render();
-      }
-      var c = this.renderer.domElement.toDataURL('image/' + type);
-      // Create DOM-less download link and click it to start download
-      var download = $('<a href="' + c + '" download="emperor.' + type + '">');
-      download.get(0).click();
-    } else if (type === 'svg') {
+      var pngRenderer = new THREE.CanvasRenderer({antialias: true,
+                                                  preserveDrawingBuffer: true});
+      pngRenderer.autoClear = true;
+      pngRenderer.sortObjects = true;
+      pngRenderer.setSize(this.$plotSpace.width() * factor,
+                          this.$plotSpace.height() * factor);
+      pngRenderer.setClearColor(this.renderer.getClearColor(), 1);
+      pngRenderer.setPixelRatio(window.devicePixelRatio);
+      pngRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
+
+      // toBlob is only available in some browsers, that's why we use
+      // canvas-toBlob
+      pngRenderer.domElement.toBlob(function(blob) {
+        saveAs(blob, 'emperor.png');
+      });
+    }
+    else if (type === 'svg') {
       // confirm box based on number of samples: better safe than sorry
       if (this.dm.length >= 9000) {
         if (confirm('This number of samples could take a long time and in ' +
            'some computers the browser will crash. If this happens we ' +
            'suggest to use the png implementation. Do you want to ' +
-           'continue?') == false) {
+           'continue?') === false) {
           return;
         }
       }
@@ -548,12 +608,17 @@ define([
         names.push(element.category);
         colors.push(element.value);
       });
-      var blob = new Blob([Draw.formatSVGLegend(names, colors)],
-                          {type: 'image/svg+xml'});
+      blob = new Blob([Draw.formatSVGLegend(names, colors)],
+                      {type: 'image/svg+xml'});
       saveAs(blob, 'emperor-image-labels.svg');
     } else {
-      console.error();('Screenshot type not implemented');
+      console.error('Screenshot type not implemented');
     }
+
+    // re-render everything, sometimes after saving objects, the colors change
+    this.sceneViews.forEach(function(view) {
+      view.needsUpdate = true;
+    });
   };
 
   /**
@@ -594,28 +659,33 @@ define([
    * @param {object} json Information about the emperor session to load.
    *
    */
-   EmperorController.prototype.loadConfig = function(json) {
+  EmperorController.prototype.loadConfig = function(json) {
     //still assuming one sceneview for now
     var sceneview = this.sceneViews[0];
 
-    sceneview.camera.position.set(json.cameraPosition.x,
-                                  json.cameraPosition.y,
-                                  json.cameraPosition.z);
-    sceneview.camera.quaternion.set(json.cameraQuaternion._x,
-                                    json.cameraQuaternion._y,
-                                    json.cameraQuaternion._z,
-                                    json.cameraQuaternion._w);
+    if (json.cameraPosition !== undefined) {
+      sceneview.camera.position.set(json.cameraPosition.x,
+                                    json.cameraPosition.y,
+                                    json.cameraPosition.z);
+    }
+    if (json.cameraQuaternion !== undefined) {
+      sceneview.camera.quaternion.set(json.cameraQuaternion._x,
+                                      json.cameraQuaternion._y,
+                                      json.cameraQuaternion._z,
+                                      json.cameraQuaternion._w);
+    }
 
     //must call updates to reset for camera move
     sceneview.camera.updateProjectionMatrix();
     sceneview.control.update();
 
     //load the rest of the controller settings
-     _.each(this.controllers, function(controller, index) {
-      if (controller !== undefined) {
+    _.each(this.controllers, function(controller, index) {
+      if (controller !== undefined && json[index] !== undefined) {
         controller.fromJSON(json[index]);
       }
     });
+
     sceneview.needsUpdate = true;
    };
 
@@ -629,6 +699,8 @@ define([
    *
    */
   EmperorController.prototype.addTab = function(dvdict, viewConstructor) {
+    var scope = this;
+
     // nothing but a temporary id
     var id = (Math.round(1000000 * Math.random())).toString();
 
@@ -640,6 +712,10 @@ define([
     // http://stackoverflow.com/a/8843181
     var params = [null, '#' + id, dvdict];
     var obj = new (Function.prototype.bind.apply(viewConstructor, params));
+
+    obj.ready = function() {
+      scope._controllerHasFinishedLoading();
+    };
 
     // set the identifier of the div to the one defined by the object
     $('#' + id).attr('id', obj.identifier);

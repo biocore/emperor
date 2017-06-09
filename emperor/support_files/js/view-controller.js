@@ -55,6 +55,14 @@ define([
      */
     this.decompViewDict = decompViewDict;
 
+    /**
+     * @type {Function}
+     * Callback to execute when all the elements in the UI for this controller
+     * have been loaded. Note, that this functionality needs to be implemented
+     * by subclasses, as EmperorViewController does not have any UI components.
+     */
+    this.ready = null;
+
     return this;
   }
   EmperorViewController.prototype = Object.create(
@@ -144,23 +152,40 @@ define([
 
     // there's a few attributes we can only set on "ready" so list them up here
     $(function() {
+      var placeholder = 'Select a ' + scope.title + ' Category';
+
       // setup the slick grid
       scope._buildGrid(options);
 
       scope.refreshMetadata();
 
+      // once this element is ready, it is safe to execute the "ready" callback
+      // if a subclass needs to wait on other elements, this attribute should
+      // be changed to null so this callback is effectively cancelled, for an
+      // example see the constructor of ColorViewController
+      scope.$select.on('chosen:ready', function() {
+        if (scope.ready !== null) {
+          scope.ready();
+        }
+      });
+
       // setup chosen
       scope.$select.chosen({width: '100%', search_contains: true,
-                            include_group_label_in_selected: true});
+                            include_group_label_in_selected: true,
+                            placeholder_text_single: placeholder});
 
       // only subclasses will provide this callback
       if (options.categorySelectionCallback !== undefined) {
-        scope.$select.chosen().change(options.categorySelectionCallback);
 
-        // now that we have the chosen selector and the table fire a callback
-        // to initialize the data grid
-        options.categorySelectionCallback(
-          null, {selected: scope.$select.val()});
+        // Disable interface controls (except the metadata selector) to
+        // prevent errors while no metadata category is selected. Once the
+        // user selects a metadata category, the controls will be enabled
+        // (see setSlickGridDataset).
+        scope.setEnabled(false);
+        scope.$select.val('');
+        scope.$select.prop('disabled', false).trigger('chosen:updated');
+
+        scope.$select.chosen().change(options.categorySelectionCallback);
       }
 
     });
@@ -199,14 +224,41 @@ define([
   };
 
   /**
+   *
+   * Private method to reset the attributes of the controller.
+   *
+   * Subclasses should implement this method as a way to reset the visual
+   * attributes of a given plot.
+   * @private
+   *
+   */
+  EmperorAttributeABC.prototype._resetAttribute = function() {
+  };
+
+  /**
    * Changes the selected value in the metadata menu.
    *
-   * @param {String} m Metadata column name to control.
+   * @param {String} m Metadata column name to control. When the category is
+   * ``null``, the metadata selector is set to an empty value, the body grid
+   * is emptied, and all the markers are reset to a default state (depends on
+   * the subclass).
    *
    * @throws {Error} Argument `m` must be a metadata category in one of the
    * decomposition views.
    */
   EmperorAttributeABC.prototype.setMetadataField = function(m) {
+    if (m === null) {
+      this._resetAttribute();
+
+      this.$select.val('');
+      this.setSlickGridDataset([]);
+
+      this.setEnabled(false);
+      this.$select.prop('disabled', false).trigger('chosen:updated');
+
+      return;
+    }
+
     // loop through the metadata headers in the decompositon views
     // FIXME: There's no good way to specify the current decomposition name
     // this needs to be added to the interface.
@@ -248,6 +300,14 @@ define([
    * @param {Array} data data.
    */
   EmperorAttributeABC.prototype.setSlickGridDataset = function(data) {
+
+    // Accounts for cases where controllers have not been set to a metadata
+    // category. In these cases all controllers (except for the metadata
+    // selector) are disabled to prevent interface errors.
+    if (this.getSlickGridDataset().length === 0 && this.enabled === false) {
+      this.setEnabled(true);
+    }
+
     // Re-render
     this.bodyGrid.setData(data);
     this.bodyGrid.invalidate();
@@ -340,12 +400,15 @@ define([
   EmperorAttributeABC.prototype.fromJSON = function(json) {
     this.setMetadataField(json.category);
 
-    // fetch and set the SlickGrid-formatted data
-    var data = this.getView().setCategory(
-      json.data, this.setPlottableAttributes, json.category);
-    this.setSlickGridDataset(data);
-    // set all to needsUpdate
-    this.getView().needsUpdate = true;
+    // if the category is null, then we just reset the controller
+    if (json.category !== null) {
+      // fetch and set the SlickGrid-formatted data
+      var data = this.getView().setCategory(
+        json.data, this.setPlottableAttributes, json.category);
+      this.setSlickGridDataset(data);
+      // set all to needsUpdate
+      this.getView().needsUpdate = true;
+    }
   };
 
   /**
@@ -364,8 +427,10 @@ define([
     var scope = this, group, hdrs;
 
     _.each(this.decompViewDict, function(view, name) {
-      // retrieve the metadata headers for this decomposition
-      hdrs = view.decomp.md_headers;
+      // sort alphabetically the metadata headers (
+      hdrs = _.sortBy(view.decomp.md_headers, function(x) {
+        return x.toLowerCase();
+      });
 
       // Before we update the metadata view, we rectify that we don't have that
       // information already. The order in this conditional matters as we hope
@@ -391,6 +456,18 @@ define([
     });
 
     this.$select.trigger('chosen:updated');
+  };
+
+  /**
+   * Sets whether or not the tab can be modified or accessed.
+   *
+   * @param {Boolean} trulse option to enable tab.
+   */
+  EmperorAttributeABC.prototype.setEnabled = function(trulse) {
+    EmperorViewController.prototype.setEnabled.call(this, trulse);
+
+    this.$select.prop('disabled', !trulse).trigger('chosen:updated');
+    this.bodyGrid.setOptions({editable: trulse});
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC,

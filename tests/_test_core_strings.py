@@ -95,6 +95,7 @@ requirejs.config({
   'chroma': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chroma.min',
   'filesaver': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/FileSaver.min',
   'blob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/Blob',
+  'canvastoblob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/canvas-toBlob',
   'd3': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/d3.min',
 
   /* THREE.js and plugins */
@@ -102,6 +103,7 @@ requirejs.config({
   'orbitcontrols': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/OrbitControls',
   'projector': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/Projector',
   'svgrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SVGRenderer',
+  'canvasrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/CanvasRenderer',
 
   /* SlickGrid */
   'slickcore': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.core.min',
@@ -146,18 +148,11 @@ requirejs.config({
   'filesaver' : {
     'deps': ['blob']
   },
-  'orbitcontrols': {
-    'deps': ['three']
+  'canvastoblob' : {
+    'deps': ['blob']
   },
-  'projector': {
-    'deps': ['three']
-  },
-  'svgrenderer': {
-    'deps': ['orbitcontrols', 'projector']
-  },
-'slickcore': ['jqueryui'],
-'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
-              'slickeditors']
+  'slickcore': ['jqueryui'],
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
 }
 });
 
@@ -168,21 +163,30 @@ function($, model, EmperorController) {
 
   var div = $('#emperor-notebook-0x9cb72f54');
 
-  var ids = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593', 'PC.355', 'PC.607', 'PC.634'];
-  var coords = [[-0.276542163845, -0.144964375408, 0.0666467344429, -0.0677109454288, 0.176070269506], [-0.237661393984, 0.0460527772512, -0.138135814766, 0.159061025229, -0.247484698646], [0.228820399536, -0.130142097093, -0.287149447883, 0.0864498846421, 0.0442951919304], [0.0422628480532, -0.0139681511889, 0.0635314615517, -0.346120552134, -0.127813807608], [0.280399117569, -0.0060128286014, 0.0234854344148, -0.0468109474823, -0.146624450094], [0.232872767451, 0.139788385269, 0.322871079774, 0.18334700682, 0.0204661596818], [0.170517581885, -0.194113268955, -0.0308965283066, 0.0198086158783, 0.155100062794], [-0.0913299284215, 0.424147148265, -0.135627421345, -0.057519480907, 0.151363490722], [-0.349339228244, -0.120787589539, 0.115274502117, 0.0694953933826, -0.0253722182853]];
-  var pct_var = [26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001];
-  var md_headers = ['SampleID', 'Treatment', 'DOB', 'Description'];
-  var metadata = [['PC.636', 'Fast', '20080116', 'Fasting_mouse_I.D._636'], ['PC.635', 'Fast', '20080116', 'Fasting_mouse_I.D._635'], ['PC.356', 'Control', '20061126', 'Control_mouse_I.D._356'], ['PC.481', 'Control', '20070314', 'Control_mouse_I.D._481'], ['PC.354', 'Control', '20061218', 'Ctrol_mouse_I.D._354'], ['PC.593', 'Control', '20071210', 'Control_mouse_I.D._593'], ['PC.355', 'Control', '20061218', 'Control_mouse_I.D._355'], ['PC.607', 'Fast', '20071112', 'Fasting_mouse_I.D._607'], ['PC.634', 'Fast', '20080116', 'Fasting_mouse_I.D._634']];
-  var axesNames = [0, 1, 2, 3, 4];
+  var data = {
+    // coordinates information
+    'sample_ids': ["PC.636", "PC.635", "PC.356", "PC.481", "PC.354", "PC.593", "PC.355", "PC.607", "PC.634"],
+    'coordinates': [[-0.651995810831719, -0.3417784983371589, 0.15713116241738878, -0.15964022322388774, 0.41511600449567154], [-0.5603276951316744, 0.10857735915373172, -0.32567898978232684, 0.3750137797216106, -0.583487828830988], [0.5394835270542403, -0.3068324227225251, -0.6770043110217822, 0.203820501907719, 0.1044335488558445], [0.09964194790906594, -0.03293232371368659, 0.14978636968698092, -0.8160388524355932, -0.301343079001781], [0.661089243947507, -0.014176279685000464, 0.05537095913733857, -0.11036487613740434, -0.3456924105084198], [0.5490376828031979, 0.32957520954888647, 0.7612242145083941, 0.4322721667939822, 0.04825249860931067], [0.40202458647314415, -0.4576554852461752, -0.0728438902229666, 0.04670222577076932, 0.36567512814466946], [-0.21532604614952783, 1.0, -0.31976501999316115, -0.13561208920603846, 0.35686551552017187], [-0.8236274360749414, -0.2847775589983077, 0.27177950526966277, 0.16384736680860681, -0.05981937728235736]],
+    'axes_names': [0, 1, 2, 3, 4],
+    'percents_explained': [26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001],
+
+    // sample information
+    'metadata_headers': ["SampleID", "Treatment", "DOB", "Description"],
+    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]],
+    'settings': {}
+  }
 
   var dm, ec;
 
   function init() {
     // Initialize the DecompositionModel
-    dm = new DecompositionModel(name, ids, coords, pct_var,
-                                md_headers, metadata, axesNames);
+    dm = new DecompositionModel('', data['sample_ids'],
+                                data['coordinates'],
+                                data['percents_explained'],
+                                data['metadata_headers'], data['metadata'],
+                                data['axes_names']);
     // Initialize the EmperorController
-    ec = new EmperorController(dm, 'emperor-notebook-0x9cb72f54');
+    ec = new EmperorController(dm, "emperor-notebook-0x9cb72f54");
   }
 
   function animate() {
@@ -197,6 +201,11 @@ function($, model, EmperorController) {
     init();
     animate();
 
+    ec.ready = function () {
+      // any other code that needs to be executed when emperor is loaded should
+      // go here
+      ec.loadConfig(data['settings']);
+    }
   });
 
 }); // END REQUIRE.JS block
@@ -267,6 +276,7 @@ requirejs.config({
   'chroma': './some-local-path//vendor/js/chroma.min',
   'filesaver': './some-local-path//vendor/js/FileSaver.min',
   'blob': './some-local-path//vendor/js/Blob',
+  'canvastoblob': './some-local-path//vendor/js/canvas-toBlob',
   'd3': './some-local-path//vendor/js/d3.min',
 
   /* THREE.js and plugins */
@@ -274,6 +284,7 @@ requirejs.config({
   'orbitcontrols': './some-local-path//vendor/js/three.js-plugins/OrbitControls',
   'projector': './some-local-path//vendor/js/three.js-plugins/Projector',
   'svgrenderer': './some-local-path//vendor/js/three.js-plugins/SVGRenderer',
+  'canvasrenderer': './some-local-path//vendor/js/three.js-plugins/CanvasRenderer',
 
   /* SlickGrid */
   'slickcore': './some-local-path//vendor/js/slick.core.min',
@@ -318,18 +329,11 @@ requirejs.config({
   'filesaver' : {
     'deps': ['blob']
   },
-  'orbitcontrols': {
-    'deps': ['three']
+  'canvastoblob' : {
+    'deps': ['blob']
   },
-  'projector': {
-    'deps': ['three']
-  },
-  'svgrenderer': {
-    'deps': ['orbitcontrols', 'projector']
-  },
-'slickcore': ['jqueryui'],
-'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
-              'slickeditors']
+  'slickcore': ['jqueryui'],
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
 }
 });
 
@@ -340,21 +344,30 @@ function($, model, EmperorController) {
 
   var div = $('#emperor-notebook-0x9cb72f54');
 
-  var ids = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593', 'PC.355', 'PC.607', 'PC.634'];
-  var coords = [[-0.276542163845, -0.144964375408, 0.0666467344429, -0.0677109454288, 0.176070269506], [-0.237661393984, 0.0460527772512, -0.138135814766, 0.159061025229, -0.247484698646], [0.228820399536, -0.130142097093, -0.287149447883, 0.0864498846421, 0.0442951919304], [0.0422628480532, -0.0139681511889, 0.0635314615517, -0.346120552134, -0.127813807608], [0.280399117569, -0.0060128286014, 0.0234854344148, -0.0468109474823, -0.146624450094], [0.232872767451, 0.139788385269, 0.322871079774, 0.18334700682, 0.0204661596818], [0.170517581885, -0.194113268955, -0.0308965283066, 0.0198086158783, 0.155100062794], [-0.0913299284215, 0.424147148265, -0.135627421345, -0.057519480907, 0.151363490722], [-0.349339228244, -0.120787589539, 0.115274502117, 0.0694953933826, -0.0253722182853]];
-  var pct_var = [26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001];
-  var md_headers = ['SampleID', 'Treatment', 'DOB', 'Description'];
-  var metadata = [['PC.636', 'Fast', '20080116', 'Fasting_mouse_I.D._636'], ['PC.635', 'Fast', '20080116', 'Fasting_mouse_I.D._635'], ['PC.356', 'Control', '20061126', 'Control_mouse_I.D._356'], ['PC.481', 'Control', '20070314', 'Control_mouse_I.D._481'], ['PC.354', 'Control', '20061218', 'Ctrol_mouse_I.D._354'], ['PC.593', 'Control', '20071210', 'Control_mouse_I.D._593'], ['PC.355', 'Control', '20061218', 'Control_mouse_I.D._355'], ['PC.607', 'Fast', '20071112', 'Fasting_mouse_I.D._607'], ['PC.634', 'Fast', '20080116', 'Fasting_mouse_I.D._634']];
-  var axesNames = [0, 1, 2, 3, 4];
+  var data = {
+    // coordinates information
+    'sample_ids': ["PC.636", "PC.635", "PC.356", "PC.481", "PC.354", "PC.593", "PC.355", "PC.607", "PC.634"],
+    'coordinates': [[-0.651995810831719, -0.3417784983371589, 0.15713116241738878, -0.15964022322388774, 0.41511600449567154], [-0.5603276951316744, 0.10857735915373172, -0.32567898978232684, 0.3750137797216106, -0.583487828830988], [0.5394835270542403, -0.3068324227225251, -0.6770043110217822, 0.203820501907719, 0.1044335488558445], [0.09964194790906594, -0.03293232371368659, 0.14978636968698092, -0.8160388524355932, -0.301343079001781], [0.661089243947507, -0.014176279685000464, 0.05537095913733857, -0.11036487613740434, -0.3456924105084198], [0.5490376828031979, 0.32957520954888647, 0.7612242145083941, 0.4322721667939822, 0.04825249860931067], [0.40202458647314415, -0.4576554852461752, -0.0728438902229666, 0.04670222577076932, 0.36567512814466946], [-0.21532604614952783, 1.0, -0.31976501999316115, -0.13561208920603846, 0.35686551552017187], [-0.8236274360749414, -0.2847775589983077, 0.27177950526966277, 0.16384736680860681, -0.05981937728235736]],
+    'axes_names': [0, 1, 2, 3, 4],
+    'percents_explained': [26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001],
+
+    // sample information
+    'metadata_headers': ["SampleID", "Treatment", "DOB", "Description"],
+    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]],
+    'settings': {}
+  }
 
   var dm, ec;
 
   function init() {
     // Initialize the DecompositionModel
-    dm = new DecompositionModel(name, ids, coords, pct_var,
-                                md_headers, metadata, axesNames);
+    dm = new DecompositionModel('', data['sample_ids'],
+                                data['coordinates'],
+                                data['percents_explained'],
+                                data['metadata_headers'], data['metadata'],
+                                data['axes_names']);
     // Initialize the EmperorController
-    ec = new EmperorController(dm, 'emperor-notebook-0x9cb72f54');
+    ec = new EmperorController(dm, "emperor-notebook-0x9cb72f54");
   }
 
   function animate() {
@@ -369,6 +382,11 @@ function($, model, EmperorController) {
     init();
     animate();
 
+    ec.ready = function () {
+      // any other code that needs to be executed when emperor is loaded should
+      // go here
+      ec.loadConfig(data['settings']);
+    }
   });
 
 }); // END REQUIRE.JS block
@@ -418,6 +436,7 @@ requirejs.config({
   'chroma': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chroma.min',
   'filesaver': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/FileSaver.min',
   'blob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/Blob',
+  'canvastoblob': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/canvas-toBlob',
   'd3': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/d3.min',
 
   /* THREE.js and plugins */
@@ -425,6 +444,7 @@ requirejs.config({
   'orbitcontrols': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/OrbitControls',
   'projector': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/Projector',
   'svgrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SVGRenderer',
+  'canvasrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/CanvasRenderer',
 
   /* SlickGrid */
   'slickcore': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.core.min',
@@ -469,18 +489,11 @@ requirejs.config({
   'filesaver' : {
     'deps': ['blob']
   },
-  'orbitcontrols': {
-    'deps': ['three']
+  'canvastoblob' : {
+    'deps': ['blob']
   },
-  'projector': {
-    'deps': ['three']
-  },
-  'svgrenderer': {
-    'deps': ['orbitcontrols', 'projector']
-  },
-'slickcore': ['jqueryui'],
-'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
-              'slickeditors']
+  'slickcore': ['jqueryui'],
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
 }
 });
 
@@ -491,21 +504,30 @@ function($, model, EmperorController) {
 
   var div = $('#emperor-notebook-0x9cb72f54');
 
-  var ids = ['PC.636', 'PC.635', 'PC.356', 'PC.481', 'PC.354', 'PC.593', 'PC.355', 'PC.607', 'PC.634'];
-  var coords = [[0.560798235138, -0.276542163845, -0.144964375408, 0.0666467344429, -0.0677109454288, 0.176070269506], [0.560798235138, -0.237661393984, 0.0460527772512, -0.138135814766, 0.159061025229, -0.247484698646], [-0.349339228244, 0.228820399536, -0.130142097093, -0.287149447883, 0.0864498846421, 0.0442951919304], [0.09101585409164065, 0.0422628480532, -0.0139681511889, 0.0635314615517, -0.346120552134, -0.127813807608], [-0.3449299261570519, 0.280399117569, -0.0060128286014, 0.0234854344148, -0.0468109474823, -0.146624450094], [0.1339586222427872, 0.232872767451, 0.139788385269, 0.322871079774, 0.18334700682, 0.0204661596818], [-0.3449299261570519, 0.170517581885, -0.194113268955, -0.0308965283066, 0.0198086158783, 0.155100062794], [0.12926175697625547, -0.0913299284215, 0.424147148265, -0.135627421345, -0.057519480907, 0.151363490722], [0.560798235138, -0.349339228244, -0.120787589539, 0.115274502117, 0.0694953933826, -0.0253722182853]];
-  var pct_var = [-1.0, 26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001];
-  var md_headers = ['SampleID', 'Treatment', 'DOB', 'Description'];
-  var metadata = [['PC.636', 'Fast', '20080116', 'Fasting_mouse_I.D._636'], ['PC.635', 'Fast', '20080116', 'Fasting_mouse_I.D._635'], ['PC.356', 'Control', '20061126', 'Control_mouse_I.D._356'], ['PC.481', 'Control', '20070314', 'Control_mouse_I.D._481'], ['PC.354', 'Control', '20061218', 'Ctrol_mouse_I.D._354'], ['PC.593', 'Control', '20071210', 'Control_mouse_I.D._593'], ['PC.355', 'Control', '20061218', 'Control_mouse_I.D._355'], ['PC.607', 'Fast', '20071112', 'Fasting_mouse_I.D._607'], ['PC.634', 'Fast', '20080116', 'Fasting_mouse_I.D._634']];
-  var axesNames = ['DOB', 0, 1, 2, 3, 4];
+  var data = {
+    // coordinates information
+    'sample_ids': ["PC.636", "PC.635", "PC.356", "PC.481", "PC.354", "PC.593", "PC.355", "PC.607", "PC.634"],
+    'coordinates': [[1.322178487895014, -0.651995810831719, -0.3417784983371589, 0.15713116241738878, -0.15964022322388774, 0.41511600449567154], [1.322178487895014, -0.5603276951316744, 0.10857735915373172, -0.32567898978232684, 0.3750137797216106, -0.583487828830988], [-0.8236274360749414, 0.5394835270542403, -0.3068324227225251, -0.6770043110217822, 0.203820501907719, 0.1044335488558445], [0.21458556178898447, 0.09964194790906594, -0.03293232371368659, 0.14978636968698092, -0.8160388524355932, -0.301343079001781], [-0.813231746501206, 0.661089243947507, -0.014176279685000464, 0.05537095913733857, -0.11036487613740434, -0.3456924105084198], [0.3158305385071034, 0.5490376828031979, 0.32957520954888647, 0.7612242145083941, 0.4322721667939822, 0.04825249860931067], [-0.813231746501206, 0.40202458647314415, -0.4576554852461752, -0.0728438902229666, 0.04670222577076932, 0.36567512814466946], [0.30475686917855915, -0.21532604614952783, 1.0, -0.31976501999316115, -0.13561208920603846, 0.35686551552017187], [1.322178487895014, -0.8236274360749414, -0.2847775589983077, 0.27177950526966277, 0.16384736680860681, -0.05981937728235736]],
+    'axes_names': ["DOB", 0, 1, 2, 3, 4],
+    'percents_explained': [-1, 26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001],
+
+    // sample information
+    'metadata_headers': ["SampleID", "Treatment", "DOB", "Description"],
+    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]],
+    'settings': {}
+  }
 
   var dm, ec;
 
   function init() {
     // Initialize the DecompositionModel
-    dm = new DecompositionModel(name, ids, coords, pct_var,
-                                md_headers, metadata, axesNames);
+    dm = new DecompositionModel('', data['sample_ids'],
+                                data['coordinates'],
+                                data['percents_explained'],
+                                data['metadata_headers'], data['metadata'],
+                                data['axes_names']);
     // Initialize the EmperorController
-    ec = new EmperorController(dm, 'emperor-notebook-0x9cb72f54');
+    ec = new EmperorController(dm, "emperor-notebook-0x9cb72f54");
   }
 
   function animate() {
@@ -520,6 +542,11 @@ function($, model, EmperorController) {
     init();
     animate();
 
+    ec.ready = function () {
+      // any other code that needs to be executed when emperor is loaded should
+      // go here
+      ec.loadConfig(data['settings']);
+    }
   });
 
 }); // END REQUIRE.JS block

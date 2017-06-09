@@ -1,4 +1,4 @@
-<div id='{{ plot_id }}' style="position: relative; width:100%; height:500px;">
+<div id='{{ plot_id }}' style="position: relative; width:{{ width }}; height:{{ height }};">
   <div class='loading' style="position: absolute;top: 50%;left: 50%;margin-left: -229px; margin-top: -59px; z-index: 10000;height:118px;width:458px;padding:0px"><img src='{{ base_url }}/img/emperor.png' alt='Emperor resources missing. Expected them to be found in {{ base_url }}'></div>
 </div>
 </div>
@@ -24,6 +24,7 @@ requirejs.config({
   'chroma': '{{ base_url }}/vendor/js/chroma.min',
   'filesaver': '{{ base_url }}/vendor/js/FileSaver.min',
   'blob': '{{ base_url }}/vendor/js/Blob',
+  'canvastoblob': '{{ base_url }}/vendor/js/canvas-toBlob',
   'd3': '{{ base_url }}/vendor/js/d3.min',
 
   /* THREE.js and plugins */
@@ -31,6 +32,7 @@ requirejs.config({
   'orbitcontrols': '{{ base_url }}/vendor/js/three.js-plugins/OrbitControls',
   'projector': '{{ base_url }}/vendor/js/three.js-plugins/Projector',
   'svgrenderer': '{{ base_url }}/vendor/js/three.js-plugins/SVGRenderer',
+  'canvasrenderer': '{{ base_url }}/vendor/js/three.js-plugins/CanvasRenderer',
 
   /* SlickGrid */
   'slickcore': '{{ base_url }}/vendor/js/slick.core.min',
@@ -81,18 +83,11 @@ requirejs.config({
   'filesaver' : {
     'deps': ['blob']
   },
-  'orbitcontrols': {
-    'deps': ['three']
+  'canvastoblob' : {
+    'deps': ['blob']
   },
-  'projector': {
-    'deps': ['three']
-  },
-  'svgrenderer': {
-    'deps': ['orbitcontrols', 'projector']
-  },
-'slickcore': ['jqueryui'],
-'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
-              'slickeditors']
+  'slickcore': ['jqueryui'],
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
 }
 });
 
@@ -103,21 +98,30 @@ function($, model, EmperorController) {
 
   var div = $('#{{ plot_id }}');
 
-  var ids = {{ coords_ids }};
-  var coords = {{ coords }};
-  var pct_var = {{ pct_var | map('float') | list }};
-  var md_headers = {{ md_headers}};
-  var metadata = {{  metadata }};
-  var axesNames = {{ axes_names }};
+  var data = {
+    // coordinates information
+    'sample_ids': {{ coords_ids | tojson }},
+    'coordinates': {{ coords | tojson }},
+    'axes_names': {{ axes_names | tojson }},
+    'percents_explained': {{ pct_var | tojson }},
+
+    // sample information
+    'metadata_headers': {{ md_headers | tojson }},
+    'metadata': {{ metadata | tojson }},
+    'settings': {{ settings | tojson }}
+  }
 
   var dm, ec;
 
   function init() {
     // Initialize the DecompositionModel
-    dm = new DecompositionModel(name, ids, coords, pct_var,
-                                md_headers, metadata, axesNames);
+    dm = new DecompositionModel('', data['sample_ids'],
+                                data['coordinates'],
+                                data['percents_explained'],
+                                data['metadata_headers'], data['metadata'],
+                                data['axes_names']);
     // Initialize the EmperorController
-    ec = new EmperorController(dm, '{{ plot_id }}');
+    ec = new EmperorController(dm, {{ plot_id | tojson }});
   }
 
   function animate() {
@@ -132,6 +136,11 @@ function($, model, EmperorController) {
     init();
     animate();
 
+    ec.ready = function () {
+      // any other code that needs to be executed when emperor is loaded should
+      // go here
+      ec.loadConfig(data['settings']);
+    }
   });
 
 }); // END REQUIRE.JS block

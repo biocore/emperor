@@ -26,18 +26,20 @@ from __future__ import division
 from os.path import join, basename
 from distutils.dir_util import copy_tree
 import numpy as np
+import pandas as pd
 
 from jinja2 import FileSystemLoader
 from jinja2.environment import Environment
 
+from emperor import __version__ as emperor_version
 from emperor.util import (get_emperor_support_files_dir,
-                          validate_and_process_custom_axes)
+                          validate_and_process_custom_axes, resolve_stable_url)
 from emperor.qiime_backports.make_3d_plots import (get_custom_coords,
                                                    remove_nans,
                                                    scale_custom_coords)
 
 # we are going to use this remote location to load external resources
-REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/new-api/emperor'
+REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/%s/emperor'
               '/support_files')
 LOCAL_URL = "/nbextensions/emperor/support_files"
 
@@ -78,6 +80,23 @@ class Emperor(object):
         nbextensions folder in the Jupyter installation or (3) ``True`` - load
         the resources from the GitHub repository. This parameter defaults to
         ``True``. See the Notes section for more information.
+
+    Attributes
+    ----------
+    width: str
+        Width of the plot when displayed in the Jupyter notebook (in CSS
+        units).
+    height: str
+        Height of the plot when displayed in the Jupyter notebook (in CSS
+        units).
+    settings: dict
+        A dictionary of settings that is loaded when a plot is displayed.
+        Settings generated from the graphical user interface are stored as JSON
+        files that can be loaded, and directly set to this attribute.
+        Alternatively, each aspect of the plot can be changed with dedicated
+        methods, for example see ``color_by``, ``set_background_color``, etc.
+        This attribute can also be serialized as a JSON string and loaded from
+        the GUI.
 
     Examples
     --------
@@ -183,7 +202,8 @@ class Emperor(object):
 
         if isinstance(remote, bool):
             if remote:
-                self.base_url = REMOTE_URL
+                self.base_url = resolve_stable_url(emperor_version,
+                                                   REMOTE_URL)
             else:
                 self.base_url = LOCAL_URL
         elif isinstance(remote, str):
@@ -191,6 +211,13 @@ class Emperor(object):
         else:
             raise ValueError("Unsupported type for `remote` argument, should "
                              "be a bool or str")
+
+        # dimensions for the div containing the plot in the context of the
+        # Jupyter notebook, can be a "percent" or "number of pixels".
+        self.width = '100%'
+        self.height = '500px'
+
+        self._settings = {}
 
     def __str__(self):
         return self.make_emperor()
@@ -284,9 +311,18 @@ class Emperor(object):
 
         # format the coordinates
         d = self.dimensions
-        pct_var = (self.ordination.proportion_explained[:d] * 100).tolist()
-        coords = self.ordination.samples.values[:, :d].tolist()
-        names = self.ordination.samples.columns[:d].tolist()
+
+        # normalize the coordinates
+        coords = self.ordination.samples.values[:, :d]
+        coords /= np.max(np.abs(coords))
+        coords = coords.tolist()
+
+        # convert to a list from the values property as old versions of pandas
+        # do not convert the elements of the Series/DataFrames to the nearest
+        # python type, causing errors when seralizing to JSON.
+        pct_var = (self.ordination.proportion_explained[:d] * 100)
+        pct_var = pct_var.values.tolist()
+        names = self.ordination.samples.columns[:d].values.tolist()
 
         # avoid unicode strings
         coord_ids = list(map(str, self.mf.index.tolist()))
@@ -327,6 +363,529 @@ class Emperor(object):
                                     plot_id=plot_id,
                                     logic_template_path=basename(LOGIC_PATH),
                                     style_template_path=basename(STYLE_PATH),
-                                    axes_names=names)
+                                    axes_names=names,
+                                    width=self.width,
+                                    height=self.height,
+                                    settings=self.settings)
 
         return plot
+
+    def _base_data_checks(self, category, data, d_type):
+        """Perform common checks in the methods that modify the plot
+
+        Parameters
+        ----------
+        category: str
+            The metadata category used for this attribute.
+        data: dict or pd.Series
+            Mapping of metadata value to attribute.
+        d_type: object
+            The required type in the ``data`` mappings.
+
+        Returns
+        -------
+        dict
+            Validated and consumable dictionary of attribute mappings.
+        """
+
+        if not isinstance(category, str):
+            raise TypeError('Metadata category must be a string')
+
+        if category not in self.mf.columns:
+            raise KeyError('The category %s is not present in your metadata' %
+                           category)
+
+        if isinstance(data, pd.Series):
+            data = data.to_dict()
+
+        # if no data is provide just return an empty dictionary
+        if data is None or not data:
+            return {}
+
+        present = set(self.mf[category].value_counts().index)
+        given = set(data.keys())
+
+        if present != given:
+            if present.issubset(given):
+                raise ValueError('More categories present in the provided '
+                                 'data, the following categories were '
+                                 'not found in the metadata: %s.' %
+                                 ', '.join(given - present))
+            elif given.issubset(present):
+                raise ValueError('The following categories are not present'
+                                 ' in the provided data: %s' %
+                                 ', '.join(present - given))
+
+        # isinstance won't recognize numpy dtypes that are still valid
+        if not all(np.issubdtype(type(v), d_type) for v in data.values()):
+            raise TypeError('Values in the provided data must be '
+                            'of %s' % d_type)
+
+        return data
+
+    def color_by(self, category, colors=None, colormap=None, continuous=False):
+        """Set the coloring settings for the plot elements
+
+        Parameters
+        ----------
+        category: str
+            Name of the metadata column.
+        colors: dict or pd.Series, optional
+            Mapping of categories to a CSS color attribute. Defaults to the
+            colors described by ``colormap``.
+        colormap: str, optional
+            Name of the colormap to use. Supports continuous and discrete
+            colormaps, see the notes section. Defaults to QIIME's discrete
+            colorscheme.
+        continuous: bool, optional
+            Whether or not the ``category`` should be interpreted as numeric.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        KeyError
+            If ``category`` is not part of the metadata.
+        TypeError
+            If ``category`` is not a string.
+        ValueError
+            If ``colors`` describes fewer or more categories than the ones
+            present in the ``category`` column.
+            If ``colors`` has colors in a non-string format.
+
+        Notes
+        -----
+        Valid colormaps are listed below (under the `Code` column), for
+        examples see [1]_ or [2]_.
+
+        +----------+---------------------+------------+
+        | Code     | Name                | Type       |
+        +==========+=====================+============+
+        | Paired   | Paired              | Discrete   |
+        +----------+---------------------+------------+
+        | Accent   | Accent              | Discrete   |
+        +----------+---------------------+------------+
+        | Dark2    | Dark                | Discrete   |
+        +----------+---------------------+------------+
+        | Set1     | Set1                | Discrete   |
+        +----------+---------------------+------------+
+        | Set2     | Set2                | Discrete   |
+        +----------+---------------------+------------+
+        | Set3     | Set3                | Discrete   |
+        +----------+---------------------+------------+
+        | Pastel1  | Pastel1             | Discrete   |
+        +----------+---------------------+------------+
+        | Pastel2  | Pastel2             | Discrete   |
+        +----------+---------------------+------------+
+        | Viridis  | Viridis             | Sequential |
+        +----------+---------------------+------------+
+        | Reds     | Reds                | Sequential |
+        +----------+---------------------+------------+
+        | RdPu     | Red-Purple          | Sequential |
+        +----------+---------------------+------------+
+        | Oranges  | Oranges             | Sequential |
+        +----------+---------------------+------------+
+        | OrRd     | Orange-Red          | Sequential |
+        +----------+---------------------+------------+
+        | YlOrBr   | Yellow-Orange-Brown | Sequential |
+        +----------+---------------------+------------+
+        | YlOrRd   | Yellow-Orange-Red   | Sequential |
+        +----------+---------------------+------------+
+        | YlGn     | Yellow-Green        | Sequential |
+        +----------+---------------------+------------+
+        | YlGnBu   | Yellow-Green-Blue   | Sequential |
+        +----------+---------------------+------------+
+        | Greens   | Greens              | Sequential |
+        +----------+---------------------+------------+
+        | GnBu     | Green-Blue          | Sequential |
+        +----------+---------------------+------------+
+        | Blues    | Blues               | Sequential |
+        +----------+---------------------+------------+
+        | BuGn     | Blue-Green          | Sequential |
+        +----------+---------------------+------------+
+        | BuPu     | Blue-Purple         | Sequential |
+        +----------+---------------------+------------+
+        | Purples  | Purples             | Sequential |
+        +----------+---------------------+------------+
+        | PuRd     | Purple-Red          | Sequential |
+        +----------+---------------------+------------+
+        | PuBuGn   | Purple-Blue-Green   | Sequential |
+        +----------+---------------------+------------+
+        | Greys    | Greys               | Sequential |
+        +----------+---------------------+------------+
+        | Spectral | Spectral            | Diverging  |
+        +----------+---------------------+------------+
+        | RdBu     | Red-Blue            | Diverging  |
+        +----------+---------------------+------------+
+        | RdYlGn   | Red-Yellow-Green    | Diverging  |
+        +----------+---------------------+------------+
+        | RdYlB    | Red-Yellow-Blue     | Diverging  |
+        +----------+---------------------+------------+
+        | RdGy     | Red-Grey            | Diverging  |
+        +----------+---------------------+------------+
+        | PiYG     | Pink-Yellow-Green   | Diverging  |
+        +----------+---------------------+------------+
+        | BrBG     | Brown-Blue-Green    | Diverging  |
+        +----------+---------------------+------------+
+        | PuOr     | Purple-Orange       | Diverging  |
+        +----------+---------------------+------------+
+        | PRGn     | Purple-Green        | Diverging  |
+        +----------+---------------------+------------+
+
+        See Also
+        --------
+        emperor.core.Emperor.visibility_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.shape_by
+        emperor.core.Emperor.set_background_color
+        emperor.core.Emperor.set_axes
+
+        References
+        ----------
+        .. [1] https://matplotlib.org/examples/color/colormaps_reference.html
+        .. [2] http://colorbrewer2.org/
+        """
+        colors = self._base_data_checks(category, colors, str)
+
+        if colormap is None:
+            colormap = 'discrete-coloring-qiime'
+        elif not isinstance(colormap, str):
+            raise TypeError('The colormap argument must be a string')
+
+        self._settings.update({"color": {
+            "category": category,
+            "colormap": colormap,
+            "continuous": continuous,
+            "data": colors
+        }})
+
+        return self
+
+    def visibility_by(self, category, visibilities=None, negate=False):
+        """Set the visibility settings for the plot elements
+
+        Parameters
+        ----------
+        category: str
+            Name of the metadata column.
+        visibilities: dict, list or pd.Series, optional
+            When this argument is a ``dict`` or ``pd.Series``, it is a mapping
+            of categories to a boolean values determining whether or not that
+            category should be visible. When this argument is a ``list``, only
+            categories present will be visible in the plot.
+        negate: bool
+            Whether or not to negate the values in ``visibilities``.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        KeyError
+            If ``category`` is not part of the metadata.
+        TypeError
+            If ``category`` is not a string.
+        ValueError
+            If ``visibilities`` describes fewer or more categories than the
+            ones present in the ``category`` column.
+            If ``visibilities`` has visibilities in a non-string format.
+
+        See Also
+        --------
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.shape_by
+        emperor.core.Emperor.set_background_color
+        emperor.core.Emperor.set_axes
+        """
+        if isinstance(visibilities, list) and category in self.mf:
+            cats = self.mf[category].unique()
+            visibilities = {c: c in visibilities for c in cats}
+
+        visibilities = self._base_data_checks(category, visibilities, bool)
+
+        # negate visibilities using XOR
+        visibilities = {k: v ^ negate for k, v in visibilities.items()}
+
+        self._settings.update({"visibility": {
+            "category": category,
+            "data": visibilities
+        }})
+
+        return self
+
+    def scale_by(self, category, scales=None, global_scale=1.0, scaled=False):
+        """Set the scaling settings for the plot elements
+
+        Parameters
+        ----------
+        category: str
+            Name of the metadata column.
+        scales: dict or pd.Series, optional
+            Mapping of categories to numbers determining the size of the
+            elements in each category.
+        global_scale: int or float, optional
+            The size of all the elements.
+        scaled: bool
+            Whether or not the values in ``scales`` should be assumed to be
+            numeric and scaled in size according to their value.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        KeyError
+            If ``category`` is not part of the metadata.
+        TypeError
+            If ``category`` is not a string.
+            If ``global_scale`` is not a number.
+            If ``scaled`` is not a boolean value.
+        ValueError
+            If ``scales`` describes fewer or more categories than the ones
+            present in the ``category`` column.
+            If ``scales`` has sizes in a non-numeric format.
+
+        See Also
+        --------
+        emperor.core.Emperor.visibility_by
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.shape_by
+        emperor.core.Emperor.set_background_color
+        emperor.core.Emperor.set_axes
+        """
+        scales = self._base_data_checks(category, scales, float)
+
+        if (not isinstance(global_scale, (float, int)) or
+           isinstance(global_scale, bool)):
+            raise TypeError('The global scale argument must be a float or int')
+
+        if not isinstance(scaled, bool):
+            raise TypeError('The scaled argument must be a bool')
+
+        self._settings.update({"scale": {
+            "category": category,
+            "globalScale": str(global_scale),
+            "scaleVal": scaled,
+            "data": scales
+        }})
+
+        return self
+
+    def shape_by(self, category, shapes=None):
+        """Set the shape settings for the plot elements
+
+        Parameters
+        ----------
+        category: str
+            Name of the metadata column.
+        shapes: dict or pd.Series, optional
+            Mapping of categories to string values determining the shape of
+            the objects. See the notes for the valid options.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        KeyError
+            If ``category`` is not part of the metadata.
+        TypeError
+            If ``category`` is not a string.
+        ValueError
+            If ``shapes`` describes fewer or more categories than the
+            ones present in the ``category`` column.
+            If ``shapes`` has shapes in a non-string format.
+
+        Notes
+        -----
+        The valid shape names are ``"Sphere"``, ``"Cube"``, ``"Cone"``,
+        ``"Icosahedron"`` and ``"Cylinder"``.
+
+        See Also
+        --------
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.visibility_by
+        emperor.core.Emperor.set_background_color
+        emperor.core.Emperor.set_axes
+        """
+        shapes = self._base_data_checks(category, shapes, str)
+
+        self._settings.update({"shape": {
+            "category": category,
+            "data": shapes
+        }})
+
+        return self
+
+    def set_axes(self, visible=None, invert=None, color='white'):
+        """Change visual aspects about visible dimensions in a plot
+
+        Parameters
+        ----------
+        visible: list of thee ints, optional
+            List of three indices of the dimensions that will be visible.
+        invert: list of bools, optional
+            List of three bools that determine whether each axis is inverted or
+            not.
+        color: str
+            Color of the axes lines in the plot, should be a name or value in
+            CSS format.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        ValueError
+            If the ``visible`` or ``invert`` arrays don't have exactly three
+            elements.
+            If the ``visible`` elements are out of range i.e. if an index is
+            not contained in the space defined by the dimensions property.
+        TypeError
+            If the indices in ``visible`` are not all integers.
+            If the values of ``invert`` are not all boolean.
+            If ``color`` is not a string.
+
+        Notes
+        -----
+        This method is internally coupled to the ``set_background_color``
+        method.
+
+        See Also
+        --------
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.shape_by
+        emperor.core.Emperor.set_background_color
+        """
+        if visible is None:
+            visible = [0, 1, 2]
+        if invert is None:
+            invert = [False, False, False]
+
+        if len(visible) != 3:
+            raise ValueError('Exactly three elements must be contained in the'
+                             ' visible array')
+        if len(invert) != 3:
+            raise ValueError('Exactly three elements must be contained in the'
+                             ' invert array')
+
+        if any([v >= self.dimensions or v < 0 for v in visible]):
+            raise ValueError('One or more of your visible dimensions are out '
+                             'of range.')
+
+        # prevent obscure JavaScript errors by validating the data
+        if any([not isinstance(v, int) for v in visible]):
+            raise TypeError('All axes indices should be integers')
+        if any([not isinstance(i, bool) for i in invert]):
+            raise TypeError('The elements in the invert argument should all '
+                            'be boolean')
+        if not isinstance(color, str):
+            raise TypeError('Colors should be a CSS color as a string')
+
+        # the background color and axes information are intertwined, so before
+        # updating the data, we need to retrieve the color if it exists
+        # see the code in set_background_color
+        bc = self.settings.get('axes', {}).get('backgroundColor', 'black')
+
+        self._settings.update({'axes': {
+            'visibleDimensions': visible,
+            'flippedAxes': invert,
+            'axesColor': color,
+            'backgroundColor': bc
+        }})
+
+        return self
+
+    def set_background_color(self, color='black'):
+        """Changes the background color of the plot
+
+        Parameters
+        ----------
+        color: str, optional
+            The background color. Color name or value in the CSS format.
+            Defaults to black.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Notes
+        -----
+        This method is tightly coupled to ``set_axes``.
+
+        Raises
+        ------
+        TypeError
+            If the color is not a string.
+
+        See Also
+        --------
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.shape_by
+        emperor.core.Emperor.set_axes
+        """
+
+        if not isinstance(color, str):
+            raise TypeError('The background color has to be a string')
+
+        # the background color and axes information are intertwined, so before
+        # updating the data, we need to make sure we have other values present
+        # see the code in set_axes
+        if 'axes' not in self.settings:
+            self.set_axes()
+
+        self._settings["axes"]["backgroundColor"] = color
+
+        return self
+
+    @property
+    def settings(self):
+        """Dictionary to load default settings from, when displaying a plot"""
+        return self._settings
+
+    @settings.setter
+    def settings(self, setts):
+        if setts is None:
+            del self.settings
+            return
+
+        for key, val in setts.items():
+            if key == 'shape':
+                self.shape_by(val['category'], val['data'])
+            elif key == 'visibility':
+                self.visibility_by(val['category'], val['data'])
+            elif key == 'scale':
+                self.scale_by(val['category'], val['data'],
+                              float(val['globalScale']),
+                              val['scaleVal'])
+            elif key == 'axes':
+                self.set_axes(val['visibleDimensions'], val['flippedAxes'],
+                              val['axesColor'])
+                self.set_background_color(val['backgroundColor'])
+            elif key == 'color':
+                self.color_by(val['category'], val['data'], val['colormap'],
+                              val['continuous'])
+            else:
+                raise KeyError('Unrecognized settings key: %s' % key)
+
+    @settings.deleter
+    def settings(self):
+        self._settings = {}

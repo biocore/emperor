@@ -39,7 +39,7 @@ define([
     colors += '</table>';
     this.$body.append(colors);
 
-    // the jupyter notebook add style on the tables, so remove it
+    // the jupyter notebook adds style on the tables, so remove it
     this.$body.find('tr').css('border', 'none');
     this.$body.find('td').css('border', 'none');
 
@@ -51,9 +51,10 @@ define([
                 allowEmpty: false,
                 showInitial: true,
                 clickoutFiresChange: true,
+                hideAfterPaletteSelect: true,
                 change: function(color) {
                   // We let the controller deal with the callback, the only
-                  // things we need are the name of the element triggerring
+                  // things we need are the name of the element triggering
                   // the color change and the color as an integer (note that
                   // we are parsing from a string hence we have to indicate
                   // the numerical base)
@@ -103,7 +104,7 @@ define([
      * Which axes are 'flipped', by default all are set to false.
      * @private
      */
-    this._flippedAxes = [0, 0, 0];
+    this._flippedAxes = [false, false, false];
 
     // initialize interface elements here
     $(this).ready(function() {
@@ -129,40 +130,86 @@ define([
     }
 
     var view = this.getView(), scope = this;
-    var percents = view.decomp.percExpl;
+    var $table = $('<table></table>'), $row, $td, widgets;
     var names = ['First', 'Second', 'Third'];
 
-    var table = '<table style="border:none;">';
-    table += '<col align="left"><col align="right"><col align="center">';
+    $table.css({'border': 'none',
+                'width': 'inherit',
+                'text-align': 'left',
+                'padding-bottom': '10%'});
+
+    $table.append('<tr><th>Axis</th><th>Visible</th><th>Invert</th></tr>');
+
     _.each(view.visibleDimensions, function(dimension, index) {
-      table += '<tr>';
+      widgets = scope._makeDimensionWidgets(index);
+
+      $row = $('<tr></tr>');
 
       // axis name
-      table += '<td>' + names[index] + ' Axis' + '</td>';
+      $row.append('<td>' + names[index] + '</td>');
 
-      // percentage of variation and name
-      table += '<td>PC ' + (dimension + 1) + ' - ' +
-               percents[dimension].toFixed(2) + '%</td>';
+      // visible dimension menu
+      $td = $('<td></td>');
+      $td.append(widgets.menu);
+      $row.append($td);
 
-      // whether or not the axis is flipped
-      table += '<td>Is' + (scope._flippedAxes[index] ? '' : ' Not') +
-               ' Flipped</td>';
+      // inverted checkbox
+      $td = $('<td></td>');
+      $td.append(widgets.checkbox);
+      $row.append($td);
 
-      table += '</tr>';
-
-    });
-    table += '</table>';
-
-    this.$table = $(table);
-    this.$table.css({'width': 'inherit',
-                     'padding-bottom': '10%'
+      $table.append($row);
     });
 
+    this.$table = $table;
     this.$header.append(this.$table);
 
-    // the jupyter notebook add style on the tables, so remove it
+    // the jupyter notebook adds style on the tables, so remove it
     this.$header.find('tr').css('border', 'none');
     this.$header.find('td').css('border', 'none');
+  };
+
+  /**
+   * Method to create dropdown menus and checkboxes
+   *
+   * @param {Integer} position The position of the axis for which the widgets
+   * are being created.
+   *
+   * @private
+   */
+  AxesController.prototype._makeDimensionWidgets = function(position) {
+    if (position > 2 || position < 0) {
+      throw Error('Cannot create widgets for position: ' + position);
+    }
+
+    var scope = this, $check, $menu;
+    var decomposition = scope.getView().decomp;
+    var visibleDimension = scope.getView().visibleDimensions[position];
+
+    $menu = $('<select>');
+    $check = $('<input type="checkbox">');
+
+    // if the axis is flipped, then show the checkmark
+    $check.prop('checked', scope._flippedAxes[position]);
+
+    _.each(decomposition.axesNames, function(name, index) {
+      $menu.append($('<option>').attr('value', name).text(name));
+    });
+
+    $menu.on('change', function() {
+      var index = $(this).prop('selectedIndex');
+      scope.updateVisibleAxes(index, position);
+    });
+
+    $check.on('change', function() {
+      scope.flipAxis(visibleDimension);
+    });
+
+    $(function() {
+      $menu.val(decomposition.axesNames[visibleDimension]);
+    });
+
+    return {menu: $menu, checkbox: $check};
   };
 
   /**
@@ -174,9 +221,10 @@ define([
   AxesController.prototype._buildScreePlot = function() {
     var scope = this;
     var percents = this.getView().decomp.percExpl;
+    var names = this.getView().decomp.axesNames;
     percents = _.map(percents, function(val, index) {
       // +1 to account for zero-indexing
-      return {'axis': 'PC ' + (index + 1), 'percent': val,
+      return {'axis': names[index] + ' ', 'percent': val,
               'dimension-index': index};
     });
 
@@ -215,6 +263,10 @@ define([
       .append('g');
 
     this.$_screePlotContainer.height(height + margin.top + margin.bottom);
+
+    // Only keep dimensions resulting of an ordination i.e. with a positive
+    // percentage explained.
+    percents = percents.filter(function(x) { return x.percent >= 0; });
 
     // creation of the chart itself
     x.domain(percents.map(function(d) { return d.axis; }));
@@ -268,61 +320,6 @@ define([
       .style('shape-rendering', 'crispEdges');
 
     this.screePlot = svg;
-
-    // This function creates a function callbacks
-    //
-    // The rationale to create this function, was to deal with the fact that
-    // three of the 'context menu' options had the same behaviour, otherwise
-    // we would have had to repeat the code in the returned function.
-    //
-    var callbackFactory = function(callBackIndex) {
-      return (function(key, opts) {
-        var index = parseInt($(this).attr('dimension-index'));
-        scope.updateVisibleAxes(index, callBackIndex);
-      });
-    };
-
-    /*
-      Once we have created the plot, we bind each of the bars to a context
-      menu, hence the selector searches for all the 'rect' tags inside the
-      controller's div.
-
-      The functionality itself is rather simple, each of the options in the
-      context menu allows the user to select the clicked bar as the first,
-      second or third visible axis. With each of these changes, we re-build the
-      display table to reflect the currently visible data (see
-      callbackFactory).
-
-      Finally, there is one option that allows users to reorient the
-      coordinates for that axis.
-     */
-    $.contextMenu({
-      selector: '#' + this.identifier + ' rect',
-      trigger: 'left',
-      items: {
-        'first-axis': {
-          name: 'Set as first axis',
-          callback: callbackFactory(0)
-        },
-        'second-axis': {
-          name: 'Set as second axis',
-          callback: callbackFactory(1)
-        },
-        'third-axis': {
-          name: 'Set as third axis',
-          callback: callbackFactory(2)
-        },
-        'sep1': '---------',
-        'flip-axis': {
-          icon: 'exchange',
-          name: 'Flip axis orientation',
-          callback: function(key, opts) {
-            var index = parseInt($(this).attr('dimension-index'));
-            scope.flipAxis(index);
-          }
-        }
-      }
-    });
   };
 
   /**
@@ -342,7 +339,7 @@ define([
       decView.changeVisibleDimensions(visibleDimensions);
     });
 
-    this._flippedAxes[position] = 0;
+    this._flippedAxes[position] = false;
 
     this.buildDisplayTable();
   };
@@ -366,7 +363,8 @@ define([
       }
     });
 
-    this._flippedAxes[axIndex] = 1 ^ this._flippedAxes[axIndex];
+    // needs to cast to boolean, because XOR returns an integer
+    this._flippedAxes[axIndex] = Boolean(true ^ this._flippedAxes[axIndex]);
     this.buildDisplayTable();
   };
 
@@ -431,6 +429,13 @@ define([
       if (element) {
         scope.flipAxis(decView.visibleDimensions[index]);
       }
+    });
+
+    this.$body.find('[name="axes-color"]').spectrum({
+      color: json.axesColor
+    });
+    this.$body.find('[name="background-color"]').spectrum({
+      color: json.backgroundColor
     });
 
     this.colorChanged('axes-color', json.axesColor);
