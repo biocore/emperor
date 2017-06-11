@@ -345,6 +345,11 @@ define([
    */
   EmperorController.prototype.render = function() {
     var scope = this;
+
+    if (this.controllers.animations !== undefined) {
+      this.controllers.animations.drawFrame();
+    }
+
     $.each(this.sceneViews, function(i, sv) {
       if (sv.checkUpdate()) {
         scope.renderer.setViewport(0, 0, scope.width, scope.height);
@@ -352,6 +357,7 @@ define([
         sv.render();
       }
     });
+
   };
 
   /**

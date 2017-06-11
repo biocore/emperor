@@ -3,8 +3,12 @@ define([
     'underscore',
     'view',
     'viewcontroller',
-], function($, _, DecompositionView, ViewControllers) {
+    'animationdirector',
+    'draw'
+], function($, _, DecompositionView, ViewControllers, AnimationDirector,
+            draw) {
   var EmperorViewController = ViewControllers.EmperorViewController;
+  var drawTrajectoryLine = draw.drawTrajectoryLine;
 
   /**
    * @class AnimationsController
@@ -79,6 +83,9 @@ define([
     this.$speed = $('<div></div>').css('margin-top', '10px');
     this._$mediaContainer.append(this.$speed);
 
+    this.director = null;
+    this._isPlaying = false;
+
     // initialize interface elements here
     $(this).ready(function() {
       scope.$speed.slider({'min': 0.1,
@@ -106,14 +113,33 @@ define([
                                               });
 
       scope.$rewind.button({icons: {primary: "ui-icon-seek-first"}});
+      scope.$rewind.on('click', function() {
+        scope._rewindButtonClicked();
+      });
+
       scope.$play.button({icons: {primary: "ui-icon-play"}});
+      scope.$play.on('click', function(){
+        scope._playButtonClicked();
+      });
+
       scope.$pause.button({icons: {primary: "ui-icon-pause"}});
+      scope.$pause.on('click', function() {
+        scope._pauseButtonClicked();
+      });
     });
 
     return this;
   }
   AnimationsController.prototype = Object.create(EmperorViewController.prototype);
   AnimationsController.prototype.constructor = EmperorViewController;
+
+  AnimationsController.prototype.isPlaying = function() {
+    return this._isPlaying;
+  }
+
+  AnimationsController.prototype._sliderChanged = function(evt, ui) {
+
+  }
 
   AnimationsController.prototype._sliderChanged = function(evt, ui) {
 
@@ -126,6 +152,127 @@ define([
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
 
   }
+
+  AnimationsController.prototype._rewindButtonClicked = function(evt, params) {
+  /*
+  g_isPlaying = false;
+  g_animationDirector = null;
+  document.getElementById("play-button").disabled="false";
+  $('#animation-speed-slider').slider('option', 'disabled', false);
+
+  for (var index = 0; index < g_animationLines.length; index++){
+    g_mainScene.remove(g_animationLines[index]);
+    g_elementsGroup.remove(g_animationLines[index]);
+  }
+
+  // re-initialize as an empty array
+  g_animationLines = [];
+  */
+    console.log('clicked rewind, isPlaying: ' + this.isPlaying());
+    var view = this.getView();
+
+    this._isPlaying = false;
+    this.AnimationDirector = null;
+
+    this.$play.prop('disabled', false);
+    this.$speed.slider('option', 'disabled', false);
+
+    view.tubes.forEach(function(tube) {
+      if (tube.parent !== null) {
+        tube.parent.remove(tube);
+      }
+    });
+
+    view.tubes = [];
+    view.needsUpdate = true;
+  }
+
+  AnimationsController.prototype._pauseButtonClicked = function(evt, params) {
+    /*
+     *
+        if (g_isPlaying === true){
+          g_isPlaying = false;
+          document.getElementById("play-button").disabled="false"
+        }
+     *
+     * */
+    console.log('clicked pause, isPlaying: ' + this.isPlaying());
+    if (this.isPlaying()) {
+      this._isPlaying = false;
+      this.$play.prop('disabled', true);
+    }
+  }
+
+  AnimationsController.prototype._playButtonClicked = function(evt, params) {
+
+    var headers, data = {}, positions = {}, gradient, trajectory, speed, decomp, p, scope;
+
+    scope = this;
+
+    decomp = this.getView().decomp;
+    headers = decomp.md_headers;
+
+    gradient = this.$gradientSelect.val();
+    trajectory = this.$trajectorySelect.val();
+
+    for (var i = 0; i < decomp.plottable.length; i++) {
+      p = decomp.plottable[i];
+      // console.log(p.name);
+
+      data[p.name] = p.metadata;
+      // console.log(data);
+      positions[p.name] = {'name': p.name, 'color': 0, 'x': p.coordinates[0],
+                           'y': p.coordinates[1], 'z': p.coordinates[2]};
+      // console.log(positions);
+    }
+
+    this.director = new AnimationDirector(headers, data, positions, gradient,
+                                          trajectory);
+    this.$speed.slider('option', 'disabled', true);
+    this.director.updateFrame();
+
+    this._isPlaying = true;
+    // view.tubes = [];
+  }
+
+  AnimationsController.prototype.drawFrame = function() {
+    if (this.director === null || this.director.animationCycleFinished() ||
+        !this.isPlaying()) {
+      return;
+    }
+    var view = this.getView(), tube, scope = this;
+
+    var radius = view.markers[0].geometry.parameters.radius;
+
+    view.tubes.forEach(function(tube) {
+      if (tube === undefined) {
+        return;
+      }
+      if (tube.parent !== null) {
+        tube.parent.remove(tube);
+      }
+    });
+
+    view.tubes = this.director.trajectories.map(function(trajectory) {
+      var tube = drawTrajectoryLine(trajectory, scope.director.currentFrame,
+                                    'red', radius * 0.45);
+      return tube;
+    });
+
+    view.needsUpdate = true;
+
+    this.director.updateFrame();
+
+
+    if (this.director.animationCycleFinished()) {
+      this.director = null;
+      this._isPlaying = false;
+      this.$play.prop('disabled', false);
+      this.$speed.slider('option', 'disabled', false);
+      // view.tubes = [];
+    }
+
+  };
 
   AnimationsController.prototype._createDecomposition = function(gradient, trajectory){
   
