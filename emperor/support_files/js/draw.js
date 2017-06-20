@@ -14,7 +14,7 @@ define(['underscore', 'three'], function(_, THREE) {
    */
   THREE.EmperorTrajectory = THREE.Curve.create(
       function(points) {
-        this.points = (points == undefined) ? [] : points;
+        this.points = (points === undefined) ? [] : points;
       },
 
       function(t) {

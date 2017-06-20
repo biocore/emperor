@@ -68,6 +68,8 @@ define([
     this.$pause = $('<button></button>');
     this._$mediaContainer.append(this.$pause);
 
+    this._colors = {};
+
     // make the buttons squared
     this._$mediaContainer.find('button').css({'width': '30px',
                                               'height': '30px',
@@ -205,9 +207,7 @@ define([
 
   AnimationsController.prototype._playButtonClicked = function(evt, params) {
 
-    var headers, data = {}, positions = {}, gradient, trajectory, speed, decomp, p, scope;
-
-    scope = this;
+    var headers, data = {}, positions = {}, gradient, trajectory, decomp, p;
 
     decomp = this.getView().decomp;
     headers = decomp.md_headers;
@@ -217,13 +217,10 @@ define([
 
     for (var i = 0; i < decomp.plottable.length; i++) {
       p = decomp.plottable[i];
-      // console.log(p.name);
 
       data[p.name] = p.metadata;
-      // console.log(data);
       positions[p.name] = {'name': p.name, 'color': 0, 'x': p.coordinates[0],
                            'y': p.coordinates[1], 'z': p.coordinates[2]};
-      // console.log(positions);
     }
 
     this.director = new AnimationDirector(headers, data, positions, gradient,
@@ -232,7 +229,6 @@ define([
     this.director.updateFrame();
 
     this._isPlaying = true;
-    // view.tubes = [];
   }
 
   AnimationsController.prototype.drawFrame = function() {
@@ -240,7 +236,8 @@ define([
         !this.isPlaying()) {
       return;
     }
-    var view = this.getView(), tube, scope = this;
+
+    var view = this.getView(), tube, scope = this, color;
 
     var radius = view.markers[0].geometry.parameters.radius;
 
@@ -253,9 +250,12 @@ define([
       }
     });
 
+
     view.tubes = this.director.trajectories.map(function(trajectory) {
+      color = scope._colors[trajectory.metadataCategoryName] || 'yellow';
+
       var tube = drawTrajectoryLine(trajectory, scope.director.currentFrame,
-                                    'red', radius * 0.45);
+                                    color, 0.45 * radius);
       return tube;
     });
 
@@ -263,16 +263,37 @@ define([
 
     this.director.updateFrame();
 
-
     if (this.director.animationCycleFinished()) {
       this.director = null;
       this._isPlaying = false;
       this.$play.prop('disabled', false);
       this.$speed.slider('option', 'disabled', false);
-      // view.tubes = [];
     }
-
   };
+
+  AnimationsController.prototype.setGradientCategory = function(category) {
+    this.$gradientSelect.val(category);
+    this.$gradientSelect.trigger('chosen:updated');
+    this.$gradientSelect.change();
+  };
+
+  AnimationsController.prototype.getGradientCategory = function() {
+    return this.$gradientSelect.val();
+  };
+
+  AnimationsController.prototype.setTrajectoryCategory = function(category) {
+    this.$trajectorySelect.val(category);
+    this.$trajectorySelect.trigger('chosen:updated');
+    this.$trajectorySelect.change();
+  };
+
+  AnimationsController.prototype.getTrajectoryCategory = function() {
+    return this.$trajectorySelect.val();
+  };
+
+  AnimationsController.prototype.setColors = function(colors) {
+    this._colors = colors;
+  }
 
   AnimationsController.prototype._createDecomposition = function(gradient, trajectory){
   
