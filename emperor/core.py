@@ -494,7 +494,7 @@ class Emperor(object):
                             x.astype('str').tolist(),
                             axis=1).values.tolist()
         return headers, metadata
-=======
+
     def _base_data_checks(self, category, data, d_type):
         """Perform common checks in the methods that modify the plot
 
