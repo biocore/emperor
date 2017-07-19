@@ -95,7 +95,7 @@ define(['underscore', 'three'], function(_, THREE) {
    **/
   function makeLabel(position, text, color, factor) {
     var canvas = document.createElement('canvas');
-    var size = 512;
+    var size = 1024;
 
     factor = (factor === undefined ? 1 : factor);
 
