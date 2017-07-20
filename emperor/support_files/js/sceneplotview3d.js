@@ -356,13 +356,18 @@ define([
    *
    * @param {Integer} color An integer in hexadecimal that specifies the color
    * of each of the axes lines, the length of these lines is determined by the
-   * dimensionRanges property.
+   * dimensionRanges property. If the color value is null the lines will be
+   * removed.
    *
    */
   ScenePlotView3D.prototype.drawAxesWithColor = function(color) {
     var scope = this, axisLine;
 
+    // axes lines are removed if the color is null
     this.removeAxes();
+    if (color === null) {
+      return;
+    }
 
     this._dimensionsIterator(function(start, end, index) {
       axisLine = makeLine(start, end, color, 3, false);
@@ -383,15 +388,20 @@ define([
    * each axis.
    *
    * @param {Integer} color An integer in hexadecimal that specifies the color
-   * of the labels, these labels will be positioned at the end of the axes line.
+   * of the labels, these labels will be positioned at the end of the axes
+   * line. If the color value is null the labels will be removed.
    *
    */
   ScenePlotView3D.prototype.drawAxesLabelsWithColor = function(color) {
     var scope = this, axisLabel, decomp, firstKey, text, factor;
 
-    factor = (this.dimensionRanges.max[0] - this.dimensionRanges.min[0]) * 0.9;
-
+    // the labels are only removed if the color is null
     this.removeAxesLabels();
+    if (color === null) {
+      return;
+    }
+
+    factor = (this.dimensionRanges.max[0] - this.dimensionRanges.min[0]) * 0.9;
 
     // get the first decomposition object, it doesn't really mater which one
     // we look at though, as all of them should have the same percentage

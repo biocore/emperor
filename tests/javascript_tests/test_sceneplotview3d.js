@@ -187,7 +187,7 @@ requirejs([
       spv.control.dispose();
     });
 
-    test('Test the draw axes', function(assert) {
+    test('Test draw axes', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -204,6 +204,27 @@ requirejs([
         equal(line.material.color.r, 0);
         equal(line.material.color.g, 1);
         equal(line.material.color.b, 0.058823529411764705);
+      }
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    test('Test axes color as null', function(assert) {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      // color the axis lines
+      spv.drawAxesWithColor(null);
+
+      var line;
+
+      for (var i = 0; i < 3; i++) {
+        line = spv.scene.getObjectByName('emperor-axis-line-' + i);
+        equal(line, undefined);
       }
 
       // release the control back to the main page
@@ -256,6 +277,25 @@ requirejs([
         equal(label.material.color.r, 0);
         equal(label.material.color.g, 1);
         equal(label.material.color.b, 0.058823529411764705);
+      }
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    test('Test the draw axes labels as null', function(assert) {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      // color the axis lines
+      spv.drawAxesLabelsWithColor(null);
+
+      for (var i = 0; i < 3; i++) {
+        label = spv.scene.getObjectByName('emperor-axis-label-' + i);
+        equal(label, undefined);
       }
 
       // release the control back to the main page
