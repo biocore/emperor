@@ -48,24 +48,28 @@ define([
                 palette: [['black', 'white']],
                 showPalette: true,
                 showInput: true,
-                allowEmpty: false,
+                allowEmpty: true,
                 showInitial: true,
                 clickoutFiresChange: true,
                 hideAfterPaletteSelect: true,
                 change: function(color) {
-                  // We let the controller deal with the callback, the only
-                  // things we need are the name of the element triggering
-                  // the color change and the color as an integer (note that
-                  // we are parsing from a string hence we have to indicate
-                  // the numerical base)
-                  scope.colorChanged($(this).attr('name'),
-                                     parseInt(color.toHex(), 16));
+                  // null means hide axes and labels
+                  if (color !== null) {
+                    // We let the controller deal with the callback, the only
+                    // things we need are the name of the element triggering
+                    // the color change and the color as an integer (note that
+                    // we are parsing from a string hence we have to indicate
+                    // the numerical base)
+                    color = parseInt(color.toHex(), 16);
+                  }
+                  scope.colorChanged($(this).attr('name'), color);
                 }
     };
     // spectrumify all the elements in the body that have a name ending in
     // color
     this.$body.find('[name="axes-color"]').spectrum(opts);
     opts.color = 'black';
+    opts.allowEmpty = false;
     this.$body.find('[name="background-color"]').spectrum(opts);
 
     /**
