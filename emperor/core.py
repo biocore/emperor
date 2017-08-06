@@ -336,17 +336,7 @@ class Emperor(object):
         if custom_axes is None:
             custom_axes = []
 
-        # based on: http://stackoverflow.com/a/6196098
-        loader = FileSystemLoader(join(get_emperor_support_files_dir(),
-                                       'templates'))
-
-        if standalone:
-            main_path = basename(STANDALONE_PATH)
-        else:
-            main_path = basename(JUPYTER_PATH)
-        env = Environment(loader=loader)
-
-        main_template = env.get_template(main_path)
+        main_template = self._get_template(standalone)
 
         coord_ids, coords, pct_var, ci, headers, metadata, names = \
             self._process_data(custom_axes, jackknifing_method)
@@ -370,6 +360,32 @@ class Emperor(object):
                                     settings=self.settings)
 
         return plot
+
+    def _get_template(self, standalone=False):
+        """Get the jinja template object
+
+        Parameters
+        ----------
+        standalone: bool, optional
+            Whether or not the generated plot will load resources locally
+            (``True``), or from a specified URL (``False``).
+
+        Returns
+        -------
+        jinja2.Template
+            Template where the plot is created.
+        """
+        # based on: http://stackoverflow.com/a/6196098
+        loader = FileSystemLoader(join(get_emperor_support_files_dir(),
+                                       'templates'))
+
+        if standalone:
+            main_path = basename(STANDALONE_PATH)
+        else:
+            main_path = basename(JUPYTER_PATH)
+        env = Environment(loader=loader)
+
+        return env.get_template(main_path)
 
     def _process_data(self, custom_axes, jackknifing_method):
         """Handle the coordinates data
