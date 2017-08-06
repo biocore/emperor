@@ -413,8 +413,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             master_pcoa[3] = master_pcoa[3]*100
 
         # return a value containing coords_low and coords_high
-        return identifiers, coords_data, eigenvalues_average, master_pcoa[3],\
-            coords_low, coords_high, clones
+        return (identifiers, master_pcoa[1], eigenvalues_average,
+                master_pcoa[3], coords_low, coords_high, clones)
     # comparison plots are processed almost individually
     elif type(coords_data) == list and is_comparison:
 
