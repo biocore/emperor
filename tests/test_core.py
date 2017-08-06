@@ -374,14 +374,14 @@ class TopLevelTests(TestCase):
         self.assertEqual(metadata, self.expected_metadata)
         self.assertEqual(names, [0, 1, 2, 3, 4])
 
-    def test_jackkifed_bad_data(self):
+    def test_jackknifed_bad_data(self):
         with self.assertRaises(TypeError):
             Emperor(self.ord_res, self.mf, jackknifed=[1])
 
         with self.assertRaises(TypeError):
             Emperor(self.ord_res, self.mf, jackknifed=self.jackknifed + [1])
 
-    def test_jackkifed_bad_data_sample_ids(self):
+    def test_jackknifed_bad_data_sample_ids(self):
         self.jackknifed[0].samples.index = pd.Series(list('abcdefghi'))
         with self.assertRaises(ValueError):
             Emperor(self.ord_res, self.mf, jackknifed=self.jackknifed)
