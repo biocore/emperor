@@ -464,7 +464,7 @@ class Emperor(object):
                                    headers, metadata, custom_axes,
                                    jackknifing_method, False)
 
-        names = self.ordination.samples.columns[:dims].tolist()
+        names = self.ordination.samples.columns[:dims].values.tolist()
         c_pct = c_pct.tolist()
 
         if custom_axes:
