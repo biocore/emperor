@@ -100,11 +100,17 @@ define([
    */
   VisibilityController.prototype.setPlottableAttributes =
       function(scope, visible, group) {
-    var idx;
+    var idx, hasConfidenceIntervals;
 
-    _.each(group, function(element) {
-      idx = element.idx;
+    hasConfidenceIntervals = scope.decomp.hasConfidenceIntervals();
+
+    _.each(group, function(plottable) {
+      idx = plottable.idx;
       scope.markers[idx].visible = visible;
+
+      if (hasConfidenceIntervals) {
+        scope.ellipsoids[idx].visible = visible;
+      }
     });
     scope.needsUpdate = true;
   };

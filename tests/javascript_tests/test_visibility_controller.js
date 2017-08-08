@@ -15,60 +15,65 @@ requirejs([
     module('VisibilityController', {
       setup: function() {
         this.sharedDecompositionViewDict = {};
-        var $slickid = $('<div id="fooligans"></div>');
-        $slickid.appendTo(document.body);
 
         // setup function
-        name = 'pcoa';
-        ids = ['PC.636', 'PC.635'];
-        coords = [
-          [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
-          -0.229889, -0.046599],
-          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794]];
-        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
-        md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
-        metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
-        var decomp = new DecompositionModel(name, ids, coords, pct_var,
-                                            md_headers, metadata);
+        var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635'],
+                    coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
+                                   0.176070, 0.072969, -0.229889, -0.046599],
+                                  [-0.237661, 0.046053, -0.138136, 0.159061,
+                                   -0.247485, -0.115211, -0.112864, 0.064794]],
+                    percents_explained: [26.6887048633, 16.2563704022,
+                                         13.7754129161, 11.217215823,
+                                         10.024774995, 8.22835130237,
+                                         7.55971173665, 6.24945796136]};
+        var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                          'DOB'];
+        var metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control',
+                         '20070314'],
+                        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
+                         '20071112']];
+        decomp = new DecompositionModel(data, md_headers, metadata);
         var dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.scatter = dv;
 
-        name = 'biplot';
-        ids = ['tax_1', 'tax_2'];
-        coords = [
-          [-1, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
-          -0.229889, -0.046599],
-          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794]];
-        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+        data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
+                coordinates: [[-1, -0.144964, 0.066647, -0.067711, 0.176070,
+                               0.072969, -0.229889, -0.046599],
+                              [-0.237661, 0.046053, -0.138136, 0.159061,
+                               -0.247485, -0.115211, -0.112864, 0.064794]],
+                percents_explained: [26.6887048633, 16.2563704022,
+                                     13.7754129161, 11.217215823, 10.024774995,
+                                     8.22835130237, 7.55971173665,
+                                     6.24945796136]};
         md_headers = ['SampleID', 'Gram'];
-        metadata = [['tax_1', '1'],
-        ['tax_2', '0']];
-        this.decomp = new DecompositionModel(name, ids, coords, pct_var,
-                                             md_headers, metadata);
-        this.dv = new DecompositionView(this.decomp);
+        metadata = [['tax_1', '1'], ['tax_2', '0']];
+        decomp = new DecompositionModel(data, md_headers, metadata);
+        this.dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.biplot = this.dv;
 
-        // Slickgrid
-        var columns = [
-        {id: 'pc1', name: 'pc1', field: 'pc1'},
-        {id: 'pc2', name: 'pc2', field: 'pc2'},
-        {id: 'pc3', name: 'pc3', field: 'pc3'}
-        ];
-
-        var options = {
-          enableCellNavigation: true,
-          enableColumnReorder: false
+        // jackknifed specific
+        data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
+                coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
+                               0.176070, 0.072969, -0.229889, -0.046599],
+                              [-0.237661, 0.046053, -0.138136, 0.159061,
+                               -0.247485, -0.115211, -0.112864, 0.064794],
+                              [-0.237661, 0.046053, -0.138136, 0.159061,
+                                -0.247485, -0.115211, -0.112864, 0.064794]
+                ],
+                percents_explained: [26.6887048633, 16.2563704022,
+                                     13.7754129161, 11.217215823,
+                                     10.024774995, 8.22835130237,
+                                     7.55971173665, 6.24945796136],
+                ci: [[0.5, 0.68, -1.64, 0.56, 1.87, 0.75, 0.61, 1.14],
+                     [0.09, 0.8, -0.07, -1.52, 0.86, -0.2, -2.63, -0.57],
+                     [0.21, -0.85, 0.19, -1.88, -1.19, -1.38, 1.55, -0.1]]
         };
-        var data = [];
-        data.push({'pc1': 1, 'pc2': 1, 'pc3': 1});
-        data.push({'pc1': 1, 'pc2': 1, 'pc3': 2});
-
-        grid = new Slick.Grid('#fooligans', data, columns, options);
+        md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
+        metadata = [['PC.636', '14.2', 'Control', '20070314'],
+        ['PC.635', 'StringValue', 'Fast', '20071112'],
+        ['PC.634', '14.7', 'Fast', '20071112']];
+        decomp = new DecompositionModel(data, md_headers, metadata);
+        this.jackknifedDecView = new DecompositionView(decomp);
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
@@ -113,6 +118,41 @@ requirejs([
       equal(this.dv.markers[idx].visible, true);
       equal(this.dv.markers[idx + 1].visible, true);
       equal(this.dv.needsUpdate, true);
+    });
+
+    test('Testing setPlottableAttributes (jackknifed)', function(assert) {
+      // testing with one plottable
+      var idx = 0, dv = this.jackknifedDecView;
+      plottables = [{idx: idx}];
+
+      // all should be visible
+      equal(dv.markers[0].visible, true);
+      equal(dv.markers[1].visible, true);
+      equal(dv.ellipsoids[0].visible, true);
+      equal(dv.ellipsoids[1].visible, true);
+
+      VisibilityController.prototype.setPlottableAttributes(dv, false,
+                                                            plottables);
+      equal(dv.needsUpdate, true);
+
+      // sample zero should be hidden
+      equal(dv.markers[0].visible, false);
+      equal(dv.markers[1].visible, true);
+      equal(dv.ellipsoids[0].visible, false);
+      equal(dv.ellipsoids[1].visible, true);
+
+
+      // testing with multiple plottables
+      plottables = [{idx: idx}, {idx: idx + 1}];
+      VisibilityController.prototype.setPlottableAttributes(dv, true,
+                                                            plottables);
+      equal(dv.needsUpdate, true);
+
+      // none should be visible
+      equal(dv.markers[0].visible, true);
+      equal(dv.markers[1].visible, true);
+      equal(dv.ellipsoids[0].visible, true);
+      equal(dv.ellipsoids[1].visible, true);
     });
 
     test('Testing toJSON', function() {
