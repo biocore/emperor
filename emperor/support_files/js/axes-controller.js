@@ -250,8 +250,7 @@ define([
       'border-radius': '5px',
       'cursor': 'default',
       'font-family': 'Helvetica, sans-serif',
-      'font-size': '14px',
-      'z-index': '999'
+      'font-size': '14px'
     }).html('Percent Explained');
 
     var x = d3.scale.ordinal()
@@ -321,10 +320,13 @@ define([
       .on('mousemove', function(d) {
         tooltip.html(d.percent.toFixed(2));
         tooltip.style({
-          "display": "inline-block",
           "left": d3.event.pageX - parseFloat(tooltip.style('width'))/2 + "px",
           "top": d3.event.pageY - parseFloat(tooltip.style('height')) + "px",
         });
+
+        // after positioning the tooltip display the view, otherwise weird
+        // resizing glitches occur
+        tooltip.style({"display": "inline-block"});
       })
       .on('mouseout', function(d) {
         tooltip.style("display", "none");
