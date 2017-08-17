@@ -318,8 +318,10 @@ define([
       .attr('y', function(d) { return y(d.percent); })
       .attr('height', function(d) { return height - y(d.percent); })
       .on('mousemove', function(d) {
-        var midpoint = parseFloat(tooltip.style('width')) / 2,
-            offset = parseFloat(tooltip.style('height'));
+        // midpoint: set the midpoint to zero in case something is off
+        // offset: avoid some flickering
+        var midpoint = (parseFloat(tooltip.style('width')) / 2) || 0,
+            offset = 25;
 
         tooltip.html(d.percent.toFixed(2));
 
