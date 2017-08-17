@@ -90,6 +90,9 @@ function($, _, DecompositionView, ViewControllers) {
           Slick.GlobalEditorLock.commitCurrentEdit();
         }
       });
+      // $input.find(".ui-slider-range" ).css('background', '#70caff');
+      $input.css('background', '#70caff');
+
       $sliderDiv.appendTo($parentDiv);
       $viewval.appendTo(args.container);
 
@@ -136,5 +139,29 @@ function($, _, DecompositionView, ViewControllers) {
     this.init();
   }
 
-  return {'ScaleEditor': ScaleEditor};
+  /**
+   *
+   * Function to format colors for the SlickGrid object.
+   *
+   * This formatter is heavily based in the examples found in
+   * slick.formattters.js and is only intended to be used with ScaleFormatter.
+   *
+   * @param {integer} row SlickGrid row.
+   * @param {integer} cell SlickGrid cell.
+   * @param {integer|string|bool} value The value in the row.
+   * @param {object} columnDef SlickGrid column definition.
+   * @param {object} dataContext Data model of the SlickGrid object.
+   *
+   * @return {string} String with a div where the background color is set as
+   * the value that's passed in.
+   *
+   * @alias module:SlickGridColors.ScaleFormatter
+   *
+   */
+  function ScaleFormatter(row, cell, value, columnDef, dataContext) {
+    return "<div style='width:inherit;height:inherit;text-align:center;" +
+           "cursor:pointer;'>" + value + "</div>";
+  }
+
+  return {'ScaleEditor': ScaleEditor, 'ScaleFormatter': ScaleFormatter};
 });
