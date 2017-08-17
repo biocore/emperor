@@ -99,7 +99,7 @@ function($, _, DecompositionView, ViewControllers, shapes) {
    * @function ShapeFormatter
    */
   function ShapeFormatter(row, cell, value, columnDef, dataContext) {
-    return '<div>' + value + '</div>';
+    return '<div style="text-align:center;cursor:pointer;">' + value + '</div>';
   }
 
   return {'ShapeEditor': ShapeEditor, 'ShapeFormatter': ShapeFormatter};
