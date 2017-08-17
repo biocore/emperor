@@ -240,7 +240,7 @@ define([
         width = this.$body.width() - margin.left - margin.right,
         height = (this.$body.height() * 0.40) - margin.top - margin.bottom;
 
-    var tooltip = d3.select("body").append("div").style({
+    var tooltip = d3.select('body').append('div').style({
       'position': 'absolute',
       'display': 'none',
       'color': 'black',
@@ -318,18 +318,22 @@ define([
       .attr('y', function(d) { return y(d.percent); })
       .attr('height', function(d) { return height - y(d.percent); })
       .on('mousemove', function(d) {
+        var midpoint = parseFloat(tooltip.style('width')) / 2,
+            offset = parseFloat(tooltip.style('height'));
+
         tooltip.html(d.percent.toFixed(2));
+
         tooltip.style({
-          "left": d3.event.pageX - parseFloat(tooltip.style('width'))/2 + "px",
-          "top": d3.event.pageY - parseFloat(tooltip.style('height')) + "px",
+          'left': d3.event.pageX - midpoint + 'px',
+          'top': d3.event.pageY - offset + 'px'
         });
 
         // after positioning the tooltip display the view, otherwise weird
         // resizing glitches occur
-        tooltip.style({"display": "inline-block"});
+        tooltip.style({'display': 'inline-block'});
       })
       .on('mouseout', function(d) {
-        tooltip.style("display", "none");
+        tooltip.style('display', 'none');
       });
 
     // figure title
