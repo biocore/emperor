@@ -141,6 +141,8 @@ define([
     this.$gridDiv.css('margin', '0 auto');
     this.$gridDiv.css('width', '100%');
     this.$gridDiv.css('height', '100%');
+    this.$gridDiv.attr('title', 'Change the ' + title.toLowerCase() + ' with' +
+                       ' the left column controls.');
     this.$body.append(this.$gridDiv);
 
     var dm = this.getView().decomp;
@@ -324,6 +326,9 @@ define([
    */
   EmperorAttributeABC.prototype._buildGrid = function(options) {
     var columns = [{id: 'field1', name: '', field: 'category'}];
+
+    // autoEdit enables one-click editor trigger on the entire grid, instead
+    // of requiring users to click twice on a widget.
     var gridOptions = {editable: true, enableAddRow: false,
       enableCellNavigation: true, forceFitColumns: true,
       enableColumnReorder: false, autoEdit: true};
