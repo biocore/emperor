@@ -1,7 +1,7 @@
 define([
     'jquery',
     'underscore',
-    'viewcontroller',
+    'viewcontroller'
 ], function($, _, ViewControllers) {
   var ScalarViewControllerABC = ViewControllers.ScalarViewControllerABC;
 
@@ -30,7 +30,8 @@ define([
                                  decompViewDict);
     return this;
   }
-  ScaleViewController.prototype = Object.create(ScalarViewControllerABC.prototype);
+  ScaleViewController.prototype = Object.create(
+    ScalarViewControllerABC.prototype);
   ScaleViewController.prototype.constructor = ScalarViewControllerABC;
 
   /**
@@ -87,7 +88,7 @@ define([
    */
   ScaleViewController.prototype.scaleValue = function(val, min, range) {
     return Math.round((1 + (val - min) * 4 / range) * 10000) / 10000;
-  }
+  };
 
   return ScaleViewController;
 });

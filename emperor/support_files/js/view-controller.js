@@ -613,7 +613,8 @@ define([
 
     return this;
   }
-  ScalarViewControllerABC.prototype = Object.create(EmperorAttributeABC.prototype);
+  ScalarViewControllerABC.prototype = Object.create(
+    EmperorAttributeABC.prototype);
   ScalarViewControllerABC.prototype.constructor = EmperorAttributeABC;
 
   /**
@@ -750,13 +751,13 @@ define([
    * Method to do global updates to only the current view
    *
    */
-  ScalarViewControllerABC.prototype.setAllPlottableAttributes = function(value) {
+  ScalarViewControllerABC.prototype.setAllPlottableAttributes = function() {
     throw new Error('Not implemented, subclasses should override this method');
   };
 
   ScalarViewControllerABC.prototype.scaleValue = function(val, min, range) {
     return 1;
-  }
+  };
 
   /**
    * Helper function to get the scale for each metadata value

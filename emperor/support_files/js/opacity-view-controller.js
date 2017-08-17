@@ -31,7 +31,8 @@ define([
                                  decompViewDict);
     return this;
   }
-  OpacityViewController.prototype = Object.create(ScalarViewControllerABC.prototype);
+  OpacityViewController.prototype = Object.create(
+    ScalarViewControllerABC.prototype);
   OpacityViewController.prototype.constructor = ScalarViewControllerABC;
 
   /**
@@ -92,7 +93,7 @@ define([
    */
   OpacityViewController.prototype.scaleValue = function(val, min, range) {
     return Math.round(((val - min) / range) * 10000) / 10000;
-  }
+  };
 
   return OpacityViewController;
 });

@@ -160,7 +160,7 @@ function($, _, DecompositionView, ViewControllers) {
    */
   function ScaleFormatter(row, cell, value, columnDef, dataContext) {
     return "<div style='width:inherit;height:inherit;text-align:center;" +
-           "cursor:pointer;'>" + value + "</div>";
+           "cursor:pointer;'>" + value + '</div>';
   }
 
   return {'ScaleEditor': ScaleEditor, 'ScaleFormatter': ScaleFormatter};
