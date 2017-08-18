@@ -17,40 +17,40 @@ requirejs([
         this.sharedDecompositionViewDict = {};
 
         // setup function
-        name = 'pcoa';
-        ids = ['PC.636', 'PC.635', 'PC.634'];
-        coords = [
-          [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
-          -0.229889, -0.046599],
-          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794],
-          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794]];
-        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+        var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
+                    coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
+                                   0.176070, 0.072969,
+                                   -0.229889, -0.046599],
+                                  [-0.237661, 0.046053, -0.138136, 0.159061,
+                                   -0.247485, -0.115211, -0.112864, 0.064794],
+                                  [-0.237661, 0.046053, -0.138136, 0.159061,
+                                    -0.247485, -0.115211, -0.112864, 0.064794]
+                    ],
+                    percents_explained: [26.6887048633, 16.2563704022,
+                                         13.7754129161, 11.217215823,
+                                         10.024774995, 8.22835130237,
+                                         7.55971173665, 6.24945796136]};
         md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
         metadata = [['PC.636', '14.2', 'Control', '20070314'],
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
-        decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-            metadata);
+        decomp = new DecompositionModel(data, md_headers, metadata);
         var dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.scatter = dv;
 
-        name = 'biplot';
-        ids = ['tax_1', 'tax_2'];
-        coords = [
-          [-1, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
-          -0.229889, -0.046599],
-          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794]];
-        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+        data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
+                coordinates: [[-1, -0.144964, 0.066647, -0.067711, 0.176070,
+                               0.072969, -0.229889, -0.046599],
+                              [-0.237661, 0.046053, -0.138136, 0.159061,
+                               -0.247485, -0.115211, -0.112864, 0.064794]],
+                percents_explained: [26.6887048633, 16.2563704022,
+                                     13.7754129161, 11.217215823, 10.024774995,
+                                     8.22835130237, 7.55971173665,
+                                     6.24945796136]};
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
-        this.decomp = new DecompositionModel(name, ids, coords, pct_var,
-            md_headers, metadata);
+        this.decomp = new DecompositionModel(data, md_headers, metadata);
         this.dv = new DecompositionView(this.decomp);
         this.sharedDecompositionViewDict.biplot = dv;
       },
