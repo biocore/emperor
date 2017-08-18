@@ -737,13 +737,14 @@ define([
    */
   ScalarViewControllerABC.prototype._resetAttribute = function() {
     EmperorAttributeABC.prototype._resetAttribute.call(this);
+
+    var scope = this;
     this.$scaledValue.prop('checked', false);
 
     _.each(this.decompViewDict, function(view) {
       scope.setPlottableAttributes(view, 1, view.decomp.plottable);
       view.needsUpdate = true;
     });
-    this.$scaledCheckbox.prop('checked', false);
   };
 
   /**

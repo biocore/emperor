@@ -24,7 +24,7 @@ define([
   function ScaleViewController(container, decompViewDict) {
     var helpmenu = 'Change the size of the attributes on the plot, allowing ' +
                    'highlighting of points using size.';
-    var title = 'Size';
+    var title = 'Scale';
 
     ScalarViewControllerABC.call(this, container, title, helpmenu, 0, 5, 0.1,
                                  decompViewDict);

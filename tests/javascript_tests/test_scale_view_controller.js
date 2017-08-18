@@ -144,7 +144,7 @@ requirejs([
       controller.setMetadataField('SampleID');
 
       var obs = controller.toJSON();
-      var exp = {category: 'SampleID', globalScale: '1.0', scaleVal: false,
+      var exp = {category: 'SampleID', globalScale: '1', scaleVal: false,
                  data: {'PC.636': 1, 'PC.635': 1, 'PC.634': 1}};
       deepEqual(obs, exp);
     });
