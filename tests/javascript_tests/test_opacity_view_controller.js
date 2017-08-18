@@ -65,7 +65,8 @@ requirejs([
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
-      assert.ok(OpacityViewController.prototype instanceof ScalarViewControllerABC);
+      assert.ok(OpacityViewController.prototype instanceof
+                ScalarViewControllerABC);
 
       var controller = new OpacityViewController(container,
         this.sharedDecompositionViewDict);

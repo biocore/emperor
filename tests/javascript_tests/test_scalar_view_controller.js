@@ -4,7 +4,7 @@ requirejs([
     'three',
     'model',
     'view',
-    'viewcontroller',
+    'viewcontroller'
 ], function($, _, THREE, model, DecompositionView, viewcontroller) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
@@ -64,7 +64,8 @@ requirejs([
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
-      assert.ok(ScalarViewControllerABC.prototype instanceof EmperorAttributeABC);
+      assert.ok(ScalarViewControllerABC.prototype instanceof
+                EmperorAttributeABC);
 
       var controller = new ScalarViewControllerABC(container, 'Test',
         'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);

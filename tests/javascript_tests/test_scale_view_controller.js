@@ -65,7 +65,8 @@ requirejs([
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
-      assert.ok(ScaleViewController.prototype instanceof ScalarViewControllerABC);
+      assert.ok(ScaleViewController.prototype instanceof
+                ScalarViewControllerABC);
 
       var controller = new ScaleViewController(container,
         this.sharedDecompositionViewDict);
