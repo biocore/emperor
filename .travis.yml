@@ -22,7 +22,7 @@ install:
   - pip install 'sphinx<1.6' sphinx-bootstrap-theme coverage coveralls
   # install lockfile before to prevent a failure in travis
   - pip install 'lockfile>=0.10.2'
-  - pip install -e '.[all]' --no-use-wheel --verbose
+  - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py

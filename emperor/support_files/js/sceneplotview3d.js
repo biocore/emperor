@@ -218,6 +218,7 @@ define([
    *
    */
   ScenePlotView3D.prototype.addDecompositionsToScene = function() {
+    var j;
 
     // Note that the internal logic of the THREE.Scene object prevents the
     // objects from being re-added so we can simply iterate over all the
@@ -226,8 +227,11 @@ define([
     // Add all the meshes to the scene, iterate through all keys in
     // decomposition view dictionary
     for (var decViewName in this.decViews) {
-      for (var j = 0; j < this.decViews[decViewName].markers.length; j++) {
+      for (j = 0; j < this.decViews[decViewName].markers.length; j++) {
         this.scene.add(this.decViews[decViewName].markers[j]);
+      }
+      for (j = 0; j < this.decViews[decViewName].ellipsoids.length; j++) {
+        this.scene.add(this.decViews[decViewName].ellipsoids[j]);
       }
     }
 

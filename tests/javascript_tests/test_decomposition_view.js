@@ -10,31 +10,29 @@ requirejs([
     module('Decomposition View', {
       setup: function() {
         // setup function
-        name = 'pcoa';
-        ids = ['PC.636', 'PC.635'];
-        coords = [
+        var data = {
+          name: 'pcoa',
+          sample_ids: ['PC.636', 'PC.635'],
+          coordinates: [
           [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
           -0.229889, -0.046599],
           [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794]];
-        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
-        md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
-        metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
-        decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-            metadata);
+          -0.112864, 0.064794]],
+          percents_explained: [26.6887048633, 16.2563704022, 13.7754129161,
+                               11.217215823, 10.024774995, 8.22835130237,
+                               7.55971173665, 6.24945796136]};
+        var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                          'DOB'];
+        var metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control',
+                         '20070314'],
+                        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
+                         '20071112']];
+        this.decomp = new DecompositionModel(data, md_headers, metadata);
       },
 
       teardown: function() {
         // teardown function
-        name = null;
-        ids = null;
-        coords = null;
-        pct_var = null;
-        md_headers = null;
-        metadata = null;
-        decomp = null;
+        this.decomp = null;
       }
     });
 
@@ -45,24 +43,24 @@ requirejs([
      */
     test('Test constructor', function() {
       var obs;
-      var dv = new DecompositionView(decomp);
-      var _name = 'pcoa';
-      var _ids = ['PC.636', 'PC.635'];
-      var _coords = [
+      var dv = new DecompositionView(this.decomp);
+      var data = {name: 'pcoa',
+                  sample_ids: ['PC.636', 'PC.635'],
+                  coordinates: [
         [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
         -0.229889, -0.046599],
         [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-        -0.112864, 0.064794]];
-      var _pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
-                      11.217215823, 10.024774995, 8.22835130237, 7.55971173665,
-                      6.24945796136];
+        -0.112864, 0.064794]],
+                  percents_explained: [26.6887048633, 16.2563704022,
+                                       13.7754129161, 11.217215823,
+                                       10.024774995, 8.22835130237,
+                                       7.55971173665, 6.24945796136]};
       var _md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
                          'DOB'];
       var _metadata = [
         ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
-      var exp = new DecompositionModel(_name, _ids, _coords, _pct_var,
-          _md_headers, _metadata);
+      var exp = new DecompositionModel(data, _md_headers, _metadata);
 
       deepEqual(dv.decomp, exp, 'decomp set correctly');
       equal(dv.count, 2, 'count set correctly');
@@ -104,7 +102,7 @@ requirejs([
      *
      */
     test('Test changeVisibleDimensions', function() {
-      var dv = new DecompositionView(decomp);
+      var dv = new DecompositionView(this.decomp);
       dv.changeVisibleDimensions([2, 3, 4]);
       obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
@@ -129,7 +127,7 @@ requirejs([
     test('Test changeVisibleDimensions excepts', function() {
       throws(
           function() {
-            var dv = new DecompositionView(decomp);
+            var dv = new DecompositionView(this.decomp);
             dv.changeVisibleDimensions([2, 3, 4, 5]);
           },
           Error,
@@ -143,7 +141,7 @@ requirejs([
      *
      */
     test('Test change flip axes', function(assert) {
-      var dv = new DecompositionView(decomp);
+      var dv = new DecompositionView(this.decomp);
 
       // copy the arrays
       expa = _.clone(dv.markers[0].position.toArray());
@@ -187,7 +185,7 @@ requirejs([
      */
     test('Test changing the orientations and then flipping a dimension',
          function() {
-      var dv = new DecompositionView(decomp);
+      var dv = new DecompositionView(this.decomp);
 
       deepEqual(dv.axesOrientation, [1, 1, 1]);
 
