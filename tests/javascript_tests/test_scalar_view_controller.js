@@ -5,15 +5,14 @@ requirejs([
     'model',
     'view',
     'viewcontroller',
-    'scaleviewcontroller'
-], function($, _, THREE, model, DecompositionView, viewcontroller,
-            ScaleViewController) {
+], function($, _, THREE, model, DecompositionView, viewcontroller) {
   $(document).ready(function() {
+    var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var ScalarViewControllerABC = viewcontroller.ScalarViewControllerABC;
     var DecompositionModel = model.DecompositionModel;
     var Plottable = model.Plottable;
 
-    module('ScaleViewController', {
+    module('ScalarViewControllerABC', {
       setup: function() {
         this.sharedDecompositionViewDict = {};
 
@@ -65,16 +64,19 @@ requirejs([
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
-      assert.ok(ScaleViewController.prototype instanceof ScalarViewControllerABC);
+      assert.ok(ScalarViewControllerABC.prototype instanceof EmperorAttributeABC);
 
-      var controller = new ScaleViewController(container,
-        this.sharedDecompositionViewDict);
-
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
       controller.setMetadataField('SampleID');
-      equal(controller.title, 'Scale');
+
+      equal(controller.title, 'Test');
+      equal(controller.description, 'Class for testing');
 
       var testColumn = controller.bodyGrid.getColumns()[0];
       equal(testColumn.field, 'value');
+
+      equal(controller.$sliderGlobal.slider('value'), 10);
 
       // verify the checked value is set properly
       equal(controller.$scaledValue.is(':checked'), false);
@@ -82,73 +84,16 @@ requirejs([
       equal(controller.getMetadataField(), 'SampleID');
     });
 
-    test('Testing setPlottableAttributes helper function', function(assert) {
-      // testing with one plottable
-      var idx = 0;
-      plottables = [{idx: idx}];
-      deepEqual(this.dv.markers[idx].scale.x, 1);
-      deepEqual(this.dv.markers[idx].scale.y, 1);
-      deepEqual(this.dv.markers[idx].scale.z, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.x, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.y, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.z, 1);
-      ScaleViewController.prototype.setPlottableAttributes(
-        this.dv, 2.5, plottables);
-      deepEqual(this.dv.markers[idx].scale.x, 2.5);
-      deepEqual(this.dv.markers[idx].scale.y, 2.5);
-      deepEqual(this.dv.markers[idx].scale.z, 2.5);
-      deepEqual(this.dv.markers[idx + 1].scale.x, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.y, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.z, 1);
-      equal(this.dv.needsUpdate, true);
-
-      // testing with multiple plottable
-      plottables = [{idx: idx}, {idx: idx + 1}];
-      ScaleViewController.prototype.setPlottableAttributes(this.dv, 0.4,
-                                                           plottables);
-      deepEqual(this.dv.markers[idx].scale.x, 0.4);
-      deepEqual(this.dv.markers[idx].scale.y, 0.4);
-      deepEqual(this.dv.markers[idx].scale.z, 0.4);
-      deepEqual(this.dv.markers[idx + 1].scale.x, 0.4);
-      deepEqual(this.dv.markers[idx + 1].scale.y, 0.4);
-      deepEqual(this.dv.markers[idx + 1].scale.z, 0.4);
-      equal(this.dv.needsUpdate, true);
-    });
-
-    test('Testing toJSON', function() {
-      var container = $('<div id="does-not-exist" style="height:11px; ' +
-                        'width:12px"></div>');
-      var controller = new ScaleViewController(
-        container, this.sharedDecompositionViewDict);
-      controller.setMetadataField('SampleID');
-
-      var obs = controller.toJSON();
-      var exp = {category: 'SampleID', globalScale: '1', scaleVal: false,
-                 data: {'PC.636': 1, 'PC.635': 1, 'PC.634': 1}};
-      deepEqual(obs, exp);
-    });
-
     test('Testing fromJSON', function() {
       var json = {category: 'SampleID', globalScale: '1.0', scaleVal: false,
-                  data: {'PC.636': 1.1, 'PC.635': 1, 'PC.634': 0.7}};
+                 data: {'PC.636': 1.1, 'PC.635': 1, 'PC.634': 0.7}};
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
-        container, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
-      var idx = 0;
-      var scatter = controller.decompViewDict.scatter;
-      deepEqual(scatter.markers[idx].scale.x, 1.1);
-      deepEqual(scatter.markers[idx].scale.y, 1.1);
-      deepEqual(scatter.markers[idx].scale.z, 1.1);
-      deepEqual(scatter.markers[idx + 1].scale.x, 1);
-      deepEqual(scatter.markers[idx + 1].scale.y, 1);
-      deepEqual(scatter.markers[idx + 1].scale.z, 1);
-      deepEqual(scatter.markers[idx + 2].scale.x, 0.7);
-      deepEqual(scatter.markers[idx + 2].scale.y, 0.7);
-      deepEqual(scatter.markers[idx + 2].scale.z, 0.7);
       equal(controller.$select.val(), 'SampleID');
       equal(controller.$scaledValue.is(':checked'), false);
     });
@@ -159,26 +104,32 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
-        container, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
-      var idx = 0;
-      deepEqual(controller.decompViewDict.scatter.markers[idx].scale.x, 1);
-      deepEqual(controller.decompViewDict.scatter.markers[idx].scale.y, 1);
-      deepEqual(controller.decompViewDict.scatter.markers[idx].scale.z, 1);
-      deepEqual(controller.decompViewDict.scatter.markers[idx + 1].scale.x, 5);
-      deepEqual(controller.decompViewDict.scatter.markers[idx + 1].scale.y, 5);
-      deepEqual(controller.decompViewDict.scatter.markers[idx + 1].scale.z, 5);
       equal(controller.$select.val(), 'DOB');
       equal(controller.$scaledValue.is(':checked'), true);
+    });
+
+    test('Testing toJSON', function() {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      controller.setMetadataField('SampleID');
+
+      var obs = controller.toJSON();
+      var exp = {category: 'SampleID', globalScale: '1', scaleVal: false,
+                 data: {'PC.636': 1, 'PC.635': 1, 'PC.634': 1}};
+      deepEqual(obs, exp);
     });
 
     test('Testing toJSON (null)', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
-        container, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
       controller.setMetadataField(null);
 
       var obs = controller.toJSON();
@@ -187,27 +138,48 @@ requirejs([
       deepEqual(obs, exp);
     });
 
+    test('Testing scaleValue', function() {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+
+      // return value should be constant, awkward abstract class
+      equal(controller.scaleValue(0, 0, 0), 1);
+      equal(controller.scaleValue(), 1);
+    });
+
+    test('Testing setAllPlottableAttributes', function(assert) {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+
+      controller.setAllPlottableAttributes();
+      assert.ok(true);
+    });
+
+    test('Test setPlottableAttributes is a noop', function(assert) {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      controller.setMetadataField('SampleID');
+      controller.setPlottableAttributes();
+      assert.ok(true);
+    });
+
     test('Testing fromJSON (null)', function() {
       var json = {category: null, globalScale: '1.0', scaleVal: false,
                   data: {}};
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
-        container, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
       var idx = 0;
-      var scatter = controller.decompViewDict.scatter;
-      deepEqual(scatter.markers[0].scale.x, 1);
-      deepEqual(scatter.markers[0].scale.y, 1);
-      deepEqual(scatter.markers[0].scale.z, 1);
-      deepEqual(scatter.markers[1].scale.x, 1);
-      deepEqual(scatter.markers[1].scale.y, 1);
-      deepEqual(scatter.markers[1].scale.z, 1);
-      deepEqual(scatter.markers[2].scale.x, 1);
-      deepEqual(scatter.markers[2].scale.y, 1);
-      deepEqual(scatter.markers[2].scale.z, 1);
       equal(controller.getMetadataField(), null);
       equal(controller.$scaledValue.is(':checked'), false);
     });
@@ -215,8 +187,8 @@ requirejs([
     test('Testing getScale', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
-        container, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
       var data = ['1.0', 'no', 'false', 'something', '2.0'];
 
       //test standard values
@@ -226,8 +198,23 @@ requirejs([
 
       //test scaled values
       obs = controller.getScale(data, true);
-      exp = {'1.0': 1, 'no': 0, 'false': 0, 'something': 0, '2.0': 5};
+      exp = {'1.0': 1, 'no': 0, 'false': 0, 'something': 0, '2.0': 1};
       deepEqual(obs, exp);
+    });
+
+    asyncTest('Test setEnabled (true)', function() {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new ScalarViewControllerABC(container, 'Test',
+        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      $(function() {
+        controller.setEnabled(false);
+
+        equal(controller.$scaledValue.is(':disabled'), true);
+        equal(controller.$sliderGlobal.slider('option', 'disabled'), true);
+
+        start(); // qunit
+      });
     });
   });
 });

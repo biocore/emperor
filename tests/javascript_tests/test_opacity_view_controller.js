@@ -5,15 +5,15 @@ requirejs([
     'model',
     'view',
     'viewcontroller',
-    'scaleviewcontroller'
+    'opacityviewcontroller'
 ], function($, _, THREE, model, DecompositionView, viewcontroller,
-            ScaleViewController) {
+            OpacityViewController) {
   $(document).ready(function() {
     var ScalarViewControllerABC = viewcontroller.ScalarViewControllerABC;
     var DecompositionModel = model.DecompositionModel;
     var Plottable = model.Plottable;
 
-    module('ScaleViewController', {
+    module('OpacityViewController', {
       setup: function() {
         this.sharedDecompositionViewDict = {};
 
@@ -65,13 +65,13 @@ requirejs([
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
-      assert.ok(ScaleViewController.prototype instanceof ScalarViewControllerABC);
+      assert.ok(OpacityViewController.prototype instanceof ScalarViewControllerABC);
 
-      var controller = new ScaleViewController(container,
+      var controller = new OpacityViewController(container,
         this.sharedDecompositionViewDict);
 
       controller.setMetadataField('SampleID');
-      equal(controller.title, 'Scale');
+      equal(controller.title, 'Opacity');
 
       var testColumn = controller.bodyGrid.getColumns()[0];
       equal(testColumn.field, 'value');
@@ -86,39 +86,29 @@ requirejs([
       // testing with one plottable
       var idx = 0;
       plottables = [{idx: idx}];
-      deepEqual(this.dv.markers[idx].scale.x, 1);
-      deepEqual(this.dv.markers[idx].scale.y, 1);
-      deepEqual(this.dv.markers[idx].scale.z, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.x, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.y, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.z, 1);
-      ScaleViewController.prototype.setPlottableAttributes(
-        this.dv, 2.5, plottables);
-      deepEqual(this.dv.markers[idx].scale.x, 2.5);
-      deepEqual(this.dv.markers[idx].scale.y, 2.5);
-      deepEqual(this.dv.markers[idx].scale.z, 2.5);
-      deepEqual(this.dv.markers[idx + 1].scale.x, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.y, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.z, 1);
+      deepEqual(this.dv.markers[idx].material.opacity, 1);
+      deepEqual(this.dv.markers[idx + 1].material.opacity, 1);
+
+      OpacityViewController.prototype.setPlottableAttributes(this.dv, 0.5,
+                                                             plottables);
+
+      deepEqual(this.dv.markers[idx].material.opacity, 0.5);
+      deepEqual(this.dv.markers[idx + 1].material.opacity, 1);
       equal(this.dv.needsUpdate, true);
 
       // testing with multiple plottable
       plottables = [{idx: idx}, {idx: idx + 1}];
-      ScaleViewController.prototype.setPlottableAttributes(this.dv, 0.4,
-                                                           plottables);
-      deepEqual(this.dv.markers[idx].scale.x, 0.4);
-      deepEqual(this.dv.markers[idx].scale.y, 0.4);
-      deepEqual(this.dv.markers[idx].scale.z, 0.4);
-      deepEqual(this.dv.markers[idx + 1].scale.x, 0.4);
-      deepEqual(this.dv.markers[idx + 1].scale.y, 0.4);
-      deepEqual(this.dv.markers[idx + 1].scale.z, 0.4);
+      OpacityViewController.prototype.setPlottableAttributes(this.dv, 0.4,
+                                                             plottables);
+      deepEqual(this.dv.markers[idx].material.opacity, 0.4);
+      deepEqual(this.dv.markers[idx + 1].material.opacity, 0.4);
       equal(this.dv.needsUpdate, true);
     });
 
     test('Testing toJSON', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new OpacityViewController(
         container, this.sharedDecompositionViewDict);
       controller.setMetadataField('SampleID');
 
@@ -130,46 +120,37 @@ requirejs([
 
     test('Testing fromJSON', function() {
       var json = {category: 'SampleID', globalScale: '1.0', scaleVal: false,
-                  data: {'PC.636': 1.1, 'PC.635': 1, 'PC.634': 0.7}};
+                  data: {'PC.636': 0.1, 'PC.635': 1, 'PC.634': 0.7}};
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new OpacityViewController(
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
-      var idx = 0;
+
       var scatter = controller.decompViewDict.scatter;
-      deepEqual(scatter.markers[idx].scale.x, 1.1);
-      deepEqual(scatter.markers[idx].scale.y, 1.1);
-      deepEqual(scatter.markers[idx].scale.z, 1.1);
-      deepEqual(scatter.markers[idx + 1].scale.x, 1);
-      deepEqual(scatter.markers[idx + 1].scale.y, 1);
-      deepEqual(scatter.markers[idx + 1].scale.z, 1);
-      deepEqual(scatter.markers[idx + 2].scale.x, 0.7);
-      deepEqual(scatter.markers[idx + 2].scale.y, 0.7);
-      deepEqual(scatter.markers[idx + 2].scale.z, 0.7);
+      deepEqual(scatter.markers[0].material.opacity, 0.1);
+      deepEqual(scatter.markers[1].material.opacity, 1);
+      deepEqual(scatter.markers[2].material.opacity, 0.7);
       equal(controller.$select.val(), 'SampleID');
       equal(controller.$scaledValue.is(':checked'), false);
     });
 
     test('Testing fromJSON scaled', function() {
       var json = {category: 'DOB', globalScale: '1.0', scaleVal: true,
-                  data: {'20070314': 1, '20071112': 5}};
+                  data: {'20070314': 0.1, '20071112': 0.5}};
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new OpacityViewController(
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
-      var idx = 0;
-      deepEqual(controller.decompViewDict.scatter.markers[idx].scale.x, 1);
-      deepEqual(controller.decompViewDict.scatter.markers[idx].scale.y, 1);
-      deepEqual(controller.decompViewDict.scatter.markers[idx].scale.z, 1);
-      deepEqual(controller.decompViewDict.scatter.markers[idx + 1].scale.x, 5);
-      deepEqual(controller.decompViewDict.scatter.markers[idx + 1].scale.y, 5);
-      deepEqual(controller.decompViewDict.scatter.markers[idx + 1].scale.z, 5);
+      var scatter = controller.decompViewDict.scatter;
+      deepEqual(scatter.markers[0].material.opacity, 0.1);
+      deepEqual(scatter.markers[1].material.opacity, 0.5);
+
       equal(controller.$select.val(), 'DOB');
       equal(controller.$scaledValue.is(':checked'), true);
     });
@@ -177,7 +158,7 @@ requirejs([
     test('Testing toJSON (null)', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new OpacityViewController(
         container, this.sharedDecompositionViewDict);
       controller.setMetadataField(null);
 
@@ -193,21 +174,14 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new OpacityViewController(
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
       var idx = 0;
       var scatter = controller.decompViewDict.scatter;
-      deepEqual(scatter.markers[0].scale.x, 1);
-      deepEqual(scatter.markers[0].scale.y, 1);
-      deepEqual(scatter.markers[0].scale.z, 1);
-      deepEqual(scatter.markers[1].scale.x, 1);
-      deepEqual(scatter.markers[1].scale.y, 1);
-      deepEqual(scatter.markers[1].scale.z, 1);
-      deepEqual(scatter.markers[2].scale.x, 1);
-      deepEqual(scatter.markers[2].scale.y, 1);
-      deepEqual(scatter.markers[2].scale.z, 1);
+      deepEqual(scatter.markers[0].material.opacity, 1);
+      deepEqual(scatter.markers[1].material.opacity, 1);
       equal(controller.getMetadataField(), null);
       equal(controller.$scaledValue.is(':checked'), false);
     });
@@ -215,7 +189,7 @@ requirejs([
     test('Testing getScale', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new OpacityViewController(
         container, this.sharedDecompositionViewDict);
       var data = ['1.0', 'no', 'false', 'something', '2.0'];
 
@@ -226,7 +200,7 @@ requirejs([
 
       //test scaled values
       obs = controller.getScale(data, true);
-      exp = {'1.0': 1, 'no': 0, 'false': 0, 'something': 0, '2.0': 5};
+      exp = {'1.0': 0, 'no': 0, 'false': 0, 'something': 0, '2.0': 1};
       deepEqual(obs, exp);
     });
   });

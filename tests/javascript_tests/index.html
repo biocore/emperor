@@ -119,7 +119,9 @@
           'test_plottable': '../../tests/javascript_tests/test_plottable',
           'test_animate': '../../tests/javascript_tests/test_animate',
           'test_color_view_controller': '../../tests/javascript_tests/test_color_view_controller',
+          'test_scalar_view_controller': '../../tests/javascript_tests/test_scalar_view_controller',
           'test_scale_view_controller': '../../tests/javascript_tests/test_scale_view_controller',
+          'test_opacity_view_controller': '../../tests/javascript_tests/test_opacity_view_controller',
           'test_decomposition_model': '../../tests/javascript_tests/test_decomposition_model',
           'test_decomposition_view': '../../tests/javascript_tests/test_decomposition_view',
           'test_draw': '../../tests/javascript_tests/test_draw',
@@ -167,15 +169,16 @@
            'colorviewcontroller', 'scaleviewcontroller', 'scale-editor',
            'controller', 'draw', 'model', 'scene3d', 'trajectory', 'util',
            'view', 'abcviewcontroller', 'viewcontroller',
-           'visibilitycontroller', 'shape-editor', 'shapes', 'canvastoblob',
-           'canvasrenderer',
+            'opacityviewcontroller', 'visibilitycontroller', 'shape-editor',
+            'shapes', 'canvastoblob', 'canvasrenderer',
 
            'test_plottable', 'test_decomposition_model',
            'test_decomposition_view', 'test_view_controller',
            'test_color_view_controller', 'test_sceneplotview3d',
            'test_trajectory', 'test_animate', 'test_util',  'test_draw',
            'test_visibility_controller', 'test_shape_controller',
-           'test_scale_view_controller', 'test_axes_controller'],
+           'test_scale_view_controller', 'test_axes_controller',
+           'test_scalar_view_controller', 'test_opacity_view_controller'],
            /*
               Very important to always load all dependencies first, otherwise
               you might encounter problems with Qunit not running all tests.
@@ -186,8 +189,9 @@
                       animate, coloreditor, colorviewcontroller,
                       scaleviewcontroller, scaleeditor, controller,
                       draw, model, scene3d, trajectory, util, view,
-                      abcviewcontroller, viewcontroller, visibilitycontroller,
-                      shapeeditor, shapes, canvastoblob, canvasrenderer,
+                      abcviewcontroller, viewcontroller, opacityviewcontroller,
+                      visibilitycontroller, shapeeditor, shapes, canvastoblob,
+                      canvasrenderer,
 
                       // test suites
                       test_plottable, test_decomposition_model,
@@ -196,7 +200,8 @@
                       test_trajectory, test_animate, test_util, test_ui,
                       test_draw, test_visibility_controller,
                       test_shape_controller, test_scale_view_controller,
-                      test_axes_controller) {
+                      test_axes_controller, test_scalar_view_controller,
+                      test_opacity_view_controller) {
               // now trigger the tests
               $( document ).ready(function() {
                 QUnit.start();

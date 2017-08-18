@@ -712,22 +712,6 @@ define([
   };
 
   /**
-   * Helper function to set the scale of plottable
-   *
-   * @param {Object} scope The scope where the plottables exist
-   * @param {Boolean} scale New scaling factor of the plottables
-   * (1.0 being standard scale)
-   * @param {Object[]} group list of mesh objects that should be changed
-   * in scope
-   *
-   */
-  ScalarViewControllerABC.prototype.setPlottableAttributes = function(scope,
-                                                                      scale,
-                                                                      group) {
-    throw new Error('Not implemented, subclasses should override this method');
-  };
-
-  /**
    *
    * Private method to reset the scale of all the objects to one.
    *
@@ -749,13 +733,36 @@ define([
 
   /**
    *
+   * Helper function to set the scale of plottable.
+   *
+   * Note, needs to be overriden by the subclass.
+   *
+   */
+  ScalarViewControllerABC.prototype.setPlottableAttributes = function() {
+  };
+
+  /**
+   *
    * Method to do global updates to only the current view
+   *
+   * Note, needs to be overriden by the subclass.
    *
    */
   ScalarViewControllerABC.prototype.setAllPlottableAttributes = function() {
-    throw new Error('Not implemented, subclasses should override this method');
   };
 
+  /**
+   *
+   * Scaling function to use when the attribute is based on a metadata
+   * category (used in getScale).
+   *
+   * @param {float} val The metadata value for the current sample.
+   * @param {float} min The minimum metadata value in the dataset.
+   * @param {float} range The span of the metadata values.
+   *
+   * @return {float} Attribute value
+   *
+   */
   ScalarViewControllerABC.prototype.scaleValue = function(val, min, range) {
     return 1;
   };
