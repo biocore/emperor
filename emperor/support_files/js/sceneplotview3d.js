@@ -28,8 +28,8 @@ define([
    * @return {ScenePlotView3D} An instance of ScenePlotView3D.
    * @constructs ScenePlotView3D
    */
-   function ScenePlotView3D(renderer, decViews, container, xView, yView,
-                            width, height) {
+  function ScenePlotView3D(renderer, decViews, container, xView, yView,
+                           width, height) {
     var scope = this;
 
     // convert to jquery object for consistency with the rest of the objects
@@ -69,6 +69,14 @@ define([
      */
     this.backgroundColor = 0x000000;
 
+    /**
+     * Ranges for all the decompositions in this view (there's a min and a max
+     * property).
+     * @type {Object}
+     */
+    this.dimensionRanges = {'max': [], 'min': []};
+    this._unionRanges();
+
     // used to name the axis lines/labels in the scene
     this._axisPrefix = 'emperor-axis-line-';
     this._axisLabelPrefix = 'emperor-axis-label-';
@@ -77,13 +85,17 @@ define([
     var max = _.max(decViews.scatter.decomp.dimensionRanges.max);
     var frontFrust = _.min([max * 0.001, 1]);
     var backFrust = _.max([max * 100, 100]);
+
     /**
      * Camera used to display the scene.
      * @type {THREE.PerspectiveCamera}
      */
-    this.camera = new THREE.PerspectiveCamera(35, width / height,
-                                              frontFrust, backFrust);
+    // these are placeholders that are later updated in updateCameraAspectRatio
+    this.camera = new THREE.OrthographicCamera(-50, 50, 50, -50);
     this.camera.position.set(0, 0, max * 5);
+    this.camera.zoom  = 0.7;
+
+    this.updateCameraAspectRatio();
 
     //need to initialize the scene
     this.scene = new THREE.Scene();
@@ -135,7 +147,6 @@ define([
      * the ranges that covers all of the decomposition views.
      * @type {Object}
      */
-    this.dimensionRanges = {'max': [], 'min': []};
     this.drawAxesWithColor(0xFFFFFF);
     this.drawAxesLabelsWithColor(0xFFFFFF);
 
@@ -338,20 +349,44 @@ define([
 
     // shortcut to the index of the visible dimension and the range object
     var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
-        z = this.visibleDimensions[2], range = this.dimensionRanges;
+        z = this.visibleDimensions[2], range = this.dimensionRanges,
+        is2D = z === null, axesPadding = 1.07;
+
+    /*
+     * We special case Z when it is a 2D plot, whenever that's the case we set
+     * the range to be zero so no lines are shown on screen.
+     */
 
     // this is the "origin" of our ordination
-    var start = [range.min[x], range.min[y], range.min[z]];
+    var start = [range.min[x] * axesPadding,
+                 range.min[y] * axesPadding,
+                 is2D ? 0 : range.min[z] * axesPadding];
 
     var ends = [
-      [range.max[x], range.min[y], range.min[z]],
-      [range.min[x], range.max[y], range.min[z]],
-      [range.min[x], range.min[y], range.max[z]]
+      [range.max[x] * axesPadding,
+       range.min[y] * axesPadding,
+       is2D ? 0 : range.min[z] * axesPadding],
+      [range.min[x] * axesPadding,
+       range.max[y] * axesPadding,
+       is2D ? 0 : range.min[z] * axesPadding],
+      [range.min[x] * axesPadding,
+       range.min[y] * axesPadding,
+       is2D ? 0 : range.max[z] * axesPadding]
     ];
 
     action(start, ends[0], x);
     action(start, ends[1], y);
-    action(start, ends[2], z);
+
+    // when transitioning to 2D reset the camera and disable rotation to make
+    // the plot look straight at the camera, as opposed to an awkward angle
+    if (is2D) {
+      this.control.enableRotate = false;
+      this.recenterCamera();
+    }
+    else {
+      action(start, ends[2], z);
+      this.control.enableRotate = true;
+    }
   };
 
   /**
@@ -414,7 +449,6 @@ define([
     decomp = this.decViews[firstKey].decomp;
 
     this._dimensionsIterator(function(start, end, index) {
-
       // when the labels get too long, it's a bit hard to look at
       if (decomp.axesNames[index].length > 25) {
         text = decomp.axesNames[index].slice(0, 20) + '...';
@@ -475,19 +509,6 @@ define([
 
   /**
    *
-   * Sets the aspect ratio of the camera according to the current size of the
-   * scene.
-   *
-   * @param {Float} winAspect ratio of width to height of the scene.
-   *
-   */
-  ScenePlotView3D.prototype.setCameraAspectRatio = function(winAspect) {
-    this.camera.aspect = winAspect;
-    this.camera.updateProjectionMatrix();
-  };
-
-  /**
-   *
    * Resizes and relocates the scene.
    *
    * @param {Float} xView New horizontal location.
@@ -501,9 +522,38 @@ define([
     this.yView = yView;
     this.width = width;
     this.height = height;
-    this.setCameraAspectRatio(width / height);
+
+    this.updateCameraAspectRatio();
+
     this.needsUpdate = true;
   };
+
+  /**
+   *
+   * Resets the aspect ratio of the camera according to the current size of the
+   * plot space.
+   *
+   */
+  ScenePlotView3D.prototype.updateCameraAspectRatio = function() {
+    // orthographic cameras operate in space units not in pixel units i.e.
+    // the width and height of the view is based on the objects not the window
+    var owidth = this.dimensionRanges.max[0] - this.dimensionRanges.min[0];
+    var oheight = this.dimensionRanges.max[1] - this.dimensionRanges.min[1];
+
+    var aspect = this.width / this.height;
+
+    // ensure that the camera's aspect ratio is equal to the window's
+    owidth = oheight * aspect;
+
+    this.camera.left =  -owidth / 2;
+    this.camera.right =  owidth / 2;
+    this.camera.top =  oheight / 2;
+    this.camera.bottom =  -oheight / 2;
+
+    this.camera.aspect = aspect;
+    this.camera.updateProjectionMatrix();
+  }
+
 
   /**
    *

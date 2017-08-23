@@ -181,7 +181,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
 
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2], scope = this, changePosition,
-      hasConfidenceIntervals, radius = 0;
+      hasConfidenceIntervals, radius = 0, is2D = (z === null);
 
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
@@ -196,7 +196,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
     // always use the original data plus the axis orientation
     mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
                       plottable.coordinates[y] * scope.axesOrientation[1],
-                      plottable.coordinates[z] * scope.axesOrientation[2]);
+                      (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
     mesh.updateMatrix();
 
     if (hasConfidenceIntervals) {
@@ -204,10 +204,10 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
 
       mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
                         plottable.coordinates[y] * scope.axesOrientation[1],
-                        plottable.coordinates[z] * scope.axesOrientation[2]);
+                        (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
 
       mesh.scale.set(plottable.ci[x] / radius, plottable.ci[y] / radius,
-                     plottable.ci[z] / radius);
+                     is2D ? 0.01 : plottable.ci[z] / radius);
 
       mesh.updateMatrix();
     }
