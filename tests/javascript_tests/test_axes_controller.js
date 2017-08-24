@@ -15,8 +15,6 @@ requirejs([
     module('AxesController', {
       setup: function() {
         this.sharedDecompositionViewDict = {};
-        var $slickid = $('<div id="fooligans"></div>');
-        $slickid.appendTo(document.body);
 
         // setup function
         var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
@@ -54,24 +52,6 @@ requirejs([
         decomp = new DecompositionModel(data, md_headers, metadata);
         this.dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.biplot = dv;
-
-        // Slickgrid
-        var columns = [
-        {id: 'pc1', name: 'pc1', field: 'pc1'},
-        {id: 'pc2', name: 'pc2', field: 'pc2'},
-        {id: 'pc3', name: 'pc3', field: 'pc3'}
-        ];
-
-        var options = {
-          enableCellNavigation: true,
-          enableColumnReorder: false
-        };
-        var data = [];
-        data.push({'pc1': 1, 'pc2': 1, 'pc3': 1});
-        data.push({'pc1': 1, 'pc2': 1, 'pc3': 2});
-        data.push({'pc1': 2, 'pc2': 1, 'pc3': 2});
-
-        grid = new Slick.Grid('#fooligans', data, columns, options);
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
