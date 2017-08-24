@@ -101,7 +101,6 @@ requirejs([
     });
 
     test('Testing colorChanged', function() {
-
       var decView = this.controller.getView();
       this.controller.colorChanged('axes-color', 0xF0F0F0);
       deepEqual(decView.axesColor, 0xF0F0F0);
@@ -109,5 +108,48 @@ requirejs([
       deepEqual(decView.backgroundColor, 0x101010);
     });
 
+    test('Test flipAxis', function(assert) {
+      var res;
+
+      res = this.controller.$header.find(':checkbox');
+
+      // verify the checkboxes change as expected
+      deepEqual([res[0].checked, res[1].checked, res[2].checked],
+                [false, false, false]);
+      deepEqual(this.controller._flippedAxes, [false, false, false]);
+
+      this.controller.flipAxis(1);
+
+      res = this.controller.$header.find(':checkbox');
+      deepEqual([res[0].checked, res[1].checked, res[2].checked],
+                [false, true, false]);
+      deepEqual(this.controller._flippedAxes, [false, true, false]);
+
+      this.controller.flipAxis(1);
+
+      res = this.controller.$header.find(':checkbox');
+      deepEqual([res[0].checked, res[1].checked, res[2].checked],
+                [false, false, false]);
+      deepEqual(this.controller._flippedAxes, [false, false, false]);
+    });
+
+    test('Test updateVisibleAxes', function() {
+      var res;
+
+      // check that we can turn to a 2D plot
+      this.controller.updateVisibleAxes(null, 2);
+
+      res = this.controller.$header.find(':checkbox');
+      deepEqual([res[0].disabled, res[1].disabled, res[2].disabled],
+                [false, false, true]);
+      deepEqual(this.controller._flippedAxes, [false, false, false]);
+
+      this.controller.updateVisibleAxes(3, 2);
+
+      res = this.controller.$header.find(':checkbox');
+      deepEqual([res[0].disabled, res[1].disabled, res[2].disabled],
+                [false, false, false]);
+      deepEqual(this.controller._flippedAxes, [false, false, false]);
+    });
   });
 });

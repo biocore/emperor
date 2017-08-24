@@ -230,6 +230,9 @@ define([
       var idx = visibleDimension;
       if (idx === null) {
         idx = decomposition.dimensions;
+
+        // disable the flip axes checkbox
+        $check.attr('disabled', true);
       }
       $menu.prop('selectedIndex', idx);
     });
@@ -348,7 +351,7 @@ define([
   };
 
   /**
-   * Callback to reposition an axis into a new position.
+   * Callback to reposition an axis
    *
    * @param {Integer} index The index of the dimension to set as a new visible
    * axis, in the corresponding position indicated by `position`.
