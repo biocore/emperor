@@ -86,7 +86,7 @@ requirejs([
       assert.ok(spv.renderer instanceof THREE.SVGRenderer);
       assert.ok(spv.control instanceof THREE.OrbitControls);
       assert.ok(spv.scene instanceof THREE.Scene);
-      assert.ok(spv.camera instanceof THREE.PerspectiveCamera);
+      assert.ok(spv.camera instanceof THREE.OrthographicCamera);
       assert.ok(spv.light instanceof THREE.DirectionalLight);
 
       deepEqual(spv.xView, 0);
@@ -263,16 +263,17 @@ requirejs([
       // color the axis lines
       spv.drawAxesLabelsWithColor(0x00FF0F);
 
-      var label, positions = [[-0.237661, -0.144964, -0.138136],
-                              [-1, 0.046053, -0.138136],
-                              [-1, -0.144964, 0.066647]];
+      var label, tolerance = 0.000001,
+          positions = [[-0.25429727,-0.15511148,-0.147805522],
+                       [-1.07,0.04927671,-0.14780552000000002],
+                       [-1.07,-0.15511148000000002,0.07131229]];
 
       for (var i = 0; i < 3; i++) {
         label = spv.scene.getObjectByName('emperor-axis-label-' + i);
 
-        equal(label.position.x, positions[i][0]);
-        equal(label.position.y, positions[i][1]);
-        equal(label.position.z, positions[i][2]);
+        assert.ok((label.position.x - positions[i][0]) < tolerance);
+        assert.ok((label.position.y - positions[i][1]) < tolerance);
+        assert.ok((label.position.z - positions[i][2]) < tolerance);
 
         equal(label.material.color.r, 0);
         equal(label.material.color.g, 1);
@@ -326,22 +327,30 @@ requirejs([
 
     /**
      *
-     * Test the setCameraAspectRatio method for ScenePlotView3D
+     * Test the updateCameraAspectRatio method for ScenePlotView3D
      *
      */
-    test('Test setCameraAspectRatio', function() {
+    test('Test updateCameraAspectRatio', function() {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                     'fooligans', 0, 0, 20, 20);
-      spv.setCameraAspectRatio(100);
-      equal(spv.camera.aspect, 100);
 
-      spv.setCameraAspectRatio(200);
-      equal(spv.camera.aspect, 200);
-
-      spv.setCameraAspectRatio(1);
+      // same width and height
+      spv.updateCameraAspectRatio();
+      equal(spv.camera.left, -0.0955085);
+      equal(spv.camera.right, 0.0955085);
+      equal(spv.camera.top, 0.0955085);
+      equal(spv.camera.bottom, -0.0955085);
       equal(spv.camera.aspect, 1);
+
+      spv.width = 30;
+      spv.updateCameraAspectRatio();
+      equal(spv.camera.left, -0.14326275);
+      equal(spv.camera.right, 0.14326275);
+      equal(spv.camera.top, 0.0955085);
+      equal(spv.camera.bottom, -0.0955085);
+      equal(spv.camera.aspect, 1.5);
 
       // release the control back to the main page
       spv.control.dispose();
