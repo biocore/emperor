@@ -62,7 +62,6 @@ define([
       'slickGridColumn': {id: 'title', name: '', field: 'value',
         sortable: false, maxWidth: SLICK_WIDTH,
         minWidth: SLICK_WIDTH,
-        autoEdit: true,
         formatter: Slick.Formatters.Checkmark,
         editor: Slick.Editors.Checkbox}};
 

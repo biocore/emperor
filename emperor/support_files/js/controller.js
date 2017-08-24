@@ -87,11 +87,14 @@ define([
      * @type {node}
      */
     this.$plotSpace = $("<div class='emperor-plot-wrapper'></div>");
+
     /**
      * Internal div where the plots live in (jQuery object).
      * @type {node}
      */
     this.$plotMenu = $("<div class='emperor-plot-menu'></div>");
+    this.$plotMenu.attr('title', 'Right click on the plot for more options ' +
+                        'or click on a sample to reveal its name.');
 
     this.$divId.append(this.$plotSpace);
     this.$divId.append(this.$plotMenu);
@@ -698,7 +701,7 @@ define([
     var scope = this;
 
     // nothing but a temporary id
-    var id = (Math.round(1000000 * Math.random())).toString();
+    var id = (Math.round(1000000 * Math.random())).toString(), $li;
 
     this._$tabsContainer.append("<div id='" + id +
                                 "' class='emperor-tab-div' ></div>");
@@ -718,8 +721,9 @@ define([
 
     // now add the list element linking to the container div with the proper
     // title
-    this._$tabsList.append("<li><a href='#" + obj.identifier + "'>" +
-                           obj.title + '</a></li>');
+    $li = $("<li><a href='#" + obj.identifier + "'>" + obj.title + '</a></li>');
+    $li.attr('title', obj.description);
+    this._$tabsList.append($li);
 
     return obj;
   };

@@ -163,7 +163,6 @@ define([
         id: 'title', name: '', field: 'value',
         sortable: false, maxWidth: SLICK_WIDTH,
         minWidth: SLICK_WIDTH,
-        autoEdit: true,
         editor: ColorEditor,
         formatter: ColorFormatter
       }

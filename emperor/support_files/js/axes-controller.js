@@ -31,7 +31,7 @@ define([
     EmperorViewController.call(this, container, title, helpmenu,
                                decompViewDict);
 
-    var colors = '<table style="width:inherit; border:none;">';
+    var colors = '<table style="width:inherit; border:none;" title="">';
     colors += '<tr><td>Axes and Labels Color</td>';
     colors += '<td><input type="text" name="axes-color"/></td></tr>';
     colors += '<tr><td>Background Color</td>';
@@ -81,6 +81,7 @@ define([
      * @private
      */
     this.$_screePlotContainer = $('<div name="scree-plot">');
+    this.$_screePlotContainer.attr('title', '');
     this.$_screePlotContainer.css({'display': 'inline-block',
                                    'position': 'relative',
                                    'width': '100%',
@@ -137,6 +138,7 @@ define([
     var $table = $('<table></table>'), $row, $td, widgets;
     var names = ['First', 'Second', 'Third'];
 
+    $table.attr('title', 'Modify the axes visible on screen');
     $table.css({'border': 'none',
                 'width': 'inherit',
                 'text-align': 'left',
@@ -238,6 +240,19 @@ define([
         width = this.$body.width() - margin.left - margin.right,
         height = (this.$body.height() * 0.40) - margin.top - margin.bottom;
 
+    var tooltip = d3.select('body').append('div').style({
+      'position': 'absolute',
+      'display': 'none',
+      'color': 'black',
+      'height': 'auto',
+      'text-align': 'center',
+      'background-color': 'rgba(200,200,200,0.5)',
+      'border-radius': '5px',
+      'cursor': 'default',
+      'font-family': 'Helvetica, sans-serif',
+      'font-size': '14px'
+    }).html('Percent Explained');
+
     var x = d3.scale.ordinal()
       .rangeRoundBands([0, width], 0.1);
 
@@ -302,11 +317,25 @@ define([
       .attr('width', x.rangeBand())
       .attr('y', function(d) { return y(d.percent); })
       .attr('height', function(d) { return height - y(d.percent); })
-      .on('mouseover', function(d) {
-        $(this).css('fill', 'teal');
+      .on('mousemove', function(d) {
+        // midpoint: set the midpoint to zero in case something is off
+        // offset: avoid some flickering
+        var midpoint = (parseFloat(tooltip.style('width')) / 2) || 0,
+            offset = 25;
+
+        tooltip.html(d.percent.toFixed(2));
+
+        tooltip.style({
+          'left': d3.event.pageX - midpoint + 'px',
+          'top': d3.event.pageY - offset + 'px'
+        });
+
+        // after positioning the tooltip display the view, otherwise weird
+        // resizing glitches occur
+        tooltip.style({'display': 'inline-block'});
       })
       .on('mouseout', function(d) {
-        $(this).css('fill', 'steelblue');
+        tooltip.style('display', 'none');
       });
 
     // figure title
