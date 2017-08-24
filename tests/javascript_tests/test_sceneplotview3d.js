@@ -210,6 +210,37 @@ requirejs([
       spv.control.dispose();
     });
 
+    test('Test draw axes 2D', function(assert) {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      spv.removeAxes();
+      spv.visibleDimensions[2] = null;
+      spv.drawAxesWithColor(0x0000FF);
+
+      var line;
+
+      for (var i = 0; i < 3; i++) {
+        line = spv.scene.getObjectByName('emperor-axis-line-' + i);
+
+        if (i !== 2) {
+          equal(line.material.color.r, 0);
+          equal(line.material.color.g, 0);
+          equal(line.material.color.b, 1);
+        }
+        else {
+          equal(line, undefined);
+        }
+      }
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+
     test('Test axes color as null', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
