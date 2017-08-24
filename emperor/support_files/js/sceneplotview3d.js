@@ -554,7 +554,6 @@ define([
     this.camera.updateProjectionMatrix();
   }
 
-
   /**
    *
    * Convenience method to check if this or any of the decViews under this need
