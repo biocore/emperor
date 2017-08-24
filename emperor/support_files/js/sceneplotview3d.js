@@ -93,7 +93,7 @@ define([
     // these are placeholders that are later updated in updateCameraAspectRatio
     this.camera = new THREE.OrthographicCamera(-50, 50, 50, -50);
     this.camera.position.set(0, 0, max * 5);
-    this.camera.zoom  = 0.7;
+    this.camera.zoom = 0.7;
 
     this.updateCameraAspectRatio();
 
@@ -545,14 +545,14 @@ define([
     // ensure that the camera's aspect ratio is equal to the window's
     owidth = oheight * aspect;
 
-    this.camera.left =  -owidth / 2;
-    this.camera.right =  owidth / 2;
-    this.camera.top =  oheight / 2;
-    this.camera.bottom =  -oheight / 2;
+    this.camera.left = -owidth / 2;
+    this.camera.right = owidth / 2;
+    this.camera.top = oheight / 2;
+    this.camera.bottom = -oheight / 2;
 
     this.camera.aspect = aspect;
     this.camera.updateProjectionMatrix();
-  }
+  };
 
   /**
    *
