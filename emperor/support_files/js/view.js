@@ -194,18 +194,21 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
     mesh = scope.markers[plottable.idx];
 
     // always use the original data plus the axis orientation
-    mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
-                      plottable.coordinates[y] * scope.axesOrientation[1],
-                      (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+    mesh.position.set(
+      plottable.coordinates[x] * scope.axesOrientation[0],
+      plottable.coordinates[y] * scope.axesOrientation[1],
+      (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
     mesh.updateMatrix();
 
     if (hasConfidenceIntervals) {
       mesh = scope.ellipsoids[plottable.idx];
 
-      mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
-                        plottable.coordinates[y] * scope.axesOrientation[1],
-                        (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+      mesh.position.set(
+        plottable.coordinates[x] * scope.axesOrientation[0],
+        plottable.coordinates[y] * scope.axesOrientation[1],
+        (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
 
+      // flatten the ellipsoids ever so slightly
       mesh.scale.set(plottable.ci[x] / radius, plottable.ci[y] / radius,
                      is2D ? 0.01 : plottable.ci[z] / radius);
 
@@ -233,7 +236,8 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
 
   if (localIndex !== -1) {
     var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
-        z = this.visibleDimensions[2], hasConfidenceIntervals;
+        z = this.visibleDimensions[2], hasConfidenceIntervals,
+        is2D = (z === null);
 
     hasConfidenceIntervals = scope.decomp.hasConfidenceIntervals();
 
@@ -250,18 +254,20 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
       mesh = scope.markers[plottable.idx];
 
       // always use the original data plus the axis orientation
-      mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
-                        plottable.coordinates[y] * scope.axesOrientation[1],
-                        plottable.coordinates[z] * scope.axesOrientation[2]);
+      mesh.position.set(
+        plottable.coordinates[x] * scope.axesOrientation[0],
+        plottable.coordinates[y] * scope.axesOrientation[1],
+        is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
       mesh.updateMatrix();
 
       if (hasConfidenceIntervals) {
         mesh = scope.ellipsoids[plottable.idx];
 
         // always use the original data plus the axis orientation
-        mesh.position.set(plottable.coordinates[x] * scope.axesOrientation[0],
-                          plottable.coordinates[y] * scope.axesOrientation[1],
-                          plottable.coordinates[z] * scope.axesOrientation[2]);
+        mesh.position.set(
+          plottable.coordinates[x] * scope.axesOrientation[0],
+          plottable.coordinates[y] * scope.axesOrientation[1],
+          is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
         mesh.updateMatrix();
       }
     });
