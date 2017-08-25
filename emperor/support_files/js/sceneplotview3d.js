@@ -351,7 +351,7 @@ define([
     var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
         z = this.visibleDimensions[2], range = this.dimensionRanges,
         is2D = z === null;
-    
+
     // Adds a padding to all dimensions such that samples don't overlap
     // with the axes lines. Determined based on the default sphere radius
     var axesPadding = 1.07;
