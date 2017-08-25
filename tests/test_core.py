@@ -843,6 +843,115 @@ class EmperorSettingsTests(TestCase):
         with self.assertRaises(TypeError):
             emp.scale_by('DOB', data, scaled=(1, 2))
 
+    def test_opacity_by(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        obs = emp.opacity_by('DOB')
+        exp = {'opacity': {"category": 'DOB',
+                           "data": {},
+                           "globalScale": "1.0",
+                           "scaleVal": False
+                           }
+               }
+        self.assertEqual(emp.settings['opacity'], exp['opacity'])
+        self.assertEqual(obs.settings['opacity'], exp['opacity'])
+
+        obs = emp.opacity_by('Treatment')
+        exp = {'opacity': {"category": 'Treatment',
+                           "data": {},
+                           "globalScale": "1.0",
+                           "scaleVal": False
+                           }
+               }
+        self.assertEqual(emp.settings['opacity'], exp['opacity'])
+        self.assertEqual(obs.settings['opacity'], exp['opacity'])
+
+        obs = emp.opacity_by('Treatment', global_scale=0.35)
+        exp = {'opacity': {"category": 'Treatment',
+                           "data": {},
+                           "globalScale": "0.35",
+                           "scaleVal": False
+                           }
+               }
+        self.assertEqual(emp.settings['opacity'], exp['opacity'])
+        self.assertEqual(obs.settings['opacity'], exp['opacity'])
+
+        obs = emp.opacity_by('Treatment', global_scale=0.35, scaled=True)
+        exp = {'opacity': {"category": 'Treatment',
+                           "data": {},
+                           "globalScale": "0.35",
+                           "scaleVal": True
+                           }
+               }
+        self.assertEqual(emp.settings['opacity'], exp['opacity'])
+        self.assertEqual(obs.settings['opacity'], exp['opacity'])
+
+    def test_opacity_by_with_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        exp = {'opacity': {"category": 'DOB',
+                           "data": {'20061126': 0.50,
+                                    '20061218': 0.10,
+                                    '20070314': 0.10,
+                                    '20071112': 0.10,
+                                    '20071210': 0.05,
+                                    '20080116': 0.10
+                                    },
+                           "globalScale": "1.0",
+                           "scaleVal": False
+                           }
+               }
+        data = exp['opacity']['data']
+        obs = emp.opacity_by('DOB', data)
+        self.assertEqual(emp.settings['opacity'], exp['opacity'])
+        self.assertEqual(obs.settings['opacity'], exp['opacity'])
+
+    def test_opacity_by_with_series_data(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        exp = {'opacity': {"category": 'DOB',
+                           "data": {'20061126': 0.1,
+                                    '20061218': 0.4,
+                                    '20070314': 0.3,
+                                    '20071112': 0.2,
+                                    '20071210': 0.1,
+                                    '20080116': 1
+                                    },
+                           "globalScale": "1.0",
+                           "scaleVal": False
+                           }
+               }
+        data = pd.Series(exp['opacity']['data'])
+        obs = emp.opacity_by('DOB', data)
+        self.assertEqual(emp.settings['opacity'], exp['opacity'])
+        self.assertEqual(obs.settings['opacity'], exp['opacity'])
+
+    def test_opacity_by_with_data_invalid_scale(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        data = {'20061126': 1.0, '20061218': 1.0, '20070314': 1.0,
+                '20071112': 1.0, '20071210': 0.5, '20080116': 1.0}
+
+        with self.assertRaises(TypeError):
+            emp.opacity_by('DOB', data, global_scale=False)
+        with self.assertRaises(TypeError):
+            emp.opacity_by('DOB', data, global_scale=(1, 2, 3))
+        with self.assertRaises(TypeError):
+            emp.opacity_by('DOB', data, global_scale=[])
+
+    def test_opacity_by_with_data_invalid_scaled(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        data = {'20061126': 1.0, '20061218': 1.0, '20070314': 1.0,
+                '20071112': 1.0, '20071210': 0.5, '20080116': 1.0}
+
+        with self.assertRaises(TypeError):
+            emp.opacity_by('DOB', data, scaled=1)
+        with self.assertRaises(TypeError):
+            emp.opacity_by('DOB', data, scaled=[])
+        with self.assertRaises(TypeError):
+            emp.opacity_by('DOB', data, scaled=(1, 2))
+
     def test_set_axes(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
 

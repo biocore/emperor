@@ -1,13 +1,9 @@
 define([
     'jquery',
     'underscore',
-    'util',
-    'viewcontroller',
-    'scale-editor'
-], function($, _, util, ViewControllers, ScaleEditor) {
-
-  // we only use the base attribute class, no need to get the base class
-  var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
+    'viewcontroller'
+], function($, _, ViewControllers) {
+  var ScalarViewControllerABC = ViewControllers.ScalarViewControllerABC;
 
   /**
    * @class ScaleViewController
@@ -22,229 +18,21 @@ define([
    *
    * @return {ScaleViewController}
    * @constructs ScaleViewController
-   * @extends EmperorAttributeABC
+   * @extends ScalarViewControllerABC
    *
    **/
   function ScaleViewController(container, decompViewDict) {
-    var helpmenu = 'Change the scale of the attributes on the plot, allowing ' +
+    var helpmenu = 'Change the size of the attributes on the plot, allowing ' +
                    'highlighting of points using size.';
     var title = 'Scale';
-    // Create checkbox for scaling by values
-    /**
-     * jQuery node for checkbox controlling whether to scale by values or not
-     * @type {Node}
-     */
-    this.$scaledValue = $('<input type="checkbox">');
-    /**
-     * jQuery node for label of $scaledValues
-     * @type {Node}
-     */
-    this.$scaledLabel = $('<label>Scale by values</label>');
 
-    //Create global scale bar
-    /**
-     * jQuery node for global scale bar container div
-     * @type {Node}
-     */
-    this.$globalDiv = $('<div style="width:100%;padding:5px;">');
-    this.$globalDiv.html('<p>Global Scaling</p>');
-    var $sliderDiv = $('<div style="width:80%;display:inline-block;">');
-    var $viewval = $('<input type="text" value="1.0" readonly ' +
-                     'style="border:0;width:25px;' +
-                     'background-color:rgb(238, 238, 238)">');
-    /**
-     * jQuery node for global scale bar
-     * @type {Node}
-     */
-    this.$sliderGlobal = $sliderDiv.slider({
-        range: 'max',
-        min: 0.1,
-        max: 5.0,
-        value: 1.0,
-        step: 0.1,
-        slide: function(event, ui) {
-          $viewval.val(ui.value);
-        },
-        stop: function(event, ui) {
-          // Update the slickgrid values with the new scale
-          var data = scope.getSlickGridDataset();
-          _.each(data, function(element) {
-            element.value = ui.value;
-          });
-          scope.setSlickGridDataset(data);
-
-          //Update the scales for all meshes
-          var dv = scope.getView();
-          _.each(dv.markers, function(element) {
-            element.scale.set(ui.value, ui.value, ui.value);
-          });
-          dv.needsUpdate = true;
-        }
-      });
-    this.$globalDiv.append($viewval);
-    this.$globalDiv.append($sliderDiv);
-
-    // Constant for width in slick-grid
-    var SLICK_WIDTH = 50, scope = this;
-
-    // Build the options dictionary
-    var options = {'valueUpdatedCallback': function(e, args) {
-      var scale = +args.item.value;
-      var group = args.item.plottables;
-      var element = scope.getView();
-      scope.setPlottableAttributes(element, scale, group);
-    },
-      'categorySelectionCallback': function(evt, params) {
-        var category = scope.$select.val();
-
-        var decompViewDict = scope.getView();
-
-        // getting all unique values per categories
-        var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(
-          category);
-        // getting scale value for each point
-        var scaled = scope.$scaledValue.is(':checked');
-        try {
-          var attributes = scope.getScale(uniqueVals, scaled);
-        } catch (err) {
-          // Do not fire off action, instead just reshow globalDiv so we don't
-          // lose the current scaling values.
-          scope.$scaledValue.prop('checked', false);
-          return;
-        }
-        if (scaled) {
-          scope.$globalDiv.hide();
-        }
-        else {
-          scope.$globalDiv.show();
-        }
-        scope.resize();
-
-        // fetch the slickgrid-formatted data
-        var data = decompViewDict.setCategory(
-          attributes, scope.setPlottableAttributes, category);
-
-        scope.setSlickGridDataset(data);
-      },
-      'slickGridColumn': {id: 'title', name: '', field: 'value',
-        sortable: false, maxWidth: SLICK_WIDTH,
-        minWidth: SLICK_WIDTH,
-        autoEdit: true,
-        editor: ScaleEditor.ScaleEditor}};
-
-    EmperorAttributeABC.call(this, container, title, helpmenu,
-        decompViewDict, options);
-    this.$header.append(this.$scaledValue);
-    this.$header.append(this.$scaledLabel);
-    this.$body.prepend(this.$globalDiv);
-
-    scope.$scaledValue.on('change', options.categorySelectionCallback);
-
+    ScalarViewControllerABC.call(this, container, title, helpmenu, 0, 5, 0.1,
+                                 decompViewDict);
     return this;
   }
-  ScaleViewController.prototype = Object.create(EmperorAttributeABC.prototype);
-  ScaleViewController.prototype.constructor = EmperorAttributeABC;
-
-  /**
-   *
-   * Private method to reset the scale of all the objects to one.
-   *
-   * @extends EmperorAttributeABC
-   * @private
-   *
-   */
-  ScaleViewController.prototype._resetAttribute = function() {
-    EmperorAttributeABC.prototype._resetAttribute.call(this);
-    var scope = this;
-
-    _.each(this.decompViewDict, function(view) {
-      scope.setPlottableAttributes(view, 1, view.decomp.plottable);
-      view.needsUpdate = true;
-    });
-    this.$scaledValue.prop('checked', false);
-  };
-
-  /**
-   * Converts the current instance into a JSON string.
-   *
-   * @return {Object} JSON ready representation of self.
-   */
-  ScaleViewController.prototype.toJSON = function() {
-    var json = EmperorAttributeABC.prototype.toJSON.call(this);
-    json.globalScale = this.$globalDiv.children('input').val();
-    json.scaleVal = this.$scaledValue.is(':checked');
-    return json;
-  };
-
-  /**
-   * Decodes JSON string and modifies its own instance variables accordingly.
-   *
-   * @param {Object} Parsed JSON string representation of self.
-   */
-  ScaleViewController.prototype.fromJSON = function(json) {
-    // Can't call super because select needs to be set first
-    // Order here is important. We want to set all the extra controller
-    // settings before we load from json, as they can override the JSON when set
-
-    this.setMetadataField(json.category);
-
-    // if the category is null, then there's nothing to set about the state
-    // of the controller
-    if (json.category === null) {
-      return;
-    }
-
-    this.$select.val(json.category);
-    this.$select.trigger('chosen:updated');
-    this.$sliderGlobal.slider('value', json.globalScale);
-    this.$scaledValue.prop('checked', json.scaleVal);
-    this.$scaledValue.trigger('change');
-
-    // fetch and set the SlickGrid-formatted data
-    var data = this.getView().setCategory(
-      json.data, this.setPlottableAttributes, json.category);
-    this.setSlickGridDataset(data);
-    // set all to needsUpdate
-    this.getView().needsUpdate = true;
-  };
-
-  /**
-   * Resizes the container and the individual elements.
-   *
-   * Note, the consumer of this class, likely the main controller should call
-   * the resize function any time a resizing event happens.
-   *
-   * @param {float} width the container width.
-   * @param {float} height the container height.
-   */
-  ScaleViewController.prototype.resize = function(width, height) {
-    this.$body.height(this.$canvas.height() - this.$header.height());
-    this.$body.width(this.$canvas.width());
-
-    //scale gridDiv based on whether global scaling available or not
-    if (this.$scaledValue.is(':checked')) {
-      this.$gridDiv.css('height', '100%');
-    }
-    else {
-      this.$gridDiv.css(
-        'height', this.$body.height() - this.$globalDiv.height() - 10);
-    }
-
-    // call super, most of the header and body resizing logic is done there
-    EmperorAttributeABC.prototype.resize.call(this, width, height);
-  };
-
-  /**
-   * Sets whether or not elements in the tab can be modified.
-   *
-   * @param {Boolean} trulse option to enable elements.
-   */
-  ScaleViewController.prototype.setEnabled = function(trulse) {
-    EmperorAttributeABC.prototype.setEnabled.call(this, trulse);
-
-    this.$scaledValue.prop('disabled', !trulse);
-    this.$sliderGlobal.slider('option', 'disabled', !trulse);
-  };
+  ScaleViewController.prototype = Object.create(
+    ScalarViewControllerABC.prototype);
+  ScaleViewController.prototype.constructor = ScalarViewControllerABC;
 
   /**
    * Helper function to set the scale of plottable
@@ -256,8 +44,8 @@ define([
    * in scope
    *
    */
-  ScaleViewController.prototype.setPlottableAttributes = function(
-      scope, scale, group) {
+  ScaleViewController.prototype.setPlottableAttributes = function(scope, scale,
+                                                                  group) {
     var idx;
 
     _.each(group, function(element) {
@@ -268,56 +56,38 @@ define([
   };
 
   /**
-   * Helper function to get the scale for each metadata value
    *
-   * @param {String[]} values The values to get scale for
-   * @param {Boolean} scaled Whether or not to scale by values or just reset to
-   * standard scale (1.0)
+   * Modify the scale of all the markers in the current view
    *
-   * @throws {Error} No or one numeric value in category and trying to scale by
-   * value
+   * @param {float} value The new opacity of the lements in the current view.
+   * Should be a value between 0.1 and 5 (inclusive).
+   *
+   * @extends ScalarViewControllerABC
+   *
    */
-  ScaleViewController.prototype.getScale = function(values, scaled) {
-    var scale = {}, numbers, val;
-    if (!scaled) {
-      _.each(values, function(element) {
-        scale[element] = 1.0;
-      });
-    } else {
-      //See if we have numeric values, fail if no
-      var split = util.splitNumericValues(values);
-      if (split.numeric.length < 2) {
-        alert('Not enough numeric values in category, can not scale by value!');
-        throw new Error('no numeric values');
-      }
+  ScaleViewController.prototype.setAllPlottableAttributes = function(value) {
+    var dv = this.getView();
 
-      // Alert if we have non-numerics and scale them to 0
-      if (split.nonNumeric.length > 0) {
-        _.each(split.nonNumeric, function(element) {
-          scale[element] = 0.0;
-        });
-        alert('Non-numeric values detected. These will be hidden!');
-      }
+    _.each(dv.markers, function(element) {
+      element.scale.set(value, value, value);
+    });
+    dv.needsUpdate = true;
+  };
 
-      // convert objects to numbers so we can map them to a color, we keep a
-      // copy of the untransformed object so we can search the metadata
-      numbers = _.map(split.numeric, parseFloat);
-
-      //scale remaining values between 1 and 5 scale
-      var min = _.min(numbers);
-      var max = _.max(numbers);
-      var range = max - min;
-
-      _.each(split.numeric, function(element) {
-        // note these elements are not numbers
-        val = parseFloat(element);
-
-        // Scale the values, then round to 4 decimaal places.
-        scale[element] = Math.round(
-            (1 + (val - min) * 4 / range) * 10000) / 10000;
-        });
-    }
-    return scale;
+  /**
+   *
+   * Scaling function to use when sample scaling is based on a metadata
+   * category.
+   *
+   * @param {float} val The metadata value for the current sample.
+   * @param {float} min The minimum metadata value in the dataset.
+   * @param {float} range The span of the metadata values.
+   *
+   * @return {float} Scale value for a given sample.
+   *
+   */
+  ScaleViewController.prototype.scaleValue = function(val, min, range) {
+    return Math.round((1 + (val - min) * 4 / range) * 10000) / 10000;
   };
 
   return ScaleViewController;

@@ -48,9 +48,25 @@ function($, _, DecompositionView, ViewControllers) {
 
     /* @constructor */
     this.init = function() {
+      console.log('whattttt');
+      console.log(args);
       var pos = args.grid.getActiveCell();
       var metaColPos = args.grid.getCellNodeBox(pos.row, pos.cell + 1);
-      var barLength = metaColPos.right - metaColPos.left - 10;
+      var barLength = metaColPos.right - metaColPos.left - 14;
+
+      // the controller type determines the ranges
+      var columnName = args.grid.getColumns()[0].name, min, max, step;
+      if (columnName === 'Opacity') {
+        min = 0;
+        max = 1;
+        step = 0.05;
+      }
+      else {
+        min = 0.1;
+        max = 5;
+        step = 0.1;
+      }
+
       $parentDiv = $('<div style="flat:left;position:absolute;height:30px;' +
                      'width:' + barLength + 'px;z-index:1000">');
       $viewval = $('<input type="text" value="' + args.item.value +
@@ -60,10 +76,10 @@ function($, _, DecompositionView, ViewControllers) {
                          'background-color:rgb(238, 238, 238)">');
       $input = $sliderDiv.slider({
         range: 'max',
-        min: 0.1,
-        max: 5.0,
+        min: min,
+        max: max,
+        step: step,
         value: args.item.value,
-        step: 0.1,
         slide: function(event, ui) {
           $viewval.val(ui.value);
           args.item.value = ui.value;
@@ -74,6 +90,9 @@ function($, _, DecompositionView, ViewControllers) {
           Slick.GlobalEditorLock.commitCurrentEdit();
         }
       });
+      // $input.find(".ui-slider-range" ).css('background', '#70caff');
+      $input.css('background', '#70caff');
+
       $sliderDiv.appendTo($parentDiv);
       $viewval.appendTo(args.container);
 
@@ -120,5 +139,29 @@ function($, _, DecompositionView, ViewControllers) {
     this.init();
   }
 
-  return {'ScaleEditor': ScaleEditor};
+  /**
+   *
+   * Function to format colors for the SlickGrid object.
+   *
+   * This formatter is heavily based in the examples found in
+   * slick.formattters.js and is only intended to be used with ScaleFormatter.
+   *
+   * @param {integer} row SlickGrid row.
+   * @param {integer} cell SlickGrid cell.
+   * @param {integer|string|bool} value The value in the row.
+   * @param {object} columnDef SlickGrid column definition.
+   * @param {object} dataContext Data model of the SlickGrid object.
+   *
+   * @return {string} String with a div where the background color is set as
+   * the value that's passed in.
+   *
+   * @alias module:SlickGridColors.ScaleFormatter
+   *
+   */
+  function ScaleFormatter(row, cell, value, columnDef, dataContext) {
+    return "<div style='width:inherit;height:inherit;text-align:center;" +
+           "cursor:pointer;'>" + value + '</div>';
+  }
+
+  return {'ScaleEditor': ScaleEditor, 'ScaleFormatter': ScaleFormatter};
 });

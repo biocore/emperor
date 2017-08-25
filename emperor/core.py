@@ -680,6 +680,7 @@ class Emperor(object):
         --------
         emperor.core.Emperor.visibility_by
         emperor.core.Emperor.scale_by
+        emperor.core.Emperor.opacity_by
         emperor.core.Emperor.shape_by
         emperor.core.Emperor.set_background_color
         emperor.core.Emperor.set_axes
@@ -740,6 +741,7 @@ class Emperor(object):
         --------
         emperor.core.Emperor.color_by
         emperor.core.Emperor.scale_by
+        emperor.core.Emperor.opacity_by
         emperor.core.Emperor.shape_by
         emperor.core.Emperor.set_background_color
         emperor.core.Emperor.set_axes
@@ -820,6 +822,68 @@ class Emperor(object):
 
         return self
 
+    def opacity_by(self, category, opacities=None, global_scale=1.0,
+                   scaled=False):
+        """Set the scaling settings for the plot elements
+
+        Parameters
+        ----------
+        category: str
+            Name of the metadata column.
+        opacities: dict or pd.Series, optional
+            Mapping of categories to numbers determining the opacity of the
+            elements in each category.
+        global_scale: int or float, optional
+            The size of all the elements.
+        scaled: bool
+            Whether or not the values in ``opacities`` should be assumed to be
+            numeric and scaled in size according to their value.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        KeyError
+            If ``category`` is not part of the metadata.
+        TypeError
+            If ``category`` is not a string.
+            If ``global_scale`` is not a number.
+            If ``scaled`` is not a boolean value.
+        ValueError
+            If ``opacities`` describes fewer or more categories than the ones
+            present in the ``category`` column.
+            If ``opacities`` has sizes in a non-numeric format.
+
+        See Also
+        --------
+        emperor.core.Emperor.visibility_by
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.shape_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.set_background_color
+        emperor.core.Emperor.set_axes
+        """
+        opacities = self._base_data_checks(category, opacities, float)
+
+        if (not isinstance(global_scale, (float, int)) or
+           isinstance(global_scale, bool)):
+            raise TypeError('The global scale argument must be a float or int')
+
+        if not isinstance(scaled, bool):
+            raise TypeError('The scaled argument must be a bool')
+
+        self._settings.update({"opacity": {
+            "category": category,
+            "globalScale": str(global_scale),
+            "scaleVal": scaled,
+            "data": opacities
+        }})
+
+        return self
+
     def shape_by(self, category, shapes=None):
         """Set the shape settings for the plot elements
 
@@ -856,6 +920,7 @@ class Emperor(object):
         --------
         emperor.core.Emperor.color_by
         emperor.core.Emperor.scale_by
+        emperor.core.Emperor.opacity_by
         emperor.core.Emperor.visibility_by
         emperor.core.Emperor.set_background_color
         emperor.core.Emperor.set_axes
@@ -909,7 +974,7 @@ class Emperor(object):
         --------
         emperor.core.Emperor.color_by
         emperor.core.Emperor.scale_by
-        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.opacity_by
         emperor.core.Emperor.shape_by
         emperor.core.Emperor.set_background_color
         """
