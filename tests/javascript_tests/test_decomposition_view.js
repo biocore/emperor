@@ -118,6 +118,23 @@ requirejs([
       deepEqual(dv.axesOrientation, [1, 1, 1]);
     });
 
+    test('Test changeVisibleDimensions (2D)', function() {
+      var dv = new DecompositionView(this.decomp);
+      dv.changeVisibleDimensions([2, 3, null]);
+      obs = [dv.markers[0].position.x,
+      dv.markers[0].position.y,
+      dv.markers[0].position.z];
+      exp = [0.066647, -0.067711, 0];
+      deepEqual(obs, exp);
+      obs = [dv.markers[1].position.x,
+      dv.markers[1].position.y,
+      dv.markers[1].position.z];
+      exp = [-0.138136, 0.159061, 0];
+      deepEqual(obs, exp);
+
+      deepEqual(dv.axesOrientation, [1, 1, 1]);
+    });
+
     /**
      *
      * Test the changeVisibleDimensions throws an error if the number of
@@ -177,6 +194,30 @@ requirejs([
 
       deepEqual(dv.axesOrientation, [1, -1, 1]);
     });
+
+    test('Test change flip axes (2D)', function(assert) {
+      var dv = new DecompositionView(this.decomp);
+
+      var expa = [-0.276542, 0.144964, 0], expb = [-0.237661, -0.046053, 0];
+
+      dv.changeVisibleDimensions([0, 1, null]);
+
+      // change the position of the decomposition view and ...
+      dv.flipVisibleDimension(1);
+
+      // ... Check for the following things:
+      //
+      // 1.- The position themselves
+      // 2.- The ranges i.e. positions still fall within the dimensionRanges.
+      // 3.- The axis orientation vector
+      obs = dv.markers[0].position.toArray();
+      deepEqual(obs, expa, 'First marker position updated correctly');
+      obs = dv.markers[1].position.toArray();
+      deepEqual(obs, expb, 'Second marker position updated correctly');
+
+      deepEqual(dv.axesOrientation, [1, -1, 1]);
+    });
+
 
     /**
      *

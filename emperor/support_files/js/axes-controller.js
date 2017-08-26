@@ -156,6 +156,8 @@ define([
 
       // visible dimension menu
       $td = $('<td></td>');
+      // this acts as the minimum width of the column
+      $td.css('width', '100px');
       $td.append(widgets.menu);
       $row.append($td);
 
@@ -193,6 +195,7 @@ define([
     var visibleDimension = scope.getView().visibleDimensions[position];
 
     $menu = $('<select>');
+    $menu.css({'width': '100%'});
     $check = $('<input type="checkbox">');
 
     // if the axis is flipped, then show the checkmark
@@ -202,8 +205,20 @@ define([
       $menu.append($('<option>').attr('value', name).text(name));
     });
 
+    if (position === 2) {
+      $menu.append($('<option>').attr('value', null)
+                                .text('Hide Axis (make 2D)'));
+    }
+
     $menu.on('change', function() {
       var index = $(this).prop('selectedIndex');
+
+      // the last element is the "hide" option, only for the third menu, if
+      // that's the case the selected index becomes null so it can be hidden
+      if (position === 2 && index === decomposition.dimensions) {
+        index = null;
+      }
+
       scope.updateVisibleAxes(index, position);
     });
 
@@ -212,7 +227,16 @@ define([
     });
 
     $(function() {
-      $menu.val(decomposition.axesNames[visibleDimension]);
+      // if the selected index is null, it means we need to select the last
+      // element in the dropdown menu
+      var idx = visibleDimension;
+      if (idx === null) {
+        idx = decomposition.dimensions;
+
+        // disable the flip axes checkbox
+        $check.attr('disabled', true);
+      }
+      $menu.prop('selectedIndex', idx);
     });
 
     return {menu: $menu, checkbox: $check};
@@ -356,7 +380,7 @@ define([
   };
 
   /**
-   * Callback to reposition an axis into a new position.
+   * Callback to reposition an axis
    *
    * @param {Integer} index The index of the dimension to set as a new visible
    * axis, in the corresponding position indicated by `position`.
