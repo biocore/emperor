@@ -50,15 +50,15 @@ function DecompositionView(decomp) {
   /**
    * Axes color.
    * @type {integer}
-   * @default 0xFFFFFF (white)
+   * @default '#FFFFFF' (white)
    */
-  this.axesColor = 0xFFFFFF;
+  this.axesColor = '#FFFFFF';
   /**
    * Background color.
    * @type {integer}
-   * @default 0x000000 (black)
+   * @default '#000000' (black)
    */
-  this.backgroundColor = 0x000000;
+  this.backgroundColor = '#000000';
   /**
    * Tube objects on screen (used for animations)
    * @type {THREE.Mesh[]}

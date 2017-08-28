@@ -57,10 +57,8 @@ define([
                   if (color !== null) {
                     // We let the controller deal with the callback, the only
                     // things we need are the name of the element triggering
-                    // the color change and the color as an integer (note that
-                    // we are parsing from a string hence we have to indicate
-                    // the numerical base)
-                    color = parseInt(color.toHex(), 16);
+                    // the color change and the color
+                    color = color.toHexString();
                   }
                   scope.colorChanged($(this).attr('name'), color);
                 }
@@ -430,8 +428,8 @@ define([
    *
    * @param {String} name The name of the element to change, it can be either
    * 'axes-color' or 'background-color'.
-   * @param {Integer} color The color to set to the `name`. Should be in an
-   * RGB-like format.
+   * @param {String} color The color to set to the `name`. Should be in a CSS
+   * compatible format.
    */
   AxesController.prototype.colorChanged = function(name, color) {
     // for both cases update all the decomposition views and then set the
@@ -466,6 +464,7 @@ define([
 
     json.visibleDimensions = decView.visibleDimensions;
     json.flippedAxes = this._flippedAxes;
+
     json.backgroundColor = decView.backgroundColor;
     json.axesColor = decView.axesColor;
 
@@ -488,15 +487,21 @@ define([
       }
     });
 
-    this.$body.find('[name="axes-color"]').spectrum({
-      color: json.axesColor
-    });
-    this.$body.find('[name="background-color"]').spectrum({
-      color: json.backgroundColor
-    });
+    // only set these colors if they are present, note that colors
+    // are saved as
+    if (json.axesColor !== undefined) {
+      this.$body.find('[name="axes-color"]').spectrum('set', json.axesColor);
+      this.colorChanged('axes-color', json.axesColor);
+    }
 
-    this.colorChanged('axes-color', json.axesColor);
-    this.colorChanged('background-color', json.backgroundColor);
+    if (json.backgroundColor !== undefined) {
+      this.$body.find('[name="background-color"]')
+                .spectrum('set', json.backgroundColor);
+      this.colorChanged('background-color', json.backgroundColor);
+    }
+
+    // make sure everything is up to date in the UI
+    this.buildDisplayTable();
   };
 
   return AxesController;

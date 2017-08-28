@@ -58,16 +58,16 @@ define([
     this.height = height;
     /**
      * Axes color.
-     * @type {integer}
-     * @default 0xFFFFFF (white)
+     * @type {String}
+     * @default '#FFFFFF' (white)
      */
-    this.axesColor = 0xFFFFFF;
+    this.axesColor = '#FFFFFF';
     /**
      * Background color.
-     * @type {integer}
-     * @default 0x000000 (black)
+     * @type {String}
+     * @default '#000000' (black)
      */
-    this.backgroundColor = 0x000000;
+    this.backgroundColor = '#000000';
 
     /**
      * Ranges for all the decompositions in this view (there's a min and a max
@@ -147,8 +147,8 @@ define([
      * the ranges that covers all of the decomposition views.
      * @type {Object}
      */
-    this.drawAxesWithColor(0xFFFFFF);
-    this.drawAxesLabelsWithColor(0xFFFFFF);
+    this.drawAxesWithColor('#FFFFFF');
+    this.drawAxesLabelsWithColor('#FFFFFF');
 
     this._raycaster = new THREE.Raycaster();
     this._mouse = new THREE.Vector2();
@@ -397,7 +397,7 @@ define([
    *
    * Draw the axes lines in the plot
    *
-   * @param {Integer} color An integer in hexadecimal that specifies the color
+   * @param {String} color A CSS-compatible value that specifies the color
    * of each of the axes lines, the length of these lines is determined by the
    * dimensionRanges property. If the color value is null the lines will be
    * removed.
@@ -430,7 +430,7 @@ define([
    * presented in the same scene should have the same percentages explained by
    * each axis.
    *
-   * @param {Integer} color An integer in hexadecimal that specifies the color
+   * @param {String} color A CSS-compatible value that specifies the color
    * of the labels, these labels will be positioned at the end of the axes
    * line. If the color value is null the labels will be removed.
    *
@@ -607,8 +607,8 @@ define([
 
     // check if we should change the background color
     if (backgroundColor !== this.backgroundColor) {
-      this.renderer.setClearColor(new THREE.Color(backgroundColor));
       this.backgroundColor = _.clone(backgroundColor);
+      this.scene.background = new THREE.Color(this.backgroundColor);
 
       updateColors = true;
     }

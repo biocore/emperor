@@ -81,14 +81,14 @@ requirejs([
       var obs = this.controller.toJSON();
       var exp = {'flippedAxes': [false, false, false],
                  'visibleDimensions': [0, 1, 2],
-                 'backgroundColor': 0x000000, 'axesColor': 0xFFFFFF};
+                 'backgroundColor': '#000000', 'axesColor': '#FFFFFF'};
       deepEqual(obs, exp);
     });
 
     test('Testing fromJSON', function() {
       var json = {'flippedAxes': [true, true, false],
                   'visibleDimensions': [0, 1, 0],
-                  'backgroundColor': 0xFF00FF, 'axesColor': 0xFF000F};
+                  'backgroundColor': '#FF00FF', 'axesColor': '#FF000F'};
 
       this.controller.fromJSON(json);
 
@@ -96,16 +96,16 @@ requirejs([
       deepEqual(decView.visibleDimensions, [0, 1, 0]);
       deepEqual(this.controller._flippedAxes, [true, true, false]);
 
-      deepEqual(decView.backgroundColor, 0xFF00FF);
-      deepEqual(decView.axesColor, 0xFF000F);
+      deepEqual(decView.backgroundColor, '#FF00FF');
+      deepEqual(decView.axesColor, '#FF000F');
     });
 
     test('Testing colorChanged', function() {
       var decView = this.controller.getView();
-      this.controller.colorChanged('axes-color', 0xF0F0F0);
-      deepEqual(decView.axesColor, 0xF0F0F0);
-      this.controller.colorChanged('background-color', 0x101010);
-      deepEqual(decView.backgroundColor, 0x101010);
+      this.controller.colorChanged('axes-color', '#F0F0F0');
+      deepEqual(decView.axesColor, '#F0F0F0');
+      this.controller.colorChanged('background-color', '#101010');
+      deepEqual(decView.backgroundColor, '#101010');
     });
 
     test('Test flipAxis', function(assert) {
