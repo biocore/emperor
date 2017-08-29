@@ -48,8 +48,6 @@ function($, _, DecompositionView, ViewControllers) {
 
     /* @constructor */
     this.init = function() {
-      console.log('whattttt');
-      console.log(args);
       var pos = args.grid.getActiveCell();
       var metaColPos = args.grid.getCellNodeBox(pos.row, pos.cell + 1);
       var barLength = metaColPos.right - metaColPos.left - 14;
