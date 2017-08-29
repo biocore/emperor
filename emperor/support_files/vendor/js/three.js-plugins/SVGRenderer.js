@@ -5,6 +5,9 @@ define(['three', 'projector'], function(THREE, Projector){
  * This modified version has a two new methods: renderText and getTextNode,
  * which allows us to insert text to the SVG renderer. The text has to be
  * created using sprites and have the attribute text. 
+ *
+ * It also includes a change in getSvgColor to use fill-opacity instead of rgba
+ * when the opacity is not zero or one.
  */
 
 THREE.SVGObject = function ( node ) {
@@ -136,7 +139,7 @@ THREE.SVGRenderer = function () {
 
 		if ( opacity === undefined || opacity === 1 ) return 'rgb(' + arg + ')';
 
-		return 'rgba(' + arg + ',' + opacity + ')';
+		return 'rgb(' + arg + '); fill-opacity: ' + opacity;
 
 	}
 
