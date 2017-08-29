@@ -96,8 +96,8 @@ requirejs([
       equal(spv.height, 20);
       equal(spv.checkUpdate(), true);
 
-      equal(spv.axesColor, 0xFFFFFF);
-      equal(spv.backgroundColor, 0x000000);
+      equal(spv.axesColor, '#FFFFFF');
+      equal(spv.backgroundColor, '#000000');
 
       deepEqual(spv.visibleDimensions, [0, 1, 2]);
       deepEqual(spv.dimensionRanges.max, [-0.237661, 0.046053, 0.066647,
@@ -219,7 +219,7 @@ requirejs([
 
       spv.removeAxes();
       spv.visibleDimensions[2] = null;
-      spv.drawAxesWithColor(0x0000FF);
+      spv.drawAxesWithColor('#0000FF');
 
       var line;
 
@@ -292,7 +292,7 @@ requirejs([
                                     'fooligans', 0, 0, 20, 20);
 
       // color the axis lines
-      spv.drawAxesLabelsWithColor(0x00FF0F);
+      spv.drawAxesLabelsWithColor('#00FF0F');
 
       var label, tolerance = 0.000001,
           positions = [[-0.25429727, -0.15511148, -0.147805522],

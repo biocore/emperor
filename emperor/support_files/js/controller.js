@@ -114,14 +114,6 @@ define([
     this.controllers = {};
 
     /**
-     * Background color of the scene.
-     * @type {THREE.Color}
-     * @default 0x00000000
-     */
-    this.rendererBackgroundColor = new THREE.Color();
-    this.rendererBackgroundColor.setHex('0x000000');
-
-    /**
      * Object in charge of doing the rendering of the scenes.
      * @type {THREE.Renderer}
      */
@@ -135,7 +127,6 @@ define([
     }
 
     this.renderer.setSize(this.width, this.height);
-    this.renderer.setClearColor(this.rendererBackgroundColor);
     this.renderer.autoClear = false;
     this.renderer.sortObjects = true;
     this.$plotSpace.append(this.renderer.domElement);
@@ -546,7 +537,6 @@ define([
       pngRenderer.sortObjects = true;
       pngRenderer.setSize(this.$plotSpace.width() * factor,
                           this.$plotSpace.height() * factor);
-      pngRenderer.setClearColor(this.renderer.getClearColor(), 1);
       pngRenderer.setPixelRatio(window.devicePixelRatio);
       pngRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
 
@@ -571,7 +561,6 @@ define([
       var svgRenderer = new THREE.SVGRenderer({antialias: true,
                                                preserveDrawingBuffer: true});
       svgRenderer.setSize(this.$plotSpace.width(), this.$plotSpace.height());
-      svgRenderer.setClearColor(this.renderer.getClearColor(), 1);
       svgRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
       svgRenderer.sortObjects = true;
 
@@ -597,7 +586,8 @@ define([
                        '" width="' + viewBox[2] + '" y="' + viewBox[1] +
                        '" x="' + viewBox[0] +
                        '" stroke-width="0" stroke="#000000" fill="#' +
-                       this.renderer.getClearColor().getHexString() + '"/>';
+                       this.sceneViews[0].scene.background.getHexString() +
+                       '"/>';
       index = svgfile.indexOf('>', index) + 1;
       svgfile = svgfile.substr(0, index) + background + svgfile.substr(index);
 

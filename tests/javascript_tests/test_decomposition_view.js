@@ -69,8 +69,8 @@ requirejs([
           'visibleDimensions set correctly');
       deepEqual(dv.tubes, [], 'tubes set correctly');
 
-      equal(dv.axesColor, 0xFFFFFF);
-      equal(dv.backgroundColor, 0x000000);
+      equal(dv.axesColor, '#FFFFFF');
+      equal(dv.backgroundColor, '#000000');
 
       deepEqual(dv.axesOrientation, [1, 1, 1]);
 
