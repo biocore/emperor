@@ -100,6 +100,8 @@ define([
     //need to initialize the scene
     this.scene = new THREE.Scene();
     this.scene.add(this.camera);
+    this.scene.background = new THREE.Color(this.backgroundColor);
+
     /**
      * Object used to light the scene, by default is set to a light and
      * transparent color (0x99999999).
