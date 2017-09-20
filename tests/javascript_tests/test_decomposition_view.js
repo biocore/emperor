@@ -64,7 +64,7 @@ requirejs([
 
       deepEqual(dv.decomp, exp, 'decomp set correctly');
       equal(dv.count, 2, 'count set correctly');
-      equal(dv.visibleCount, 2, 'visibleCount set correctly');
+      equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
       deepEqual(dv.visibleDimensions, [0, 1, 2],
           'visibleDimensions set correctly');
       deepEqual(dv.tubes, [], 'tubes set correctly');
@@ -94,6 +94,22 @@ requirejs([
          */
       // deepEqual(dv._genericSphere, undefined,
       //           "_genericSphere set correctly");
+    });
+
+    /**
+     *
+     * Test that getVisibleCount is correctly updated
+     *
+     */
+    test('Test getVisibleCount', function() {
+      var dv = new DecompositionView(this.decomp);
+      dv.markers[0].visible = false;
+      equal(dv.getVisibleCount(), 1);
+      dv.markers[1].visible = false;
+      equal(dv.getVisibleCount(), 0);
+      dv.markers[0].visible = true;
+      dv.markers[1].visible = true;
+      equal(dv.getVisibleCount(), 2);
     });
 
     /**

@@ -90,6 +90,21 @@ define([
     this.$plotSpace = $("<div class='emperor-plot-wrapper'></div>");
 
     /**
+     * Div with the number of visible samples
+     * @type {node}
+     */
+    this.$plotBanner = $('<label>Loading ...</label>');
+    this.$plotBanner.css({'padding': '2px',
+                          'font-style': '9pt helvetica',
+                          'color': 'white',
+                          'border': '1px solid',
+                          'border-color': 'white',
+                          'position': 'absolute'});
+
+    // add the sample count to the plot space
+    this.$plotSpace.append(this.$plotBanner);
+
+    /**
      * Internal div where the plots live in (jQuery object).
      * @type {node}
      */
@@ -343,8 +358,43 @@ define([
         scope.renderer.setViewport(0, 0, scope.width, scope.height);
         scope.renderer.clear();
         sv.render();
+
+        // if there's a change for the scene view update the counts
+        scope.updatePlotBanner();
       }
     });
+  };
+
+  /**
+   *
+   * Updates the plot banner based on the number of visible elements and the
+   * scene's background color.
+   *
+   */
+  EmperorController.prototype.updatePlotBanner = function() {
+    var color = this.sceneViews[0].scene.background.clone(), visible = 0,
+        total = 0;
+
+    // invert the color so it's visible regardless of the background
+    color.setRGB((Math.floor(color.r * 255) ^ 0xFF) / 255,
+                 (Math.floor(color.g * 255) ^ 0xFF) / 255,
+                 (Math.floor(color.b * 255) ^ 0xFF) / 255);
+    color = color.getStyle();
+
+    _.each(ec.decViews, function(decomposition) {
+      // computing this with every update requires traversin all elements,
+      // however it seems as the only reliable way to get this number right
+      // without depending on the view controllers (an anti-pattern)
+      visible += decomposition.getVisibleCount();
+      total += decomposition.count;
+    });
+
+    this.$plotBanner.css({'color': color, 'border-color': color});
+    this.$plotBanner.html(visible + '/' + total + ' visible');
+  };
+
+  EmperorController.prototype.getPlotBanner = function(text) {
+    return this.$plotBanner.text();
   };
 
   /**

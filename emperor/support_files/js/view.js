@@ -30,11 +30,6 @@ function DecompositionView(decomp) {
    */
   this.count = decomp.length;
   /**
-   * Number of visible samples.
-   * @type {integer}
-   */
-  this.visibleCount = this.count;
-  /**
    * Top visible dimensions
    * @type {integer[]}
    * @default [0, 1, 2]
@@ -140,6 +135,22 @@ DecompositionView.prototype._initBaseView = function() {
   // apply but to the adjacency list NOT IMPLEMENTED
   // this.decomp.applyAJ( ... ); Blame Jamie and Jose - baby steps buddy...
 
+};
+
+/**
+ *
+ * Get the number of visible elements
+ *
+ * @return {Number} The number of visible elements in this view.
+ *
+ */
+DecompositionView.prototype.getVisibleCount = function() {
+  var visible = 0;
+  visible = _.reduce(this.markers, function(acc, marker) {
+    return acc + (marker.visible + 0);
+  }, 0);
+
+  return visible;
 };
 
 /**
