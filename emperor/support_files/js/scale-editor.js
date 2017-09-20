@@ -83,9 +83,10 @@ function($, _, DecompositionView, ViewControllers) {
           args.item.value = ui.value;
         },
         stop: function(event, ui) {
-          // commit the changes as soon as a new scale is selected
-          // http://stackoverflow.com/a/15513516/379593
-          Slick.GlobalEditorLock.commitCurrentEdit();
+          // commit the changes as soon as a new shape is selected
+          // https://stackoverflow.com/a/35768360/379593
+          args.grid.getEditorLock().commitCurrentEdit();
+          args.grid.resetActiveCell();
         }
       });
       // $input.find(".ui-slider-range" ).css('background', '#70caff');

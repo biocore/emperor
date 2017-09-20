@@ -37,8 +37,9 @@ function($, _, DecompositionView, ViewControllers, shapes) {
       $input.appendTo(args.container);
       $input.on('change', function() {
         // commit the changes as soon as a new shape is selected
-        // http://stackoverflow.com/a/15513516/379593
-        Slick.GlobalEditorLock.commitCurrentEdit();
+        // https://stackoverflow.com/a/35768360/379593
+        args.grid.getEditorLock().commitCurrentEdit();
+        args.grid.resetActiveCell();
       });
     };
 

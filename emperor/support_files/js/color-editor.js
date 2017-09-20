@@ -59,9 +59,10 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
         change: function(color) {
           $input.css('background-color', color.toHexString());
 
-          // commit the changes as soon as a new color is selected
-          // http://stackoverflow.com/a/15513516/379593
-          Slick.GlobalEditorLock.commitCurrentEdit();
+          // commit the changes as soon as a new shape is selected
+          // https://stackoverflow.com/a/35768360/379593
+          args.grid.getEditorLock().commitCurrentEdit();
+          args.grid.resetActiveCell();
         }
       });
     };
