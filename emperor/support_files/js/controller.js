@@ -93,7 +93,7 @@ define([
      * Div with the number of visible samples
      * @type {node}
      */
-    this.$plotBanner = $("<label>Loading ...</label>");
+    this.$plotBanner = $('<label>Loading ...</label>');
     this.$plotBanner.css({'padding': '2px',
                           'font-style': '9pt helvetica',
                           'color': 'white',
@@ -391,11 +391,11 @@ define([
 
     this.$plotBanner.css({'color': color, 'border-color': color});
     this.$plotBanner.html(visible + '/' + total + ' visible');
-  }
+  };
 
   EmperorController.prototype.getPlotBanner = function(text) {
     return this.$plotBanner.text();
-  }
+  };
 
   /**
    *

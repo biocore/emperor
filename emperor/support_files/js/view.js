@@ -151,7 +151,7 @@ DecompositionView.prototype.getVisibleCount = function() {
   }, 0);
 
   return visible;
-}
+};
 
 /**
  *
