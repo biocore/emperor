@@ -381,7 +381,7 @@ define([
                  (Math.floor(color.b * 255) ^ 0xFF) / 255);
     color = color.getStyle();
 
-    _.each(ec.decViews, function(decomposition) {
+    _.each(this.decViews, function(decomposition) {
       // computing this with every update requires traversin all elements,
       // however it seems as the only reliable way to get this number right
       // without depending on the view controllers (an anti-pattern)
