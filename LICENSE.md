@@ -139,7 +139,7 @@ THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### THREE.js ([r73](https://github.com/mrdoob/three.js/tree/r73) is released under the MIT License
+### THREE.js ([r87](https://github.com/mrdoob/three.js/tree/r87) is released under the MIT License
 
 The MIT License
 

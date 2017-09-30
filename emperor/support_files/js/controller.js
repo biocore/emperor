@@ -7,6 +7,7 @@ define([
     'scene3d',
     'colorviewcontroller',
     'visibilitycontroller',
+    'opacityviewcontroller',
     'shapecontroller',
     'axescontroller',
     'scaleviewcontroller',
@@ -18,10 +19,10 @@ define([
     'canvasrenderer',
     'canvastoblob'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
-            ColorViewController, VisibilityController, ShapeController,
-            AxesController, ScaleViewController, AnimationsController,
-            FileSaver, viewcontroller, SVGRenderer, Draw, CanvasRenderer,
-            canvasToBlob) {
+            ColorViewController, VisibilityController, OpacityViewController,
+            ShapeController, AxesController, ScaleViewController,
+            AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
+            CanvasRenderer, canvasToBlob) {
 
   /**
    *
@@ -89,11 +90,29 @@ define([
      * @type {node}
      */
     this.$plotSpace = $("<div class='emperor-plot-wrapper'></div>");
+
+    /**
+     * Div with the number of visible samples
+     * @type {node}
+     */
+    this.$plotBanner = $('<label>Loading ...</label>');
+    this.$plotBanner.css({'padding': '2px',
+                          'font-style': '9pt helvetica',
+                          'color': 'white',
+                          'border': '1px solid',
+                          'border-color': 'white',
+                          'position': 'absolute'});
+
+    // add the sample count to the plot space
+    this.$plotSpace.append(this.$plotBanner);
+
     /**
      * Internal div where the plots live in (jQuery object).
      * @type {node}
      */
     this.$plotMenu = $("<div class='emperor-plot-menu'></div>");
+    this.$plotMenu.attr('title', 'Right click on the plot for more options ' +
+                        'or click on a sample to reveal its name.');
 
     this.$divId.append(this.$plotSpace);
     this.$divId.append(this.$plotMenu);
@@ -112,14 +131,6 @@ define([
     this.controllers = {};
 
     /**
-     * Background color of the scene.
-     * @type {THREE.Color}
-     * @default 0x00000000
-     */
-    this.rendererBackgroundColor = new THREE.Color();
-    this.rendererBackgroundColor.setHex('0x000000');
-
-    /**
      * Object in charge of doing the rendering of the scenes.
      * @type {THREE.Renderer}
      */
@@ -133,7 +144,6 @@ define([
     }
 
     this.renderer.setSize(this.width, this.height);
-    this.renderer.setClearColor(this.rendererBackgroundColor);
     this.renderer.autoClear = false;
     this.renderer.sortObjects = true;
     this.$plotSpace.append(this.renderer.domElement);
@@ -355,9 +365,44 @@ define([
         scope.renderer.setViewport(0, 0, scope.width, scope.height);
         scope.renderer.clear();
         sv.render();
+
+        // if there's a change for the scene view update the counts
+        scope.updatePlotBanner();
       }
     });
 
+  };
+
+  /**
+   *
+   * Updates the plot banner based on the number of visible elements and the
+   * scene's background color.
+   *
+   */
+  EmperorController.prototype.updatePlotBanner = function() {
+    var color = this.sceneViews[0].scene.background.clone(), visible = 0,
+        total = 0;
+
+    // invert the color so it's visible regardless of the background
+    color.setRGB((Math.floor(color.r * 255) ^ 0xFF) / 255,
+                 (Math.floor(color.g * 255) ^ 0xFF) / 255,
+                 (Math.floor(color.b * 255) ^ 0xFF) / 255);
+    color = color.getStyle();
+
+    _.each(this.decViews, function(decomposition) {
+      // computing this with every update requires traversin all elements,
+      // however it seems as the only reliable way to get this number right
+      // without depending on the view controllers (an anti-pattern)
+      visible += decomposition.getVisibleCount();
+      total += decomposition.count;
+    });
+
+    this.$plotBanner.css({'color': color, 'border-color': color});
+    this.$plotBanner.html(visible + '/' + total + ' visible');
+  };
+
+  EmperorController.prototype.getPlotBanner = function(text) {
+    return this.$plotBanner.text();
   };
 
   /**
@@ -399,12 +444,14 @@ define([
                                          ColorViewController);
     this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
                                               VisibilityController);
+    this.controllers.opacity = this.addTab(this.sceneViews[0].decViews,
+                                           OpacityViewController);
+    this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
+        ScaleViewController);
     this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
                                          ShapeController);
     this.controllers.axes = this.addTab(this.sceneViews[0].decViews,
                                         AxesController);
-    this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
-                                         ScaleViewController);
     this.controllers.animations = this.addTab(this.sceneViews[0].decViews,
                                               AnimationsController);
 
@@ -550,7 +597,6 @@ define([
       pngRenderer.sortObjects = true;
       pngRenderer.setSize(this.$plotSpace.width() * factor,
                           this.$plotSpace.height() * factor);
-      pngRenderer.setClearColor(this.renderer.getClearColor(), 1);
       pngRenderer.setPixelRatio(window.devicePixelRatio);
       pngRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
 
@@ -575,7 +621,6 @@ define([
       var svgRenderer = new THREE.SVGRenderer({antialias: true,
                                                preserveDrawingBuffer: true});
       svgRenderer.setSize(this.$plotSpace.width(), this.$plotSpace.height());
-      svgRenderer.setClearColor(this.renderer.getClearColor(), 1);
       svgRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
       svgRenderer.sortObjects = true;
 
@@ -601,7 +646,8 @@ define([
                        '" width="' + viewBox[2] + '" y="' + viewBox[1] +
                        '" x="' + viewBox[0] +
                        '" stroke-width="0" stroke="#000000" fill="#' +
-                       this.renderer.getClearColor().getHexString() + '"/>';
+                       this.sceneViews[0].scene.background.getHexString() +
+                       '"/>';
       index = svgfile.indexOf('>', index) + 1;
       svgfile = svgfile.substr(0, index) + background + svgfile.substr(index);
 
@@ -708,7 +754,7 @@ define([
     var scope = this;
 
     // nothing but a temporary id
-    var id = (Math.round(1000000 * Math.random())).toString();
+    var id = (Math.round(1000000 * Math.random())).toString(), $li;
 
     this._$tabsContainer.append("<div id='" + id +
                                 "' class='emperor-tab-div' ></div>");
@@ -728,8 +774,9 @@ define([
 
     // now add the list element linking to the container div with the proper
     // title
-    this._$tabsList.append("<li><a href='#" + obj.identifier + "'>" +
-                           obj.title + '</a></li>');
+    $li = $("<li><a href='#" + obj.identifier + "'>" + obj.title + '</a></li>');
+    $li.attr('title', obj.description);
+    this._$tabsList.append($li);
 
     return obj;
   };

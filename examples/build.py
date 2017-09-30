@@ -33,6 +33,7 @@ categories = np.asarray(np.random.randint(1, 1000, N), str)
 coords_ids = listify(np.arange(N))
 coords = (np.random.randn(N, 10) * 0.25).tolist()
 pct_var = pd.Series(1/np.exp(np.arange(10)))
+pct_var = pct_var / pct_var.sum()
 
 
 md_headers = ['SampleID', 'DOB', 'Strings']

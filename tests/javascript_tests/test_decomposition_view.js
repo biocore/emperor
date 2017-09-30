@@ -10,31 +10,29 @@ requirejs([
     module('Decomposition View', {
       setup: function() {
         // setup function
-        name = 'pcoa';
-        ids = ['PC.636', 'PC.635'];
-        coords = [
+        var data = {
+          name: 'pcoa',
+          sample_ids: ['PC.636', 'PC.635'],
+          coordinates: [
           [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
           -0.229889, -0.046599],
           [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794]];
-        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
-        md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
-        metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
-        decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-            metadata);
+          -0.112864, 0.064794]],
+          percents_explained: [26.6887048633, 16.2563704022, 13.7754129161,
+                               11.217215823, 10.024774995, 8.22835130237,
+                               7.55971173665, 6.24945796136]};
+        var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                          'DOB'];
+        var metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control',
+                         '20070314'],
+                        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
+                         '20071112']];
+        this.decomp = new DecompositionModel(data, md_headers, metadata);
       },
 
       teardown: function() {
         // teardown function
-        name = null;
-        ids = null;
-        coords = null;
-        pct_var = null;
-        md_headers = null;
-        metadata = null;
-        decomp = null;
+        this.decomp = null;
       }
     });
 
@@ -45,34 +43,34 @@ requirejs([
      */
     test('Test constructor', function() {
       var obs;
-      var dv = new DecompositionView(decomp);
-      var _name = 'pcoa';
-      var _ids = ['PC.636', 'PC.635'];
-      var _coords = [
+      var dv = new DecompositionView(this.decomp);
+      var data = {name: 'pcoa',
+                  sample_ids: ['PC.636', 'PC.635'],
+                  coordinates: [
         [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
         -0.229889, -0.046599],
         [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-        -0.112864, 0.064794]];
-      var _pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
-                      11.217215823, 10.024774995, 8.22835130237, 7.55971173665,
-                      6.24945796136];
+        -0.112864, 0.064794]],
+                  percents_explained: [26.6887048633, 16.2563704022,
+                                       13.7754129161, 11.217215823,
+                                       10.024774995, 8.22835130237,
+                                       7.55971173665, 6.24945796136]};
       var _md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
                          'DOB'];
       var _metadata = [
         ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
-      var exp = new DecompositionModel(_name, _ids, _coords, _pct_var,
-          _md_headers, _metadata);
+      var exp = new DecompositionModel(data, _md_headers, _metadata);
 
       deepEqual(dv.decomp, exp, 'decomp set correctly');
       equal(dv.count, 2, 'count set correctly');
-      equal(dv.visibleCount, 2, 'visibleCount set correctly');
+      equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
       deepEqual(dv.visibleDimensions, [0, 1, 2],
           'visibleDimensions set correctly');
       deepEqual(dv.tubes, [], 'tubes set correctly');
 
-      equal(dv.axesColor, 0xFFFFFF);
-      equal(dv.backgroundColor, 0x000000);
+      equal(dv.axesColor, '#FFFFFF');
+      equal(dv.backgroundColor, '#000000');
 
       deepEqual(dv.axesOrientation, [1, 1, 1]);
 
@@ -100,11 +98,27 @@ requirejs([
 
     /**
      *
+     * Test that getVisibleCount is correctly updated
+     *
+     */
+    test('Test getVisibleCount', function() {
+      var dv = new DecompositionView(this.decomp);
+      dv.markers[0].visible = false;
+      equal(dv.getVisibleCount(), 1);
+      dv.markers[1].visible = false;
+      equal(dv.getVisibleCount(), 0);
+      dv.markers[0].visible = true;
+      dv.markers[1].visible = true;
+      equal(dv.getVisibleCount(), 2);
+    });
+
+    /**
+     *
      * Test that changeVisibleDimensions updates the meshes position
      *
      */
     test('Test changeVisibleDimensions', function() {
-      var dv = new DecompositionView(decomp);
+      var dv = new DecompositionView(this.decomp);
       dv.changeVisibleDimensions([2, 3, 4]);
       obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
@@ -120,6 +134,23 @@ requirejs([
       deepEqual(dv.axesOrientation, [1, 1, 1]);
     });
 
+    test('Test changeVisibleDimensions (2D)', function() {
+      var dv = new DecompositionView(this.decomp);
+      dv.changeVisibleDimensions([2, 3, null]);
+      obs = [dv.markers[0].position.x,
+      dv.markers[0].position.y,
+      dv.markers[0].position.z];
+      exp = [0.066647, -0.067711, 0];
+      deepEqual(obs, exp);
+      obs = [dv.markers[1].position.x,
+      dv.markers[1].position.y,
+      dv.markers[1].position.z];
+      exp = [-0.138136, 0.159061, 0];
+      deepEqual(obs, exp);
+
+      deepEqual(dv.axesOrientation, [1, 1, 1]);
+    });
+
     /**
      *
      * Test the changeVisibleDimensions throws an error if the number of
@@ -129,7 +160,7 @@ requirejs([
     test('Test changeVisibleDimensions excepts', function() {
       throws(
           function() {
-            var dv = new DecompositionView(decomp);
+            var dv = new DecompositionView(this.decomp);
             dv.changeVisibleDimensions([2, 3, 4, 5]);
           },
           Error,
@@ -143,7 +174,7 @@ requirejs([
      *
      */
     test('Test change flip axes', function(assert) {
-      var dv = new DecompositionView(decomp);
+      var dv = new DecompositionView(this.decomp);
 
       // copy the arrays
       expa = _.clone(dv.markers[0].position.toArray());
@@ -180,6 +211,30 @@ requirejs([
       deepEqual(dv.axesOrientation, [1, -1, 1]);
     });
 
+    test('Test change flip axes (2D)', function(assert) {
+      var dv = new DecompositionView(this.decomp);
+
+      var expa = [-0.276542, 0.144964, 0], expb = [-0.237661, -0.046053, 0];
+
+      dv.changeVisibleDimensions([0, 1, null]);
+
+      // change the position of the decomposition view and ...
+      dv.flipVisibleDimension(1);
+
+      // ... Check for the following things:
+      //
+      // 1.- The position themselves
+      // 2.- The ranges i.e. positions still fall within the dimensionRanges.
+      // 3.- The axis orientation vector
+      obs = dv.markers[0].position.toArray();
+      deepEqual(obs, expa, 'First marker position updated correctly');
+      obs = dv.markers[1].position.toArray();
+      deepEqual(obs, expb, 'Second marker position updated correctly');
+
+      deepEqual(dv.axesOrientation, [1, -1, 1]);
+    });
+
+
     /**
      *
      * Test that changeVisibleDimensions and flip axis
@@ -187,7 +242,7 @@ requirejs([
      */
     test('Test changing the orientations and then flipping a dimension',
          function() {
-      var dv = new DecompositionView(decomp);
+      var dv = new DecompositionView(this.decomp);
 
       deepEqual(dv.axesOrientation, [1, 1, 1]);
 

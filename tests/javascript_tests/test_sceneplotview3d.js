@@ -20,40 +20,40 @@ requirejs([
         var div = $('<div id="fooligans"></div>');
         div.appendTo(document.body);
 
-        var name = 'pcoa';
-        var ids = ['PC.636', 'PC.635'];
-        var coords = [[-0.276542, -0.144964, 0.066647, -0.067711, 0.176070,
-        0.072969, -0.229889, -0.046599],
-        [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485,
-        -0.115211, -0.112864, 0.064794]];
-        var pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
-                       11.217215823, 10.024774995, 8.22835130237,
-                       7.55971173665, 6.24945796136];
+        var data = {name: 'pcoa',
+                    sample_ids: ['PC.636', 'PC.635'],
+                    coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
+                                   0.176070, 0.072969, -0.229889, -0.046599],
+                                  [-0.237661, 0.046053, -0.138136, 0.159061,
+                                   -0.247485, -0.115211, -0.112864, 0.064794]],
+                    percents_explained: [26.6887048633, 16.2563704022,
+                                         13.7754129161, 11.217215823,
+                                         10.024774995, 8.22835130237,
+                                         7.55971173665, 6.24945796136]};
         var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
                           'DOB'];
         var metadata = [
           ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
           ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']
         ];
-        var decomp = new DecompositionModel(name, ids, coords, pct_var,
-            md_headers, metadata);
+        var decomp = new DecompositionModel(data, md_headers, metadata);
         var dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.scatter = dv;
 
-        name = 'biplot';
-        ids = ['tax_1', 'tax_2'];
-        coords = [
-          [-1, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
-          -0.229889, -0.046599],
-          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794]];
-        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+        data = {name: 'biplot',
+                sample_ids: ['tax_1', 'tax_2'],
+                coordinates: [[-1, -0.144964, 0.066647, -0.067711, 0.176070,
+                               0.072969, -0.229889, -0.046599],
+                              [-0.237661, 0.046053, -0.138136, 0.159061,
+                               -0.247485, -0.115211, -0.112864, 0.064794]],
+                percents_explained: [26.6887048633, 16.2563704022,
+                                     13.7754129161, 11.217215823,
+                                     10.024774995, 8.22835130237,
+                                     7.55971173665, 6.24945796136]};
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
-        decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-            metadata);
+        decomp = new DecompositionModel(data, md_headers, metadata);
         dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.biplot = dv;
       },
@@ -86,7 +86,7 @@ requirejs([
       assert.ok(spv.renderer instanceof THREE.SVGRenderer);
       assert.ok(spv.control instanceof THREE.OrbitControls);
       assert.ok(spv.scene instanceof THREE.Scene);
-      assert.ok(spv.camera instanceof THREE.PerspectiveCamera);
+      assert.ok(spv.camera instanceof THREE.OrthographicCamera);
       assert.ok(spv.light instanceof THREE.DirectionalLight);
 
       deepEqual(spv.xView, 0);
@@ -96,8 +96,8 @@ requirejs([
       equal(spv.height, 20);
       equal(spv.checkUpdate(), true);
 
-      equal(spv.axesColor, 0xFFFFFF);
-      equal(spv.backgroundColor, 0x000000);
+      equal(spv.axesColor, '#FFFFFF');
+      equal(spv.backgroundColor, '#000000');
 
       deepEqual(spv.visibleDimensions, [0, 1, 2]);
       deepEqual(spv.dimensionRanges.max, [-0.237661, 0.046053, 0.066647,
@@ -187,7 +187,7 @@ requirejs([
       spv.control.dispose();
     });
 
-    test('Test the draw axes', function(assert) {
+    test('Test draw axes', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -204,6 +204,58 @@ requirejs([
         equal(line.material.color.r, 0);
         equal(line.material.color.g, 1);
         equal(line.material.color.b, 0.058823529411764705);
+      }
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    test('Test draw axes 2D', function(assert) {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      spv.removeAxes();
+      spv.visibleDimensions[2] = null;
+      spv.drawAxesWithColor('#0000FF');
+
+      var line;
+
+      for (var i = 0; i < 3; i++) {
+        line = spv.scene.getObjectByName('emperor-axis-line-' + i);
+
+        if (i !== 2) {
+          equal(line.material.color.r, 0);
+          equal(line.material.color.g, 0);
+          equal(line.material.color.b, 1);
+        }
+        else {
+          equal(line, undefined);
+        }
+      }
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+
+    test('Test axes color as null', function(assert) {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      // color the axis lines
+      spv.drawAxesWithColor(null);
+
+      var line;
+
+      for (var i = 0; i < 3; i++) {
+        line = spv.scene.getObjectByName('emperor-axis-line-' + i);
+        equal(line, undefined);
       }
 
       // release the control back to the main page
@@ -240,22 +292,42 @@ requirejs([
                                     'fooligans', 0, 0, 20, 20);
 
       // color the axis lines
-      spv.drawAxesLabelsWithColor(0x00FF0F);
+      spv.drawAxesLabelsWithColor('#00FF0F');
 
-      var label, positions = [[-0.237661, -0.144964, -0.138136],
-                              [-1, 0.046053, -0.138136],
-                              [-1, -0.144964, 0.066647]];
+      var label, tolerance = 0.000001,
+          positions = [[-0.25429727, -0.15511148, -0.147805522],
+                       [-1.07, 0.04927671, -0.14780552000000002],
+                       [-1.07, -0.15511148000000002, 0.07131229]];
 
       for (var i = 0; i < 3; i++) {
         label = spv.scene.getObjectByName('emperor-axis-label-' + i);
 
-        equal(label.position.x, positions[i][0]);
-        equal(label.position.y, positions[i][1]);
-        equal(label.position.z, positions[i][2]);
+        assert.ok((label.position.x - positions[i][0]) < tolerance);
+        assert.ok((label.position.y - positions[i][1]) < tolerance);
+        assert.ok((label.position.z - positions[i][2]) < tolerance);
 
         equal(label.material.color.r, 0);
         equal(label.material.color.g, 1);
         equal(label.material.color.b, 0.058823529411764705);
+      }
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    test('Test the draw axes labels as null', function(assert) {
+      // We will use SVGRenderer here and in the other tests as we cannot use
+      // WebGLRenderer and test with phantom.js
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      // color the axis lines
+      spv.drawAxesLabelsWithColor(null);
+
+      for (var i = 0; i < 3; i++) {
+        label = spv.scene.getObjectByName('emperor-axis-label-' + i);
+        equal(label, undefined);
       }
 
       // release the control back to the main page
@@ -286,22 +358,30 @@ requirejs([
 
     /**
      *
-     * Test the setCameraAspectRatio method for ScenePlotView3D
+     * Test the updateCameraAspectRatio method for ScenePlotView3D
      *
      */
-    test('Test setCameraAspectRatio', function() {
+    test('Test updateCameraAspectRatio', function() {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                     'fooligans', 0, 0, 20, 20);
-      spv.setCameraAspectRatio(100);
-      equal(spv.camera.aspect, 100);
 
-      spv.setCameraAspectRatio(200);
-      equal(spv.camera.aspect, 200);
-
-      spv.setCameraAspectRatio(1);
+      // same width and height
+      spv.updateCameraAspectRatio();
+      equal(spv.camera.left, -0.0955085);
+      equal(spv.camera.right, 0.0955085);
+      equal(spv.camera.top, 0.0955085);
+      equal(spv.camera.bottom, -0.0955085);
       equal(spv.camera.aspect, 1);
+
+      spv.width = 30;
+      spv.updateCameraAspectRatio();
+      equal(spv.camera.left, -0.14326275);
+      equal(spv.camera.right, 0.14326275);
+      equal(spv.camera.top, 0.0955085);
+      equal(spv.camera.bottom, -0.0955085);
+      equal(spv.camera.aspect, 1.5);
 
       // release the control back to the main page
       spv.control.dispose();
@@ -339,20 +419,21 @@ requirejs([
 
       equal(spv.scene.children.length, 11);
 
-      name = 'pcoa';
-      ids = ['PC.636', 'PC.635'];
-      coords = [[-0.276542, -0.144964, 0.066647, -0.067711, 0.176070,
-                  0.072969, -0.229889, -0.046599],
-                [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-                  -0.112864, 0.064794]];
-      pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-                 10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+      var data = {name: 'pcoa',
+                  sample_ids: ['PC.636', 'PC.635'],
+                  coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
+                                 0.176070, 0.072969, -0.229889, -0.046599],
+                                [-0.237661, 0.046053, -0.138136, 0.159061,
+                                 -0.247485, -0.115211, -0.112864, 0.064794]],
+                  percents_explained: [26.6887048633, 16.2563704022,
+                                       13.7754129161, 11.217215823,
+                                       10.024774995, 8.22835130237,
+                                       7.55971173665, 6.24945796136]};
       md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
       metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
       ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
 
-      decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-                                      metadata);
+      decomp = new DecompositionModel(data, md_headers, metadata);
       dv = new DecompositionView(decomp);
 
       this.sharedDecompositionViewDict.pleep = dv;

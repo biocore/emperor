@@ -56,6 +56,7 @@ requirejs.config({
   'viewcontroller': '{{ base_url }}/js/view-controller',
   'colorviewcontroller': '{{ base_url }}/js/color-view-controller',
   'visibilitycontroller': '{{ base_url }}/js/visibility-controller',
+  'opacityviewcontroller': '{{ base_url }}/js/opacity-view-controller',
   'scaleviewcontroller': '{{ base_url }}/js/scale-view-controller',
   'shapecontroller': '{{ base_url }}/js/shape-controller',
   'axescontroller': '{{ base_url }}/js/axes-controller',
@@ -102,10 +103,16 @@ function($, model, EmperorController) {
 
   var data = {
     // coordinates information
-    'sample_ids': {{ coords_ids | tojson }},
-    'coordinates': {{ coords | tojson }},
-    'axes_names': {{ axes_names | tojson }},
-    'percents_explained': {{ pct_var | tojson }},
+    'decompositions': [
+      {
+        'sample_ids': {{ coords_ids | tojson }},
+        'coordinates': {{ coords | tojson }},
+        'axes_names': {{ axes_names | tojson }},
+        'percents_explained': {{ pct_var | tojson }},
+        'ci': {{ ci | tojson }},
+        'type': 'ordination'
+      }
+    ],
 
     // sample information
     'metadata_headers': {{ md_headers | tojson }},
@@ -116,12 +123,11 @@ function($, model, EmperorController) {
   var dm, ec;
 
   function init() {
+    var decomp = data['decompositions'][0];
+
     // Initialize the DecompositionModel
-    dm = new DecompositionModel('', data['sample_ids'],
-                                data['coordinates'],
-                                data['percents_explained'],
-                                data['metadata_headers'], data['metadata'],
-                                data['axes_names']);
+    dm = new DecompositionModel(decomp, data['metadata_headers'],
+                                data['metadata']);
     // Initialize the EmperorController
     ec = new EmperorController(dm, {{ plot_id | tojson }});
   }

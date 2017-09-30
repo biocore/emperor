@@ -163,7 +163,6 @@ define([
         id: 'title', name: '', field: 'value',
         sortable: false, maxWidth: SLICK_WIDTH,
         minWidth: SLICK_WIDTH,
-        autoEdit: true,
         editor: ColorEditor,
         formatter: ColorFormatter
       }
@@ -530,11 +529,18 @@ define([
    */
   ColorViewController.prototype.setPlottableAttributes =
   function(scope, color, group) {
-    var idx;
+
+    var idx, hasConfidenceIntervals;
+
+    hasConfidenceIntervals = scope.decomp.hasConfidenceIntervals();
 
     _.each(group, function(element) {
       idx = element.idx;
       scope.markers[idx].material.color = new THREE.Color(color);
+
+      if (hasConfidenceIntervals) {
+        scope.ellipsoids[idx].material.color = new THREE.Color(color);
+      }
     });
     scope.needsUpdate = true;
   };

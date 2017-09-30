@@ -33,7 +33,7 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
    *
    */
   function ColorEditor(args) {
-    var $input;
+    var $input = $("<div class='colorbox'></div>");
     var defaultValue;
     var scope = this;
 
@@ -41,10 +41,10 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
       // make the background look exactly the same when the color is being
       // edited
       $(args.container).css('background-color', '#eeeeee');
-
-      $input = $("<div class='colorbox'></div>");
+      $input.appendTo($(args.container));
       $input.css('background-color', args.item.value);
-      $input.appendTo(args.container);
+
+      // initialize spectrum
       $input.spectrum({
         color: args.item.color,
         showInput: true,
@@ -59,9 +59,10 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
         change: function(color) {
           $input.css('background-color', color.toHexString());
 
-          // commit the changes as soon as a new color is selected
-          // http://stackoverflow.com/a/15513516/379593
-          Slick.GlobalEditorLock.commitCurrentEdit();
+          // commit the changes as soon as a new shape is selected
+          // https://stackoverflow.com/a/35768360/379593
+          args.grid.getEditorLock().commitCurrentEdit();
+          args.grid.resetActiveCell();
         }
       });
     };
@@ -73,6 +74,7 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
     };
 
     this.focus = function() {
+      $input.focus();
       $input.spectrum('show');
     };
 
@@ -102,7 +104,20 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
     };
 
     this.show = function() {
-      $input.spectrum('show');
+      /*
+       *
+       * We setup a brief timeout that gives the browser enough time to finish
+       * preparing the specturm widget. If we don't wait for 100 milliseconds,
+       * opening the color picker will take two clicks. This is also a
+       * consequence of spectrum initializing asynchronously, by the time
+       * SlickGrid executes the show method the widget is not ready yet so the
+       * 'spectrum('show')' call results in a noop, and in order to show the
+       * color picker users would need to click again on the colorbox.
+       *
+       */
+      setTimeout(function() {
+        $input.spectrum('show');
+      }, 100);
     };
 
     this.position = function(cellBox) {
@@ -111,7 +126,6 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
 
     this.init();
   }
-
 
   /**
    *
@@ -133,8 +147,8 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
    *
    */
   function ColorFormatter(row, cell, value, columnDef, dataContext) {
-    return "<div class='colorbox' style='background-color:" + value +
-           ";'></div>";
+    return "<div class='colorbox' style='cursor:pointer;background-color:" +
+           value + ";'></div>";
   }
 
   return {'ColorEditor': ColorEditor, 'ColorFormatter': ColorFormatter};

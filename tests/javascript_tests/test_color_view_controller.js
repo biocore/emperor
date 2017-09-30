@@ -16,67 +16,72 @@ requirejs([
     module('ColorViewController', {
       setup: function() {
         this.sharedDecompositionViewDict = {};
-        var $slickid = $('<div id="fooligans"></div>');
-        $slickid.appendTo(document.body);
 
         // setup function
-        name = 'pcoa';
-        ids = ['PC.636', 'PC.635', 'PC.634'];
-        coords = [
-          [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
-          -0.229889, -0.046599],
-          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794],
-          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794]];
-        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+        var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
+                    coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
+                                   0.176070, 0.072969,
+                                   -0.229889, -0.046599],
+                                  [-0.237661, 0.046053, -0.138136, 0.159061,
+                                   -0.247485, -0.115211, -0.112864, 0.064794],
+                                  [-0.237661, 0.046053, -0.138136, 0.159061,
+                                    -0.247485, -0.115211, -0.112864, 0.064794]
+                    ],
+                    percents_explained: [26.6887048633, 16.2563704022,
+                                         13.7754129161, 11.217215823,
+                                         10.024774995, 8.22835130237,
+                                         7.55971173665, 6.24945796136]};
         md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
         metadata = [['PC.636', '14.2', 'Control', '20070314'],
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
-        decomp = new DecompositionModel(name, ids, coords, pct_var, md_headers,
-            metadata);
+        decomp = new DecompositionModel(data, md_headers, metadata);
         var dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.scatter = dv;
 
-        name = 'biplot';
-        ids = ['tax_1', 'tax_2'];
-        coords = [
-          [-1, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
-          -0.229889, -0.046599],
-          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-          -0.112864, 0.064794]];
-        pct_var = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
-        10.024774995, 8.22835130237, 7.55971173665, 6.24945796136];
+        data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
+                coordinates: [[-1, -0.144964, 0.066647, -0.067711, 0.176070,
+                               0.072969, -0.229889, -0.046599],
+                              [-0.237661, 0.046053, -0.138136, 0.159061,
+                               -0.247485, -0.115211, -0.112864, 0.064794]],
+                percents_explained: [26.6887048633, 16.2563704022,
+                                     13.7754129161, 11.217215823, 10.024774995,
+                                     8.22835130237, 7.55971173665,
+                                     6.24945796136]};
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
-        this.decomp = new DecompositionModel(name, ids, coords, pct_var,
-                                             md_headers, metadata);
+        this.decomp = new DecompositionModel(data, md_headers, metadata);
         this.dv = new DecompositionView(this.decomp);
         this.sharedDecompositionViewDict.biplot = dv;
 
-        // Slickgrid
-        var columns = [
-        {id: 'pc1', name: 'pc1', field: 'pc1'},
-        {id: 'pc2', name: 'pc2', field: 'pc2'},
-        {id: 'pc3', name: 'pc3', field: 'pc3'}
-        ];
-
-        var options = {
-          enableCellNavigation: true,
-          enableColumnReorder: false
+        // jackknifed specific
+        data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
+                coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
+                               0.176070, 0.072969, -0.229889, -0.046599],
+                              [-0.237661, 0.046053, -0.138136, 0.159061,
+                               -0.247485, -0.115211, -0.112864, 0.064794],
+                              [-0.237661, 0.046053, -0.138136, 0.159061,
+                                -0.247485, -0.115211, -0.112864, 0.064794]
+                ],
+                percents_explained: [26.6887048633, 16.2563704022,
+                                     13.7754129161, 11.217215823,
+                                     10.024774995, 8.22835130237,
+                                     7.55971173665, 6.24945796136],
+                ci: [[0.5, 0.68, -1.64, 0.56, 1.87, 0.75, 0.61, 1.14],
+                     [0.09, 0.8, -0.07, -1.52, 0.86, -0.2, -2.63, -0.57],
+                     [0.21, -0.85, 0.19, -1.88, -1.19, -1.38, 1.55, -0.1]]
         };
-        var data = [];
-        data.push({'pc1': 1, 'pc2': 1, 'pc3': 1});
-        data.push({'pc1': 1, 'pc2': 1, 'pc3': 2});
-        data.push({'pc1': 2, 'pc2': 1, 'pc3': 2});
-
-        grid = new Slick.Grid('#fooligans', data, columns, options);
+        md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
+        metadata = [['PC.636', '14.2', 'Control', '20070314'],
+        ['PC.635', 'StringValue', 'Fast', '20071112'],
+        ['PC.634', '14.7', 'Fast', '20071112']];
+        decomp = new DecompositionModel(data, md_headers, metadata);
+        this.jackknifedDecView = new DecompositionView(decomp);
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
+        this.jackknifedDecView = undefined;
         $('#fooligans').remove();
         this.decomp = undefined;
       }
@@ -485,6 +490,42 @@ requirejs([
       equal(this.dv.needsUpdate, true);
     });
 
+    test('Testing setPlottableAttributes (jackknifing)', function(assert) {
+      // In this test we validate that ellipsoids can be changed in color
+      // one by one and a few at a time.
+
+      // testing with one plottable
+      var idx = 0, dv = this.jackknifedDecView;
+      plottables = [{idx: idx}];
+
+      // assert initial state
+      equal(dv.markers[0].material.color.getHexString(), 'ff0000');
+      equal(dv.markers[1].material.color.getHexString(), 'ff0000');
+      equal(dv.ellipsoids[0].material.color.getHexString(), 'ff0000');
+      equal(dv.ellipsoids[1].material.color.getHexString(), 'ff0000');
+
+      // change color to green (only one sample)
+      ColorViewController.prototype.setPlottableAttributes(dv, '#00ff00',
+                                                           plottables);
+      equal(dv.needsUpdate, true);
+
+      equal(dv.markers[0].material.color.getHexString(), '00ff00');
+      equal(dv.markers[1].material.color.getHexString(), 'ff0000');
+      equal(dv.ellipsoids[0].material.color.getHexString(), '00ff00');
+      equal(dv.ellipsoids[1].material.color.getHexString(), 'ff0000');
+
+      // change color to black (two samples)
+      plottables = [{idx: idx}, {idx: idx + 1}];
+      ColorViewController.prototype.setPlottableAttributes(dv, '#000000',
+                                                           plottables);
+      equal(dv.needsUpdate, true);
+
+      equal(dv.markers[0].material.color.getHexString(), '000000');
+      equal(dv.markers[1].material.color.getHexString(), '000000');
+      equal(dv.ellipsoids[0].material.color.getHexString(), '000000');
+      equal(dv.ellipsoids[1].material.color.getHexString(), '000000');
+    });
+
     test('Testing toJSON', function() {
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(
@@ -607,9 +648,11 @@ requirejs([
         metadata.push([i, 'b ' + Math.random(), 'c ' + Math.random()]);
       }
 
-      var d = new DecompositionModel('pcoa', _.range(1001), coords,
-                                     [45, 35, 15, 5],
-                                     ['SampleID', 'foo', 'bar'], metadata);
+      var data = {coordinates: coords, percents_explained: [45, 35, 15, 5],
+                  sample_ids: _.range(1001), name: 'pcoa'};
+
+      var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
+                                     metadata);
       var dv = new DecompositionView(d);
       var container = $('<div id="does-not-exist"></div>');
       // create a dummy category selection callback
@@ -640,9 +683,11 @@ requirejs([
         metadata.push([i, 'b ' + Math.random(), 'c ' + Math.random()]);
       }
 
-      var d = new DecompositionModel('pcoa', _.range(1001), coords,
-                                     [45, 35, 15, 5],
-                                     ['SampleID', 'foo', 'bar'], metadata);
+      var data = {coordinates: coords, percents_explained: [45, 35, 15, 5],
+                  sample_ids: _.range(1001), name: 'pcoa'};
+
+      var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
+                                     metadata);
       var dv = new DecompositionView(d);
       var container = $('<div id="does-not-exist"></div>');
       // create a dummy category selection callback

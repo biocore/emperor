@@ -16,7 +16,7 @@ from emperor.qiime_backports.parse import parse_mapping_file_to_dict
 from numpy.ma.extras import apply_along_axis
 from numpy.ma import MaskedArray
 from numpy import (shape, vstack, zeros, sum as numpy_sum, sort as numpy_sort,
-    nan as numpy_nan, array, median)
+    nan as numpy_nan, array, median, average)
 
 def is_valid_git_refname(refname):
     """check if a string is a valid branch-name/ref-name for git
@@ -341,30 +341,29 @@ def _compute_jn_pcoa_avg_ranges(jn_flipped_matrices, method):
         IQR: Interquartile Range
         ideal fourths: Ideal fourths method as implemented in scipy
     """
-    x,y = shape(jn_flipped_matrices[0])
-    all_flat_matrices = [matrix.ravel() for matrix in jn_flipped_matrices]
-    summary_matrix = vstack(all_flat_matrices)
-    matrix_sum = numpy_sum(summary_matrix, axis=0)
-    matrix_average = matrix_sum / float(len(jn_flipped_matrices))
-    matrix_average = matrix_average.reshape(x,y)
+    x, y = shape(jn_flipped_matrices[0])
+    matrices = len(jn_flipped_matrices)
+
+    summary_matrix = array(jn_flipped_matrices).reshape(matrices, x * y)
+    matrix_average = average(jn_flipped_matrices, axis=0)
+
     if method == 'IQR':
         result = matrix_IQR(summary_matrix)
-        matrix_low = result[0].reshape(x,y)
-        matrix_high = result[1].reshape(x,y)
+        matrix_low = result[0].reshape(x, y)
+        matrix_high = result[1].reshape(x, y)
     elif method == 'ideal_fourths':
         result = idealfourths(summary_matrix, axis=0)
-        matrix_low = result[0].reshape(x,y)
-        matrix_high = result[1].reshape(x,y)
+        matrix_low = result[0].reshape(x, y)
+        matrix_high = result[1].reshape(x, y)
     elif method == "sdev":
         # calculate std error for each sample in each dimension
-        sdevs = zeros(shape=[x,y])
+        sdevs = zeros(shape=[x, y])
         for j in range(y):
             for i in range(x):
                 vals = array([pcoa[i][j] for pcoa in jn_flipped_matrices])
-                sdevs[i,j] = vals.std(ddof=1)
+                sdevs[i, j] = vals.std(ddof=1)
         matrix_low = -sdevs/2
         matrix_high = sdevs/2
-
 
     return matrix_average, matrix_low, matrix_high
 
