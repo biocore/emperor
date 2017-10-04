@@ -208,7 +208,9 @@ define([
   AnimationsController.prototype._playButtonClicked = function(evt, params) {
 
     var headers, data = {}, positions = {}, gradient, trajectory, decomp, p;
+    var view, marker, pos;
 
+    view = this.getView();
     decomp = this.getView().decomp;
     headers = decomp.md_headers;
 
@@ -219,8 +221,11 @@ define([
       p = decomp.plottable[i];
 
       data[p.name] = p.metadata;
-      positions[p.name] = {'name': p.name, 'color': 0, 'x': p.coordinates[0],
-                           'y': p.coordinates[1], 'z': p.coordinates[2]};
+
+      // get the view's position, not the metadata's position
+      pos = view.markers[p.idx].position;
+      positions[p.name] = {'name': p.name, 'color': 0, 'x': pos.x,
+                           'y': pos.y, 'z': pos.z};
     }
 
     this.director = new AnimationDirector(headers, data, positions, gradient,
