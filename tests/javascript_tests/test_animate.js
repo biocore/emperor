@@ -1,7 +1,7 @@
 requirejs([
     'underscore',
     'jquery',
-    'animate'
+    'animationdirector'
 ], function(_, $, AnimationDirector) {
   $(document).ready(function() {
 
