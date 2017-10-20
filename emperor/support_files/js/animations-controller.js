@@ -186,21 +186,6 @@ define([
   }
 
   AnimationsController.prototype._rewindButtonClicked = function(evt, params) {
-  /*
-  g_isPlaying = false;
-  g_animationDirector = null;
-  document.getElementById("play-button").disabled="false";
-  $('#animation-speed-slider').slider('option', 'disabled', false);
-
-  for (var index = 0; index < g_animationLines.length; index++){
-    g_mainScene.remove(g_animationLines[index]);
-    g_elementsGroup.remove(g_animationLines[index]);
-  }
-
-  // re-initialize as an empty array
-  g_animationLines = [];
-  */
-    console.log('clicked rewind, isPlaying: ' + this.isPlaying());
     var view = this.getView();
 
     this._isPlaying = false;
@@ -220,15 +205,6 @@ define([
   }
 
   AnimationsController.prototype._pauseButtonClicked = function(evt, params) {
-    /*
-     *
-        if (g_isPlaying === true){
-          g_isPlaying = false;
-          document.getElementById("play-button").disabled="false"
-        }
-     *
-     * */
-    console.log('clicked pause, isPlaying: ' + this.isPlaying());
     if (this.isPlaying()) {
       this._isPlaying = false;
       this.$play.prop('disabled', true);
