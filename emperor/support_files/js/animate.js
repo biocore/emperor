@@ -36,6 +36,8 @@ function(_, trajectory) {
    * @param {String} trajectoryCategory a string with the name of the mapping
    * file header where the data that groups the samples is contained, this will
    * usually be BODY_SITE, HOST_SUBJECT_ID, etc..
+   * @param {speed} Positive real number determining the speed of an animation,
+   * this is reflected in the number of frames produced for each time interval.
    *
    * @return {AnimationDirector} returns an animation director if the parameters
    * passed in were all valid.
@@ -49,12 +51,12 @@ function(_, trajectory) {
    */
   function AnimationDirector(mappingFileHeaders, mappingFileData,
                              coordinatesData, gradientCategory,
-                             trajectoryCategory) {
+                             trajectoryCategory, speed) {
 
     // all arguments are required
     if (mappingFileHeaders === undefined || mappingFileData === undefined ||
       coordinatesData === undefined || gradientCategory === undefined ||
-      trajectoryCategory === undefined) {
+      trajectoryCategory === undefined || speed === undefined) {
       throw new Error('All arguments are required');
     }
 
@@ -69,6 +71,12 @@ function(_, trajectory) {
     if (index == -1) {
       throw new Error('Could not find the trajectory category in the mapping' +
                       ' file');
+    }
+
+    // guard against logical problems with the trajectory object
+    if (speed <= 0) {
+      throw new Error("The animation speed cannot be less than or equal to " +
+                      "zero");
     }
 
     /**
@@ -136,6 +144,12 @@ function(_, trajectory) {
      */
     this.trajectories = [];
 
+    /**
+     * @type {Float}
+     * How fast should the animation run, has to be a postive non-zero value.
+     */
+    this.speed = speed;
+
     this.initializeTrajectories();
     this.getMaximumTrajectoryLength();
 
@@ -153,6 +167,9 @@ function(_, trajectory) {
     var sampleNamesBuffer = [], gradientPointsBuffer = [];
     var coordinatesBuffer = [];
     var chewedDataBuffer = null;
+
+    // frames we want projected in the trajectory's interval
+    var n = Math.floor((1 / (this.speed)) * 10);
 
     // compute a dictionary from where we will extract the germane data
     chewedData = getSampleNamesAndDataForSortedTrajectories(
@@ -206,7 +223,7 @@ function(_, trajectory) {
 
       // create the trajectory object
       trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer, key,
-          gradientPointsBuffer, coordinatesBuffer, this.minimumDelta);
+          gradientPointsBuffer, coordinatesBuffer, this.minimumDelta, n);
 
       this.trajectories.push(trajectoryBuffer);
 

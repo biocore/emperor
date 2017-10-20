@@ -68,7 +68,7 @@ define([
      * @type {float}
      * @default 10
      */
-    this.maxN = maxN !== undefined ? maxN : 10;
+    this.maxN = maxN !== undefined ? maxN : 100;
 
     if (this.coordinates.length != this.gradientPoints.length) {
       throw new Error('The number of coordinate points and gradient points is' +

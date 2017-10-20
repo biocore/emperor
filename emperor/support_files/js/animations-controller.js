@@ -29,9 +29,12 @@ define([
   function AnimationsController(container, decompViewDict) {
     var helpmenu = 'Animate trajectories connecting samples in your data';
     var title = 'Animations';
-    var scope = this, dm, label;
+    var scope = this, dm, label, gradientTooltip, trajectoryTooltip;
     EmperorViewController.call(this, container, title, helpmenu,
                                decompViewDict);
+
+    trajectoryTooltip = 'Category to group samples';
+    gradientTooltip = 'Category to sort samples';
 
     dm = this.getView().decomp;
 
@@ -39,7 +42,8 @@ define([
     this.$trajectorySelect = $("<select class='emperor-tab-drop-down'>");
 
     // http://stackoverflow.com/a/6602002
-    _.each(dm.md_headers, function(header) {
+    // prepend an empty string so dropdown shows the "tooltip string"
+    _.each([''].concat(dm.md_headers), function(header) {
       scope.$gradientSelect.append(
           $('<option>').attr('value', header).text(header));
       scope.$trajectorySelect.append(
@@ -48,8 +52,11 @@ define([
 
     // add a label to the chosen drop downs
     label = $('<label>').text('Gradient').append(this.$gradientSelect);
+    label.attr('title', gradientTooltip);
     this.$header.append(label);
+
     label = $('<label>').text('Trajectory').append(this.$trajectorySelect);
+    label.attr('title', trajectoryTooltip);
     this.$header.append(label);
 
     // container of the sliders and buttons
@@ -80,9 +87,11 @@ define([
     this._$mediaContainer.append($('<hr>'));
 
     this._$speedLabel = $('<text name="speed">Speed (1x)</text>');
+    this._$speedLabel.attr('title', 'Speed at which the traces animate');
     this._$mediaContainer.append(this._$speedLabel);
 
     this.$speed = $('<div></div>').css('margin-top', '10px');
+    this.$speed.attr('title', 'Speed at which the traces animate');
     this._$mediaContainer.append(this.$speed);
 
     this.director = null;
@@ -93,19 +102,30 @@ define([
       scope.$speed.slider({'min': 0.1,
                            'max': 5,
                            'step': 0.1,
-                           slide: function(event, ui) {
+                           'value': 1,
+                           'range': 'max',
+                           'slide': function(event, ui) {
                              scope._$speedLabel.text('Speed (' + ui.value +
                                                      'x)');
                            },
-                           change: function(event, ui) {
+                           'change': function(event, ui) {
                              scope._$speedLabel.text('Speed (' + ui.value +
                                                      'x)');
                              scope._sliderChanged();
                            }});
+      scope.$speed.css('background', '#70caff');
 
       // setup chosen
-      scope.$gradientSelect.chosen({width: '100%', search_contains: true});
-      scope.$trajectorySelect.chosen({width: '100%', search_contains: true});
+      scope.$gradientSelect.chosen({
+        width: '100%',
+        search_contains: true,
+        placeholder_text_single: gradientTooltip
+      });
+      scope.$trajectorySelect.chosen({
+        width: '100%',
+        search_contains: true,
+        placeholder_text_single: trajectoryTooltip
+      });
 
       scope.$gradientSelect.chosen().change(function (){
                                               scope._gradientChanged();
@@ -115,19 +135,24 @@ define([
                                               });
 
       scope.$rewind.button({icons: {primary: "ui-icon-seek-first"}});
+      scope.$rewind.attr('title', 'Restart the animation');
       scope.$rewind.on('click', function() {
         scope._rewindButtonClicked();
       });
 
       scope.$play.button({icons: {primary: "ui-icon-play"}});
+      scope.$play.attr('title', 'Start the animation');
       scope.$play.on('click', function(){
         scope._playButtonClicked();
       });
 
       scope.$pause.button({icons: {primary: "ui-icon-pause"}});
+      scope.$pause.attr('title', 'Pause the animation');
       scope.$pause.on('click', function() {
         scope._pauseButtonClicked();
       });
+
+      scope.setEnabled(false);
     });
 
     return this;
@@ -148,11 +173,16 @@ define([
   }
 
   AnimationsController.prototype._gradientChanged = function(evt, params) {
+    if (this.$trajectorySelect.val() !== '') {
+      this.setEnabled(true);
+    }
 
   }
 
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
-
+    if (this.$gradientSelect.val() !== '') {
+      this.setEnabled(true);
+    }
   }
 
   AnimationsController.prototype._rewindButtonClicked = function(evt, params) {
@@ -174,7 +204,7 @@ define([
     var view = this.getView();
 
     this._isPlaying = false;
-    this.AnimationDirector = null;
+    this.director = null;
 
     this.$play.prop('disabled', false);
     this.$speed.slider('option', 'disabled', false);
@@ -205,10 +235,23 @@ define([
     }
   }
 
-  AnimationsController.prototype._playButtonClicked = function(evt, params) {
+  /**
+   * Sets whether or not the tab can be modified or accessed.
+   *
+   * @param {Boolean} trulse option to enable tab.
+   */
+  AnimationsController.prototype.setEnabled = function(trulse) {
+    EmperorViewController.prototype.setEnabled.call(this, trulse);
 
+    this.$speed.slider('option', 'disabled', !trulse);
+    this.$play.prop('disabled', !trulse);
+    this.$pause.prop('disabled', !trulse);
+    this.$rewind.prop('disabled', !trulse);
+  };
+
+  AnimationsController.prototype._playButtonClicked = function(evt, params) {
     var headers, data = {}, positions = {}, gradient, trajectory, decomp, p;
-    var view, marker, pos;
+    var view, marker, pos, speed;
 
     view = this.getView();
     decomp = this.getView().decomp;
@@ -216,6 +259,8 @@ define([
 
     gradient = this.$gradientSelect.val();
     trajectory = this.$trajectorySelect.val();
+
+    speed = this.$speed.slider('option', 'value');
 
     for (var i = 0; i < decomp.plottable.length; i++) {
       p = decomp.plottable[i];
@@ -229,7 +274,7 @@ define([
     }
 
     this.director = new AnimationDirector(headers, data, positions, gradient,
-                                          trajectory);
+                                          trajectory, speed);
     this.$speed.slider('option', 'disabled', true);
     this.director.updateFrame();
 
