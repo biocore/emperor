@@ -173,14 +173,14 @@ define([
   }
 
   AnimationsController.prototype._gradientChanged = function(evt, params) {
-    if (this.$trajectorySelect.val() !== '') {
+    if (this.getTrajectoryCategory() !== '') {
       this.setEnabled(true);
     }
 
   }
 
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
-    if (this.$gradientSelect.val() !== '') {
+    if (this.getGradientCategory() !== '') {
       this.setEnabled(true);
     }
   }
