@@ -1,8 +1,9 @@
 define([
     'three',
     'orbitcontrols',
-    'draw'
-], function(THREE, OrbitControls, draw) {
+    'draw',
+    'underscore'
+], function(THREE, OrbitControls, draw, _) {
   /** @private */
   var makeLine = draw.makeLine;
   /** @private */
