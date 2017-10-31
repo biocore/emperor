@@ -1,8 +1,9 @@
 define([
     'three',
     'orbitcontrols',
-    'draw'
-], function(THREE, OrbitControls, draw) {
+    'draw',
+    'underscore'
+], function(THREE, OrbitControls, draw, _) {
   /** @private */
   var makeLine = draw.makeLine;
   /** @private */
@@ -652,7 +653,9 @@ define([
     var camera = this.camera;
 
     // if autorotation is enabled, then update the controls
-    this.control.update();
+    if (this.control.autoRotate) {
+      this.control.update();
+    }
 
     //point all samples towards the camera
     _.each(this.decViews.scatter.markers, function(element) {
