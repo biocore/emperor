@@ -207,7 +207,7 @@ define([
   AnimationsController.prototype._pauseButtonClicked = function(evt, params) {
     if (this.isPlaying()) {
       this._isPlaying = false;
-      this.$play.prop('disabled', true);
+      this.$play.prop('disabled', false);
     }
   }
 
@@ -226,6 +226,12 @@ define([
   };
 
   AnimationsController.prototype._playButtonClicked = function(evt, params) {
+
+    if (this._isPlaying === false && this.director !== null) {
+      this._isPlaying = true;
+      return;
+    }
+
     var headers, data = {}, positions = {}, gradient, trajectory, decomp, p;
     var view, marker, pos, speed;
 
