@@ -111,7 +111,6 @@ define([
                            'change': function(event, ui) {
                              scope._$speedLabel.text('Speed (' + ui.value +
                                                      'x)');
-                             scope._sliderChanged();
                            }});
       scope.$speed.css('background', '#70caff');
 
@@ -164,19 +163,10 @@ define([
     return this._isPlaying;
   }
 
-  AnimationsController.prototype._sliderChanged = function(evt, ui) {
-
-  }
-
-  AnimationsController.prototype._sliderChanged = function(evt, ui) {
-
-  }
-
   AnimationsController.prototype._gradientChanged = function(evt, params) {
     if (this.getTrajectoryCategory() !== '') {
       this.setEnabled(true);
     }
-
   }
 
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
@@ -191,9 +181,6 @@ define([
     this._isPlaying = false;
     this.director = null;
 
-    this.$play.prop('disabled', false);
-    this.$speed.slider('option', 'disabled', false);
-
     view.tubes.forEach(function(tube) {
       if (tube.parent !== null) {
         tube.parent.remove(tube);
@@ -202,13 +189,15 @@ define([
 
     view.tubes = [];
     view.needsUpdate = true;
+
+    this._updateButtons();
   }
 
   AnimationsController.prototype._pauseButtonClicked = function(evt, params) {
     if (this.isPlaying()) {
       this._isPlaying = false;
-      this.$play.prop('disabled', false);
     }
+    this._updateButtons();
   }
 
   /**
@@ -218,17 +207,60 @@ define([
    */
   AnimationsController.prototype.setEnabled = function(trulse) {
     EmperorViewController.prototype.setEnabled.call(this, trulse);
-
-    this.$speed.slider('option', 'disabled', !trulse);
-    this.$play.prop('disabled', !trulse);
-    this.$pause.prop('disabled', !trulse);
-    this.$rewind.prop('disabled', !trulse);
+    this._updateButtons();
   };
+
+  /**
+   *
+   *
+   *
+   *
+   */
+  AnimationsController.prototype._updateButtons = function() {
+    var play, pause, speed, rewind;
+
+    /*
+     *
+     * The behavior of the media buttons is a bit complicated. It is explained
+     * by the following truth table where the variables are "director", "is
+     * playing" and "enabled". Each output's value determines if the button
+     * should be enabled. Note that we negate the values when we make the
+     * assignment because jQuery only has a "disabled" method.
+     *
+     * ||----------|------------|---------||-------|-------|-------|--------|
+     * || director | is playing | enabled || Play  | Speed | Pause | Rewind |
+     * ||----------|------------|---------||-------|-------|-------|--------|
+     * || FALSE    | FALSE      | FALSE   || FALSE | FALSE | FALSE | FALSE  |
+     * || FALSE    | FALSE      | TRUE    || TRUE  | TRUE  | FALSE | FALSE  |
+     * || FALSE    | TRUE       | FALSE   || FALSE | FALSE | FALSE | FALSE  |
+     * || FALSE    | TRUE       | TRUE    || FALSE | FALSE | FALSE | FALSE  |
+     * || TRUE     | FALSE      | FALSE   || FALSE | FALSE | FALSE | FALSE  |
+     * || TRUE     | FALSE      | TRUE    || TRUE  | FALSE | FALSE | TRUE   |
+     * || TRUE     | TRUE       | FALSE   || FALSE | FALSE | FALSE | FALSE  |
+     * || TRUE     | TRUE       | TRUE    || FALSE | FALSE | TRUE  | TRUE   |
+     * ||----------|------------|---------||-------|-------|-------|--------|
+     *
+     */
+    play = ((this.enabled && this.director === null && !this.isPlaying()) ||
+            (this.enabled && this.director !== null && !this.isPlaying()));
+
+    pause = this.director !== null && this.enabled && this.isPlaying;
+
+    speed = this.director === null && !this.isPlaying() && this.enabled;
+
+    rewind = this.director !== null && this.enabled;
+
+    this.$speed.slider('option', 'disabled', !speed);
+    this.$play.prop('disabled', !play);
+    this.$pause.prop('disabled', !pause);
+    this.$rewind.prop('disabled', !rewind);
+  }
 
   AnimationsController.prototype._playButtonClicked = function(evt, params) {
 
     if (this._isPlaying === false && this.director !== null) {
       this._isPlaying = true;
+      this._updateButtons();
       return;
     }
 
@@ -257,10 +289,10 @@ define([
 
     this.director = new AnimationDirector(headers, data, positions, gradient,
                                           trajectory, speed);
-    this.$speed.slider('option', 'disabled', true);
     this.director.updateFrame();
 
     this._isPlaying = true;
+    this._updateButtons();
   }
 
   AnimationsController.prototype.drawFrame = function() {
@@ -282,7 +314,6 @@ define([
       }
     });
 
-
     view.tubes = this.director.trajectories.map(function(trajectory) {
       color = scope._colors[trajectory.metadataCategoryName] || 'yellow';
 
@@ -298,8 +329,9 @@ define([
     if (this.director.animationCycleFinished()) {
       this.director = null;
       this._isPlaying = false;
-      this.$play.prop('disabled', false);
-      this.$speed.slider('option', 'disabled', false);
+      this._updateButtons();
+
+      this.$rewind.prop('disabled', false);
     }
   };
 
