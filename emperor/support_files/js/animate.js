@@ -221,9 +221,11 @@ function(_, trajectory) {
         continue;
       }
 
-      // create the trajectory object
+      // create the trajectory object, we use Infinity to draw as many frames
+      // as they may be needed
       trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer, key,
-          gradientPointsBuffer, coordinatesBuffer, this.minimumDelta, n);
+          gradientPointsBuffer, coordinatesBuffer, this.minimumDelta, n,
+          Infinity);
 
       this.trajectories.push(trajectoryBuffer);
 

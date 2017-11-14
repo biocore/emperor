@@ -68,7 +68,7 @@ define([
      * @type {float}
      * @default 10
      */
-    this.maxN = maxN;
+    this.maxN = maxN !== undefined ? maxN : 10;
 
     if (this.coordinates.length != this.gradientPoints.length) {
       throw new Error('The number of coordinate points and gradient points is' +
@@ -108,6 +108,9 @@ define([
             this.gradientPoints[index + 1]));
 
       pointsPerStep = this.calculateNumberOfPointsForDelta(delta);
+      if (pointsPerStep > this.maxN) {
+        pointsPerStep = this.maxN;
+      }
 
       currInterpolation = linearInterpolation(this.coordinates[index]['x'],
           this.coordinates[index]['y'],
