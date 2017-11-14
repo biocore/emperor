@@ -95,7 +95,7 @@ define([
     this._$mediaContainer.append(this.$speed);
 
     this.director = null;
-    this._isPlaying = false;
+    this.playing = false;
 
     // initialize interface elements here
     $(this).ready(function() {
@@ -159,10 +159,6 @@ define([
   AnimationsController.prototype = Object.create(EmperorViewController.prototype);
   AnimationsController.prototype.constructor = EmperorViewController;
 
-  AnimationsController.prototype.isPlaying = function() {
-    return this._isPlaying;
-  }
-
   AnimationsController.prototype._gradientChanged = function(evt, params) {
     if (this.getTrajectoryCategory() !== '') {
       this.setEnabled(true);
@@ -178,7 +174,7 @@ define([
   AnimationsController.prototype._rewindButtonClicked = function(evt, params) {
     var view = this.getView();
 
-    this._isPlaying = false;
+    this.playing = false;
     this.director = null;
 
     view.tubes.forEach(function(tube) {
@@ -194,8 +190,8 @@ define([
   }
 
   AnimationsController.prototype._pauseButtonClicked = function(evt, params) {
-    if (this.isPlaying()) {
-      this._isPlaying = false;
+    if (this.playing) {
+      this.playing = false;
     }
     this._updateButtons();
   }
@@ -212,9 +208,9 @@ define([
 
   /**
    *
+   * Helper method to update what media buttons should be enabled
    *
-   *
-   *
+   * @private
    */
   AnimationsController.prototype._updateButtons = function() {
     var play, pause, speed, rewind;
@@ -222,31 +218,31 @@ define([
     /*
      *
      * The behavior of the media buttons is a bit complicated. It is explained
-     * by the following truth table where the variables are "director", "is
-     * playing" and "enabled". Each output's value determines if the button
+     * by the following truth table where the variables are "director",
+     * "playing" and "enabled". Each output's value determines if the button
      * should be enabled. Note that we negate the values when we make the
      * assignment because jQuery only has a "disabled" method.
      *
-     * ||----------|------------|---------||-------|-------|-------|--------|
-     * || director | is playing | enabled || Play  | Speed | Pause | Rewind |
-     * ||----------|------------|---------||-------|-------|-------|--------|
-     * || FALSE    | FALSE      | FALSE   || FALSE | FALSE | FALSE | FALSE  |
-     * || FALSE    | FALSE      | TRUE    || TRUE  | TRUE  | FALSE | FALSE  |
-     * || FALSE    | TRUE       | FALSE   || FALSE | FALSE | FALSE | FALSE  |
-     * || FALSE    | TRUE       | TRUE    || FALSE | FALSE | FALSE | FALSE  |
-     * || TRUE     | FALSE      | FALSE   || FALSE | FALSE | FALSE | FALSE  |
-     * || TRUE     | FALSE      | TRUE    || TRUE  | FALSE | FALSE | TRUE   |
-     * || TRUE     | TRUE       | FALSE   || FALSE | FALSE | FALSE | FALSE  |
-     * || TRUE     | TRUE       | TRUE    || FALSE | FALSE | TRUE  | TRUE   |
-     * ||----------|------------|---------||-------|-------|-------|--------|
+     * ||----------|---------|---------||-------|-------|-------|--------|
+     * || director | playing | enabled || Play  | Speed | Pause | Rewind |
+     * ||----------|---------|---------||-------|-------|-------|--------|
+     * || FALSE    | FALSE   | FALSE   || FALSE | FALSE | FALSE | FALSE  |
+     * || FALSE    | FALSE   | TRUE    || TRUE  | TRUE  | FALSE | FALSE  |
+     * || FALSE    | TRUE    | FALSE   || FALSE | FALSE | FALSE | FALSE  |
+     * || FALSE    | TRUE    | TRUE    || FALSE | FALSE | FALSE | FALSE  |
+     * || TRUE     | FALSE   | FALSE   || FALSE | FALSE | FALSE | FALSE  |
+     * || TRUE     | FALSE   | TRUE    || TRUE  | FALSE | FALSE | TRUE   |
+     * || TRUE     | TRUE    | FALSE   || FALSE | FALSE | FALSE | FALSE  |
+     * || TRUE     | TRUE    | TRUE    || FALSE | FALSE | TRUE  | TRUE   |
+     * ||----------|---------|---------||-------|-------|-------|--------|
      *
      */
-    play = ((this.enabled && this.director === null && !this.isPlaying()) ||
-            (this.enabled && this.director !== null && !this.isPlaying()));
+    play = ((this.enabled && this.director === null && !this.playing) ||
+            (this.enabled && this.director !== null && !this.playing));
 
-    pause = this.director !== null && this.enabled && this.isPlaying;
+    pause = this.director !== null && this.enabled && this.playing;
 
-    speed = this.director === null && !this.isPlaying() && this.enabled;
+    speed = this.director === null && !this.playing && this.enabled;
 
     rewind = this.director !== null && this.enabled;
 
@@ -258,8 +254,8 @@ define([
 
   AnimationsController.prototype._playButtonClicked = function(evt, params) {
 
-    if (this._isPlaying === false && this.director !== null) {
-      this._isPlaying = true;
+    if (this.playing === false && this.director !== null) {
+      this.playing = true;
       this._updateButtons();
       return;
     }
@@ -291,13 +287,13 @@ define([
                                           trajectory, speed);
     this.director.updateFrame();
 
-    this._isPlaying = true;
+    this.playing = true;
     this._updateButtons();
   }
 
   AnimationsController.prototype.drawFrame = function() {
     if (this.director === null || this.director.animationCycleFinished() ||
-        !this.isPlaying()) {
+        !this.playing) {
       return;
     }
 
@@ -328,7 +324,7 @@ define([
 
     if (this.director.animationCycleFinished()) {
       this.director = null;
-      this._isPlaying = false;
+      this.playing = false;
       this._updateButtons();
 
       this.$rewind.prop('disabled', false);
