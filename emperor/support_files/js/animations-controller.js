@@ -159,43 +159,6 @@ define([
   AnimationsController.prototype = Object.create(EmperorViewController.prototype);
   AnimationsController.prototype.constructor = EmperorViewController;
 
-  AnimationsController.prototype._gradientChanged = function(evt, params) {
-    if (this.getTrajectoryCategory() !== '') {
-      this.setEnabled(true);
-    }
-  }
-
-  AnimationsController.prototype._trajectoryChanged = function(evt, params) {
-    if (this.getGradientCategory() !== '') {
-      this.setEnabled(true);
-    }
-  }
-
-  AnimationsController.prototype._rewindButtonClicked = function(evt, params) {
-    var view = this.getView();
-
-    this.playing = false;
-    this.director = null;
-
-    view.tubes.forEach(function(tube) {
-      if (tube.parent !== null) {
-        tube.parent.remove(tube);
-      }
-    });
-
-    view.tubes = [];
-    view.needsUpdate = true;
-
-    this._updateButtons();
-  }
-
-  AnimationsController.prototype._pauseButtonClicked = function(evt, params) {
-    if (this.playing) {
-      this.playing = false;
-    }
-    this._updateButtons();
-  }
-
   /**
    * Sets whether or not the tab can be modified or accessed.
    *
@@ -252,6 +215,73 @@ define([
     this.$rewind.prop('disabled', !rewind);
   }
 
+  /**
+   *
+   * Callback method executed when the Gradient menu changes.
+   *
+   * @private
+   */
+  AnimationsController.prototype._gradientChanged = function(evt, params) {
+    if (this.getTrajectoryCategory() !== '') {
+      this.setEnabled(true);
+    }
+  }
+
+  /**
+   *
+   * Callback method executed when the Trajectory menu changes.
+   *
+   * @private
+   */
+  AnimationsController.prototype._trajectoryChanged = function(evt, params) {
+    if (this.getGradientCategory() !== '') {
+      this.setEnabled(true);
+    }
+  }
+
+  /**
+   *
+   * Callback method executed when the Rewind button is clicked.
+   *
+   * @private
+   */
+  AnimationsController.prototype._rewindButtonClicked = function(evt, params) {
+    var view = this.getView();
+
+    this.playing = false;
+    this.director = null;
+
+    view.tubes.forEach(function(tube) {
+      if (tube.parent !== null) {
+        tube.parent.remove(tube);
+      }
+    });
+
+    view.tubes = [];
+    view.needsUpdate = true;
+
+    this._updateButtons();
+  }
+
+  /**
+   *
+   * Callback method when the Pause button is clicked.
+   *
+   * @private
+   */
+  AnimationsController.prototype._pauseButtonClicked = function(evt, params) {
+    if (this.playing) {
+      this.playing = false;
+    }
+    this._updateButtons();
+  }
+
+  /**
+   *
+   * Callback method when the Play button is clicked.
+   *
+   * @private
+   */
   AnimationsController.prototype._playButtonClicked = function(evt, params) {
 
     if (this.playing === false && this.director !== null) {
@@ -291,6 +321,15 @@ define([
     this._updateButtons();
   }
 
+  /**
+   *
+   * Update the portion of the trajectory that needs to be drawn.
+   *
+   * If the animation is not playing (because it was paused or it has finished)
+   * or a director hasn't been instantiated, no action is taken. Otherwise,
+   * trajectories are updated on screen.
+   *
+   */
   AnimationsController.prototype.drawFrame = function() {
     if (this.director === null || this.director.animationCycleFinished() ||
         !this.playing) {
@@ -299,6 +338,7 @@ define([
 
     var view = this.getView(), tube, scope = this, color;
 
+    // FIXME: this is a bug when the shapes are not spheres
     var radius = view.markers[0].geometry.parameters.radius;
 
     view.tubes.forEach(function(tube) {
@@ -325,32 +365,74 @@ define([
     if (this.director.animationCycleFinished()) {
       this.director = null;
       this.playing = false;
-      this._updateButtons();
 
+      // When the animation cycle finishes, update the state of the media
+      // buttons and re-enable the rewind button so users can clear the
+      // screen.
+      this._updateButtons();
       this.$rewind.prop('disabled', false);
     }
   };
 
+  /**
+   *
+   * Setter for the gradient category
+   *
+   * Represents how samples are ordered in each trajectory.
+   *
+   * @param {String} category The name of the category to set in the menu.
+   */
   AnimationsController.prototype.setGradientCategory = function(category) {
     this.$gradientSelect.val(category);
     this.$gradientSelect.trigger('chosen:updated');
     this.$gradientSelect.change();
   };
 
+  /**
+   *
+   * Getter for the gradient category
+   *
+   * Represents how samples are ordered in each trajectory.
+   *
+   * @return {String} The name of the gradient category in the menu.
+   */
   AnimationsController.prototype.getGradientCategory = function() {
     return this.$gradientSelect.val();
   };
 
+  /**
+   *
+   * Setter for the trajectory category
+   *
+   * Represents how samples are grouped together.
+   *
+   * @param {String} category The name of the category to set in the menu.
+   */
   AnimationsController.prototype.setTrajectoryCategory = function(category) {
     this.$trajectorySelect.val(category);
     this.$trajectorySelect.trigger('chosen:updated');
     this.$trajectorySelect.change();
   };
 
+  /**
+   *
+   * Getter for the trajectory category
+   *
+   * Represents how samples are grouped together.
+   *
+   * @return {String} The name of the trajectory category in the menu.
+   */
   AnimationsController.prototype.getTrajectoryCategory = function() {
     return this.$trajectorySelect.val();
   };
 
+  /**
+   *
+   * Setter for the speed of the animation.
+   *
+   * @param {Float} speed Speed at which the animation is played.
+   * @throws {Error} If speed value es below 0.1 or above 5.
+   */
   AnimationsController.prototype.setSpeed = function(speed) {
     if (speed < 0.1 || speed > 5) {
       throw new Error("The speed cannot be less than 0.1 or greater than 5");
@@ -358,6 +440,12 @@ define([
     this.$speed.slider('option', 'value', speed);
   };
 
+  /**
+   *
+   * Getter for the speed of the animation.
+   *
+   * @return {Float} Speed at which the animation is played.
+   */
   AnimationsController.prototype.getSpeed = function() {
     return this.$speed.slider('option', 'value');
   };
