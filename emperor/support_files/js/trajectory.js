@@ -108,9 +108,6 @@ define([
             this.gradientPoints[index + 1]));
 
       pointsPerStep = this.calculateNumberOfPointsForDelta(delta);
-      if (pointsPerStep > this.maxN) {
-        pointsPerStep = this.maxN;
-      }
 
       currInterpolation = linearInterpolation(this.coordinates[index]['x'],
           this.coordinates[index]['y'],
@@ -348,6 +345,37 @@ define([
     for (var key in chewedSampleData) {
       chewedSampleData[key].sort(sortingFunction);
     }
+
+    // Don't add a trajectory unless it has more than one sample in the
+    // gradient. For example, there's no reason why we should animate a
+    // trajectory that has 3 samples at timepoint 0 ([0, 0, 0]) or a trajectory
+    // that has just one sample at timepoint 0 ([0])
+    chewedSampleData = _.filter(chewedSampleData, function(trajectory){
+      var uniqueValues = _.uniq(trajectory, false, function(sample){
+        return sample.value;
+      });
+
+      return uniqueValues.length >= 1 && trajectory.length >=1;
+    });
+
+    // note that min finds the trajectory with the oldest sample, once found
+    // we get the first sample and the first point in the gradient
+    var earliestSample = _.min(chewedSampleData, function(trajectory) {
+      return parseInt(trajectory[0].value);
+    })[0].value;
+
+
+    // Left-pad all trajectories so they start at the same time, but they are
+    // not visibly different
+    var out = {};
+    _.each(chewedSampleData, function(value, key){
+      out[key] = chewedSampleData[key];
+      var first = chewedSampleData[key][0];
+      if (first.value !== earliestSample){
+        out[key].unshift({'name': first.name, 'value': earliestSample,
+                          'x': first.x, 'y': first.y, 'z': first.z + 0.0001});
+      }
+    })
 
     return chewedSampleData;
   }
