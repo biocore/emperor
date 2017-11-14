@@ -274,7 +274,7 @@ define([
     gradient = this.$gradientSelect.val();
     trajectory = this.$trajectorySelect.val();
 
-    speed = this.$speed.slider('option', 'value');
+    speed = this.getSpeed();
 
     for (var i = 0; i < decomp.plottable.length; i++) {
       p = decomp.plottable[i];
@@ -355,6 +355,17 @@ define([
     return this.$trajectorySelect.val();
   };
 
+  AnimationsController.prototype.setSpeed = function(speed) {
+    if (speed < 0.1 || speed > 5) {
+      throw new Error("The speed cannot be less than 0.1 or greater than 5");
+    }
+    this.$speed.slider('option', 'value', speed);
+  };
+
+  AnimationsController.prototype.getSpeed = function() {
+    return this.$speed.slider('option', 'value');
+  };
+
   AnimationsController.prototype.setColors = function(colors) {
     this._colors = colors;
   }
@@ -371,7 +382,9 @@ define([
   AnimationsController.prototype.toJSON = function() {
     var json = {};
 
-    console.error('AnimationsViewController.toJSON Not implemented!');
+    json.gradientCategory = this.getGradientCategory();
+    json.trajectoryCategory = this.getTrajectoryCategory();
+    json.speed = this.getSpeed();
 
     return json;
   };
@@ -382,9 +395,12 @@ define([
    * @param {Object} Parsed JSON string representation of self.
    */
   AnimationsController.prototype.fromJSON = function(json) {
-    var scope = this;
+    this._rewindButtonClicked();
 
-    console.error('AnimationsViewController.fromJSON Not implemented!');
+    this.setGradientCategory(json.gradientCategory);
+    this.setTrajectoryCategory(json.trajectoryCategory);
+
+    this.setSpeed(json.speed);
   };
 
   return AnimationsController;
