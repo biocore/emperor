@@ -111,6 +111,8 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
             'z': 0.322871}
         ],
         'Fast': [
+        {'name': 'PC.607', 'value': '20061126', 'x': -0.09133, 'y': 0.424147,
+          'z': -0.135527},
         {'name': 'PC.607', 'value': '20071112', 'x': -0.09133, 'y': 0.424147,
           'z': -0.135627},
         {'name': 'PC.634', 'value': '20080116', 'x': -0.349339, 'y': -0.120788,
@@ -146,8 +148,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
       var trajectory;
 
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
-          gradientPoints, coordinates, 2,
-          10);
+                                           gradientPoints, coordinates, 2, 10);
       deepEqual(trajectory.sampleNames, ['PC.636', 'PC.635', 'PC.356',
           'PC.481', 'PC.354'], 'Sample names are set correctly');
       equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata ' +
