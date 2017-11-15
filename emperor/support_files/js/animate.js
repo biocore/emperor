@@ -257,7 +257,7 @@ function(_, trajectory) {
    *
    */
   AnimationDirector.prototype._computeN = function() {
-    var arrayOfLengths = new Array();
+    var arrayOfLengths = [];
 
     // retrieve the length of all the trajectories
     for (var index = 0; index < this.trajectories.length; index++) {
