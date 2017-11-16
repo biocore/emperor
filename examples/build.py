@@ -47,11 +47,6 @@ samples = pd.DataFrame(index=coords_ids, data=coords)
 mf = pd.DataFrame(data=metadata, columns=md_headers)
 mf.set_index('SampleID', inplace=True)
 
-mf['subject'] = np.random.randint(low=0, high=3, size=N)
-
-subjects = ['ringo', 'john', 'george', 'paul']
-mf['subject'] = mf['subject'].apply(lambda x: subjects[x])
-
 res = OrdinationResults(short_method_name='PC', long_method_name='Principal '
                         'Coordinates Analysis', eigvals=pct_var,
                         samples=samples, proportion_explained=pct_var)

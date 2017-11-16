@@ -584,18 +584,8 @@ define([
       return dv.needsUpdate;
     });
 
-    // always add all the present tubes, if they are already present, this will
-    // be a noop, we could be smarter about this ...
-    // this.decViews.forEach(function(view) {
-    //   view.tubes.forEach(function(tube){
-    //     scope.scene.add(tube);
-    //   };
-    // });
-
     _.each(this.decViews, function(view) {
       view.tubes.forEach(function(tube) {
-        // console.log('LOLOLOL');
-        // console.log(tube);
         scope.scene.add(tube);
       });
     });
