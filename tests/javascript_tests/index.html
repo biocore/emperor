@@ -134,6 +134,7 @@
           'test_visibility_controller': '../../tests/javascript_tests/test_visibility_controller',
           'test_shape_controller': '../../tests/javascript_tests/test_shape_controller',
           'test_axes_controller': '../../tests/javascript_tests/test_axes_controller',
+          'test_animations_controller': '../../tests/javascript_tests/test_animations_controller'
         },
         /*
            Libraries that are not AMD compatible need shim to declare their
@@ -179,7 +180,8 @@
            'test_trajectory', 'test_animate', 'test_util',  'test_draw',
            'test_visibility_controller', 'test_shape_controller',
            'test_scale_view_controller', 'test_axes_controller',
-           'test_scalar_view_controller', 'test_opacity_view_controller'],
+           'test_scalar_view_controller', 'test_opacity_view_controller',
+           'test_animations_controller'],
            /*
               Very important to always load all dependencies first, otherwise
               you might encounter problems with Qunit not running all tests.
@@ -202,7 +204,8 @@
                       test_draw, test_visibility_controller,
                       test_shape_controller, test_scale_view_controller,
                       test_axes_controller, test_scalar_view_controller,
-                      test_opacity_view_controller) {
+                      test_opacity_view_controller,
+                      test_animations_controller) {
               // now trigger the tests
               $( document ).ready(function() {
                 QUnit.start();
