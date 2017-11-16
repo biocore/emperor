@@ -952,6 +952,51 @@ class EmperorSettingsTests(TestCase):
         with self.assertRaises(TypeError):
             emp.opacity_by('DOB', data, scaled=(1, 2))
 
+    def test_animations_by(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        exp = {'animations': {"gradientCategory": 'DOB',
+                              "trajectoryCategory": 'Treatment',
+                              "speed": 1
+                              }
+               }
+        obs = emp.animations_by('DOB', 'Treatment')
+        self.assertEqual(emp.settings['animations'], exp['animations'])
+        self.assertEqual(obs.settings['animations'], exp['animations'])
+
+        exp = {'animations': {"gradientCategory": 'Treatment',
+                              "trajectoryCategory": 'DOB',
+                              "speed": 3.3
+                              }
+               }
+        obs = emp.animations_by('Treatment', 'DOB', 3.3)
+        self.assertEqual(emp.settings['animations'], exp['animations'])
+        self.assertEqual(obs.settings['animations'], exp['animations'])
+
+    def test_animations_by_exceptions(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(KeyError):
+            emp.animations_by('Animals', 'DOB')
+
+    def test_animations_by_exceptions_one(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(KeyError):
+            emp.animations_by('DOB', 'Animals')
+
+    def test_animations_by_exceptions_two(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(TypeError):
+            emp.animations_by(1, 'Animals')
+
+    def test_animations_by_exceptions_three(self):
+        emp = Emperor(self.ord_res, self.mf)
+
+        with self.assertRaises(TypeError):
+            emp.animations_by('DOB', 'Treatment', '1.0')
+
     def test_set_axes(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
 

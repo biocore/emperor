@@ -118,6 +118,11 @@ requirejs.config({
   'controller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/controller',
   'draw': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/draw',
   'scene3d': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/sceneplotview3d',
+  'shapes': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shapes',
+  'animationdirector': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/animate',
+  'trajectory': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/trajectory',
+
+  /* controllers */
   'abcviewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/abc-view-controller',
   'viewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/view-controller',
   'colorviewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/color-view-controller',
@@ -126,10 +131,13 @@ requirejs.config({
   'scaleviewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/scale-view-controller',
   'shapecontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shape-controller',
   'axescontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/axes-controller',
+  'animationscontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/animations-controller',
+
+  /* editors */
   'shape-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shape-editor',
   'color-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/color-editor',
-  'scale-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/scale-editor',
-  'shapes': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shapes'
+  'scale-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/scale-editor'
+
 },
 /*
    Libraries that are not AMD compatible need shim to declare their
@@ -305,6 +313,11 @@ requirejs.config({
   'controller': './some-local-path//js/controller',
   'draw': './some-local-path//js/draw',
   'scene3d': './some-local-path//js/sceneplotview3d',
+  'shapes': './some-local-path//js/shapes',
+  'animationdirector': './some-local-path//js/animate',
+  'trajectory': './some-local-path//js/trajectory',
+
+  /* controllers */
   'abcviewcontroller': './some-local-path//js/abc-view-controller',
   'viewcontroller': './some-local-path//js/view-controller',
   'colorviewcontroller': './some-local-path//js/color-view-controller',
@@ -313,10 +326,13 @@ requirejs.config({
   'scaleviewcontroller': './some-local-path//js/scale-view-controller',
   'shapecontroller': './some-local-path//js/shape-controller',
   'axescontroller': './some-local-path//js/axes-controller',
+  'animationscontroller': './some-local-path//js/animations-controller',
+
+  /* editors */
   'shape-editor': './some-local-path//js/shape-editor',
   'color-editor': './some-local-path//js/color-editor',
-  'scale-editor': './some-local-path//js/scale-editor',
-  'shapes': './some-local-path//js/shapes'
+  'scale-editor': './some-local-path//js/scale-editor'
+
 },
 /*
    Libraries that are not AMD compatible need shim to declare their

@@ -569,7 +569,7 @@ define([
    */
    ScenePlotView3D.prototype.checkUpdate = function() {
     var updateDimensions = false, updateColors = false,
-        currentDimensions, backgroundColor, axesColor;
+        currentDimensions, backgroundColor, axesColor, scope = this;
 
     // check if any of the decomposition views have changed
     var updateData = _.any(this.decViews, function(dv) {
@@ -582,6 +582,12 @@ define([
       axesColor = dv.axesColor;
 
       return dv.needsUpdate;
+    });
+
+    _.each(this.decViews, function(view) {
+      view.tubes.forEach(function(tube) {
+        scope.scene.add(tube);
+      });
     });
 
     // check if the visible dimensions have changed

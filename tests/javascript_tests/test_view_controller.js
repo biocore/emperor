@@ -199,6 +199,16 @@ requirejs([
       deepEqual(_.keys(attr.decompViewDict), ['pcoa', 'biplot']);
     });
 
+    test('Test hasMetadataField', function(assert) {
+      var container = $('<div id="does-not-exist"></div>');
+
+      var controller = new EmperorViewController(container, 'foo', 'bar',
+          this.sharedDecompositionViewDict);
+
+      equal(controller.hasMetadataField('DOB'), true);
+      equal(controller.hasMetadataField('PLEL'), false);
+    });
+
     /**
      *
      * Tests to make sure the exceptions are being raised as expected

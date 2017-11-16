@@ -1,7 +1,7 @@
 requirejs([
     'underscore',
     'jquery',
-    'animate'
+    'animationdirector'
 ], function(_, $, AnimationDirector) {
   $(document).ready(function() {
 
@@ -65,7 +65,7 @@ requirejs([
         'P6': 0.067853, 'P7': 0.244448, 'P8': -0.059883 };
 
         mappingFileDataShort = { 'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT',
-        'Control', '20070314'], 'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT',
+        'Control', '20061126'], 'PC.635': ['PC.635', 'YATGCTGCCTCCCGTAGGAGT',
         'Fast', '20080116'], 'PC.636': ['PC.636', 'YATGCTGCCTCCCGTAGGAGT',
         'Fast', '20080116'], 'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT',
         'Fast', '20061126'] };
@@ -122,8 +122,8 @@ requirejs([
     test('Test constructor', function() {
 
       var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
-          coordinatesData, 'DOB',
-          'Treatment', 1000, 10);
+                                           coordinatesData, 'DOB', 'Treatment',
+                                           10);
 
       // a quick run through all the properties
       equal(director.mappingFileHeaders, mappingFileHeaders, 'The mapping ' +
@@ -138,7 +138,7 @@ requirejs([
           'trajectoryCategory is set correctly');
       equal(director.minimumDelta, 92, 'The minimum delta is computed' +
           'correctly');
-      equal(director.maximumTrajectoryLength, 26, 'The maximum trajectory ' +
+      equal(director.maximumTrajectoryLength, 206, 'The maximum trajectory ' +
           'length value is correct');
       equal(director.currentFrame, -1, 'The current frame is correct');
       equal(director.trajectories.length, 2, 'The number of trajectories is ' +
@@ -158,7 +158,8 @@ requirejs([
           {'x': 0.232873, 'y': 0.139788, 'z': 0.322871}],
           'Control');
       deepEqual(director.trajectories[1].representativeCoordinatesAtIndex(1000),
-          [{'x': -0.09133, 'y': 0.424147, 'z': -0.135627},
+          [{'x': -0.09133, 'y': 0.424147, 'z': -0.135527},
+          {'x': -0.09133, 'y': 0.424147, 'z': -0.135627},
           {'x': -0.349339, 'y': -0.120788, 'z': 0.115275},
           {'x': -0.237661, 'y': 0.046053, 'z': -0.138136},
           {'x': -0.276542, 'y': -0.144964, 'z': 0.066647}],
@@ -169,9 +170,9 @@ requirejs([
 
     test('Test useless trajectories are removed', function() {
       var director = new AnimationDirector(mappingFileHeadersUnique,
-          mappingFileDataUnique,
-          coordinatesData, 'DOB',
-          'Treatment', 1000, 10);
+                                           mappingFileDataUnique,
+                                           coordinatesData, 'DOB',
+                                           'Treatment', 2);
       equal(director.trajectories.length, 2, 'The number of trajectories is ' +
           'correct');
       equal(director.trajectories[0].metadataCategoryName, 'C', 'The ' +
@@ -179,7 +180,7 @@ requirejs([
       equal(director.trajectories[1].metadataCategoryName, 'D', 'The ' +
           'category name (D) is assigned correctly');
       deepEqual(director.trajectories[0].gradientPoints,
-          ['0', '1', '2'], 'Correct time points (C)');
+          ['-9999', '0', '1', '2'], 'Correct time points (C)');
         deepEqual(director.trajectories[1].gradientPoints,
             ['-9999', '0', '100000'], 'Correct time points (D)');
     });
@@ -197,7 +198,7 @@ requirejs([
       throws(
           function() {
             result = new AnimationDirector(mappingFileData, coordinatesData,
-                'DOB', 'Treatment', 1000);
+                'DOB', 'Treatment', 1);
           },
           Error,
           'An error is raised if mapping file headers are not passed'
@@ -207,7 +208,7 @@ requirejs([
           function() {
             result = new AnimationDirector(mappingFileHeaders,
                 coordinatesData, 'DOB',
-                'Treatment', 1000);
+                'Treatment', 1);
           },
           Error,
           'An error is raised if mapping file data is not passed'
@@ -217,7 +218,7 @@ requirejs([
           function() {
             result = new AnimationDirector(mappingFileHeaders,
                 mappingFileData, coordinatesData,
-                'Treatment', 1000);
+                'Treatment', 1);
           },
           Error,
           'An error is raised if no gradient category is passed'
@@ -226,7 +227,7 @@ requirejs([
       throws(
           function() {
             result = new AnimationDirector(mappingFileHeaders,
-                mappingFileData, 'DOB', 1000);
+                mappingFileData, 'DOB', 1);
           },
           Error,
           'An error is raised if no trajectory category is passed'
@@ -252,21 +253,21 @@ requirejs([
 
       var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
           coordinatesData, 'DOB',
-          'Treatment', 1000);
-      equal(director.getMaximumTrajectoryLength(), 26,
+          'Treatment', 1);
+      equal(director.getMaximumTrajectoryLength(), 2064,
           'Test for the correct getMaximumTrajectoryLength value to be ' +
           'returned');
       var director = new AnimationDirector(mappingFileHeaders, mappingFileData,
           coordinatesData, 'DOB',
-          'Treatment', 10000);
-      equal(director.getMaximumTrajectoryLength(), 26,
+          'Treatment', 10);
+      equal(director.getMaximumTrajectoryLength(), 206,
           'Test for the correct getMaximumTrajectoryLength value to be ' +
           'returned');
       var director = new AnimationDirector(mappingFileHeaders,
           mappingFileData, coordinatesData,
           'DOB', 'LinkerPrimerSequence',
-          1000);
-      equal(director.getMaximumTrajectoryLength(), 41,
+          100);
+      equal(director.getMaximumTrajectoryLength(), 1,
           'Test for the correct getMaximumTrajectoryLength value to be ' +
           'returned');
     });
@@ -280,7 +281,7 @@ requirejs([
     test('Test the current frame is updated correctly', function() {
       var director = new AnimationDirector(mappingFileHeaders,
           mappingFileData, coordinatesData,
-          'DOB', 'Treatment', 1000);
+          'DOB', 'Treatment', 10);
       equal(director.currentFrame, -1, 'The current frame is set correctly');
       director.updateFrame();
       equal(director.currentFrame, 0, 'The current frame is set correctly');
@@ -289,7 +290,7 @@ requirejs([
       for (var i = 1; i < 1000; i++) {
         director.updateFrame();
       }
-      equal(director.currentFrame, 27, 'The current frame is stopped at the' +
+      equal(director.currentFrame, 207, 'The current frame is stopped at the' +
           ' maximum trajectory length');
     });
 
@@ -320,7 +321,7 @@ requirejs([
       var director = new AnimationDirector(mappingFileHeaders,
           mappingFileDataShort,
           coordinatesDataShort,
-          'DOB', 'Treatment', 1000);
+          'DOB', 'Treatment', 1);
       equal(director.trajectories.length, 1, 'Correct number of trajectories');
 
     });

@@ -36,6 +36,8 @@ function(_, trajectory) {
    * @param {String} trajectoryCategory a string with the name of the mapping
    * file header where the data that groups the samples is contained, this will
    * usually be BODY_SITE, HOST_SUBJECT_ID, etc..
+   * @param {speed} Positive real number determining the speed of an animation,
+   * this is reflected in the number of frames produced for each time interval.
    *
    * @return {AnimationDirector} returns an animation director if the parameters
    * passed in were all valid.
@@ -49,12 +51,12 @@ function(_, trajectory) {
    */
   function AnimationDirector(mappingFileHeaders, mappingFileData,
                              coordinatesData, gradientCategory,
-                             trajectoryCategory) {
+                             trajectoryCategory, speed) {
 
     // all arguments are required
     if (mappingFileHeaders === undefined || mappingFileData === undefined ||
       coordinatesData === undefined || gradientCategory === undefined ||
-      trajectoryCategory === undefined) {
+      trajectoryCategory === undefined || speed === undefined) {
       throw new Error('All arguments are required');
     }
 
@@ -69,6 +71,12 @@ function(_, trajectory) {
     if (index == -1) {
       throw new Error('Could not find the trajectory category in the mapping' +
                       ' file');
+    }
+
+    // guard against logical problems with the trajectory object
+    if (speed <= 0) {
+      throw new Error('The animation speed cannot be less than or equal to ' +
+                      'zero');
     }
 
     /**
@@ -134,7 +142,13 @@ function(_, trajectory) {
      * Array where each element in the trajectory is a trajectory with the
      * interpolated points in it.
      */
-    this.trajectories = new Array();
+    this.trajectories = [];
+
+    /**
+     * @type {Float}
+     * How fast should the animation run, has to be a postive non-zero value.
+     */
+    this.speed = speed;
 
     this.initializeTrajectories();
     this.getMaximumTrajectoryLength();
@@ -150,9 +164,12 @@ function(_, trajectory) {
   AnimationDirector.prototype.initializeTrajectories = function() {
 
     var chewedData = null, trajectoryBuffer = null, minimumDelta;
-    var sampleNamesBuffer = new Array(), gradientPointsBuffer = new Array();
-    var coordinatesBuffer = new Array();
+    var sampleNamesBuffer = [], gradientPointsBuffer = [];
+    var coordinatesBuffer = [];
     var chewedDataBuffer = null;
+
+    // frames we want projected in the trajectory's interval
+    var n = Math.floor((1 / (this.speed)) * 10);
 
     // compute a dictionary from where we will extract the germane data
     chewedData = getSampleNamesAndDataForSortedTrajectories(
@@ -204,9 +221,11 @@ function(_, trajectory) {
         continue;
       }
 
-      // create the trajectory object
+      // create the trajectory object, we use Infinity to draw as many frames
+      // as they may be needed
       trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer, key,
-          gradientPointsBuffer, coordinatesBuffer, this.minimumDelta);
+          gradientPointsBuffer, coordinatesBuffer, this.minimumDelta, n,
+          Infinity);
 
       this.trajectories.push(trajectoryBuffer);
 
@@ -238,7 +257,7 @@ function(_, trajectory) {
    *
    */
   AnimationDirector.prototype._computeN = function() {
-    var arrayOfLengths = new Array();
+    var arrayOfLengths = [];
 
     // retrieve the length of all the trajectories
     for (var index = 0; index < this.trajectories.length; index++) {

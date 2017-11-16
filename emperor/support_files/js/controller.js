@@ -11,6 +11,7 @@ define([
     'shapecontroller',
     'axescontroller',
     'scaleviewcontroller',
+    'animationscontroller',
     'filesaver',
     'viewcontroller',
     'svgrenderer',
@@ -19,8 +20,9 @@ define([
     'canvastoblob'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
             ColorViewController, VisibilityController, OpacityViewController,
-            ShapeController, AxesController, ScaleViewController, FileSaver,
-            viewcontroller, SVGRenderer, Draw, CanvasRenderer, canvasToBlob) {
+            ShapeController, AxesController, ScaleViewController,
+            AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
+            CanvasRenderer, canvasToBlob) {
 
   /**
    *
@@ -353,6 +355,11 @@ define([
    */
   EmperorController.prototype.render = function() {
     var scope = this;
+
+    if (this.controllers.animations !== undefined) {
+      this.controllers.animations.drawFrame();
+    }
+
     $.each(this.sceneViews, function(i, sv) {
       if (sv.checkUpdate()) {
         scope.renderer.setViewport(0, 0, scope.width, scope.height);
@@ -363,6 +370,7 @@ define([
         scope.updatePlotBanner();
       }
     });
+
   };
 
   /**
@@ -444,6 +452,8 @@ define([
                                          ShapeController);
     this.controllers.axes = this.addTab(this.sceneViews[0].decViews,
                                         AxesController);
+    this.controllers.animations = this.addTab(this.sceneViews[0].decViews,
+                                              AnimationsController);
 
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
@@ -724,7 +734,11 @@ define([
     //load the rest of the controller settings
     _.each(this.controllers, function(controller, index) {
       if (controller !== undefined && json[index] !== undefined) {
-        controller.fromJSON(json[index]);
+        // wrap everything inside this "ready" call to prevent problems with
+        // the jQuery elements not being loaded yet
+        $(function() {
+          controller.fromJSON(json[index]);
+        });
       }
     });
 

@@ -126,11 +126,9 @@ define([
           currInterpolation.slice(0, -1));
 
       // extend the interval buffer
-      // credit goes to http://stackoverflow.com/a/13735425/379593
-      intervalBuffer = intervalBuffer.concat(
-          Array.apply(null, new Array(pointsPerStep)).map(
-            Number.prototype.valueOf, index));
-
+      for (var i = 0; i < pointsPerStep; i++) {
+        intervalBuffer.push(index);
+      }
     }
 
     // add the last point to make sure the trajectory is closed
@@ -311,7 +309,7 @@ define([
     var gradientIndex = mappingFileHeaders.indexOf(gradientCategory);
     var trajectoryIndex = mappingFileHeaders.indexOf(trajectoryCategory);
 
-    var chewedSampleData = new Object();
+    var processedData = {}, out = {};
     var trajectoryBuffer = null, gradientBuffer = null;
 
     // this is the most utterly annoying thing ever
@@ -329,10 +327,10 @@ define([
 
       // check if there's already an element for this trajectory, if not
       // initialize a new array for this element of the processed data
-      if (chewedSampleData[trajectoryBuffer] === undefined) {
-        chewedSampleData[trajectoryBuffer] = new Array();
+      if (processedData[trajectoryBuffer] === undefined) {
+        processedData[trajectoryBuffer] = [];
       }
-      chewedSampleData[trajectoryBuffer].push({'name': sampleId,
+      processedData[trajectoryBuffer].push({'name': sampleId,
         'value': gradientBuffer, 'x': coordinatesData[sampleId]['x'],
         'y': coordinatesData[sampleId]['y'],
         'z': coordinatesData[sampleId]['z']});
@@ -345,11 +343,46 @@ define([
     };
 
     // sort all the values using the custom anonymous function
-    for (var key in chewedSampleData) {
-      chewedSampleData[key].sort(sortingFunction);
+    for (var key in processedData) {
+      processedData[key].sort(sortingFunction);
     }
 
-    return chewedSampleData;
+    // Don't add a trajectory unless it has more than one sample in the
+    // gradient. For example, there's no reason why we should animate a
+    // trajectory that has 3 samples at timepoint 0 ([0, 0, 0]) or a trajectory
+    // that has just one sample at timepoint 0 ([0])
+    for (key in processedData) {
+      var uniqueValues = _.uniq(processedData[key], false, function(sample) {
+        return sample.value;
+      });
+
+      if (uniqueValues.length > 1 && processedData[key].length >= 1) {
+        out[key] = processedData[key];
+      }
+    }
+
+    // we need a placeholder object as we filter trajectories below
+    processedData = out;
+    out = {};
+
+    // note that min finds the trajectory with the oldest sample, once found
+    // we get the first sample and the first point in the gradient
+    var earliestSample = _.min(processedData, function(trajectory) {
+      return parseInt(trajectory[0].value);
+    })[0].value;
+
+    // Left-pad all trajectories so they start at the same time, but they are
+    // not visibly different
+    _.each(processedData, function(value, key) {
+      out[key] = processedData[key];
+      var first = processedData[key][0];
+      if (first.value !== earliestSample) {
+        out[key].unshift({'name': first.name, 'value': earliestSample,
+                          'x': first.x, 'y': first.y, 'z': first.z + 0.0001});
+      }
+    });
+
+    return out;
   }
 
   /**
