@@ -734,7 +734,11 @@ define([
     //load the rest of the controller settings
     _.each(this.controllers, function(controller, index) {
       if (controller !== undefined && json[index] !== undefined) {
-        controller.fromJSON(json[index]);
+        // wrap everything inside this "ready" call to prevent problems with
+        // the jQuery elements not being loaded yet
+        $(function() {
+          controller.fromJSON(json[index]);
+        });
       }
     });
 
