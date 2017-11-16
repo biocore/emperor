@@ -126,11 +126,11 @@ define([
         placeholder_text_single: trajectoryTooltip
       });
 
-      scope.$gradientSelect.chosen().change(function (){
-                                              scope._gradientChanged();
+      scope.$gradientSelect.chosen().change(function (e, p){
+                                              scope._gradientChanged(e, p);
                                             });
-      scope.$trajectorySelect.chosen().change(function () {
-                                                scope._trajectoryChanged();
+      scope.$trajectorySelect.chosen().change(function (e, p) {
+                                                scope._trajectoryChanged(e, p);
                                               });
 
       scope.$rewind.button({icons: {primary: "ui-icon-seek-first"}});
@@ -222,8 +222,13 @@ define([
    * @private
    */
   AnimationsController.prototype._gradientChanged = function(evt, params) {
-    if (this.getTrajectoryCategory() !== '') {
+    if (this.getGradientCategory() !== '' && !this.enabled &&
+        this.getTrajectoryCategory() !== '') {
       this.setEnabled(true);
+    }
+    else if (this.getGradientCategory() === '' ||
+             this.getTrajectoryCategory() === '' ) {
+      this.setEnabled(false);
     }
   }
 
@@ -234,8 +239,13 @@ define([
    * @private
    */
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
-    if (this.getGradientCategory() !== '') {
+    if (this.getGradientCategory() !== '' && !this.enabled &&
+        this.getTrajectoryCategory() !== '') {
       this.setEnabled(true);
+    }
+    else if (this.getGradientCategory() === '' ||
+             this.getTrajectoryCategory() === '' ) {
+      this.setEnabled(false);
     }
   }
 
@@ -383,6 +393,10 @@ define([
    * @param {String} category The name of the category to set in the menu.
    */
   AnimationsController.prototype.setGradientCategory = function(category) {
+    if (!this.hasMetadataField(category)) {
+      category = '';
+    }
+
     this.$gradientSelect.val(category);
     this.$gradientSelect.trigger('chosen:updated');
     this.$gradientSelect.change();
@@ -409,6 +423,10 @@ define([
    * @param {String} category The name of the category to set in the menu.
    */
   AnimationsController.prototype.setTrajectoryCategory = function(category) {
+    if (!this.hasMetadataField(category)) {
+      category = '';
+    }
+
     this.$trajectorySelect.val(category);
     this.$trajectorySelect.trigger('chosen:updated');
     this.$trajectorySelect.change();
