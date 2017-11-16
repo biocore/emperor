@@ -126,26 +126,26 @@ define([
         placeholder_text_single: trajectoryTooltip
       });
 
-      scope.$gradientSelect.chosen().change(function (e, p){
+      scope.$gradientSelect.chosen().change(function(e, p) {
                                               scope._gradientChanged(e, p);
                                             });
-      scope.$trajectorySelect.chosen().change(function (e, p) {
+      scope.$trajectorySelect.chosen().change(function(e, p) {
                                                 scope._trajectoryChanged(e, p);
                                               });
 
-      scope.$rewind.button({icons: {primary: "ui-icon-seek-first"}});
+      scope.$rewind.button({icons: {primary: 'ui-icon-seek-first'}});
       scope.$rewind.attr('title', 'Restart the animation');
       scope.$rewind.on('click', function() {
         scope._rewindButtonClicked();
       });
 
-      scope.$play.button({icons: {primary: "ui-icon-play"}});
+      scope.$play.button({icons: {primary: 'ui-icon-play'}});
       scope.$play.attr('title', 'Start the animation');
-      scope.$play.on('click', function(){
+      scope.$play.on('click', function() {
         scope._playButtonClicked();
       });
 
-      scope.$pause.button({icons: {primary: "ui-icon-pause"}});
+      scope.$pause.button({icons: {primary: 'ui-icon-pause'}});
       scope.$pause.attr('title', 'Pause the animation');
       scope.$pause.on('click', function() {
         scope._pauseButtonClicked();
@@ -156,7 +156,8 @@ define([
 
     return this;
   }
-  AnimationsController.prototype = Object.create(EmperorViewController.prototype);
+  AnimationsController.prototype = Object.create(
+    EmperorViewController.prototype);
   AnimationsController.prototype.constructor = EmperorViewController;
 
   /**
@@ -213,7 +214,7 @@ define([
     this.$play.prop('disabled', !play);
     this.$pause.prop('disabled', !pause);
     this.$rewind.prop('disabled', !rewind);
-  }
+  };
 
   /**
    *
@@ -227,10 +228,10 @@ define([
       this.setEnabled(true);
     }
     else if (this.getGradientCategory() === '' ||
-             this.getTrajectoryCategory() === '' ) {
+             this.getTrajectoryCategory() === '') {
       this.setEnabled(false);
     }
-  }
+  };
 
   /**
    *
@@ -244,10 +245,10 @@ define([
       this.setEnabled(true);
     }
     else if (this.getGradientCategory() === '' ||
-             this.getTrajectoryCategory() === '' ) {
+             this.getTrajectoryCategory() === '') {
       this.setEnabled(false);
     }
-  }
+  };
 
   /**
    *
@@ -271,7 +272,7 @@ define([
     view.needsUpdate = true;
 
     this._updateButtons();
-  }
+  };
 
   /**
    *
@@ -284,7 +285,7 @@ define([
       this.playing = false;
     }
     this._updateButtons();
-  }
+  };
 
   /**
    *
@@ -329,7 +330,7 @@ define([
 
     this.playing = true;
     this._updateButtons();
-  }
+  };
 
   /**
    *
@@ -453,7 +454,7 @@ define([
    */
   AnimationsController.prototype.setSpeed = function(speed) {
     if (speed < 0.1 || speed > 5) {
-      throw new Error("The speed cannot be less than 0.1 or greater than 5");
+      throw new Error('The speed cannot be less than 0.1 or greater than 5');
     }
     this.$speed.slider('option', 'value', speed);
   };
@@ -470,11 +471,7 @@ define([
 
   AnimationsController.prototype.setColors = function(colors) {
     this._colors = colors;
-  }
-
-  AnimationsController.prototype._createDecomposition = function(gradient, trajectory){
-  
-  }
+  };
 
   /**
    * Converts the current instance into a JSON string.

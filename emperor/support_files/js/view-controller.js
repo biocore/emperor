@@ -102,7 +102,7 @@ define([
     });
 
     return res !== undefined;
-  }
+  };
 
   /**
    *
@@ -283,7 +283,7 @@ define([
       return;
     }
 
-    if(!this.hasMetadataField(m)) {
+    if (!this.hasMetadataField(m)) {
       throw Error('Cannot set "' + m + '" as the metadata field, this column' +
                   ' is not available in the decomposition views');
     }

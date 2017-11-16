@@ -78,18 +78,18 @@ define(['underscore', 'three'], function(_, THREE) {
   }
 
 
-  function drawTrajectoryLine(trajectory, currentFrame, color, radius){
+  function drawTrajectoryLine(trajectory, currentFrame, color, radius) {
     // based on the example described in:
     // https://github.com/mrdoob/three.js/wiki/Drawing-lines
     var material, points = [], lineGeometry, limit = 0, path;
 
     _trajectory = trajectory.representativeCoordinatesAtIndex(currentFrame);
 
-    material = new THREE.MeshPhongMaterial({color:color});
+    material = new THREE.MeshPhongMaterial({color: color});
     material.matrixAutoUpdate = true;
     material.transparent = false;
 
-    for (var index = 0; index < _trajectory.length; index++){
+    for (var index = 0; index < _trajectory.length; index++) {
       points.push(new THREE.Vector3(_trajectory[index].x,
                   _trajectory[index].y, _trajectory[index].z));
     }
@@ -98,7 +98,7 @@ define(['underscore', 'three'], function(_, THREE) {
     // the line will contain the two vertices and the described material
     // we increase the number of points to have a smoother transition on
     // edges i. e. where the trajectory changes the direction it is going
-    lineGeometry = new THREE.TubeGeometry(path, (points.length-1)*3, radius,
+    lineGeometry = new THREE.TubeGeometry(path, (points.length - 1) * 3, radius,
                                           10, false);
 
     return new THREE.Mesh(lineGeometry, material);

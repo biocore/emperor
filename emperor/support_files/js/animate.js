@@ -75,8 +75,8 @@ function(_, trajectory) {
 
     // guard against logical problems with the trajectory object
     if (speed <= 0) {
-      throw new Error("The animation speed cannot be less than or equal to " +
-                      "zero");
+      throw new Error('The animation speed cannot be less than or equal to ' +
+                      'zero');
     }
 
     /**

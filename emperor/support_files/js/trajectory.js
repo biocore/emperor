@@ -126,7 +126,7 @@ define([
           currInterpolation.slice(0, -1));
 
       // extend the interval buffer
-      for(var i = 0; i < pointsPerStep; i++) {
+      for (var i = 0; i < pointsPerStep; i++) {
         intervalBuffer.push(index);
       }
     }
@@ -352,11 +352,11 @@ define([
     // trajectory that has 3 samples at timepoint 0 ([0, 0, 0]) or a trajectory
     // that has just one sample at timepoint 0 ([0])
     for (key in processedData) {
-      var uniqueValues = _.uniq(processedData[key], false, function(sample){
+      var uniqueValues = _.uniq(processedData[key], false, function(sample) {
         return sample.value;
       });
 
-      if(uniqueValues.length > 1 && processedData[key].length >=1) {
+      if (uniqueValues.length > 1 && processedData[key].length >= 1) {
         out[key] = processedData[key];
       }
     }
@@ -373,14 +373,14 @@ define([
 
     // Left-pad all trajectories so they start at the same time, but they are
     // not visibly different
-    _.each(processedData, function(value, key){
+    _.each(processedData, function(value, key) {
       out[key] = processedData[key];
       var first = processedData[key][0];
-      if (first.value !== earliestSample){
+      if (first.value !== earliestSample) {
         out[key].unshift({'name': first.name, 'value': earliestSample,
                           'x': first.x, 'y': first.y, 'z': first.z + 0.0001});
       }
-    })
+    });
 
     return out;
   }
