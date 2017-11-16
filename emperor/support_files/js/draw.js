@@ -105,8 +105,6 @@ define(['underscore', 'three'], function(_, THREE) {
   }
 
 
-
-
   /**
    *
    * Create a THREE object that displays 2D text, this implementation is based
