@@ -978,11 +978,21 @@ class EmperorSettingsTests(TestCase):
 
         with self.assertRaises(KeyError):
             emp.animations_by('Animals', 'DOB')
+
+    def test_animations_by_exceptions_one(self):
+        emp = Emperor(self.ord_res, self.mf)
+
         with self.assertRaises(KeyError):
-            emp.animations_by('DOB', 'NO')
+            emp.animations_by('DOB', 'Animals')
+
+    def test_animations_by_exceptions_two(self):
+        emp = Emperor(self.ord_res, self.mf)
 
         with self.assertRaises(TypeError):
-            emp.animations_by(1, 'NO')
+            emp.animations_by(1, 'Animals')
+
+    def test_animations_by_exceptions_three(self):
+        emp = Emperor(self.ord_res, self.mf)
 
         with self.assertRaises(TypeError):
             emp.animations_by('DOB', 'Treatment', '1.0')
