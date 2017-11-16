@@ -86,6 +86,25 @@ define([
   };
 
   /**
+   * Check if a metadata field is present
+   *
+   * @param {String} m Metadata column to check if is present.
+   *
+   * @return {Bool} Whether or not the metadata field is present.
+   *
+   */
+  EmperorViewController.prototype.hasMetadataField = function(m) {
+    // loop through the metadata headers in the decompositon views
+    // FIXME: There's no good way to specify the current decomposition name
+    // this needs to be added to the interface.
+    var res = _.find(this.decompViewDict, function(view) {
+      return view.decomp.md_headers.indexOf(m) !== -1;
+    });
+
+    return res !== undefined;
+  }
+
+  /**
    *
    * @class EmperorAttributeABC
    *
@@ -264,14 +283,7 @@ define([
       return;
     }
 
-    // loop through the metadata headers in the decompositon views
-    // FIXME: There's no good way to specify the current decomposition name
-    // this needs to be added to the interface.
-    var res = _.find(this.decompViewDict, function(view) {
-      return view.decomp.md_headers.indexOf(m) !== -1;
-    });
-
-    if (res === undefined) {
+    if(!this.hasMetadataField(m)) {
       throw Error('Cannot set "' + m + '" as the metadata field, this column' +
                   ' is not available in the decomposition views');
     }
