@@ -934,6 +934,62 @@ class Emperor(object):
 
         return self
 
+    def animations_by(self, gradient, trajectory, speed=1):
+        """Set the shape settings for the plot elements
+
+        Parameters
+        ----------
+        gradient: str
+            Name of the metadata column that orders samples.
+        trajectory: str
+            Name of the metadata column that groups samples.
+        speed: float
+            How fast the animation should go.
+
+        Returns
+        -------
+        emperor.Emperor
+            Emperor object with updated settings.
+
+        Raises
+        ------
+        KeyError
+            If ``gradient`` or ``trajectory`` are not part of the metadata.
+        TypeError
+            If ``gradient`` or ``trajectory`` are not strings.
+            If ``speed`` is not a number.
+
+        See Also
+        --------
+        emperor.core.Emperor.color_by
+        emperor.core.Emperor.scale_by
+        emperor.core.Emperor.shape_by
+        emperor.core.Emperor.opacity_by
+        emperor.core.Emperor.visibility_by
+        emperor.core.Emperor.set_background_color
+        emperor.core.Emperor.set_axes
+        """
+
+        it = {'gradient': gradient, 'trajectory': trajectory}
+        for k, v in it.items():
+            if not isinstance(v, str):
+                raise TypeError('"%s" category must be a string' % k)
+
+            if v not in self.mf.columns:
+                raise KeyError('The category "%s" is not present in your '
+                               'metadata' % v)
+
+        if not isinstance(speed, (float, int)):
+            raise TypeError('Speed is not a number')
+
+        self._settings.update({"animations": {
+            "gradientCategory": gradient,
+            "trajectoryCategory": trajectory,
+            "speed": speed
+        }})
+
+        return self
+
     def set_axes(self, visible=None, invert=None, color='white'):
         """Change visual aspects about visible dimensions in a plot
 
