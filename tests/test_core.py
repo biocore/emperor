@@ -957,7 +957,8 @@ class EmperorSettingsTests(TestCase):
 
         exp = {'animations': {"gradientCategory": 'DOB',
                               "trajectoryCategory": 'Treatment',
-                              "speed": 1
+                              "speed": 1,
+                              "radius": 1
                               }
                }
         obs = emp.animations_by('DOB', 'Treatment')
@@ -966,10 +967,11 @@ class EmperorSettingsTests(TestCase):
 
         exp = {'animations': {"gradientCategory": 'Treatment',
                               "trajectoryCategory": 'DOB',
-                              "speed": 3.3
+                              "speed": 3.3,
+                              "radius": 4
                               }
                }
-        obs = emp.animations_by('Treatment', 'DOB', 3.3)
+        obs = emp.animations_by('Treatment', 'DOB', 3.3, 4)
         self.assertEqual(emp.settings['animations'], exp['animations'])
         self.assertEqual(obs.settings['animations'], exp['animations'])
 
@@ -989,13 +991,13 @@ class EmperorSettingsTests(TestCase):
         emp = Emperor(self.ord_res, self.mf)
 
         with self.assertRaises(TypeError):
-            emp.animations_by(1, 'Animals')
+            emp.animations_by('DOB', 'Treatment', speed='1.0')
 
     def test_animations_by_exceptions_three(self):
         emp = Emperor(self.ord_res, self.mf)
 
         with self.assertRaises(TypeError):
-            emp.animations_by('DOB', 'Treatment', '1.0')
+            emp.animations_by('DOB', 'Treatment', radius='1.0')
 
     def test_set_axes(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)

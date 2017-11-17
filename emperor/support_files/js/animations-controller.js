@@ -86,7 +86,7 @@ define([
 
     this._$mediaContainer.append($('<hr>'));
 
-    this._$speedLabel = $('<text name="speed">Speed (1x)</text>');
+    this._$speedLabel = $('<text name="speed">Speed: 1x</text>');
     this._$speedLabel.attr('title', 'Speed at which the traces animate');
     this._$mediaContainer.append(this._$speedLabel);
 
@@ -94,25 +94,46 @@ define([
     this.$speed.attr('title', 'Speed at which the traces animate');
     this._$mediaContainer.append(this.$speed);
 
+    this._$radiusLabel = $('<text name="radius">Radius: 1</text>');
+    this._$radiusLabel.attr('title', 'Radius of the traces');
+    this._$mediaContainer.append(this._$radiusLabel);
+
+    this.$radius = $('<div></div>').css('margin-top', '10px');
+    this.$radius.attr('title', 'Radius of the animated traces');
+    this._$mediaContainer.append(this.$radius);
+
     this.director = null;
     this.playing = false;
 
     // initialize interface elements here
     $(this).ready(function() {
-      scope.$speed.slider({'min': 0.1,
-                           'max': 5,
-                           'step': 0.1,
+      scope.$speed.slider({'min': 0.01,
+                           'max': 10,
+                           'step': 0.05,
                            'value': 1,
                            'range': 'max',
                            'slide': function(event, ui) {
-                             scope._$speedLabel.text('Speed (' + ui.value +
-                                                     'x)');
+                             scope._$speedLabel.text('Speed: ' + ui.value +
+                                                     'x');
                            },
                            'change': function(event, ui) {
-                             scope._$speedLabel.text('Speed (' + ui.value +
-                                                     'x)');
+                             scope._$speedLabel.text('Speed: ' + ui.value +
+                                                     'x');
                            }});
       scope.$speed.css('background', '#70caff');
+
+      scope.$radius.slider({'min': 0.01,
+                            'max': 10,
+                            'step': 0.05,
+                            'value': 1,
+                            'range': 'max',
+                            'slide': function(event, ui) {
+                              scope._$radiusLabel.text('Raidus: ' + ui.value);
+                            },
+                            'change': function(event, ui) {
+                              scope._$radiusLabel.text('Radius: ' + ui.value);
+                            }});
+      scope.$radius.css('background', '#70caff');
 
       // setup chosen
       scope.$gradientSelect.chosen({
@@ -189,6 +210,7 @@ define([
      *
      * ||----------|---------|---------||-------|-------|-------|--------|
      * || director | playing | enabled || Play  | Speed | Pause | Rewind |
+     * ||          |         |         ||       | Radius|       |        |
      * ||----------|---------|---------||-------|-------|-------|--------|
      * || FALSE    | FALSE   | FALSE   || FALSE | FALSE | FALSE | FALSE  |
      * || FALSE    | FALSE   | TRUE    || TRUE  | TRUE  | FALSE | FALSE  |
@@ -211,6 +233,7 @@ define([
     rewind = this.director !== null && this.enabled;
 
     this.$speed.slider('option', 'disabled', !speed);
+    this.$radius.slider('option', 'disabled', !speed);
     this.$play.prop('disabled', !play);
     this.$pause.prop('disabled', !pause);
     this.$rewind.prop('disabled', !rewind);
@@ -351,6 +374,7 @@ define([
 
     // FIXME: this is a bug when the shapes are not spheres
     var radius = view.markers[0].geometry.parameters.radius;
+    radius *= 0.45 * this.getRadius();
 
     view.tubes.forEach(function(tube) {
       if (tube === undefined) {
@@ -450,11 +474,12 @@ define([
    * Setter for the speed of the animation.
    *
    * @param {Float} speed Speed at which the animation is played.
-   * @throws {Error} If speed value es below 0.1 or above 5.
+   * @throws {Error} If the radius value is lesser than or equal to 0 or
+   * greater than 10.
    */
   AnimationsController.prototype.setSpeed = function(speed) {
-    if (speed < 0.1 || speed > 5) {
-      throw new Error('The speed cannot be less than 0.1 or greater than 5');
+    if (speed <= 0 || speed > 10) {
+      throw new Error('The speed must be greater than 0 and lesser than 10');
     }
     this.$speed.slider('option', 'value', speed);
   };
@@ -467,6 +492,31 @@ define([
    */
   AnimationsController.prototype.getSpeed = function() {
     return this.$speed.slider('option', 'value');
+  };
+
+  /**
+   *
+   * Setter for the radius of the animation.
+   *
+   * @param {Float} radius Radius of the traces in the animations.
+   * @throws {Error} If the radius value is lesser than or equal to 0 or
+   * greater than 10.
+   */
+  AnimationsController.prototype.setRadius = function(radius) {
+    if (radius <= 0 || radius > 10) {
+      throw new Error('The radius must be greater than 0 and lesser than 10');
+    }
+    this.$radius.slider('option', 'value', radius);
+  };
+
+  /**
+   *
+   * Getter for the radius of the traces in the animation.
+   *
+   * @return {Float} Radius of the traces in the animation
+   */
+  AnimationsController.prototype.getRadius = function() {
+    return this.$radius.slider('option', 'value');
   };
 
   AnimationsController.prototype.setColors = function(colors) {
@@ -484,6 +534,7 @@ define([
     json.gradientCategory = this.getGradientCategory();
     json.trajectoryCategory = this.getTrajectoryCategory();
     json.speed = this.getSpeed();
+    json.radius = this.getRadius();
 
     return json;
   };
@@ -500,6 +551,7 @@ define([
     this.setTrajectoryCategory(json.trajectoryCategory);
 
     this.setSpeed(json.speed);
+    this.setRadius(json.radius);
   };
 
   return AnimationsController;
