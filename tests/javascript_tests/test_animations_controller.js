@@ -59,6 +59,7 @@ requirejs([
       equal(this.controller.enabled, false);
 
       equal(this.controller.$speed.slider('option', 'disabled'), true);
+      equal(this.controller.$radius.slider('option', 'disabled'), true);
       equal(this.controller.$play.prop('disabled'), true);
       equal(this.controller.$pause.prop('disabled'), true);
       equal(this.controller.$rewind.prop('disabled'), true);
@@ -66,6 +67,7 @@ requirejs([
       equal(this.controller.getGradientCategory(), '');
       equal(this.controller.getTrajectoryCategory(), '');
       equal(this.controller.getSpeed(), 1);
+      equal(this.controller.getRadius(), 1);
     });
 
     test('Test speed setter/getter', function(assert) {
@@ -87,10 +89,36 @@ requirejs([
 
       throws(
           function() {
-            this.controller.setSpeed(6);
+            this.controller.setSpeed(11);
           },
           Error,
           'An error is raised if an invalid speed is set'
+      );
+    });
+
+    test('Test radius setter/getter', function(assert) {
+      equal(this.controller.getRadius(), 1);
+
+      this.controller.setRadius(1.11);
+      equal(this.controller.getRadius(), 1.11);
+
+      throws(
+          function() {
+            this.controller.setRadius(-1);
+          },
+          Error,
+          'An error is raised if an invalid radius is set'
+      );
+
+      this.controller.setRadius(3.11);
+      equal(this.controller.getRadius(), 3.11);
+
+      throws(
+          function() {
+            this.controller.setRadius(11);
+          },
+          Error,
+          'An error is raised if an invalid radius is set'
       );
     });
 
@@ -141,6 +169,7 @@ requirejs([
 
       equal(this.controller.playing, false);
       equal(this.controller.$speed.slider('option', 'disabled'), false);
+      equal(this.controller.$radius.slider('option', 'disabled'), false);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
       equal(this.controller.$rewind.prop('disabled'), true);
@@ -157,6 +186,7 @@ requirejs([
       assert.ok(this.controller.director !== null);
 
       equal(this.controller.$speed.slider('option', 'disabled'), true);
+      equal(this.controller.$radius.slider('option', 'disabled'), true);
       equal(this.controller.$play.prop('disabled'), true);
       equal(this.controller.$pause.prop('disabled'), false);
       equal(this.controller.$rewind.prop('disabled'), false);
@@ -174,6 +204,7 @@ requirejs([
       assert.ok(this.controller.director === null);
 
       equal(this.controller.$speed.slider('option', 'disabled'), false);
+      equal(this.controller.$radius.slider('option', 'disabled'), false);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
       equal(this.controller.$rewind.prop('disabled'), true);
@@ -183,6 +214,7 @@ requirejs([
       this.controller._updateButtons();
 
       equal(this.controller.$speed.slider('option', 'disabled'), true);
+      equal(this.controller.$radius.slider('option', 'disabled'), true);
       equal(this.controller.$play.prop('disabled'), true);
       equal(this.controller.$pause.prop('disabled'), true);
       equal(this.controller.$rewind.prop('disabled'), true);
@@ -191,6 +223,7 @@ requirejs([
       this.controller.setTrajectoryCategory('Treatment');
 
       equal(this.controller.$speed.slider('option', 'disabled'), false);
+      equal(this.controller.$radius.slider('option', 'disabled'), false);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
       equal(this.controller.$rewind.prop('disabled'), true);
@@ -207,6 +240,7 @@ requirejs([
       this.controller._updateButtons();
 
       equal(this.controller.$speed.slider('option', 'disabled'), true);
+      equal(this.controller.$radius.slider('option', 'disabled'), true);
       equal(this.controller.$play.prop('disabled'), true);
       equal(this.controller.$pause.prop('disabled'), false);
       equal(this.controller.$rewind.prop('disabled'), false);
@@ -215,6 +249,7 @@ requirejs([
       this.controller._updateButtons();
 
       equal(this.controller.$speed.slider('option', 'disabled'), true);
+      equal(this.controller.$radius.slider('option', 'disabled'), true);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
       equal(this.controller.$rewind.prop('disabled'), false);
@@ -224,25 +259,28 @@ requirejs([
       this.controller.setGradientCategory('DOB');
       this.controller.setTrajectoryCategory('Treatment');
       this.controller.setSpeed(1.11);
+      this.controller.setRadius(0.5);
 
       var obs = this.controller.toJSON();
       var exp = {'gradientCategory': 'DOB',
                  'trajectoryCategory': 'Treatment',
-                 'speed': 1.11};
+                 'speed': 1.11, 'radius': 0.5};
       deepEqual(obs, exp);
     });
 
     test('Testing fromJSON', function() {
       var json = {'gradientCategory': 'Treatment',
                   'trajectoryCategory': 'DOB',
-                  'speed': 3.33};
+                  'speed': 3.33, 'radius': 0.5};
 
       this.controller.fromJSON(json);
       equal(this.controller.getTrajectoryCategory(), 'DOB');
       equal(this.controller.getGradientCategory(), 'Treatment');
       equal(this.controller.getSpeed(), 3.33);
+      equal(this.controller.getRadius(), 0.5);
 
       equal(this.controller.$speed.slider('option', 'disabled'), false);
+      equal(this.controller.$radius.slider('option', 'disabled'), false);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
       equal(this.controller.$rewind.prop('disabled'), true);
@@ -258,8 +296,10 @@ requirejs([
       equal(this.controller.getTrajectoryCategory(), 'DOB');
       equal(this.controller.getGradientCategory(), 'Treatment');
       equal(this.controller.getSpeed(), 3.33);
+      equal(this.controller.getRadius(), 0.5);
 
       equal(this.controller.$speed.slider('option', 'disabled'), false);
+      equal(this.controller.$radius.slider('option', 'disabled'), false);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
       equal(this.controller.$rewind.prop('disabled'), true);

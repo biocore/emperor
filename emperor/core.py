@@ -934,7 +934,7 @@ class Emperor(object):
 
         return self
 
-    def animations_by(self, gradient, trajectory, speed=1):
+    def animations_by(self, gradient, trajectory, speed=1, radius=1):
         """Set the shape settings for the plot elements
 
         Parameters
@@ -945,6 +945,8 @@ class Emperor(object):
             Name of the metadata column that groups samples.
         speed: float
             How fast the animation should go.
+        radius: float
+            The radius of the animated traces.
 
         Returns
         -------
@@ -956,8 +958,7 @@ class Emperor(object):
         KeyError
             If ``gradient`` or ``trajectory`` are not part of the metadata.
         TypeError
-            If ``gradient`` or ``trajectory`` are not strings.
-            If ``speed`` is not a number.
+            If ``speed`` or ``radius`` are not numbers.
 
         See Also
         --------
@@ -970,22 +971,23 @@ class Emperor(object):
         emperor.core.Emperor.set_axes
         """
 
-        it = {'gradient': gradient, 'trajectory': trajectory}
-        for k, v in it.items():
-            if not isinstance(v, str):
-                raise TypeError('"%s" category must be a string' % k)
-
-            if v not in self.mf.columns:
-                raise KeyError('The category "%s" is not present in your '
-                               'metadata' % v)
+        if gradient not in self.mf.columns:
+            raise KeyError('The gradient category is not present in your '
+                           'metadata')
+        if trajectory not in self.mf.columns:
+            raise KeyError('The trajectory category is not present in your '
+                           'metadata')
 
         if not isinstance(speed, (float, int)):
             raise TypeError('Speed is not a number')
+        if not isinstance(radius, (float, int)):
+            raise TypeError('Radius is not a number')
 
         self._settings.update({"animations": {
             "gradientCategory": gradient,
             "trajectoryCategory": trajectory,
-            "speed": speed
+            "speed": speed,
+            "radius": radius
         }})
 
         return self

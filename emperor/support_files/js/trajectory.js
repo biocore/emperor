@@ -372,7 +372,10 @@ define([
     })[0].value;
 
     // Left-pad all trajectories so they start at the same time, but they are
-    // not visibly different
+    // not visibly different.
+    //
+    // Note: THREE.js won't display geometries with overlapping vertices,
+    // therefore we add a small amount of noise in the Z coordinate.
     _.each(processedData, function(value, key) {
       out[key] = processedData[key];
       var first = processedData[key][0];
