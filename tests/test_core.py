@@ -958,20 +958,24 @@ class EmperorSettingsTests(TestCase):
         exp = {'animations': {"gradientCategory": 'DOB',
                               "trajectoryCategory": 'Treatment',
                               "speed": 1,
-                              "radius": 1
+                              "radius": 1,
+                              "colors": {"Fast": "red", "Control": "blue"}
                               }
                }
-        obs = emp.animations_by('DOB', 'Treatment')
+        obs = emp.animations_by('DOB', 'Treatment',
+                                {"Fast": "red", "Control": "blue"})
         self.assertEqual(emp.settings['animations'], exp['animations'])
         self.assertEqual(obs.settings['animations'], exp['animations'])
 
         exp = {'animations': {"gradientCategory": 'Treatment',
                               "trajectoryCategory": 'DOB',
                               "speed": 3.3,
-                              "radius": 4
+                              "radius": 4,
+                              "colors": {"Fast": "red", "Control": "blue"}
                               }
                }
-        obs = emp.animations_by('Treatment', 'DOB', 3.3, 4)
+        obs = emp.animations_by('Treatment', 'DOB',
+                                {"Fast": "red", "Control": "blue"}, 3.3, 4)
         self.assertEqual(emp.settings['animations'], exp['animations'])
         self.assertEqual(obs.settings['animations'], exp['animations'])
 
@@ -979,25 +983,29 @@ class EmperorSettingsTests(TestCase):
         emp = Emperor(self.ord_res, self.mf)
 
         with self.assertRaises(KeyError):
-            emp.animations_by('Animals', 'DOB')
+            emp.animations_by('Animals', 'DOB',
+                              {"Fast": "red", "Control": "blue"})
 
     def test_animations_by_exceptions_one(self):
         emp = Emperor(self.ord_res, self.mf)
 
         with self.assertRaises(KeyError):
-            emp.animations_by('DOB', 'Animals')
+            emp.animations_by('DOB', 'Animals',
+                              {"Fast": "red", "Control": "blue"})
 
     def test_animations_by_exceptions_two(self):
         emp = Emperor(self.ord_res, self.mf)
 
         with self.assertRaises(TypeError):
-            emp.animations_by('DOB', 'Treatment', speed='1.0')
+            emp.animations_by('DOB', 'Treatment',
+                              {"Fast": "red", "Control": "blue"}, speed='1.0')
 
     def test_animations_by_exceptions_three(self):
         emp = Emperor(self.ord_res, self.mf)
 
         with self.assertRaises(TypeError):
-            emp.animations_by('DOB', 'Treatment', radius='1.0')
+            emp.animations_by('DOB', 'Treatment',
+                              {"Fast": "red", "Control": "blue"}, radius='1.0')
 
     def test_set_axes(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)

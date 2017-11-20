@@ -245,7 +245,7 @@ define([
   AnimationsController.prototype._buildGrid = function() {
     var scope = this, columns, gridOptions;
 
-    columns= [
+    columns = [
       {id: 'title', name: '', field: 'value', sortable: false, maxWidth: 25,
        minWidth: 25, editor: ColorEditor, formatter: ColorFormatter},
       {id: 'field1', name: '', field: 'category'}
@@ -295,7 +295,7 @@ define([
     this.$body.height(this.$canvas.height() - this.$header.height());
     this.$body.width(this.$canvas.width());
 
-    var grid =  this.$canvas.height();
+    var grid = this.$canvas.height();
     grid -= this.$header.height() + this._$mediaContainer.height();
     console.log('the grid height is: ' + grid);
     this.$gridDiv.height(grid);
@@ -378,7 +378,7 @@ define([
 
     this.setColors(colors);
     this.resize();
-  }
+  };
 
   /**
    *
