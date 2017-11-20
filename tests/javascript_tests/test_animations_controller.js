@@ -59,6 +59,7 @@ requirejs([
       equal(this.controller.enabled, false);
 
       equal(this.controller.$speed.slider('option', 'disabled'), true);
+      equal(this.controller._grid.getOptions().editable, false);
       equal(this.controller.$radius.slider('option', 'disabled'), true);
       equal(this.controller.$play.prop('disabled'), true);
       equal(this.controller.$pause.prop('disabled'), true);
@@ -124,13 +125,13 @@ requirejs([
 
     test('Test gradient category setter/getter', function(assert) {
       this.controller.setGradientCategory('Treatment');
-      equal(this.controller.getGradientCategory(), 'Treatment');
+      deepEqual(this.controller.getGradientCategory(), 'Treatment');
 
       this.controller.setGradientCategory('Does not exist');
-      equal(this.controller.getGradientCategory(), '');
+      deepEqual(this.controller.getGradientCategory(), '');
 
       this.controller.setGradientCategory('DOB');
-      equal(this.controller.getGradientCategory(), 'DOB');
+      deepEqual(this.controller.getGradientCategory(), 'DOB');
     });
 
     test('Test trajectory category setter/getter', function(assert) {
@@ -159,6 +160,16 @@ requirejs([
       equal(this.controller.enabled, false);
     });
 
+    test('Test colors setter/getter', function(assert) {
+      this.controller.setTrajectoryCategory('Treatment');
+      this.controller.setGradientCategory('DOB');
+
+      deepEqual(this.controller.getColors(), {'Fast': '#ff0000'});
+
+      this.controller.setColors({'Fast': 'green'});
+      deepEqual(this.controller.getColors(), {'Fast': 'green'});
+    });
+
     test('Test _pauseButtonClicked', function(assert) {
       this.controller.setGradientCategory('DOB');
       this.controller.setTrajectoryCategory('Treatment');
@@ -169,6 +180,7 @@ requirejs([
 
       equal(this.controller.playing, false);
       equal(this.controller.$speed.slider('option', 'disabled'), false);
+      equal(this.controller._grid.getOptions().editable, true);
       equal(this.controller.$radius.slider('option', 'disabled'), false);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
@@ -186,6 +198,7 @@ requirejs([
       assert.ok(this.controller.director !== null);
 
       equal(this.controller.$speed.slider('option', 'disabled'), true);
+      equal(this.controller._grid.getOptions().editable, false);
       equal(this.controller.$radius.slider('option', 'disabled'), true);
       equal(this.controller.$play.prop('disabled'), true);
       equal(this.controller.$pause.prop('disabled'), false);
@@ -204,6 +217,7 @@ requirejs([
       assert.ok(this.controller.director === null);
 
       equal(this.controller.$speed.slider('option', 'disabled'), false);
+      equal(this.controller._grid.getOptions().editable, true);
       equal(this.controller.$radius.slider('option', 'disabled'), false);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
@@ -214,6 +228,7 @@ requirejs([
       this.controller._updateButtons();
 
       equal(this.controller.$speed.slider('option', 'disabled'), true);
+      equal(this.controller._grid.getOptions().editable, false);
       equal(this.controller.$radius.slider('option', 'disabled'), true);
       equal(this.controller.$play.prop('disabled'), true);
       equal(this.controller.$pause.prop('disabled'), true);
@@ -223,6 +238,7 @@ requirejs([
       this.controller.setTrajectoryCategory('Treatment');
 
       equal(this.controller.$speed.slider('option', 'disabled'), false);
+      equal(this.controller._grid.getOptions().editable, true);
       equal(this.controller.$radius.slider('option', 'disabled'), false);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
@@ -240,6 +256,7 @@ requirejs([
       this.controller._updateButtons();
 
       equal(this.controller.$speed.slider('option', 'disabled'), true);
+      equal(this.controller._grid.getOptions().editable, false);
       equal(this.controller.$radius.slider('option', 'disabled'), true);
       equal(this.controller.$play.prop('disabled'), true);
       equal(this.controller.$pause.prop('disabled'), false);
@@ -249,6 +266,7 @@ requirejs([
       this.controller._updateButtons();
 
       equal(this.controller.$speed.slider('option', 'disabled'), true);
+      equal(this.controller._grid.getOptions().editable, false);
       equal(this.controller.$radius.slider('option', 'disabled'), true);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
@@ -260,26 +278,29 @@ requirejs([
       this.controller.setTrajectoryCategory('Treatment');
       this.controller.setSpeed(1.11);
       this.controller.setRadius(0.5);
+      this.controller.setColors({'Fast': 'black'});
 
       var obs = this.controller.toJSON();
       var exp = {'gradientCategory': 'DOB',
                  'trajectoryCategory': 'Treatment',
-                 'speed': 1.11, 'radius': 0.5};
+                 'speed': 1.11, 'radius': 0.5, 'colors': {'Fast': 'black'}};
       deepEqual(obs, exp);
     });
 
     test('Testing fromJSON', function() {
       var json = {'gradientCategory': 'Treatment',
                   'trajectoryCategory': 'DOB',
-                  'speed': 3.33, 'radius': 0.5};
+                  'speed': 3.33, 'radius': 0.5, 'colors': {'Fast': 'blue'}};
 
       this.controller.fromJSON(json);
       equal(this.controller.getTrajectoryCategory(), 'DOB');
       equal(this.controller.getGradientCategory(), 'Treatment');
       equal(this.controller.getSpeed(), 3.33);
       equal(this.controller.getRadius(), 0.5);
+      deepEqual(this.controller.getColors(), {'Fast': 'blue'});
 
       equal(this.controller.$speed.slider('option', 'disabled'), false);
+      equal(this.controller._grid.getOptions().editable, true);
       equal(this.controller.$radius.slider('option', 'disabled'), false);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);
@@ -297,8 +318,10 @@ requirejs([
       equal(this.controller.getGradientCategory(), 'Treatment');
       equal(this.controller.getSpeed(), 3.33);
       equal(this.controller.getRadius(), 0.5);
+      deepEqual(this.controller.getColors(), {'Fast': 'blue'});
 
       equal(this.controller.$speed.slider('option', 'disabled'), false);
+      equal(this.controller._grid.getOptions().editable, true);
       equal(this.controller.$radius.slider('option', 'disabled'), false);
       equal(this.controller.$play.prop('disabled'), false);
       equal(this.controller.$pause.prop('disabled'), true);

@@ -934,7 +934,7 @@ class Emperor(object):
 
         return self
 
-    def animations_by(self, gradient, trajectory, speed=1, radius=1):
+    def animations_by(self, gradient, trajectory, colors, speed=1, radius=1):
         """Set the shape settings for the plot elements
 
         Parameters
@@ -943,6 +943,8 @@ class Emperor(object):
             Name of the metadata column that orders samples.
         trajectory: str
             Name of the metadata column that groups samples.
+        colors: dict or pd.Series
+            Mapping of trajectory categories to a CSS color attribute.
         speed: float
             How fast the animation should go.
         radius: float
@@ -983,11 +985,14 @@ class Emperor(object):
         if not isinstance(radius, (float, int)):
             raise TypeError('Radius is not a number')
 
+        colors = self._base_data_checks(trajectory, colors, str)
+
         self._settings.update({"animations": {
             "gradientCategory": gradient,
             "trajectoryCategory": trajectory,
             "speed": speed,
-            "radius": radius
+            "radius": radius,
+            "colors": colors
         }})
 
         return self

@@ -4,11 +4,14 @@ define([
     'view',
     'viewcontroller',
     'animationdirector',
-    'draw'
+    'draw',
+    'color-editor',
+    'colorviewcontroller'
 ], function($, _, DecompositionView, ViewControllers, AnimationDirector,
-            draw) {
+            draw, Color, ColorViewController) {
   var EmperorViewController = ViewControllers.EmperorViewController;
   var drawTrajectoryLine = draw.drawTrajectoryLine;
+  var ColorEditor = Color.ColorEditor, ColorFormatter = Color.ColorFormatter;
 
   /**
    * @class AnimationsController
@@ -60,7 +63,7 @@ define([
     this.$header.append(label);
 
     // container of the sliders and buttons
-    this._$mediaContainer = $('<div name="button-container"></div>');
+    this._$mediaContainer = $('<div name="media-controls-container"></div>');
     this._$mediaContainer.css({'padding-top': '10px',
                                'width': 'inherit',
                                'text-align': 'center'});
@@ -102,8 +105,21 @@ define([
     this.$radius.attr('title', 'Radius of the animated traces');
     this._$mediaContainer.append(this.$radius);
 
+    this.$gridDiv = $('<div name="emperor-grid-div"></div>');
+    this.$gridDiv.css('margin', '0 auto');
+    this.$gridDiv.css('width', 'inherit');
+    this.$gridDiv.css('height', '100%');
+    this.$gridDiv.attr('title', 'Change the color of the animated traces.');
+    this.$body.append(this.$gridDiv);
+
     this.director = null;
     this.playing = false;
+
+    /**
+     * @type {Slick.Grid}
+     * Container that lists the trajectories and their colors
+     */
+    this._grid = null;
 
     // initialize interface elements here
     $(this).ready(function() {
@@ -172,6 +188,8 @@ define([
         scope._pauseButtonClicked();
       });
 
+      scope._buildGrid();
+
       scope.setEnabled(false);
     });
 
@@ -182,6 +200,76 @@ define([
   AnimationsController.prototype.constructor = EmperorViewController;
 
   /**
+   * Get the colors for the trajectories
+   *
+   * @return {Object} Returns the object mapping trajectories to colors.
+   */
+  AnimationsController.prototype.getColors = function() {
+    return this._colors;
+  };
+
+  /**
+   * Set the colors of the trajectories
+   *
+   * @param {Object} colors Mapping between trajectories and colors.
+   */
+  AnimationsController.prototype.setColors = function(colors) {
+    this._colors = colors;
+
+    var data = [];
+    for (var value in colors) {
+      data.push({category: value, value: colors[value]});
+    }
+
+    this._grid.setData(data);
+    this._grid.invalidate();
+    this._grid.render();
+  };
+
+  /**
+   * Callback when a row's color changes
+   *
+   * See _buildGrid for information about the arguments.
+   *
+   * @private
+   */
+  AnimationsController.prototype._colorChanged = function(e, args) {
+    this._colors[args.item.category] = args.item.value;
+  };
+
+  /**
+   * Helper method to create a grid and set it up for the traces
+   *
+   * @private
+   */
+  AnimationsController.prototype._buildGrid = function() {
+    var scope = this, columns, gridOptions;
+
+    columns = [
+      {id: 'title', name: '', field: 'value', sortable: false, maxWidth: 25,
+       minWidth: 25, editor: ColorEditor, formatter: ColorFormatter},
+      {id: 'field1', name: '', field: 'category'}
+    ];
+
+    // autoEdit enables one-click editor trigger on the entire grid, instead
+    // of requiring users to click twice on a widget.
+    gridOptions = {editable: true, enableAddRow: false, autoEdit: true,
+                   enableCellNavigation: true, forceFitColumns: true,
+                   enableColumnReorder: false};
+
+    this._grid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
+
+    // hide the header row of the grid
+    // http://stackoverflow.com/a/29827664/379593
+    this.$body.find('.slick-header').css('display', 'none');
+
+    // subscribe to events when a cell is changed
+    this._grid.onCellChange.subscribe(function(e, args) {
+      scope._colorChanged(e, args);
+    });
+  };
+
+  /**
    * Sets whether or not the tab can be modified or accessed.
    *
    * @param {Boolean} trulse option to enable tab.
@@ -189,6 +277,38 @@ define([
   AnimationsController.prototype.setEnabled = function(trulse) {
     EmperorViewController.prototype.setEnabled.call(this, trulse);
     this._updateButtons();
+  };
+
+  /**
+   * Resizes the container and the individual elements.
+   *
+   * Note, the consumer of this class, likely the main controller should call
+   * the resize function any time a resizing event happens.
+   *
+   * @param {Float} width the container width.
+   * @param {Float} height the container height.
+   */
+  AnimationsController.prototype.resize = function(width, height) {
+    // call super, most of the header and body resizing logic is done there
+    EmperorViewController.prototype.resize.call(this, width, height);
+
+    this.$body.height(this.$canvas.height() - this.$header.height());
+    this.$body.width(this.$canvas.width());
+
+    var grid = this.$canvas.height();
+    grid -= this.$header.height() + this._$mediaContainer.height();
+    console.log('the grid height is: ' + grid);
+    this.$gridDiv.height(grid);
+
+    // the whole code is asynchronous, so there may be situations where
+    // _grid doesn't exist yet, so check before trying to modify the object
+    if (this._grid !== null) {
+      // make the columns fit the available space whenever the window resizes
+      // http://stackoverflow.com/a/29835739
+      this._grid.setColumns(this._grid.getColumns());
+      // Resize the slickgrid canvas for the new body size.
+      this._grid.resizeCanvas();
+    }
   };
 
   /**
@@ -211,6 +331,7 @@ define([
      * ||----------|---------|---------||-------|-------|-------|--------|
      * || director | playing | enabled || Play  | Speed | Pause | Rewind |
      * ||          |         |         ||       | Radius|       |        |
+     * ||          |         |         ||       | Colors|       |        |
      * ||----------|---------|---------||-------|-------|-------|--------|
      * || FALSE    | FALSE   | FALSE   || FALSE | FALSE | FALSE | FALSE  |
      * || FALSE    | FALSE   | TRUE    || TRUE  | TRUE  | FALSE | FALSE  |
@@ -237,6 +358,26 @@ define([
     this.$play.prop('disabled', !play);
     this.$pause.prop('disabled', !pause);
     this.$rewind.prop('disabled', !rewind);
+
+    this._grid.setOptions({editable: speed});
+  };
+
+  /**
+   *
+   * Helper method to update a grid.
+   *
+   * @private
+   */
+  AnimationsController.prototype._updateGrid = function() {
+    var category = this.getTrajectoryCategory(), colors, values;
+
+    values = this.getView().decomp.getUniqueValuesByCategory(category);
+    colors = ColorViewController.getColorList(values,
+                                              'discrete-coloring-qiime',
+                                              true, false)[0];
+
+    this.setColors(colors);
+    this.resize();
   };
 
   /**
@@ -249,6 +390,7 @@ define([
     if (this.getGradientCategory() !== '' && !this.enabled &&
         this.getTrajectoryCategory() !== '') {
       this.setEnabled(true);
+      this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
              this.getTrajectoryCategory() === '') {
@@ -266,9 +408,11 @@ define([
     if (this.getGradientCategory() !== '' && !this.enabled &&
         this.getTrajectoryCategory() !== '') {
       this.setEnabled(true);
+      this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
              this.getTrajectoryCategory() === '') {
+      this.setColors({});
       this.setEnabled(false);
     }
   };
@@ -386,10 +530,10 @@ define([
     });
 
     view.tubes = this.director.trajectories.map(function(trajectory) {
-      color = scope._colors[trajectory.metadataCategoryName] || 'yellow';
+      color = scope._colors[trajectory.metadataCategoryName] || 'red';
 
       var tube = drawTrajectoryLine(trajectory, scope.director.currentFrame,
-                                    color, 0.45 * radius);
+                                    color, radius);
       return tube;
     });
 
@@ -519,10 +663,6 @@ define([
     return this.$radius.slider('option', 'value');
   };
 
-  AnimationsController.prototype.setColors = function(colors) {
-    this._colors = colors;
-  };
-
   /**
    * Converts the current instance into a JSON string.
    *
@@ -535,6 +675,7 @@ define([
     json.trajectoryCategory = this.getTrajectoryCategory();
     json.speed = this.getSpeed();
     json.radius = this.getRadius();
+    json.colors = this.getColors();
 
     return json;
   };
@@ -552,6 +693,8 @@ define([
 
     this.setSpeed(json.speed);
     this.setRadius(json.radius);
+
+    this.setColors(json.colors);
   };
 
   return AnimationsController;
