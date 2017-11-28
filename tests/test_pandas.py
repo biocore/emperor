@@ -18,7 +18,7 @@ from emperor._pandas import scatterplot
 # account for what's allowed in python 2 vs PY3K
 try:
     from . import _test_core_strings as tcs
-except:
+except Exception:
     import _test_core_strings as tcs
 
 # from http://stackoverflow.com/a/22605281/379593
