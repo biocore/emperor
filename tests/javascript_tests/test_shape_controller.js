@@ -17,8 +17,8 @@ requirejs([
     module('Shape Controller', {
       setup: function() {
         // setup function
-        this.shapesAvailable = ['Sphere', 'Cube', 'Cone', 'Icosahedron',
-                                'Cylinder'];
+        this.shapesAvailable = ['Sphere', 'Diamond', 'Cone', 'Cylinder',
+                                'Ring', 'Square', 'Icosahedron'];
         this.sharedDecompositionViewDict = {};
 
         // setup function
@@ -93,23 +93,29 @@ requirejs([
       geom = shapes.getGeometry('Sphere', range);
       equal(geom.parameters.radius, 0.06);
 
-      geom = shapes.getGeometry('Cube', range);
-      equal(geom.parameters.width, 0.06);
-      equal(geom.parameters.height, 0.06);
-      equal(geom.parameters.depth, 0.06);
+      geom = shapes.getGeometry('Square', range);
+      equal(geom.parameters.width, 0.12);
+      equal(geom.parameters.height, 0.12);
 
       geom = shapes.getGeometry('Cone', range);
-      equal(geom.parameters.radiusTop, 0.024);
+      equal(geom.parameters.radiusTop, 0.06);
       equal(geom.parameters.radiusBottom, 0);
-      equal(geom.parameters.height, 0.09);
+      equal(geom.parameters.height, 0.12);
 
       geom = shapes.getGeometry('Icosahedron', range);
       equal(geom.parameters.radius, 0.06);
 
+      geom = shapes.getGeometry('Diamond', range);
+      equal(geom.parameters.radius, 0.06);
+
+      geom = shapes.getGeometry('Ring', range);
+      equal(geom.parameters.innerRadius, 0.06 / 1.618033);
+      equal(geom.parameters.outerRadius, 0.06);
+
       geom = shapes.getGeometry('Cylinder', range);
-      equal(geom.parameters.radiusTop, 0.024);
-      equal(geom.parameters.radiusBottom, 0.024);
-      equal(geom.parameters.height, 0.09);
+      equal(geom.parameters.radiusTop, 0.06);
+      equal(geom.parameters.radiusBottom, 0.06);
+      equal(geom.parameters.height, 0.12);
     });
 
     test('Check getGeometry raises an exception with unknown shape',
@@ -126,9 +132,9 @@ requirejs([
       plottables = [{idx: idx}];
       equal(this.dv.markers[idx].geometry.type, 'SphereGeometry');
       equal(this.dv.markers[idx + 1].geometry.type, 'SphereGeometry');
-      ShapeController.prototype.setPlottableAttributes(this.dv, 'Cube',
+      ShapeController.prototype.setPlottableAttributes(this.dv, 'Square',
                                                        plottables);
-      equal(this.dv.markers[idx].geometry.type, 'BoxGeometry');
+      equal(this.dv.markers[idx].geometry.type, 'PlaneGeometry');
       equal(this.dv.markers[idx + 1].geometry.type, 'SphereGeometry');
       equal(this.dv.needsUpdate, true);
 
@@ -167,7 +173,7 @@ requirejs([
 
     test('Testing fromJSON', function() {
       var json = {'category': 'SampleID',
-                  'data': {'PC.636': 'Cube', 'PC.635': 'Sphere'}
+                  'data': {'PC.636': 'Square', 'PC.635': 'Sphere'}
       };
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
@@ -178,7 +184,7 @@ requirejs([
       controller.fromJSON(json);
       var idx = 0;
       equal(controller.decompViewDict.scatter.markers[idx].geometry.type,
-            'BoxGeometry');
+            'PlaneGeometry');
       equal(controller.decompViewDict.scatter.markers[idx + 1].geometry.type,
             'SphereGeometry');
     });
