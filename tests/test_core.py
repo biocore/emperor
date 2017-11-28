@@ -23,7 +23,7 @@ from emperor.core import Emperor
 # account for what's allowed in python 2 vs PY3K
 try:
     from . import _test_core_strings as tcs
-except:
+except Exception:
     import _test_core_strings as tcs
 
 
