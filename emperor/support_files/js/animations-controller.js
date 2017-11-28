@@ -297,7 +297,6 @@ define([
 
     var grid = this.$canvas.height();
     grid -= this.$header.height() + this._$mediaContainer.height();
-    console.log('the grid height is: ' + grid);
     this.$gridDiv.height(grid);
 
     // the whole code is asynchronous, so there may be situations where
@@ -387,7 +386,7 @@ define([
    * @private
    */
   AnimationsController.prototype._gradientChanged = function(evt, params) {
-    if (this.getGradientCategory() !== '' && !this.enabled &&
+    if (this.getGradientCategory() !== '' &&
         this.getTrajectoryCategory() !== '') {
       this.setEnabled(true);
       this._updateGrid();
@@ -405,7 +404,7 @@ define([
    * @private
    */
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
-    if (this.getGradientCategory() !== '' && !this.enabled &&
+    if (this.getGradientCategory() !== '' &&
         this.getTrajectoryCategory() !== '') {
       this.setEnabled(true);
       this._updateGrid();

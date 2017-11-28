@@ -137,12 +137,14 @@ requirejs([
     test('Test trajectory category setter/getter', function(assert) {
       this.controller.setTrajectoryCategory('DOB');
       equal(this.controller.getTrajectoryCategory(), 'DOB');
+      deepEqual(this.controller.getColors(), {});
 
       this.controller.setGradientCategory('Does not exist either');
       equal(this.controller.getGradientCategory(), '');
 
       this.controller.setTrajectoryCategory('Treatment');
       equal(this.controller.getTrajectoryCategory(), 'Treatment');
+      deepEqual(this.controller.getColors(), {});
     });
 
     test('Test trajectory and category methods together', function(assert) {
@@ -152,12 +154,15 @@ requirejs([
 
       this.controller.setTrajectoryCategory('Treatment');
       equal(this.controller.enabled, false);
+      deepEqual(this.controller.getColors(), {});
 
       this.controller.setGradientCategory('DOB');
       equal(this.controller.enabled, true);
+      deepEqual(this.controller.getColors(), {'Fast': '#ff0000'});
 
       this.controller.setTrajectoryCategory('');
       equal(this.controller.enabled, false);
+      deepEqual(this.controller.getColors(), {});
     });
 
     test('Test colors setter/getter', function(assert) {
