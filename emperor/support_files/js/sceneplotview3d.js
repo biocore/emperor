@@ -222,13 +222,13 @@ define([
     }
 
     function copyToClipboard(text) {
-      var $temp = $("<input>");
+      var $temp = $('<input>');
 
       // we need an input element to be able to copy to clipboard, taken from
       // https://codepen.io/shaikmaqsood/pen/XmydxJ/
-      $("body").append($temp);
+      $('body').append($temp);
       $temp.val(text).select();
-      document.execCommand("copy");
+      document.execCommand('copy');
       $temp.remove();
     }
 
