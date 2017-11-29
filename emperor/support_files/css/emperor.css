@@ -59,4 +59,16 @@ div.colorbox {
     background: none;
 }
 
-
+/*
+ *
+ * Used to show a helper when resizing the plot menu. See the call to
+ * `resizable` from $plotMenu in controller.js.
+ *
+ **/
+.plot-space-resizable-helper {
+  padding: 0px;
+  margin: 0;
+  border-left: 3px solid black;
+  box-shadow: -3px -2px 4px white;
+  border-bottom: none;
+}

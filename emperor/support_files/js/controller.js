@@ -188,6 +188,24 @@ define([
       scope._buildUI();
       // Hide the loading splashscreen
       scope.$divId.find('.loading').hide();
+
+      scope.$plotMenu.resizable({
+        handles: 'w',
+        helper: 'plot-space-resizable-helper',
+        stop: function(event, ui) {
+          var percent = (ui.size.width / scope.width) * 100;
+
+          scope.$plotSpace.width((100 - percent) + '%');
+          scope.$plotMenu.css({'width': percent + '%', 'left': 0});
+
+          // The scrollbars randomly appear on the window while showing the
+          // helper, with this small delay we give them enough time to
+          // disappear.
+          setTimeout(function() {
+            scope.resize(scope.width, scope.height);
+          }, 50);
+        }
+      });
     });
 
     // once the object finishes loading, resize the contents so everything fits
