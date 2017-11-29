@@ -190,30 +190,26 @@ define([
         event.preventDefault();  //cancel system double-click event
     });
 
-    //Add info div as bottom of canvas
-    this.$info = $('<div>');
-    this.$info.css('position', 'absolute')
-      .css('bottom', 0)
-      .css('height', 16)
-      .css('width', '50%')
-      .css('padding-left', 10)
-      .css('padding-right', 10)
-      .css('font-size', 12)
-      .css('z-index', 10000)
-      .css('background-color', 'rgb(238, 238, 238)')
-      .css('border', '1px solid black')
-      .css('font-family', 'Verdana,Arial,sans-serif')
-      .hide();
-    $(this.renderer.domElement).parent().append(this.$info);
-
     // register callback for populating info with clicked sample name
     // set the timeout for fading out the info div
-    var infoDuration = 2500;
+    var infoDuration = 4000;
     var infoTimeout = setTimeout(function() {
         scope.$info.fadeOut();
       }, infoDuration);
 
-    this.on('click', function(n, i) {
+    /**
+     *
+     * The functions showText and copyToClipboard are used in the 'click' and
+     * 'dblclick' events.
+     *
+     * When a sample is clicked we show a legend at the bottom left of the
+     * view. If this legend is clicked, we copy the sample name to the
+     * clipboard. When a sample is double-clicked we directly copy the sample
+     * name to the clipboard and add the legend at the bottom left of the view.
+     *
+     */
+
+    function showText(n, i) {
       clearTimeout(infoTimeout);
       scope.$info.text(n);
       scope.$info.show();
@@ -223,6 +219,48 @@ define([
         scope.$info.fadeOut();
         scope.$info.text('');
       }, infoDuration);
+    }
+
+    function copyToClipboard(text) {
+      var $temp = $('<input>');
+
+      // we need an input element to be able to copy to clipboard, taken from
+      // https://codepen.io/shaikmaqsood/pen/XmydxJ/
+      $('body').append($temp);
+      $temp.val(text).select();
+      document.execCommand('copy');
+      $temp.remove();
+    }
+
+    //Add info div as bottom of canvas
+    this.$info = $('<div>').attr('title', 'Click to copy to clipboard');
+    this.$info.css({'position': 'absolute',
+                    'bottom': 0,
+                    'height': 16,
+                    'width': '50%',
+                    'padding-left': 10,
+                    'padding-right': 10,
+                    'font-size': 12,
+                    'z-index': 10000,
+                    'background-color': 'rgb(238, 238, 238)',
+                    'border': '1px solid black',
+                    'font-family': 'Verdana,Arial,sans-serif'}).hide();
+    this.$info.click(function() {
+      var text = scope.$info.text();
+
+      // handle the case where multiple clicks are received
+      text = text.replace(/\(copied to clipboard\) /g, '');
+      copyToClipboard(text);
+
+      scope.$info.effect('highlight', {}, 500);
+      scope.$info.text('(copied to clipboard) ' + text);
+    });
+    $(this.renderer.domElement).parent().append(this.$info);
+
+    this.on('click', showText);
+    this.on('dblclick', function(n, i) {
+      copyToClipboard(n);
+      showText('(copied to clipboard) ' + n, i);
     });
   };
 

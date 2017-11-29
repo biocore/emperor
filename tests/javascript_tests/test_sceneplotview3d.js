@@ -114,7 +114,7 @@ requirejs([
       // pub/sub
       deepEqual(spv.EVENTS, ['click', 'dblclick']);
       deepEqual(spv._subscribers.click.length, 1);
-      deepEqual(spv._subscribers.dblclick.length, 0);
+      deepEqual(spv._subscribers.dblclick.length, 1);
 
       // release the control back to the main page
       spv.control.dispose();

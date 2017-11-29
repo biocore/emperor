@@ -111,8 +111,10 @@ define([
      * @type {node}
      */
     this.$plotMenu = $("<div class='emperor-plot-menu'></div>");
-    this.$plotMenu.attr('title', 'Right click on the plot for more options ' +
-                        'or click on a sample to reveal its name.');
+    this.$plotMenu.attr('title', 'Right click on the plot for more options, ' +
+                        ' click on a sample to reveal its name, or ' +
+                        'double-click on a sample to copy its name to the ' +
+                        'clipboard');
 
     this.$divId.append(this.$plotSpace);
     this.$divId.append(this.$plotMenu);
