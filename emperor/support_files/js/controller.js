@@ -216,7 +216,7 @@ define([
           scope.$plotSpace.css({'width': '73%'});
           scope.$plotMenu.css({'width': '27%', 'left': 0});
         }
-        else{
+        else {
           scope.$plotSpace.css({'width': '99%'});
           scope.$plotMenu.css({'width': '1%', 'left': 0});
         }
