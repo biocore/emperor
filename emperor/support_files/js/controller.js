@@ -188,6 +188,41 @@ define([
       scope._buildUI();
       // Hide the loading splashscreen
       scope.$divId.find('.loading').hide();
+
+      // The next few lines setup the space/menu resizing logic. Specifically,
+      // we only enable the "west' handle, set double-click toggle behaviour
+      // and add a tooltip to the handle.
+      scope.$plotMenu.resizable({
+        handles: 'w',
+        helper: 'plot-space-resizable-helper',
+        stop: function(event, ui) {
+          var percent = (ui.size.width / scope.width) * 100;
+
+          scope.$plotSpace.width((100 - percent) + '%');
+          scope.$plotMenu.css({'width': percent + '%', 'left': 0});
+
+          // The scrollbars randomly appear on the window while showing the
+          // helper, with this small delay we give them enough time to
+          // disappear.
+          setTimeout(function() {
+            scope.resize(scope.width, scope.height);
+          }, 50);
+        }
+      }).dblclick(function() {
+        var percent = (scope.$plotSpace.width() / scope.width) * 100;
+
+        // allow for a bit of leeway
+        if (percent >= 98) {
+          scope.$plotSpace.css({'width': '73%'});
+          scope.$plotMenu.css({'width': '27%', 'left': 0});
+        }
+        else {
+          scope.$plotSpace.css({'width': '99%'});
+          scope.$plotMenu.css({'width': '1%', 'left': 0});
+        }
+        scope.resize(scope.width, scope.height);
+      }).attr('title', 'Drag to resize or double click to toggle visibility');
+
     });
 
     // once the object finishes loading, resize the contents so everything fits
