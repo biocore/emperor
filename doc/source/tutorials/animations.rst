@@ -133,7 +133,8 @@ name it ``animations_gradient``.
 
 .. note::
    When plots are generated with Emperor, only columns where all values are
-   numeric can be animated as a *gradient* category.
+   numeric can be animated as a *gradient* category. Trajectories with mixed
+   types or with non-numeric types will be ignored.
 
 As for the *trajectory* category, we will ignore all subjects except the ones
 that underwent a FMT, so for all other samples (both for the HMP and FMT), we
