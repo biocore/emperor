@@ -26,6 +26,13 @@ General Documentation:
    examples
    formats
 
+Animations:
+===========
+
+.. toctree::
+   :maxdepth: 1
+
+   tutorials/animations
 
 Citing Emperor
 ==============
