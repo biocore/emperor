@@ -157,8 +157,9 @@ class TopLevelTests(TestCase):
 
         expected.loc['PC.634'] = ['This sample has no metadata'] * 3
 
-        pd.testing.assert_frame_equal(expected.sort_index(),
-                                      emp.mf.sort_index(), check_names=False)
+        pd.util.testing.assert_frame_equal(expected.sort_index(),
+                                           emp.mf.sort_index(),
+                                           check_names=False)
 
     def test_no_overlap(self):
         self.mf.index = self.mf.index + '.not'
