@@ -140,6 +140,36 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
                                        '/new-api/emperor/support_files')
 
+    def test_initial_unbalanced(self):
+        self.mf.drop(['PC.354'], inplace=True)
+        with self.assertRaisesRegex(KeyError, "There are samples not "
+                                    "included in the mapping file. Override "
+                                    "this error by using the "
+                                    "`ignore_missing_samples` argument. "
+                                    "Offending samples: PC.354"):
+            Emperor(self.ord_res, self.mf, remote=self.url)
+
+    def test_initial_unbalanced_ignore(self):
+        expected = self.mf.copy()
+        self.mf.drop(['PC.634'], inplace=True)
+        emp = Emperor(self.ord_res, self.mf, remote=self.url,
+                      ignore_missing_samples=True)
+
+        expected.loc['PC.634'] = ['This sample has no metadata'] * 3
+
+        pd.testing.assert_frame_equal(expected.sort_index(),
+                                      emp.mf.sort_index(), check_names=False)
+
+    def test_no_overlap(self):
+        self.mf.index = self.mf.index + '.not'
+
+        with self.assertRaisesRegex(ValueError, 'None the sample identifiers '
+                                    'match between the metadata and the '
+                                    'coordinates. Verify that you are using '
+                                    'metadata and coordinates corresponding to'
+                                    ' the same dataset.'):
+            Emperor(self.ord_res, self.mf, remote=self.url)
+
     def test_get_template(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
         obs = emp._get_template(False)
