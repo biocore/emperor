@@ -142,11 +142,11 @@ class TopLevelTests(TestCase):
 
     def test_initial_unbalanced(self):
         self.mf.drop(['PC.354'], inplace=True)
-        with self.assertRaisesRegex(KeyError, "There are samples not "
-                                    "included in the mapping file. Override "
-                                    "this error by using the "
-                                    "`ignore_missing_samples` argument. "
-                                    "Offending samples: PC.354"):
+        with self.assertRaisesRegexp(KeyError, "There are samples not "
+                                     "included in the mapping file. Override "
+                                     "this error by using the "
+                                     "`ignore_missing_samples` argument. "
+                                     "Offending samples: PC.354"):
             Emperor(self.ord_res, self.mf, remote=self.url)
 
     def test_initial_unbalanced_ignore(self):
@@ -163,11 +163,11 @@ class TopLevelTests(TestCase):
     def test_no_overlap(self):
         self.mf.index = self.mf.index + '.not'
 
-        with self.assertRaisesRegex(ValueError, 'None the sample identifiers '
-                                    'match between the metadata and the '
-                                    'coordinates. Verify that you are using '
-                                    'metadata and coordinates corresponding to'
-                                    ' the same dataset.'):
+        with self.assertRaisesRegexp(ValueError, 'None the sample identifiers '
+                                     'match between the metadata and the '
+                                     'coordinates. Verify that you are using '
+                                     'metadata and coordinates corresponding '
+                                     'to the same dataset.'):
             Emperor(self.ord_res, self.mf, remote=self.url)
 
     def test_get_template(self):

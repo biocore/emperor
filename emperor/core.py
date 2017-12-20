@@ -265,7 +265,7 @@ class Emperor(object):
         elif difference and ignore_missing_samples:
             # pad the missing samples
             data = np.full((len(difference), self.mf.shape[1]),
-                           'This sample has no metadata')
+                           'This sample has no metadata', dtype='<U27')
             pad = pd.DataFrame(index=difference, columns=self.mf.columns,
                                data=data)
             self.mf = pd.concat([self.mf, pad])
