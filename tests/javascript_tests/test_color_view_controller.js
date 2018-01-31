@@ -108,6 +108,29 @@ requirejs([
       equal(controller.$scaled.is(':disabled'), true);
     });
 
+    test('Is coloring continuous', function() {
+      var container = $('<div id="no-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+
+      var controller = new ColorViewController(
+        container, this.sharedDecompositionViewDict);
+      equal(controller.title, 'Color');
+
+      equal(controller.isColoringContinuous(), false);
+
+      controller.setMetadataField('Mixed');
+      controller.$colormapSelect.val('Viridis').trigger('chosen:updated');
+      controller.$scaled.prop('checked', true).trigger('change');
+
+      equal(controller.isColoringContinuous(), true);
+
+      controller.setMetadataField('DOB');
+      controller.$colormapSelect.val('Viridis').trigger('chosen:updated');
+      controller.$scaled.prop('checked', true).trigger('change');
+
+      equal(controller.isColoringContinuous(), true);
+    });
+
     test('Test _nonNumericPlottables', function() {
       var container = $('<div id="no-exist" style="height:11px; ' +
                         'width:12px"></div>');
@@ -583,6 +606,7 @@ requirejs([
       equal(controller.$select.val(), 'Mixed');
       equal(controller.$colormapSelect.val(), 'Viridis');
       equal(controller.$scaled.is(':checked'), true);
+      equal(controller.isColoringContinuous(), true);
     });
 
     test('Testing toJSON (null)', function() {
@@ -617,6 +641,7 @@ requirejs([
       equal(controller.$select.val(), null);
       equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
       equal(controller.$scaled.is(':checked'), false);
+      equal(controller.isColoringContinuous(), false);
     });
 
     asyncTest('Test setEnabled', function() {
