@@ -266,7 +266,7 @@ define([
   ColorViewController.prototype.isColoringContinuous = function() {
     // the bodygrid can have at most one element (NA values)
     return this.$scaled.is(':checked') && this.bodyGrid.getData().length <= 1;
-  }
+  };
 
   /**
    *
