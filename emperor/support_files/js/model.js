@@ -4,6 +4,7 @@ define([
     'util'
 ],
 function($, _, util) {
+  var naturalSort = util.naturalSort;
   /**
    *
    * @class Plottable
@@ -338,7 +339,8 @@ function($, _, util) {
 
     var md_idx = this._getMetadataIndex(category);
     var res = _.filter(this.plottable, function(pl) {
-      return pl.metadata[md_idx] === value; });
+      return pl.metadata[md_idx] === value;
+    });
 
     if (res.length === 0) {
       throw new Error('The value ' + value +
@@ -354,13 +356,16 @@ function($, _, util) {
    * @param {string} category A string with the metadata header.
    *
    * @return {string[]} An array of the available values for the given metadata
-   * header.
+   * header sorted first alphabetically and then numerically.
    *
    */
   DecompositionModel.prototype.getUniqueValuesByCategory = function(category) {
     var md_idx = this._getMetadataIndex(category);
-    return _.uniq(
-      _.map(this.plottable, function(pl) {return pl.metadata[md_idx];}));
+    var values = _.map(this.plottable, function(pl) {
+      return pl.metadata[md_idx];
+    });
+
+    return naturalSort(_.uniq(values));
   };
 
   /**

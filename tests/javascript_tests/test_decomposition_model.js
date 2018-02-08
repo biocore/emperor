@@ -619,6 +619,29 @@ requirejs([
     /**
      *
      * Tests if a unique set of metadata category values can be obtained from a
+     * metadata category of mixed types.
+     *
+     */
+    test('Test getUniqueValuesByCategory mixed types', function() {
+      var mixedValues = ['b', '-1', '3', '0', '-5', '100', 'b', 'a', 'A'];
+
+      this.metadata = _.map(this.metadata, function(row, index) {
+        row.push(mixedValues[index]);
+        return row;
+      });
+      this.md_headers.push('Mixed');
+
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata);
+      var obs = dm.getUniqueValuesByCategory('Mixed');
+      var exp = ['a', 'A', 'b', '-5', '-1', '0', '3', '100'];
+
+      deepEqual(obs, exp, 'Unique metadata values retrieved successfully');
+    });
+
+    /**
+     *
+     * Tests if a unique set of metadata category values can be obtained from a
      * metadata category
      *
      */
