@@ -51,7 +51,7 @@ define([
      *  jQuery object holding the SVG colorbar
      */
     this.$colorScale = $("<svg width='90%' height='100%' " +
-                         "'style='display:block;margin:auto;'></svg>");
+                         "style='display:block;margin:auto;'></svg>");
     this.$scaleDiv.append(this.$colorScale);
     this.$scaleDiv.hide();
     /**
@@ -254,6 +254,18 @@ define([
       view.setGroupColor(0xff0000, view.decomp.plottable);
       view.needsUpdate = true;
     });
+  };
+
+  /**
+   * Method that returns whether or not the coloring is continuous and the
+   * values have been scaled.
+   *
+   * @return {Boolean} True if the coloring is continuous and the data is
+   * scaled, false otherwise.
+   */
+  ColorViewController.prototype.isColoringContinuous = function() {
+    // the bodygrid can have at most one element (NA values)
+    return this.$scaled.is(':checked') && this.bodyGrid.getData().length <= 1;
   };
 
   /**
