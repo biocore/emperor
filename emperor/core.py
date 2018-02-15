@@ -252,8 +252,8 @@ class Emperor(object):
         difference = ordination_samples - set(self.mf.index)
 
         if difference == ordination_samples:
-            raise ValueError('None the sample identifiers match between the '
-                             'metadata and the coordinates. Verify that you '
+            raise ValueError('None of the sample identifiers match between the'
+                             ' metadata and the coordinates. Verify that you '
                              'are using metadata and coordinates corresponding'
                              ' to the same dataset.')
 
