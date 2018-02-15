@@ -248,9 +248,10 @@ class Emperor(object):
         return display(HTML(str(self)))
 
     def _validate_metadata(self, ignore_missing_samples):
-        difference = set(self.ordination.samples.index) - set(self.mf.index)
+        ordination_samples = set(self.ordination.samples.index)
+        difference = ordination_samples - set(self.mf.index)
 
-        if len(difference) == len(self.ordination.samples):
+        if difference == ordination_samples:
             raise ValueError('None the sample identifiers match between the '
                              'metadata and the coordinates. Verify that you '
                              'are using metadata and coordinates corresponding'
@@ -261,7 +262,7 @@ class Emperor(object):
                            "file. Override this error by using the "
                            "`ignore_missing_samples` argument. Offending "
                            "samples: %s"
-                           % ', '.join([str(i) for i in difference]))
+                           % ', '.join(sorted([str(i) for i in difference])))
         elif difference and ignore_missing_samples:
             # pad the missing samples
             data = np.full((len(difference), self.mf.shape[1]),
