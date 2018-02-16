@@ -25,6 +25,7 @@ from __future__ import division
 
 from os.path import join, basename
 from distutils.dir_util import copy_tree
+import warnings
 import numpy as np
 import pandas as pd
 
@@ -35,7 +36,7 @@ from skbio import OrdinationResults
 from emperor import __version__ as emperor_version
 from emperor.util import (get_emperor_support_files_dir,
                           preprocess_coords_file, resolve_stable_url,
-                          validate_and_process_custom_axes)
+                          validate_and_process_custom_axes, EmperorWarning)
 
 # we are going to use this remote location to load external resources
 REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/%s/emperor'
@@ -87,7 +88,8 @@ class Emperor(object):
     ignore_missing_samples: bool, optional
         If set to `True` samples without metadata are included by setting all
         metadata values to: ``This sample has not metadata``. By default an
-        exception will be raised if missing samples are encountered.
+        exception will be raised if missing samples are encountered. Note, this
+        flag only takes effect if there's at least one overlapping sample.
 
     Attributes
     ----------
@@ -264,6 +266,11 @@ class Emperor(object):
                            "samples: %s"
                            % ', '.join(sorted([str(i) for i in difference])))
         elif difference and ignore_missing_samples:
+            warnings.warn("%d out of %d samples have no metadata and are being"
+                          " included with a placeholder value." %
+                          (len(difference), len(ordination_samples)),
+                          EmperorWarning)
+
             # pad the missing samples
             data = np.full((len(difference), self.mf.shape[1]),
                            'This sample has no metadata', dtype='<U27')
