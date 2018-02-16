@@ -692,13 +692,20 @@ define([
       saveAs(blob, 'emperor-image.svg');
 
       // generating legend
-      var names = [], colors = [];
-      _.each(this.controllers.color.bodyGrid.getData(), function(element) {
-        names.push(element.category);
-        colors.push(element.value);
-      });
-      blob = new Blob([Draw.formatSVGLegend(names, colors)],
-                      {type: 'image/svg+xml'});
+      var names = [], colors = [], legend;
+
+      if (this.controllers.color.isColoringContinuous()) {
+        legend = XMLS.serializeToString(this.controllers.color.$colorScale[0]);
+      }
+      else {
+        _.each(this.controllers.color.bodyGrid.getData(), function(element) {
+          names.push(element.category);
+          colors.push(element.value);
+        });
+
+        legend = Draw.formatSVGLegend(names, colors);
+      }
+      blob = new Blob([legend], {type: 'image/svg+xml'});
       saveAs(blob, 'emperor-image-labels.svg');
     } else {
       console.error('Screenshot type not implemented');
