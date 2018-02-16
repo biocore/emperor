@@ -4,8 +4,10 @@ define([
     'view',
     'viewcontroller',
     'd3',
-    'contextmenu'
-], function($, _, DecompositionView, ViewControllers, d3, contextmenu) {
+    'contextmenu',
+    'filesaver'
+], function($, _, DecompositionView, ViewControllers, d3, contextmenu,
+            FileSaver) {
   var EmperorViewController = ViewControllers.EmperorViewController;
 
   /**
@@ -87,7 +89,6 @@ define([
                                    'vertical-align': 'middle',
                                    'overflow': 'hidden'});
 
-
     this.$body.append(this.$_screePlotContainer);
 
     /**
@@ -101,7 +102,7 @@ define([
       'position': 'absolute',
       'z-index': '3',
       'top': '10px',
-      'right': '5px',
+      'right': '5px'
     }).button({text: false,
                              icons: {primary: ' ui-icon-circle-arrow-s'}
     }).attr('title', 'Download Scree Plot');
@@ -411,7 +412,7 @@ define([
 
       blob = new Blob([svg], {type: 'image/svg+xml'});
       saveAs(blob, 'emperor-scree-plot.svg');
-  }
+  };
 
   /**
    * Callback to reposition an axis
