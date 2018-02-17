@@ -15,10 +15,12 @@ from io import StringIO
 from skbio import OrdinationResults
 from jinja2 import Template
 
+import warnings
 import pandas as pd
 import numpy as np
 
 from emperor.core import Emperor
+from emperor.util import EmperorWarning
 
 # account for what's allowed in python 2 vs PY3K
 try:
@@ -139,6 +141,46 @@ class TopLevelTests(TestCase):
 
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
                                        '/new-api/emperor/support_files')
+
+    def test_initial_unbalanced(self):
+        self.mf.drop(['PC.354'], inplace=True)
+        with self.assertRaisesRegexp(KeyError, "There are samples not "
+                                     "included in the mapping file. Override "
+                                     "this error by using the "
+                                     "`ignore_missing_samples` argument. "
+                                     "Offending samples: PC.354"):
+            Emperor(self.ord_res, self.mf, remote=self.url)
+
+    def test_initial_unbalanced_ignore(self):
+        expected = self.mf.copy()
+        self.mf.drop(['PC.634'], inplace=True)
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            emp = Emperor(self.ord_res, self.mf, remote=self.url,
+                          ignore_missing_samples=True)
+
+            self.assertTrue(len(w) == 1)
+            self.assertTrue(issubclass(w[-1].category, EmperorWarning))
+            self.assertEqual("1 out of 9 samples have no metadata and are "
+                             "being included with a placeholder value.",
+                             str(w[-1].message))
+
+            expected.loc['PC.634'] = ['This sample has no metadata'] * 3
+
+            pd.util.testing.assert_frame_equal(expected.sort_index(),
+                                               emp.mf.sort_index(),
+                                               check_names=False)
+
+    def test_no_overlap(self):
+        self.mf.index = self.mf.index + '.not'
+
+        with self.assertRaisesRegexp(ValueError, 'None of the sample '
+                                     'identifiers match between the metadata '
+                                     'and the coordinates. Verify that you are'
+                                     ' using metadata and coordinates '
+                                     'corresponding to the same dataset.'):
+            Emperor(self.ord_res, self.mf, remote=self.url)
 
     def test_get_template(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)

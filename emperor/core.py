@@ -25,6 +25,7 @@ from __future__ import division
 
 from os.path import join, basename
 from distutils.dir_util import copy_tree
+import warnings
 import numpy as np
 import pandas as pd
 
@@ -35,7 +36,7 @@ from skbio import OrdinationResults
 from emperor import __version__ as emperor_version
 from emperor.util import (get_emperor_support_files_dir,
                           preprocess_coords_file, resolve_stable_url,
-                          validate_and_process_custom_axes)
+                          validate_and_process_custom_axes, EmperorWarning)
 
 # we are going to use this remote location to load external resources
 REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/%s/emperor'
@@ -84,6 +85,11 @@ class Emperor(object):
     jackknifed: list of OrdinationResults, optional
         A list of the OrdinationResults objects with the same sample
         identifiers as the identifiers in ``ordination``.
+    ignore_missing_samples: bool, optional
+        If set to `True` samples without metadata are included by setting all
+        metadata values to: ``This sample has not metadata``. By default an
+        exception will be raised if missing samples are encountered. Note, this
+        flag only takes effect if there's at least one overlapping sample.
 
     Attributes
     ----------
@@ -182,6 +188,9 @@ class Emperor(object):
     ------
     ValueError
         If the remote argument is not of ``bool`` or ``str`` type.
+        If none of the samples in the ordination matrix are in the metadata.
+    KeyError
+        If there's samples in the ordination matrix but not in the metadata.
 
     References
     ----------
@@ -191,24 +200,20 @@ class Emperor(object):
 
     """
     def __init__(self, ordination, mapping_file, dimensions=5, remote=True,
-                 jackknifed=None):
+                 jackknifed=None, ignore_missing_samples=False):
 
         self.ordination = ordination
         self.jackknifed = jackknifed
 
         self.mf = mapping_file.copy()
 
-        # filter all metadata that we may have for which we don't have any
-        # coordinates this also ensures that the coordinates are in the
-        # same order as the metadata
-        self.mf = self.mf.loc[ordination.samples.index]
-
+        self._validate_metadata(ignore_missing_samples)
         self._validate_jackknifed()
 
         self._html = None
 
-        if ordination.proportion_explained.shape[0] < dimensions:
-            self.dimensions = ordination.proportion_explained.shape[0]
+        if self.ordination.proportion_explained.shape[0] < dimensions:
+            self.dimensions = self.ordination.proportion_explained.shape[0]
         else:
             self.dimensions = dimensions
 
@@ -243,6 +248,40 @@ class Emperor(object):
         from IPython.display import display, HTML
 
         return display(HTML(str(self)))
+
+    def _validate_metadata(self, ignore_missing_samples):
+        ordination_samples = set(self.ordination.samples.index)
+        difference = ordination_samples - set(self.mf.index)
+
+        if difference == ordination_samples:
+            raise ValueError('None of the sample identifiers match between the'
+                             ' metadata and the coordinates. Verify that you '
+                             'are using metadata and coordinates corresponding'
+                             ' to the same dataset.')
+
+        if difference and not ignore_missing_samples:
+            raise KeyError("There are samples not included in the mapping "
+                           "file. Override this error by using the "
+                           "`ignore_missing_samples` argument. Offending "
+                           "samples: %s"
+                           % ', '.join(sorted([str(i) for i in difference])))
+        elif difference and ignore_missing_samples:
+            warnings.warn("%d out of %d samples have no metadata and are being"
+                          " included with a placeholder value." %
+                          (len(difference), len(ordination_samples)),
+                          EmperorWarning)
+
+            # pad the missing samples
+            data = np.full((len(difference), self.mf.shape[1]),
+                           'This sample has no metadata', dtype='<U27')
+            pad = pd.DataFrame(index=difference, columns=self.mf.columns,
+                               data=data)
+            self.mf = pd.concat([self.mf, pad])
+
+        # filter all metadata that we may have for which we don't have any
+        # coordinates this also ensures that the coordinates are in the
+        # same order as the metadata
+        self.mf = self.mf.loc[self.ordination.samples.index]
 
     def _validate_jackknifed(self):
         # bail if the value is non or an empty list
