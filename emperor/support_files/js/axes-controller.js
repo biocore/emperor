@@ -4,8 +4,10 @@ define([
     'view',
     'viewcontroller',
     'd3',
-    'contextmenu'
-], function($, _, DecompositionView, ViewControllers, d3, contextmenu) {
+    'contextmenu',
+    'filesaver'
+], function($, _, DecompositionView, ViewControllers, d3, contextmenu,
+            FileSaver) {
   var EmperorViewController = ViewControllers.EmperorViewController;
 
   /**
@@ -88,6 +90,23 @@ define([
                                    'overflow': 'hidden'});
 
     this.$body.append(this.$_screePlotContainer);
+
+    /**
+     * @type {Node}
+     * jQuery object containing the download scree plot button
+     *
+     * See also the private method _downloadScreePlot
+     */
+    this.$saveButton = $('<button>&nbsp;</save>');
+    this.$saveButton.css({
+      'position': 'absolute',
+      'z-index': '3',
+      'top': '10px',
+      'right': '5px'
+    }).button({text: false,
+                             icons: {primary: ' ui-icon-circle-arrow-s'}
+    }).attr('title', 'Download Scree Plot');
+    this.$_screePlotContainer.append(this.$saveButton);
 
     /**
      * @type {Node}
@@ -375,6 +394,24 @@ define([
       .style('shape-rendering', 'crispEdges');
 
     this.screePlot = svg;
+
+    this.$saveButton.on('click', function() {
+      scope._downloadScreePlot();
+    });
+  };
+
+  /**
+   *
+   * Helper method to download the scree plot as an SVG file.
+   *
+   */
+  AxesController.prototype._downloadScreePlot = function() {
+      // converting svgRenderer to string: http://stackoverflow.com/a/17415624
+      var XMLS = new XMLSerializer();
+      var svg = XMLS.serializeToString(this.screePlot.node().ownerSVGElement);
+
+      blob = new Blob([svg], {type: 'image/svg+xml'});
+      saveAs(blob, 'emperor-scree-plot.svg');
   };
 
   /**
