@@ -418,7 +418,7 @@ define([
    */
   EmperorController.prototype.updatePlotBanner = function() {
     var color = this.sceneViews[0].scene.background.clone(), visible = 0,
-        total = 0;
+        total = 0, message = '';
 
     // invert the color so it's visible regardless of the background
     color.setRGB((Math.floor(color.r * 255) ^ 0xFF) / 255,
@@ -435,7 +435,13 @@ define([
     });
 
     this.$plotBanner.css({'color': color, 'border-color': color});
-    this.$plotBanner.html(visible + '/' + total + ' visible');
+
+    if (visible !== total) {
+      message = ' <br> WARNING: hiding samples in an ordination can be ' +
+                'misleading';
+    }
+
+    this.$plotBanner.html(visible + '/' + total + ' visible' + message);
   };
 
   EmperorController.prototype.getPlotBanner = function(text) {
