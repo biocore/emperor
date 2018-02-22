@@ -45,7 +45,7 @@
         page.evaluate(addLogging);
 
         // https://stackoverflow.com/a/29506120/379593
-        page.evaluate(function(){
+        page.evaluate(function() {
             Math.log2 = Math.log2 || function(x) {
                 return Math.log(x) / Math.LOG2E;
             };
