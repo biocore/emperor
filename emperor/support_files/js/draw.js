@@ -122,23 +122,31 @@ define(['underscore', 'three'], function(_, THREE) {
    * @function makeLabel
    **/
   function makeLabel(position, text, color, factor) {
-    var canvas = document.createElement('canvas');
-    var size = 1024;
-
     factor = (factor === undefined ? 1 : factor);
 
-    canvas.width = size;
-    canvas.height = size;
-    var context = canvas.getContext('2d');
+    var fontSize = 30 * factor, canvas, context, measure;
+
+    canvas = document.createElement('canvas');
+    context = canvas.getContext('2d');
+
+    // set the font size so we can measure the width
+    context.font = fontSize + 'px Arial';
+    measure = context.measureText(text);
+
+    // make the dimensions squared and a power of 2 (for use in THREE.js)
+    canvas.width = Math.pow(2, Math.ceil(Math.log2(measure.width)));
+    canvas.height = canvas.width;
+
+    // after changing the canvas' size we need to reset the font attributes
+    context.textAlign = 'center';
+    context.font = fontSize + 'px Arial';
     if (_.isNumber(color)) {
       context.fillStyle = '#' + color.toString(16);
     }
     else {
       context.fillStyle = color;
     }
-    context.textAlign = 'center';
-    context.font = (30 * factor) + 'px Arial';
-    context.fillText(text, size / 2, size / 2);
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
 
     var amap = new THREE.Texture(canvas);
     amap.needsUpdate = true;
