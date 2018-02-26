@@ -86,14 +86,25 @@ In certain circumstances it is more convenient to create plots independent of
 the Jupyter notebook, to do this you would need to do the same thing as above
 (load the metadata and coordinates), and then instead of displaying the plot
 inline, you can use the Python API to create a folder with the plot and needed
-resources. The following snippet assumes that you have an ``Emperor`` instance
-in a variable named ``emp``::
+resources. The following snippet uses the ``Emperor`` object but this time it
+sets the ``remote`` parameter to the current directory i.e. ``remote='.'``
+(like in UNIX, ``'.'`` refers to the current path)::
 
    from emperor import Emperor
    from os import makedirs
    from os.path import join
+   from skbio import OrdinationResults
 
-   emp = Emperor(..)
+   import pandas as pd
+
+   # this is just an example of how to load a metadata table and ordination
+   metadata = pd.read_csv('mapping-file.txt', sep='\t', index_col='#SampleID')
+   ordination = OrdinationResults.read('bray-curtis.txt')
+
+
+   # the remote argument refers to where the support files will be located
+   # relative to the plot itself i.e. index.html.
+   emp = Emperor(ordination, metadata, remote='.')
    output_folder = 'plot' # new folder where data will be saved
 
    # create an output directory
