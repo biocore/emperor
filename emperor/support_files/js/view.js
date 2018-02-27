@@ -2,8 +2,10 @@ define([
     'jquery',
     'underscore',
     'three',
-    'shapes'
-], function($, _, THREE, shapes) {
+    'shapes',
+    'draw'
+], function($, _, THREE, shapes, draw) {
+  var makeArrow = draw.makeArrow;
 /**
  *
  * @class DecompositionView
@@ -101,37 +103,51 @@ DecompositionView.prototype._initBaseView = function() {
 
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
-  this.decomp.apply(function(plottable) {
-    mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial());
-    mesh.name = plottable.name;
+  if (this.decomp.isScatterType()) {
+    this.decomp.apply(function(plottable) {
+      mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial());
+      mesh.name = plottable.name;
 
-    mesh.material.color = new THREE.Color(0xff0000);
-    mesh.material.transparent = false;
-    mesh.material.depthWrite = true;
-    mesh.material.opacity = 1;
-    mesh.matrixAutoUpdate = true;
+      mesh.material.color = new THREE.Color(0xff0000);
+      mesh.material.transparent = false;
+      mesh.material.depthWrite = true;
+      mesh.material.opacity = 1;
+      mesh.matrixAutoUpdate = true;
 
-    mesh.position.set(plottable.coordinates[x], plottable.coordinates[y],
-                      plottable.coordinates[z]);
+      mesh.position.set(plottable.coordinates[x], plottable.coordinates[y],
+                        plottable.coordinates[z]);
 
-    scope.markers.push(mesh);
+      scope.markers.push(mesh);
 
-    if (hasConfidenceIntervals) {
-      // copy the current sphere and make it an ellipsoid
-      mesh = mesh.clone();
+      if (hasConfidenceIntervals) {
+        // copy the current sphere and make it an ellipsoid
+        mesh = mesh.clone();
 
-      mesh.name = plottable.name + '_ci';
-      mesh.material.transparent = true;
-      mesh.material.opacity = 0.5;
+        mesh.name = plottable.name + '_ci';
+        mesh.material.transparent = true;
+        mesh.material.opacity = 0.5;
 
-      mesh.scale.set(plottable.ci[x] / geometry.parameters.radius,
-                     plottable.ci[y] / geometry.parameters.radius,
-                     plottable.ci[z] / geometry.parameters.radius);
+        mesh.scale.set(plottable.ci[x] / geometry.parameters.radius,
+                       plottable.ci[y] / geometry.parameters.radius,
+                       plottable.ci[z] / geometry.parameters.radius);
 
-      scope.ellipsoids.push(mesh);
-    }
-  });
+        scope.ellipsoids.push(mesh);
+      }
+    });
+  }
+  else if (this.decomp.isArrowType()) {
+    var arrow, zero = [0, 0, 0], point;
 
+    this.decomp.apply(function(plottable) {
+      point = [plottable.coordinates[x], plottable.coordinates[y], plottable.coordinates[z]];
+      arrow = makeArrow(zero, point, 0xff0000);
+
+      scope.markers.push(arrow);
+    });
+  }
+  else {
+    throw "Unsupported decomposition type";
+  }
   // apply but to the adjacency list NOT IMPLEMENTED
   // this.decomp.applyAJ( ... ); Blame Jamie and Jose - baby steps buddy...
 
@@ -345,10 +361,16 @@ DecompositionView.prototype.setGroupColor = function(color, group) {
 
   _.each(group, function(element) {
     idx = element.idx;
-    scope.markers[idx].material.color = new THREE.Color(color);
 
-    if (hasConfidenceIntervals) {
-      scope.ellipsoids[idx].material.color = new THREE.Color(color);
+    if (scope.decomp.isScatterType()) {
+      scope.markers[idx].material.color = new THREE.Color(color);
+
+      if (hasConfidenceIntervals) {
+        scope.ellipsoids[idx].material.color = new THREE.Color(color);
+      }
+    }
+    else if (scope.decomp.isArrowType()) {
+      throw "Not implemented yet, sendhelp.io";
     }
   });
 };

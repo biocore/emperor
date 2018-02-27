@@ -685,10 +685,13 @@ define([
       this.control.update();
     }
 
-    //point all samples towards the camera
-    _.each(this.decViews.scatter.markers, function(element) {
-      element.quaternion.copy(camera.quaternion);
-    });
+    // don't point arrows towards the camera, that makes zero sense :L!
+    if (this.decViews.scatter.decomp.isScatterType()) {
+      //point all samples towards the camera
+      _.each(this.decViews.scatter.markers, function(element) {
+        element.quaternion.copy(camera.quaternion);
+      });
+    }
 
     this.needsUpdate = false;
     $.each(this.decViews, function(key, val) {
