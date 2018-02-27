@@ -77,6 +77,37 @@ define(['underscore', 'three'], function(_, THREE) {
     return line;
   }
 
+  /**
+   *
+   * Create a generic Arrow object (composite of a cone and line)
+   *
+   * @param {float[]} from The x, y and z coordinates where the arrow
+   * originates from.
+   * @param {float[]} to The x, y and z coordinates where the arrow points to.
+   * @param {integer} color Hexadecimal base that specifies the color of the
+   * line.
+   *
+   * @return {THREE.Object3D}
+   * @function makeArrow
+   */
+  function makeArrow(from, to, color) {
+    // TODO: Write tests for this function
+    var target, origin, direction, length, arrow;
+
+    target = new THREE.Vector3(to[0], to[1], to[2]);
+    origin = new THREE.Vector3(from[0], from[1], from[2]);
+
+    length = origin.distanceTo(target);
+
+    // https://stackoverflow.com/a/20558498/379593
+    direction = target.sub(origin);
+
+    direction.normalize();
+
+    arrow = new THREE.ArrowHelper(direction, origin, length, color);
+
+    return arrow;
+  }
 
   function drawTrajectoryLine(trajectory, currentFrame, color, radius) {
     // based on the example described in:
@@ -203,5 +234,6 @@ define(['underscore', 'three'], function(_, THREE) {
   }
 
   return {'formatSVGLegend': formatSVGLegend, 'makeLine': makeLine,
-          'makeLabel': makeLabel, 'drawTrajectoryLine': drawTrajectoryLine};
+          'makeLabel': makeLabel, 'makeArrow': makeArrow,
+          'drawTrajectoryLine': drawTrajectoryLine};
 });
