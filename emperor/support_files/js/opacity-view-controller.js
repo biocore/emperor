@@ -52,10 +52,21 @@ define([
 
     // webgl acts up with transparent objects, so we only set them to be
     // explicitly transparent if the opacity is not at full
-    _.each(group, function(element) {
-      scope.markers[element.idx].material.transparent = transparent;
-      scope.markers[element.idx].material.opacity = opacity;
-    });
+    if (scope.decomp.isScatterType()) {
+      _.each(group, function(element) {
+        scope.markers[element.idx].material.transparent = transparent;
+        scope.markers[element.idx].material.opacity = opacity;
+      });
+    }
+    else if (scope.decomp.isArrowType()) {
+      _.each(group, function(element) {
+        scope.markers[element.idx].line.material.transparent = transparent;
+        scope.markers[element.idx].line.material.opacity = opacity;
+
+        scope.markers[element.idx].cone.material.transparent = transparent;
+        scope.markers[element.idx].cone.material.opacity = opacity;
+      });
+    }
     scope.needsUpdate = true;
   };
 
@@ -72,10 +83,21 @@ define([
 
     // webgl acts up with transparent objects, so we only set them to be
     // explicitly transparent if the opacity is not at full
-    _.each(dv.markers, function(element) {
-      element.material.transparent = transparent;
-      element.material.opacity = value;
-    });
+    if (dv.decomp.isScatterType()) {
+      _.each(dv.markers, function(element) {
+        element.material.transparent = transparent;
+        element.material.opacity = value;
+      });
+    }
+    else if (dv.decomp.isArrowType()) {
+      _.each(dv.markers, function(element) {
+        element.line.material.transparent = transparent;
+        element.line.material.opacity = value;
+
+        element.cone.material.transparent = transparent;
+        element.cone.material.opacity = value;
+      });
+    }
     dv.needsUpdate = true;
   };
 

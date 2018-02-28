@@ -140,7 +140,7 @@ DecompositionView.prototype._initBaseView = function() {
 
     this.decomp.apply(function(plottable) {
       point = [plottable.coordinates[x], plottable.coordinates[y], plottable.coordinates[z]];
-      arrow = makeArrow(zero, point, 0xff0000);
+      arrow = makeArrow(zero, point, 0x708090);
 
       scope.markers.push(arrow);
     });
@@ -217,31 +217,52 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
     radius = scope.ellipsoids[0].geometry.parameters.radius;
   }
 
-  this.decomp.apply(function(plottable) {
-    mesh = scope.markers[plottable.idx];
+  // TODO: Some of this could be refactored
+  if (this.decomp.isScatterType()) {
+    this.decomp.apply(function(plottable) {
+      mesh = scope.markers[plottable.idx];
 
-    // always use the original data plus the axis orientation
-    mesh.position.set(
-      plottable.coordinates[x] * scope.axesOrientation[0],
-      plottable.coordinates[y] * scope.axesOrientation[1],
-      (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
-    mesh.updateMatrix();
-
-    if (hasConfidenceIntervals) {
-      mesh = scope.ellipsoids[plottable.idx];
-
+      // always use the original data plus the axis orientation
       mesh.position.set(
         plottable.coordinates[x] * scope.axesOrientation[0],
         plottable.coordinates[y] * scope.axesOrientation[1],
         (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
-
-      // flatten the ellipsoids ever so slightly
-      mesh.scale.set(plottable.ci[x] / radius, plottable.ci[y] / radius,
-                     is2D ? 0.01 : plottable.ci[z] / radius);
-
       mesh.updateMatrix();
-    }
-  });
+
+      if (hasConfidenceIntervals) {
+        mesh = scope.ellipsoids[plottable.idx];
+
+        mesh.position.set(
+          plottable.coordinates[x] * scope.axesOrientation[0],
+          plottable.coordinates[y] * scope.axesOrientation[1],
+          (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+
+        // flatten the ellipsoids ever so slightly
+        mesh.scale.set(plottable.ci[x] / radius, plottable.ci[y] / radius,
+                       is2D ? 0.01 : plottable.ci[z] / radius);
+
+        mesh.updateMatrix();
+      }
+    });
+  }
+  else if(this.decomp.isArrowType()) {
+    var zero = new THREE.Vector3(0, 0, 0), target, arrow;
+
+    this.decomp.apply(function(plottable) {
+      arrow = scope.markers[plottable.idx];
+
+      target = new THREE.Vector3(
+        plottable.coordinates[x] * scope.axesOrientation[0],
+        plottable.coordinates[y] * scope.axesOrientation[1],
+        (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+
+      target = target.sub(zero);
+      target.normalize();
+
+      arrow.setDirection(target.sub(zero));
+      arrow.setLength(zero.distanceTo(target));
+    });
+  }
 
   this.needsUpdate = true;
 };
@@ -277,18 +298,9 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
     // and update the state of the orientation
     this.axesOrientation[localIndex] *= -1;
 
-    this.decomp.apply(function(plottable) {
-      mesh = scope.markers[plottable.idx];
-
-      // always use the original data plus the axis orientation
-      mesh.position.set(
-        plottable.coordinates[x] * scope.axesOrientation[0],
-        plottable.coordinates[y] * scope.axesOrientation[1],
-        is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
-      mesh.updateMatrix();
-
-      if (hasConfidenceIntervals) {
-        mesh = scope.ellipsoids[plottable.idx];
+    if (this.decomp.isScatterType()) {
+      this.decomp.apply(function(plottable) {
+        mesh = scope.markers[plottable.idx];
 
         // always use the original data plus the axis orientation
         mesh.position.set(
@@ -296,8 +308,37 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
           plottable.coordinates[y] * scope.axesOrientation[1],
           is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
         mesh.updateMatrix();
-      }
-    });
+
+        if (hasConfidenceIntervals) {
+          mesh = scope.ellipsoids[plottable.idx];
+
+          // always use the original data plus the axis orientation
+          mesh.position.set(
+            plottable.coordinates[x] * scope.axesOrientation[0],
+            plottable.coordinates[y] * scope.axesOrientation[1],
+            is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
+          mesh.updateMatrix();
+        }
+      });
+    }
+    else if (this.decomp.isArrowType()) {
+      var zero = new THREE.Vector3(0, 0, 0), target, arrow;
+
+      this.decomp.apply(function(plottable) {
+        arrow = scope.markers[plottable.idx];
+
+        target = new THREE.Vector3(
+          plottable.coordinates[x] * scope.axesOrientation[0],
+          plottable.coordinates[y] * scope.axesOrientation[1],
+          (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+
+        target = target.sub(zero);
+        target.normalize();
+
+        arrow.setDirection(target.sub(zero));
+        arrow.setLength(zero.distanceTo(target));
+      });
+    }
 
     this.needsUpdate = true;
   }

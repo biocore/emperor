@@ -15,6 +15,8 @@ define([
    * identifiers and the values are DecompositionView objects referring to a
    * set of objects presented on screen. This dictionary will usually be shared
    * by all the tabs in the application. This argument is passed by reference.
+   * Note that only the decompositions of type 'scatter' will be controlled,
+   * other types will be ignored.
    *
    * @return {ScaleViewController}
    * @constructs ScaleViewController
@@ -25,6 +27,11 @@ define([
     var helpmenu = 'Change the size of the attributes on the plot, allowing ' +
                    'highlighting of points using size.';
     var title = 'Scale';
+
+    // scaling is only supported for scatter types
+    decompViewDict = _.pick(decompViewDict, function(view) {
+      return view.decomp.isScatterType();
+    });
 
     ScalarViewControllerABC.call(this, container, title, helpmenu, 0, 5, 0.1,
                                  decompViewDict);

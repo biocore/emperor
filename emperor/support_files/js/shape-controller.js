@@ -20,6 +20,8 @@ define([
    * identifiers and the values are DecompositionView objects referring to a
    * set of objects presented on screen. This dictionary will usually be shared
    * by all the tabs in the application. This argument is passed by reference.
+   * Note that only the decompositions of type 'scatter' will be controlled,
+   * other types will be ignored.
    *
    * @return {ShapeController} An instance of ShapeController
    * @constructs ShapeController
@@ -68,6 +70,11 @@ define([
         formatter: ShapeFormatter
       }
     };
+
+    // shapes are only supported for scatter types
+    decompViewDict = _.pick(decompViewDict, function(view) {
+      return view.decomp.isScatterType();
+    });
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
                              decompViewDict, options);
