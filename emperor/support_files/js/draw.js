@@ -38,6 +38,41 @@ define(['underscore', 'three'], function(_, THREE) {
     return u;
   };
 
+  /**
+   *
+   * @class EmperorArrowHelper
+   *
+   * Subclass of THREE.ArrowHelper to make raycasting work on the line and cone
+   * children.
+   *
+   * For more information about the arguments, see the [online documentation]
+   * {@link https://threejs.org/docs/#api/helpers/ArrowHelper}.
+   * @return {EmperorArrowHelper}
+   * @extends THREE.ArrowHelper
+   *
+   */
+  function EmperorArrowHelper(dir, origin, length, color, headLength,
+                              headWidth) {
+    THREE.ArrowHelper.call(this, dir, origin, length, color, headLength,
+                            headWidth);
+    return this;
+  }
+  EmperorArrowHelper.prototype = Object.create(THREE.ArrowHelper.prototype);
+  EmperorArrowHelper.prototype.constructor = THREE.ArrowHelper;
+
+  /**
+   *
+   * Check for ray casting with the line and cone of the arrow
+   *
+   * This class may need to disappear if THREE.ArrowHelper implements the
+   * raycast method, for more information see the [online documentation]
+   * {@link https://threejs.org/docs/#api/helpers/ArrowHelper}.
+   *
+   */
+  EmperorArrowHelper.prototype.raycast = function(raycaster, intersects) {
+      this.line.raycast(raycaster, intersects);
+      this.cone.raycast(raycaster, intersects);
+  };
 
   /**
    *
@@ -104,7 +139,7 @@ define(['underscore', 'three'], function(_, THREE) {
 
     direction.normalize();
 
-    arrow = new THREE.ArrowHelper(direction, origin, length, color);
+    arrow = new EmperorArrowHelper(direction, origin, length, color);
 
     return arrow;
   }

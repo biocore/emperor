@@ -141,6 +141,8 @@ DecompositionView.prototype._initBaseView = function() {
     this.decomp.apply(function(plottable) {
       point = [plottable.coordinates[x], plottable.coordinates[y], plottable.coordinates[z]];
       arrow = makeArrow(zero, point, 0x708090);
+      arrow.line.name = plottable.name;
+      arrow.cone.name = plottable.name;
 
       scope.markers.push(arrow);
     });
