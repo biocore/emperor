@@ -23,6 +23,7 @@ define([
             ShapeController, AxesController, ScaleViewController,
             AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
             CanvasRenderer, canvasToBlob) {
+  var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
 
   /**
    *
