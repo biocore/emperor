@@ -33,8 +33,10 @@ define([
    * The application controller, contains all the information on how the model
    * is being presented to the user.
    *
-   * @param {DecompositionModel} dm An object that will be represented on
-   * screen.
+   * @param {DecompositionModel} scatter A decomposition object that represents
+   * the scatter-represented objects.
+   * @param {DecompositionModel} biplot An optional decomposition object that
+   * represents the arrow-represented objects. Can be null or undefined.
    * @param {string} divId The element id where the controller should
    * instantiate itself.
    * @param {node} [webglcanvas = undefined] the canvas to use to render the
@@ -45,7 +47,7 @@ define([
    * @constructs EmperorController
    *
    */
-  function EmperorController(dm, divId, webglcanvas) {
+  function EmperorController(scatter, biplot, divId, webglcanvas) {
     var scope = this;
 
     /**
@@ -75,11 +77,18 @@ define([
      */
     this.height = this.$divId.height();
 
+
     /**
-     * Ordination data being plotted.
-     * @type {DecompositionModel}
+     * Object with all the available decomposition views.
+     *
+     * @type {object}
      */
-    this.dm = dm;
+    this.decViews = {'scatter': new DecompositionView(scatter)};
+
+    if (biplot) {
+      this.decViews.biplot = new DecompositionView(biplot);
+    }
+
     /**
      * List of the scene plots views being rendered.
      * @type {ScenePlotView3D[]}
@@ -173,16 +182,6 @@ define([
     // future, that's why we are creating the extra "tabsContainer" div
     this.$plotMenu.append(this._$tabsContainer);
     this._$tabsContainer.append(this._$tabsList);
-
-    /**
-     * Object with all the available decomposition views.
-     *
-     * FIXME: This is a hack to go around the fact that the constructor takes
-     * a single decomposition model instead of a dictionary
-     *
-     * @type {object}
-     */
-    this.decViews = {'scatter': new DecompositionView(this.dm)};
 
     // default decomposition view uses the full window
     this.addSceneView();
@@ -474,7 +473,7 @@ define([
 
     // this is the number of expected view controllers that will announce that
     // all view controllers have been successfully loaded.
-    this._expected = 4;
+    this._expected = 7;
     this._seen = 0;
 
     //FIXME: This only works for 1 scene plot view
@@ -646,7 +645,7 @@ define([
     }
     else if (type === 'svg') {
       // confirm box based on number of samples: better safe than sorry
-      if (this.dm.length >= 9000) {
+      if (this.decViews.scatter.decomp.length >= 9000) {
         if (confirm('This number of samples could take a long time and in ' +
            'some computers the browser will crash. If this happens we ' +
            'suggest to use the png implementation. Do you want to ' +
@@ -792,7 +791,7 @@ define([
 
   /**
    *
-   * Helper method to resize the plots.
+   * Helper method to add tabs to the controller.
    *
    * @param {DecompositionView[]} dvdict Dictionary of DecompositionViews.
    * @param {EmperorViewControllerABC} viewConstructor Constructor of the view
