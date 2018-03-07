@@ -72,12 +72,15 @@ define([
     };
 
     // shapes are only supported for scatter types
-    decompViewDict = _.pick(decompViewDict, function(view) {
-      return view.decomp.isScatterType();
-    });
+    var reshapeable = {};
+    for (var key in decompViewDict) {
+      if (decompViewDict[key].decomp.isScatterType()) {
+        reshapeable[key] = decompViewDict[key];
+      }
+    }
 
     EmperorAttributeABC.call(this, container, title, helpmenu,
-                             decompViewDict, options);
+                             reshapeable, options);
     return this;
   }
 

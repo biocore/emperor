@@ -28,13 +28,16 @@ define([
                    'highlighting of points using size.';
     var title = 'Scale';
 
-    // scaling is only supported for scatter types
-    decompViewDict = _.pick(decompViewDict, function(view) {
-      return view.decomp.isScatterType();
-    });
+    // shapes are only supported for scatter types
+    var scalable = {};
+    for (var key in decompViewDict) {
+      if (decompViewDict[key].decomp.isScatterType()) {
+        scalable[key] = decompViewDict[key];
+      }
+    }
 
     ScalarViewControllerABC.call(this, container, title, helpmenu, 0, 5, 0.1,
-                                 decompViewDict);
+                                 scalable);
     return this;
   }
   ScaleViewController.prototype = Object.create(
