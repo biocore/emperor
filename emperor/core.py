@@ -269,6 +269,7 @@ class Emperor(object):
         # metadata is optional for biplots, so we just create an empty table
         if metadata is None:
             metadata = pd.DataFrame(index=pd.Index(matrix.index, name='id'))
+            metadata['all'] = 'All objects'
             return metadata
 
         ordination_samples = set(matrix.index)

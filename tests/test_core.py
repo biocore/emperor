@@ -56,6 +56,27 @@ class TopLevelTests(TestCase):
                               short_method_name='PCoA',
                               long_method_name='Princpal Coordinates Analysis')
 
+        # biplot ordination with 5 features
+        features = np.abs(samples / 2.0).copy()[:5]
+        features.index = 'f.' + features.index
+
+        biplot_scores = np.ones((9, 5))
+        d = OrdinationResults(eigvals=eigvals.copy(),
+                              samples=np.abs(samples).copy(),
+                              features=features,
+                              biplot_scores=biplot_scores,
+                              proportion_explained=props.copy(),
+                              short_method_name='RDA',
+                              long_method_name='Redundancy Analysis')
+
+        self.biplot = d
+
+        feature_mf = pd.DataFrame(index=['f.PC.636', 'f.PC.635', 'f.PC.356',
+                                         'f.PC.481', 'f.PC.354'])
+        feature_mf['Category'] = ['foo', 'bar', 'baz', 'foo', 'foo']
+        feature_mf['Second'] = ['No', 'Yes', 'Noes', 'Noooo', 'Yep']
+        self.feature_mf = feature_mf
+
         self.jackknifed = [a, b, c]
 
         data = \
@@ -138,6 +159,42 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.width, '100%')
         self.assertEqual(emp.height, '500px')
         self.assertEqual(emp.settings, {})
+
+        self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
+                                       '/new-api/emperor/support_files')
+
+    def test_initial_biplots(self):
+        emp = Emperor(self.biplot, self.mf, self.feature_mf, remote=self.url)
+
+        self.assertEqual(emp.width, '100%')
+        self.assertEqual(emp.height, '500px')
+        self.assertEqual(emp.settings, {})
+
+        feature_mf = pd.DataFrame(index=['f.PC.636', 'f.PC.635', 'f.PC.356',
+                                         'f.PC.481', 'f.PC.354'])
+        feature_mf['Category'] = ['foo', 'bar', 'baz', 'foo', 'foo']
+        feature_mf['Second'] = ['No', 'Yes', 'Noes', 'Noooo', 'Yep']
+
+        # it is redundant, but the mapping file should remain untouched
+        pd.util.testing.assert_frame_equal(feature_mf, emp.feature_mf,
+                                           check_names=False)
+
+        self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
+                                       '/new-api/emperor/support_files')
+
+    def test_initial_biplots_no_metadata(self):
+        emp = Emperor(self.biplot, self.mf, remote=self.url)
+
+        self.assertEqual(emp.width, '100%')
+        self.assertEqual(emp.height, '500px')
+        self.assertEqual(emp.settings, {})
+
+        empty_mf = pd.DataFrame(index=['f.PC.636', 'f.PC.635', 'f.PC.356',
+                                       'f.PC.481', 'f.PC.354'])
+        empty_mf['all'] = 'All objects'
+
+        pd.util.testing.assert_frame_equal(empty_mf, emp.feature_mf,
+                                           check_names=False)
 
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
                                        '/new-api/emperor/support_files')
