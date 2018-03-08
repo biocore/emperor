@@ -71,9 +71,11 @@ requirejs([
      * problems and check that the attributes are set correctly
      *
      */
-    test('Test constructor', function() {
+    test('Test constructor', function(assert) {
       var dm = new DecompositionModel(this.data, this.md_headers,
                                       this.metadata);
+
+      equal(dm.type, 'scatter');
       equal(dm.abbreviatedName, 'pcoa', 'Abbreviated name set correctly');
 
       var exp = [26.6887048633, 16.2563704022, 13.7754129161, 11.217215823,
@@ -172,6 +174,23 @@ requirejs([
                 ['PC 1', 'PC 2', 'PC 3', 'PC 4', 'PC 5', 'PC 6', 'PC 7',
                  'PC 8', 'PC 9'], 'Axes correctly renamed');
     });
+
+    test('Test isArrowType', function(assert) {
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata, 'arrow');
+      equal(dm.type, 'arrow');
+      assert.ok(dm.isArrowType());
+      assert.ok(dm.isScatterType() === false);
+    });
+
+    test('Test isScatterType', function(assert) {
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata, 'scatter');
+      equal(dm.type, 'scatter');
+      assert.ok(dm.isScatterType());
+      assert.ok(dm.isArrowType() === false);
+    });
+
 
     /**
      *

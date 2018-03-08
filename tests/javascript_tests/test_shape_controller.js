@@ -53,13 +53,15 @@ requirejs([
                                      6.24945796136]};
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'], ['tax_2', '0']];
-        this.decomp = new DecompositionModel(data, md_headers, metadata);
+        this.decomp = new DecompositionModel(data, md_headers, metadata,
+                                             'arrow');
         this.dv = new DecompositionView(this.decomp);
-        this.sharedDecompositionViewDict.biplot = dv;
+        this.sharedDecompositionViewDict.biplot = this.dv;
       },
 
       teardown: function() {
         // teardown function
+        this.sharedDecompositionViewDict = undefined;
       }
     });
 
@@ -77,12 +79,16 @@ requirejs([
 
       assert.ok(ShapeController.prototype instanceof EmperorAttributeABC);
 
-      var controller = new ShapeController(container,
+      controller = new ShapeController(container,
                                            this.sharedDecompositionViewDict);
       equal(controller.title, 'Shape');
 
       var testColumn = controller.bodyGrid.getColumns()[0];
       equal(testColumn.field, 'value');
+
+      // test filtering of the decompositon
+      assert.ok(controller.decompViewDict.biplot === undefined);
+
     });
 
     test('Test getGeometry', function() {
@@ -128,23 +134,23 @@ requirejs([
 
     test('Testing setPlottableAttributes helper function', function(assert) {
       // testing with one plottable
-      var idx = 0;
+      var idx = 0, view = this.sharedDecompositionViewDict.scatter;
       plottables = [{idx: idx}];
-      equal(this.dv.markers[idx].geometry.type, 'SphereGeometry');
-      equal(this.dv.markers[idx + 1].geometry.type, 'SphereGeometry');
-      ShapeController.prototype.setPlottableAttributes(this.dv, 'Square',
+      equal(view.markers[idx].geometry.type, 'SphereGeometry');
+      equal(view.markers[idx + 1].geometry.type, 'SphereGeometry');
+      ShapeController.prototype.setPlottableAttributes(view, 'Square',
                                                        plottables);
-      equal(this.dv.markers[idx].geometry.type, 'PlaneGeometry');
-      equal(this.dv.markers[idx + 1].geometry.type, 'SphereGeometry');
-      equal(this.dv.needsUpdate, true);
+      equal(view.markers[idx].geometry.type, 'PlaneGeometry');
+      equal(view.markers[idx + 1].geometry.type, 'SphereGeometry');
+      equal(view.needsUpdate, true);
 
       // testing with multiple plottable
       plottables = [{idx: idx}, {idx: idx + 1}];
-      ShapeController.prototype.setPlottableAttributes(this.dv, 'Cylinder',
+      ShapeController.prototype.setPlottableAttributes(view, 'Cylinder',
                                                        plottables);
-      equal(this.dv.markers[idx].geometry.type, 'CylinderGeometry');
-      equal(this.dv.markers[idx + 1].geometry.type, 'CylinderGeometry');
-      equal(this.dv.needsUpdate, true);
+      equal(view.markers[idx].geometry.type, 'CylinderGeometry');
+      equal(view.markers[idx + 1].geometry.type, 'CylinderGeometry');
+      equal(view.needsUpdate, true);
     });
 
     test('Testing setPlottableAttributes unknown shape', function(assert) {
