@@ -62,7 +62,7 @@ class TopLevelTests(TestCase):
 
         biplot_scores = np.ones((9, 5))
         d = OrdinationResults(eigvals=eigvals.copy(),
-                              samples=np.abs(samples).copy(),
+                              samples=samples.copy(),
                               features=features,
                               biplot_scores=biplot_scores,
                               proportion_explained=props.copy(),
@@ -137,6 +137,18 @@ class TopLevelTests(TestCase):
                                  0.35686552],
                                 [-0.82362744, -0.28477756, 0.27177951,
                                  0.16384737, -0.05981938]]
+
+        self.expected_biplot_coords = [
+            [0.7989764321707692, 0.41882625725119405, 0.19255353093594343,
+             0.19562821395993216, 0.5086963730424037],
+            [0.6866434036312, 0.1330541540144393, 0.39909740671082994,
+             0.45955382957848684, 0.7150245690992273],
+            [0.6611002961979922, 0.37600222318672283, 0.8296226448056473,
+             0.24976813456784003, 0.12797619689815815],
+            [0.12210441648907923, 0.04035631834856271, 0.18355298799796177,
+             1.0, 0.3692754065598425],
+            [0.8101198147298804, 0.01737206462987538, 0.06785333685041521,
+             0.135244634257307, 0.4236224898810244]]
 
         np.random.seed(111)
 
@@ -353,6 +365,77 @@ class TopLevelTests(TestCase):
         self.assertTrue(bi_ids is None)
         self.assertTrue(bi_headers is None)
         self.assertTrue(bi_metadata is None)
+
+    def test_process_data_biplots(self):
+        emp = Emperor(self.biplot, self.mf, self.feature_mf, remote=self.url)
+
+        (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         bi_coords, bi_ids,
+         bi_headers, bi_metadata) = emp._process_data([], 'IQR')
+
+        self.assertEqual(coord_ids, ['PC.636', 'PC.635', 'PC.356', 'PC.481',
+                         'PC.354', 'PC.593', 'PC.355', 'PC.607', 'PC.634'])
+
+        np.testing.assert_array_almost_equal(coords, self.expected_coords)
+
+        obs_pct_var = np.array([26.688705, 16.25637, 13.775413, 11.217216,
+                                10.024775])
+        np.testing.assert_array_almost_equal(pct_var, obs_pct_var)
+
+        np.testing.assert_array_almost_equal(ci, [])
+
+        self.assertEqual(headers, ['SampleID', 'Treatment', 'DOB',
+                         'Description'])
+
+        self.assertEqual(metadata, self.expected_metadata)
+        self.assertEqual(names, [0, 1, 2, 3, 4])
+
+        np.testing.assert_array_almost_equal(bi_coords,
+                                             self.expected_biplot_coords)
+        self.assertEqual(bi_ids, ['f.PC.636', 'f.PC.635', 'f.PC.356',
+                                  'f.PC.481', 'f.PC.354'])
+        self.assertEqual(bi_headers, ['SampleID', 'Category', 'Second'])
+        self.assertEqual(bi_metadata, [['f.PC.636', 'foo', 'No'],
+                                       ['f.PC.635', 'bar', 'Yes'],
+                                       ['f.PC.356', 'baz', 'Noes'],
+                                       ['f.PC.481', 'foo', 'Noooo'],
+                                       ['f.PC.354', 'foo', 'Yep']])
+
+    def test_process_data_biplots_no_metadata(self):
+        emp = Emperor(self.biplot, self.mf, remote=self.url)
+
+        (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         bi_coords, bi_ids,
+         bi_headers, bi_metadata) = emp._process_data([], 'IQR')
+
+        self.assertEqual(coord_ids, ['PC.636', 'PC.635', 'PC.356', 'PC.481',
+                         'PC.354', 'PC.593', 'PC.355', 'PC.607', 'PC.634'])
+
+        np.testing.assert_array_almost_equal(coords, self.expected_coords)
+
+        obs_pct_var = np.array([26.688705, 16.25637, 13.775413, 11.217216,
+                                10.024775])
+        np.testing.assert_array_almost_equal(pct_var, obs_pct_var)
+
+        np.testing.assert_array_almost_equal(ci, [])
+
+        self.assertEqual(headers, ['SampleID', 'Treatment', 'DOB',
+                         'Description'])
+
+        self.assertEqual(metadata, self.expected_metadata)
+        self.assertEqual(names, [0, 1, 2, 3, 4])
+
+        np.testing.assert_array_almost_equal(bi_coords,
+                                             self.expected_biplot_coords)
+        self.assertEqual(bi_ids,
+                         ['f.PC.636', 'f.PC.635', 'f.PC.356', 'f.PC.481',
+                          'f.PC.354'])
+        self.assertEqual(bi_headers, ['id', 'all'])
+        self.assertEqual(bi_metadata, [['f.PC.636', 'All objects'],
+                                       ['f.PC.635', 'All objects'],
+                                       ['f.PC.356', 'All objects'],
+                                       ['f.PC.481', 'All objects'],
+                                       ['f.PC.354', 'All objects']])
 
     def test_process_data_custom_axes(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
