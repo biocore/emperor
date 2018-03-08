@@ -391,34 +391,5 @@ DecompositionView.prototype.setCategory = function(attributes,
   return dataView;
 };
 
-/**
- *
- * Change the color for a set of plottables.
- *
- * @param {integer} color An RGB color in hexadecimal format.
- * @param {Plottable[]} group Array of Plottables that will change in color.
- *
- */
-DecompositionView.prototype.setGroupColor = function(color, group) {
-  var idx, scope = this, hasConfidenceIntervals;
-
-  hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
-
-  _.each(group, function(element) {
-    idx = element.idx;
-
-    if (scope.decomp.isScatterType()) {
-      scope.markers[idx].material.color = new THREE.Color(color);
-
-      if (hasConfidenceIntervals) {
-        scope.ellipsoids[idx].material.color = new THREE.Color(color);
-      }
-    }
-    else if (scope.decomp.isArrowType()) {
-      throw 'Not implemented yet, sendhelp.io';
-    }
-  });
-};
-
   return DecompositionView;
 });

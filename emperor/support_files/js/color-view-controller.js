@@ -250,9 +250,10 @@ define([
   ColorViewController.prototype._resetAttribute = function() {
     EmperorAttributeABC.prototype._resetAttribute.call(this);
 
+    var view = this.getView(), scope = this;
+
     _.each(this.decompViewDict, function(view) {
-      view.setGroupColor(0xff0000, view.decomp.plottable);
-      view.needsUpdate = true;
+      scope.setPlottableAttributes(view, 0xff0000, view.decomp.plottable);
     });
   };
 
