@@ -271,8 +271,9 @@ class TopLevelTests(TestCase):
     def test_process_data(self):
         emp = Emperor(self.ord_res, self.mf, remote=self.url)
 
-        coord_ids, coords, pct_var, ci, headers, metadata, names = \
-            emp._process_data([], 'IQR')
+        (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         bi_coords, bi_ids,
+         bi_headers, bi_metadata) = emp._process_data([], 'IQR')
 
         self.assertEqual(coord_ids, ['PC.636', 'PC.635', 'PC.356', 'PC.481',
                          'PC.354', 'PC.593', 'PC.355', 'PC.607', 'PC.634'])
@@ -291,11 +292,17 @@ class TopLevelTests(TestCase):
         self.assertEqual(metadata, self.expected_metadata)
         self.assertEqual(names, [0, 1, 2, 3, 4])
 
+        self.assertTrue(bi_coords is None)
+        self.assertTrue(bi_ids is None)
+        self.assertTrue(bi_headers is None)
+        self.assertTrue(bi_metadata is None)
+
     def test_process_data_custom_axes(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
 
-        coord_ids, coords, pct_var, ci, headers, metadata, names = \
-            emp._process_data(['DOB'], 'IQR')
+        (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         bi_coords, bi_ids,
+         bi_headers, bi_metadata) = emp._process_data(['DOB'], 'IQR')
 
         self.assertEqual(coord_ids, ['PC.636', 'PC.635', 'PC.356', 'PC.481',
                          'PC.354', 'PC.593', 'PC.355', 'PC.607', 'PC.634'])
@@ -341,6 +348,11 @@ class TopLevelTests(TestCase):
         self.assertEqual(metadata, self.expected_metadata)
         self.assertEqual(names, ['DOB', 0, 1, 2, 3, 4])
 
+        self.assertTrue(bi_coords is None)
+        self.assertTrue(bi_ids is None)
+        self.assertTrue(bi_headers is None)
+        self.assertTrue(bi_metadata is None)
+
     def test_custom_axes_missing_headers(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
 
@@ -351,8 +363,9 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.ord_res, self.mf, remote=False,
                       jackknifed=self.jackknifed)
 
-        coord_ids, coords, pct_var, ci, headers, metadata, names = \
-            emp._process_data([], 'IQR')
+        (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         bi_coords, bi_ids,
+         bi_headers, bi_metadata) = emp._process_data([], 'IQR')
 
         self.assertEqual(coord_ids, ['PC.636', 'PC.635', 'PC.356', 'PC.481',
                          'PC.354', 'PC.593', 'PC.355', 'PC.607', 'PC.634'])
@@ -415,6 +428,11 @@ class TopLevelTests(TestCase):
 
         self.assertEqual(metadata, self.expected_metadata)
         self.assertEqual(names, [0, 1, 2, 3, 4])
+
+        self.assertTrue(bi_coords is None)
+        self.assertTrue(bi_ids is None)
+        self.assertTrue(bi_headers is None)
+        self.assertTrue(bi_metadata is None)
 
     def test_jackknifed_bad_data(self):
         with self.assertRaises(TypeError):

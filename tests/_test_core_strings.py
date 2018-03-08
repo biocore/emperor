@@ -172,35 +172,26 @@ function($, model, EmperorController) {
 
   var div = $('#emperor-notebook-0x9cb72f54');
 
-  var data = {
-    // coordinates information
-    'decompositions': [
-      {
-        'sample_ids': ["PC.636", "PC.635", "PC.356", "PC.481", "PC.354", "PC.593", "PC.355", "PC.607", "PC.634"],
-        'coordinates': [[-0.651995810831719, -0.3417784983371589, 0.15713116241738878, -0.15964022322388774, 0.41511600449567154], [-0.5603276951316744, 0.10857735915373172, -0.32567898978232684, 0.3750137797216106, -0.583487828830988], [0.5394835270542403, -0.3068324227225251, -0.6770043110217822, 0.203820501907719, 0.1044335488558445], [0.09964194790906594, -0.03293232371368659, 0.14978636968698092, -0.8160388524355932, -0.301343079001781], [0.661089243947507, -0.014176279685000464, 0.05537095913733857, -0.11036487613740434, -0.3456924105084198], [0.5490376828031979, 0.32957520954888647, 0.7612242145083941, 0.4322721667939822, 0.04825249860931067], [0.40202458647314415, -0.4576554852461752, -0.0728438902229666, 0.04670222577076932, 0.36567512814466946], [-0.21532604614952783, 1.0, -0.31976501999316115, -0.13561208920603846, 0.35686551552017187], [-0.8236274360749414, -0.2847775589983077, 0.27177950526966277, 0.16384736680860681, -0.05981937728235736]],
-        'axes_names': [0, 1, 2, 3, 4],
-        'percents_explained': [26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001],
-        'ci': null,
-        'type': 'ordination'
-      }
-    ],
+  var data = {"plot": {"decomposition": {"axes_names": [0, 1, 2, 3, 4], "ci": null, "coordinates": [[-0.651995810831719, -0.3417784983371589, 0.15713116241738878, -0.15964022322388774, 0.41511600449567154], [-0.5603276951316744, 0.10857735915373172, -0.32567898978232684, 0.3750137797216106, -0.583487828830988], [0.5394835270542403, -0.3068324227225251, -0.6770043110217822, 0.203820501907719, 0.1044335488558445], [0.09964194790906594, -0.03293232371368659, 0.14978636968698092, -0.8160388524355932, -0.301343079001781], [0.661089243947507, -0.014176279685000464, 0.05537095913733857, -0.11036487613740434, -0.3456924105084198], [0.5490376828031979, 0.32957520954888647, 0.7612242145083941, 0.4322721667939822, 0.04825249860931067], [0.40202458647314415, -0.4576554852461752, -0.0728438902229666, 0.04670222577076932, 0.36567512814466946], [-0.21532604614952783, 1.0, -0.31976501999316115, -0.13561208920603846, 0.35686551552017187], [-0.8236274360749414, -0.2847775589983077, 0.27177950526966277, 0.16384736680860681, -0.05981937728235736]], "percents_explained": [26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001], "sample_ids": ["PC.636", "PC.635", "PC.356", "PC.481", "PC.354", "PC.593", "PC.355", "PC.607", "PC.634"]}, "metadata": [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]], "metadata_headers": ["SampleID", "Treatment", "DOB", "Description"], "settings": {}, "type": "scatter"}};
 
-    // sample information
-    'metadata_headers': ["SampleID", "Treatment", "DOB", "Description"],
-    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]],
-    'settings': {}
-  }
-
-  var dm, ec;
+  var plot, biplot = null, ec;
 
   function init() {
-    var decomp = data['decompositions'][0];
+    // Initialize the DecompositionModel for the scatter plot, and optionally
+    // add one for the biplot arrows
+    plot = new DecompositionModel(data.plot.decomposition,
+                                     data.plot.metadata_headers,
+                                     data.plot.metadata,
+                                     data.plot.type);
 
-    // Initialize the DecompositionModel
-    dm = new DecompositionModel(decomp, data['metadata_headers'],
-                                data['metadata']);
-    // Initialize the EmperorController
-    ec = new EmperorController(dm, "emperor-notebook-0x9cb72f54");
+    if (data.biplot) {
+      biplot = new DecompositionModel(data.biplot.decomposition,
+                                       data.biplot.metadata_headers,
+                                       data.biplot.metadata,
+                                       data.biplot.type);
+    }
+
+    ec = new EmperorController(plot, biplot, "emperor-notebook-0x9cb72f54");
   }
 
   function animate() {
@@ -218,7 +209,7 @@ function($, model, EmperorController) {
     ec.ready = function () {
       // any other code that needs to be executed when emperor is loaded should
       // go here
-      ec.loadConfig(data['settings']);
+      ec.loadConfig(data.plot.settings);
     }
   });
 
@@ -367,35 +358,26 @@ function($, model, EmperorController) {
 
   var div = $('#emperor-notebook-0x9cb72f54');
 
-  var data = {
-    // coordinates information
-    'decompositions': [
-      {
-        'sample_ids': ["PC.636", "PC.635", "PC.356", "PC.481", "PC.354", "PC.593", "PC.355", "PC.607", "PC.634"],
-        'coordinates': [[-0.651995810831719, -0.3417784983371589, 0.15713116241738878, -0.15964022322388774, 0.41511600449567154], [-0.5603276951316744, 0.10857735915373172, -0.32567898978232684, 0.3750137797216106, -0.583487828830988], [0.5394835270542403, -0.3068324227225251, -0.6770043110217822, 0.203820501907719, 0.1044335488558445], [0.09964194790906594, -0.03293232371368659, 0.14978636968698092, -0.8160388524355932, -0.301343079001781], [0.661089243947507, -0.014176279685000464, 0.05537095913733857, -0.11036487613740434, -0.3456924105084198], [0.5490376828031979, 0.32957520954888647, 0.7612242145083941, 0.4322721667939822, 0.04825249860931067], [0.40202458647314415, -0.4576554852461752, -0.0728438902229666, 0.04670222577076932, 0.36567512814466946], [-0.21532604614952783, 1.0, -0.31976501999316115, -0.13561208920603846, 0.35686551552017187], [-0.8236274360749414, -0.2847775589983077, 0.27177950526966277, 0.16384736680860681, -0.05981937728235736]],
-        'axes_names': [0, 1, 2, 3, 4],
-        'percents_explained': [26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001],
-        'ci': null,
-        'type': 'ordination'
-      }
-    ],
+  var data = {"plot": {"decomposition": {"axes_names": [0, 1, 2, 3, 4], "ci": null, "coordinates": [[-0.651995810831719, -0.3417784983371589, 0.15713116241738878, -0.15964022322388774, 0.41511600449567154], [-0.5603276951316744, 0.10857735915373172, -0.32567898978232684, 0.3750137797216106, -0.583487828830988], [0.5394835270542403, -0.3068324227225251, -0.6770043110217822, 0.203820501907719, 0.1044335488558445], [0.09964194790906594, -0.03293232371368659, 0.14978636968698092, -0.8160388524355932, -0.301343079001781], [0.661089243947507, -0.014176279685000464, 0.05537095913733857, -0.11036487613740434, -0.3456924105084198], [0.5490376828031979, 0.32957520954888647, 0.7612242145083941, 0.4322721667939822, 0.04825249860931067], [0.40202458647314415, -0.4576554852461752, -0.0728438902229666, 0.04670222577076932, 0.36567512814466946], [-0.21532604614952783, 1.0, -0.31976501999316115, -0.13561208920603846, 0.35686551552017187], [-0.8236274360749414, -0.2847775589983077, 0.27177950526966277, 0.16384736680860681, -0.05981937728235736]], "percents_explained": [26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001], "sample_ids": ["PC.636", "PC.635", "PC.356", "PC.481", "PC.354", "PC.593", "PC.355", "PC.607", "PC.634"]}, "metadata": [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]], "metadata_headers": ["SampleID", "Treatment", "DOB", "Description"], "settings": {}, "type": "scatter"}};
 
-    // sample information
-    'metadata_headers': ["SampleID", "Treatment", "DOB", "Description"],
-    'metadata': [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]],
-    'settings': {}
-  }
-
-  var dm, ec;
+  var plot, biplot = null, ec;
 
   function init() {
-    var decomp = data['decompositions'][0];
+    // Initialize the DecompositionModel for the scatter plot, and optionally
+    // add one for the biplot arrows
+    plot = new DecompositionModel(data.plot.decomposition,
+                                     data.plot.metadata_headers,
+                                     data.plot.metadata,
+                                     data.plot.type);
 
-    // Initialize the DecompositionModel
-    dm = new DecompositionModel(decomp, data['metadata_headers'],
-                                data['metadata']);
-    // Initialize the EmperorController
-    ec = new EmperorController(dm, "emperor-notebook-0x9cb72f54");
+    if (data.biplot) {
+      biplot = new DecompositionModel(data.biplot.decomposition,
+                                       data.biplot.metadata_headers,
+                                       data.biplot.metadata,
+                                       data.biplot.type);
+    }
+
+    ec = new EmperorController(plot, biplot, "emperor-notebook-0x9cb72f54");
   }
 
   function animate() {
@@ -413,7 +395,7 @@ function($, model, EmperorController) {
     ec.ready = function () {
       // any other code that needs to be executed when emperor is loaded should
       // go here
-      ec.loadConfig(data['settings']);
+      ec.loadConfig(data.plot.settings);
     }
   });
 
