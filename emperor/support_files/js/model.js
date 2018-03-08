@@ -383,7 +383,7 @@ function($, _, util) {
    */
   DecompositionModel.prototype.isArrowType = function() {
     return this.type === 'arrow';
-  }
+  };
 
   /**
    *
@@ -392,7 +392,7 @@ function($, _, util) {
    */
   DecompositionModel.prototype.isScatterType = function() {
     return this.type === 'scatter';
-  }
+  };
 
   /**
    *

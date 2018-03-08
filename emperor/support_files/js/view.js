@@ -139,7 +139,9 @@ DecompositionView.prototype._initBaseView = function() {
     var arrow, zero = [0, 0, 0], point;
 
     this.decomp.apply(function(plottable) {
-      point = [plottable.coordinates[x], plottable.coordinates[y], plottable.coordinates[z]];
+      point = [plottable.coordinates[x],
+               plottable.coordinates[y],
+               plottable.coordinates[z]];
       arrow = makeArrow(zero, point, 0x708090);
       arrow.line.name = plottable.name;
       arrow.cone.name = plottable.name;
@@ -148,7 +150,7 @@ DecompositionView.prototype._initBaseView = function() {
     });
   }
   else {
-    throw "Unsupported decomposition type";
+    throw 'Unsupported decomposition type';
   }
   // apply but to the adjacency list NOT IMPLEMENTED
   // this.decomp.applyAJ( ... ); Blame Jamie and Jose - baby steps buddy...
@@ -247,7 +249,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
       }
     });
   }
-  else if(this.decomp.isArrowType()) {
+  else if (this.decomp.isArrowType()) {
     var zero = new THREE.Vector3(0, 0, 0), target, arrow;
 
     this.decomp.apply(function(plottable) {
@@ -413,7 +415,7 @@ DecompositionView.prototype.setGroupColor = function(color, group) {
       }
     }
     else if (scope.decomp.isArrowType()) {
-      throw "Not implemented yet, sendhelp.io";
+      throw 'Not implemented yet, sendhelp.io';
     }
   });
 };
