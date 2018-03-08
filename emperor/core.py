@@ -23,6 +23,7 @@ Classes
 # ----------------------------------------------------------------------------
 from __future__ import division
 
+from copy import deepcopy
 from os.path import join, basename
 from distutils.dir_util import copy_tree
 import warnings
@@ -66,7 +67,8 @@ class Emperor(object):
     ----------
     ordination: skbio.OrdinationResults
         Object containing the computed values for an ordination method in
-        scikit-bio.
+        scikit-bio. Currently supports skbio.stats.ordination.PCoA and
+        skbio.stats.ordination.RDA results.
     mapping_file: pd.DataFrame
         DataFrame object with the metadata associated to the samples in the
         ``ordination`` object, should have an index set and it should match the
@@ -110,6 +112,10 @@ class Emperor(object):
         methods, for example see ``color_by``, ``set_background_color``, etc.
         This attribute can also be serialized as a JSON string and loaded from
         the GUI.
+    feature_mf: pd.DataFrame
+        DataFrame object with the metadata associated to the features in the
+        ``ordination`` object, should have an index set and it should match the
+        identifiers in the ``ordination.features`` property.
 
     Examples
     --------
@@ -199,15 +205,24 @@ class Emperor(object):
        2013 Nov 26;2(1):16.
 
     """
-    def __init__(self, ordination, mapping_file, dimensions=5, remote=True,
-                 jackknifed=None, ignore_missing_samples=False):
+    def __init__(self, ordination, mapping_file, feature_mapping_file=None,
+                 dimensions=5, remote=True, jackknifed=None,
+                 ignore_missing_samples=False):
 
         self.ordination = ordination
         self.jackknifed = jackknifed
 
         self.mf = mapping_file.copy()
 
-        self._validate_metadata(ignore_missing_samples)
+        self.mf = self._validate_metadata(self.mf, self.ordination.samples,
+                                          ignore_missing_samples)
+
+        # if biplots are to be visualized
+        if self.ordination.features is not None:
+            self.feature_mf = self._validate_metadata(feature_mapping_file,
+                                                      self.ordination.features,
+                                                      False)
+
         self._validate_jackknifed()
 
         self._html = None
@@ -249,9 +264,15 @@ class Emperor(object):
 
         return display(HTML(str(self)))
 
-    def _validate_metadata(self, ignore_missing_samples):
-        ordination_samples = set(self.ordination.samples.index)
-        difference = ordination_samples - set(self.mf.index)
+    def _validate_metadata(self, metadata, matrix, ignore_missing_samples):
+
+        # metadata is optional for biplots, so we just create an empty table
+        if metadata is None:
+            metadata = pd.DataFrame(index=pd.Index(matrix.index, name='id'))
+            return metadata
+
+        ordination_samples = set(matrix.index)
+        difference = ordination_samples - set(metadata.index)
 
         if difference == ordination_samples:
             raise ValueError('None of the sample identifiers match between the'
@@ -272,16 +293,18 @@ class Emperor(object):
                           EmperorWarning)
 
             # pad the missing samples
-            data = np.full((len(difference), self.mf.shape[1]),
+            data = np.full((len(difference), metadata.shape[1]),
                            'This sample has no metadata', dtype='<U27')
             pad = pd.DataFrame(index=difference, columns=self.mf.columns,
                                data=data)
-            self.mf = pd.concat([self.mf, pad])
+            metadata = pd.concat([metadata, pad])
 
         # filter all metadata that we may have for which we don't have any
         # coordinates this also ensures that the coordinates are in the
         # same order as the metadata
-        self.mf = self.mf.loc[self.ordination.samples.index]
+        metadata = metadata.loc[matrix.index]
+
+        return metadata
 
     def _validate_jackknifed(self):
         # bail if the value is non or an empty list
@@ -377,8 +400,10 @@ class Emperor(object):
 
         main_template = self._get_template(standalone)
 
-        coord_ids, coords, pct_var, ci, headers, metadata, names = \
-            self._process_data(custom_axes, jackknifing_method)
+        # _process_data does a lot of munging to the coordinates data and
+        # _to_dict puts the data into a dictionary-like object for consumption
+        data = self._to_dict(self._process_data(custom_axes,
+                                                jackknifing_method))
 
         # yes, we could have used UUID, but we couldn't find an easier way to
         # test that deterministically and with this approach we can seed the
@@ -386,19 +411,65 @@ class Emperor(object):
         plot_id = 'emperor-notebook-' + str(hex(np.random.randint(2**32)))
 
         # need to do something about low and high
-        plot = main_template.render(coords_ids=coord_ids, coords=coords,
-                                    pct_var=pct_var, ci=ci,
-                                    md_headers=headers, metadata=metadata,
-                                    plot_id=plot_id,
-                                    axes_names=names,
-                                    base_url=self.base_url,
+        plot = main_template.render(data=data, plot_id=plot_id,
                                     logic_template_path=basename(LOGIC_PATH),
                                     style_template_path=basename(STYLE_PATH),
+                                    base_url=self.base_url,
                                     width=self.width,
-                                    height=self.height,
-                                    settings=self.settings)
+                                    height=self.height)
 
         return plot
+
+    def _to_dict(self, data):
+        """Convert processed data into a dictionary of decompositions
+
+        Parameters
+        ----------
+        data : tuple
+            The output of _process_data. Should contain information about the
+            scatter plot and the biplot.
+
+        Returns
+        -------
+        dict
+            A dictionary describing the plots contained in the ordination
+            object and the sample + feature metadata.
+        """
+        # data is a tuple as returned by _process_data
+        (coord_ids, coords, pct_var, ci,
+         headers, metadata, names,
+         bi_coords, bi_ids,
+         bi_headers, bi_metadata) = data
+
+        data = {
+            'plot': {
+                'decomposition': {
+                    'sample_ids': coord_ids,
+                    'coordinates': coords,
+                    'axes_names': names,
+                    'percents_explained': pct_var,
+                    'ci': ci
+                },
+                'type': 'scatter',
+                'metadata_headers': headers,
+                'metadata': metadata,
+                'settings': self.settings,
+            }
+        }
+
+        # we can rely on the fact that the dictionary above will exist
+        if self.ordination.features is not None:
+            data['biplot'] = deepcopy(data['plot'])
+            data['biplot']['decomposition']['ci'] = []
+            data['biplot']['type'] = 'arrow'
+            data['biplot']['settings'] = None
+
+            data['biplot']['metadata'] = bi_metadata
+            data['biplot']['metadata_headers'] = bi_headers
+            data['biplot']['decomposition']['sample_ids'] = bi_ids
+            data['biplot']['decomposition']['coordinates'] = bi_coords
+
+        return data
 
     def _get_template(self, standalone=False):
         """Get the jinja template object
@@ -473,6 +544,7 @@ class Emperor(object):
         dims = self.dimensions
 
         ci = None
+        bi_coords, bi_ids, bi_headers, bi_metadata = None, None, None, None
 
         c_headers, c_data, c_eigenvals, c_pct = [], [], [], []
         if self.jackknifed:
@@ -496,7 +568,7 @@ class Emperor(object):
 
             c_pct = data.proportion_explained[:dims] * 100
 
-        headers, metadata = self._to_legacy_map(custom_axes)
+        headers, metadata = self._to_legacy_map(self.mf, custom_axes)
 
         c_headers, c_data, _, c_pct, low, high, _ = \
             preprocess_coords_file(c_headers, c_data, c_eigenvals, c_pct,
@@ -514,14 +586,26 @@ class Emperor(object):
         if low is not None or high is not None:
             ci = np.abs(high - low).tolist()
 
-        return (self.ordination.samples.index.tolist(), c_data.tolist(),
-                c_pct, ci, headers, metadata, names)
+        if self.ordination.features is not None:
+            bi_coords = self.ordination.features.values[:, :dims]
+            bi_coords /= np.max(np.abs(bi_coords))
+            bi_coords = bi_coords.tolist()
+            bi_ids = self.ordination.features.index.values.tolist()
 
-    def _to_legacy_map(self, custom_axes=None):
+            bi_headers, bi_metadata = self._to_legacy_map(self.feature_mf)
+
+        return (self.ordination.samples.index.tolist(), c_data.tolist(),
+                c_pct, ci, headers, metadata, names, bi_coords, bi_ids,
+                bi_headers, bi_metadata)
+
+    def _to_legacy_map(self, mf, custom_axes=None):
         """Helper method to convert Pandas dataframe to legacy QIIME structure
 
         Parameters
         ----------
+        mf : pd.DataFrame
+            DataFrame with the metadata, this can be feature or sample
+            metadata.
         custom_axes : list of str, optional
             Custom axes to embed in the ordination.
 
@@ -532,7 +616,6 @@ class Emperor(object):
         list of list of str
             Data in ``mf``.
         """
-        mf = self.mf
         # there's a bug in old versions of Pandas that won't allow us to rename
         # a DataFrame's index, newer versions i.e 0.18 work just fine but 0.14
         # would overwrite the name and simply set it as None
