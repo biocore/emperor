@@ -136,7 +136,7 @@ requirejs([
       deepEqual(view.markers[1].position.toArray(), [0, 0, 0]);
 
       // bulk checks
-      view.markers.map(function (marker) {
+      view.markers.map(function(marker) {
         assert.ok(marker instanceof THREE.ArrowHelper);
 
         deepEqual(marker.line.material.color.getHex(), 0x708090);
