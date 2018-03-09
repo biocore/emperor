@@ -2,8 +2,9 @@ requirejs([
     'jquery',
     'underscore',
     'model',
-    'view'
-], function($, _, model, DecompositionView) {
+    'view',
+    'three'
+], function($, _, model, DecompositionView, THREE) {
   $(document).ready(function() {
     var DecompositionModel = model.DecompositionModel;
 
@@ -28,11 +29,34 @@ requirejs([
                         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
                          '20071112']];
         this.decomp = new DecompositionModel(data, md_headers, metadata);
+
+        /* `this.expected`: this is the same as the object declared above,
+         * except this object is not being passed anywhere and is only used to
+         * check that nothing has changed between methods.
+         */
+        data = {name: 'pcoa',
+                    sample_ids: ['PC.636', 'PC.635'],
+                    coordinates: [
+          [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
+          -0.229889, -0.046599],
+          [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
+          -0.112864, 0.064794]],
+                    percents_explained: [26.6887048633, 16.2563704022,
+                                         13.7754129161, 11.217215823,
+                                         10.024774995, 8.22835130237,
+                                         7.55971173665, 6.24945796136]};
+        md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                           'DOB'];
+        metadata = [
+          ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+          ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
+        this.expected = new DecompositionModel(data, md_headers, metadata);
       },
 
       teardown: function() {
         // teardown function
         this.decomp = null;
+        this.expected = null;
       }
     });
 
@@ -44,25 +68,8 @@ requirejs([
     test('Test constructor', function() {
       var obs;
       var dv = new DecompositionView(this.decomp);
-      var data = {name: 'pcoa',
-                  sample_ids: ['PC.636', 'PC.635'],
-                  coordinates: [
-        [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
-        -0.229889, -0.046599],
-        [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-        -0.112864, 0.064794]],
-                  percents_explained: [26.6887048633, 16.2563704022,
-                                       13.7754129161, 11.217215823,
-                                       10.024774995, 8.22835130237,
-                                       7.55971173665, 6.24945796136]};
-      var _md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
-                         'DOB'];
-      var _metadata = [
-        ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
-      var exp = new DecompositionModel(data, _md_headers, _metadata);
 
-      deepEqual(dv.decomp, exp, 'decomp set correctly');
+      deepEqual(dv.decomp, this.expected, 'decomp set correctly');
       equal(dv.count, 2, 'count set correctly');
       equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
       deepEqual(dv.visibleDimensions, [0, 1, 2],
@@ -94,6 +101,47 @@ requirejs([
          */
       // deepEqual(dv._genericSphere, undefined,
       //           "_genericSphere set correctly");
+    });
+
+    test('Test constructor (biplot)', function(assert) {
+      // this test is pretty much the same as above except for arrow types
+      this.decomp.type = 'arrow';
+      var view = new DecompositionView(this.decomp);
+
+      this.expected.type = 'arrow';
+      deepEqual(view.decomp, this.expected);
+      equal(view.count, 2);
+      equal(view.getVisibleCount(), 2);
+      deepEqual(view.visibleDimensions, [0, 1, 2]);
+      deepEqual(view.tubes, []);
+      equal(view.axesColor, '#FFFFFF');
+      equal(view.backgroundColor, '#000000');
+      deepEqual(view.axesOrientation, [1, 1, 1]);
+
+      // testing the markers
+      assert.ok(view.markers.length === 2);
+
+      equal(view.markers[0].line.name, 'PC.636');
+      equal(view.markers[0].cone.name, 'PC.636');
+      equal(view.markers[1].line.name, 'PC.635');
+      equal(view.markers[1].cone.name, 'PC.635');
+
+      var a = [0.19977209326971626, 0, 0.8289251461730293, 0.52246934148585];
+      var b = [-0.3246511569372691, 0, 0.5585576432564162, 0.7632922018854449];
+
+      deepEqual(view.markers[0].quaternion.toArray(), a);
+      deepEqual(view.markers[1].quaternion.toArray(), b);
+
+      deepEqual(view.markers[0].position.toArray(), [0, 0, 0]);
+      deepEqual(view.markers[1].position.toArray(), [0, 0, 0]);
+
+      // bulk checks
+      view.markers.map(function (marker) {
+        assert.ok(marker instanceof THREE.ArrowHelper);
+
+        deepEqual(marker.line.material.color.getHex(), 0x708090);
+        deepEqual(marker.cone.material.color.getHex(), 0x708090);
+      });
     });
 
     /**

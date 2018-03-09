@@ -221,7 +221,6 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
     radius = scope.ellipsoids[0].geometry.parameters.radius;
   }
 
-  // TODO: Some of this could be refactored
   if (this.decomp.isScatterType()) {
     this.decomp.apply(function(plottable) {
       mesh = scope.markers[plottable.idx];
@@ -250,7 +249,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
     });
   }
   else if (this.decomp.isArrowType()) {
-    var zero = new THREE.Vector3(0, 0, 0), target, arrow;
+    var zero = new THREE.Vector3(0, 0, 0), target, arrow, length;
 
     this.decomp.apply(function(plottable) {
       arrow = scope.markers[plottable.idx];
@@ -260,7 +259,9 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
         plottable.coordinates[y] * scope.axesOrientation[1],
         (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
 
+      // calculate the length before normalization
       target = target.sub(zero);
+      length = zero.distanceTo(target);
       target.normalize();
 
       arrow.setDirection(target.sub(zero));
@@ -326,7 +327,7 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
       });
     }
     else if (this.decomp.isArrowType()) {
-      var zero = new THREE.Vector3(0, 0, 0), target, arrow;
+      var zero = new THREE.Vector3(0, 0, 0), target, arrow, length;
 
       this.decomp.apply(function(plottable) {
         arrow = scope.markers[plottable.idx];
@@ -336,11 +337,13 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
           plottable.coordinates[y] * scope.axesOrientation[1],
           (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
 
+        // calculate the length before normalization
         target = target.sub(zero);
+        length = zero.distanceTo(target);
         target.normalize();
 
         arrow.setDirection(target.sub(zero));
-        arrow.setLength(zero.distanceTo(target));
+        arrow.setLength(length);
       });
     }
 
