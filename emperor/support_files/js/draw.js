@@ -112,19 +112,17 @@ define(['underscore', 'three'], function(_, THREE) {
    * [here]{@link http://stackoverflow.com/a/14106703/379593}
    *
    * @param {float[]} position The x, y, and z location of the label.
-   * @param {string} text with the text to be shown on screen.
+   * @param {string} text The text to be shown on screen.
    * @param {integer|string} Color Hexadecimal base that represents the color
    * of the text.
-   * @param {float} [1] factor An optional scaling factor to determine the size
-   * of the labels.
    *
    * @return {THREE.Sprite} Object with the text displaying in it.
    * @function makeLabel
    **/
-  function makeLabel(position, text, color, factor) {
-    factor = (factor === undefined ? 1 : factor);
+  function makeLabel(position, text, color) {
 
-    var fontSize = 30 * factor, canvas, context, measure;
+    // the font size determines the resolution relative to the sprite object
+    var fontSize = 30, canvas, context, measure;
 
     canvas = document.createElement('canvas');
     context = canvas.getContext('2d');
@@ -135,10 +133,11 @@ define(['underscore', 'three'], function(_, THREE) {
 
     // make the dimensions squared and a power of 2 (for use in THREE.js)
     canvas.width = Math.pow(2, Math.ceil(Math.log2(measure.width)));
-    canvas.height = canvas.width;
+    canvas.height = Math.pow(2, Math.ceil(Math.log2(fontSize)));
 
     // after changing the canvas' size we need to reset the font attributes
     context.textAlign = 'center';
+    context.textBaseline = 'middle';
     context.font = fontSize + 'px Arial';
     if (_.isNumber(color)) {
       context.fillStyle = '#' + color.toString(16);
@@ -159,7 +158,7 @@ define(['underscore', 'three'], function(_, THREE) {
 
     var sp = new THREE.Sprite(mat);
     sp.position.set(position[0], position[1], position[2]);
-    sp.scale.set(0.75, 0.75, 0.75);
+    sp.scale.set(1 * 0.5, (canvas.height / canvas.width) * 0.5, 1);
 
     // add an extra attribute so we can render this properly when we use
     // SVGRenderer
