@@ -6,6 +6,7 @@ define([
     'draw'
 ], function($, _, THREE, shapes, draw) {
   var makeArrow = draw.makeArrow;
+  var makeLineCollection = draw.makeLineCollection;
 /**
  *
  * @class DecompositionView
@@ -66,15 +67,17 @@ function DecompositionView(decomp) {
    * @type {THREE.Mesh[]}
    */
   this.markers = [];
-
-  this.ellipsoids = [];
-
   /**
-   * Array of line objects shown on screen (used for procustes and vector
-   * plots).
-   * @type {THREE.Line[]}
+   * Array of THREE.Mesh objects on screen (represent confidence intervals).
+   * @type {THREE.Mesh[]}
    */
-  this.lines = [];
+  this.ellipsoids = [];
+  /**
+   * Object with THREE.LineSegments for the procrustes edges. Has a left and
+   * a right attribute.
+   * @type {Object}
+   */
+  this.lines = {'left': null, 'right': null};
 
   // setup this.markers and this.lines
   this._initBaseView();
@@ -152,9 +155,28 @@ DecompositionView.prototype._initBaseView = function() {
   else {
     throw 'Unsupported decomposition type';
   }
-  // apply but to the adjacency list NOT IMPLEMENTED
-  // this.decomp.applyAJ( ... ); Blame Jamie and Jose - baby steps buddy...
 
+  if (this.decomp.edges.length) {
+    var left, center, right, u, v, verticesLeft = [], verticesRight = [];
+    this.decomp.edges.forEach(function(edge) {
+      u = edge[0];
+      v = edge[1];
+
+      // remember x, y and z
+      center = [(u.coordinates[x] + v.coordinates[x]) / 2,
+                (u.coordinates[y] + v.coordinates[y]) / 2,
+                (u.coordinates[z] + v.coordinates[z]) / 2];
+
+      left = [u.coordinates[x], u.coordinates[y], u.coordinates[z]];
+      right = [v.coordinates[x], v.coordinates[y], v.coordinates[z]];
+
+      verticesLeft.push(left, center);
+      verticesRight.push(right, center);
+    });
+
+    this.lines.left = makeLineCollection(verticesLeft, 0xffffff);
+    this.lines.right = makeLineCollection(verticesRight, 0xff0000);
+  }
 };
 
 /**
@@ -175,44 +197,16 @@ DecompositionView.prototype.getVisibleCount = function() {
 
 /**
  *
- * Change the visible coordinates
+ * Update the position of the markers, arrows and lines.
  *
- * @param {integer[]} newDims An Array of integers in which each integer is the
- * index to the principal coordinate to show
+ * This method is called by flipVisibleDimension and by changeVisibleDimensions
+ * and will naively change the positions even if they haven't changed.
  *
  */
-DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
-  if (newDims.length !== 3) {
-    throw new Error('Only three dimensions can be shown at the same time');
-  }
-
-  // one by one, find and update the dimensions that are changing
-  for (var i = 0; i < 3; i++) {
-    if (this.visibleDimensions[i] !== newDims[i]) {
-      // index represents the global position of the dimension
-      var index = this.visibleDimensions[i],
-          orientation = this.axesOrientation[i];
-
-      // 1.- Correct the limits of the ranges for the dimension that we are
-      // moving out of the scene i.e. the old dimension
-      if (this.axesOrientation[i] === -1) {
-        var max = this.decomp.dimensionRanges.max[index];
-        var min = this.decomp.dimensionRanges.min[index];
-        this.decomp.dimensionRanges.max[index] = min * (-1);
-        this.decomp.dimensionRanges.min[index] = max * (-1);
-      }
-
-      // 2.- Set the orientation of the new dimension to be 1
-      this.axesOrientation[i] = 1;
-
-      // 3.- Update the visible dimensions to include the new value
-      this.visibleDimensions[i] = newDims[i];
-    }
-  }
-
+DecompositionView.prototype.updatePositions = function() {
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
-      z = this.visibleDimensions[2], scope = this, changePosition,
-      hasConfidenceIntervals, radius = 0, is2D = (z === null);
+      z = this.visibleDimensions[2], scope = this, hasConfidenceIntervals,
+      radius = 0, is2D = (z === null);
 
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
@@ -269,7 +263,87 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
     });
   }
 
+  // edges are made using THREE.LineSegments and a buffer geometry so updating
+  // the position takes a bit more work but these objects will render faster
+  if (this.decomp.edges) {
+    var left, center, right, u, v, positionsLeft, positionsRight, j = 0;
+    positionsLeft = this.lines.left.geometry.attributes.position.array;
+    positionsRight = this.lines.right.geometry.attributes.position.array;
+
+    this.decomp.edges.forEach(function(edge) {
+      u = edge[0];
+      v = edge[1];
+
+      // x, y and z are the visible dimensions (see above)
+      center = [(u.coordinates[x] + v.coordinates[x]) / 2,
+                (u.coordinates[y] + v.coordinates[y]) / 2,
+                (u.coordinates[z] + v.coordinates[z]) / 2];
+
+      left = [u.coordinates[x], u.coordinates[y], u.coordinates[z]];
+      right = [v.coordinates[x], v.coordinates[y], v.coordinates[z]];
+
+      positionsLeft[(j * 6)] = left[0] * scope.axesOrientation[0];
+      positionsLeft[(j * 6) + 1] = left[1] * scope.axesOrientation[1];
+      positionsLeft[(j * 6) + 2] = (is2D ? 0 : left[2]) * scope.axesOrientation[2];
+      positionsLeft[(j * 6) + 3] = center[0] * scope.axesOrientation[0];
+      positionsLeft[(j * 6) + 4] = center[1] * scope.axesOrientation[1];
+      positionsLeft[(j * 6) + 5] = (is2D ? 0 : center[2]) * scope.axesOrientation[2];
+
+      positionsRight[(j * 6)] = right[0] * scope.axesOrientation[0];
+      positionsRight[(j * 6) + 1] = right[1] * scope.axesOrientation[1];
+      positionsRight[(j * 6) + 2] = (is2D ? 0 : right[2]) * scope.axesOrientation[2];
+      positionsRight[(j * 6) + 3] = center[0] * scope.axesOrientation[0];
+      positionsRight[(j * 6) + 4] = center[1] * scope.axesOrientation[1];
+      positionsRight[(j * 6) + 5] = (is2D ? 0 : center[2]) * scope.axesOrientation[2];
+
+      j++;
+    });
+
+    // otherwise the geometry will remain unchanged
+    this.lines.left.geometry.attributes.position.needsUpdate = true;
+    this.lines.right.geometry.attributes.position.needsUpdate = true;
+  }
   this.needsUpdate = true;
+};
+
+/**
+ *
+ * Change the visible coordinates
+ *
+ * @param {integer[]} newDims An Array of integers in which each integer is the
+ * index to the principal coordinate to show
+ *
+ */
+DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
+  if (newDims.length !== 3) {
+    throw new Error('Only three dimensions can be shown at the same time');
+  }
+
+  // one by one, find and update the dimensions that are changing
+  for (var i = 0; i < 3; i++) {
+    if (this.visibleDimensions[i] !== newDims[i]) {
+      // index represents the global position of the dimension
+      var index = this.visibleDimensions[i],
+          orientation = this.axesOrientation[i];
+
+      // 1.- Correct the limits of the ranges for the dimension that we are
+      // moving out of the scene i.e. the old dimension
+      if (this.axesOrientation[i] === -1) {
+        var max = this.decomp.dimensionRanges.max[index];
+        var min = this.decomp.dimensionRanges.min[index];
+        this.decomp.dimensionRanges.max[index] = min * (-1);
+        this.decomp.dimensionRanges.min[index] = max * (-1);
+      }
+
+      // 2.- Set the orientation of the new dimension to be 1
+      this.axesOrientation[i] = 1;
+
+      // 3.- Update the visible dimensions to include the new value
+      this.visibleDimensions[i] = newDims[i];
+    }
+  }
+
+  this.updatePositions();
 };
 
 /**
@@ -288,12 +362,6 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
   var localIndex = this.visibleDimensions.indexOf(index);
 
   if (localIndex !== -1) {
-    var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
-        z = this.visibleDimensions[2], hasConfidenceIntervals,
-        is2D = (z === null);
-
-    hasConfidenceIntervals = scope.decomp.hasConfidenceIntervals();
-
     // update the ranges for this decomposition
     var max = this.decomp.dimensionRanges.max[index];
     var min = this.decomp.dimensionRanges.min[index];
@@ -303,51 +371,7 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
     // and update the state of the orientation
     this.axesOrientation[localIndex] *= -1;
 
-    if (this.decomp.isScatterType()) {
-      this.decomp.apply(function(plottable) {
-        mesh = scope.markers[plottable.idx];
-
-        // always use the original data plus the axis orientation
-        mesh.position.set(
-          plottable.coordinates[x] * scope.axesOrientation[0],
-          plottable.coordinates[y] * scope.axesOrientation[1],
-          is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
-        mesh.updateMatrix();
-
-        if (hasConfidenceIntervals) {
-          mesh = scope.ellipsoids[plottable.idx];
-
-          // always use the original data plus the axis orientation
-          mesh.position.set(
-            plottable.coordinates[x] * scope.axesOrientation[0],
-            plottable.coordinates[y] * scope.axesOrientation[1],
-            is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
-          mesh.updateMatrix();
-        }
-      });
-    }
-    else if (this.decomp.isArrowType()) {
-      var zero = new THREE.Vector3(0, 0, 0), target, arrow, length;
-
-      this.decomp.apply(function(plottable) {
-        arrow = scope.markers[plottable.idx];
-
-        target = new THREE.Vector3(
-          plottable.coordinates[x] * scope.axesOrientation[0],
-          plottable.coordinates[y] * scope.axesOrientation[1],
-          (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
-
-        // calculate the length before normalization
-        target = target.sub(zero);
-        length = zero.distanceTo(target);
-        target.normalize();
-
-        arrow.setDirection(target.sub(zero));
-        arrow.setLength(length);
-      });
-    }
-
-    this.needsUpdate = true;
+    this.updatePositions();
   }
 };
 

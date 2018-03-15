@@ -114,6 +114,47 @@ define(['underscore', 'three'], function(_, THREE) {
 
   /**
    *
+   * Create a collection of disconnected lines.
+   *
+   * This function is specially useful when creating a lot of lines as it uses
+   * a BufferGeometry for improved performance.
+   *
+   * @param {Array[]} vertices List of vertices used to create the lines. Each
+   * line is connected on as (vertices[i], vertices[i+1),
+   * (vertices[i+2], vertices[i+3]), etc.
+   * @param {integer} color Hexadecimal base that specifies the color of the
+   * line.
+   *
+   * @return {THREE.LineSegments}
+   * @function makeLineCollection
+   *
+   */
+  function makeLineCollection(vertices, color) {
+    // based on https://jsfiddle.net/wilt/bd8trrLx/
+    var material = new THREE.LineBasicMaterial({
+      color: color || 0xff0000
+    });
+
+    var positions = new Float32Array(vertices.length * 3);
+
+    for (var i = 0; i < vertices.length; i++) {
+
+      positions[i * 3] = vertices[i][0];
+      positions[i * 3 + 1] = vertices[i][1];
+      positions[i * 3 + 2] = vertices[i][2];
+
+    }
+
+    var indices = _.range(vertices.length);
+    var geometry = new THREE.BufferGeometry();
+    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(indices), 1));
+
+    return new THREE.LineSegments(geometry, material);
+  }
+
+  /**
+   *
    * Create a generic Arrow object (composite of a cone and line)
    *
    * @param {float[]} from The x, y and z coordinates where the arrow
@@ -270,5 +311,6 @@ define(['underscore', 'three'], function(_, THREE) {
 
   return {'formatSVGLegend': formatSVGLegend, 'makeLine': makeLine,
           'makeLabel': makeLabel, 'makeArrow': makeArrow,
-          'drawTrajectoryLine': drawTrajectoryLine};
+          'drawTrajectoryLine': drawTrajectoryLine,
+          'makeLineCollection': makeLineCollection};
 });
