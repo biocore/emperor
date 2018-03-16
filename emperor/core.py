@@ -263,8 +263,10 @@ class Emperor(object):
         self._settings = {}
 
         # label each ordination by index
-        self.procrustes_names = ['Ordination %d' % i
-                                 for i in range(len(self.procrustes))]
+        self.procrustes_names = []
+        if self.procrustes:
+            self.procrustes_names = ['Ordination %d' % i
+                                     for i in range(len(self.procrustes) + 1)]
 
     def __str__(self):
         return self.make_emperor()
@@ -612,14 +614,15 @@ class Emperor(object):
 
             c_pct = data.proportion_explained[:dims] * 100
 
+        # repeats is only dependant on procrustes
         headers, metadata = self._to_legacy_map(self.mf, custom_axes,
-                                                repeats=len(ordinations))
+                                                len(self.procrustes))
 
         # make an edge list for the procrustes plot
         if self.procrustes:
-            for i in range(1, len(ordinations)):
+            for i in range(len(self.procrustes)):
                 for sample in self.mf.index:
-                    edges.append([sample + '_0', sample + '_%d' % i])
+                    edges.append([sample + '_0', sample + '_%d' % (i + 1)])
 
         c_headers, c_data, _, c_pct, low, high, _ = \
             preprocess_coords_file(c_headers, c_data, c_eigenvals, c_pct,
@@ -688,7 +691,8 @@ class Emperor(object):
 
         if repeats:
             mfs = []
-            for i in range(repeats):
+            # repeats and the original
+            for i in range(repeats + 1):
                 mfs.append(mf.copy())
                 mfs[i].index = pd.Index(mfs[i].index + '_%d' % i,
                                         name=mfs[i].index.name)

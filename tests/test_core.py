@@ -175,12 +175,20 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
                                        '/new-api/emperor/support_files')
 
+        self.assertEqual(emp.jackknifed, [])
+        self.assertEqual(emp.procrustes, [])
+        self.assertEqual(emp.procrustes_names, [])
+
     def test_initial_biplots(self):
         emp = Emperor(self.biplot, self.mf, self.feature_mf, remote=self.url)
 
         self.assertEqual(emp.width, '100%')
         self.assertEqual(emp.height, '500px')
         self.assertEqual(emp.settings, {})
+
+        self.assertEqual(emp.jackknifed, [])
+        self.assertEqual(emp.procrustes, [])
+        self.assertEqual(emp.procrustes_names, [])
 
         feature_mf = pd.DataFrame(index=['f.PC.636', 'f.PC.635', 'f.PC.356',
                                          'f.PC.481', 'f.PC.354'])
@@ -200,6 +208,10 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.width, '100%')
         self.assertEqual(emp.height, '500px')
         self.assertEqual(emp.settings, {})
+
+        self.assertEqual(emp.jackknifed, [])
+        self.assertEqual(emp.procrustes, [])
+        self.assertEqual(emp.procrustes_names, [])
 
         empty_mf = pd.DataFrame(index=['f.PC.636', 'f.PC.635', 'f.PC.356',
                                        'f.PC.481', 'f.PC.354'])
@@ -341,6 +353,7 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.ord_res, self.mf, remote=self.url)
 
         (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         edges,
          bi_coords, bi_ids,
          bi_headers, bi_metadata) = emp._process_data([], 'IQR')
 
@@ -360,6 +373,8 @@ class TopLevelTests(TestCase):
 
         self.assertEqual(metadata, self.expected_metadata)
         self.assertEqual(names, [0, 1, 2, 3, 4])
+
+        self.assertEqual(edges, [])
 
         self.assertTrue(bi_coords is None)
         self.assertTrue(bi_ids is None)
@@ -370,6 +385,7 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.biplot, self.mf, self.feature_mf, remote=self.url)
 
         (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         edges,
          bi_coords, bi_ids,
          bi_headers, bi_metadata) = emp._process_data([], 'IQR')
 
@@ -389,6 +405,8 @@ class TopLevelTests(TestCase):
 
         self.assertEqual(metadata, self.expected_metadata)
         self.assertEqual(names, [0, 1, 2, 3, 4])
+
+        self.assertEqual(edges, [])
 
         np.testing.assert_array_almost_equal(bi_coords,
                                              self.expected_biplot_coords)
@@ -405,6 +423,7 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.biplot, self.mf, remote=self.url)
 
         (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         edges,
          bi_coords, bi_ids,
          bi_headers, bi_metadata) = emp._process_data([], 'IQR')
 
@@ -424,6 +443,8 @@ class TopLevelTests(TestCase):
 
         self.assertEqual(metadata, self.expected_metadata)
         self.assertEqual(names, [0, 1, 2, 3, 4])
+
+        self.assertEqual(edges, [])
 
         np.testing.assert_array_almost_equal(bi_coords,
                                              self.expected_biplot_coords)
@@ -441,6 +462,7 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.ord_res, self.mf, remote=False)
 
         (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         edges,
          bi_coords, bi_ids,
          bi_headers, bi_metadata) = emp._process_data(['DOB'], 'IQR')
 
@@ -488,6 +510,8 @@ class TopLevelTests(TestCase):
         self.assertEqual(metadata, self.expected_metadata)
         self.assertEqual(names, ['DOB', 0, 1, 2, 3, 4])
 
+        self.assertEqual(edges, [])
+
         self.assertTrue(bi_coords is None)
         self.assertTrue(bi_ids is None)
         self.assertTrue(bi_headers is None)
@@ -503,7 +527,13 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.ord_res, self.mf, remote=False,
                       jackknifed=self.jackknifed)
 
+        aligned = emp.ordination.samples.index.tolist()
+        self.assertEqual(emp.jackknifed[0].samples.index.tolist(), aligned)
+        self.assertEqual(emp.jackknifed[1].samples.index.tolist(), aligned)
+        self.assertEqual(emp.jackknifed[2].samples.index.tolist(), aligned)
+
         (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         edges,
          bi_coords, bi_ids,
          bi_headers, bi_metadata) = emp._process_data([], 'IQR')
 
@@ -569,6 +599,63 @@ class TopLevelTests(TestCase):
         self.assertEqual(metadata, self.expected_metadata)
         self.assertEqual(names, [0, 1, 2, 3, 4])
 
+        self.assertEqual(edges, [])
+
+        self.assertTrue(bi_coords is None)
+        self.assertTrue(bi_ids is None)
+        self.assertTrue(bi_headers is None)
+        self.assertTrue(bi_metadata is None)
+
+    def test_process_procrustes_data(self):
+        ordinations = self.jackknifed[1:]
+        emp = Emperor(self.ord_res, self.mf, remote=False,
+                      procrustes=ordinations)
+
+        aligned = emp.ordination.samples.index.tolist()
+        self.assertEqual(emp.jackknifed, [])
+        self.assertEqual(emp.procrustes[0].samples.index.tolist(), aligned)
+        self.assertEqual(emp.procrustes[1].samples.index.tolist(), aligned)
+
+        (coord_ids, coords, pct_var, ci, headers, metadata, names,
+         edges,
+         bi_coords, bi_ids,
+         bi_headers, bi_metadata) = emp._process_data([], 'IQR')
+
+        self.assertEqual(coord_ids,
+                         ['PC.636_0', 'PC.635_0', 'PC.356_0', 'PC.481_0',
+                          'PC.354_0', 'PC.593_0', 'PC.355_0', 'PC.607_0',
+                          'PC.634_0',
+                          'PC.636_1', 'PC.635_1', 'PC.356_1', 'PC.481_1',
+                          'PC.354_1', 'PC.593_1', 'PC.355_1', 'PC.607_1',
+                          'PC.634_1',
+                          'PC.636_2', 'PC.635_2', 'PC.356_2', 'PC.481_2',
+                          'PC.354_2', 'PC.593_2', 'PC.355_2', 'PC.607_2',
+                          'PC.634_2'])
+        np.testing.assert_array_almost_equal(coords, tcs.PROCRUSTES_COORDS)
+
+        obs_pct_var = np.array([26.688705, 16.25637, 13.775413,
+                                11.217216, 10.024775])
+        np.testing.assert_array_almost_equal(pct_var, obs_pct_var)
+
+        exp_ci = []
+        np.testing.assert_array_almost_equal(ci, exp_ci)
+
+        self.assertEqual(headers, ['SampleID', 'Treatment', 'DOB',
+                         'Description', '__Procrustes_Names__'])
+
+        self.assertEqual(metadata, tcs.PROCRUSTES_MAP)
+        self.assertEqual(names, [0, 1, 2, 3, 4])
+
+        self.assertEqual(edges, [['PC.636_0', 'PC.636_1'],
+                         ['PC.635_0', 'PC.635_1'], ['PC.356_0', 'PC.356_1'],
+                         ['PC.481_0', 'PC.481_1'], ['PC.354_0', 'PC.354_1'],
+                         ['PC.593_0', 'PC.593_1'], ['PC.355_0', 'PC.355_1'],
+                         ['PC.607_0', 'PC.607_1'], ['PC.634_0', 'PC.634_1'],
+                         ['PC.636_0', 'PC.636_2'], ['PC.635_0', 'PC.635_2'],
+                         ['PC.356_0', 'PC.356_2'], ['PC.481_0', 'PC.481_2'],
+                         ['PC.354_0', 'PC.354_2'], ['PC.593_0', 'PC.593_2'],
+                         ['PC.355_0', 'PC.355_2'], ['PC.607_0', 'PC.607_2'],
+                         ['PC.634_0', 'PC.634_2']])
         self.assertTrue(bi_coords is None)
         self.assertTrue(bi_ids is None)
         self.assertTrue(bi_headers is None)
@@ -585,6 +672,12 @@ class TopLevelTests(TestCase):
         self.jackknifed[0].samples.index = pd.Series(list('abcdefghi'))
         with self.assertRaises(ValueError):
             Emperor(self.ord_res, self.mf, jackknifed=self.jackknifed)
+
+    def test_jackknifed_and_procrustes(self):
+        a, b, c = self.jackknifed
+        with self.assertRaises(ValueError):
+            Emperor(self.ord_res, self.mf, jackknifed=[a, b],
+                    procrustes=[c])
 
 
 class EmperorSettingsTests(TestCase):
