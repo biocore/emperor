@@ -183,10 +183,34 @@ define([
      */
     this.decViews = {'scatter': new DecompositionView(this.dm)};
 
+    /**
+     * @type {Node}
+     * jQuery object To show the context menu (as an alternative to
+     * right-clicking on the plot).
+     *
+     * The context menu that this button shows is created in the _buildUI
+     * method.
+     */
+    this.$optionsButton = $('<button name="options-button">&nbsp;</button>');
+    this.$optionsButton.css({
+      'position': 'absolute',
+      'z-index': '3',
+      'top': '5px',
+      'right': '5px'
+    }).attr('title', 'More Options').on('click', function(event) {
+      // add offset to avoid overlapping the button with the menu
+      scope.$plotSpace.contextMenu({x: event.pageX, y: event.pageY + 5});
+    });
+    this.$plotSpace.append(this.$optionsButton);
+
     // default decomposition view uses the full window
     this.addSceneView();
 
     $(function() {
+      // setup the jquery properties of the button
+      scope.$optionsButton.button({text: false,
+                                   icons: {primary: ' ui-icon-gear'}});
+
       scope._buildUI();
       // Hide the loading splashscreen
       scope.$divId.find('.loading').hide();

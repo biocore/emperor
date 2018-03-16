@@ -97,14 +97,14 @@ define([
      *
      * See also the private method _downloadScreePlot
      */
-    this.$saveButton = $('<button>&nbsp;</save>');
+    this.$saveButton = $('<button>&nbsp;</button>');
     this.$saveButton.css({
       'position': 'absolute',
       'z-index': '3',
       'top': '10px',
       'right': '5px'
-    }).button({text: false,
-                             icons: {primary: ' ui-icon-circle-arrow-s'}
+    }).button({
+      text: false, icons: {primary: ' ui-icon-circle-arrow-s'}
     }).attr('title', 'Download Scree Plot');
     this.$_screePlotContainer.append(this.$saveButton);
 
