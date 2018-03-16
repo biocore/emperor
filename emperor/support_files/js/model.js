@@ -258,9 +258,9 @@ function($, _, util) {
 
     /**
      * Array of pairs of Plottable objects.
-     * @type {[]}
+     * @type {Array[]}
      */
-    this.edges = this._processEdgeList(data.edges);
+    this.edges = this._processEdgeList(data.edges || []);
   }
 
   /**
@@ -414,7 +414,7 @@ function($, _, util) {
    *
    * Transform observation names into plottable objects.
    *
-   * @return {[]} An array of plottable pairs.
+   * @return {Array[]} An array of plottable pairs.
    * @private
    *
    */
@@ -437,7 +437,7 @@ function($, _, util) {
     });
 
     return edges;
-  }
+  };
 
   /**
    *

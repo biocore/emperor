@@ -265,7 +265,7 @@ DecompositionView.prototype.updatePositions = function() {
 
   // edges are made using THREE.LineSegments and a buffer geometry so updating
   // the position takes a bit more work but these objects will render faster
-  if (this.decomp.edges) {
+  if (this.decomp.edges.length) {
     var left, center, right, u, v, positionsLeft, positionsRight, j = 0;
     positionsLeft = this.lines.left.geometry.attributes.position.array;
     positionsRight = this.lines.right.geometry.attributes.position.array;
@@ -284,17 +284,21 @@ DecompositionView.prototype.updatePositions = function() {
 
       positionsLeft[(j * 6)] = left[0] * scope.axesOrientation[0];
       positionsLeft[(j * 6) + 1] = left[1] * scope.axesOrientation[1];
-      positionsLeft[(j * 6) + 2] = (is2D ? 0 : left[2]) * scope.axesOrientation[2];
+      positionsLeft[(j * 6) + 2] = ((is2D ? 0 : left[2]) *
+                                    scope.axesOrientation[2]);
       positionsLeft[(j * 6) + 3] = center[0] * scope.axesOrientation[0];
       positionsLeft[(j * 6) + 4] = center[1] * scope.axesOrientation[1];
-      positionsLeft[(j * 6) + 5] = (is2D ? 0 : center[2]) * scope.axesOrientation[2];
+      positionsLeft[(j * 6) + 5] = ((is2D ? 0 : center[2]) *
+                                    scope.axesOrientation[2]);
 
       positionsRight[(j * 6)] = right[0] * scope.axesOrientation[0];
       positionsRight[(j * 6) + 1] = right[1] * scope.axesOrientation[1];
-      positionsRight[(j * 6) + 2] = (is2D ? 0 : right[2]) * scope.axesOrientation[2];
+      positionsRight[(j * 6) + 2] = ((is2D ? 0 : right[2]) *
+                                     scope.axesOrientation[2]);
       positionsRight[(j * 6) + 3] = center[0] * scope.axesOrientation[0];
       positionsRight[(j * 6) + 4] = center[1] * scope.axesOrientation[1];
-      positionsRight[(j * 6) + 5] = (is2D ? 0 : center[2]) * scope.axesOrientation[2];
+      positionsRight[(j * 6) + 5] = ((is2D ? 0 : center[2]) *
+                                     scope.axesOrientation[2]);
 
       j++;
     });

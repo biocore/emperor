@@ -156,13 +156,32 @@ requirejs([
       equal(dm.length, 9, 'Length set correctly');
       deepEqual(dm.axesNames, ['pcoa 1', 'pcoa 2', 'pcoa 3', 'pcoa 4', 'pcoa 5',
                                'pcoa 6', 'pcoa 7', 'pcoa 8']);
+
+      deepEqual(dm.edges, []);
     });
 
-    /**
-     *
-     * Test constructor with custom axesNames
-     *
-     */
+    test('Test add edges', function(assert) {
+      this.data.edges = [['PC.607', 'PC.634'], ['PC.355', 'PC.634']];
+
+      var dm = new DecompositionModel(this.data, this.md_headers,
+                                      this.metadata, 'scatter');
+
+      // checking the names we assume the rest is fine
+      equal(dm.edges[0][0].name, 'PC.607');
+      equal(dm.edges[0][1].name, 'PC.634');
+      equal(dm.edges[1][0].name, 'PC.355');
+      equal(dm.edges[1][1].name, 'PC.634');
+    });
+
+    test('Test add edges error', function(assert) {
+      this.data.edges = [['PC.607', 'PC.607'], ['PC.355', 'PC.634']];
+
+      throws(function() {
+            var dm = new DecompositionModel(this.data, this.md_headers,
+                                            this.metadata, 'scatter');
+          }, Error);
+    });
+
     test('Test axesNames', function() {
       var names = ['PC 1', 'PC 2', 'PC 3', 'PC 4', 'PC 5', 'PC 6', 'PC 7',
                    'PC 8', 'PC 9'];
