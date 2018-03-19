@@ -65,6 +65,15 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
           args.grid.resetActiveCell();
         }
       });
+
+      // Don't propagate the keydown and keypress events so that inputing a
+      // color doesn't interfere with the shortcuts of the Jupyter Notebook
+      $input
+        .spectrum('container')
+        .find('.sp-input')
+        .on('keydown keypress', function(e) {
+          e.stopPropagation();
+        });
     };
 
     this.destroy = function() {

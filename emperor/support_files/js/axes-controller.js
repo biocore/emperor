@@ -65,12 +65,26 @@ define([
                   scope.colorChanged($(this).attr('name'), color);
                 }
     };
-    // spectrumify all the elements in the body that have a name ending in
-    // color
-    this.$body.find('[name="axes-color"]').spectrum(opts);
+
+    var stop = function(event) {
+      event.stopPropagation();
+    };
+
+    // spectrumify the axes and background color selectors
+    // Don't propagate the keydown and keypress events so that inputing a color
+    // doesn't interfere with the shortcuts of the Jupyter Notebook
+    this.$body.find('[name="axes-color"]')
+      .spectrum(opts)
+      .spectrum('container')
+      .find('.sp-input')
+      .on('keydown keypress', stop);
     opts.color = 'black';
     opts.allowEmpty = false;
-    this.$body.find('[name="background-color"]').spectrum(opts);
+    this.$body.find('[name="background-color"]')
+      .spectrum(opts)
+      .spectrum('container')
+      .find('.sp-input')
+      .on('keydown keypress', stop);
 
     /**
      * @type {Node}
