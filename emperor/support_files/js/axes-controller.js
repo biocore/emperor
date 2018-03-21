@@ -38,7 +38,9 @@ define([
     colors += '<td><input type="text" name="axes-color"/></td></tr>';
     colors += '<tr><td>Background Color</td>';
     colors += '<td><input type="text" name="background-color"/></td>';
+    colors += this._procrustesControllers();
     colors += '</table>';
+
     this.$body.append(colors);
 
     // the jupyter notebook adds style on the tables, so remove it
@@ -62,15 +64,29 @@ define([
                     // the color change and the color
                     color = color.toHexString();
                   }
-                  scope.colorChanged($(this).attr('name'), color);
+                  scope._colorChanged($(this).attr('name'), color);
                 }
     };
     // spectrumify all the elements in the body that have a name ending in
     // color
-    this.$body.find('[name="axes-color"]').spectrum(opts);
+    this._$axesColor = this.$body.find('[name="axes-color"]');
+    this._$axesColor.spectrum(opts);
+
     opts.color = 'black';
     opts.allowEmpty = false;
-    this.$body.find('[name="background-color"]').spectrum(opts);
+    this._$backgroundColor = this.$body.find('[name="background-color"]');
+    this._$backgroundColor.spectrum(opts);
+
+    // these initializations will be ignored if there are no edges in the views
+    opts.color = 'white';
+    opts.showPalette = false;
+    this._$referenceEdgeColor = this.$body.find(
+      '[name="reference-edge-color"]');
+    this._$referenceEdgeColor.spectrum(opts);
+
+    opts.color = 'red';
+    this._$otherEdgeColor = this.$body.find('[name="other-edge-color"]');
+    this._$otherEdgeColor.spectrum(opts);
 
     /**
      * @type {Node}
@@ -415,6 +431,146 @@ define([
   };
 
   /**
+   *
+   * Helper method to optionally create the procrustes controllers
+   *
+   */
+  AxesController.prototype._procrustesControllers = function() {
+    var out = '';
+    var shouldDraw = _.values(this.decompViewDict).some(function(view) {
+      return view.decomp.edges.length > 0;
+    });
+
+    // if we have at least one decomposition with edges then we add the
+    // controllers.
+    if (shouldDraw) {
+      out += '<tr><td>&nbsp;</td></tr>';
+      out += '<tr><td>Edge Color (reference)</td>';
+      out += '<td><input type="text" name="reference-edge-color"/></td></tr>';
+      out += '<tr><td>Edge Color (other)</td>';
+      out += '<td><input type="text" name="other-edge-color"/></td>';
+    }
+
+    return out;
+  };
+
+  /**
+   *
+   * Get the reference edge color from the UI picker.
+   *
+   */
+  AxesController.prototype.getReferenceEdgeColor = function() {
+    if (this._$referenceEdgeColor.length === 0) {
+      return null;
+    }
+
+    return this._$referenceEdgeColor.spectrum('get').toHexString();
+  };
+
+  /**
+   *
+   * Get the other edge color from the UI picker.
+   *
+   */
+  AxesController.prototype.getOtherEdgeColor = function() {
+    if (this._$otherEdgeColor.length === 0) {
+      return null;
+    }
+
+    return this._$otherEdgeColor.spectrum('get').toHexString();
+  };
+
+  /**
+   *
+   * Get the background color from the UI picker.
+   *
+   */
+  AxesController.prototype.getBackgroundColor = function() {
+    return this._$backgroundColor.spectrum('get').toHexString();
+  };
+
+  /**
+   *
+   * Get the axes color from the UI picker.
+   *
+   */
+  AxesController.prototype.getAxesColor = function() {
+    return this._$axesColor.spectrum('get').toHexString();
+  };
+
+  /**
+   *
+   * Set the reference edge color (to the UI and the underlying models).
+   *
+   * @param {string} color The color to set, in a CSS 6-digit hex format i.e.
+   * #ff0000 for red
+   *
+   */
+  AxesController.prototype.setReferenceEdgeColor = function(color) {
+    if (this._$referenceEdgeColor.length) {
+      this._$referenceEdgeColor.spectrum('set', color);
+
+      _.each(this.decompViewDict, function(decView) {
+        decView.lines.left.material.color.set(color);
+        decView.needsUpdate = true;
+      });
+    }
+  };
+
+  /**
+   *
+   * Set the other edge color (to the UI and the underlying models).
+   *
+   * @param {string} color The color to set, in a CSS 6-digit hex format i.e.
+   * #ff0000 for red
+   *
+   */
+  AxesController.prototype.setOtherEdgeColor = function(color) {
+    if (this._$otherEdgeColor.length) {
+      this._$otherEdgeColor.spectrum('set', color);
+
+      _.each(this.decompViewDict, function(decView) {
+        decView.lines.right.material.color.set(color);
+        decView.needsUpdate = true;
+      });
+    }
+  };
+
+  /**
+   *
+   * Set the background color (to the UI and the underlying models).
+   *
+   * @param {string} color The color to set, in a CSS 6-digit hex format i.e.
+   * #ff0000 for red
+   *
+   */
+  AxesController.prototype.setBackgroundColor = function(color) {
+    this._$backgroundColor.spectrum('set', color);
+
+    _.each(this.decompViewDict, function(decView) {
+      decView.backgroundColor = color;
+      decView.needsUpdate = true;
+    });
+  };
+
+  /**
+   *
+   * Set the axes color (to the UI and the underlying models).
+   *
+   * @param {string} color The color to set, in a CSS 6-digit hex format i.e.
+   * #ff0000 for red
+   *
+   */
+  AxesController.prototype.setAxesColor = function(color) {
+    this._$axesColor.spectrum('set', color);
+
+    _.each(this.decompViewDict, function(decView) {
+      decView.axesColor = color;
+      decView.needsUpdate = true;
+    });
+  };
+
+  /**
    * Callback to reposition an axis
    *
    * @param {Integer} index The index of the dimension to set as a new visible
@@ -461,31 +617,33 @@ define([
   };
 
   /**
-   * Callback to change color of the axes or the background
+   * Convenience to change color of the axes or the background
    *
    * @param {String} name The name of the element to change, it can be either
-   * 'axes-color' or 'background-color'.
+   * 'axes-color' or 'background-color'. If the plot displays procrustes data
+   * then it can also accept 'reference-edge-color' and 'other-edge-color'.
    * @param {String} color The color to set to the `name`. Should be in a CSS
    * compatible format.
+   *
+   * @private
    */
-  AxesController.prototype.colorChanged = function(name, color) {
+  AxesController.prototype._colorChanged = function(name, color) {
     // for both cases update all the decomposition views and then set the
     // appropriate colors
     if (name === 'axes-color') {
-      _.each(this.decompViewDict, function(decView) {
-        decView.axesColor = color;
-        decView.needsUpdate = true;
-      });
+      this.setAxesColor(color);
     }
     else if (name === 'background-color') {
-      _.each(this.decompViewDict, function(decView) {
-        decView.backgroundColor = color;
-        decView.needsUpdate = true;
-      });
+      this.setBackgroundColor(color);
+    }
+    else if (name === 'reference-edge-color') {
+      this.setReferenceEdgeColor(color);
+    }
+    else if (name === 'other-edge-color') {
+      this.setOtherEdgeColor(color);
     }
     else {
-      throw Error('Could not find "' + name + '" only two allowed inputs are' +
-                  '"axes-color" and "background-color"');
+      throw Error('Could not change color for element: "' + name + '"');
     }
   };
 
@@ -502,8 +660,11 @@ define([
     json.visibleDimensions = decView.visibleDimensions;
     json.flippedAxes = this._flippedAxes;
 
-    json.backgroundColor = decView.backgroundColor;
-    json.axesColor = decView.axesColor;
+    json.backgroundColor = this.getBackgroundColor();
+    json.axesColor = this.getAxesColor();
+
+    json.referenceEdgeColor = this.getReferenceEdgeColor();
+    json.otherEdgeColor = this.getOtherEdgeColor();
 
     return json;
   };
@@ -527,14 +688,19 @@ define([
     // only set these colors if they are present, note that colors
     // are saved as
     if (json.axesColor !== undefined) {
-      this.$body.find('[name="axes-color"]').spectrum('set', json.axesColor);
-      this.colorChanged('axes-color', json.axesColor);
+      this.setAxesColor(json.axesColor);
     }
 
     if (json.backgroundColor !== undefined) {
-      this.$body.find('[name="background-color"]')
-                .spectrum('set', json.backgroundColor);
-      this.colorChanged('background-color', json.backgroundColor);
+      this.setBackgroundColor(json.backgroundColor);
+    }
+
+    // if procrustes information is available
+    if (json.referenceEdgeColor !== undefined) {
+      this.setReferenceEdgeColor(json.referenceEdgeColor);
+    }
+    if (json.otherEdgeColor !== undefined) {
+      this.setOtherEdgeColor(json.otherEdgeColor);
     }
 
     // make sure everything is up to date in the UI
