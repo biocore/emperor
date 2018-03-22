@@ -210,7 +210,9 @@ define([
             scope.resize(scope.width, scope.height);
           }, 50);
         }
-      }).dblclick(function() {
+      });
+
+      scope.$plotMenu.find('.ui-resizable-handle').dblclick(function() {
         var percent = (scope.$plotSpace.width() / scope.width) * 100;
 
         // allow for a bit of leeway
