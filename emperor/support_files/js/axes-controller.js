@@ -172,6 +172,10 @@ define([
     $(this).ready(function() {
       scope.buildDisplayTable();
       scope._buildScreePlot();
+
+      if (scope.ready !== null) {
+        scope.ready();
+      }
     });
 
     return this;

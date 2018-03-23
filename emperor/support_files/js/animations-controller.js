@@ -151,6 +151,16 @@ define([
                             }});
       scope.$radius.css('background', '#70caff');
 
+      // once this element is ready, it is safe to execute the "ready" callback
+      // if a subclass needs to wait on other elements, this attribute should
+      // be changed to null so this callback is effectively cancelled, for an
+      // example see the constructor of ColorViewController
+      scope.$trajectorySelect.on('chosen:ready', function() {
+        if (scope.ready !== null) {
+          scope.ready();
+        }
+      });
+
       // setup chosen
       scope.$gradientSelect.chosen({
         width: '100%',
