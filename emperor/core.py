@@ -1350,6 +1350,13 @@ class Emperor(object):
             elif key == 'color':
                 self.color_by(val['category'], val['data'], val['colormap'],
                               val['continuous'])
+            elif key == 'opacity':
+                self.opacity_by(val['category'], val['data'],
+                                float(val['globalScale']), val['scaleVal'])
+            elif key == 'animations':
+                self.animations_by(val['gradientCategory'],
+                                   val['trajectoryCategory'], val['colors'],
+                                   val['speed'], val['radius'])
             else:
                 raise KeyError('Unrecognized settings key: %s' % key)
 

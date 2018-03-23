@@ -67,26 +67,50 @@ define([
                   scope._colorChanged($(this).attr('name'), color);
                 }
     };
+
+
+    // Don't propagate the keydown and keypress events so that inputing a color
+    // doesn't interfere with the shortcuts of the Jupyter Notebook
+    var stop = function(event) {
+      event.stopPropagation();
+    };
+
     // spectrumify all the elements in the body that have a name ending in
     // color
     this._$axesColor = this.$body.find('[name="axes-color"]');
-    this._$axesColor.spectrum(opts);
+    this._$axesColor
+      .spectrum(opts)
+      .spectrum('container')
+      .find('.sp-input')
+      .on('keydown keypress', stop);
 
     opts.color = 'black';
     opts.allowEmpty = false;
     this._$backgroundColor = this.$body.find('[name="background-color"]');
-    this._$backgroundColor.spectrum(opts);
+    this._$backgroundColor
+      .spectrum(opts)
+      .spectrum('container')
+      .find('.sp-input')
+      .on('keydown keypress', stop);
 
     // these initializations will be ignored if there are no edges in the views
     opts.color = 'white';
     opts.showPalette = false;
     this._$referenceEdgeColor = this.$body.find(
       '[name="reference-edge-color"]');
-    this._$referenceEdgeColor.spectrum(opts);
+    this._$referenceEdgeColor
+      .spectrum(opts)
+      .spectrum('container')
+      .find('.sp-input')
+      .on('keydown keypress', stop);
 
     opts.color = 'red';
     this._$otherEdgeColor = this.$body.find('[name="other-edge-color"]');
-    this._$otherEdgeColor.spectrum(opts);
+    this._$otherEdgeColor
+      .spectrum(opts)
+      .spectrum('container')
+      .find('.sp-input')
+      .on('keydown keypress', stop);
 
     /**
      * @type {Node}
@@ -113,14 +137,14 @@ define([
      *
      * See also the private method _downloadScreePlot
      */
-    this.$saveButton = $('<button>&nbsp;</save>');
+    this.$saveButton = $('<button>&nbsp;</button>');
     this.$saveButton.css({
       'position': 'absolute',
       'z-index': '3',
       'top': '10px',
       'right': '5px'
-    }).button({text: false,
-                             icons: {primary: ' ui-icon-circle-arrow-s'}
+    }).button({
+      text: false, icons: {primary: ' ui-icon-circle-arrow-s'}
     }).attr('title', 'Download Scree Plot');
     this.$_screePlotContainer.append(this.$saveButton);
 

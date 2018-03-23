@@ -483,15 +483,13 @@ define([
    *
    */
   ScenePlotView3D.prototype.drawAxesLabelsWithColor = function(color) {
-    var scope = this, axisLabel, decomp, firstKey, text, factor;
+    var scope = this, axisLabel, decomp, firstKey, text;
 
     // the labels are only removed if the color is null
     this.removeAxesLabels();
     if (color === null) {
       return;
     }
-
-    factor = (this.dimensionRanges.max[0] - this.dimensionRanges.min[0]) * 0.9;
 
     // get the first decomposition object, it doesn't really mater which one
     // we look at though, as all of them should have the same percentage
@@ -514,7 +512,7 @@ define([
         text += ' (' + decomp.percExpl[index].toPrecision(4) + ' %)';
       }
 
-      axisLabel = makeLabel(end, text, color, factor);
+      axisLabel = makeLabel(end, text, color);
       axisLabel.name = scope._axisLabelPrefix + index;
 
       scope.scene.add(axisLabel);

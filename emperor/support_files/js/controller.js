@@ -183,10 +183,34 @@ define([
     this.$plotMenu.append(this._$tabsContainer);
     this._$tabsContainer.append(this._$tabsList);
 
+    /**
+     * @type {Node}
+     * jQuery object To show the context menu (as an alternative to
+     * right-clicking on the plot).
+     *
+     * The context menu that this button shows is created in the _buildUI
+     * method.
+     */
+    this.$optionsButton = $('<button name="options-button">&nbsp;</button>');
+    this.$optionsButton.css({
+      'position': 'absolute',
+      'z-index': '3',
+      'top': '5px',
+      'right': '5px'
+    }).attr('title', 'More Options').on('click', function(event) {
+      // add offset to avoid overlapping the button with the menu
+      scope.$plotSpace.contextMenu({x: event.pageX, y: event.pageY + 5});
+    });
+    this.$plotSpace.append(this.$optionsButton);
+
     // default decomposition view uses the full window
     this.addSceneView();
 
     $(function() {
+      // setup the jquery properties of the button
+      scope.$optionsButton.button({text: false,
+                                   icons: {primary: ' ui-icon-gear'}});
+
       scope._buildUI();
       // Hide the loading splashscreen
       scope.$divId.find('.loading').hide();
@@ -210,7 +234,9 @@ define([
             scope.resize(scope.width, scope.height);
           }, 50);
         }
-      }).dblclick(function() {
+      });
+
+      scope.$plotMenu.find('.ui-resizable-handle').dblclick(function() {
         var percent = (scope.$plotSpace.width() / scope.width) * 100;
 
         // allow for a bit of leeway
@@ -418,7 +444,7 @@ define([
    */
   EmperorController.prototype.updatePlotBanner = function() {
     var color = this.sceneViews[0].scene.background.clone(), visible = 0,
-        total = 0;
+        total = 0, message = '';
 
     // invert the color so it's visible regardless of the background
     color.setRGB((Math.floor(color.r * 255) ^ 0xFF) / 255,
@@ -435,7 +461,13 @@ define([
     });
 
     this.$plotBanner.css({'color': color, 'border-color': color});
-    this.$plotBanner.html(visible + '/' + total + ' visible');
+
+    if (visible !== total) {
+      message = ' <br> WARNING: hiding samples in an ordination can be ' +
+                'misleading';
+    }
+
+    this.$plotBanner.html(visible + '/' + total + ' visible' + message);
   };
 
   EmperorController.prototype.getPlotBanner = function(text) {
