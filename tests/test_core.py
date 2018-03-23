@@ -1377,7 +1377,18 @@ class EmperorSettingsTests(TestCase):
                                                 '20070314': True,
                                                 '20071112': False,
                                                 '20071210': True,
-                                                '20080116': False}}
+                                                '20080116': False}},
+                        'opacity': {"category": 'DOB',
+                                    "data": {},
+                                    "globalScale": "1.0",
+                                    "scaleVal": False},
+                        'animations': {"gradientCategory": 'DOB',
+                                       "trajectoryCategory": 'Treatment',
+                                       "speed": 1,
+                                       "radius": 1,
+                                       "colors": {"Fast": "red",
+                                                  "Control": "blue"}
+                                       }
                         }
 
         emp = Emperor(self.ord_res, self.mf, remote=False)
