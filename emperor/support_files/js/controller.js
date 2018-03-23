@@ -505,7 +505,7 @@ define([
 
     // this is the number of expected view controllers that will announce that
     // all view controllers have been successfully loaded.
-    this._expected = 5;
+    this._expected = 7;
     this._seen = 0;
 
     //FIXME: This only works for 1 scene plot view
