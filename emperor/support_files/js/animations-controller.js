@@ -354,9 +354,11 @@ define([
 
     this.$speed.slider('option', 'disabled', !speed);
     this.$radius.slider('option', 'disabled', !speed);
-    this.$play.prop('disabled', !play);
-    this.$pause.prop('disabled', !pause);
-    this.$rewind.prop('disabled', !rewind);
+
+    // jquery ui requires a manual refresh of to the UI after state changes
+    this.$play.prop('disabled', !play).button('refresh');
+    this.$pause.prop('disabled', !pause).button('refresh');
+    this.$rewind.prop('disabled', !rewind).button('refresh');
 
     this._grid.setOptions({editable: speed});
   };
@@ -548,7 +550,7 @@ define([
       // buttons and re-enable the rewind button so users can clear the
       // screen.
       this._updateButtons();
-      this.$rewind.prop('disabled', false);
+      this.$rewind.prop('disabled', false).button('refresh');
     }
   };
 
