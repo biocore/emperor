@@ -12,7 +12,7 @@ import sys
 from distutils.core import setup
 from glob import glob
 
-__version__ = "1.0.0beta13-dev"
+__version__ = "1.0.0beta14"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
