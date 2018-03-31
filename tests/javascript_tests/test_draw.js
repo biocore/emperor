@@ -114,7 +114,7 @@ requirejs(['draw'], function(draw) {
     });
 
     test('Test makeArrow works correctly', function(assert) {
-      var arrow = makeArrow([0, 0, 0], [9, 1, 1], 0x00ff00);
+      var arrow = makeArrow([0, 0, 0], [9, 1, 1], 0x00ff00, 'test');
 
       equal(arrow.line.material.color.r, 0);
       equal(arrow.line.material.color.g, 1);
@@ -128,10 +128,16 @@ requirejs(['draw'], function(draw) {
       equal(arrow.position.y, 0);
       equal(arrow.position.z, 0);
 
+      deepEqual(arrow.cone.position.toArray(), arrow.label.position.toArray());
+
       equal(arrow.quaternion.x, 0.07367677183061115);
       equal(arrow.quaternion.y, 0);
       equal(arrow.quaternion.z, -0.6630909464755004);
       equal(arrow.quaternion.w, 0.7449041079191638);
+
+      equal(arrow.line.name, 'test');
+      equal(arrow.cone.name, 'test');
+      equal(arrow.name, 'test');
     });
 
     /**

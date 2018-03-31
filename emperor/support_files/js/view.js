@@ -142,9 +142,7 @@ DecompositionView.prototype._initBaseView = function() {
       point = [plottable.coordinates[x],
                plottable.coordinates[y],
                plottable.coordinates[z]];
-      arrow = makeArrow(zero, point, 0x708090);
-      arrow.line.name = plottable.name;
-      arrow.cone.name = plottable.name;
+      arrow = makeArrow(zero, point, 0xc0c0c0, plottable.name);
 
       scope.markers.push(arrow);
     });
@@ -249,7 +247,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
     });
   }
   else if (this.decomp.isArrowType()) {
-    var zero = new THREE.Vector3(0, 0, 0), target, arrow, length;
+    var target, arrow;
 
     this.decomp.apply(function(plottable) {
       arrow = scope.markers[plottable.idx];
@@ -259,13 +257,7 @@ DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
         plottable.coordinates[y] * scope.axesOrientation[1],
         (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
 
-      // calculate the length before normalization
-      target = target.sub(zero);
-      length = zero.distanceTo(target);
-      target.normalize();
-
-      arrow.setDirection(target.sub(zero));
-      arrow.setLength(zero.distanceTo(target));
+      arrow.setPointsTo(target);
     });
   }
 
@@ -327,7 +319,7 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
       });
     }
     else if (this.decomp.isArrowType()) {
-      var zero = new THREE.Vector3(0, 0, 0), target, arrow, length;
+      var target, arrow;
 
       this.decomp.apply(function(plottable) {
         arrow = scope.markers[plottable.idx];
@@ -337,13 +329,7 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
           plottable.coordinates[y] * scope.axesOrientation[1],
           (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
 
-        // calculate the length before normalization
-        target = target.sub(zero);
-        length = zero.distanceTo(target);
-        target.normalize();
-
-        arrow.setDirection(target.sub(zero));
-        arrow.setLength(length);
+        arrow.setPointsTo(target);
       });
     }
 

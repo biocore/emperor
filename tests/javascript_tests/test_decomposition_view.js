@@ -139,8 +139,8 @@ requirejs([
       view.markers.map(function(marker) {
         assert.ok(marker instanceof THREE.ArrowHelper);
 
-        deepEqual(marker.line.material.color.getHex(), 0x708090);
-        deepEqual(marker.cone.material.color.getHex(), 0x708090);
+        deepEqual(marker.line.material.color.getHex(), 0xc0c0c0);
+        deepEqual(marker.cone.material.color.getHex(), 0xc0c0c0);
       });
     });
 
