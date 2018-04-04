@@ -162,35 +162,43 @@
     function addStringOperations() {
         // https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padEnd
-        String.prototype.padEnd = function padEnd(targetLength,padString) {
-            targetLength = targetLength>>0; //floor if number or convert non-number to 0;
-            padString = String((typeof padString !== 'undefined' ? padString : ' '));
+        String.prototype.padEnd = function padEnd(targetLength, padString) {
+            //floor if number or convert non-number to 0;
+            targetLength = targetLength >> 0;
+            padString = String((typeof padString !== 'undefined' ?
+                                padString : ' '));
             if (this.length > targetLength) {
                 return String(this);
             }
             else {
-                targetLength = targetLength-this.length;
+                targetLength = targetLength - this.length;
                 if (targetLength > padString.length) {
-                    padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
+                    //append to original to ensure we are longer than needed
+                    padString += padString.repeat(targetLength /
+                                                  padString.length);
                 }
-                return String(this) + padString.slice(0,targetLength);
+                return String(this) + padString.slice(0, targetLength);
             }
         };
 
         // https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
-        String.prototype.padStart = function padStart(targetLength,padString) {
-            targetLength = targetLength>>0; //truncate if number or convert non-number to 0;
-            padString = String((typeof padString !== 'undefined' ? padString : ' '));
+        String.prototype.padStart = function padStart(targetLength, padString) {
+            // truncate if number or convert non-number to 0;
+            targetLength = targetLength >> 0;
+            padString = String((typeof padString !== 'undefined' ?
+                                padString : ' '));
             if (this.length > targetLength) {
                 return String(this);
             }
             else {
-                targetLength = targetLength-this.length;
+                targetLength = targetLength - this.length;
                 if (targetLength > padString.length) {
-                    padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
+                    //append to original to ensure we are longer than needed
+                    padString += padString.repeat(targetLength /
+                                                  padString.length);
                 }
-                return padString.slice(0,targetLength) + String(this);
+                return padString.slice(0, targetLength) + String(this);
             }
         };
 
@@ -213,18 +221,19 @@
             if (str.length == 0 || count == 0) {
                 return '';
             }
-            // Ensuring count is a 31-bit integer allows us to heavily optimize the
-            // main part. But anyway, most current (August 2014) browsers can't handle
-            // strings 1 << 28 chars or longer, so:
+            // Ensuring count is a 31-bit integer allows us to heavily optimize
+            // the main part. But anyway, most current (August 2014) browsers
+            // can't handle strings 1 << 28 chars or longer, so:
             if (str.length * count >= 1 << 28) {
-                throw new RangeError('repeat count must not overflow maximum string size');
+                throw new RangeError('repeat count must not overflow maximum' +
+                                     ' string size');
             }
             var rpt = '';
             for (var i = 0; i < count; i++) {
                 rpt += str;
             }
             return rpt;
-        }
+        };
     }
 
     /*
