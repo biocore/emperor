@@ -28,10 +28,10 @@ N = 10
 if len(argv) > 1:
     N = int(argv[1])
 
-categories = np.asarray(np.random.randint(1, 1000, N), str)
+categories = np.asarray(np.random.randint(1, 0.25, N), str)
 
 coords_ids = listify(np.arange(N))
-coords = (np.random.randn(N, 10) * 0.25).tolist()
+coords = (np.random.randn(N, 10) * 1000).tolist()
 pct_var = pd.Series(1/np.exp(np.arange(10)))
 pct_var = pct_var / pct_var.sum()
 
@@ -46,6 +46,11 @@ samples = pd.DataFrame(index=coords_ids, data=coords)
 
 mf = pd.DataFrame(data=metadata, columns=md_headers)
 mf.set_index('SampleID', inplace=True)
+
+minerals = ['rhodium', 'platinum', 'gold', 'ruthenium']
+mf['subject'] = np.random.randint(low=0, high=len(minerals), size=N)
+
+mf['subject'] = mf['subject'].apply(lambda x: minerals[x])
 
 res = OrdinationResults(short_method_name='PC', long_method_name='Principal '
                         'Coordinates Analysis', eigvals=pct_var,

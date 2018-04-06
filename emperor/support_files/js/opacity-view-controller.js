@@ -48,14 +48,22 @@ define([
   OpacityViewController.prototype.setPlottableAttributes = function(scope,
                                                                     opacity,
                                                                     group) {
-    var transparent = opacity !== 1;
 
     // webgl acts up with transparent objects, so we only set them to be
     // explicitly transparent if the opacity is not at full
+    var transparent = opacity !== 1, funk;
+
+    if (scope.decomp.isScatterType()) {
+      funk = _changeMeshOpacity;
+    }
+    else if (scope.decomp.isArrowType()) {
+      funk = _changeArrowOpacity;
+    }
+
     _.each(group, function(element) {
-      scope.markers[element.idx].material.transparent = transparent;
-      scope.markers[element.idx].material.opacity = opacity;
+      funk(scope.markers[element.idx], opacity, transparent);
     });
+
     scope.needsUpdate = true;
   };
 
@@ -68,14 +76,20 @@ define([
    *
    */
   OpacityViewController.prototype.setAllPlottableAttributes = function(value) {
-    var dv = this.getView(), transparent = value !== 1;
+    var dv = this.getView(), transparent, funk;
 
     // webgl acts up with transparent objects, so we only set them to be
     // explicitly transparent if the opacity is not at full
-    _.each(dv.markers, function(element) {
-      element.material.transparent = transparent;
-      element.material.opacity = value;
-    });
+    transparent = value !== 1;
+
+    if (dv.decomp.isScatterType()) {
+      funk = _changeMeshOpacity;
+    }
+    else if (dv.decomp.isArrowType()) {
+      funk = _changeArrowOpacity;
+    }
+
+    _.each(dv.markers, _.partial(funk, _, value, transparent));
     dv.needsUpdate = true;
   };
 
@@ -94,6 +108,29 @@ define([
   OpacityViewController.prototype.scaleValue = function(val, min, range) {
     return Math.round(((val - min) / range) * 10000) / 10000;
   };
+
+  /**
+   * Helper function to change the opacity of an arrow object.
+   *
+   * @private
+   */
+  function _changeArrowOpacity(arrow, value, transparent) {
+    arrow.line.material.transparent = transparent;
+    arrow.line.material.opacity = value;
+
+    arrow.cone.material.transparent = transparent;
+    arrow.cone.material.opacity = value;
+  }
+
+  /**
+   * Helper function to change the opacity of a mesh object.
+   *
+   * @private
+   */
+  function _changeMeshOpacity(mesh, value, transparent) {
+    mesh.material.transparent = transparent;
+    mesh.material.opacity = value;
+  }
 
   return OpacityViewController;
 });

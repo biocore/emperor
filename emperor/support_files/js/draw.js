@@ -1,5 +1,8 @@
 /** @module draw */
-define(['underscore', 'three'], function(_, THREE) {
+define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
+  // useful for some calculations
+  var ZERO = new THREE.Vector3();
+
   /**
    *
    * @class EmperorTrajectory
@@ -38,6 +41,98 @@ define(['underscore', 'three'], function(_, THREE) {
     return u;
   };
 
+  /**
+   *
+   * @class EmperorArrowHelper
+   *
+   * Subclass of THREE.ArrowHelper to make raycasting work on the line and cone
+   * children.
+   *
+   * For more information about the arguments, see the [online documentation]
+   * {@link https://threejs.org/docs/#api/helpers/ArrowHelper}.
+   * @return {EmperorArrowHelper}
+   * @extends THREE.ArrowHelper
+   *
+   */
+  function EmperorArrowHelper(dir, origin, length, color, headLength,
+                              headWidth, name) {
+    THREE.ArrowHelper.call(this, dir, origin, length, color, headLength,
+                           headWidth);
+
+    // 16 is roughly the number of characters in "Axis 1 (XX.xx %)"
+    var pad, MIN = 16, paddedName = name;
+
+    this.name = name;
+    this.line.name = this.name;
+    this.cone.name = this.name;
+
+    /*
+     * If the text's lenght is small it will be rendered as a blurry sprite by
+     * padding with spaces we ensure the length allows for a decent resolution.
+     */
+    if (this.name.length < MIN) {
+      pad = Math.round((MIN - this.name.length) / 2);
+
+      paddedName = paddedName.padStart(paddedName.length + pad);
+      paddedName = paddedName.padEnd(paddedName.length + pad);
+    }
+
+    this.label = makeLabel(this.cone.position.toArray(), paddedName, color);
+    this.add(this.label);
+
+    return this;
+  }
+  EmperorArrowHelper.prototype = Object.create(THREE.ArrowHelper.prototype);
+  EmperorArrowHelper.prototype.constructor = THREE.ArrowHelper;
+
+  /**
+   *
+   * Check for ray casting with the line and cone of the arrow
+   *
+   * This class may need to disappear if THREE.ArrowHelper implements the
+   * raycast method, for more information see the [online documentation]
+   * {@link https://threejs.org/docs/#api/helpers/ArrowHelper}.
+   *
+   */
+  EmperorArrowHelper.prototype.raycast = function(raycaster, intersects) {
+      // don't raycast the label since that one is self-explanatory
+      this.line.raycast(raycaster, intersects);
+      this.cone.raycast(raycaster, intersects);
+  };
+
+  /**
+   *
+   * Set the arrow's color
+   *
+   * @param {THREE.Color} color The color to set for the line, cone and label.
+   *
+   */
+  EmperorArrowHelper.prototype.setColor = function(color) {
+    THREE.ArrowHelper.prototype.setColor.call(this, color);
+    this.label.material.color.set(color);
+  };
+
+  /**
+   *
+   * Change the vector where the arrow points to
+   *
+   * @param {THREE.Vector3} target The vector where the arrow will point to.
+   * Note, the label will also change position.
+   *
+   */
+  EmperorArrowHelper.prototype.setPointsTo = function(target) {
+    var length;
+
+    // calculate the length before normalizing to a unit vector
+    target = target.sub(ZERO);
+    length = ZERO.distanceTo(target);
+    target.normalize();
+
+    this.setDirection(target.sub(ZERO));
+    this.setLength(length);
+
+    this.label.position.copy(this.cone.position);
+  };
 
   /**
    *
@@ -77,6 +172,40 @@ define(['underscore', 'three'], function(_, THREE) {
     return line;
   }
 
+  /**
+   *
+   * Create a generic Arrow object (composite of a cone and line)
+   *
+   * @param {float[]} from The x, y and z coordinates where the arrow
+   * originates from.
+   * @param {float[]} to The x, y and z coordinates where the arrow points to.
+   * @param {integer} color Hexadecimal base that specifies the color of the
+   * line.
+   * @param {String} name The text to be used in the label, and the name of
+   * the line and cone (used for raycasting).
+   *
+   * @return {THREE.Object3D}
+   * @function makeArrow
+   */
+  function makeArrow(from, to, color, name) {
+    var target, origin, direction, length, arrow;
+
+    target = new THREE.Vector3(to[0], to[1], to[2]);
+    origin = new THREE.Vector3(from[0], from[1], from[2]);
+
+    length = origin.distanceTo(target);
+
+    // https://stackoverflow.com/a/20558498/379593
+    direction = target.sub(origin);
+
+    direction.normalize();
+
+    // don't set the head size or width, defaults are good enough
+    arrow = new EmperorArrowHelper(direction, origin, length, color,
+                                   undefined, undefined, name);
+
+    return arrow;
+  }
 
   function drawTrajectoryLine(trajectory, currentFrame, color, radius) {
     // based on the example described in:
@@ -211,5 +340,6 @@ define(['underscore', 'three'], function(_, THREE) {
   }
 
   return {'formatSVGLegend': formatSVGLegend, 'makeLine': makeLine,
-          'makeLabel': makeLabel, 'drawTrajectoryLine': drawTrajectoryLine};
+          'makeLabel': makeLabel, 'makeArrow': makeArrow,
+          'drawTrajectoryLine': drawTrajectoryLine};
 });

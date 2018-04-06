@@ -50,9 +50,9 @@ requirejs([
                                      6.24945796136]};
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'], ['tax_2', '0']];
-        decomp = new DecompositionModel(data, md_headers, metadata);
+        decomp = new DecompositionModel(data, md_headers, metadata, 'arrow');
         this.dv = new DecompositionView(decomp);
-        this.sharedDecompositionViewDict.biplot = dv;
+        this.sharedDecompositionViewDict.biplot = this.dv;
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
@@ -80,6 +80,9 @@ requirejs([
       equal(controller.$scaledValue.is(':checked'), false);
       equal(controller.$select.val(), 'SampleID');
       equal(controller.getMetadataField(), 'SampleID');
+
+      // test filtering of the decompositon
+      assert.ok(controller.decompViewDict.biplot === undefined);
     });
 
     test('Testing setPlottableAttributes helper function', function(assert) {

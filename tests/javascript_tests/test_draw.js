@@ -2,6 +2,7 @@ requirejs(['draw'], function(draw) {
   var formatSVGLegend = draw.formatSVGLegend;
   var makeLine = draw.makeLine;
   var makeLabel = draw.makeLabel;
+  var makeArrow = draw.makeArrow;
   $(document).ready(function() {
 
     module('Drawing utilities', {
@@ -110,6 +111,33 @@ requirejs(['draw'], function(draw) {
       equal(label.position.z, 0);
 
       equal(label.text, 'foolibusters');
+    });
+
+    test('Test makeArrow works correctly', function(assert) {
+      var arrow = makeArrow([0, 0, 0], [9, 1, 1], 0x00ff00, 'test');
+
+      equal(arrow.line.material.color.r, 0);
+      equal(arrow.line.material.color.g, 1);
+      equal(arrow.line.material.color.b, 0);
+
+      equal(arrow.cone.material.color.r, 0);
+      equal(arrow.cone.material.color.g, 1);
+      equal(arrow.cone.material.color.b, 0);
+
+      equal(arrow.position.x, 0);
+      equal(arrow.position.y, 0);
+      equal(arrow.position.z, 0);
+
+      deepEqual(arrow.cone.position.toArray(), arrow.label.position.toArray());
+
+      equal(arrow.quaternion.x, 0.07367677183061115);
+      equal(arrow.quaternion.y, 0);
+      equal(arrow.quaternion.z, -0.6630909464755004);
+      equal(arrow.quaternion.w, 0.7449041079191638);
+
+      equal(arrow.line.name, 'test');
+      equal(arrow.cone.name, 'test');
+      equal(arrow.name, 'test');
     });
 
     /**

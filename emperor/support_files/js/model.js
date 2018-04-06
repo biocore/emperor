@@ -129,8 +129,16 @@ function($, _, util) {
    * @constructs DecompositionModel
    *
    */
-  function DecompositionModel(data, md_headers, metadata) {
+  function DecompositionModel(data, md_headers, metadata, type) {
     var coords = data.coordinates, ci = data.ci || [];
+
+    /**
+     *
+     * Model's type of the data, can be either 'scatter' or 'arrow'
+     * @type {string}
+     *
+     */
+    this.type = type || 'scatter';
 
     var num_coords;
     /**
@@ -366,6 +374,24 @@ function($, _, util) {
     });
 
     return naturalSort(_.uniq(values));
+  };
+
+  /**
+   *
+   * Method to determine if this is an arrow decomposition
+   *
+   */
+  DecompositionModel.prototype.isArrowType = function() {
+    return this.type === 'arrow';
+  };
+
+  /**
+   *
+   * Method to determine if this is a scatter decomposition
+   *
+   */
+  DecompositionModel.prototype.isScatterType = function() {
+    return this.type === 'scatter';
   };
 
   /**

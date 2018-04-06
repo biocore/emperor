@@ -101,35 +101,26 @@ function($, model, EmperorController) {
 
   var div = $('#{{ plot_id }}');
 
-  var data = {
-    // coordinates information
-    'decompositions': [
-      {
-        'sample_ids': {{ coords_ids | tojson }},
-        'coordinates': {{ coords | tojson }},
-        'axes_names': {{ axes_names | tojson }},
-        'percents_explained': {{ pct_var | tojson }},
-        'ci': {{ ci | tojson }},
-        'type': 'ordination'
-      }
-    ],
+  var data = {{ data | tojson }};
 
-    // sample information
-    'metadata_headers': {{ md_headers | tojson }},
-    'metadata': {{ metadata | tojson }},
-    'settings': {{ settings | tojson }}
-  }
-
-  var dm, ec;
+  var plot, biplot = null, ec;
 
   function init() {
-    var decomp = data['decompositions'][0];
+    // Initialize the DecompositionModel for the scatter plot, and optionally
+    // add one for the biplot arrows
+    plot = new DecompositionModel(data.plot.decomposition,
+                                  data.plot.metadata_headers,
+                                  data.plot.metadata,
+                                  data.plot.type);
 
-    // Initialize the DecompositionModel
-    dm = new DecompositionModel(decomp, data['metadata_headers'],
-                                data['metadata']);
-    // Initialize the EmperorController
-    ec = new EmperorController(dm, {{ plot_id | tojson }});
+    if (data.biplot) {
+      biplot = new DecompositionModel(data.biplot.decomposition,
+                                      data.biplot.metadata_headers,
+                                      data.biplot.metadata,
+                                      data.biplot.type);
+    }
+
+    ec = new EmperorController(plot, biplot, {{ plot_id | tojson }});
   }
 
   function animate() {
@@ -147,7 +138,7 @@ function($, model, EmperorController) {
     ec.ready = function () {
       // any other code that needs to be executed when emperor is loaded should
       // go here
-      ec.loadConfig(data['settings']);
+      ec.loadConfig(data.plot.settings);
     }
   });
 

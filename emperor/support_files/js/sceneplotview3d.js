@@ -683,10 +683,13 @@ define([
       this.control.update();
     }
 
-    //point all samples towards the camera
-    _.each(this.decViews.scatter.markers, function(element) {
-      element.quaternion.copy(camera.quaternion);
-    });
+    // only scatter types should be pointed towards the camera, for arrow types
+    // this will result in a very odd visual effect
+    if (this.decViews.scatter.decomp.isScatterType()) {
+      _.each(this.decViews.scatter.markers, function(element) {
+        element.quaternion.copy(camera.quaternion);
+      });
+    }
 
     this.needsUpdate = false;
     $.each(this.decViews, function(key, val) {
@@ -716,8 +719,14 @@ define([
 
     this._raycaster.setFromCamera(this._mouse, this.camera);
 
-    var intersects = this._raycaster.intersectObjects(
-      this.decViews.scatter.markers);
+    // get a flattened array of markers
+    var objects = _.map(this.decViews, function(decomp) {
+      return decomp.markers;
+    });
+    objects = _.reduce(objects, function(memo, value) {
+      return memo.concat(value);
+    }, []);
+    var intersects = this._raycaster.intersectObjects(objects);
 
     // Get first intersected item and call callback with it.
     if (intersects.length > 0) {
