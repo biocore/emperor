@@ -28,7 +28,7 @@ N = 10
 if len(argv) > 1:
     N = int(argv[1])
 
-categories = np.asarray(np.random.randint(1, 0.25, N), str)
+categories = np.asarray(np.random.randint(1, 1000, N), str)
 
 coords_ids = listify(np.arange(N))
 coords = (np.random.randn(N, 10) * 1000).tolist()

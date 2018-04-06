@@ -473,10 +473,14 @@ define([
     // controllers.
     if (shouldDraw) {
       out += '<tr><td>&nbsp;</td></tr>';
-      out += '<tr><td>Edge Color (reference)</td>';
-      out += '<td><input type="text" name="reference-edge-color"/></td></tr>';
-      out += '<tr><td>Edge Color (other)</td>';
+      out += '<tr>';
+      out += '<td>Edge Color (reference)</td>';
+      out += '<td><input type="text" name="reference-edge-color"/></td>';
+      out += '</tr>';
+      out += '<tr>';
+      out += '<td>Edge Color (other)</td>';
       out += '<td><input type="text" name="other-edge-color"/></td>';
+      out += '</tr>';
     }
 
     return out;
