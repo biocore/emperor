@@ -689,9 +689,9 @@ define([
       this.control.update();
     }
 
-    // don't point arrows towards the camera, that makes zero sense :L!
+    // only scatter types should be pointed towards the camera, for arrow types
+    // this will result in a very odd visual effect
     if (this.decViews.scatter.decomp.isScatterType()) {
-      //point all samples towards the camera
       _.each(this.decViews.scatter.markers, function(element) {
         element.quaternion.copy(camera.quaternion);
       });

@@ -180,15 +180,15 @@ function($, model, EmperorController) {
     // Initialize the DecompositionModel for the scatter plot, and optionally
     // add one for the biplot arrows
     plot = new DecompositionModel(data.plot.decomposition,
-                                     data.plot.metadata_headers,
-                                     data.plot.metadata,
-                                     data.plot.type);
+                                  data.plot.metadata_headers,
+                                  data.plot.metadata,
+                                  data.plot.type);
 
     if (data.biplot) {
       biplot = new DecompositionModel(data.biplot.decomposition,
-                                       data.biplot.metadata_headers,
-                                       data.biplot.metadata,
-                                       data.biplot.type);
+                                      data.biplot.metadata_headers,
+                                      data.biplot.metadata,
+                                      data.biplot.type);
     }
 
     ec = new EmperorController(plot, biplot, "emperor-notebook-0x9cb72f54");
@@ -366,15 +366,15 @@ function($, model, EmperorController) {
     // Initialize the DecompositionModel for the scatter plot, and optionally
     // add one for the biplot arrows
     plot = new DecompositionModel(data.plot.decomposition,
-                                     data.plot.metadata_headers,
-                                     data.plot.metadata,
-                                     data.plot.type);
+                                  data.plot.metadata_headers,
+                                  data.plot.metadata,
+                                  data.plot.type);
 
     if (data.biplot) {
       biplot = new DecompositionModel(data.biplot.decomposition,
-                                       data.biplot.metadata_headers,
-                                       data.biplot.metadata,
-                                       data.biplot.type);
+                                      data.biplot.metadata_headers,
+                                      data.biplot.metadata,
+                                      data.biplot.type);
     }
 
     ec = new EmperorController(plot, biplot, "emperor-notebook-0x9cb72f54");

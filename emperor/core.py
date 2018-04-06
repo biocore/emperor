@@ -230,9 +230,10 @@ class Emperor(object):
 
         # if biplots are to be visualized
         if self.ordination.features is not None:
-            self.feature_mf = self._validate_metadata(feature_mapping_file,
-                                                      self.ordination.features,
-                                                      False)
+            self.feature_mf = \
+                self._validate_metadata(feature_mapping_file,
+                                        self.ordination.features,
+                                        ignore_missing_samples=False)
 
         self._validate_ordinations()
 
@@ -662,7 +663,8 @@ class Emperor(object):
         ----------
         mf : pd.DataFrame
             DataFrame with the metadata, this can be feature or sample
-            metadata.
+            metadata. If the index name is ``None``, then it will be set as
+            ``'SampleID'``, otherwise it will be left untouched.
         custom_axes : list of str, optional
             Custom axes to embed in the ordination.
         repeats : int
