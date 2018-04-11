@@ -1,10 +1,10 @@
 Emperor ChangeLog
 =================
 
-Emperor 0.9.60-dev (changes since 0.9.60 go here)
--------------------------------------------------
+Emperor 0.9.61 (11 Apr 2018)
+----------------------------
 
-
+* Maintenance release ([#631](https://github.com/biocore/emperor/issues/631)).
 
 Emperor 0.9.60 (2 Nov 2016)
 ---------------------------
