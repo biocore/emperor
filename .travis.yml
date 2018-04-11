@@ -3,8 +3,8 @@ python:
   - "2.7"
 env:
   - NUMPY_VERSION=""  WITH_COVERAGE=1 # environment to test with the latest version of NumPy
-  - NUMPY_VERSION="=1.8"
-  - NUMPY_VERSION="=1.7"
+  - NUMPY_VERSION="<1.10"
+  - NUMPY_VERSION="<1.11"
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
@@ -15,7 +15,7 @@ before_install:
 install:
   - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} scipy matplotlib openpyxl=1.8.2 pandas nose flake8 pep8
   - source activate env_name
-  - pip install sphinx sphinx-bootstrap-theme coverage coveralls
+  - pip install 'sphinx<1.6' sphinx-bootstrap-theme coverage coveralls numpydoc
   - pip install -e '.[all]'
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py

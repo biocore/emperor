@@ -70,7 +70,8 @@ class ParseTests(TestCase):
         npt.assert_almost_equal(obs[2], exp[2])
         npt.assert_almost_equal(obs[3], exp[3])
 
-ordination_results_file = """Eigvals\t3
+
+ordination_results_file = u"""Eigvals\t3
 4.94\t1.79\t1.50
 
 Proportion explained\t3

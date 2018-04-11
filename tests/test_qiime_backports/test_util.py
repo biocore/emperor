@@ -178,7 +178,7 @@ class TopLevelTests(TestCase):
                             test.repeat(2).reshape(-1,2))
         test = [0,0]
         _result = idealfourths(test)
-        assert_almost_equal(isnan(_result).all(),True)
+        self.assertEqual(isnan(_result).all(),True)
 
 
 class MetadataMapTests(TestCase):
