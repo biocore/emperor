@@ -391,7 +391,7 @@ def main():
     try:
         mapping_data, header, comments = parse_mapping_file(open(map_fp, 'U'))
 
-    except:
+    except Exception:
         option_parser.error(("The metadata mapping file '%s' does not seem "
                              "to be formatted correctly, verify the "
                              "formatting is QIIME compliant by using "
@@ -799,6 +799,7 @@ def main():
         else:
             fd.writelines(lines)
             fd.close()
+
 
 if __name__ == "__main__":
     main()

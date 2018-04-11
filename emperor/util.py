@@ -484,7 +484,7 @@ def _is_numeric(x):
     """
     try:
         float(x)
-    except:
+    except Exception:
         return False
     return True
 

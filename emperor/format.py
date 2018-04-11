@@ -167,7 +167,7 @@ def format_pcoa_to_js(header, coords, pct_var, custom_axes=[],
                                                              custom_axes[i]))
             # offset will help us retrieve the correct pcoalabels val
             offset += 1
-        except:
+        except Exception:
             # if there are custom axes then subtract the number of custom axes
             pcoa_str.append('var g_pc%dLabel = \"PC%d (%.2f %%)\";\n' %
                             (i + 1, i + 1 - offset, pcoalabels[i - offset]))
