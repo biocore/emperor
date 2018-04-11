@@ -1,8 +1,9 @@
-requirejs(['draw'], function(draw) {
+requirejs(['draw', 'three'], function(draw, THREE) {
   var formatSVGLegend = draw.formatSVGLegend;
   var makeLine = draw.makeLine;
   var makeLabel = draw.makeLabel;
   var makeArrow = draw.makeArrow;
+  var makeLineCollection = draw.makeLineCollection;
   $(document).ready(function() {
 
     module('Drawing utilities', {
@@ -54,6 +55,23 @@ requirejs(['draw'], function(draw) {
       equal(testLine.material.color.r, 0);
       equal(testLine.material.color.g, 1);
       equal(testLine.material.color.b, 0);
+    });
+
+    test('Test makeLineCollection', function(assert) {
+      var vertices = [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+        [0, 1, 0]
+      ];
+      var lines = makeLineCollection(vertices, 0xf0f0f0), expected;
+
+      assert.ok(lines instanceof THREE.LineSegments);
+
+      equal(lines.material.color.getHex(), 0xf0f0f0);
+
+      expected = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0]);
+      deepEqual(lines.geometry.attributes.position.array, expected);
     });
 
     /**

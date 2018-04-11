@@ -14,6 +14,9 @@ requirejs([
 
     module('AxesController', {
       setup: function() {
+        var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                          'width:12px"></div>');
+
         this.sharedDecompositionViewDict = {};
 
         // setup function
@@ -29,13 +32,35 @@ requirejs([
                     percents_explained: [26.6887048633, 16.2563704022,
                                          13.7754129161, 11.217215823,
                                          10.024774995, 8.22835130237,
-                                         7.55971173665, 6.24945796136]};
+                                         7.55971173665, 6.24945796136],
+                    edges: [['PC.636', 'PC.635'], ['PC.636', 'PC.634']]};
         var md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
         var metadata = [['PC.636', '14.2', 'Control', '20070314'],
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
+
         var decomp = new DecompositionModel(data, md_headers, metadata);
         var dv = new DecompositionView(decomp);
+        this.controllerProcrustes = new AxesController(container,
+                                                       {'scatter': dv});
+
+        // data without procrustes edges
+        data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
+                coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
+                               0.176070, 0.072969,
+                               -0.229889, -0.046599],
+                              [-0.237661, 0.046053, -0.138136, 0.159061,
+                               -0.247485, -0.115211, -0.112864, 0.064794],
+                              [-0.237661, 0.046053, -0.138136, 0.159061,
+                                -0.247485, -0.115211, -0.112864, 0.064794]
+                ],
+                percents_explained: [26.6887048633, 16.2563704022,
+                                     13.7754129161, 11.217215823,
+                                     10.024774995, 8.22835130237,
+                                     7.55971173665, 6.24945796136]};
+
+        decomp = new DecompositionModel(data, md_headers, metadata);
+        dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -53,13 +78,22 @@ requirejs([
         this.dv = new DecompositionView(decomp);
         this.sharedDecompositionViewDict.biplot = dv;
 
-        var container = $('<div id="does-not-exist" style="height:1000px; ' +
-                          'width:12px"></div>');
         this.controller = new AxesController(container,
                                              this.sharedDecompositionViewDict);
       },
       teardown: function() {
+        // cleanup all the unwanted DOM elements
+        this.controller._$backgroundColor.spectrum('destroy');
+        this.controller._$axesColor.spectrum('destroy');
+        this.controller._$referenceEdgeColor.spectrum('destroy');
+        this.controller._$otherEdgeColor.spectrum('destroy');
+        this.controllerProcrustes._$backgroundColor.spectrum('destroy');
+        this.controllerProcrustes._$axesColor.spectrum('destroy');
+        this.controllerProcrustes._$referenceEdgeColor.spectrum('destroy');
+        this.controllerProcrustes._$otherEdgeColor.spectrum('destroy');
+
         this.controller = undefined;
+
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
       }
@@ -73,15 +107,27 @@ requirejs([
       deepEqual(this.controller._flippedAxes, [false, false, false]);
       equal(this.controller.$_screePlotContainer.attr('name'), 'scree-plot');
 
-      equal(this.controller.$body.find('[name="axes-color"]').length, 1);
-      equal(this.controller.$body.find('[name="background-color"]').length, 1);
+      equal(this.controller._$axesColor.length, 1);
+      equal(this.controller._$backgroundColor.length, 1);
+
+      equal(this.controller._$referenceEdgeColor.length, 0);
+      equal(this.controller._$otherEdgeColor.length, 0);
     });
 
     test('Testing toJSON', function() {
       var obs = this.controller.toJSON();
       var exp = {'flippedAxes': [false, false, false],
                  'visibleDimensions': [0, 1, 2],
-                 'backgroundColor': '#000000', 'axesColor': '#FFFFFF'};
+                 'referenceEdgeColor': null, 'otherEdgeColor': null,
+                 'backgroundColor': '#000000', 'axesColor': '#ffffff'};
+      deepEqual(obs, exp);
+
+      // procrustes case
+      obs = this.controllerProcrustes.toJSON();
+      exp = {'flippedAxes': [false, false, false],
+             'visibleDimensions': [0, 1, 2],
+             'otherEdgeColor': '#ff0000', 'referenceEdgeColor': '#ffffff',
+             'backgroundColor': '#000000', 'axesColor': '#ffffff'};
       deepEqual(obs, exp);
     });
 
@@ -98,14 +144,85 @@ requirejs([
 
       deepEqual(decView.backgroundColor, '#FF00FF');
       deepEqual(decView.axesColor, '#FF000F');
+
+
+      json = {'flippedAxes': [true, true, false],
+              'visibleDimensions': [0, 2, 1],
+              'backgroundColor': '#FF00FF', 'axesColor': '#FF000F',
+              'referenceEdgeColor': '#f0f123', 'otherEdgeColor': '#f0000f'};
+      this.controllerProcrustes.fromJSON(json);
+      decView = this.controllerProcrustes.getView();
+
+      deepEqual(decView.visibleDimensions, [0, 2, 1]);
+      deepEqual(this.controller._flippedAxes, [true, true, false]);
+
+      deepEqual(decView.backgroundColor, '#FF00FF');
+      deepEqual(decView.axesColor, '#FF000F');
+
+      deepEqual(this.controllerProcrustes.getBackgroundColor(), '#ff00ff');
+      deepEqual(this.controllerProcrustes.getAxesColor(), '#ff000f');
+
+      deepEqual(this.controllerProcrustes.getReferenceEdgeColor(), '#f0f123');
+      deepEqual(this.controllerProcrustes.getOtherEdgeColor(), '#f0000f');
     });
 
-    test('Testing colorChanged', function() {
-      var decView = this.controller.getView();
-      this.controller.colorChanged('axes-color', '#F0F0F0');
-      deepEqual(decView.axesColor, '#F0F0F0');
-      this.controller.colorChanged('background-color', '#101010');
-      deepEqual(decView.backgroundColor, '#101010');
+    test('Testing _colorChanged', function() {
+      this.controller._colorChanged('axes-color', '#f0f0f0');
+      deepEqual(this.controller.getAxesColor(), '#f0f0f0');
+      this.controller._colorChanged('background-color', '#101010');
+      deepEqual(this.controller.getBackgroundColor(), '#101010');
+
+      this.controller._colorChanged('reference-edge-color', '#ff00ff');
+      deepEqual(this.controller.getReferenceEdgeColor(), null);
+      this.controller._colorChanged('other-edge-color', '#ff0000');
+      deepEqual(this.controller.getOtherEdgeColor(), null);
+    });
+
+    test('Testing background color', function(assert) {
+      deepEqual(this.controller.getBackgroundColor(), '#000000');
+
+      this.controller.setBackgroundColor('#f0f123');
+      deepEqual(this.controller.getBackgroundColor(), '#f0f123');
+
+      deepEqual(this.controllerProcrustes.getBackgroundColor(), '#000000');
+
+      this.controllerProcrustes.setBackgroundColor('#f0f123');
+      deepEqual(this.controllerProcrustes.getBackgroundColor(), '#f0f123');
+
+    });
+
+    test('Testing axes color', function(assert) {
+      deepEqual(this.controller.getAxesColor(), '#ffffff');
+
+      this.controller.setAxesColor('#f0f345');
+      deepEqual(this.controller.getAxesColor(), '#f0f345');
+
+      deepEqual(this.controllerProcrustes.getAxesColor(), '#ffffff');
+
+      this.controllerProcrustes.setAxesColor('#f0f345');
+      deepEqual(this.controllerProcrustes.getAxesColor(), '#f0f345');
+    });
+
+    test('Testing reference edge color', function(assert) {
+      assert.ok(this.controller.getReferenceEdgeColor() === null);
+
+      // we just check that the method doesn't raise an error
+      this.controller.setReferenceEdgeColor('#f0f0f0');
+
+      deepEqual(this.controllerProcrustes.getReferenceEdgeColor(), '#ffffff');
+      this.controllerProcrustes.setReferenceEdgeColor('#f0f0f0');
+      deepEqual(this.controllerProcrustes.getReferenceEdgeColor(), '#f0f0f0');
+    });
+
+    test('Testing other edge color', function(assert) {
+      assert.ok(this.controller.getOtherEdgeColor() === null);
+
+      // we just check that the method doesn't raise an error
+      this.controller.setOtherEdgeColor('#f0f0f0');
+
+      deepEqual(this.controllerProcrustes.getOtherEdgeColor(), '#ff0000');
+      this.controllerProcrustes.setOtherEdgeColor('#0000ff');
+      deepEqual(this.controllerProcrustes.getOtherEdgeColor(), '#0000ff');
     });
 
     test('Test flipAxis', function(assert) {

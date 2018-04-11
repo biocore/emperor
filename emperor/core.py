@@ -87,6 +87,9 @@ class Emperor(object):
     jackknifed: list of OrdinationResults, optional
         A list of the OrdinationResults objects with the same sample
         identifiers as the identifiers in ``ordination``.
+    procrustes: list of OrdinationResults, optional
+        A list of the OrdinationResults objects with the same sample
+        identifiers as the identifiers in ``ordination``.
     ignore_missing_samples: bool, optional
         If set to `True` samples without metadata are included by setting all
         metadata values to: ``This sample has not metadata``. By default an
@@ -98,6 +101,13 @@ class Emperor(object):
     jackknifed: list
         List of OrdinationResults objects in the same sample-order as
         ``self.ordination``.
+    procrustes: list
+        List of OrdinationResults objects in the same sample-order as
+        ``self.ordination``.
+    procrustes_names: list
+        A list of names that will be used to distinguish samples from each
+        ordination in a procrustes plot. The GUI will display a category
+        labeled ``__Procrustes_Names__``.
     width: str
         Width of the plot when displayed in the Jupyter notebook (in CSS
         units).
@@ -206,11 +216,12 @@ class Emperor(object):
 
     """
     def __init__(self, ordination, mapping_file, feature_mapping_file=None,
-                 dimensions=5, remote=True, jackknifed=None,
+                 dimensions=5, remote=True, jackknifed=None, procrustes=None,
                  ignore_missing_samples=False):
 
         self.ordination = ordination
-        self.jackknifed = jackknifed
+        self.jackknifed = jackknifed if jackknifed is not None else []
+        self.procrustes = procrustes if procrustes is not None else []
 
         self.mf = mapping_file.copy()
 
@@ -224,7 +235,7 @@ class Emperor(object):
                                         self.ordination.features,
                                         ignore_missing_samples=False)
 
-        self._validate_jackknifed()
+        self._validate_ordinations()
 
         self._html = None
 
@@ -251,6 +262,12 @@ class Emperor(object):
         self.height = '500px'
 
         self._settings = {}
+
+        # label each ordination by index
+        self.procrustes_names = []
+        if self.procrustes:
+            self.procrustes_names = ['Ordination %d' % i
+                                     for i in range(len(self.procrustes) + 1)]
 
     def __str__(self):
         return self.make_emperor()
@@ -308,12 +325,17 @@ class Emperor(object):
 
         return metadata
 
-    def _validate_jackknifed(self):
+    def _validate_ordinations(self):
         # bail if the value is non or an empty list
-        if self.jackknifed is None or self.jackknifed == []:
+        if self.jackknifed == [] and self.procrustes == []:
             return
+        # error if the user tries to create a jackknifed procrustes plot
+        if len(self.jackknifed) > 0 and len(self.procrustes) > 0:
+            raise ValueError('Cannot plot a procrustes and a jackknifed plot')
 
-        ok = all([isinstance(j, OrdinationResults) for j in self.jackknifed])
+        ordinations = self.jackknifed if self.jackknifed else self.procrustes
+
+        ok = all([isinstance(j, OrdinationResults) for j in ordinations])
         if not ok:
             raise TypeError('All elements in the jackknifed array should be '
                             'OrdinationResults instances.')
@@ -323,7 +345,7 @@ class Emperor(object):
 
         aligned = []
 
-        for i, ord_res in enumerate(self.jackknifed):
+        for i, ord_res in enumerate(ordinations):
             other = set(ord_res.samples.index)
 
             # samples must be represented identically
@@ -337,7 +359,13 @@ class Emperor(object):
             # datasets
             ord_res.samples = ord_res.samples.loc[master_ids].copy()
             aligned.append(ord_res)
-        self.jackknifed = aligned
+
+        # need to test this carefully i.e. that when one is set the other one
+        # doesn't have anything or is none
+        if self.jackknifed:
+            self.jackknifed = aligned
+        elif self.procrustes:
+            self.procrustes = aligned
 
     def copy_support_files(self, target=None):
         """Copies the support files to a target directory
@@ -440,6 +468,7 @@ class Emperor(object):
         # data is a tuple as returned by _process_data
         (coord_ids, coords, pct_var, ci,
          headers, metadata, names,
+         edges,
          bi_coords, bi_ids,
          bi_headers, bi_metadata) = data
 
@@ -450,7 +479,8 @@ class Emperor(object):
                     'coordinates': coords,
                     'axes_names': names,
                     'percents_explained': pct_var,
-                    'ci': ci
+                    'ci': ci,
+                    'edges': edges
                 },
                 'type': 'scatter',
                 'metadata_headers': headers,
@@ -463,6 +493,7 @@ class Emperor(object):
         if self.ordination.features is not None:
             data['biplot'] = deepcopy(data['plot'])
             data['biplot']['decomposition']['ci'] = []
+            data['biplot']['decomposition']['edges'] = []
             data['biplot']['type'] = 'arrow'
             data['biplot']['settings'] = None
 
@@ -532,15 +563,25 @@ class Emperor(object):
             Data in ``mf``.
         list of str
             Names of the dimensions in the resulting ordination.
+        list of list of str
+            An edge list for procrustes plots
+        list of list of float
+            Arrow locations for the biplots.
+        list of str
+            Arrow identifiers for biplots.
+        list of str
+            Header names for biplot metadata.
+        list of list of str
+            Metadata for the biplots.
 
         Notes
         -----
         This method is exercised by testing the ``make_emperor`` method, and is
         not intended to be used by end-users.
         """
-        if self.jackknifed and len(custom_axes) > 1:
-            raise ValueError("Jackknifed plots are limited to one custom "
-                             "axis.")
+        if (self.jackknifed or self.procrustes) and len(custom_axes) > 1:
+            raise ValueError("Jackknifed and Procrustes plots are limited to "
+                             "one custom axis.")
 
         # turn modern data into legacy data
         dims = self.dimensions
@@ -548,9 +589,13 @@ class Emperor(object):
         ci = None
         bi_coords, bi_ids, bi_headers, bi_metadata = None, None, None, None
 
-        c_headers, c_data, c_eigenvals, c_pct = [], [], [], []
-        if self.jackknifed:
-            for data in [self.ordination] + self.jackknifed:
+        c_headers, c_data, c_eigenvals, c_pct, edges = [], [], [], [], []
+        ordinations = []
+
+        if self.jackknifed or self.procrustes:
+            ordinations = [self.ordination] + self.procrustes + self.jackknifed
+
+            for data in ordinations:
                 c_headers.append(data.samples.index.tolist())
 
                 coords = data.samples.values[:, :dims]
@@ -570,12 +615,21 @@ class Emperor(object):
 
             c_pct = data.proportion_explained[:dims] * 100
 
-        headers, metadata = self._to_legacy_map(self.mf, custom_axes)
+        # repeats is only dependant on procrustes
+        headers, metadata = self._to_legacy_map(self.mf, custom_axes,
+                                                len(self.procrustes))
+
+        # make an edge list for the procrustes plot
+        if self.procrustes:
+            for i in range(len(self.procrustes)):
+                for sample in self.mf.index:
+                    edges.append([sample + '_0', sample + '_%d' % (i + 1)])
 
         c_headers, c_data, _, c_pct, low, high, _ = \
             preprocess_coords_file(c_headers, c_data, c_eigenvals, c_pct,
                                    headers, metadata, custom_axes,
-                                   jackknifing_method, False)
+                                   jackknifing_method,
+                                   is_comparison=bool(self.procrustes))
 
         names = self.ordination.samples.columns[:dims].values.tolist()
         c_pct = c_pct.tolist()
@@ -596,11 +650,13 @@ class Emperor(object):
 
             bi_headers, bi_metadata = self._to_legacy_map(self.feature_mf)
 
-        return (self.ordination.samples.index.tolist(), c_data.tolist(),
-                c_pct, ci, headers, metadata, names, bi_coords, bi_ids,
+        return (c_headers, c_data.tolist(),
+                c_pct, ci, headers, metadata, names,
+                edges,
+                bi_coords, bi_ids,
                 bi_headers, bi_metadata)
 
-    def _to_legacy_map(self, mf, custom_axes=None):
+    def _to_legacy_map(self, mf, custom_axes=None, repeats=0):
         """Helper method to convert Pandas dataframe to legacy QIIME structure
 
         Parameters
@@ -611,6 +667,11 @@ class Emperor(object):
             ``'SampleID'``, otherwise it will be left untouched.
         custom_axes : list of str, optional
             Custom axes to embed in the ordination.
+        repeats : int
+            Number of times that the sample ids should be repeated. This is
+            used exclusively for procrustes plots. If the procrustes_names
+            property is available a column will be added with each procrustes
+            name.
 
         Returns
         -------
@@ -629,6 +690,20 @@ class Emperor(object):
 
         if custom_axes:
             mf = validate_and_process_custom_axes(mf, custom_axes)
+
+        if repeats:
+            mfs = []
+            # repeats and the original
+            for i in range(repeats + 1):
+                mfs.append(mf.copy())
+                mfs[i].index = pd.Index(mfs[i].index + '_%d' % i,
+                                        name=mfs[i].index.name)
+
+                # add to be able to differentiate between ordinations
+                if self.procrustes_names:
+                    mfs[i]['__Procrustes_Names__'] = self.procrustes_names[i]
+
+            mf = pd.concat(mfs)
 
         headers = [str(c) for c in [index_name] + mf.columns.tolist()]
         metadata = mf.apply(lambda x: [str(x.name)] +

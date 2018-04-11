@@ -160,6 +160,22 @@ define([
     this.renderer.sortObjects = true;
     this.$plotSpace.append(this.renderer.domElement);
 
+
+    /**
+     * The number of tabs that we expect to see. This attribute is updated by
+     * the addTab method, and is only releveant during the initialization
+     * process.
+     * @private
+     */
+    this._expected = 0;
+
+    /**
+     * The number of tabs that have finished initalization. This attribute is
+     * only relevant during the initialization process.
+     * @private
+     */
+    this._seen = 0;
+
     /**
      * Menu tabs containers, note that we need them in this format to have
      * jQuery's UI tabs work properly. All the view controllers will be added
@@ -503,11 +519,6 @@ define([
   EmperorController.prototype._buildUI = function() {
     var scope = this;
 
-    // this is the number of expected view controllers that will announce that
-    // all view controllers have been successfully loaded.
-    this._expected = 5;
-    this._seen = 0;
-
     //FIXME: This only works for 1 scene plot view
     this.controllers.color = this.addTab(this.sceneViews[0].decViews,
                                          ColorViewController);
@@ -832,6 +843,7 @@ define([
    */
   EmperorController.prototype.addTab = function(dvdict, viewConstructor) {
     var scope = this;
+    this._expected += 1;
 
     // nothing but a temporary id
     var id = (Math.round(1000000 * Math.random())).toString(), $li;

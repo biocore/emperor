@@ -256,10 +256,11 @@ function($, _, util) {
     // file format, see https://github.com/biocore/emperor/issues/562
     this._fixAxesNames();
 
-    // TODO:
-    // this.edges = [];
-    // this.plotEdge = false;
-    // this.serialComparison = false;
+    /**
+     * Array of pairs of Plottable objects.
+     * @type {Array[]}
+     */
+    this.edges = this._processEdgeList(data.edges || []);
   }
 
   /**
@@ -411,6 +412,35 @@ function($, _, util) {
 
   /**
    *
+   * Transform observation names into plottable objects.
+   *
+   * @return {Array[]} An array of plottable pairs.
+   * @private
+   *
+   */
+  DecompositionModel.prototype._processEdgeList = function(edges) {
+    if (edges.length === 0) {
+      return edges;
+    }
+
+    var u, v, scope = this;
+    edges = edges.map(function(edge) {
+      if (edge[0] === edge[1]) {
+        throw new Error('Cannot create edge between two identical nodes (' +
+                        edge[0] + ' and ' + edge[1] + ')');
+      }
+
+      u = scope.getPlottableByID(edge[0]);
+      v = scope.getPlottableByID(edge[1]);
+
+      return [u, v];
+    });
+
+    return edges;
+  };
+
+  /**
+   *
    * Helper function used to find the minimum and maximum values every
    * dimension in the plottable objects. This function is used with
    * underscore.js' reduce function (_.reduce).
@@ -423,7 +453,7 @@ function($, _, util) {
    * of the newly seen plottable object.
    * @private
    *
-   **/
+   */
   DecompositionModel._minMaxReduce = function(accumulator, plottable) {
 
     // iterate over every dimension
@@ -447,7 +477,9 @@ function($, _, util) {
    * scikit-bio. In both cases, if we have an abbreviated name, we will use
    * that string as a prefix for the axes names.
    *
-   **/
+   * @private
+   *
+   */
   DecompositionModel.prototype._fixAxesNames = function() {
     var expected = [], replacement = [], prefix, names, cast, i;
 

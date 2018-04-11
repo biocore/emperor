@@ -285,6 +285,12 @@ define([
       for (j = 0; j < this.decViews[decViewName].ellipsoids.length; j++) {
         this.scene.add(this.decViews[decViewName].ellipsoids[j]);
       }
+
+      // if the left lines exist so will the right lines
+      if (this.decViews[decViewName].lines.left) {
+        this.scene.add(this.decViews[decViewName].lines.left);
+        this.scene.add(this.decViews[decViewName].lines.right);
+      }
     }
 
     this.needsUpdate = true;

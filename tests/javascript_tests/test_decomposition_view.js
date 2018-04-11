@@ -30,6 +30,10 @@ requirejs([
                          '20071112']];
         this.decomp = new DecompositionModel(data, md_headers, metadata);
 
+        data.edges = [['PC.636', 'PC.635']];
+        this.decompWithEdges = new DecompositionModel(data, md_headers,
+                                                      metadata);
+
         /* `this.expected`: this is the same as the object declared above,
          * except this object is not being passed anywhere and is only used to
          * check that nothing has changed between methods.
@@ -51,6 +55,10 @@ requirejs([
           ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
           ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
         this.expected = new DecompositionModel(data, md_headers, metadata);
+
+        data.edges = [['PC.636', 'PC.635']];
+        this.expectedWithEdges = new DecompositionModel(data, md_headers,
+                                                        metadata);
       },
 
       teardown: function() {
@@ -95,7 +103,7 @@ requirejs([
       dv.markers[1].position.z];
       exp = [-0.237661, 0.046053, -0.138136];
       deepEqual(obs, exp, 'Second marker position set correctly');
-      deepEqual(dv.lines, [], 'lines set correctly');
+      deepEqual(dv.lines, {'left': null, 'right': null});
       /*
          TODO: How do we test this?
          */
@@ -144,6 +152,33 @@ requirejs([
       });
     });
 
+    test('Test constructor (with edges)', function(assert) {
+      // this test is pretty much the same as above except checking for edges
+      var view = new DecompositionView(this.decompWithEdges);
+
+      deepEqual(view.decomp, this.expectedWithEdges);
+      equal(view.count, 2);
+      equal(view.getVisibleCount(), 2);
+      deepEqual(view.visibleDimensions, [0, 1, 2]);
+      deepEqual(view.tubes, []);
+      equal(view.axesColor, '#FFFFFF');
+      equal(view.backgroundColor, '#000000');
+      deepEqual(view.axesOrientation, [1, 1, 1]);
+
+      // testing the markers
+      assert.ok(view.markers.length === 2);
+
+      // check for the edges
+      assert.ok(view.lines.left instanceof THREE.LineSegments);
+      assert.ok(view.lines.right instanceof THREE.LineSegments);
+
+      equal(view.lines.left.material.color.getHex(), 0xffffff);
+      equal(view.lines.right.material.color.getHex(), 0xff0000);
+
+      deepEqual(view.lines.left.geometry.attributes.position.array.length, 6);
+      deepEqual(view.lines.right.geometry.attributes.position.array.length, 6);
+    });
+
     /**
      *
      * Test that getVisibleCount is correctly updated
@@ -178,6 +213,39 @@ requirejs([
       dv.markers[1].position.z];
       exp = [-0.138136, 0.159061, -0.247485];
       deepEqual(obs, exp, 'Second marker position updated correctly');
+
+      deepEqual(dv.axesOrientation, [1, 1, 1]);
+    });
+
+    /**
+     *
+     * Test that changeVisibleDimensions with edges
+     *
+     */
+    test('Test changeVisibleDimensions with edges', function() {
+      var dv = new DecompositionView(this.decompWithEdges);
+      dv.changeVisibleDimensions([2, 3, 4]);
+
+      obs = [dv.markers[0].position.x, dv.markers[0].position.y,
+             dv.markers[0].position.z];
+      var exp = [0.066647, -0.067711, 0.176070];
+      deepEqual(obs, exp);
+
+      obs = [dv.markers[1].position.x,
+      dv.markers[1].position.y,
+      dv.markers[1].position.z];
+      exp = [-0.138136, 0.159061, -0.247485];
+      deepEqual(obs, exp);
+
+      exp = [0.0666470006108284, -0.0677110031247139, 0.17607000470161438,
+             -0.035744499415159225, 0.04567499831318855, -0.0357074998319149];
+      exp = new Float32Array(exp);
+      deepEqual(dv.lines.left.geometry.attributes.position.array, exp);
+
+      exp = [-0.13813599944114685, 0.159060999751091, -0.2474849969148636,
+             -0.035744499415159225, 0.04567499831318855, -0.0357074998319149];
+      exp = new Float32Array(exp);
+      deepEqual(dv.lines.right.geometry.attributes.position.array, exp);
 
       deepEqual(dv.axesOrientation, [1, 1, 1]);
     });
