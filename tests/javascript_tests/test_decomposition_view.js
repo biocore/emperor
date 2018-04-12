@@ -385,5 +385,47 @@ requirejs([
 
       deepEqual(dv.axesOrientation, [1, -1, 1]);
     });
+
+    test('Test showEdgesForPlottables', function() {
+      var dv = new DecompositionView(this.decompWithEdges);
+
+      dv.hideEdgesForPlottables();
+
+      dv.showEdgesForPlottables();
+
+      exp = [-0.2765420079231262, -0.14496399462223053, 0.0666470006108284,
+             -0.25710150599479675, -0.04945550113916397,
+             -0.035744499415159225];
+      exp = new Float32Array(exp);
+      deepEqual(dv.lines.left.geometry.attributes.position.array, exp);
+
+      exp = [-0.23766100406646729, 0.046052999794483185, -0.13813599944114685,
+             -0.25710150599479675, -0.04945550113916397,
+             -0.035744499415159225];
+
+      exp = new Float32Array(exp);
+      deepEqual(dv.lines.right.geometry.attributes.position.array, exp);
+
+      // shouldn't error and work fine
+      dv.showEdgesForPlottables('Not a plottable');
+
+    });
+
+    test('Test hideEdgesForPlottables', function() {
+      var dv = new DecompositionView(this.decompWithEdges);
+
+      dv.hideEdgesForPlottables();
+
+      exp = [0, 0, 0, 0, 0, 0];
+      exp = new Float32Array(exp);
+      deepEqual(dv.lines.left.geometry.attributes.position.array, exp);
+
+      exp = [0, 0, 0, 0, 0, 0];
+      exp = new Float32Array(exp);
+      deepEqual(dv.lines.right.geometry.attributes.position.array, exp);
+
+      dv.hideEdgesForPlottables('Not a plottable');
+    });
+
   });
 });
