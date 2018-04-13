@@ -272,13 +272,10 @@ DecompositionView.prototype.updatePositions = function() {
  * should be redrawn. If this object is not supplied, all the edges are drawn.
  */
 DecompositionView.prototype._redrawEdges = function(plottables) {
-  var u, v, j = 0, left = [], right = [], positionsLeft, positionsRight;
+  var u, v, j = 0, left = [], right = [];
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2], scope = this,
       is2D = (z === null), drawAll = (plottables === undefined);
-
-  positionsLeft = this.lines.left.geometry.attributes.position.array;
-  positionsRight = this.lines.right.geometry.attributes.position.array;
 
   this.decomp.edges.forEach(function(edge) {
     u = edge[0];
@@ -289,28 +286,15 @@ DecompositionView.prototype._redrawEdges = function(plottables) {
 
       center = [(u.coordinates[x] + v.coordinates[x]) / 2,
                 (u.coordinates[y] + v.coordinates[y]) / 2,
-                (u.coordinates[z] + v.coordinates[z]) / 2];
+                is2D ? 0 : (u.coordinates[z] + v.coordinates[z]) / 2];
 
-      left = [u.coordinates[x], u.coordinates[y], u.coordinates[z]];
-      right = [v.coordinates[x], v.coordinates[y], v.coordinates[z]];
+      left = [u.coordinates[x], u.coordinates[y],
+              is2D ? 0 : u.coordinates[z]];
+      right = [v.coordinates[x], v.coordinates[y],
+               is2D ? 0 : v.coordinates[z]];
 
-      positionsLeft[(j * 6)] = left[0] * scope.axesOrientation[0];
-      positionsLeft[(j * 6) + 1] = left[1] * scope.axesOrientation[1];
-      positionsLeft[(j * 6) + 2] = ((is2D ? 0 : left[2]) *
-                                    scope.axesOrientation[2]);
-      positionsLeft[(j * 6) + 3] = center[0] * scope.axesOrientation[0];
-      positionsLeft[(j * 6) + 4] = center[1] * scope.axesOrientation[1];
-      positionsLeft[(j * 6) + 5] = ((is2D ? 0 : center[2]) *
-                                    scope.axesOrientation[2]);
-
-      positionsRight[(j * 6)] = right[0] * scope.axesOrientation[0];
-      positionsRight[(j * 6) + 1] = right[1] * scope.axesOrientation[1];
-      positionsRight[(j * 6) + 2] = ((is2D ? 0 : right[2]) *
-                                     scope.axesOrientation[2]);
-      positionsRight[(j * 6) + 3] = center[0] * scope.axesOrientation[0];
-      positionsRight[(j * 6) + 4] = center[1] * scope.axesOrientation[1];
-      positionsRight[(j * 6) + 5] = ((is2D ? 0 : center[2]) *
-                                     scope.axesOrientation[2]);
+      scope.lines.left.setLineAtIndex(j, left, center);
+      scope.lines.right.setLineAtIndex(j, right, center);
     }
 
     j++;
@@ -448,10 +432,7 @@ DecompositionView.prototype.hideEdgesForPlottables = function(plottables) {
     return;
   }
 
-  var u, v, j = 0, positionsLeft, positionsRight, hideAll;
-
-  positionsLeft = this.lines.left.geometry.attributes.position.array;
-  positionsRight = this.lines.right.geometry.attributes.position.array;
+  var u, v, j = 0, hideAll, scope = this;
 
   hideAll = plottables === undefined;
 
@@ -461,21 +442,10 @@ DecompositionView.prototype.hideEdgesForPlottables = function(plottables) {
 
     if (hideAll ||
         (plottables.indexOf(u) !== -1 || plottables.indexOf(v) !== -1)) {
-      positionsLeft[(j * 6)] = 0;
-      positionsLeft[(j * 6) + 1] = 0;
-      positionsLeft[(j * 6) + 2] = 0;
-      positionsLeft[(j * 6) + 3] = 0;
-      positionsLeft[(j * 6) + 4] = 0;
-      positionsLeft[(j * 6) + 5] = 0;
 
-      positionsRight[(j * 6)] = 0;
-      positionsRight[(j * 6) + 1] = 0;
-      positionsRight[(j * 6) + 2] = 0;
-      positionsRight[(j * 6) + 3] = 0;
-      positionsRight[(j * 6) + 4] = 0;
-      positionsRight[(j * 6) + 5] = 0;
+      scope.lines.left.setLineAtIndex(j, [0, 0, 0], [0, 0, 0]);
+      scope.lines.right.setLineAtIndex(j, [0, 0, 0], [0, 0, 0]);
     }
-
     j++;
   });
 

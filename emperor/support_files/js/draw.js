@@ -174,6 +174,44 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
   /**
    *
+   * @class EmperorLineSegments
+   *
+   * Subclass of THREE.LineSegments to make vertex modifications easier.
+   *
+   * @return {EmperorLineSegments}
+   * @extends THREE.LineSegments
+   */
+  function EmperorLineSegments(geometry, material) {
+    THREE.LineSegments.call(this, geometry, material);
+
+    return this;
+  }
+  EmperorLineSegments.prototype = Object.create(THREE.LineSegments.prototype);
+  EmperorLineSegments.prototype.constructor = THREE.LineSegments;
+
+  /**
+   *
+   * Set the start and end points for a line in the collection.
+   *
+   * @param {Integer} i The index of the line;
+   * @param {Float[]} start An array of the starting point of the line ([x, y,
+   * z]).
+   * @param {Float[]} start An array of the ending point of the line ([x, y,
+   * z]).
+   */
+  EmperorLineSegments.prototype.setLineAtIndex = function(i, start, end) {
+    var vertices = this.geometry.attributes.position.array;
+
+    vertices[(i * 6)] = start[0];
+    vertices[(i * 6) + 1] = start[1];
+    vertices[(i * 6) + 2] = start[2];
+    vertices[(i * 6) + 3] = end[0];
+    vertices[(i * 6) + 4] = end[1];
+    vertices[(i * 6) + 5] = end[2];
+  };
+
+  /**
+   *
    * Create a collection of disconnected lines.
    *
    * This function is specially useful when creating a lot of lines as it uses
@@ -185,7 +223,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
    * @param {integer} color Hexadecimal base that specifies the color of the
    * line.
    *
-   * @return {THREE.LineSegments}
+   * @return {EmperorLineSegments}
    * @function makeLineCollection
    *
    */
@@ -210,7 +248,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(indices), 1));
 
-    return new THREE.LineSegments(geometry, material);
+    return new EmperorLineSegments(geometry, material);
   }
 
   /**
