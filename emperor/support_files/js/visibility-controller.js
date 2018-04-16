@@ -86,6 +86,8 @@ define([
 
     _.each(this.decompViewDict, function(view) {
       scope.setPlottableAttributes(view, true, view.decomp.plottable);
+      view.showEdgesForPlottables();
+
       view.needsUpdate = true;
     });
   };
@@ -111,6 +113,14 @@ define([
         scope.ellipsoids[idx].visible = visible;
       }
     });
+
+    if (visible === true) {
+      scope.showEdgesForPlottables(group);
+    }
+    else {
+      scope.hideEdgesForPlottables(group);
+    }
+
     scope.needsUpdate = true;
   };
 
