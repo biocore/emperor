@@ -181,6 +181,8 @@ class TopLevelTests(TestCase):
 
         self.assertEqual(emp.custom_axes, [])
         self.assertEqual(emp.jackknifing_method, 'IQR')
+        emp.jackknifing_method = 'sdev'
+        self.assertEqual(emp.jackknifing_method, 'IQR')
 
     def test_initial_biplots(self):
         emp = Emperor(self.biplot, self.mf, self.feature_mf, remote=self.url)

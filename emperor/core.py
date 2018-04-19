@@ -128,7 +128,7 @@ class Emperor(object):
         identifiers in the ``ordination.features`` property.
     custom_axes : list of str, optional
         Custom axes to embed in the ordination.
-    jackknifing_method : {'IQR', 'sdef'}, optional
+    jackknifing_method : {'IQR', 'sdev'}, optional
         Used only when plotting ellipsoids for jackknifed beta diversity
         (i.e. using a directory of coord files instead of a single coord
         file). Valid values are ``"IQR"`` (for inter-quartile ranges) and
