@@ -622,6 +622,15 @@ class TopLevelTests(TestCase):
         self.assertTrue(bi_headers is None)
         self.assertTrue(bi_metadata is None)
 
+    def test_jackknifed_method_sdev(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False,
+                      jackknifed=self.jackknifed)
+        emp.jackknifing_method = 'sdev'
+
+        observed = emp._to_dict(emp._process_data(emp.custom_axes,
+                                                  emp.jackknifing_method))
+        self.assertEqual(observed, tcs.JACKKNIFED_SDEV)
+
     def test_process_procrustes_data(self):
         ordinations = self.jackknifed[1:]
         emp = Emperor(self.ord_res, self.mf, remote=False,
