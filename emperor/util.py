@@ -404,9 +404,13 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
 
             # this opens support for as many custom axes as needed
             axes = len(custom_axes)
-            coords_low[:, 0:axes] = np.zeros([coords_low.shape[0], axes])
-            coords_high[:, 0:axes] = np.full((coords_high.shape[0], axes),
-                                             fill_value=0.00001)
+
+            coords_low = np.hstack([np.zeros((coords_low.shape[0], axes)),
+                                    coords_low])
+            coords_high = np.hstack([np.full((coords_low.shape[0], axes),
+                                             fill_value=0.00001),
+                                     coords_high])
+
             coords_data = coords_file[1]
 
         if master_pcoa[3][0] < 1.0 and not pct_variation_below_one:
@@ -445,16 +449,6 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
         coords_file = [out_headers, out_coords]
 
         if custom_axes:
-            # this condition deals with the fact that in order for the custom
-            # axes to be added into the original coordinates, we have to add
-            # the suffix for the sample identifiers that the coordinates have
-            if clones:
-                out_data = []
-                for index in range(0, clones):
-                    out_data.extend([[element[0]+'_%d' % index]+element[1::]
-                                     for element in mapping_data])
-                mapping_file = [mapping_header] + out_data
-
             # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
             get_custom_coords(custom_axes, mapping_file, coords_file)
             remove_nans(coords_file)

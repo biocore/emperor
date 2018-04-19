@@ -157,7 +157,7 @@ class TopLevelTests(TestCase):
             if exists(path):
                 rmtree(path)
 
-    def test_dimensions(self):
+    def test_plot_width_and_height(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
         emp.width = '111px'
         emp.height = '111px'
@@ -179,6 +179,9 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.procrustes, [])
         self.assertEqual(emp.procrustes_names, [])
 
+        self.assertEqual(emp.custom_axes, [])
+        self.assertEqual(emp.jackknifing_method, 'IQR')
+
     def test_initial_biplots(self):
         emp = Emperor(self.biplot, self.mf, self.feature_mf, remote=self.url)
 
@@ -189,6 +192,9 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.jackknifed, [])
         self.assertEqual(emp.procrustes, [])
         self.assertEqual(emp.procrustes_names, [])
+
+        self.assertEqual(emp.custom_axes, [])
+        self.assertEqual(emp.jackknifing_method, 'IQR')
 
         feature_mf = pd.DataFrame(index=['f.PC.636', 'f.PC.635', 'f.PC.356',
                                          'f.PC.481', 'f.PC.354'])
@@ -520,8 +526,16 @@ class TopLevelTests(TestCase):
     def test_custom_axes_missing_headers(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
 
+        emp.custom_axes.append(':L')
         with self.assertRaises(KeyError):
-            emp.make_emperor(custom_axes=[':L'])
+            emp.make_emperor()
+
+    def test_custom_axes_no_errors(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False)
+        emp.custom_axes.append('DOB')
+        obs = emp.make_emperor()
+
+        self.assertTrue(tcs.CUSTOM_AXES_JSON in obs)
 
     def test_process_jackknifed_data(self):
         emp = Emperor(self.ord_res, self.mf, remote=False,
