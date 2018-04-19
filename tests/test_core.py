@@ -629,7 +629,25 @@ class TopLevelTests(TestCase):
 
         observed = emp._to_dict(emp._process_data(emp.custom_axes,
                                                   emp.jackknifing_method))
-        self.assertEqual(observed, tcs.JACKKNIFED_SDEV)
+        expected = tcs.JACKKNIFED_SDEV
+
+        # the arrays need to be almost equal
+        obs_coord = observed['plot']['decomposition']['coordinates']
+        exp_coord = expected['plot']['decomposition']['coordinates']
+        np.testing.assert_array_almost_equal(obs_coord, exp_coord)
+
+        obs_ci = observed['plot']['decomposition']['ci']
+        exp_ci = expected['plot']['decomposition']['ci']
+        np.testing.assert_array_almost_equal(obs_ci, exp_ci)
+
+        # everything else should be pretty close
+        for key in ['axes_names', 'edges', 'percents_explained', 'sample_ids']:
+            self.assertEqual(observed['plot']['decomposition'][key],
+                             expected['plot']['decomposition'][key])
+
+        for key in ['metadata_headers', 'settings', 'type']:
+            self.assertEqual(observed['plot'][key],
+                             expected['plot'][key])
 
     def test_process_procrustes_data(self):
         ordinations = self.jackknifed[1:]
