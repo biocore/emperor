@@ -157,7 +157,7 @@ class TopLevelTests(TestCase):
             if exists(path):
                 rmtree(path)
 
-    def test_dimensions(self):
+    def test_plot_width_and_height(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
         emp.width = '111px'
         emp.height = '111px'
@@ -179,6 +179,11 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.procrustes, [])
         self.assertEqual(emp.procrustes_names, [])
 
+        self.assertEqual(emp.custom_axes, [])
+        self.assertEqual(emp.jackknifing_method, 'IQR')
+        emp.jackknifing_method = 'sdev'
+        self.assertEqual(emp.jackknifing_method, 'sdev')
+
     def test_initial_biplots(self):
         emp = Emperor(self.biplot, self.mf, self.feature_mf, remote=self.url)
 
@@ -189,6 +194,9 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.jackknifed, [])
         self.assertEqual(emp.procrustes, [])
         self.assertEqual(emp.procrustes_names, [])
+
+        self.assertEqual(emp.custom_axes, [])
+        self.assertEqual(emp.jackknifing_method, 'IQR')
 
         feature_mf = pd.DataFrame(index=['f.PC.636', 'f.PC.635', 'f.PC.356',
                                          'f.PC.481', 'f.PC.354'])
@@ -520,8 +528,16 @@ class TopLevelTests(TestCase):
     def test_custom_axes_missing_headers(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
 
+        emp.custom_axes.append(':L')
         with self.assertRaises(KeyError):
-            emp.make_emperor(custom_axes=[':L'])
+            emp.make_emperor()
+
+    def test_custom_axes_no_errors(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False)
+        emp.custom_axes.append('DOB')
+        obs = emp.make_emperor()
+
+        self.assertTrue(tcs.CUSTOM_AXES_JSON in obs)
 
     def test_process_jackknifed_data(self):
         emp = Emperor(self.ord_res, self.mf, remote=False,
@@ -605,6 +621,33 @@ class TopLevelTests(TestCase):
         self.assertTrue(bi_ids is None)
         self.assertTrue(bi_headers is None)
         self.assertTrue(bi_metadata is None)
+
+    def test_jackknifed_method_sdev(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False,
+                      jackknifed=self.jackknifed)
+        emp.jackknifing_method = 'sdev'
+
+        observed = emp._to_dict(emp._process_data(emp.custom_axes,
+                                                  emp.jackknifing_method))
+        expected = tcs.JACKKNIFED_SDEV
+
+        # the arrays need to be almost equal
+        obs_coord = observed['plot']['decomposition']['coordinates']
+        exp_coord = expected['plot']['decomposition']['coordinates']
+        np.testing.assert_array_almost_equal(obs_coord, exp_coord)
+
+        obs_ci = observed['plot']['decomposition']['ci']
+        exp_ci = expected['plot']['decomposition']['ci']
+        np.testing.assert_array_almost_equal(obs_ci, exp_ci)
+
+        # everything else should be pretty close
+        for key in ['axes_names', 'edges', 'percents_explained', 'sample_ids']:
+            self.assertEqual(observed['plot']['decomposition'][key],
+                             expected['plot']['decomposition'][key])
+
+        for key in ['metadata_headers', 'settings', 'type']:
+            self.assertEqual(observed['plot'][key],
+                             expected['plot'][key])
 
     def test_process_procrustes_data(self):
         ordinations = self.jackknifed[1:]

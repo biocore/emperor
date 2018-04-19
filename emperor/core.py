@@ -126,6 +126,14 @@ class Emperor(object):
         DataFrame object with the metadata associated to the features in the
         ``ordination`` object, should have an index set and it should match the
         identifiers in the ``ordination.features`` property.
+    custom_axes : list of str, optional
+        Custom axes to embed in the ordination.
+    jackknifing_method : {'IQR', 'sdev'}, optional
+        Used only when plotting ellipsoids for jackknifed beta diversity
+        (i.e. using a directory of coord files instead of a single coord
+        file). Valid values are ``"IQR"`` (for inter-quartile ranges) and
+        ``"sdev"`` (for standard deviation). This argument is ignored if
+        ``self.jackknifed`` is ``None`` or an empty list.
 
     Examples
     --------
@@ -263,8 +271,11 @@ class Emperor(object):
 
         self._settings = {}
 
+        self.custom_axes = []
+
         # label each ordination by index
         self.procrustes_names = []
+        self.jackknifing_method = 'IQR'
         if self.procrustes:
             self.procrustes_names = ['Ordination %d' % i
                                      for i in range(len(self.procrustes) + 1)]
@@ -382,22 +393,13 @@ class Emperor(object):
         # copy the required resources
         copy_tree(get_emperor_support_files_dir(), target)
 
-    def make_emperor(self, standalone=False, custom_axes=None,
-                     jackknifing_method='IQR'):
+    def make_emperor(self, standalone=False):
         """Build an emperor plot
 
         Parameters
         ----------
         standalone : bool
             Whether or not the produced plot should be a standalone HTML file.
-        custom_axes : list of str, optional
-            Custom axes to embed in the ordination.
-        jackknifing_method : {'IQR', 'sdef'}, optional
-            Used only when plotting ellipsoids for jackknifed beta diversity
-            (i.e. using a directory of coord files instead of a single coord
-            file). Valid values are ``"IQR"`` (for inter-quartile ranges) and
-            ``"sdev"`` (for standard deviation). This argument is ignored if
-            ``self.jackknifed`` is ``None`` or an empty list.
 
         Returns
         -------
@@ -424,16 +426,12 @@ class Emperor(object):
         --------
         emperor.core.Emperor.copy_support_files
         """
-
-        if custom_axes is None:
-            custom_axes = []
-
         main_template = self._get_template(standalone)
 
         # _process_data does a lot of munging to the coordinates data and
         # _to_dict puts the data into a dictionary-like object for consumption
-        data = self._to_dict(self._process_data(custom_axes,
-                                                jackknifing_method))
+        data = self._to_dict(self._process_data(self.custom_axes,
+                                                self.jackknifing_method))
 
         # yes, we could have used UUID, but we couldn't find an easier way to
         # test that deterministically and with this approach we can seed the
