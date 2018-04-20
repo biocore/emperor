@@ -76,59 +76,62 @@ requirejs(['draw', 'three'], function(draw, THREE) {
 
     /**
      *
-     * Test that makeLabel works correctly without a factor
+     * Test that makeLabel works correctly.
+     *
+     * The validity of the scaling factor was tested visually and by hand.
      *
      */
     test('Test makeLabel works correctly', function(assert) {
-      var label = makeLabel([0, 0, 0], 'foolibusters', 0x00FF00);
+      var label = makeLabel([0, 0, 0], 'ab', 0x00FF00);
 
       equal(label.material.color.r, 0);
       equal(label.material.color.g, 1);
       equal(label.material.color.b, 0);
 
-      equal(label.position.x, 0);
-      equal(label.position.y, 0);
-      equal(label.position.z, 0);
-
-      equal(label.text, 'foolibusters');
+      deepEqual(label.position.toArray(), [0, 0, 0]);
+      equal(label.text, 'ab');
+      deepEqual(label.scale.toArray(), [0.1625, 0.08125, 1]);
     });
 
     /**
      *
-     * Test that makeLabel works correctly without a factor and a color name
+     * Test that makeLabel works correctly for long strings.
+     *
+     * The validity of the scaling factor was tested visually and by hand.
      *
      */
     test('Test makeLabel works correctly with color name', function(assert) {
-      var label = makeLabel([0, 0, 0], 'foolibusters', 'red');
+      var label = makeLabel([0, 0, 0], 'DaysSinceExperimentStart', 'red');
 
       equal(label.material.color.r, 1);
       equal(label.material.color.g, 0);
       equal(label.material.color.b, 0);
 
-      equal(label.position.x, 0);
-      equal(label.position.y, 0);
-      equal(label.position.z, 0);
-
-      equal(label.text, 'foolibusters');
+      deepEqual(label.position.toArray(), [0, 0, 0]);
+      equal(label.text, 'DaysSinceExperimentStart');
+      deepEqual(label.scale.toArray(),
+                [0.9333333333333332, 0.05833333333333333, 1]);
     });
 
     /**
      *
-     * Test that makeLabel works correctly with a factor.
+     * Test that makeLabel works correctly with small and large sizes
+     *
+     * The validity of the scaling factor was tested visually and by hand.
      *
      */
-    test('Test makeLabel works correctly', function(assert) {
-      var label = makeLabel([0, 0, 0], 'foolibusters', 0xFFFF00, 20);
+    test('Test makeLabel scales right', function(assert) {
+      var label = makeLabel([0, 0, 0], 'Axis 1 (35.17 %)', 0xFFFF00);
 
       equal(label.material.color.r, 1);
       equal(label.material.color.g, 1);
       equal(label.material.color.b, 0);
 
-      equal(label.position.x, 0);
-      equal(label.position.y, 0);
-      equal(label.position.z, 0);
+      deepEqual(label.position.toArray(), [0, 0, 0]);
+      equal(label.text, 'Axis 1 (35.17 %)');
 
-      equal(label.text, 'foolibusters');
+      deepEqual(label.scale.toArray(), [0.5, 0.0625, 1]);
+
     });
 
     test('Test makeArrow works correctly', function(assert) {

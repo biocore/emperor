@@ -330,7 +330,10 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
   function makeLabel(position, text, color) {
 
     // the font size determines the resolution relative to the sprite object
-    var fontSize = 30, canvas, context, measure;
+    var fontSize = 30, canvas, context, measure, scalingFactor = 0.5;
+
+    // 1/16 is the ideal I tested, equivalent to the string 'Axis 1 (16.12 %)'
+    var ideal = 1 / 16, observed = 1 / text.length;
 
     canvas = document.createElement('canvas');
     context = canvas.getContext('2d');
@@ -339,9 +342,9 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     context.font = fontSize + 'px Arial';
     measure = context.measureText(text);
 
-    // make the dimensions squared and a power of 2 (for use in THREE.js)
-    canvas.width = Math.pow(2, Math.ceil(Math.log2(measure.width)));
-    canvas.height = Math.pow(2, Math.ceil(Math.log2(fontSize)));
+    // make the dimensions a power of 2 (for use in THREE.js)
+    canvas.width = THREE.Math.nextPowerOfTwo(measure.width);
+    canvas.height = THREE.Math.nextPowerOfTwo(fontSize);
 
     // after changing the canvas' size we need to reset the font attributes
     context.textAlign = 'center';
@@ -364,9 +367,22 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
         color: color
     });
 
+    // We need to rescale the sprite's size to make it look like the ideal case
+    // the 1.3 and 1.4 are values that I tested by hand and "looked good"
+    if (observed > ideal) {
+      // fewer characters than the "ideal"
+      scalingFactor = (ideal / observed) * 1.3;
+    }
+    else if (observed < ideal) {
+      // more characters than the "ideal"
+      scalingFactor = (observed / ideal) * 1.4;
+    }
+
     var sp = new THREE.Sprite(mat);
     sp.position.set(position[0], position[1], position[2]);
-    sp.scale.set(1 * 0.5, (canvas.height / canvas.width) * 0.5, 1);
+
+    sp.scale.set(scalingFactor, (canvas.height / canvas.width) * scalingFactor,
+                 1);
 
     // add an extra attribute so we can render this properly when we use
     // SVGRenderer
