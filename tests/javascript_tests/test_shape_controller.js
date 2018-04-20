@@ -18,7 +18,7 @@ requirejs([
       setup: function() {
         // setup function
         this.shapesAvailable = ['Sphere', 'Diamond', 'Cone', 'Cylinder',
-                                'Ring', 'Square', 'Icosahedron'];
+                                'Ring', 'Square', 'Icosahedron', 'Star'];
         this.sharedDecompositionViewDict = {};
 
         // setup function

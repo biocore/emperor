@@ -5,9 +5,10 @@ define(['jquery', 'three', 'underscore'], function($, THREE, _) {
 
   var SPHERE = 'Sphere', SQUARE = 'Square', CONE = 'Cone',
       ICOSAHEDRON = 'Icosahedron', CYLINDER = 'Cylinder',
-      OCTAHEDRON = 'Diamond', RING = 'Ring';
+      OCTAHEDRON = 'Diamond', RING = 'Ring', STAR = 'Star';
 
-  var shapes = [SPHERE, OCTAHEDRON, CONE, CYLINDER, RING, SQUARE, ICOSAHEDRON];
+  var shapes = [SPHERE, OCTAHEDRON, CONE, CYLINDER, RING, SQUARE, ICOSAHEDRON,
+                STAR];
 
   /**
    *
@@ -54,6 +55,8 @@ define(['jquery', 'three', 'underscore'], function($, THREE, _) {
         geom = new THREE.RingGeometry(factor / 1.618033, factor);
         geom.rotateX(0.3);
         return geom;
+      case STAR:
+        return StarGeometry(factor * 0.5);
       case CYLINDER:
         return new THREE.CylinderGeometry(factor, factor, 2 * factor, 10);
       default:
@@ -65,6 +68,34 @@ define(['jquery', 'three', 'underscore'], function($, THREE, _) {
   _.each(shapes, function(shape) {
     $shapesDropdown.append(new Option(shape, shape));
   });
+
+  /**
+   * Create a star with 6 points.
+   *
+   * This code was adapted from:
+   * https://threejs.org/examples/#webgl_geometry_extrude_shapes
+   *
+   * @param {Float} scale The scale to apply to the geometry.
+   * @return {THREE.ShapeGeometry} The star geometry.
+   *
+   */
+  function StarGeometry(scale) {
+    var pts = [], numPts = 6, l, a, shape, geometry;
+
+    for (var i = 0; i < numPts * 2; i++) {
+      l = i % 2 == 1 ? 1 : 2;
+      a = i / numPts * Math.PI;
+
+      pts.push(new THREE.Vector2(Math.cos(a) * l, Math.sin(a) * l));
+    }
+
+    shape = new THREE.Shape(pts);
+    geometry = new THREE.ShapeGeometry(shape);
+
+    geometry.scale(scale, scale, scale);
+    geometry.rotateX(0.3);
+    return geometry;
+  }
 
   return {$shapesDropdown: $shapesDropdown, getGeometry: getGeometry,
           shapes: shapes};
