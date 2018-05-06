@@ -484,7 +484,8 @@ define([
                 'misleading';
     }
 
-    this.$plotBanner.html(visible + '/' + total + ' visible' + message);
+    this.$plotBanner.html(visible.toLocaleString() + ' / ' +
+                          total.toLocaleString() + ' visible' + message);
   };
 
   EmperorController.prototype.getPlotBanner = function(text) {
