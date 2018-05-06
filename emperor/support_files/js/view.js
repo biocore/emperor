@@ -632,7 +632,7 @@ DecompositionView.prototype.setColor = function(color, group) {
     });
     cloud.geometry.attributes.color.needsUpdate = true;
   }
-  else if (this.isScatterType()) {
+  else if (this.decomp.isScatterType()) {
     group.forEach(group, function(plottable) {
       idx = plottable.idx;
       scope.markers[idx].material.color = new THREE.Color(color);
@@ -650,9 +650,8 @@ DecompositionView.prototype.setColor = function(color, group) {
   this.needsUpdate = true;
 };
 
-DecompositionView.prototype.setVisibility = function(visible,
-                                                                  group) {
-  var idx, hasConfidenceIntervals, scope = this;
+DecompositionView.prototype.setVisibility = function(visible, group) {
+  var hasConfidenceIntervals, scope = this;
 
   group = group || this.decomp.plottable;
 
@@ -668,11 +667,10 @@ DecompositionView.prototype.setVisibility = function(visible,
   }
   else{
     _.each(group, function(plottable) {
-      idx = plottable.idx;
-      scope.markers[idx].visible = visible;
+      scope.markers[plottable.idx].visible = visible;
 
       if (hasConfidenceIntervals) {
-        scope.ellipsoids[idx].visible = visible;
+        scope.ellipsoids[plottable.idx].visible = visible;
       }
     });
   }
@@ -712,15 +710,15 @@ DecompositionView.prototype.setOpacity = function(opacity,
       funk = _changeArrowOpacity;
     }
 
-    _.each(group, function(element) {
-      funk(scope.markers[element.idx], opacity, transparent);
+    _.each(group, function(plottable) {
+      funk(scope.markers[plottable.idx], opacity, transparent);
     });
   }
   this.needsUpdate = true;
 };
 
 DecompositionView.prototype.setScale = function(scale, group) {
-  var idx, scope = this;
+  var scope = this;
 
   group = group || this.decomp.plottable;
 
@@ -734,8 +732,7 @@ DecompositionView.prototype.setScale = function(scale, group) {
   }
   else {
     _.each(group, function(element) {
-      idx = element.idx;
-      scope.markers[idx].scale.set(scale, scale, scale);
+      scope.markers[element.idx].scale.set(scale, scale, scale);
     });
   }
   this.needsUpdate = true;
