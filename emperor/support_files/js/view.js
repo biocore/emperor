@@ -193,6 +193,8 @@ DecompositionView.prototype._fastInit = function() {
   }
 
   var positions, colors, scales, opacities, visibilities, geometry, cloud;
+
+  // TODO: this should be a decomposition view method
   var factor = (this.decomp.dimensionRanges.max[0] - this.decomp.dimensionRanges.min[0]) * 0.012;
 
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
