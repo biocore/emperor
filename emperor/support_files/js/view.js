@@ -617,9 +617,20 @@ DecompositionView.prototype.showEdgesForPlottables = function(plottables) {
   this._redrawEdges(plottables);
 };
 
+/**
+ * Set the color for a group of plottables.
+ *
+ * @param {Object} color An object that can be interpreted as a color by the
+ * THREE.Color class. Can be either a string like '#ff0000' or a number like
+ * 0xff0000, or a CSS color name like 'red', etc.
+ * @param {Plottable[]} group An array of plottables for which the color should
+ * be set. If this object is not provided, all the plottables in the view will
+ * be have the color set.
+ */
 DecompositionView.prototype.setColor = function(color, group) {
   var idx, hasConfidenceIntervals, scope = this;
 
+  group = group || this.decomp.plottable;
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
   if (this.usesPointCloud) {
@@ -650,6 +661,14 @@ DecompositionView.prototype.setColor = function(color, group) {
   this.needsUpdate = true;
 };
 
+/**
+ * Set the visibility for a group of plottables.
+ *
+ * @param {Bool} visible Whether or not the objects should be visible.
+ * @param {Plottable[]} group An array of plottables for which the visibility
+ * should be set. If this object is not provided, all the plottables in the
+ * view will be have the visibility set.
+ */
 DecompositionView.prototype.setVisibility = function(visible, group) {
   var hasConfidenceIntervals, scope = this;
 
@@ -685,13 +704,50 @@ DecompositionView.prototype.setVisibility = function(visible, group) {
   this.needsUpdate = true;
 };
 
-DecompositionView.prototype.setOpacity = function(opacity,
-                                                               group) {
+/**
+ * Set the scale for a group of plottables.
+ *
+ * @param {Float} scale The scale to set for the objects, relative to the
+ * original size. Should be a positive and non-zero value.
+ * @param {Plottable[]} group An array of plottables for which the scale
+ * should be set. If this object is not provided, all the plottables in the
+ * view will be have the scale set.
+ */
+DecompositionView.prototype.setScale = function(scale, group) {
+  var scope = this;
+
+  group = group || this.decomp.plottable;
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    _.each(group, function(plottable) {
+      cloud.geometry.attributes.scale.setX(plottable.idx, scale);
+    });
+    cloud.geometry.attributes.scale.needsUpdate = true;
+  }
+  else {
+    _.each(group, function(element) {
+      scope.markers[element.idx].scale.set(scale, scale, scale);
+    });
+  }
+  this.needsUpdate = true;
+};
+
+/**
+ * Set the opacity for a group of plottables.
+ *
+ * @param {Float} opacity The opacity value (from 0 to 1) for the selected
+ * objects.
+ * @param {Plottable[]} group An array of plottables for which the opacity
+ * should be set. If this object is not provided, all the plottables in the
+ * view will be have the opacity set.
+ */
+DecompositionView.prototype.setOpacity = function(opacity, group) {
   // webgl acts up with transparent objects, so we only set them to be
   // explicitly transparent if the opacity is not at full
   var transparent = opacity !== 1, funk, scope = this;
 
-  // if no group is is specified the visibility is changed for all
   group = group || this.decomp.plottable;
 
   if (this.usesPointCloud) {
@@ -712,27 +768,6 @@ DecompositionView.prototype.setOpacity = function(opacity,
 
     _.each(group, function(plottable) {
       funk(scope.markers[plottable.idx], opacity, transparent);
-    });
-  }
-  this.needsUpdate = true;
-};
-
-DecompositionView.prototype.setScale = function(scale, group) {
-  var scope = this;
-
-  group = group || this.decomp.plottable;
-
-  if (this.usesPointCloud) {
-    var cloud = this.markers[0];
-
-    _.each(group, function(plottable) {
-      cloud.geometry.attributes.scale.setX(plottable.idx, scale);
-    });
-    cloud.geometry.attributes.scale.needsUpdate = true;
-  }
-  else {
-    _.each(group, function(element) {
-      scope.markers[element.idx].scale.set(scale, scale, scale);
     });
   }
   this.needsUpdate = true;
