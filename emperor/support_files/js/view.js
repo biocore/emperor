@@ -187,20 +187,35 @@ DecompositionView.prototype._initBaseView = function() {
   }
 };
 
-
 DecompositionView.prototype._fastInit = function() {
-  var scope = this, positions, colors, scaless, opacities, visibilities, cloud;
+  if (this.decomp.isArrowType()) {
+    throw 'Only scatter types are supported in fast mode';
+  }
+
+  var positions, colors, scales, opacities, visibilities, geometry, cloud;
   var factor = (this.decomp.dimensionRanges.max[0] - this.decomp.dimensionRanges.min[0]) * 0.012;
 
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2];
 
-  /*
-   * Lots of source code for this comes from:
-   * https://stackoverflow.com/q/33695202/379593
+  /**
+   * In order to draw large numbers of samples we can't use full-blown
+   * geometries like spheres. Instead we will use shaders to draw each sample
+   * as a circle. Note that since these are programs that need to be compiled
+   * for the GPU, they need to be stored as strings.
+   *
+   * The "vertexShader" determines the location and size of each vertex in the
+   * geometry. And the "fragmentShader" determines the shape, opacity,
+   * visibility and color. In addition there's some logic to smooth the circles
+   * and add antialiasing.
+   *
+   * The source for the shaders was inspired and or modified from:
+   *
+   * https://www.desultoryquest.com/blog/drawing-anti-aliased-circular-points-using-opengl-slash-webgl/
    * http://jsfiddle.net/callum/x7y72k1e/10/
    * http://math.hws.edu/eck/cs424/s12/lab4/lab4-files/points.html
-   * https://www.desultoryquest.com/blog/drawing-anti-aliased-circular-points-using-opengl-slash-webgl/
+   * https://stackoverflow.com/q/33695202/379593
+   *
    */
   var vertexShader = [
     'attribute float scale;',
@@ -248,58 +263,53 @@ DecompositionView.prototype._fastInit = function() {
       '}',
     '}'].join('\n');
 
-  if (this.decomp.isScatterType()) {
-    positions = new Float32Array( this.decomp.length * 3 );
-    colors = new Float32Array( this.decomp.length * 3 );
-    scales = new Float32Array( this.decomp.length );
-    opacities = new Float32Array( this.decomp.length );
-    visibilities = new Float32Array( this.decomp.length );
+  positions = new Float32Array( this.decomp.length * 3 );
+  colors = new Float32Array( this.decomp.length * 3 );
+  scales = new Float32Array( this.decomp.length );
+  opacities = new Float32Array( this.decomp.length );
+  visibilities = new Float32Array( this.decomp.length );
 
-    var material = new THREE.ShaderMaterial( {
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      transparent: true,
-    });
+  var material = new THREE.ShaderMaterial( {
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+    transparent: true,
+  });
 
-    // we need to define a baseline size for the plot so we can control the scale
-    material.defines.kSIZE = factor;
+  // we need to define a baseline size for markers so we can control the scale
+  material.defines.kSIZE = factor;
 
-    // needed for the shader's smoothstep and fwidth functions
-    material.extensions.derivatives = true;
+  // needed for the shader's smoothstep and fwidth functions
+  material.extensions.derivatives = true;
 
-    var geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-    geometry.addAttribute('scale', new THREE.BufferAttribute(scales, 1));
-    geometry.addAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
-    geometry.addAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+  geometry = new THREE.BufferGeometry();
+  geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.addAttribute('scale', new THREE.BufferAttribute(scales, 1));
+  geometry.addAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+  geometry.addAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
 
-    cloud = new THREE.Points(geometry, material);
+  cloud = new THREE.Points(geometry, material);
 
-    this.decomp.apply(function(plottable) {
-      geometry.attributes.position.setXYZ(plottable.idx,
-                                          plottable.coordinates[x],
-                                          plottable.coordinates[y],
-                                          plottable.coordinates[z]);
+  this.decomp.apply(function(plottable) {
+    geometry.attributes.position.setXYZ(plottable.idx,
+                                        plottable.coordinates[x],
+                                        plottable.coordinates[y],
+                                        plottable.coordinates[z]);
 
-      // set default to red, visible, full opacity and of scale 1
-      geometry.attributes.color.setXYZ(plottable.idx, 1, 0, 0);
-      geometry.attributes.visible.setX(plottable.idx, 1);
-      geometry.attributes.opacity.setX(plottable.idx, 1);
-      geometry.attributes.scale.setX(plottable.idx, 1);
-    });
+    // set default to red, visible, full opacity and of scale 1
+    geometry.attributes.color.setXYZ(plottable.idx, 1, 0, 0);
+    geometry.attributes.visible.setX(plottable.idx, 1);
+    geometry.attributes.opacity.setX(plottable.idx, 1);
+    geometry.attributes.scale.setX(plottable.idx, 1);
+  });
 
-    geometry.attributes.position.needsUpdate = true;
-    geometry.attributes.color.needsUpdate = true;
-    geometry.attributes.visible.needsUpdate = true;
-    geometry.attributes.opacity.needsUpdate = true;
-    geometry.attributes.scale.needsUpdate = true;
+  geometry.attributes.position.needsUpdate = true;
+  geometry.attributes.color.needsUpdate = true;
+  geometry.attributes.visible.needsUpdate = true;
+  geometry.attributes.opacity.needsUpdate = true;
+  geometry.attributes.scale.needsUpdate = true;
 
-    this.markers.push(cloud);
-  }
-  else {
-    throw 'Only scatter types are supported in fast mode';
-  }
+  this.markers.push(cloud);
 }
 
 /**
