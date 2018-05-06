@@ -542,38 +542,7 @@ define([
    */
   ColorViewController.prototype.setPlottableAttributes =
   function(scope, color, group) {
-
-    var idx, hasConfidenceIntervals;
-
-    hasConfidenceIntervals = scope.decomp.hasConfidenceIntervals();
-
-    if (!scope.usesPointCloud) {
-      _.each(group, function(element) {
-        idx = element.idx;
-        scope.markers[idx].material.color = new THREE.Color(color);
-
-        if (hasConfidenceIntervals) {
-          scope.ellipsoids[idx].material.color = new THREE.Color(color);
-        }
-      });
-    }
-    else if (scope.usesPointCloud) {
-      var cloud = scope.markers[0];
-      color = new THREE.Color(color);
-
-      _.each(group, function(plottable) {
-        cloud.geometry.attributes.color.setXYZ(plottable.idx,
-                                               color.r, color.g, color.b);
-      });
-      cloud.geometry.attributes.color.needsUpdate = true;
-    }
-    else if (scope.decomp.isArrowType()) {
-      _.each(group, function(element) {
-        idx = element.idx;
-        scope.markers[idx].setColor(new THREE.Color(color));
-      });
-    }
-    scope.needsUpdate = true;
+    scope.setColor(color, group);
   };
 
   var DISCRETE = 'Discrete';

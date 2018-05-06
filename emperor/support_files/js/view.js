@@ -617,5 +617,152 @@ DecompositionView.prototype.showEdgesForPlottables = function(plottables) {
   this._redrawEdges(plottables);
 };
 
+DecompositionView.prototype.setColor = function(color, group) {
+  var idx, hasConfidenceIntervals, scope = this;
+
+  hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+    color = new THREE.Color(color);
+
+    group.forEach(function(plottable) {
+      cloud.geometry.attributes.color.setXYZ(plottable.idx,
+                                             color.r, color.g, color.b);
+    });
+    cloud.geometry.attributes.color.needsUpdate = true;
+  }
+  else if (this.isScatterType()) {
+    group.forEach(group, function(plottable) {
+      idx = plottable.idx;
+      scope.markers[idx].material.color = new THREE.Color(color);
+
+      if (hasConfidenceIntervals) {
+        scope.ellipsoids[idx].material.color = new THREE.Color(color);
+      }
+    });
+  }
+  else if (this.decomp.isArrowType()) {
+    group.forEach(group, function(plottable) {
+      scope.markers[plottable.idx].setColor(new THREE.Color(color));
+    });
+  }
+  this.needsUpdate = true;
+};
+
+DecompositionView.prototype.setVisibility = function(visible,
+                                                                  group) {
+  var idx, hasConfidenceIntervals, scope = this;
+
+  group = group || this.decomp.plottable;
+
+  hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    _.each(group, function(plottable) {
+      cloud.geometry.attributes.visible.setX(plottable.idx, visible * 1);
+    });
+    cloud.geometry.attributes.visible.needsUpdate = true;
+  }
+  else{
+    _.each(group, function(plottable) {
+      idx = plottable.idx;
+      scope.markers[idx].visible = visible;
+
+      if (hasConfidenceIntervals) {
+        scope.ellipsoids[idx].visible = visible;
+      }
+    });
+  }
+
+  if (visible === true) {
+    this.showEdgesForPlottables(group);
+  }
+  else {
+    this.hideEdgesForPlottables(group);
+  }
+
+  this.needsUpdate = true;
+};
+
+DecompositionView.prototype.setOpacity = function(opacity,
+                                                               group) {
+  // webgl acts up with transparent objects, so we only set them to be
+  // explicitly transparent if the opacity is not at full
+  var transparent = opacity !== 1, funk, scope = this;
+
+  // if no group is is specified the visibility is changed for all
+  group = group || this.decomp.plottable;
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    _.each(group, function(plottable) {
+      cloud.geometry.attributes.opacity.setX(plottable.idx, opacity);
+    });
+    cloud.geometry.attributes.opacity.needsUpdate = true;
+  }
+  else {
+    if (this.decomp.isScatterType()) {
+      funk = _changeMeshOpacity;
+    }
+    else if (this.decomp.isArrowType()) {
+      funk = _changeArrowOpacity;
+    }
+
+    _.each(group, function(element) {
+      funk(scope.markers[element.idx], opacity, transparent);
+    });
+  }
+  this.needsUpdate = true;
+};
+
+DecompositionView.prototype.setScale = function(scale, group) {
+  var idx, scope = this;
+
+  group = group || this.decomp.plottable;
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    _.each(group, function(plottable) {
+      cloud.geometry.attributes.scale.setX(plottable.idx, scale);
+    });
+    cloud.geometry.attributes.scale.needsUpdate = true;
+  }
+  else {
+    _.each(group, function(element) {
+      idx = element.idx;
+      scope.markers[idx].scale.set(scale, scale, scale);
+    });
+  }
+  this.needsUpdate = true;
+};
+
+/**
+ * Helper function to change the opacity of an arrow object.
+ *
+ * @private
+ */
+function _changeArrowOpacity(arrow, value, transparent) {
+  arrow.line.material.transparent = transparent;
+  arrow.line.material.opacity = value;
+
+  arrow.cone.material.transparent = transparent;
+  arrow.cone.material.opacity = value;
+}
+
+/**
+ * Helper function to change the opacity of a mesh object.
+ *
+ * @private
+ */
+function _changeMeshOpacity(mesh, value, transparent) {
+  mesh.material.transparent = transparent;
+  mesh.material.opacity = value;
+}
+
   return DecompositionView;
 });

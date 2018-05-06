@@ -56,23 +56,7 @@ define([
    */
   ScaleViewController.prototype.setPlottableAttributes = function(scope, scale,
                                                                   group) {
-    var idx;
-
-    if (scope.usesPointCloud) {
-      var cloud = scope.markers[0];
-
-      _.each(group, function(plottable) {
-        cloud.geometry.attributes.scale.setX(plottable.idx, scale);
-      });
-      cloud.geometry.attributes.scale.needsUpdate = true;
-    }
-    else {
-      _.each(group, function(element) {
-        idx = element.idx;
-        scope.markers[idx].scale.set(scale, scale, scale);
-      });
-    }
-    scope.needsUpdate = true;
+    scope.setScale(scale, group);
   };
 
   /**
@@ -86,22 +70,7 @@ define([
    *
    */
   ScaleViewController.prototype.setAllPlottableAttributes = function(value) {
-    var dv = this.getView();
-
-    if (dv.usesPointCloud) {
-      var cloud = dv.markers[0];
-
-      for (var i = 0 ; i < cloud.geometry.attributes.scale.count; i++) {
-        cloud.geometry.attributes.scale.setX(i, value);
-      }
-      cloud.geometry.attributes.scale.needsUpdate = true;
-    }
-    else {
-      _.each(dv.markers, function(element) {
-        element.scale.set(value, value, value);
-      });
-    }
-    dv.needsUpdate = true;
+    this.getView().setScale(value);
   };
 
   /**
