@@ -693,7 +693,7 @@ define([
     // this will result in a very odd visual effect
     if (this.decViews.scatter.decomp.isScatterType()) {
       _.each(this.decViews.scatter.markers, function(element) {
-        element.quaternion.copy(camera.quaternion);
+        // element.quaternion.copy(camera.quaternion);
       });
     }
 
@@ -736,6 +736,7 @@ define([
 
     // Get first intersected item and call callback with it.
     if (intersects.length > 0) {
+      // check for *intersects[0].index* that's what we want
       var intersect = intersects[0].object;
 
       for (var i = 0; i < this._subscribers[eventType].length; i++) {

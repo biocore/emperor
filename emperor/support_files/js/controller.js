@@ -528,8 +528,10 @@ define([
                                            OpacityViewController);
     this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
                                          ScaleViewController);
-    this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
-                                         ShapeController);
+    if (!this.decViews.scatter.usesPointCloud) {
+      this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
+                                           ShapeController);
+    }
     this.controllers.axes = this.addTab(this.sceneViews[0].decViews,
                                         AxesController);
     this.controllers.animations = this.addTab(this.sceneViews[0].decViews,

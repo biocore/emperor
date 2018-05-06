@@ -105,14 +105,24 @@ define([
 
     hasConfidenceIntervals = scope.decomp.hasConfidenceIntervals();
 
-    _.each(group, function(plottable) {
-      idx = plottable.idx;
-      scope.markers[idx].visible = visible;
+    if (scope.usesPointCloud) {
+      var cloud = scope.markers[0];
 
-      if (hasConfidenceIntervals) {
-        scope.ellipsoids[idx].visible = visible;
-      }
-    });
+      _.each(group, function(plottable) {
+        cloud.geometry.attributes.visible.setX(plottable.idx, visible * 1);
+      });
+      cloud.geometry.attributes.visible.needsUpdate = true;
+    }
+    else{
+      _.each(group, function(plottable) {
+        idx = plottable.idx;
+        scope.markers[idx].visible = visible;
+
+        if (hasConfidenceIntervals) {
+          scope.ellipsoids[idx].visible = visible;
+        }
+      });
+    }
 
     if (visible === true) {
       scope.showEdgesForPlottables(group);

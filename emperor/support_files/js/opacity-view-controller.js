@@ -53,17 +53,26 @@ define([
     // explicitly transparent if the opacity is not at full
     var transparent = opacity !== 1, funk;
 
-    if (scope.decomp.isScatterType()) {
-      funk = _changeMeshOpacity;
-    }
-    else if (scope.decomp.isArrowType()) {
-      funk = _changeArrowOpacity;
-    }
+    if (scope.usesPointCloud) {
+      var cloud = scope.markers[0];
 
-    _.each(group, function(element) {
-      funk(scope.markers[element.idx], opacity, transparent);
-    });
+      _.each(group, function(plottable) {
+        cloud.geometry.attributes.opacity.setX(plottable.idx, opacity);
+      });
+      cloud.geometry.attributes.opacity.needsUpdate = true;
+    }
+    else {
+      if (scope.decomp.isScatterType()) {
+        funk = _changeMeshOpacity;
+      }
+      else if (scope.decomp.isArrowType()) {
+        funk = _changeArrowOpacity;
+      }
 
+      _.each(group, function(element) {
+        funk(scope.markers[element.idx], opacity, transparent);
+      });
+    }
     scope.needsUpdate = true;
   };
 
@@ -78,18 +87,28 @@ define([
   OpacityViewController.prototype.setAllPlottableAttributes = function(value) {
     var dv = this.getView(), transparent, funk;
 
-    // webgl acts up with transparent objects, so we only set them to be
-    // explicitly transparent if the opacity is not at full
-    transparent = value !== 1;
+    if (dv.usesPointCloud) {
+      var cloud = dv.markers[0];
 
-    if (dv.decomp.isScatterType()) {
-      funk = _changeMeshOpacity;
+      for (var i = 0 ; i < cloud.geometry.attributes.opacity.count; i++) {
+        cloud.geometry.attributes.opacity.setX(i, value);
+      }
+      cloud.geometry.attributes.opacity.needsUpdate = true;
     }
-    else if (dv.decomp.isArrowType()) {
-      funk = _changeArrowOpacity;
-    }
+    else {
+      // webgl acts up with transparent objects, so we only set them to be
+      // explicitly transparent if the opacity is not at full
+      transparent = value !== 1;
 
-    _.each(dv.markers, _.partial(funk, _, value, transparent));
+      if (dv.decomp.isScatterType()) {
+        funk = _changeMeshOpacity;
+      }
+      else if (dv.decomp.isArrowType()) {
+        funk = _changeArrowOpacity;
+      }
+
+      _.each(dv.markers, _.partial(funk, _, value, transparent));
+    }
     dv.needsUpdate = true;
   };
 

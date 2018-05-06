@@ -79,8 +79,18 @@ function DecompositionView(decomp) {
    */
   this.lines = {'left': null, 'right': null};
 
+  Object.defineProperty(this, 'usesPointCloud', {
+    value: this.decomp.length > 20000,
+    writable: false
+  });
+
   // setup this.markers and this.lines
-  this._initBaseView();
+  if (this.usesPointCloud) {
+    this._fastInit();
+  }
+  else {
+    this._initBaseView();
+  }
 
   /**
    * True when changes have occured that require re-rendering of the canvas
@@ -177,6 +187,121 @@ DecompositionView.prototype._initBaseView = function() {
   }
 };
 
+
+DecompositionView.prototype._fastInit = function() {
+  var scope = this, positions, colors, scaless, opacities, visibilities, cloud;
+  var factor = (this.decomp.dimensionRanges.max[0] - this.decomp.dimensionRanges.min[0]) * 0.012;
+
+  var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
+      z = this.visibleDimensions[2];
+
+  /*
+   * Lots of source code for this comes from:
+   * https://stackoverflow.com/q/33695202/379593
+   * http://jsfiddle.net/callum/x7y72k1e/10/
+   * http://math.hws.edu/eck/cs424/s12/lab4/lab4-files/points.html
+   * https://www.desultoryquest.com/blog/drawing-anti-aliased-circular-points-using-opengl-slash-webgl/
+   */
+  var vertexShader = [
+    'attribute float scale;',
+
+    'attribute vec3 color;',
+    'attribute float opacity;',
+    'attribute float visible;',
+
+    'varying vec3 vColor;',
+    'varying float vOpacity;',
+    'varying float vVisible;',
+
+    'void main() {',
+      'vColor = color;',
+      'vOpacity = opacity;',
+      'vVisible = visible;',
+
+      'vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);',
+      'gl_Position = projectionMatrix * mvPosition; ',
+      'gl_PointSize = kSIZE * scale * (500.0 / length(mvPosition.xyz));',
+    '}'].join('\n');
+
+  var fragmentShader = [
+    'precision mediump float;',
+    'varying vec3 vColor;',
+    'varying float vOpacity;',
+    'varying float vVisible;',
+
+    'void main() {',
+      'if (vVisible > 0.0) {',
+        'vec2 cxy = 2.0 * gl_PointCoord - 1.0;',
+        'float delta = 0.0, alpha = 1.0, r = dot(cxy, cxy);',
+
+        // get rid of the frame around the points
+        'if(r > 1.1) discard;',
+
+        // antialiasing smoothing
+        'delta = fwidth(r);',
+        'alpha = 1.0 - smoothstep(1.0 - delta, 1.0 + delta, r);',
+
+        'gl_FragColor = vec4(vColor, vOpacity) * alpha;',
+      '}',
+      'else {',
+        'discard;',
+      '}',
+    '}'].join('\n');
+
+  if (this.decomp.isScatterType()) {
+    positions = new Float32Array( this.decomp.length * 3 );
+    colors = new Float32Array( this.decomp.length * 3 );
+    scales = new Float32Array( this.decomp.length );
+    opacities = new Float32Array( this.decomp.length );
+    visibilities = new Float32Array( this.decomp.length );
+
+    var material = new THREE.ShaderMaterial( {
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+      transparent: true,
+    });
+
+    // we need to define a baseline size for the plot so we can control the scale
+    material.defines.kSIZE = factor;
+
+    // needed for the shader's smoothstep and fwidth functions
+    material.extensions.derivatives = true;
+
+    var geometry = new THREE.BufferGeometry();
+    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.addAttribute('scale', new THREE.BufferAttribute(scales, 1));
+    geometry.addAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+    geometry.addAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+
+    cloud = new THREE.Points(geometry, material);
+
+    this.decomp.apply(function(plottable) {
+      geometry.attributes.position.setXYZ(plottable.idx,
+                                          plottable.coordinates[x],
+                                          plottable.coordinates[y],
+                                          plottable.coordinates[z]);
+
+      // set default to red, visible, full opacity and of scale 1
+      geometry.attributes.color.setXYZ(plottable.idx, 1, 0, 0);
+      geometry.attributes.visible.setX(plottable.idx, 1);
+      geometry.attributes.opacity.setX(plottable.idx, 1);
+      geometry.attributes.scale.setX(plottable.idx, 1);
+    });
+
+    geometry.attributes.position.needsUpdate = true;
+    geometry.attributes.color.needsUpdate = true;
+    geometry.attributes.visible.needsUpdate = true;
+    geometry.attributes.opacity.needsUpdate = true;
+    geometry.attributes.scale.needsUpdate = true;
+
+    this.markers.push(cloud);
+  }
+  else {
+    throw 'Only scatter types are supported in fast mode';
+  }
+}
+
 /**
  *
  * Get the number of visible elements
@@ -186,9 +311,19 @@ DecompositionView.prototype._initBaseView = function() {
  */
 DecompositionView.prototype.getVisibleCount = function() {
   var visible = 0;
-  visible = _.reduce(this.markers, function(acc, marker) {
-    return acc + (marker.visible + 0);
-  }, 0);
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    for (var i = 0; i < cloud.geometry.attributes.visible.count; i++) {
+      visible += (cloud.geometry.attributes.visible.getX(i) + 0);
+    }
+  }
+  else {
+    visible = _.reduce(this.markers, function(acc, marker) {
+      return acc + (marker.visible + 0);
+    }, 0);
+  }
 
   return visible;
 };
