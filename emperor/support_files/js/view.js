@@ -247,7 +247,7 @@ DecompositionView.prototype._fastInit = function() {
 
       'vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);',
       'gl_Position = projectionMatrix * mvPosition; ',
-      'gl_PointSize = kSIZE * scale * (500.0 / length(mvPosition.xyz));',
+      'gl_PointSize = kSIZE * scale * (800.0 / length(mvPosition.xyz));',
     '}'].join('\n');
 
   var fragmentShader = [
