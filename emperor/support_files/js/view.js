@@ -197,7 +197,8 @@ DecompositionView.prototype._fastInit = function() {
   var positions, colors, scales, opacities, visibilities, geometry, cloud;
 
   // TODO: this should be a decomposition view method
-  var factor = (this.decomp.dimensionRanges.max[0] - this.decomp.dimensionRanges.min[0]) * 0.012;
+  var factor = (this.decomp.dimensionRanges.max[0] -
+                this.decomp.dimensionRanges.min[0]) * 0.012;
 
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2];
@@ -267,16 +268,16 @@ DecompositionView.prototype._fastInit = function() {
       '}',
     '}'].join('\n');
 
-  positions = new Float32Array( this.decomp.length * 3 );
-  colors = new Float32Array( this.decomp.length * 3 );
-  scales = new Float32Array( this.decomp.length );
-  opacities = new Float32Array( this.decomp.length );
-  visibilities = new Float32Array( this.decomp.length );
+  positions = new Float32Array(this.decomp.length * 3);
+  colors = new Float32Array(this.decomp.length * 3);
+  scales = new Float32Array(this.decomp.length);
+  opacities = new Float32Array(this.decomp.length);
+  visibilities = new Float32Array(this.decomp.length);
 
-  var material = new THREE.ShaderMaterial( {
+  var material = new THREE.ShaderMaterial({
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
-    transparent: true,
+    transparent: true
   });
 
   // we need to define a baseline size for markers so we can control the scale
@@ -314,7 +315,7 @@ DecompositionView.prototype._fastInit = function() {
   geometry.attributes.scale.needsUpdate = true;
 
   this.markers.push(cloud);
-}
+};
 
 /**
  *
@@ -686,7 +687,7 @@ DecompositionView.prototype.setVisibility = function(visible, group) {
     });
     cloud.geometry.attributes.visible.needsUpdate = true;
   }
-  else{
+  else {
     _.each(group, function(plottable) {
       scope.markers[plottable.idx].visible = visible;
 

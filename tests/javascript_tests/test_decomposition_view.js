@@ -441,11 +441,14 @@ requirejs([
 
       // color
       dv.setColor(0x0f0f0f);
-      deepEqual(dv.markers[0].material.color.toArray(), [15/255, 15/255, 15/255]);
-      deepEqual(dv.markers[1].material.color.toArray(), [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[0].material.color.toArray(),
+                [15 / 255, 15 / 255, 15 / 255]);
+      deepEqual(dv.markers[1].material.color.toArray(),
+                [15 / 255, 15 / 255, 15 / 255]);
 
       dv.setColor(0xff00ff, plottables);
-      deepEqual(dv.markers[0].material.color.toArray(), [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[0].material.color.toArray(),
+                [15 / 255, 15 / 255, 15 / 255]);
       deepEqual(dv.markers[1].material.color.toArray(), [1, 0, 1]);
 
       // visibility
@@ -488,13 +491,13 @@ requirejs([
       // color
       dv.setColor(0x0f0f0f);
       deepEqual(dv.markers[0].material.color.toArray(),
-                [15/255, 15/255, 15/255]);
+                [15 / 255, 15 / 255, 15 / 255]);
       deepEqual(dv.markers[1].material.color.toArray(),
-                [15/255, 15/255, 15/255]);
+                [15 / 255, 15 / 255, 15 / 255]);
 
       dv.setColor(0xff00ff, plottables);
       deepEqual(dv.markers[0].material.color.toArray(),
-                [15/255, 15/255, 15/255]);
+                [15 / 255, 15 / 255, 15 / 255]);
       deepEqual(dv.markers[1].material.color.toArray(), [1, 0, 1]);
 
       // visibility
@@ -544,19 +547,19 @@ requirejs([
       // color
       dv.setColor(0x0f0f0f);
       deepEqual(dv.markers[0].line.material.color.toArray(),
-                [15/255, 15/255, 15/255]);
+                [15 / 255, 15 / 255, 15 / 255]);
       deepEqual(dv.markers[0].cone.material.color.toArray(),
-                [15/255, 15/255, 15/255]);
+                [15 / 255, 15 / 255, 15 / 255]);
       deepEqual(dv.markers[1].line.material.color.toArray(),
-                [15/255, 15/255, 15/255]);
+                [15 / 255, 15 / 255, 15 / 255]);
       deepEqual(dv.markers[1].cone.material.color.toArray(),
-                [15/255, 15/255, 15/255]);
+                [15 / 255, 15 / 255, 15 / 255]);
 
       dv.setColor(0xff00ff, plottables);
       deepEqual(dv.markers[0].line.material.color.toArray(),
-                [15/255, 15/255, 15/255]);
+                [15 / 255, 15 / 255, 15 / 255]);
       deepEqual(dv.markers[0].cone.material.color.toArray(),
-                [15/255, 15/255, 15/255]);
+                [15 / 255, 15 / 255, 15 / 255]);
       deepEqual(dv.markers[1].line.material.color.toArray(), [1, 0, 1]);
       deepEqual(dv.markers[1].cone.material.color.toArray(), [1, 0, 1]);
 
