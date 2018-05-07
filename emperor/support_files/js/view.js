@@ -102,7 +102,8 @@ function DecompositionView(decomp, asPointCloud) {
 }
 
 /**
- * For internal use mostly.
+ * Calculate the appropriate size for a geometry based on the first dimension's
+ * range.
  */
 DecompositionView.prototype.getGeometryFactor = function() {
   // this is a heauristic tested on numerous plots since 2013, based off of
