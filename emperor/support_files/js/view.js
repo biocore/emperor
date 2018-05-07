@@ -363,7 +363,19 @@ DecompositionView.prototype.updatePositions = function() {
     radius = scope.ellipsoids[0].geometry.parameters.radius;
   }
 
-  if (this.decomp.isScatterType()) {
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    this.decomp.apply(function(plottable) {
+      cloud.geometry.attributes.position.setXYZ(
+        plottable.idx,
+        plottable.coordinates[x] * scope.axesOrientation[0],
+        plottable.coordinates[y] * scope.axesOrientation[1],
+        (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+    });
+    cloud.geometry.attributes.position.needsUpdate = true;
+  }
+  else if (this.decomp.isScatterType()) {
     this.decomp.apply(function(plottable) {
       mesh = scope.markers[plottable.idx];
 
