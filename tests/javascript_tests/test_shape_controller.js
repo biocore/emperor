@@ -58,7 +58,6 @@ requirejs([
         this.dv = new DecompositionView(this.decomp);
         this.sharedDecompositionViewDict.biplot = this.dv;
 
-
         var container = $('<div id="does-not-exist" style="height:11px; ' +
                           'width:12px"></div>');
         this.controller = new ShapeController(

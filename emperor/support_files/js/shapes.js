@@ -16,7 +16,7 @@ define(['jquery', 'three', 'underscore'], function($, THREE, _) {
    *
    * @param {string} shapeName One of 'Sphere', 'Square', 'Cone',
    * 'Icosahedron', 'Cylinder', 'Diamond' and 'Ring'.
-   * @param {Object} factor Size for the geometries. Usually as determined by
+   * @param {Float} factor Size for the geometries. Usually as determined by
    * the DecompositionView object.
    *
    * @return {THREE.Geometry} The requested geometry object with a size
