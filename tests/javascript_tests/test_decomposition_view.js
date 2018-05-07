@@ -186,6 +186,12 @@ requirejs([
       }, Error, 'Biplots are not supported in fast mode');
     });
 
+    test('Test getGeometryFactor', function() {
+      var dv = new DecompositionView(this.decomp);
+
+      equal(dv.getGeometryFactor(), 0.000466572);
+    });
+
     /**
      *
      * Test that getVisibleCount is correctly updated
