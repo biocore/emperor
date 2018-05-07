@@ -689,11 +689,13 @@ define([
       this.control.update();
     }
 
-    // only scatter types should be pointed towards the camera, for arrow types
-    // this will result in a very odd visual effect
-    if (this.decViews.scatter.decomp.isScatterType()) {
+    // Only scatter plots that are not using a point cloud should be pointed
+    // towards the camera. For arrow types and point clouds doing this will
+    // results in odd visual effects
+    if (!this.decViews.scatter.usesPointCloud &&
+        this.decViews.scatter.decomp.isScatterType()) {
       _.each(this.decViews.scatter.markers, function(element) {
-        // element.quaternion.copy(camera.quaternion);
+        element.quaternion.copy(camera.quaternion);
       });
     }
 
