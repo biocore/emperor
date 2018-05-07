@@ -87,35 +87,35 @@ requirejs([
 
     test('Testing setPlottableAttributes helper function', function(assert) {
       // testing with one plottable
-      var idx = 0;
+      var idx = 0, view = this.sharedDecompositionViewDict.scatter;
       plottables = [{idx: idx}];
-      deepEqual(this.dv.markers[idx].scale.x, 1);
-      deepEqual(this.dv.markers[idx].scale.y, 1);
-      deepEqual(this.dv.markers[idx].scale.z, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.x, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.y, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.z, 1);
+      deepEqual(view.markers[idx].scale.x, 1);
+      deepEqual(view.markers[idx].scale.y, 1);
+      deepEqual(view.markers[idx].scale.z, 1);
+      deepEqual(view.markers[idx + 1].scale.x, 1);
+      deepEqual(view.markers[idx + 1].scale.y, 1);
+      deepEqual(view.markers[idx + 1].scale.z, 1);
       ScaleViewController.prototype.setPlottableAttributes(
-        this.dv, 2.5, plottables);
-      deepEqual(this.dv.markers[idx].scale.x, 2.5);
-      deepEqual(this.dv.markers[idx].scale.y, 2.5);
-      deepEqual(this.dv.markers[idx].scale.z, 2.5);
-      deepEqual(this.dv.markers[idx + 1].scale.x, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.y, 1);
-      deepEqual(this.dv.markers[idx + 1].scale.z, 1);
-      equal(this.dv.needsUpdate, true);
+        view, 2.5, plottables);
+      deepEqual(view.markers[idx].scale.x, 2.5);
+      deepEqual(view.markers[idx].scale.y, 2.5);
+      deepEqual(view.markers[idx].scale.z, 2.5);
+      deepEqual(view.markers[idx + 1].scale.x, 1);
+      deepEqual(view.markers[idx + 1].scale.y, 1);
+      deepEqual(view.markers[idx + 1].scale.z, 1);
+      equal(view.needsUpdate, true);
 
       // testing with multiple plottable
       plottables = [{idx: idx}, {idx: idx + 1}];
-      ScaleViewController.prototype.setPlottableAttributes(this.dv, 0.4,
+      ScaleViewController.prototype.setPlottableAttributes(view, 0.4,
                                                            plottables);
-      deepEqual(this.dv.markers[idx].scale.x, 0.4);
-      deepEqual(this.dv.markers[idx].scale.y, 0.4);
-      deepEqual(this.dv.markers[idx].scale.z, 0.4);
-      deepEqual(this.dv.markers[idx + 1].scale.x, 0.4);
-      deepEqual(this.dv.markers[idx + 1].scale.y, 0.4);
-      deepEqual(this.dv.markers[idx + 1].scale.z, 0.4);
-      equal(this.dv.needsUpdate, true);
+      deepEqual(view.markers[idx].scale.x, 0.4);
+      deepEqual(view.markers[idx].scale.y, 0.4);
+      deepEqual(view.markers[idx].scale.z, 0.4);
+      deepEqual(view.markers[idx + 1].scale.x, 0.4);
+      deepEqual(view.markers[idx + 1].scale.y, 0.4);
+      deepEqual(view.markers[idx + 1].scale.z, 0.4);
+      equal(view.needsUpdate, true);
     });
 
     test('Testing toJSON', function() {

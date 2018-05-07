@@ -179,6 +179,13 @@ requirejs([
       deepEqual(view.lines.right.geometry.attributes.position.array.length, 6);
     });
 
+    test('Test constructor fails (biplot in fast mode)', function() {
+      this.decomp.type = 'arrow';
+      throws(function() {
+        var dv = new DecompositionView(this.decomp, true);
+      }, Error, 'Biplots are not supported in fast mode');
+    });
+
     /**
      *
      * Test that getVisibleCount is correctly updated
@@ -425,6 +432,230 @@ requirejs([
       deepEqual(dv.lines.right.geometry.attributes.position.array, exp);
 
       dv.hideEdgesForPlottables('Not a plottable');
+    });
+
+    test('Test setters for attributes (scatter plot)', function() {
+      var dv = new DecompositionView(this.decomp), plottables;
+
+      plottables = [this.decomp.plottable[1]];
+
+      // color
+      dv.setColor(0x0f0f0f);
+      deepEqual(dv.markers[0].material.color.toArray(), [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[1].material.color.toArray(), [15/255, 15/255, 15/255]);
+
+      dv.setColor(0xff00ff, plottables);
+      deepEqual(dv.markers[0].material.color.toArray(), [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[1].material.color.toArray(), [1, 0, 1]);
+
+      // visibility
+      dv.setVisibility(false);
+      deepEqual(dv.markers[0].visible, false);
+      deepEqual(dv.markers[1].visible, false);
+
+      dv.setVisibility(true, plottables);
+      deepEqual(dv.markers[0].visible, false);
+      deepEqual(dv.markers[1].visible, true);
+
+      // scale
+      dv.setScale(3);
+      deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
+      deepEqual(dv.markers[1].scale.toArray(), [3, 3, 3]);
+
+      dv.setScale(0.8, plottables);
+      deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
+      deepEqual(dv.markers[1].scale.toArray(), [0.8, 0.8, 0.8]);
+
+      // opacity
+      dv.setOpacity(0.5);
+      deepEqual(dv.markers[0].material.transparent, true);
+      deepEqual(dv.markers[0].material.opacity, 0.5);
+      deepEqual(dv.markers[1].material.transparent, true);
+      deepEqual(dv.markers[1].material.opacity, 0.5);
+
+      dv.setOpacity(1.0, plottables);
+      deepEqual(dv.markers[0].material.transparent, true);
+      deepEqual(dv.markers[0].material.opacity, 0.5);
+      deepEqual(dv.markers[1].material.transparent, false);
+      deepEqual(dv.markers[1].material.opacity, 1.0);
+    });
+
+    test('Test setters for attributes (scatter plot with edges)', function() {
+      var dv = new DecompositionView(this.decompWithEdges);
+
+      plottables = [this.decomp.plottable[1]];
+
+      // color
+      dv.setColor(0x0f0f0f);
+      deepEqual(dv.markers[0].material.color.toArray(),
+                [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[1].material.color.toArray(),
+                [15/255, 15/255, 15/255]);
+
+      dv.setColor(0xff00ff, plottables);
+      deepEqual(dv.markers[0].material.color.toArray(),
+                [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[1].material.color.toArray(), [1, 0, 1]);
+
+      // visibility
+      dv.setVisibility(false);
+      deepEqual(dv.markers[0].visible, false);
+      deepEqual(dv.markers[1].visible, false);
+
+      // also check for the edges' visibility since the two are tied
+      deepEqual(dv.lines.left.geometry.attributes.position.array,
+                new Float32Array([0, 0, 0, 0, 0, 0]));
+      deepEqual(dv.lines.right.geometry.attributes.position.array,
+                new Float32Array([0, 0, 0, 0, 0, 0]));
+
+      dv.setVisibility(true, plottables);
+      deepEqual(dv.markers[0].visible, false);
+      deepEqual(dv.markers[1].visible, true);
+
+      // scale
+      dv.setScale(3);
+      deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
+      deepEqual(dv.markers[1].scale.toArray(), [3, 3, 3]);
+
+      dv.setScale(0.8, plottables);
+      deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
+      deepEqual(dv.markers[1].scale.toArray(), [0.8, 0.8, 0.8]);
+
+      // opacity
+      dv.setOpacity(0.5);
+      deepEqual(dv.markers[0].material.transparent, true);
+      deepEqual(dv.markers[0].material.opacity, 0.5);
+      deepEqual(dv.markers[1].material.transparent, true);
+      deepEqual(dv.markers[1].material.opacity, 0.5);
+
+      dv.setOpacity(1.0, plottables);
+      deepEqual(dv.markers[0].material.transparent, true);
+      deepEqual(dv.markers[0].material.opacity, 0.5);
+      deepEqual(dv.markers[1].material.transparent, false);
+      deepEqual(dv.markers[1].material.opacity, 1.0);
+    });
+
+    test('Test setters for attribures (biplot)', function(assert) {
+      this.decomp.type = 'arrow';
+      var dv = new DecompositionView(this.decomp), plottables;
+
+      plottables = [this.decomp.plottable[1]];
+
+      // color
+      dv.setColor(0x0f0f0f);
+      deepEqual(dv.markers[0].line.material.color.toArray(),
+                [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[0].cone.material.color.toArray(),
+                [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[1].line.material.color.toArray(),
+                [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[1].cone.material.color.toArray(),
+                [15/255, 15/255, 15/255]);
+
+      dv.setColor(0xff00ff, plottables);
+      deepEqual(dv.markers[0].line.material.color.toArray(),
+                [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[0].cone.material.color.toArray(),
+                [15/255, 15/255, 15/255]);
+      deepEqual(dv.markers[1].line.material.color.toArray(), [1, 0, 1]);
+      deepEqual(dv.markers[1].cone.material.color.toArray(), [1, 0, 1]);
+
+      // visibility
+      dv.setVisibility(false);
+      deepEqual(dv.markers[0].visible, false);
+      deepEqual(dv.markers[1].visible, false);
+
+      dv.setVisibility(true, plottables);
+      deepEqual(dv.markers[0].visible, false);
+      deepEqual(dv.markers[1].visible, true);
+
+      throws(
+        function() {
+          dv.setScale(3);
+        },
+        Error, 'Arrow types cannot change scale');
+
+      throws(
+        function() {
+          dv.setScale(0.8, plottables);
+        },
+        Error, 'Arrow types cannot change scale');
+
+      // opacity
+      dv.setOpacity(0.5);
+      deepEqual(dv.markers[0].line.material.transparent, true);
+      deepEqual(dv.markers[0].cone.material.transparent, true);
+      deepEqual(dv.markers[0].line.material.opacity, 0.5);
+      deepEqual(dv.markers[0].cone.material.opacity, 0.5);
+      deepEqual(dv.markers[1].line.material.transparent, true);
+      deepEqual(dv.markers[1].cone.material.transparent, true);
+      deepEqual(dv.markers[1].line.material.opacity, 0.5);
+      deepEqual(dv.markers[1].cone.material.opacity, 0.5);
+
+      dv.setOpacity(1.0, plottables);
+      deepEqual(dv.markers[0].line.material.transparent, true);
+      deepEqual(dv.markers[0].cone.material.transparent, true);
+      deepEqual(dv.markers[0].line.material.opacity, 0.5);
+      deepEqual(dv.markers[0].cone.material.opacity, 0.5);
+      deepEqual(dv.markers[1].line.material.transparent, false);
+      deepEqual(dv.markers[1].cone.material.transparent, false);
+      deepEqual(dv.markers[1].line.material.opacity, 1.0);
+      deepEqual(dv.markers[1].cone.material.opacity, 1.0);
+    });
+
+    test('Test setters for attributes (using point cloud)', function(assert) {
+      var dv = new DecompositionView(this.decomp, true), plottables, observed;
+
+      plottables = [this.decomp.plottable[1]];
+
+      // point clouds are a single marker
+      observed = dv.markers[0];
+
+      // color
+      dv.setColor(0x00ff00);
+      equal(observed.geometry.attributes.color.getX(0), 0);
+      equal(observed.geometry.attributes.color.getY(0), 1);
+      equal(observed.geometry.attributes.color.getZ(0), 0);
+
+      equal(observed.geometry.attributes.color.getX(1), 0);
+      equal(observed.geometry.attributes.color.getY(1), 1);
+      equal(observed.geometry.attributes.color.getZ(1), 0);
+
+      dv.setColor(0x0000ff, plottables);
+      equal(observed.geometry.attributes.color.getX(0), 0);
+      equal(observed.geometry.attributes.color.getY(0), 1);
+      equal(observed.geometry.attributes.color.getZ(0), 0);
+
+      equal(observed.geometry.attributes.color.getX(1), 0);
+      equal(observed.geometry.attributes.color.getY(1), 0);
+      equal(observed.geometry.attributes.color.getZ(1), 1);
+
+      // visibility
+      dv.setVisibility(false);
+      equal(observed.geometry.attributes.visible.getX(0), 0);
+      equal(observed.geometry.attributes.visible.getX(1), 0);
+
+      dv.setVisibility(true, plottables);
+      equal(observed.geometry.attributes.visible.getX(0), 0);
+      equal(observed.geometry.attributes.visible.getX(1), 1);
+
+      // scale
+      dv.setScale(3);
+      equal(observed.geometry.attributes.scale.getX(0), 3);
+      equal(observed.geometry.attributes.scale.getX(1), 3);
+
+      dv.setScale(1, plottables);
+      equal(observed.geometry.attributes.scale.getX(0), 3);
+      equal(observed.geometry.attributes.scale.getX(1), 1);
+
+      // opacity
+      dv.setOpacity(0.5);
+      equal(observed.geometry.attributes.opacity.getX(0), 0.5);
+      equal(observed.geometry.attributes.opacity.getX(1), 0.5);
+
+      dv.setOpacity(1.0, plottables);
+      equal(observed.geometry.attributes.opacity.getX(0), 0.5);
+      equal(observed.geometry.attributes.opacity.getX(1), 1.0);
     });
 
   });

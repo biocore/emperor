@@ -16,12 +16,14 @@ define([
  *
  * @param {DecompositionModel} decomp a DecompositionModel object that will be
  * represented on screen.
+ * @param {Bool} asPointCloud Whether or not the underlying view is represented
+ * using a point cloud. This argument is exposed to facilitate testing.
  *
  * @return {DecompositionView}
  * @constructs DecompositionView
  *
  */
-function DecompositionView(decomp) {
+function DecompositionView(decomp, asPointCloud) {
   /**
    * The decomposition model that the view represents.
    * @type {DecompositionModel}
@@ -80,7 +82,7 @@ function DecompositionView(decomp) {
   this.lines = {'left': null, 'right': null};
 
   Object.defineProperty(this, 'usesPointCloud', {
-    value: this.decomp.length > 20000,
+    value: (this.decomp.length > 20000) || asPointCloud,
     writable: false
   });
 
@@ -161,7 +163,7 @@ DecompositionView.prototype._initBaseView = function() {
     });
   }
   else {
-    throw 'Unsupported decomposition type';
+    throw new Error('Unsupported decomposition type');
   }
 
   if (this.decomp.edges.length) {
@@ -189,7 +191,7 @@ DecompositionView.prototype._initBaseView = function() {
 
 DecompositionView.prototype._fastInit = function() {
   if (this.decomp.isArrowType()) {
-    throw 'Only scatter types are supported in fast mode';
+    throw new Error('Only scatter types are supported in fast mode');
   }
 
   var positions, colors, scales, opacities, visibilities, geometry, cloud;
@@ -644,7 +646,7 @@ DecompositionView.prototype.setColor = function(color, group) {
     cloud.geometry.attributes.color.needsUpdate = true;
   }
   else if (this.decomp.isScatterType()) {
-    group.forEach(group, function(plottable) {
+    group.forEach(function(plottable) {
       idx = plottable.idx;
       scope.markers[idx].material.color = new THREE.Color(color);
 
@@ -654,7 +656,7 @@ DecompositionView.prototype.setColor = function(color, group) {
     });
   }
   else if (this.decomp.isArrowType()) {
-    group.forEach(group, function(plottable) {
+    group.forEach(function(plottable) {
       scope.markers[plottable.idx].setColor(new THREE.Color(color));
     });
   }
@@ -715,6 +717,10 @@ DecompositionView.prototype.setVisibility = function(visible, group) {
  */
 DecompositionView.prototype.setScale = function(scale, group) {
   var scope = this;
+
+  if (this.decomp.isArrowType()) {
+    throw Error('Cannot change the scale of an arrow.');
+  }
 
   group = group || this.decomp.plottable;
 
