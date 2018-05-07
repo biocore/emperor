@@ -736,8 +736,21 @@ define([
 
     // Get first intersected item and call callback with it.
     if (intersects.length > 0) {
-      // check for *intersects[0].index* that's what we want
-      var intersect = intersects[0].object;
+      var intersect;
+
+      /*
+       * When the intersect object is a Points object, the raycasting method
+       * won't intersect individual mesh objects. Instead it intersects a point
+       * and we get the index of the point. This index can then be used to
+       * trace the original Plottable object.
+       */
+      if (intersects[0].object.isPoints) {
+        var index = intersects[0].index;
+        intersect = this.decViews.scatter.decomp.plottable[index];
+      }
+      else {
+        intersect = intersects[0].object;
+      }
 
       for (var i = 0; i < this._subscribers[eventType].length; i++) {
         // keep going if one of the callbacks fails
