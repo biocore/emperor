@@ -57,11 +57,18 @@ requirejs([
                                              'arrow');
         this.dv = new DecompositionView(this.decomp);
         this.sharedDecompositionViewDict.biplot = this.dv;
+
+
+        var container = $('<div id="does-not-exist" style="height:11px; ' +
+                          'width:12px"></div>');
+        this.controller = new ShapeController(
+          container, this.sharedDecompositionViewDict);
       },
 
       teardown: function() {
         // teardown function
         this.sharedDecompositionViewDict = undefined;
+        this.controller = undefined;
       }
     });
 
@@ -74,51 +81,44 @@ requirejs([
     });
 
     test('Constructor tests', function(assert) {
-      var container = $('<div id="does-not-exist" style="height:11px; ' +
-                        'width:12px"></div>');
-
       assert.ok(ShapeController.prototype instanceof EmperorAttributeABC);
 
-      controller = new ShapeController(container,
-                                           this.sharedDecompositionViewDict);
-      equal(controller.title, 'Shape');
+      equal(this.controller.title, 'Shape');
 
-      var testColumn = controller.bodyGrid.getColumns()[0];
+      var testColumn = this.controller.bodyGrid.getColumns()[0];
       equal(testColumn.field, 'value');
 
       // test filtering of the decompositon
-      assert.ok(controller.decompViewDict.biplot === undefined);
+      assert.ok(this.controller.decompViewDict.biplot === undefined);
 
     });
 
     test('Test getGeometry', function() {
-      var geom, range;
+      var geom;
 
-      range = {'min': [-2, -1, -3], 'max': [3, 8, 9]};
-
-      geom = shapes.getGeometry('Sphere', range);
+      geom = shapes.getGeometry('Sphere', 0.06);
       equal(geom.parameters.radius, 0.06);
 
-      geom = shapes.getGeometry('Square', range);
+      geom = shapes.getGeometry('Square', 0.06);
       equal(geom.parameters.width, 0.12);
       equal(geom.parameters.height, 0.12);
 
-      geom = shapes.getGeometry('Cone', range);
+      geom = shapes.getGeometry('Cone', 0.06);
       equal(geom.parameters.radiusTop, 0.06);
       equal(geom.parameters.radiusBottom, 0);
       equal(geom.parameters.height, 0.12);
 
-      geom = shapes.getGeometry('Icosahedron', range);
+      geom = shapes.getGeometry('Icosahedron', 0.06);
       equal(geom.parameters.radius, 0.06);
 
-      geom = shapes.getGeometry('Diamond', range);
+      geom = shapes.getGeometry('Diamond', 0.06);
       equal(geom.parameters.radius, 0.06);
 
-      geom = shapes.getGeometry('Ring', range);
+      geom = shapes.getGeometry('Ring', 0.06);
       equal(geom.parameters.innerRadius, 0.06 / 1.618033);
       equal(geom.parameters.outerRadius, 0.06);
 
-      geom = shapes.getGeometry('Cylinder', range);
+      geom = shapes.getGeometry('Cylinder', 0.06);
       equal(geom.parameters.radiusTop, 0.06);
       equal(geom.parameters.radiusBottom, 0.06);
       equal(geom.parameters.height, 0.12);
@@ -126,28 +126,28 @@ requirejs([
 
     test('Check getGeometry raises an exception with unknown shape',
          function() {
-      var range = {'min': [-2, -1, -3], 'max': [3, 8, 9]};
       throws(function() {
-        shapes.getGeometry('Geometry McGeometryface', range);
+        shapes.getGeometry('Geometry McGeometryface', 0.06);
       }, Error, 'Throw error if unknown shape given');
     });
 
     test('Testing setPlottableAttributes helper function', function(assert) {
       // testing with one plottable
       var idx = 0, view = this.sharedDecompositionViewDict.scatter;
+
       plottables = [{idx: idx}];
       equal(view.markers[idx].geometry.type, 'SphereGeometry');
       equal(view.markers[idx + 1].geometry.type, 'SphereGeometry');
-      ShapeController.prototype.setPlottableAttributes(view, 'Square',
-                                                       plottables);
+      this.controller.setPlottableAttributes(view, 'Square', plottables);
+
       equal(view.markers[idx].geometry.type, 'PlaneGeometry');
       equal(view.markers[idx + 1].geometry.type, 'SphereGeometry');
       equal(view.needsUpdate, true);
 
       // testing with multiple plottable
       plottables = [{idx: idx}, {idx: idx + 1}];
-      ShapeController.prototype.setPlottableAttributes(view, 'Cylinder',
-                                                       plottables);
+      this.controller.setPlottableAttributes(view, 'Cylinder', plottables);
+
       equal(view.markers[idx].geometry.type, 'CylinderGeometry');
       equal(view.markers[idx + 1].geometry.type, 'CylinderGeometry');
       equal(view.needsUpdate, true);
@@ -155,22 +155,17 @@ requirejs([
 
     test('Testing setPlottableAttributes unknown shape', function(assert) {
       // testing with one plottable
-      plottables = [{0: 0}];
+      var plottables = [{0: 0}], view;
+      view = this.sharedDecompositionViewDict.scatter;
       throws(function() {
-        ShapeController.prototype.setPlottableAttributes(this.dv, 'WEIRD',
-                                                         plottables);
+        this.controller.setPlottableAttributes(view, 'WEIRD', plottables);
       }, Error, 'Throw error if unknown shape given');
 
     });
 
     test('Testing toJSON', function() {
-      var container = $('<div id="does-not-exist" style="height:11px; ' +
-                        'width:12px"></div>');
-      var controller = new ShapeController(container,
-                                           this.sharedDecompositionViewDict);
-
-      controller.setMetadataField('DOB');
-      var obs = controller.toJSON();
+      this.controller.setMetadataField('DOB');
+      var obs = this.controller.toJSON();
       var exp = {category: 'DOB',
                  data: {'20070314': 'Sphere', '20071112': 'Sphere'}
       };
@@ -182,46 +177,33 @@ requirejs([
                   'data': {'PC.636': 'Square', 'PC.635': 'Sphere'}
       };
 
-      var container = $('<div id="does-not-exist" style="height:11px; ' +
-                        'width:12px"></div>');
-      var controller = new ShapeController(container,
-                                           this.sharedDecompositionViewDict);
-
-      controller.fromJSON(json);
+      this.controller.fromJSON(json);
       var idx = 0;
-      equal(controller.decompViewDict.scatter.markers[idx].geometry.type,
+      equal(this.controller.decompViewDict.scatter.markers[idx].geometry.type,
             'PlaneGeometry');
-      equal(controller.decompViewDict.scatter.markers[idx + 1].geometry.type,
+
+      idx += 1;
+      equal(this.controller.decompViewDict.scatter.markers[idx].geometry.type,
             'SphereGeometry');
     });
 
     test('Testing toJSON (null)', function() {
-      var container = $('<div id="does-not-exist" style="height:11px; ' +
-                        'width:12px"></div>');
-      var controller = new ShapeController(container,
-                                           this.sharedDecompositionViewDict);
-
-      controller.setMetadataField(null);
-      var obs = controller.toJSON();
-      var exp = {category: null,
-                 data: {}
-      };
+      this.controller.setMetadataField(null);
+      var obs = this.controller.toJSON();
+      var exp = {category: null, data: {}};
       deepEqual(obs, exp);
     });
 
     test('Testing fromJSON (null)', function() {
       var json = {'category': null, 'data': {}};
 
-      var container = $('<div id="does-not-exist" style="height:11px; ' +
-                        'width:12px"></div>');
-      var controller = new ShapeController(container,
-                                           this.sharedDecompositionViewDict);
-
-      controller.fromJSON(json);
+      this.controller.fromJSON(json);
       var idx = 0;
-      equal(controller.decompViewDict.scatter.markers[idx].geometry.type,
+      equal(this.controller.decompViewDict.scatter.markers[idx].geometry.type,
             'SphereGeometry');
-      equal(controller.decompViewDict.scatter.markers[idx + 1].geometry.type,
+
+      idx += 1;
+      equal(this.controller.decompViewDict.scatter.markers[idx].geometry.type,
             'SphereGeometry');
     });
 

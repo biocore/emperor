@@ -527,8 +527,7 @@ define([
 
     var view = this.getView(), tube, scope = this, color;
 
-    // FIXME: this is a bug when the shapes are not spheres
-    var radius = view.markers[0].geometry.parameters.radius;
+    var radius = view.getGeometryFactor();
     radius *= 0.45 * this.getRadius();
 
     view.tubes.forEach(function(tube) {

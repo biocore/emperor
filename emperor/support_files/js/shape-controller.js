@@ -115,10 +115,10 @@ define([
    */
   ShapeController.prototype.setPlottableAttributes =
       function(scope, shape, group) {
-    var idx;
+    var idx, factor = scope.getGeometryFactor();
 
     // get the appropriately sized geometry
-    var geometry = shapes.getGeometry(shape, scope.decomp.dimensionRanges);
+    var geometry = shapes.getGeometry(shape, factor);
 
     if (geometry === undefined) {
       throw new Error('Unknown shape ' + shape);

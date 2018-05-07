@@ -102,6 +102,17 @@ function DecompositionView(decomp, asPointCloud) {
 }
 
 /**
+ * For internal use mostly.
+ */
+DecompositionView.prototype.getGeometryFactor = function() {
+  // this is a heauristic tested on numerous plots since 2013, based off of
+  // the old implementation of emperor. We select the dimensions of all the
+  // geometries based on this factor.
+  return (this.decomp.dimensionRanges.max[0] -
+          this.decomp.dimensionRanges.min[0]) * 0.012;
+};
+
+/**
  *
  * Helper method to initialize the base THREE.js objects.
  * @private
@@ -113,8 +124,8 @@ DecompositionView.prototype._initBaseView = function() {
   var scope = this;
 
   // get the correctly sized geometry
-  var geometry = shapes.getGeometry('Sphere', this.decomp.dimensionRanges);
-  var radius = geometry.parameters.radius, hasConfidenceIntervals;
+  var radius = this.getGeometryFactor(), hasConfidenceIntervals;
+  var geometry = shapes.getGeometry('Sphere', radius);
 
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
@@ -195,10 +206,6 @@ DecompositionView.prototype._fastInit = function() {
   }
 
   var positions, colors, scales, opacities, visibilities, geometry, cloud;
-
-  // TODO: this should be a decomposition view method
-  var factor = (this.decomp.dimensionRanges.max[0] -
-                this.decomp.dimensionRanges.min[0]) * 0.012;
 
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2];
@@ -281,7 +288,7 @@ DecompositionView.prototype._fastInit = function() {
   });
 
   // we need to define a baseline size for markers so we can control the scale
-  material.defines.kSIZE = factor;
+  material.defines.kSIZE = this.getGeometryFactor();
 
   // needed for the shader's smoothstep and fwidth functions
   material.extensions.derivatives = true;
@@ -360,7 +367,7 @@ DecompositionView.prototype.updatePositions = function() {
 
   // we need the original radius to scale confidence intervals (if they exist)
   if (hasConfidenceIntervals) {
-    radius = scope.ellipsoids[0].geometry.parameters.radius;
+    radius = this.getGeometryFactor();
   }
 
   if (this.usesPointCloud) {
