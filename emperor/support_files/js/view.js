@@ -81,6 +81,10 @@ function DecompositionView(decomp, asPointCloud) {
    */
   this.lines = {'left': null, 'right': null};
 
+  /**
+   * Whether or not the view relies on a PointCloud to display the data.
+   * @type {Bool}
+   */
   Object.defineProperty(this, 'usesPointCloud', {
     value: (this.decomp.length > 20000) || asPointCloud,
     writable: false
