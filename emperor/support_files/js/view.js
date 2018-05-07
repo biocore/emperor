@@ -206,6 +206,9 @@ DecompositionView.prototype._initBaseView = function() {
 };
 
 DecompositionView.prototype._fastInit = function() {
+  if (this.decomp.hasConfidenceIntervals()) {
+    throw new Error('Ellipsoids are not supported in fast mode');
+  }
   if (this.decomp.isArrowType()) {
     throw new Error('Only scatter types are supported in fast mode');
   }
