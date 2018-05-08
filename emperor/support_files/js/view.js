@@ -110,7 +110,7 @@ function DecompositionView(decomp, asPointCloud) {
  * range.
  */
 DecompositionView.prototype.getGeometryFactor = function() {
-  // this is a heauristic tested on numerous plots since 2013, based off of
+  // this is a heuristic tested on numerous plots since 2013, based off of
   // the old implementation of emperor. We select the dimensions of all the
   // geometries based on this factor.
   return (this.decomp.dimensionRanges.max[0] -
