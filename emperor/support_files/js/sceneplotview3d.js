@@ -112,6 +112,9 @@ define([
     this.light.position.set(1, 1, 1).normalize();
     this.camera.add(this.light);
 
+    this._raycaster = new THREE.Raycaster();
+    this._mouse = new THREE.Vector2();
+
     // add all the objects to the current scene
     this.addDecompositionsToScene();
 
@@ -152,9 +155,6 @@ define([
      */
     this.drawAxesWithColor('#FFFFFF');
     this.drawAxesLabelsWithColor('#FFFFFF');
-
-    this._raycaster = new THREE.Raycaster();
-    this._mouse = new THREE.Vector2();
 
     // initialize subscribers for event callbacks
     /**
@@ -290,6 +290,12 @@ define([
       if (this.decViews[decViewName].lines.left) {
         this.scene.add(this.decViews[decViewName].lines.left);
         this.scene.add(this.decViews[decViewName].lines.right);
+      }
+
+      // if a decomposition uses a point cloud change the default tolerance as
+      // it is otherwise too large and error-prone
+      if (this.decViews[decViewName].usesPointCloud) {
+        this._raycaster.params.Points.threshold = 0.01;
       }
     }
 
