@@ -504,8 +504,8 @@ define([
       // get the view's position, not the metadata's position
       positions[p.name] = {
         'name': p.name, 'color': 0,
-        'x':p.coordinates[x] * view.axesOrientation[0],
-        'y':p.coordinates[y] * view.axesOrientation[1],
+        'x': p.coordinates[x] * view.axesOrientation[0],
+        'y': p.coordinates[y] * view.axesOrientation[1],
         'z': is2D ? 0 : (p.coordinates[z] * view.axesOrientation[2])
       };
     }
