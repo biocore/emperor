@@ -186,6 +186,7 @@ define([
      */
     this._$tabsContainer = $("<div name='emperor-tabs-container'></div>");
     this._$tabsContainer.css('background-color', '#EEEEEE');
+    this._$tabsContainer.addClass('unselectable');
     /**
      * List of available tabs, lives inside `_$tabsContainer`.
      * @type {node}
@@ -483,7 +484,8 @@ define([
                 'misleading';
     }
 
-    this.$plotBanner.html(visible + '/' + total + ' visible' + message);
+    this.$plotBanner.html(visible.toLocaleString() + ' / ' +
+                          total.toLocaleString() + ' visible' + message);
   };
 
   EmperorController.prototype.getPlotBanner = function(text) {
