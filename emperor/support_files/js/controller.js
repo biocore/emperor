@@ -519,7 +519,7 @@ define([
    *
    */
   EmperorController.prototype._buildUI = function() {
-    var scope = this;
+    var scope = this, isLargeDataset = this.decViews.scatter.usesPointCloud;
 
     //FIXME: This only works for 1 scene plot view
     this.controllers.color = this.addTab(this.sceneViews[0].decViews,
@@ -530,7 +530,7 @@ define([
                                            OpacityViewController);
     this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
                                          ScaleViewController);
-    if (!this.decViews.scatter.usesPointCloud) {
+    if (!isLargeDataset) {
       this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
                                            ShapeController);
     }
@@ -623,21 +623,25 @@ define([
           }
         },
         'sep1': '---------',
+        // with large datasets we can't save to svg nor to png
         'fold1': {
-            'name': 'Save Image',
+            'name': 'Save Image' + (isLargeDataset ?
+                    ' (disabled for large datasets)' : '') ,
             icon: 'file-picture-o',
             'items': {
               'saveImagePNG': {
                 name: 'PNG (high resolution)',
                 callback: function(key, opts) {
                   scope.screenshot('png');
-                }
+                },
+                disabled: isLargeDataset
               },
               'saveImageSVG': {
                 name: 'SVG + labels',
                 callback: function(key, opts) {
                   scope.screenshot('svg');
-                }
+                },
+                disabled: isLargeDataset
               }
             }
         }
