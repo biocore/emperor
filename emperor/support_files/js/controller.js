@@ -626,7 +626,7 @@ define([
         // with large datasets we can't save to svg nor to png
         'fold1': {
             'name': 'Save Image' + (isLargeDataset ?
-                    ' (disabled for large datasets)' : '') ,
+                    ' (not supported for large datasets)' : '') ,
             icon: 'file-picture-o',
             'items': {
               'saveImagePNG': {
