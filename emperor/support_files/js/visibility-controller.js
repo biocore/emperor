@@ -82,13 +82,10 @@ define([
    */
   VisibilityController.prototype._resetAttribute = function() {
     EmperorAttributeABC.prototype._resetAttribute.call(this);
-    var scope = this;
 
     _.each(this.decompViewDict, function(view) {
-      scope.setPlottableAttributes(view, true, view.decomp.plottable);
+      view.setVisibility(true);
       view.showEdgesForPlottables();
-
-      view.needsUpdate = true;
     });
   };
 
@@ -101,27 +98,7 @@ define([
    */
   VisibilityController.prototype.setPlottableAttributes =
       function(scope, visible, group) {
-    var idx, hasConfidenceIntervals;
-
-    hasConfidenceIntervals = scope.decomp.hasConfidenceIntervals();
-
-    _.each(group, function(plottable) {
-      idx = plottable.idx;
-      scope.markers[idx].visible = visible;
-
-      if (hasConfidenceIntervals) {
-        scope.ellipsoids[idx].visible = visible;
-      }
-    });
-
-    if (visible === true) {
-      scope.showEdgesForPlottables(group);
-    }
-    else {
-      scope.hideEdgesForPlottables(group);
-    }
-
-    scope.needsUpdate = true;
+    scope.setVisibility(visible, group);
   };
 
   return VisibilityController;

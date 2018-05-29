@@ -519,7 +519,7 @@ define([
    *
    */
   EmperorController.prototype._buildUI = function() {
-    var scope = this;
+    var scope = this, isLargeDataset = this.decViews.scatter.usesPointCloud;
 
     //FIXME: This only works for 1 scene plot view
     this.controllers.color = this.addTab(this.sceneViews[0].decViews,
@@ -530,8 +530,10 @@ define([
                                            OpacityViewController);
     this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
                                          ScaleViewController);
-    this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
-                                         ShapeController);
+    if (!isLargeDataset) {
+      this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
+                                           ShapeController);
+    }
     this.controllers.axes = this.addTab(this.sceneViews[0].decViews,
                                         AxesController);
     this.controllers.animations = this.addTab(this.sceneViews[0].decViews,
@@ -621,21 +623,25 @@ define([
           }
         },
         'sep1': '---------',
+        // With large datasets we can't save to SVG. The PNG file will not be
+        // high resolution.
         'fold1': {
             'name': 'Save Image',
             icon: 'file-picture-o',
             'items': {
               'saveImagePNG': {
-                name: 'PNG (high resolution)',
+                name: 'PNG' + (isLargeDataset ? '' : ' (high resolution)'),
                 callback: function(key, opts) {
                   scope.screenshot('png');
                 }
               },
               'saveImageSVG': {
-                name: 'SVG + labels',
+                name: 'SVG + labels' + (isLargeDataset ?
+                      ' (not supported for large datasets)' : '') ,
                 callback: function(key, opts) {
                   scope.screenshot('svg');
-                }
+                },
+                disabled: isLargeDataset
               }
             }
         }
@@ -673,13 +679,25 @@ define([
     type = type || 'png';
 
     if (type === 'png') {
-      var pngRenderer = new THREE.CanvasRenderer({antialias: true,
-                                                  preserveDrawingBuffer: true});
-      pngRenderer.autoClear = true;
-      pngRenderer.sortObjects = true;
-      pngRenderer.setSize(this.$plotSpace.width() * factor,
-                          this.$plotSpace.height() * factor);
-      pngRenderer.setPixelRatio(window.devicePixelRatio);
+      var pngRenderer;
+
+      // Point clouds can't be rendered by the CanvasRenderer, therefore we
+      // have to use the WebGLRenderer and can't increase the image size.
+      if (this.decViews.scatter.usesPointCloud) {
+        pngRenderer = this.sceneViews[0].renderer;
+      }
+      else {
+        pngRenderer = new THREE.CanvasRenderer({
+          antialias: true,
+          preserveDrawingBuffer: true
+        });
+
+        pngRenderer.autoClear = true;
+        pngRenderer.sortObjects = true;
+        pngRenderer.setSize(this.$plotSpace.width() * factor,
+                            this.$plotSpace.height() * factor);
+        pngRenderer.setPixelRatio(window.devicePixelRatio);
+      }
       pngRenderer.render(this.sceneViews[0].scene, this.sceneViews[0].camera);
 
       // toBlob is only available in some browsers, that's why we use

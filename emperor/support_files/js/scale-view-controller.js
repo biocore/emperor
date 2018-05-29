@@ -56,13 +56,7 @@ define([
    */
   ScaleViewController.prototype.setPlottableAttributes = function(scope, scale,
                                                                   group) {
-    var idx;
-
-    _.each(group, function(element) {
-      idx = element.idx;
-      scope.markers[idx].scale.set(scale, scale, scale);
-    });
-    scope.needsUpdate = true;
+    scope.setScale(scale, group);
   };
 
   /**
@@ -76,12 +70,7 @@ define([
    *
    */
   ScaleViewController.prototype.setAllPlottableAttributes = function(value) {
-    var dv = this.getView();
-
-    _.each(dv.markers, function(element) {
-      element.scale.set(value, value, value);
-    });
-    dv.needsUpdate = true;
+    this.getView().setScale(value);
   };
 
   /**

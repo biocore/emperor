@@ -112,6 +112,9 @@ define([
     this.light.position.set(1, 1, 1).normalize();
     this.camera.add(this.light);
 
+    this._raycaster = new THREE.Raycaster();
+    this._mouse = new THREE.Vector2();
+
     // add all the objects to the current scene
     this.addDecompositionsToScene();
 
@@ -152,9 +155,6 @@ define([
      */
     this.drawAxesWithColor('#FFFFFF');
     this.drawAxesLabelsWithColor('#FFFFFF');
-
-    this._raycaster = new THREE.Raycaster();
-    this._mouse = new THREE.Vector2();
 
     // initialize subscribers for event callbacks
     /**
@@ -290,6 +290,12 @@ define([
       if (this.decViews[decViewName].lines.left) {
         this.scene.add(this.decViews[decViewName].lines.left);
         this.scene.add(this.decViews[decViewName].lines.right);
+      }
+
+      // if a decomposition uses a point cloud change the default tolerance as
+      // it is otherwise too large and error-prone
+      if (this.decViews[decViewName].usesPointCloud) {
+        this._raycaster.params.Points.threshold = 0.01;
       }
     }
 
@@ -689,9 +695,11 @@ define([
       this.control.update();
     }
 
-    // only scatter types should be pointed towards the camera, for arrow types
-    // this will result in a very odd visual effect
-    if (this.decViews.scatter.decomp.isScatterType()) {
+    // Only scatter plots that are not using a point cloud should be pointed
+    // towards the camera. For arrow types and point clouds doing this will
+    // results in odd visual effects
+    if (!this.decViews.scatter.usesPointCloud &&
+        this.decViews.scatter.decomp.isScatterType()) {
       _.each(this.decViews.scatter.markers, function(element) {
         element.quaternion.copy(camera.quaternion);
       });
@@ -736,7 +744,21 @@ define([
 
     // Get first intersected item and call callback with it.
     if (intersects.length > 0) {
-      var intersect = intersects[0].object;
+      var intersect;
+
+      /*
+       * When the intersect object is a Points object, the raycasting method
+       * won't intersect individual mesh objects. Instead it intersects a point
+       * and we get the index of the point. This index can then be used to
+       * trace the original Plottable object.
+       */
+      if (intersects[0].object.isPoints) {
+        var index = intersects[0].index;
+        intersect = this.decViews.scatter.decomp.plottable[index];
+      }
+      else {
+        intersect = intersects[0].object;
+      }
 
       for (var i = 0; i < this._subscribers[eventType].length; i++) {
         // keep going if one of the callbacks fails

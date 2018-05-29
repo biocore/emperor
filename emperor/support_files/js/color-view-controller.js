@@ -250,10 +250,8 @@ define([
   ColorViewController.prototype._resetAttribute = function() {
     EmperorAttributeABC.prototype._resetAttribute.call(this);
 
-    var view = this.getView(), scope = this;
-
     _.each(this.decompViewDict, function(view) {
-      scope.setPlottableAttributes(view, 0xff0000, view.decomp.plottable);
+      view.setColor(0xff0000);
     });
   };
 
@@ -542,28 +540,7 @@ define([
    */
   ColorViewController.prototype.setPlottableAttributes =
   function(scope, color, group) {
-
-    var idx, hasConfidenceIntervals;
-
-    hasConfidenceIntervals = scope.decomp.hasConfidenceIntervals();
-
-    if (scope.decomp.isScatterType()) {
-      _.each(group, function(element) {
-        idx = element.idx;
-        scope.markers[idx].material.color = new THREE.Color(color);
-
-        if (hasConfidenceIntervals) {
-          scope.ellipsoids[idx].material.color = new THREE.Color(color);
-        }
-      });
-    }
-    else if (scope.decomp.isArrowType()) {
-      _.each(group, function(element) {
-        idx = element.idx;
-        scope.markers[idx].setColor(new THREE.Color(color));
-      });
-    }
-    scope.needsUpdate = true;
+    scope.setColor(color, group);
   };
 
   var DISCRETE = 'Discrete';

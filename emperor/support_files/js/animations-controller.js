@@ -486,6 +486,11 @@ define([
     decomp = this.getView().decomp;
     headers = decomp.md_headers;
 
+    // get the current visible dimensions
+    var x = view.visibleDimensions[0], y = view.visibleDimensions[1],
+        z = view.visibleDimensions[2];
+    var is2D = (z === null);
+
     gradient = this.$gradientSelect.val();
     trajectory = this.$trajectorySelect.val();
 
@@ -497,9 +502,12 @@ define([
       data[p.name] = p.metadata;
 
       // get the view's position, not the metadata's position
-      pos = view.markers[p.idx].position;
-      positions[p.name] = {'name': p.name, 'color': 0, 'x': pos.x,
-                           'y': pos.y, 'z': pos.z};
+      positions[p.name] = {
+        'name': p.name, 'color': 0,
+        'x': p.coordinates[x] * view.axesOrientation[0],
+        'y': p.coordinates[y] * view.axesOrientation[1],
+        'z': is2D ? 0 : (p.coordinates[z] * view.axesOrientation[2])
+      };
     }
 
     this.director = new AnimationDirector(headers, data, positions, gradient,
@@ -527,8 +535,7 @@ define([
 
     var view = this.getView(), tube, scope = this, color;
 
-    // FIXME: this is a bug when the shapes are not spheres
-    var radius = view.markers[0].geometry.parameters.radius;
+    var radius = view.getGeometryFactor();
     radius *= 0.45 * this.getRadius();
 
     view.tubes.forEach(function(tube) {

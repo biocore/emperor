@@ -16,12 +16,14 @@ define([
  *
  * @param {DecompositionModel} decomp a DecompositionModel object that will be
  * represented on screen.
+ * @param {Bool} asPointCloud Whether or not the underlying view is represented
+ * using a point cloud. This argument is exposed to facilitate testing.
  *
  * @return {DecompositionView}
  * @constructs DecompositionView
  *
  */
-function DecompositionView(decomp) {
+function DecompositionView(decomp, asPointCloud) {
   /**
    * The decomposition model that the view represents.
    * @type {DecompositionModel}
@@ -79,8 +81,22 @@ function DecompositionView(decomp) {
    */
   this.lines = {'left': null, 'right': null};
 
+  /**
+   * Whether or not the view relies on a PointCloud to display the data.
+   * @type {Bool}
+   */
+  Object.defineProperty(this, 'usesPointCloud', {
+    value: (this.decomp.length > 20000) || asPointCloud,
+    writable: false
+  });
+
   // setup this.markers and this.lines
-  this._initBaseView();
+  if (this.usesPointCloud) {
+    this._fastInit();
+  }
+  else {
+    this._initBaseView();
+  }
 
   /**
    * True when changes have occured that require re-rendering of the canvas
@@ -88,6 +104,18 @@ function DecompositionView(decomp) {
    */
   this.needsUpdate = true;
 }
+
+/**
+ * Calculate the appropriate size for a geometry based on the first dimension's
+ * range.
+ */
+DecompositionView.prototype.getGeometryFactor = function() {
+  // this is a heuristic tested on numerous plots since 2013, based off of
+  // the old implementation of emperor. We select the dimensions of all the
+  // geometries based on this factor.
+  return (this.decomp.dimensionRanges.max[0] -
+          this.decomp.dimensionRanges.min[0]) * 0.012;
+};
 
 /**
  *
@@ -101,8 +129,8 @@ DecompositionView.prototype._initBaseView = function() {
   var scope = this;
 
   // get the correctly sized geometry
-  var geometry = shapes.getGeometry('Sphere', this.decomp.dimensionRanges);
-  var radius = geometry.parameters.radius, hasConfidenceIntervals;
+  var radius = this.getGeometryFactor(), hasConfidenceIntervals;
+  var geometry = shapes.getGeometry('Sphere', radius);
 
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
@@ -151,7 +179,7 @@ DecompositionView.prototype._initBaseView = function() {
     });
   }
   else {
-    throw 'Unsupported decomposition type';
+    throw new Error('Unsupported decomposition type');
   }
 
   if (this.decomp.edges.length) {
@@ -177,6 +205,133 @@ DecompositionView.prototype._initBaseView = function() {
   }
 };
 
+DecompositionView.prototype._fastInit = function() {
+  if (this.decomp.hasConfidenceIntervals()) {
+    throw new Error('Ellipsoids are not supported in fast mode');
+  }
+  if (this.decomp.isArrowType()) {
+    throw new Error('Only scatter types are supported in fast mode');
+  }
+
+  var positions, colors, scales, opacities, visibilities, geometry, cloud;
+
+  var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
+      z = this.visibleDimensions[2];
+
+  /**
+   * In order to draw large numbers of samples we can't use full-blown
+   * geometries like spheres. Instead we will use shaders to draw each sample
+   * as a circle. Note that since these are programs that need to be compiled
+   * for the GPU, they need to be stored as strings.
+   *
+   * The "vertexShader" determines the location and size of each vertex in the
+   * geometry. And the "fragmentShader" determines the shape, opacity,
+   * visibility and color. In addition there's some logic to smooth the circles
+   * and add antialiasing.
+   *
+   * The source for the shaders was inspired and or modified from:
+   *
+   * https://www.desultoryquest.com/blog/drawing-anti-aliased-circular-points-using-opengl-slash-webgl/
+   * http://jsfiddle.net/callum/x7y72k1e/10/
+   * http://math.hws.edu/eck/cs424/s12/lab4/lab4-files/points.html
+   * https://stackoverflow.com/q/33695202/379593
+   *
+   */
+  var vertexShader = [
+    'attribute float scale;',
+
+    'attribute vec3 color;',
+    'attribute float opacity;',
+    'attribute float visible;',
+
+    'varying vec3 vColor;',
+    'varying float vOpacity;',
+    'varying float vVisible;',
+
+    'void main() {',
+      'vColor = color;',
+      'vOpacity = opacity;',
+      'vVisible = visible;',
+
+      'vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);',
+      'gl_Position = projectionMatrix * mvPosition; ',
+      'gl_PointSize = kSIZE * scale * (800.0 / length(mvPosition.xyz));',
+    '}'].join('\n');
+
+  var fragmentShader = [
+    'precision mediump float;',
+    'varying vec3 vColor;',
+    'varying float vOpacity;',
+    'varying float vVisible;',
+
+    'void main() {',
+      'if (vVisible > 0.0) {',
+        'vec2 cxy = 2.0 * gl_PointCoord - 1.0;',
+        'float delta = 0.0, alpha = 1.0, r = dot(cxy, cxy);',
+
+        // get rid of the frame around the points
+        'if(r > 1.1) discard;',
+
+        // antialiasing smoothing
+        'delta = fwidth(r);',
+        'alpha = 1.0 - smoothstep(1.0 - delta, 1.0 + delta, r);',
+
+        'gl_FragColor = vec4(vColor, vOpacity) * alpha;',
+      '}',
+      'else {',
+        'discard;',
+      '}',
+    '}'].join('\n');
+
+  positions = new Float32Array(this.decomp.length * 3);
+  colors = new Float32Array(this.decomp.length * 3);
+  scales = new Float32Array(this.decomp.length);
+  opacities = new Float32Array(this.decomp.length);
+  visibilities = new Float32Array(this.decomp.length);
+
+  var material = new THREE.ShaderMaterial({
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+    transparent: true
+  });
+
+  // we need to define a baseline size for markers so we can control the scale
+  material.defines.kSIZE = this.getGeometryFactor();
+
+  // needed for the shader's smoothstep and fwidth functions
+  material.extensions.derivatives = true;
+
+  geometry = new THREE.BufferGeometry();
+  geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.addAttribute('scale', new THREE.BufferAttribute(scales, 1));
+  geometry.addAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+  geometry.addAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+
+  cloud = new THREE.Points(geometry, material);
+
+  this.decomp.apply(function(plottable) {
+    geometry.attributes.position.setXYZ(plottable.idx,
+                                        plottable.coordinates[x],
+                                        plottable.coordinates[y],
+                                        plottable.coordinates[z]);
+
+    // set default to red, visible, full opacity and of scale 1
+    geometry.attributes.color.setXYZ(plottable.idx, 1, 0, 0);
+    geometry.attributes.visible.setX(plottable.idx, 1);
+    geometry.attributes.opacity.setX(plottable.idx, 1);
+    geometry.attributes.scale.setX(plottable.idx, 1);
+  });
+
+  geometry.attributes.position.needsUpdate = true;
+  geometry.attributes.color.needsUpdate = true;
+  geometry.attributes.visible.needsUpdate = true;
+  geometry.attributes.opacity.needsUpdate = true;
+  geometry.attributes.scale.needsUpdate = true;
+
+  this.markers.push(cloud);
+};
+
 /**
  *
  * Get the number of visible elements
@@ -186,9 +341,19 @@ DecompositionView.prototype._initBaseView = function() {
  */
 DecompositionView.prototype.getVisibleCount = function() {
   var visible = 0;
-  visible = _.reduce(this.markers, function(acc, marker) {
-    return acc + (marker.visible + 0);
-  }, 0);
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    for (var i = 0; i < cloud.geometry.attributes.visible.count; i++) {
+      visible += (cloud.geometry.attributes.visible.getX(i) + 0);
+    }
+  }
+  else {
+    visible = _.reduce(this.markers, function(acc, marker) {
+      return acc + (marker.visible + 0);
+    }, 0);
+  }
 
   return visible;
 };
@@ -210,10 +375,22 @@ DecompositionView.prototype.updatePositions = function() {
 
   // we need the original radius to scale confidence intervals (if they exist)
   if (hasConfidenceIntervals) {
-    radius = scope.ellipsoids[0].geometry.parameters.radius;
+    radius = this.getGeometryFactor();
   }
 
-  if (this.decomp.isScatterType()) {
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    this.decomp.apply(function(plottable) {
+      cloud.geometry.attributes.position.setXYZ(
+        plottable.idx,
+        plottable.coordinates[x] * scope.axesOrientation[0],
+        plottable.coordinates[y] * scope.axesOrientation[1],
+        (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+    });
+    cloud.geometry.attributes.position.needsUpdate = true;
+  }
+  else if (this.decomp.isScatterType()) {
     this.decomp.apply(function(plottable) {
       mesh = scope.markers[plottable.idx];
 
@@ -469,6 +646,189 @@ DecompositionView.prototype.showEdgesForPlottables = function(plottables) {
 
   this._redrawEdges(plottables);
 };
+
+/**
+ * Set the color for a group of plottables.
+ *
+ * @param {Object} color An object that can be interpreted as a color by the
+ * THREE.Color class. Can be either a string like '#ff0000' or a number like
+ * 0xff0000, or a CSS color name like 'red', etc.
+ * @param {Plottable[]} group An array of plottables for which the color should
+ * be set. If this object is not provided, all the plottables in the view will
+ * be have the color set.
+ */
+DecompositionView.prototype.setColor = function(color, group) {
+  var idx, hasConfidenceIntervals, scope = this;
+
+  group = group || this.decomp.plottable;
+  hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+    color = new THREE.Color(color);
+
+    group.forEach(function(plottable) {
+      cloud.geometry.attributes.color.setXYZ(plottable.idx,
+                                             color.r, color.g, color.b);
+    });
+    cloud.geometry.attributes.color.needsUpdate = true;
+  }
+  else if (this.decomp.isScatterType()) {
+    group.forEach(function(plottable) {
+      idx = plottable.idx;
+      scope.markers[idx].material.color = new THREE.Color(color);
+
+      if (hasConfidenceIntervals) {
+        scope.ellipsoids[idx].material.color = new THREE.Color(color);
+      }
+    });
+  }
+  else if (this.decomp.isArrowType()) {
+    group.forEach(function(plottable) {
+      scope.markers[plottable.idx].setColor(new THREE.Color(color));
+    });
+  }
+  this.needsUpdate = true;
+};
+
+/**
+ * Set the visibility for a group of plottables.
+ *
+ * @param {Bool} visible Whether or not the objects should be visible.
+ * @param {Plottable[]} group An array of plottables for which the visibility
+ * should be set. If this object is not provided, all the plottables in the
+ * view will be have the visibility set.
+ */
+DecompositionView.prototype.setVisibility = function(visible, group) {
+  var hasConfidenceIntervals, scope = this;
+
+  group = group || this.decomp.plottable;
+
+  hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    _.each(group, function(plottable) {
+      cloud.geometry.attributes.visible.setX(plottable.idx, visible * 1);
+    });
+    cloud.geometry.attributes.visible.needsUpdate = true;
+  }
+  else {
+    _.each(group, function(plottable) {
+      scope.markers[plottable.idx].visible = visible;
+
+      if (hasConfidenceIntervals) {
+        scope.ellipsoids[plottable.idx].visible = visible;
+      }
+    });
+  }
+
+  if (visible === true) {
+    this.showEdgesForPlottables(group);
+  }
+  else {
+    this.hideEdgesForPlottables(group);
+  }
+
+  this.needsUpdate = true;
+};
+
+/**
+ * Set the scale for a group of plottables.
+ *
+ * @param {Float} scale The scale to set for the objects, relative to the
+ * original size. Should be a positive and non-zero value.
+ * @param {Plottable[]} group An array of plottables for which the scale
+ * should be set. If this object is not provided, all the plottables in the
+ * view will be have the scale set.
+ */
+DecompositionView.prototype.setScale = function(scale, group) {
+  var scope = this;
+
+  if (this.decomp.isArrowType()) {
+    throw Error('Cannot change the scale of an arrow.');
+  }
+
+  group = group || this.decomp.plottable;
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    _.each(group, function(plottable) {
+      cloud.geometry.attributes.scale.setX(plottable.idx, scale);
+    });
+    cloud.geometry.attributes.scale.needsUpdate = true;
+  }
+  else {
+    _.each(group, function(element) {
+      scope.markers[element.idx].scale.set(scale, scale, scale);
+    });
+  }
+  this.needsUpdate = true;
+};
+
+/**
+ * Set the opacity for a group of plottables.
+ *
+ * @param {Float} opacity The opacity value (from 0 to 1) for the selected
+ * objects.
+ * @param {Plottable[]} group An array of plottables for which the opacity
+ * should be set. If this object is not provided, all the plottables in the
+ * view will be have the opacity set.
+ */
+DecompositionView.prototype.setOpacity = function(opacity, group) {
+  // webgl acts up with transparent objects, so we only set them to be
+  // explicitly transparent if the opacity is not at full
+  var transparent = opacity !== 1, funk, scope = this;
+
+  group = group || this.decomp.plottable;
+
+  if (this.usesPointCloud) {
+    var cloud = this.markers[0];
+
+    _.each(group, function(plottable) {
+      cloud.geometry.attributes.opacity.setX(plottable.idx, opacity);
+    });
+    cloud.geometry.attributes.opacity.needsUpdate = true;
+  }
+  else {
+    if (this.decomp.isScatterType()) {
+      funk = _changeMeshOpacity;
+    }
+    else if (this.decomp.isArrowType()) {
+      funk = _changeArrowOpacity;
+    }
+
+    _.each(group, function(plottable) {
+      funk(scope.markers[plottable.idx], opacity, transparent);
+    });
+  }
+  this.needsUpdate = true;
+};
+
+/**
+ * Helper function to change the opacity of an arrow object.
+ *
+ * @private
+ */
+function _changeArrowOpacity(arrow, value, transparent) {
+  arrow.line.material.transparent = transparent;
+  arrow.line.material.opacity = value;
+
+  arrow.cone.material.transparent = transparent;
+  arrow.cone.material.opacity = value;
+}
+
+/**
+ * Helper function to change the opacity of a mesh object.
+ *
+ * @private
+ */
+function _changeMeshOpacity(mesh, value, transparent) {
+  mesh.material.transparent = transparent;
+  mesh.material.opacity = value;
+}
 
   return DecompositionView;
 });
