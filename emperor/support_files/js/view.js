@@ -808,6 +808,24 @@ DecompositionView.prototype.setOpacity = function(opacity, group) {
 };
 
 /**
+ * Toggles the visibility of arrow labels
+ *
+ * @throws {Error} if this method is called on a scatter type.
+ */
+DecompositionView.prototype.toggleLabelVisibility = function() {
+  if (this.decomp.isScatterType()) {
+    throw new Error('Cannot hide labels of scatter types');
+  }
+  var scope = this;
+
+  this.decomp.apply(function(plottable) {
+    arrow = scope.markers[plottable.idx];
+    arrow.label.visible = Boolean(arrow.label.visible ^ true);
+  });
+  this.needsUpdate = true;
+};
+
+/**
  * Helper function to change the opacity of an arrow object.
  *
  * @private

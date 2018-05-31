@@ -580,6 +580,13 @@ define([
             });
           }
         },
+        'labels' : {
+          name: 'Toggle label visibility',
+          visible: scope.decViews.biplot !== undefined,
+          callback: function() {
+            scope.decViews.biplot.toggleLabelVisibility();
+          }
+        },
         'sep0': '----------------',
         'saveState': {
           name: 'Save current settings',
