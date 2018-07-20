@@ -59,25 +59,11 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     THREE.ArrowHelper.call(this, dir, origin, length, color, headLength,
                            headWidth);
 
-    // 16 is roughly the number of characters in "Axis 1 (XX.xx %)"
-    var pad, MIN = 16, paddedName = name;
-
     this.name = name;
     this.line.name = this.name;
     this.cone.name = this.name;
 
-    /*
-     * If the text's lenght is small it will be rendered as a blurry sprite by
-     * padding with spaces we ensure the length allows for a decent resolution.
-     */
-    if (this.name.length < MIN) {
-      pad = Math.round((MIN - this.name.length) / 2);
-
-      paddedName = paddedName.padStart(paddedName.length + pad);
-      paddedName = paddedName.padEnd(paddedName.length + pad);
-    }
-
-    this.label = makeLabel(this.cone.position.toArray(), paddedName, color);
+    this.label = makeLabel(this.cone.position.toArray(), this.name, color);
     this.add(this.label);
 
     return this;
@@ -319,6 +305,9 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
    * on the answer found
    * [here]{@link http://stackoverflow.com/a/14106703/379593}
    *
+   * The text is returned scaled to its size in pixels, hence you'll need to
+   * scale it down depending on the scene's dimensions.
+   *
    * @param {float[]} position The x, y, and z location of the label.
    * @param {string} text The text to be shown on screen.
    * @param {integer|string} Color Hexadecimal base that represents the color
@@ -328,12 +317,8 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
    * @function makeLabel
    **/
   function makeLabel(position, text, color) {
-
     // the font size determines the resolution relative to the sprite object
-    var fontSize = 30, canvas, context, measure, scalingFactor = 0.5;
-
-    // 1/16 is the ideal I tested, equivalent to the string 'Axis 1 (16.12 %)'
-    var ideal = 1 / 16, observed = 1 / text.length;
+    var fontSize = 32, canvas, context, measure;
 
     canvas = document.createElement('canvas');
     context = canvas.getContext('2d');
@@ -367,22 +352,9 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
         color: color
     });
 
-    // We need to rescale the sprite's size to make it look like the ideal case
-    // the 1.3 and 1.4 are values that I tested by hand and "looked good"
-    if (observed > ideal) {
-      // fewer characters than the "ideal"
-      scalingFactor = (ideal / observed) * 1.3;
-    }
-    else if (observed < ideal) {
-      // more characters than the "ideal"
-      scalingFactor = (observed / ideal) * 1.4;
-    }
-
     var sp = new THREE.Sprite(mat);
     sp.position.set(position[0], position[1], position[2]);
-
-    sp.scale.set(scalingFactor, (canvas.height / canvas.width) * scalingFactor,
-                 1);
+    sp.scale.set(canvas.width, canvas.height, 1);
 
     // add an extra attribute so we can render this properly when we use
     // SVGRenderer
