@@ -309,6 +309,8 @@ requirejs([
         equal(label.material.color.r, 0);
         equal(label.material.color.g, 1);
         equal(label.material.color.b, 0.058823529411764705);
+
+        deepEqual(label.scale.toArray(), [0.195158784, 0.024394848, 1]);
       }
 
       // release the control back to the main page
@@ -355,6 +357,16 @@ requirejs([
       spv.control.dispose();
     });
 
+    test('Test getScalingConstant', function(assert) {
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+
+      assert.equal(spv.getScalingConstant(), 0.000762339);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
 
     /**
      *
@@ -433,12 +445,23 @@ requirejs([
       metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
       ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
 
-      decomp = new DecompositionModel(data, md_headers, metadata);
+      decomp = new DecompositionModel(data, md_headers, metadata, 'arrow');
       dv = new DecompositionView(decomp);
+
+      // the label is not scaled upon creation
+      deepEqual(dv.markers[0].label.scale.toArray(), [128, 32, 1]);
+      deepEqual(dv.markers[1].label.scale.toArray(), [128, 32, 1]);
 
       this.sharedDecompositionViewDict.pleep = dv;
       spv.addDecompositionsToScene();
+
       equal(spv.scene.children.length, 13);
+
+      // after the labels are added to the scene, their scales change
+      deepEqual(dv.markers[0].label.scale.toArray(),
+                [0.097579392, 0.024394848, 1]);
+      deepEqual(dv.markers[1].label.scale.toArray(),
+                [0.097579392, 0.024394848, 1]);
 
       // release the control back to the main page
       spv.control.dispose();

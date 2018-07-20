@@ -283,6 +283,7 @@ define([
 
       for (j = 0; j < this.decViews[decViewName].markers.length; j++) {
         marker = this.decViews[decViewName].markers[j];
+        this.scene.add(marker);
 
         // only arrows include text as part of their markers
         if (isArrowType) {
@@ -322,7 +323,7 @@ define([
   ScenePlotView3D.prototype.getScalingConstant = function() {
     return (this.dimensionRanges.max[0] -
             this.dimensionRanges.min[0]) * 0.001;
-  }
+  };
 
   /**
    *

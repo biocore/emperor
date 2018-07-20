@@ -90,7 +90,7 @@ requirejs(['draw', 'three'], function(draw, THREE) {
 
       deepEqual(label.position.toArray(), [0, 0, 0]);
       equal(label.text, 'ab');
-      deepEqual(label.scale.toArray(), [0.1625, 0.08125, 1]);
+      deepEqual(label.scale.toArray(), [64, 32, 1]);
     });
 
     /**
@@ -109,8 +109,7 @@ requirejs(['draw', 'three'], function(draw, THREE) {
 
       deepEqual(label.position.toArray(), [0, 0, 0]);
       equal(label.text, 'DaysSinceExperimentStart');
-      deepEqual(label.scale.toArray(),
-                [0.9333333333333332, 0.05833333333333333, 1]);
+      deepEqual(label.scale.toArray(), [512, 32, 1]);
     });
 
     /**
@@ -130,7 +129,7 @@ requirejs(['draw', 'three'], function(draw, THREE) {
       deepEqual(label.position.toArray(), [0, 0, 0]);
       equal(label.text, 'Axis 1 (35.17 %)');
 
-      deepEqual(label.scale.toArray(), [0.5, 0.0625, 1]);
+      deepEqual(label.scale.toArray(), [256, 32, 1]);
 
     });
 
