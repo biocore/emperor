@@ -270,7 +270,7 @@ define([
    *
    */
   ScenePlotView3D.prototype.addDecompositionsToScene = function() {
-    var j;
+    var j, marker, scaling = this.getScalingConstant();
 
     // Note that the internal logic of the THREE.Scene object prevents the
     // objects from being re-added so we can simply iterate over all the
@@ -279,8 +279,16 @@ define([
     // Add all the meshes to the scene, iterate through all keys in
     // decomposition view dictionary
     for (var decViewName in this.decViews) {
+      var isArrowType = this.decViews[decViewName].decomp.isArrowType();
+
       for (j = 0; j < this.decViews[decViewName].markers.length; j++) {
-        this.scene.add(this.decViews[decViewName].markers[j]);
+        marker = this.decViews[decViewName].markers[j];
+
+        // only arrows include text as part of their markers
+        if (isArrowType) {
+          marker.label.scale.set(marker.label.scale.x * scaling,
+                                 marker.label.scale.y * scaling, 1);
+        }
       }
       for (j = 0; j < this.decViews[decViewName].ellipsoids.length; j++) {
         this.scene.add(this.decViews[decViewName].ellipsoids[j]);
@@ -301,6 +309,20 @@ define([
 
     this.needsUpdate = true;
   };
+
+  /**
+   * Calculate a scaling constant for the text in the scene.
+   *
+   * It is important that this factor is calculated based on all the elements
+   * in a scene, and that it is the same for all the text elements in the
+   * scene. Otherwise, some text will be bigger than other.
+   *
+   * @return {Number} The scaling factor to use for labels.
+   */
+  ScenePlotView3D.prototype.getScalingConstant = function() {
+    return (this.dimensionRanges.max[0] -
+            this.dimensionRanges.min[0]) * 0.001;
+  }
 
   /**
    *
@@ -489,7 +511,8 @@ define([
    *
    */
   ScenePlotView3D.prototype.drawAxesLabelsWithColor = function(color) {
-    var scope = this, axisLabel, decomp, firstKey, text;
+    var scope = this, axisLabel, decomp, firstKey, text, scaling;
+    scaling = this.getScalingConstant();
 
     // the labels are only removed if the color is null
     this.removeAxesLabels();
@@ -519,6 +542,8 @@ define([
       }
 
       axisLabel = makeLabel(end, text, color);
+      axisLabel.scale.set(axisLabel.scale.x * scaling,
+                          axisLabel.scale.y * scaling, 1);
       axisLabel.name = scope._axisLabelPrefix + index;
 
       scope.scene.add(axisLabel);
