@@ -326,6 +326,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     // set the font size so we can measure the width
     context.font = fontSize + 'px Arial';
     measure = context.measureText(text);
+    console.log('This is the measure: ', measure.width);
 
     // make the dimensions a power of 2 (for use in THREE.js)
     canvas.width = THREE.Math.nextPowerOfTwo(measure.width);
