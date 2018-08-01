@@ -318,7 +318,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
    **/
   function makeLabel(position, text, color) {
     // the font size determines the resolution relative to the sprite object
-    var fontSize = 32, canvas, context, measure;
+    var fontSize = 30, canvas, context, measure;
 
     canvas = document.createElement('canvas');
     context = canvas.getContext('2d');
