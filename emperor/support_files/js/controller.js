@@ -90,6 +90,14 @@ define([
     }
 
     /**
+     * Keep track of whether or not the biplot labels should be hidden.
+     *
+     * @type {Bool}
+     * @private
+     */
+    this._hideBiplotLabels = false;
+
+    /**
      * List of the scene plots views being rendered.
      * @type {ScenePlotView3D[]}
      */
@@ -584,6 +592,7 @@ define([
           name: 'Toggle label visibility',
           visible: scope.decViews.biplot !== undefined,
           callback: function() {
+            scope._hideBiplotLabels = Boolean(scope._hideBiplotLabels ^ true);
             scope.decViews.biplot.toggleLabelVisibility();
           }
         },
@@ -798,12 +807,14 @@ define([
    * key as the controllers object.
    *
    */
-   EmperorController.prototype.saveConfig = function() {
+  EmperorController.prototype.saveConfig = function() {
     var saveinfo = {};
     // Assuming single sceneview for now
     sceneview = this.sceneViews[0];
     saveinfo.cameraPosition = sceneview.camera.position;
     saveinfo.cameraQuaternion = sceneview.camera.quaternion;
+    saveinfo.hideBiplotLabels = this._hideBiplotLabels;
+
     // Save settings for each controller in the view
      _.each(this.controllers, function(controller, index) {
       if (controller !== undefined) {
@@ -839,6 +850,25 @@ define([
                                       json.cameraQuaternion._y,
                                       json.cameraQuaternion._z,
                                       json.cameraQuaternion._w);
+    }
+    if (json.hideBiplotLabels !== undefined) {
+      /*
+       * The controller only needs to toggle the visibility if the saved state
+       * is different from the current state.
+       *
+       * saved | current || result
+       * =========================
+       * false | false   || no-op
+       * false | true    || toggle
+       * true  | false   || toggle
+       * true  | true    || no-op
+       *
+       * The table above represents a logical XOR.
+       */
+      if (json.hideBiplotLabels ^ this._hideBiplotLabels) {
+        this.decViews.biplot.toggleLabelVisibility();
+      }
+      this._hideBiplotLabels = json.hideBiplotLabels;
     }
 
     //must call updates to reset for camera move
