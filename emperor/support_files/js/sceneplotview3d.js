@@ -543,9 +543,6 @@ define([
       }
 
       axisLabel = makeLabel(end, text, color);
-      console.log("'" + axisLabel.text + "'");
-      console.log('X: ', axisLabel.scale.x, scaling);
-      console.log('Y: ', axisLabel.scale.y, scaling);
       axisLabel.scale.set(axisLabel.scale.x * scaling,
                           axisLabel.scale.y * scaling, 1);
       axisLabel.name = scope._axisLabelPrefix + index;

@@ -308,6 +308,9 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
    * The text is returned scaled to its size in pixels, hence you'll need to
    * scale it down depending on the scene's dimensions.
    *
+   * Warning: The text sizes vary slightly depending on the browser and OS you
+   * use. This is specially important for testing.
+   *
    * @param {float[]} position The x, y, and z location of the label.
    * @param {string} text The text to be shown on screen.
    * @param {integer|string} Color Hexadecimal base that represents the color
@@ -318,7 +321,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
    **/
   function makeLabel(position, text, color) {
     // the font size determines the resolution relative to the sprite object
-    var fontSize = 30, canvas, context, measure;
+    var fontSize = 32, canvas, context, measure;
 
     canvas = document.createElement('canvas');
     context = canvas.getContext('2d');
@@ -326,7 +329,6 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     // set the font size so we can measure the width
     context.font = fontSize + 'px Arial';
     measure = context.measureText(text);
-    console.log('This is the measure: ', measure.width);
 
     // make the dimensions a power of 2 (for use in THREE.js)
     canvas.width = THREE.Math.nextPowerOfTwo(measure.width);

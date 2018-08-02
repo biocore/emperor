@@ -20,7 +20,7 @@ requirejs([
         var div = $('<div id="fooligans"></div>');
         div.appendTo(document.body);
 
-        var data = {name: 'pcoa',
+        var data = {name: 'PCOA',
                     sample_ids: ['PC.636', 'PC.635'],
                     coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
                                    0.176070, 0.072969, -0.229889, -0.046599],
@@ -310,7 +310,7 @@ requirejs([
         equal(label.material.color.g, 1);
         equal(label.material.color.b, 0.058823529411764705);
 
-        deepEqual(label.scale.toArray(), [0.195158784, 0.024394848, 1]);
+        deepEqual(label.scale.toArray(), [0.390317568, 0.024394848, 1]);
       }
 
       // release the control back to the main page
@@ -431,7 +431,7 @@ requirejs([
 
       equal(spv.scene.children.length, 11);
 
-      var data = {name: 'pcoa',
+      var data = {name: 'PCOA',
                   sample_ids: ['PC.636', 'PC.635'],
                   coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
                                  0.176070, 0.072969, -0.229889, -0.046599],
