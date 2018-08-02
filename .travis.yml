@@ -1,12 +1,11 @@
 language: python
 python:
   - "2.7"
-  - "3.4"
+  - "3.5"
+  - "3.6"
 env:
   - NUMPY_VERSION=""  WITH_COVERAGE=1 # environment to test with the latest version of NumPy
-  # test only with the latest stable releases of numpy i.e. 1.9.x and 1.10.x
-  - NUMPY_VERSION="<1.10"
-  - NUMPY_VERSION="<1.11"
+  - NUMPY_VERSION="<1.13"
 before_install:
   - phantomjs --version
   - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
@@ -16,7 +15,7 @@ before_install:
   # Update conda itself
   - conda update --yes conda
 install:
-  - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib openpyxl=1.8.2 pandas nose flake8 pep8 ipython-notebook
+  - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas nose flake8 pep8 jupyter
   - source activate env_name
   - pip install https://github.com/google/closure-linter/archive/master.zip
   - pip install 'sphinx<1.6' sphinx-bootstrap-theme coverage coveralls

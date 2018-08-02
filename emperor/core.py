@@ -642,7 +642,7 @@ class Emperor(object):
 
         if self.ordination.features is not None:
             bi_coords = self.ordination.features.values[:, :dims]
-            bi_coords /= np.max(np.abs(bi_coords))
+            bi_coords = bi_coords / np.max(np.abs(bi_coords))
             bi_coords = bi_coords.tolist()
             bi_ids = self.ordination.features.index.values.tolist()
 
