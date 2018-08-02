@@ -87,7 +87,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
   /**
    *
-   * Check for ray casting with the line and cone of the arrow
+   * Check for ray casting with arrow's cone.
    *
    * This class may need to disappear if THREE.ArrowHelper implements the
    * raycast method, for more information see the [online documentation]
@@ -95,9 +95,12 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
    *
    */
   EmperorArrowHelper.prototype.raycast = function(raycaster, intersects) {
-      // don't raycast the label since that one is self-explanatory
-      this.line.raycast(raycaster, intersects);
-      this.cone.raycast(raycaster, intersects);
+    // Two considerations:
+    // * Don't raycast the label since that one is self-explanatory
+    // * Don't raycast to the line as it adds a lot of noise to the raycaster.
+    //   If raycasting is enabled for lines, this will result in incorrect
+    //   intersects showing as the closest to the ray i.e. wrong labels.
+    this.cone.raycast(raycaster, intersects);
   };
 
   /**
