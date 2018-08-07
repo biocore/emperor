@@ -849,7 +849,6 @@ define([
    *
    */
   ScenePlotView3D.prototype.recenterCamera = function() {
-    this.control.update();
     this.camera.rotation.set(0, 0, 0);
     this.camera.updateProjectionMatrix();
 
@@ -858,6 +857,11 @@ define([
 
     // 5 is inspired by the old emperor.js and by the init method of this class
     this.camera.position.set(0, 0, max * 5);
+
+    // after all changes are made, reset the control
+    this.control.reset();
+    this.control.update();
+
     this.needsUpdate = true;
   };
 

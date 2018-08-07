@@ -690,7 +690,7 @@ requirejs([
      * Test the recenterCamera method for ScenePlotView3D
      *
      */
-    test('Test recenterCamera', function() {
+    test('Test recenterCamera', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true}), max;
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
@@ -706,12 +706,18 @@ requirejs([
 
       spv.recenterCamera();
 
-      equal(spv.camera.rotation.x, 0);
-      equal(spv.camera.rotation.y, 0);
-      equal(spv.camera.rotation.z, 0);
+      // for some odd reason orbit controls makes the rotation close to zero
+      // but not actually zero and there's no "close to zero" method in Qunit
+      function closeToZero(x) {
+        x = Math.abs(x);
+        return x >= 0 && x < 0.0000001;
+      }
+      assert.ok(closeToZero(spv.camera.rotation.x));
+      assert.ok(closeToZero(spv.camera.rotation.y));
+      assert.ok(closeToZero(spv.camera.rotation.z));
 
-      equal(spv.camera.position.x, 0);
-      equal(spv.camera.position.y, 0);
+      assert.ok(closeToZero(spv.camera.position.x));
+      assert.ok(closeToZero(spv.camera.position.y));
       equal(spv.camera.position.z, max * 5);
 
       spv.control.dispose();
