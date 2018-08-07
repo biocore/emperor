@@ -120,14 +120,14 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      *
      */
     test('Test makeLabel scales right', function(assert) {
-      var label = makeLabel([0, 0, 0], 'Axis 1 (35.17 %)', 0xFFFF00);
+      var label = makeLabel([0, 0, 0], 'PC1 (35.17 %)', 0xFFFF00);
 
       equal(label.material.color.r, 1);
       equal(label.material.color.g, 1);
       equal(label.material.color.b, 0);
 
       deepEqual(label.position.toArray(), [0, 0, 0]);
-      equal(label.text, 'Axis 1 (35.17 %)');
+      equal(label.text, 'PC1 (35.17 %)');
 
       deepEqual(label.scale.toArray(), [256, 32, 1]);
 
