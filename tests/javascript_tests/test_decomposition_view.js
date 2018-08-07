@@ -390,6 +390,33 @@ requirejs([
       deepEqual(dv.axesOrientation, [1, -1, 1]);
     });
 
+    test('Test toggling label visibility errors', function(assert) {
+      var dv = new DecompositionView(this.decomp);
+
+      throws(
+        function() {
+          dv.toggleLabelVisibility();
+        },
+        Error, 'Scatter types cannot toggle label visibility'
+      );
+    });
+
+    test('Test toggling label visibility', function(assert) {
+      this.decomp.type = 'arrow';
+      var dv = new DecompositionView(this.decomp);
+      assert.equal(dv.markers[0].label.visible, true);
+      assert.equal(dv.markers[1].label.visible, true);
+
+      dv.toggleLabelVisibility();
+
+      assert.equal(dv.markers[0].label.visible, false);
+      assert.equal(dv.markers[1].label.visible, false);
+
+      dv.toggleLabelVisibility();
+
+      assert.equal(dv.markers[0].label.visible, true);
+      assert.equal(dv.markers[1].label.visible, true);
+    });
 
     /**
      *
