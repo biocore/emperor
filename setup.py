@@ -9,8 +9,7 @@
 
 import sys
 
-from distutils.core import setup
-from glob import glob
+from setuptools import setup, find_packages
 
 __version__ = "1.0.0beta17"
 __maintainer__ = "Emperor development team"
@@ -24,7 +23,8 @@ classes = """
     Topic :: Software Development :: User Interfaces
     Programming Language :: Python
     Programming Language :: Python :: 2.7
-    Programming Language :: Python :: 3.4
+    Programming Language :: Python :: 3.5
+    Programming Language :: Python :: 3.6
     Programming Language :: Python :: Implementation :: CPython
     Operating System :: OS Independent
     Operating System :: POSIX
@@ -33,12 +33,8 @@ classes = """
 
 classifiers = [s.strip() for s in classes.split('\n') if s]
 
-long_description = """Emperor: a tool for visualizing high-throughput microbial community data
-
-EMPeror: a tool for visualizing high-throughput microbial community data.
-Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.
-Gigascience. 2013 Nov 26;2(1):16.
-"""
+with open('README.md') as f:
+    long_description = f.read()
 
 skbio_2 = "scikit-bio >= 0.4.1, < 0.5.0"
 skbio_3 = "scikit-bio >= 0.4.1"
@@ -63,8 +59,8 @@ setup(
     maintainer=__maintainer__,
     maintainer_email=__email__,
     url='http://github.com/biocore/emperor',
-    packages=['emperor', 'emperor.qiime_backports'],
-    scripts=glob('scripts/*py'),
+    packages=find_packages(),
+    scripts=['scripts/make_emperor.py'],
     package_data={
         'emperor': ['support_files/vendor/js/three.js-plugins/*.js',
                     'support_files/vendor/js/*.js',
@@ -84,5 +80,6 @@ setup(
     install_requires=base,
     extras_require={'doc': doc, 'test': test, 'all': all_deps},
     long_description=long_description,
+    long_description_content_type='text/markdown',
     license='BSD-3-Clause',
     classifiers=classifiers)

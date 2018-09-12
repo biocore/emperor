@@ -11,4 +11,10 @@ Before contributing code to Emperor, please familiarize yourself with the [contr
 
 ## Usage
 
-You can start using Emperor through [QIIME2](https://qiime2.org)'s [interfaces](https://docs.qiime2.org/2.0.6/interfaces/) (the command line interface or the graphical user interface), or alternatively using the Python interface (compatible with the Jupyter notebook, see [this example](http://nbviewer.jupyter.org/github/biocore/emperor/blob/new-api/examples/keyboard.ipynb)). For more detalis, refer to our [online documentation](http://emperor.microbio.me/uno/).
+You can start using Emperor through [QIIME2](https://qiime2.org)'s [interfaces](https://docs.qiime2.org/2018.8/interfaces/) (the command line interface or the graphical user interface), or alternatively using the Python interface (compatible with the Jupyter notebook, see [this example](http://nbviewer.jupyter.org/github/biocore/emperor/blob/new-api/examples/keyboard.ipynb)). For more detalis, refer to our [online documentation](http://emperor.microbio.me/uno/).
+
+## Publications
+
+- [EMPeror: a tool for visualizing high-throughput microbial community data](https://www.ncbi.nlm.nih.gov/pubmed/24280061). GigaScience, 2013.
+
+- [Bringing the Dynamic Microbiome to Life with Animations](https://www.ncbi.nlm.nih.gov/pubmed/28081445). Cell Host & Microbe, 2016.
