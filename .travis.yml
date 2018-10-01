@@ -5,7 +5,7 @@ python:
   - "3.6"
   - "3.7"
 env:
-  - NUMPY_VERSION=""  WITH_COVERAGE=1 # environment to test with the latest version of NumPy
+  - NUMPY_VERSION=""  # environment to test with the latest version of NumPy
   - NUMPY_VERSION="<1.13"
 before_install:
   - phantomjs --version
@@ -16,22 +16,19 @@ before_install:
   # Update conda itself
   - conda update --yes conda
 install:
-  - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas nose flake8 pep8 jupyter
-  - source activate env_name
+  - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage coveralls
+  - source activate travis
   - pip install https://github.com/google/closure-linter/archive/master.zip
-  - pip install 'sphinx<1.6' sphinx-bootstrap-theme coverage coveralls
+  - pip install 'sphinx<1.6' sphinx-bootstrap-theme
   # install lockfile before to prevent a failure in travis
-  - pip install 'lockfile>=0.10.2'
   - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
   # we can only run gjslint in a python 2.7.x environment
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'; fi
-  # execute the full test suite
-  - python tests/all_tests.py
   # we just check coverage in the latest version of NumPy
-  - if [ ${WITH_COVERAGE} ]; then nosetests emperor --with-coverage --cover-package=emperor --cover-inclusive tests; fi
+  - coverage run tests/all_tests.py; coverage report
   - make -C doc html
 after_success:
   - coveralls

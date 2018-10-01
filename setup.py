@@ -42,7 +42,7 @@ skbio_3 = "scikit-bio >= 0.4.1"
 base = ["numpy >= 1.7", "scipy >= 0.17.0", "click", "pandas",
         skbio_2, "jinja2 >= 2.9", "future"]
 doc = ["Sphinx < 1.6", "sphinx-bootstrap-theme"]
-test = ["nose >= 0.10.1", "pep8", "flake8"]
+test = ["pep8", "flake8"]
 all_deps = base + doc + test
 
 # prevent python2 from trying to install skbio >= 0.5.0 (which only works in
