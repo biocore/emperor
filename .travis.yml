@@ -12,7 +12,6 @@ env:
   - NUMPY_VERSION=""  # environment to test with the latest version of NumPy
   - NUMPY_VERSION="<1.13"
 before_install:
-  - phantomjs --version
   - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
@@ -22,9 +21,8 @@ before_install:
 install:
   - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage
   - source activate travis
-  - pip install https://github.com/google/closure-linter/archive/master.zip
-  - pip install 'sphinx<1.6' sphinx-bootstrap-theme coveralls
-  # install lockfile before to prevent a failure in travis
+  - conda install -c conda-forge phantomjs
+  - pip install https://github.com/google/closure-linter/archive/master.zip 'sphinx<1.6' sphinx-bootstrap-theme coveralls
   - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
 script:
