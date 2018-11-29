@@ -67,7 +67,7 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
 
     test_dir = abspath(dirname(__file__))
 
-    unittest_good_pattern = re.compile(b'OK\s*$')
+    unittest_good_pattern = re.compile(r'OK\s*$')
     application_not_found_pattern = re.compile(b'ApplicationNotFoundError')
     python_name = 'python'
     bad_tests = []
@@ -95,7 +95,7 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
             command = '%s %s -v' % (python_name, unittest_name)
             stdout, stderr, return_value = console(command)
             print(stderr.decode("utf-8"))
-            if not unittest_good_pattern.search(stderr):
+            if not unittest_good_pattern.search(stderr.decode("utf-8")):
                 if application_not_found_pattern.search(stderr):
                     missing_application_tests.append(unittest_name)
                 else:
