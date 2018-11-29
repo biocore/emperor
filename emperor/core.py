@@ -707,10 +707,9 @@ class Emperor(object):
 
             mf = pd.concat(mfs)
 
-        headers = [str(c) for c in [index_name] + mf.columns.tolist()]
-        metadata = mf.apply(lambda x: [str(x.name)] +
-                            x.astype('str').tolist(),
-                            axis=1).values.tolist()
+        # create a list of lists representation for the entire dataframe
+        headers = [index_name] + mf.columns.astype(str).tolist()
+        metadata = mf.reset_index().astype(str).values.tolist()
         return headers, metadata
 
     def _base_data_checks(self, category, data, d_type):
