@@ -1,13 +1,10 @@
 language: python
-matrix:
-  include:
-    - python: 2.7
-    - python: 3.4
-    - python: 3.5
-    - python: 3.6
-    - python: 3.7
-      dist: xenial
-      sudo: true
+python:
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
+  - 3.7
 env:
   - NUMPY_VERSION=""  # environment to test with the latest version of NumPy
   - NUMPY_VERSION="<1.13"
@@ -21,7 +18,7 @@ before_install:
 install:
   - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage
   - source activate travis
-  - conda install -c conda-forge phantomjs
+  - conda install -c conda-forge phantomjs --yes
   - pip install https://github.com/google/closure-linter/archive/master.zip 'sphinx<1.6' sphinx-bootstrap-theme coveralls
   - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
