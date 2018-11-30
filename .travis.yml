@@ -4,17 +4,36 @@ python:
   - 3.4
   - 3.5
   - 3.6
-  - 3.7
 env:
   - NUMPY_VERSION=""  # environment to test with the latest version of NumPy
   - NUMPY_VERSION="<1.13"
+
+matrix:
+  include:
+    - python: 3.7
+      dist: xenial
+      sudo: true
+      env: NUMPY_VERSION=""
+    - python: 3.7
+      dist: xenial
+      sudo: true
+      env: NUMPY_VERSION="<1.13"
+  exclude:
+      # for older python versions only test the latest versions of NumPy
+      - python: 2.7
+        env: NUMPY_VERSION="<1.13"
+      - python: 3.4
+        env: NUMPY_VERSION="<1.13"
+      - python: 3.5
+        env: NUMPY_VERSION="<1.13"
+
 before_install:
-  - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
+  - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh && chmod +x miniconda.sh
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda2/bin:$PATH
   # Update conda itself
   - conda update --yes conda
+
 install:
   - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage
   - source activate travis
@@ -22,6 +41,7 @@ install:
   - pip install https://github.com/google/closure-linter/archive/master.zip 'sphinx<1.6' sphinx-bootstrap-theme coveralls
   - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
+
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
   # we can only run gjslint in a python 2.7.x environment
