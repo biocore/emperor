@@ -73,6 +73,10 @@ class Emperor(object):
         DataFrame object with the metadata associated to the samples in the
         ``ordination`` object, should have an index set and it should match the
         identifiers in the ``ordination`` object.
+    feature_mapping_file: pd.DataFrame, optional
+        DataFrame object with the metadata associated to the features in the
+        ``ordination`` object, should have an index set and it should match the
+        identifiers in the ``ordination.features`` object.
     dimensions: int, optional
         Number of dimensions to keep from the ordination data, defaults to 5.
         Be aware that this value will determine the number of dimensions for

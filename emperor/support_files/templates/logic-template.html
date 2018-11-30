@@ -4,7 +4,11 @@
 </div>
 
 <script type="text/javascript">
-requirejs.config({
+// When running in the Jupyter notebook we've encountered version conflicts
+// with some dependencies. So instead of polluting the global require context,
+// we define a new context.
+var emperorRequire = require.config({
+'context': 'emperor',
 // the left side is the module name, and the right side is the path
 // relative to the baseUrl attribute, do NOT include the .js extension
 'paths': {
@@ -94,7 +98,7 @@ requirejs.config({
 }
 });
 
-requirejs(
+emperorRequire(
 ["jquery", "model", "controller"],
 function($, model, EmperorController) {
   var DecompositionModel = model.DecompositionModel;

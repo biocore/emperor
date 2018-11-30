@@ -584,7 +584,7 @@ define([
     {id: 'Spectral', name: 'Spectral', type: DIVERGING},
     {id: 'RdBu', name: 'Red-Blue', type: DIVERGING},
     {id: 'RdYlGn', name: 'Red-Yellow-Green', type: DIVERGING},
-    {id: 'RdYlB', name: 'Red-Yellow-Blue', type: DIVERGING},
+    {id: 'RdYlBu', name: 'Red-Yellow-Blue', type: DIVERGING},
     {id: 'RdGy', name: 'Red-Grey', type: DIVERGING},
     {id: 'PiYG', name: 'Pink-Yellow-Green', type: DIVERGING},
     {id: 'BrBG', name: 'Brown-Blue-Green', type: DIVERGING},
