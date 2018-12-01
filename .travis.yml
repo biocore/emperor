@@ -9,6 +9,8 @@ env:
   - NUMPY_VERSION="<1.13"
 
 matrix:
+  # support for python 3.7 is rather awkward via Travis CI
+  # https://github.com/travis-ci/travis-ci/issues/9815
   include:
     - python: 3.7
       dist: xenial
@@ -35,7 +37,7 @@ before_install:
   - conda update --yes conda
 
 install:
-  - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage
+  - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage 'scikit-learn >= 0.19.1'
   - source activate travis
   - conda install -c conda-forge phantomjs --yes
   - pip install https://github.com/google/closure-linter/archive/master.zip 'sphinx<1.6' sphinx-bootstrap-theme coveralls
