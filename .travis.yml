@@ -1,9 +1,9 @@
 language: python
 python:
   - 2.7
-  - 3.4
   - 3.5
   - 3.6
+  # also includes 3.7 (see below)
 env:
   - NUMPY_VERSION=""  # environment to test with the latest version of NumPy
   - NUMPY_VERSION="<1.13"
@@ -37,7 +37,7 @@ before_install:
   - conda update --yes conda
 
 install:
-  - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage pip
+  - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage pip cython
   - source activate travis
   - conda install -c conda-forge phantomjs --yes
   - pip install https://github.com/google/closure-linter/archive/master.zip 'sphinx<1.6' sphinx-bootstrap-theme coveralls 'scikit-learn>=0.19.1' --no-binary scikit-learn
