@@ -1,36 +1,57 @@
 language: python
 python:
-  - "2.7"
-  - "3.5"
-  - "3.6"
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
+  # also includes 3.7 (see below)
 env:
-  - NUMPY_VERSION=""  WITH_COVERAGE=1 # environment to test with the latest version of NumPy
+  - NUMPY_VERSION=""  # environment to test with the latest version of NumPy
   - NUMPY_VERSION="<1.13"
+
+matrix:
+  # support for python 3.7 is rather awkward via Travis CI
+  # https://github.com/travis-ci/travis-ci/issues/9815
+  include:
+    - python: 3.7
+      dist: xenial
+      sudo: true
+      env: NUMPY_VERSION=""
+    - python: 3.7
+      dist: xenial
+      sudo: true
+      env: NUMPY_VERSION="<1.13"
+  exclude:
+      # for older python versions only test the latest versions of NumPy
+      - python: 2.7
+        env: NUMPY_VERSION="<1.13"
+      - python: 3.4
+        env: NUMPY_VERSION="<1.13"
+      - python: 3.5
+        env: NUMPY_VERSION="<1.13"
+
 before_install:
-  - phantomjs --version
-  - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
+  - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh && chmod +x miniconda.sh
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda2/bin:$PATH
   # Update conda itself
   - conda update --yes conda
+
 install:
-  - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas nose flake8 pep8 jupyter
-  - source activate env_name
-  - pip install https://github.com/google/closure-linter/archive/master.zip
-  - pip install 'sphinx<1.6' sphinx-bootstrap-theme coverage coveralls
-  # install lockfile before to prevent a failure in travis
-  - pip install 'lockfile>=0.10.2'
+  - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython
+  - source activate travis
+  - conda install -c conda-forge phantomjs --yes
+  # scikit-learn has to be pinned down due to a bug: https://github.com/scikit-learn/scikit-learn/issues/12671
+  - pip install https://github.com/google/closure-linter/archive/master.zip 'sphinx<1.6' sphinx-bootstrap-theme coveralls 'scikit-learn==0.19.2' --no-binary scikit-learn
   - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
+
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
   # we can only run gjslint in a python 2.7.x environment
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'; fi
-  # execute the full test suite
-  - python tests/all_tests.py
   # we just check coverage in the latest version of NumPy
-  - if [ ${WITH_COVERAGE} ]; then nosetests emperor --with-coverage --cover-package=emperor --cover-inclusive tests; fi
+  - coverage run tests/all_tests.py; coverage report
   - make -C doc html
 after_success:
   - coveralls
