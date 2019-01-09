@@ -332,7 +332,7 @@ define([
     }
 
     var spv = new ScenePlotView3D(this.renderer, this.decViews,
-                                  this.$plotSpace, 0, 0, 0, 0);
+                                  this.$plotSpace, 0, 0, this.width, this.height);
     this.sceneViews.push(spv);
 
     // this will setup the appropriate sizes and widths
