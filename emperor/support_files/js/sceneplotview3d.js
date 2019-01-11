@@ -639,6 +639,10 @@ define([
 
   /**
    * Updates the target and dimensions of the camera and control
+   *
+   * The target of the scene depends on the coordinate space of the data, by
+   * default it is set to zero, but we need to make sure that the target is
+   * reasonable for the data.
    */
   ScenePlotView3D.prototype.updateCameraTarget = function() {
     var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
