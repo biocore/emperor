@@ -661,7 +661,7 @@ define([
     this.updateCameraAspectRatio();
 
     this.control.saveState();
-  }
+  };
 
   /**
    *
