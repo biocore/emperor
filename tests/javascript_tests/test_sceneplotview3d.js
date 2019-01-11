@@ -107,6 +107,14 @@ requirejs([
                                           -0.247485, -0.115211, -0.229889,
                                           -0.046599]);
 
+      // check that updateCameraTarget is working as expected
+      var expTarget = new THREE.Vector3(-0.6188305, -0.0494555, 0);
+      assert.ok(spv.control.target.distanceTo(expTarget) <= Number.EPSILON);
+
+      var expPosition = expTarget.clone();
+      expPosition.z = 0.88035;
+      assert.ok(spv.camera.position.distanceTo(expPosition) <= Number.EPSILON);
+
       // raycasting properties
       assert.ok(spv._raycaster instanceof THREE.Raycaster);
       assert.ok(spv._mouse instanceof THREE.Vector2);
@@ -696,31 +704,53 @@ requirejs([
       var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
                                     'fooligans', 0, 0, 20, 20);
 
+      // should be the center of the scene
+      var reset = spv.control.position0.clone(), zero = new THREE.Vector3();
+
       spv.camera.rotation.set(1, 1, 1);
-      spv.camera.updateProjectionMatrix();
       spv.camera.position.set(-1, 11, 0);
       spv.camera.updateProjectionMatrix();
+      spv.control.update();
       spv.needsUpdate = true;
-
-      max = _.max(spv.dimensionRanges.max);
 
       spv.recenterCamera();
 
-      // for some odd reason orbit controls makes the rotation close to zero
-      // but not actually zero and there's no "close to zero" method in Qunit
-      function closeToZero(x) {
-        x = Math.abs(x);
-        return x >= 0 && x < 0.0000001;
-      }
-      assert.ok(closeToZero(spv.camera.rotation.x));
-      assert.ok(closeToZero(spv.camera.rotation.y));
-      assert.ok(closeToZero(spv.camera.rotation.z));
-
-      assert.ok(closeToZero(spv.camera.position.x));
-      assert.ok(closeToZero(spv.camera.position.y));
-      equal(spv.camera.position.z, max * 5);
+      assert.ok(spv.camera.rotation.x <= Number.EPSILON);
+      assert.ok(spv.camera.rotation.y <= Number.EPSILON);
+      assert.ok(spv.camera.rotation.z <= Number.EPSILON);
+      assert.ok(spv.camera.position.distanceTo(reset) <= Number.EPSILON);
 
       spv.control.dispose();
     });
+
+    /**
+     *
+     * Test the updateCameraTarget method for ScenePlotView3D
+     *
+     */
+    test('Test updateCameraTarget', function(assert) {
+
+      var renderer = new THREE.SVGRenderer({antialias: true}), max;
+      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+                                    'fooligans', 0, 0, 20, 20);
+      spv.visibleDimensions = [1, 2, 3];
+      spv.updateCameraTarget();
+
+      var top = 0.1023915, bottom = -top, right = 0.1023915, left = -right;
+      var target = new THREE.Vector3(-0.0494555, -0.0357445, 0);
+      var position = new THREE.Vector3(-0.0494555, -0.0357445, 0.88035);
+
+      assert.ok((spv.camera.top - top) < Number.EPSILON);
+      assert.ok((spv.camera.bottom - bottom) < Number.EPSILON);
+      assert.ok((spv.camera.left - left) < Number.EPSILON);
+      assert.ok((spv.camera.right - right) < Number.EPSILON);
+
+      // also check the position
+      assert.ok(spv.control.target.distanceTo(target) < Number.EPSILON);
+      assert.ok(spv.camera.position.distanceTo(position) < Number.EPSILON);
+
+      spv.control.dispose();
+    });
+
   });
 });

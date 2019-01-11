@@ -69,6 +69,17 @@ define([
      * @default '#000000' (black)
      */
     this.backgroundColor = '#000000';
+    /**
+     * True when changes have occured that require re-rendering of the canvas
+     * @type {Boolean}
+     */
+    this.needsUpdate = true;
+    /**
+     * Array of integers indicating the index of the visible dimension at each
+     * axis ([x, y, z]).
+     * @type {Integer[]}
+     */
+    this.visibleDimensions = [0, 1, 2];
 
     /**
      * Ranges for all the decompositions in this view (there's a min and a max
@@ -95,8 +106,6 @@ define([
     this.camera = new THREE.OrthographicCamera(-50, 50, 50, -50);
     this.camera.position.set(0, 0, max * 5);
     this.camera.zoom = 0.7;
-
-    this.updateCameraAspectRatio();
 
     //need to initialize the scene
     this.scene = new THREE.Scene();
@@ -131,23 +140,13 @@ define([
     this.control.panSpeed = 0.8;
     this.control.enableZoom = true;
     this.control.enablePan = true;
-    this.control.enableDamping = true;
-    this.control.dampingFactor = 0.3;
     this.control.addEventListener('change', function() {
       scope.needsUpdate = true;
     });
+
+    this.updateCameraTarget();
     this.control.update();
-    /**
-     * True when changes have occured that require re-rendering of the canvas
-     * @type {Boolean}
-     */
-    this.needsUpdate = true;
-    /**
-     * Array of integers indicating the index of the visible dimension at each
-     * axis ([x, y, z]).
-     * @type {Integer[]}
-     */
-    this.visibleDimensions = [0, 1, 2];
+
     /**
      * Object with "min" and "max" attributes each of which is an array with
      * the ranges that covers all of the decomposition views.
@@ -605,6 +604,7 @@ define([
     this.height = height;
 
     this.updateCameraAspectRatio();
+    this.control.update();
 
     this.needsUpdate = true;
   };
@@ -616,10 +616,12 @@ define([
    *
    */
   ScenePlotView3D.prototype.updateCameraAspectRatio = function() {
+    var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
+
     // orthographic cameras operate in space units not in pixel units i.e.
     // the width and height of the view is based on the objects not the window
-    var owidth = this.dimensionRanges.max[0] - this.dimensionRanges.min[0];
-    var oheight = this.dimensionRanges.max[1] - this.dimensionRanges.min[1];
+    var owidth = this.dimensionRanges.max[x] - this.dimensionRanges.min[x];
+    var oheight = this.dimensionRanges.max[y] - this.dimensionRanges.min[y];
 
     var aspect = this.width / this.height;
 
@@ -633,6 +635,32 @@ define([
 
     this.camera.aspect = aspect;
     this.camera.updateProjectionMatrix();
+  };
+
+  /**
+   * Updates the target and dimensions of the camera and control
+   *
+   * The target of the scene depends on the coordinate space of the data, by
+   * default it is set to zero, but we need to make sure that the target is
+   * reasonable for the data.
+   */
+  ScenePlotView3D.prototype.updateCameraTarget = function() {
+    var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
+
+    var owidth = this.dimensionRanges.max[x] - this.dimensionRanges.min[x];
+    var oheight = this.dimensionRanges.max[y] - this.dimensionRanges.min[y];
+    var xcenter = this.dimensionRanges.max[x] - (owidth / 2);
+    var ycenter = this.dimensionRanges.max[y] - (oheight / 2);
+
+    var max = _.max(this.decViews.scatter.decomp.dimensionRanges.max);
+
+    this.control.target.set(xcenter, ycenter, 0);
+    this.camera.position.set(xcenter, ycenter, max * 5);
+    this.camera.updateProjectionMatrix();
+
+    this.updateCameraAspectRatio();
+
+    this.control.saveState();
   };
 
   /**
@@ -674,6 +702,9 @@ define([
       this.visibleDimensions = _.clone(currentDimensions);
       this.drawAxesWithColor(this.axesColor);
       this.drawAxesLabelsWithColor(this.axesColor);
+
+      this.updateCameraTarget();
+      this.control.update();
 
       updateDimensions = true;
     }
@@ -849,16 +880,6 @@ define([
    *
    */
   ScenePlotView3D.prototype.recenterCamera = function() {
-    this.camera.rotation.set(0, 0, 0);
-    this.camera.updateProjectionMatrix();
-
-    // reset the position of the this view
-    var max = _.max(this.dimensionRanges.max);
-
-    // 5 is inspired by the old emperor.js and by the init method of this class
-    this.camera.position.set(0, 0, max * 5);
-
-    // after all changes are made, reset the control
     this.control.reset();
     this.control.update();
 
