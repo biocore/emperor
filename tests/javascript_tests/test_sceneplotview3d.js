@@ -697,7 +697,7 @@ requirejs([
                                     'fooligans', 0, 0, 20, 20);
 
       // should be the center of the scene
-      var center = spv.control.target0.clone();
+      var reset = spv.control.position0.clone();
 
       spv.camera.rotation.set(1, 1, 1);
       spv.camera.position.set(-1, 11, 0);
@@ -705,15 +705,6 @@ requirejs([
       spv.control.update();
       spv.needsUpdate = true;
 
-      max = _.max(spv.dimensionRanges.max);
-
-      spv.recenterCamera();
-      spv.recenterCamera();
-      spv.recenterCamera();
-      spv.recenterCamera();
-      spv.recenterCamera();
-      spv.recenterCamera();
-      spv.recenterCamera();
       spv.recenterCamera();
 
       // for some odd reason orbit controls makes the rotation close to zero
@@ -727,9 +718,7 @@ requirejs([
       assert.ok(closeToZero(spv.camera.rotation.y));
       assert.ok(closeToZero(spv.camera.rotation.z));
 
-      console.log('camera distance to center is ', spv.camera.position.distanceTo(center));
-      console.log('camera position is ', spv.camera.position);
-      assert.ok(closeToZero(spv.camera.position.distanceTo(center)));
+      assert.ok(closeToZero(spv.camera.position.distanceTo(reset)));
 
       spv.control.dispose();
     });

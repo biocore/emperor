@@ -89,11 +89,6 @@ define([
     this.dimensionRanges = {'max': [], 'min': []};
     this._unionRanges();
 
-    var owidth = this.dimensionRanges.max[0] - this.dimensionRanges.min[0];
-    var oheight = this.dimensionRanges.max[1] - this.dimensionRanges.min[1];
-    console.log('WORLD width ', owidth, 'height ', oheight);
-    console.log('SCREEN width ', this.width, 'height ', this.height);
-
     // used to name the axis lines/labels in the scene
     this._axisPrefix = 'emperor-axis-line-';
     this._axisLabelPrefix = 'emperor-axis-label-';
@@ -145,8 +140,6 @@ define([
     this.control.panSpeed = 0.8;
     this.control.enableZoom = true;
     this.control.enablePan = true;
-    this.control.enableDamping = true;
-    this.control.dampingFactor = 0.3;
     this.control.addEventListener('change', function() {
       scope.needsUpdate = true;
     });
@@ -661,11 +654,9 @@ define([
     this.camera.position.set(xcenter, ycenter, max * 5);
     this.camera.updateProjectionMatrix();
 
-    this.control.target0.copy(this.control.target);
-    this.control.position0.copy(this.camera.position);
-
-    // this calls control.update
     this.updateCameraAspectRatio();
+
+    this.control.saveState();
   }
 
   /**
@@ -886,15 +877,7 @@ define([
    */
   ScenePlotView3D.prototype.recenterCamera = function() {
     this.control.reset();
-    this.camera.rotation.set(0, 0, 0);
-    this.camera.position.copy(this.control.position0);
-    this.camera.updateProjectionMatrix();
-
-    // after all changes are made, reset the control
     this.control.update();
-
-    console.log('The camera is not being centered', this.camera.position, this.control.target0);
-    console.log('distance ', this.camera.position.distanceTo(this.control.position0));
 
     this.needsUpdate = true;
   };
