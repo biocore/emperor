@@ -237,8 +237,6 @@ class TopLevelTests(TestCase):
         self.ord_res.proportion_explained = \
             self.ord_res.proportion_explained[:1].copy()
 
-        print(self.ord_res.samples)
-
         with self.assertRaisesRegexp(ValueError, "Ordinations with less than "
                                      "two dimensions are not supported"):
             Emperor(self.ord_res, self.mf, remote=False)
