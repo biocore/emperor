@@ -752,5 +752,57 @@ requirejs([
       spv.control.dispose();
     });
 
+    /**
+     *
+     * Test object for 2D decomposition view
+     *
+     */
+    test('Test for 2D object', function(assert) {
+
+      var data = {name: 'PCOA',
+                  sample_ids: ['PC.636', 'PC.635'],
+                  coordinates: [[-0.276542, -0.144964],
+                                [-0.237661, 0.046053]],
+                  percents_explained: [80.0, 20.0]};
+      var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                        'DOB'];
+      var metadata = [
+        ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']
+      ];
+      var decomp = new DecompositionModel(data, md_headers, metadata);
+      var dv = new DecompositionView(decomp);
+
+      var renderer = new THREE.SVGRenderer({antialias: true}), max;
+      var spv = new ScenePlotView3D(renderer, {'scatter': dv},
+                                    'fooligans', 0, 0, 20, 20);
+
+      // do a checkup of the general attributes
+      deepEqual(spv.xView, 0);
+      deepEqual(spv.yView, 0);
+
+      equal(spv.width, 20);
+      equal(spv.height, 20);
+      equal(spv.checkUpdate(), true);
+
+      equal(spv.axesColor, '#FFFFFF');
+      equal(spv.backgroundColor, '#000000');
+
+      deepEqual(spv.visibleDimensions, [0, 1]);
+      deepEqual(spv.dimensionRanges.max, [-0.237661, 0.046053]);
+      deepEqual(spv.dimensionRanges.min, [-0.276542, -0.144964]);
+
+      // check that updateCameraTarget is working as expected
+      var expTarget = new THREE.Vector3(-0.2571015, -0.0494555, 0);
+      assert.ok(spv.control.target.distanceTo(expTarget) <= Number.EPSILON);
+
+      var expPosition = expTarget.clone();
+      expPosition.z = 0.230265;
+      assert.ok(spv.camera.position.distanceTo(expPosition) <= Number.EPSILON);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
   });
 });

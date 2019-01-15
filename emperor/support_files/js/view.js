@@ -37,16 +37,19 @@ function DecompositionView(decomp, asPointCloud) {
   /**
    * Top visible dimensions
    * @type {integer[]}
-   * @default [0, 1, 2]
    */
-  this.visibleDimensions = [0, 1, 2]; // We default to the first three PCs
+  // this array should have at most three elements
+  this.visibleDimensions = _.range(this.decomp.dimensions).slice(0, 3);
   /**
    * Orientation of the axes, `-1` means the axis is flipped, `1` means the
    * axis is not flipped.
    * @type {integer[]}
-   * @default [1, 1, 1]
    */
-  this.axesOrientation = [1, 1, 1];
+  this.axesOrientation = _.map(this.visibleDimensions, function() {
+    // by default values are not flipped i.e. all elements are equal to 1
+    return 1;
+  });
+
   /**
    * Axes color.
    * @type {integer}
@@ -146,7 +149,7 @@ DecompositionView.prototype._initBaseView = function() {
       mesh.matrixAutoUpdate = true;
 
       mesh.position.set(plottable.coordinates[x], plottable.coordinates[y],
-                        plottable.coordinates[z]);
+                        plottable.coordinates[z] || 0);
 
       scope.markers.push(mesh);
 
@@ -172,7 +175,7 @@ DecompositionView.prototype._initBaseView = function() {
     this.decomp.apply(function(plottable) {
       point = [plottable.coordinates[x],
                plottable.coordinates[y],
-               plottable.coordinates[z]];
+               plottable.coordinates[z] || 0];
       arrow = makeArrow(zero, point, 0xc0c0c0, plottable.name);
 
       scope.markers.push(arrow);
@@ -191,10 +194,10 @@ DecompositionView.prototype._initBaseView = function() {
       // remember x, y and z
       center = [(u.coordinates[x] + v.coordinates[x]) / 2,
                 (u.coordinates[y] + v.coordinates[y]) / 2,
-                (u.coordinates[z] + v.coordinates[z]) / 2];
+                ((u.coordinates[z] + v.coordinates[z]) / 2) || 0];
 
-      left = [u.coordinates[x], u.coordinates[y], u.coordinates[z]];
-      right = [v.coordinates[x], v.coordinates[y], v.coordinates[z]];
+      left = [u.coordinates[x], u.coordinates[y], u.coordinates[z] || 0];
+      right = [v.coordinates[x], v.coordinates[y], v.coordinates[z] || 0];
 
       verticesLeft.push(left, center);
       verticesRight.push(right, center);
@@ -314,7 +317,7 @@ DecompositionView.prototype._fastInit = function() {
     geometry.attributes.position.setXYZ(plottable.idx,
                                         plottable.coordinates[x],
                                         plottable.coordinates[y],
-                                        plottable.coordinates[z]);
+                                        plottable.coordinates[z] || 0);
 
     // set default to red, visible, full opacity and of scale 1
     geometry.attributes.color.setXYZ(plottable.idx, 1, 0, 0);
@@ -369,7 +372,7 @@ DecompositionView.prototype.getVisibleCount = function() {
 DecompositionView.prototype.updatePositions = function() {
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2], scope = this, hasConfidenceIntervals,
-      radius = 0, is2D = (z === null);
+      radius = 0, is2D = (z === null || z === undefined);
 
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
@@ -386,7 +389,7 @@ DecompositionView.prototype.updatePositions = function() {
         plottable.idx,
         plottable.coordinates[x] * scope.axesOrientation[0],
         plottable.coordinates[y] * scope.axesOrientation[1],
-        (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+        is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
     });
     cloud.geometry.attributes.position.needsUpdate = true;
   }
@@ -398,7 +401,7 @@ DecompositionView.prototype.updatePositions = function() {
       mesh.position.set(
         plottable.coordinates[x] * scope.axesOrientation[0],
         plottable.coordinates[y] * scope.axesOrientation[1],
-        (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+        is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
       mesh.updateMatrix();
 
       if (hasConfidenceIntervals) {
@@ -407,7 +410,7 @@ DecompositionView.prototype.updatePositions = function() {
         mesh.position.set(
           plottable.coordinates[x] * scope.axesOrientation[0],
           plottable.coordinates[y] * scope.axesOrientation[1],
-          (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+          is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
 
         // flatten the ellipsoids ever so slightly
         mesh.scale.set(plottable.ci[x] / radius, plottable.ci[y] / radius,
@@ -426,7 +429,7 @@ DecompositionView.prototype.updatePositions = function() {
       target = new THREE.Vector3(
         plottable.coordinates[x] * scope.axesOrientation[0],
         plottable.coordinates[y] * scope.axesOrientation[1],
-        (is2D ? 0 : plottable.coordinates[z]) * scope.axesOrientation[2]);
+        is2D ? 0 : plottable.coordinates[z] * scope.axesOrientation[2]);
 
       arrow.setPointsTo(target);
     });
@@ -493,12 +496,12 @@ DecompositionView.prototype._redrawEdges = function(plottables) {
  *
  */
 DecompositionView.prototype.changeVisibleDimensions = function(newDims) {
-  if (newDims.length !== 3) {
+  if (newDims.length < 2 || newDims.length > 3) {
     throw new Error('Only three dimensions can be shown at the same time');
   }
 
   // one by one, find and update the dimensions that are changing
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < newDims.length; i++) {
     if (this.visibleDimensions[i] !== newDims[i]) {
       // index represents the global position of the dimension
       var index = this.visibleDimensions[i],

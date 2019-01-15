@@ -79,7 +79,7 @@ define([
      * axis ([x, y, z]).
      * @type {Integer[]}
      */
-    this.visibleDimensions = [0, 1, 2];
+    this.visibleDimensions = _.clone(this.decViews.scatter.visibleDimensions);
 
     /**
      * Ranges for all the decompositions in this view (there's a min and a max
@@ -425,7 +425,7 @@ define([
     // shortcut to the index of the visible dimension and the range object
     var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
         z = this.visibleDimensions[2], range = this.dimensionRanges,
-        is2D = z === null;
+        is2D = (z === null || z === undefined);
 
     // Adds a padding to all dimensions such that samples don't overlap
     // with the axes lines. Determined based on the default sphere radius
@@ -456,11 +456,9 @@ define([
     action(start, ends[0], x);
     action(start, ends[1], y);
 
-    // when transitioning to 2D reset the camera and disable rotation to make
-    // the plot look straight at the camera, as opposed to an awkward angle
+    // when transitioning to 2D disable rotation to avoid awkward angles
     if (is2D) {
       this.control.enableRotate = false;
-      this.recenterCamera();
     }
     else {
       action(start, ends[2], z);
@@ -658,9 +656,13 @@ define([
     this.camera.position.set(xcenter, ycenter, max * 5);
     this.camera.updateProjectionMatrix();
 
+    this.light.position.set(xcenter, ycenter, max * 5);
+
     this.updateCameraAspectRatio();
 
     this.control.saveState();
+
+    this.needsUpdate = true;
   };
 
   /**
