@@ -38,7 +38,7 @@ function DecompositionView(decomp, asPointCloud) {
    * Top visible dimensions
    * @type {integer[]}
    */
-  // this array should have at most three elements
+  // make sure we only use at most 3 elements
   this.visibleDimensions = _.range(this.decomp.dimensions).slice(0, 3);
   /**
    * Orientation of the axes, `-1` means the axis is flipped, `1` means the
