@@ -489,7 +489,7 @@ define([
     // get the current visible dimensions
     var x = view.visibleDimensions[0], y = view.visibleDimensions[1],
         z = view.visibleDimensions[2];
-    var is2D = (z === null);
+    var is2D = (z === null || z === undefined);
 
     gradient = this.$gradientSelect.val();
     trajectory = this.$trajectorySelect.val();

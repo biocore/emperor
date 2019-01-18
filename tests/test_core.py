@@ -231,6 +231,16 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
                                        '/new-api/emperor/support_files')
 
+    def test_one_dimensional(self):
+        self.ord_res.samples = self.ord_res.samples.iloc[:, :1].copy()
+        self.ord_res.eigvals = self.ord_res.eigvals.iloc[:1].copy()
+        self.ord_res.proportion_explained = \
+            self.ord_res.proportion_explained[:1].copy()
+
+        with self.assertRaisesRegexp(ValueError, "Ordinations with less than "
+                                     "two dimensions are not supported"):
+            Emperor(self.ord_res, self.mf, remote=False)
+
     def test_initial_unbalanced(self):
         self.mf.drop(['PC.354'], inplace=True)
         with self.assertRaisesRegexp(KeyError, "There are samples not "

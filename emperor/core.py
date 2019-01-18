@@ -217,6 +217,7 @@ class Emperor(object):
     ValueError
         If the remote argument is not of ``bool`` or ``str`` type.
         If none of the samples in the ordination matrix are in the metadata.
+        If the data is one-dimensional.
     KeyError
         If there's samples in the ordination matrix but not in the metadata.
 
@@ -230,6 +231,10 @@ class Emperor(object):
     def __init__(self, ordination, mapping_file, feature_mapping_file=None,
                  dimensions=5, remote=True, jackknifed=None, procrustes=None,
                  ignore_missing_samples=False):
+
+        if ordination.samples.shape[1] < 2:
+            raise ValueError('Ordinations with less than two dimensions are'
+                             ' not supported.')
 
         self.ordination = ordination
         self.jackknifed = jackknifed if jackknifed is not None else []

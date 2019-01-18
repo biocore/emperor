@@ -111,6 +111,45 @@ requirejs([
       //           "_genericSphere set correctly");
     });
 
+    /**
+     *
+     * Test that the Decomposition View object is initialized correctly
+     *
+     */
+    test('Test constructor with two dimensions', function() {
+
+      var data = {
+        name: 'pcoa',
+        sample_ids: ['PC.636', 'PC.635'],
+        coordinates: [[-0.276542, -0.144964], [-0.237661, 0.046053]],
+        percents_explained: [80.0, 20.0]};
+      var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                        'DOB'];
+      var metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control',
+                       '20070314'],
+                      ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
+                       '20071112']];
+      decomp = new DecompositionModel(data, md_headers, metadata);
+
+      var obs;
+      var dv = new DecompositionView(decomp);
+
+      equal(dv.count, 2, 'count set correctly');
+      equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
+      deepEqual(dv.visibleDimensions, [0, 1],
+          'visibleDimensions set correctly');
+      deepEqual(dv.tubes, [], 'tubes set correctly');
+
+      equal(dv.axesColor, '#FFFFFF');
+      equal(dv.backgroundColor, '#000000');
+
+      deepEqual(dv.axesOrientation, [1, 1]);
+
+      deepEqual(dv.markers[0].position.toArray(), [-0.276542, -0.144964, 0]);
+      deepEqual(dv.markers[1].position.toArray(), [-0.237661, 0.046053, 0]);
+      deepEqual(dv.lines, {'left': null, 'right': null});
+    });
+
     test('Test constructor (biplot)', function(assert) {
       // this test is pretty much the same as above except for arrow types
       this.decomp.type = 'arrow';
