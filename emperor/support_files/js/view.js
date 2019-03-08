@@ -151,6 +151,8 @@ DecompositionView.prototype._initBaseView = function() {
       mesh.position.set(plottable.coordinates[x], plottable.coordinates[y],
                         plottable.coordinates[z] || 0);
 
+      mesh.userData.shape = 'Sphere'
+
       scope.markers.push(mesh);
 
       if (hasConfidenceIntervals) {
@@ -827,6 +829,136 @@ DecompositionView.prototype.toggleLabelVisibility = function() {
   });
   this.needsUpdate = true;
 };
+
+/**
+ *
+ * Helper that builds a vega specification off of the current view state
+ *
+ * @private
+ */
+DecompositionView.prototype._buildVegaSpec = function() {
+  function rgbColor(colorObj) {
+    var r = colorObj.r * 255;
+    var g = colorObj.g * 255;
+    var b = colorObj.b * 255;
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+
+  // Maps THREE.js geometries to vega shapes
+  var getShape = {
+    Sphere: 'circle',
+    Diamond: 'diamond',
+    Cone: 'triangle-down',
+    Cylinder: 'square',
+    Ring: 'circle',
+    Square: 'square',
+    Icosahedron: 'cross',
+    Star: 'cross',
+  };
+
+  function viewMarkersAsVegaDataset(markers) {
+    var points = [], marker, i;
+    for (i = 0; i < markers.length; i++) {
+      marker = markers[i];
+      if (marker.visible) {
+        points.push({
+          id: marker.name,
+          x: marker.position.x,
+          y: marker.position.y,
+          color: rgbColor(marker.material.color),
+          originalShape: marker.userData.shape,
+          shape: getShape[marker.userData.shape],
+          scale: { x: marker.scale.x, y: marker.scale.y, },
+          opacity: marker.material.opacity,
+        });
+      }
+    }
+    return points;
+  };
+
+  // This is probably horribly slow on QIITA-scale MD files, probably needs some attention
+  function plottablesAsMetadata(points, header) {
+    var md = [], point, row, i, j;
+    for (i = 0; i < points.length; i++) {
+      point = points[i];
+      row = {};
+      for (j = 0; j < header.length; j++) {
+        row[header[j]] = point.metadata[j];
+      }
+      md.push(row);
+    }
+    return md;
+  }
+
+  var scope = this;
+  var model = scope.decomp;
+
+  var axisX = scope.visibleDimensions[0];
+  var axisY = scope.visibleDimensions[1];
+
+  var dimRanges = model.dimensionRanges;
+  var rangeX = [dimRanges.min[axisX], dimRanges.max[axisX]];
+  var rangeY = [dimRanges.min[axisY], dimRanges.max[axisY]];
+
+  var baseWidth = 800;
+
+  return {
+    '$schema': 'https://vega.github.io/schema/vega/v5.json',
+    padding: 5,
+    background: scope.backgroundColor,
+    config: {
+      axis: { labelColor: scope.axesColor, titleColor: scope.axesColor, },
+      title: { color: scope.axesColor, },
+    },
+    title: 'Emperor PCoA',
+    data: [
+      { name: 'metadata', values: plottablesAsMetadata(model.plottable, model.md_headers), },
+      {
+        name: 'points', values: viewMarkersAsVegaDataset(scope.markers),
+        transform: [
+          {
+            type: 'lookup',
+            from: 'metadata',
+            key: model.md_headers[0],
+            fields: ['id'],
+            as: ['metadata'],
+          }
+        ],
+      },
+    ],
+    signals: [
+      {name: 'width', update: baseWidth + ' * ((' + rangeX[1] + ') - (' + rangeX[0] + '))'},
+      {name: 'height', update: baseWidth + ' * ((' + rangeY[1] + ') - (' + rangeY[0] + '))'}
+    ],
+    scales: [
+      { name: 'xScale', range: 'width', domain: [rangeX[0], rangeX[1]] },
+      { name: 'yScale', range: 'height', domain: [rangeY[0], rangeY[1]] }
+    ],
+    axes: [
+      { orient: 'bottom', scale: 'xScale', title: model.axesLabels[axisX], },
+      { orient: 'left', scale: 'yScale', title: model.axesLabels[axisY], }
+    ],
+    marks: [
+      {
+        type: 'symbol',
+        from: {data: 'points'},
+        encode: {
+          enter: {
+            fill: { field: 'color', },
+            x: { scale: 'xScale', field: 'x', },
+            y: { scale: 'yScale', field: 'y', },
+            shape: { field: 'shape', },
+            size: { signal: 'datum.scale.x * datum.scale.y * 100', },
+            opacity: { field: 'opacity', },
+          },
+          update: {
+            tooltip: { signal: 'datum.metadata' },
+          },
+        },
+      },
+    ],
+  };
+}
 
 /**
  * Helper function to change the opacity of an arrow object.

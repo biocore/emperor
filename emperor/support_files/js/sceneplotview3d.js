@@ -525,19 +525,7 @@ define([
     decomp = this.decViews[firstKey].decomp;
 
     this._dimensionsIterator(function(start, end, index) {
-      // when the labels get too long, it's a bit hard to look at
-      if (decomp.axesNames[index].length > 25) {
-        text = decomp.axesNames[index].slice(0, 20) + '...';
-      }
-      else {
-        text = decomp.axesNames[index];
-      }
-
-      // account for custom axes (their percentage explained will be -1 to
-      // indicate that this attribute is not meaningful).
-      if (decomp.percExpl[index] >= 0) {
-        text += ' (' + decomp.percExpl[index].toPrecision(4) + ' %)';
-      }
+      text = decomp.axesLabels[index];
 
       axisLabel = makeLabel(end, text, color);
       axisLabel.scale.set(axisLabel.scale.x * scaling,

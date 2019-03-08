@@ -661,7 +661,24 @@ define([
                 disabled: isLargeDataset
               }
             }
-        }
+        },
+        'openInVegaEditor': {
+          name: 'Open in Vega Editor',
+          icon: 'file-picture-o',
+          callback: function(key, opts) {
+            scope.exportToVega();
+          },
+          disabled: function(key, opt) {
+            // Only enable if this is a "vanilla" plot
+            if (scope.decViews.scatter.lines.left === null &&
+                scope.decViews.scatter.lines.right === null &&
+                scope.decViews.biplot === undefined) {
+              return false;
+            }
+            return true;
+          },
+        },
+
       }
     });
 
@@ -929,6 +946,56 @@ define([
     this._$tabsList.append($li);
 
     return obj;
+  };
+
+  /**
+   *
+   * Helper that posts messages between browser tabs
+   *
+   * @private
+   *
+   */
+  _postMessage = function(url, payload) {
+    // Shamelessly pulled from https://github.com/vega/vega-embed/
+    var editor = window.open(url);
+    var wait = 10000;
+    var step = 250;
+    var count = ~~(wait / step);
+
+    function listen(e) {
+      if (e.source === editor) {
+        count = 0;
+        window.removeEventListener('message', listen, false);
+      }
+    }
+
+    window.addEventListener('message', listen, false);
+
+    function send() {
+      if (count <= 0) {
+        return;
+      }
+      editor.postMessage(payload, '*');
+      setTimeout(send, step);
+      count -= 1;
+    }
+    setTimeout(send, step);
+  }
+
+  /**
+   *
+   * Open in Vega editor
+   *
+   */
+  EmperorController.prototype.exportToVega = function() {
+    var url = 'https://vega.github.io/editor/';
+    var spec = this.decViews.scatter._buildVegaSpec();
+    var payload = {
+      mode: 'vega',
+      renderer: 'canvas',
+      spec: JSON.stringify(spec),
+    };
+    _postMessage(url, payload);
   };
 
   return EmperorController;
