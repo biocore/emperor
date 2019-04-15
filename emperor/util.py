@@ -371,10 +371,10 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
     clones = 0
 
     if custom_axes and type(coords_data) == np.ndarray:
-            # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
-            get_custom_coords(custom_axes, mapping_file, coords_file)
-            remove_nans(coords_file)
-            scale_custom_coords(custom_axes, coords_file)
+        # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
+        get_custom_coords(custom_axes, mapping_file, coords_file)
+        remove_nans(coords_file)
+        scale_custom_coords(custom_axes, coords_file)
     elif type(coords_data) == list and not is_comparison:
         # take the first pcoa file as the master set of coordinates
         master_pcoa = [coords_header[0], coords_data[0],
