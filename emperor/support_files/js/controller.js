@@ -47,8 +47,14 @@ define([
    * @constructs EmperorController
    *
    */
-  function EmperorController(scatter, biplot, divId, webglcanvas) {
+  function EmperorController(scatter, biplot, divId, webglcanvas, experimental) {
     var scope = this;
+
+    /**
+     * Enables experimental features.
+     * @type {boolean}
+     */
+    this.experimental = experimental;
 
     /**
      * Scaling constant for grid dimensions (read only).
@@ -662,24 +668,32 @@ define([
               }
             }
         },
-        'openInVegaEditor': {
-          name: 'Open in Vega Editor',
-          icon: 'file-picture-o',
-          callback: function(key, opts) {
-            scope.exportToVega();
+        fold2: {
+          name: 'EXPERIMENTAL',
+          visible: function(key, opts) {
+            return scope.experimental;
           },
-          disabled: function(key, opt) {
-            // Only enable if this is a "vanilla" plot
-            if (scope.decViews.scatter.lines.left === null &&
-                scope.decViews.scatter.lines.right === null &&
-                scope.decViews.biplot === undefined) {
-              return false;
-            }
-            return true;
+          icon: '',
+          items: {
+            openInVegaEditor: {
+              name: 'Open in Vega Editor',
+              icon: 'file-picture-o',
+              callback: function(key, opts) {
+                scope.exportToVega();
+              },
+              disabled: function(key, opt) {
+                // Only enable if this is a "vanilla" plot
+                if (scope.decViews.scatter.lines.left === null &&
+                    scope.decViews.scatter.lines.right === null &&
+                    scope.decViews.biplot === undefined) {
+                  return false;
+                }
+                return true;
+              },
+            },
           },
         },
-
-      }
+      },
     });
 
     // The context menu is only shown if there's a single right click. We

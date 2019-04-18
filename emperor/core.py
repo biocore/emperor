@@ -230,7 +230,7 @@ class Emperor(object):
     """
     def __init__(self, ordination, mapping_file, feature_mapping_file=None,
                  dimensions=5, remote=True, jackknifed=None, procrustes=None,
-                 ignore_missing_samples=False):
+                 ignore_missing_samples=False, enable_experimental=False):
 
         if ordination.samples.shape[1] < 2:
             raise ValueError('Ordinations with less than two dimensions are'
@@ -288,6 +288,8 @@ class Emperor(object):
         if self.procrustes:
             self.procrustes_names = ['Ordination %d' % i
                                      for i in range(len(self.procrustes) + 1)]
+
+        self.experimental = enable_experimental
 
     def __str__(self):
         return self.make_emperor()
@@ -453,7 +455,8 @@ class Emperor(object):
                                     style_template_path=basename(STYLE_PATH),
                                     base_url=self.base_url,
                                     width=self.width,
-                                    height=self.height)
+                                    height=self.height,
+                                    experimental=self.experimental)
 
         return plot
 
