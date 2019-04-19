@@ -47,14 +47,8 @@ define([
    * @constructs EmperorController
    *
    */
-  function EmperorController(scatter, biplot, divId, webglcanvas, experimental) {
+  function EmperorController(scatter, biplot, divId, webglcanvas) {
     var scope = this;
-
-    /**
-     * Enables experimental features.
-     * @type {boolean}
-     */
-    this.experimental = experimental;
 
     /**
      * Scaling constant for grid dimensions (read only).
@@ -598,6 +592,7 @@ define([
         'labels' : {
           name: 'Toggle label visibility',
           visible: scope.decViews.biplot !== undefined,
+          icon: 'font',
           callback: function() {
             scope._hideBiplotLabels = Boolean(scope._hideBiplotLabels ^ true);
             scope.decViews.biplot.toggleLabelVisibility();
@@ -669,29 +664,25 @@ define([
             }
         },
         fold2: {
-          name: 'EXPERIMENTAL',
-          visible: function(key, opts) {
-            return scope.experimental;
+          name: 'Experimental',
+          disabled: function(key, opt) {
+            // Only enable if this is a "vanilla" plot
+            if (scope.decViews.scatter.lines.left === null &&
+                scope.decViews.scatter.lines.right === null &&
+                scope.decViews.biplot === undefined) {
+              return false;
+            }
+            return true;
           },
-          icon: '',
+          icon: 'warning',
           items: {
             openInVegaEditor: {
               name: 'Open in Vega Editor',
-              icon: 'file-picture-o',
               callback: function(key, opts) {
                 scope.exportToVega();
               },
-              disabled: function(key, opt) {
-                // Only enable if this is a "vanilla" plot
-                if (scope.decViews.scatter.lines.left === null &&
-                    scope.decViews.scatter.lines.right === null &&
-                    scope.decViews.biplot === undefined) {
-                  return false;
-                }
-                return true;
-              },
-            },
-          },
+            }
+          }
         },
       },
     });

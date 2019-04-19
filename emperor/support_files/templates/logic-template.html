@@ -124,7 +124,7 @@ function($, model, EmperorController) {
                                       data.biplot.type);
     }
 
-    ec = new EmperorController(plot, biplot, {{ plot_id | tojson }}, undefined, {{ experimental | tojson }});
+    ec = new EmperorController(plot, biplot, {{ plot_id | tojson }});
   }
 
   function animate() {
