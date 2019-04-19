@@ -151,7 +151,7 @@ DecompositionView.prototype._initBaseView = function() {
       mesh.position.set(plottable.coordinates[x], plottable.coordinates[y],
                         plottable.coordinates[z] || 0);
 
-      mesh.userData.shape = 'Sphere'
+      mesh.userData.shape = 'Sphere';
 
       scope.markers.push(mesh);
 
@@ -876,7 +876,8 @@ DecompositionView.prototype._buildVegaSpec = function() {
     return points;
   };
 
-  // This is probably horribly slow on QIITA-scale MD files, probably needs some attention
+  // This is probably horribly slow on QIITA-scale MD files, probably needs
+  // some attention
   function plottablesAsMetadata(points, header) {
     var md = [], point, row, i, j;
     for (i = 0; i < points.length; i++) {
@@ -912,7 +913,10 @@ DecompositionView.prototype._buildVegaSpec = function() {
     },
     title: 'Emperor PCoA',
     data: [
-      { name: 'metadata', values: plottablesAsMetadata(model.plottable, model.md_headers), },
+      {
+        name: 'metadata',
+        values: plottablesAsMetadata(model.plottable, model.md_headers),
+      },
       {
         name: 'points', values: viewMarkersAsVegaDataset(scope.markers),
         transform: [
@@ -927,8 +931,14 @@ DecompositionView.prototype._buildVegaSpec = function() {
       },
     ],
     signals: [
-      {name: 'width', update: baseWidth + ' * ((' + rangeX[1] + ') - (' + rangeX[0] + '))'},
-      {name: 'height', update: baseWidth + ' * ((' + rangeY[1] + ') - (' + rangeY[0] + '))'}
+      {
+        name: 'width',
+        update: baseWidth + ' * ((' + rangeX[1] + ') - (' + rangeX[0] + '))',
+      },
+      {
+        name: 'height',
+        update: baseWidth + ' * ((' + rangeY[1] + ') - (' + rangeY[0] + '))',
+      },
     ],
     scales: [
       { name: 'xScale', range: 'width', domain: [rangeX[0], rangeX[1]] },
@@ -958,7 +968,7 @@ DecompositionView.prototype._buildVegaSpec = function() {
       },
     ],
   };
-}
+};
 
 /**
  * Helper function to change the opacity of an arrow object.

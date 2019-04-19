@@ -985,7 +985,7 @@ define([
       count -= 1;
     }
     setTimeout(send, step);
-  }
+  };
 
   /**
    *
