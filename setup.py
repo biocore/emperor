@@ -11,7 +11,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.0beta18-dev"
+__version__ = "1.0.0beta19"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
