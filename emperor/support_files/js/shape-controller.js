@@ -127,6 +127,7 @@ define([
     _.each(group, function(element) {
       idx = element.idx;
       scope.markers[idx].geometry = geometry;
+      scope.markers[idx].userData.shape = shape;
     });
     scope.needsUpdate = true;
   };

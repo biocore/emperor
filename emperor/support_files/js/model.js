@@ -514,6 +514,34 @@ function($, _, util) {
         this.axesNames = names.nonNumeric.concat(replacement);
       }
     }
+    this._buildAxesLabels();
+  };
+
+  /**
+   *
+   * Helper method to build labels for all axes
+   *
+   */
+  DecompositionModel.prototype._buildAxesLabels = function() {
+    var axesLabels = [], index, text;
+    for (index = 0; index < this.axesNames.length; index++) {
+      // when the labels get too long, it's a bit hard to look at
+      if (this.axesNames[index].length > 25) {
+        text = this.axesNames[index].slice(0, 20) + '...';
+      }
+      else {
+        text = this.axesNames[index];
+      }
+
+      // account for custom axes (their percentage explained will be -1 to
+      // indicate that this attribute is not meaningful).
+      if (this.percExpl[index] >= 0) {
+        text += ' (' + this.percExpl[index].toPrecision(4) + ' %)';
+      }
+
+      axesLabels.push(text);
+    }
+    this.axesLabels = axesLabels;
   };
 
   /**
