@@ -113,6 +113,7 @@ define([
           var discrete = $('option:selected', scope.$colormapSelect)
                            .attr('data-type') == DISCRETE;
           var colorScheme = scope.$colormapSelect.val();
+          console.log(colorScheme);
 
           var decompViewDict = scope.getView();
 
@@ -120,9 +121,12 @@ define([
             scope.$scaled.prop('checked', false);
             scope.$scaled.prop('hidden', true);
             scope.$scaledLabel.prop('hidden', true);
+            scope.bodyGrid.selectionPalette = ColorViewController.getDiscretePaletteColor(colorScheme);
+            console.log(scope.bodyGrid.selectionPalette);
           } else {
             scope.$scaled.prop('hidden', false);
             scope.$scaledLabel.prop('hidden', false);
+            scope.bodyGrid.selectionPalette = undefined;
           }
           var scaled = scope.$scaled.is(':checked');
           // getting all unique values per categories
@@ -340,13 +344,7 @@ define([
    *
    */
   ColorViewController.getDiscreteColors = function(values, map) {
-    map = map || 'discrete-coloring-qiime';
-
-    if (map == 'discrete-coloring-qiime') {
-      map = ColorViewController._qiimeDiscrete;
-    } else {
-      map = chroma.brewer[map];
-    }
+    map = ColorViewController.getDiscretePaletteColor(map);
     var size = map.length;
     var colors = {};
     for (var i = 0; i < values.length; i++) {
@@ -354,6 +352,31 @@ define([
         colors[values[i]] = map[mapIndex];
     }
     return colors;
+  };
+
+  /**
+   *
+   * Retrieve a whole discrete palette color set.
+   *
+   * @param {String} [map = 'discrete-coloring-qiime'] name of the color map to
+   * use, see ColorViewController.Colormaps
+   * @see ColorViewController.Colormaps
+   *
+   * @return {Object} map for selected color palette
+   *
+   */
+  ColorViewController.getDiscretePaletteColor = function(map) {
+    //TODO: CHECK MAP TYPE
+
+    map = map || 'discrete-coloring-qiime';
+
+    if (map == 'discrete-coloring-qiime') {
+      map = ColorViewController._qiimeDiscrete;
+    } else {
+      map = chroma.brewer[map];
+    }
+
+    return map;
   };
 
   /**
