@@ -651,6 +651,9 @@ requirejs([
       deepEqual(ColorViewController.getDiscretePaletteColor('RdGy'),
       ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#ffffff',
       '#e0e0e0', '#bababa', '#878787', '#4d4d4d', '#1a1a1a']);
+      deepEqual(ColorViewController.getDiscretePaletteColor('Set2'),
+      ['#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3', '#a6d854', '#ffd92f',
+      '#e5c494', '#b3b3b3']);
     });
 
     asyncTest('Test setEnabled', function() {
