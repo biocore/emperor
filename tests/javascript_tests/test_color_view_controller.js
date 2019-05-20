@@ -644,6 +644,15 @@ requirejs([
       equal(controller.isColoringContinuous(), false);
     });
 
+    test('Test getDiscretePaletteColor(map)', function() {
+      deepEqual(ColorViewController.getDiscretePaletteColor('OrRd'),
+      ['#fff7ec', '#fee8c8', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548',
+      '#d7301f', '#b30000', '#7f0000']);
+      deepEqual(ColorViewController.getDiscretePaletteColor('RdGy'),
+      ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#ffffff',
+      '#e0e0e0', '#bababa', '#878787', '#4d4d4d', '#1a1a1a']);
+    });
+
     asyncTest('Test setEnabled', function() {
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(

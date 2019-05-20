@@ -366,8 +366,6 @@ define([
    *
    */
   ColorViewController.getDiscretePaletteColor = function(map) {
-    //TODO: CHECK MAP TYPE
-
     map = map || 'discrete-coloring-qiime';
 
     if (map == 'discrete-coloring-qiime') {
