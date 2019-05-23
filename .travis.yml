@@ -1,7 +1,6 @@
 language: python
 python:
   - 2.7
-  - 3.4
   - 3.5
   - 3.6
   # also includes 3.7 (see below)
@@ -24,8 +23,6 @@ matrix:
   exclude:
       # for older python versions only test the latest versions of NumPy
       - python: 2.7
-        env: NUMPY_VERSION="<1.13"
-      - python: 3.4
         env: NUMPY_VERSION="<1.13"
       - python: 3.5
         env: NUMPY_VERSION="<1.13"

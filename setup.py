@@ -11,7 +11,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.0beta19"
+__version__ = "1.0.0beta19-dev"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
@@ -23,7 +23,6 @@ classes = """
     Topic :: Software Development :: User Interfaces
     Programming Language :: Python
     Programming Language :: Python :: 2.7
-    Programming Language :: Python :: 3.4
     Programming Language :: Python :: 3.5
     Programming Language :: Python :: 3.6
     Programming Language :: Python :: 3.7
