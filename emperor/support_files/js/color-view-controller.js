@@ -117,10 +117,11 @@ define([
           var decompViewDict = scope.getView();
 
           if (discrete) {
+            var palette = ColorViewController.getPaletteColor(colorScheme);
             scope.$scaled.prop('checked', false);
             scope.$scaled.prop('hidden', true);
             scope.$scaledLabel.prop('hidden', true);
-            scope.bodyGrid.selectionPalette = ColorViewController.getPaletteColor(colorScheme);
+            scope.bodyGrid.selectionPalette = palette;
           } else {
             scope.$scaled.prop('hidden', false);
             scope.$scaledLabel.prop('hidden', false);
