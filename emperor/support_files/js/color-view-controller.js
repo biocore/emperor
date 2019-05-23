@@ -113,7 +113,6 @@ define([
           var discrete = $('option:selected', scope.$colormapSelect)
                            .attr('data-type') == DISCRETE;
           var colorScheme = scope.$colormapSelect.val();
-          console.log(colorScheme);
 
           var decompViewDict = scope.getView();
 
@@ -121,8 +120,7 @@ define([
             scope.$scaled.prop('checked', false);
             scope.$scaled.prop('hidden', true);
             scope.$scaledLabel.prop('hidden', true);
-            scope.bodyGrid.selectionPalette = ColorViewController.getDiscretePaletteColor(colorScheme);
-            console.log(scope.bodyGrid.selectionPalette);
+            scope.bodyGrid.selectionPalette = ColorViewController.getPaletteColor(colorScheme);
           } else {
             scope.$scaled.prop('hidden', false);
             scope.$scaledLabel.prop('hidden', false);
@@ -344,7 +342,7 @@ define([
    *
    */
   ColorViewController.getDiscreteColors = function(values, map) {
-    map = ColorViewController.getDiscretePaletteColor(map);
+    map = ColorViewController.getPaletteColor(map);
     var size = map.length;
     var colors = {};
     for (var i = 0; i < values.length; i++) {
@@ -365,7 +363,7 @@ define([
    * @return {Object} map for selected color palette
    *
    */
-  ColorViewController.getDiscretePaletteColor = function(map) {
+  ColorViewController.getPaletteColor = function(map) {
     map = map || 'discrete-coloring-qiime';
 
     if (map == 'discrete-coloring-qiime') {

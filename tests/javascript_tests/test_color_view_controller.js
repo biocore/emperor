@@ -645,13 +645,13 @@ requirejs([
     });
 
     test('Test getDiscretePaletteColor(map)', function() {
-      deepEqual(ColorViewController.getDiscretePaletteColor('OrRd'),
+      deepEqual(ColorViewController.getPaletteColor('OrRd'),
       ['#fff7ec', '#fee8c8', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548',
       '#d7301f', '#b30000', '#7f0000']);
-      deepEqual(ColorViewController.getDiscretePaletteColor('RdGy'),
+      deepEqual(ColorViewController.getPaletteColor('RdGy'),
       ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#ffffff',
       '#e0e0e0', '#bababa', '#878787', '#4d4d4d', '#1a1a1a']);
-      deepEqual(ColorViewController.getDiscretePaletteColor('Set2'),
+      deepEqual(ColorViewController.getPaletteColor('Set2'),
       ['#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3', '#a6d854', '#ffd92f',
       '#e5c494', '#b3b3b3']);
     });
