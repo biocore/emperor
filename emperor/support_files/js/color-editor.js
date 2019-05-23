@@ -49,11 +49,15 @@ function($, _, DecompositionView, ViewControllers, spectrum) {
         color: args.item.color,
         showInput: true,
         allowEmpty: false,
-        showPalette: false,
         showInitial: true,
         clickoutFiresChange: true,
         className: 'full-spectrum',
         preferredFormat: 'hex6',
+        // Show the whole set of color palette on the menu (only discrete)
+        showPalette: args.grid.selectionPalette !== undefined,
+        showSelectionPalette: args.grid.selectionPalette !== undefined,
+        palette: args.grid.selectionPalette,
+
 
         /* On change callback */
         change: function(color) {
