@@ -166,6 +166,27 @@ requirejs([
       deepEqual(this.controllerProcrustes.getOtherEdgeColor(), '#f0000f');
     });
 
+    test('Test fromJSON issue #717', function() {
+      // update the inversion of two axes before loading from JSON
+      this.controller.flipAxis(0);
+      this.controller.flipAxis(1);
+
+      deepEqual(this.controller._flippedAxes, [true, true, false]);
+
+      var json = {'flippedAxes': [false, true, true],
+                  'visibleDimensions': [0, 1, 2],
+                  'backgroundColor': '#FF00FF', 'axesColor': '#FF000F'};
+
+      this.controller.fromJSON(json);
+
+      var decView = this.controller.getView();
+      deepEqual(decView.visibleDimensions, [0, 1, 2]);
+      deepEqual(this.controller._flippedAxes, [false, true, true]);
+
+      deepEqual(decView.backgroundColor, '#FF00FF');
+      deepEqual(decView.axesColor, '#FF000F');
+    });
+
     test('Testing _colorChanged', function() {
       this.controller._colorChanged('axes-color', '#f0f0f0');
       deepEqual(this.controller.getAxesColor(), '#f0f0f0');

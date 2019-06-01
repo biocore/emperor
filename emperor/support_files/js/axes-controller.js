@@ -712,7 +712,8 @@ define([
     decView.changeVisibleDimensions(json.visibleDimensions);
 
     _.each(json.flippedAxes, function(element, index) {
-      if (element) {
+      // if the values are different, the axes need to be inverted
+      if (element !== scope._flippedAxes[index]) {
         scope.flipAxis(decView.visibleDimensions[index]);
       }
     });
