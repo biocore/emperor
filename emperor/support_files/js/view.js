@@ -3,8 +3,9 @@ define([
     'underscore',
     'three',
     'shapes',
-    'draw'
-], function($, _, THREE, shapes, draw) {
+    'draw',
+    'multi-model'
+], function($, _, THREE, shapes, draw, multiModel) {
   var makeArrow = draw.makeArrow;
   var makeLineCollection = draw.makeLineCollection;
 /**
@@ -23,22 +24,29 @@ define([
  * @constructs DecompositionView
  *
  */
-function DecompositionView(decomp, asPointCloud) {
+function DecompositionView(multiModel, modelKey, asPointCloud) {
   /**
    * The decomposition model that the view represents.
    * @type {DecompositionModel}
    */
-  this.decomp = decomp;
+  this.decomp = multiModel.models[modelKey];
+  
+  /**
+   * All models in the current scene and global metrics about them
+   * @type {MultiModel}
+   */
+  this.allModels = multiModel;
+  
   /**
    * Number of samples represented in the view.
    * @type {integer}
    */
-  this.count = decomp.length;
+  this.count = this.decomp.length;
   /**
    * Top visible dimensions
    * @type {integer[]}
    */
-  // make sure we only use at most 3 elements
+  // make sure we only use at most 3 elements for scatter and arrow plots
   this.visibleDimensions = _.range(this.decomp.dimensions).slice(0, 3);
   /**
    * Orientation of the axes, `-1` means the axis is flipped, `1` means the
@@ -49,6 +57,11 @@ function DecompositionView(decomp, asPointCloud) {
     // by default values are not flipped i.e. all elements are equal to 1
     return 1;
   });
+  /**
+   * Use Scatter or Parallel Plot Display for scatter model objects
+   @type {String}
+   */
+  this.viewType = 'scatter';
 
   /**
    * Axes color.
@@ -72,6 +85,17 @@ function DecompositionView(decomp, asPointCloud) {
    * @type {THREE.Mesh[]}
    */
   this.markers = [];
+  
+  /**
+   * Meshes to be swapped out of scene when markers are modified.
+   */
+  this.oldMarkers = [];
+  
+  /**
+   * Flag indicating old markers must be removed from the scene tree.
+   */
+  this.needsSwapMarkers = false;
+  
   /**
    * Array of THREE.Mesh objects on screen (represent confidence intervals).
    * @type {THREE.Mesh[]}
@@ -92,21 +116,35 @@ function DecompositionView(decomp, asPointCloud) {
     value: (this.decomp.length > 20000) || asPointCloud,
     writable: false
   });
+    
+  this._initGeometry();
+}
 
-  // setup this.markers and this.lines
-  if (this.usesPointCloud) {
+DecompositionView.prototype._initGeometry = function() {
+  this.oldMarkers = this.markers;
+  if (this.oldMarkers.length > 0)
+    this.needsSwapMarkers = true;
+  this.markers = [];
+  
+  //TODO FIXME HACK:  Do we need to swap lines as well?
+  this.lines = {'left': null, 'right': null};
+  
+  if (this.viewType === 'parallel-plot')
+  {
+    console.log("Fast Init Parallel Plot");
+    this._fastInitParallelPlot();
+  }
+  else if (this.usesPointCloud) {
+    console.log("Fast Init");
     this._fastInit();
   }
   else {
+    console.log("Init Base View");
     this._initBaseView();
   }
-
-  /**
-   * True when changes have occured that require re-rendering of the canvas
-   * @type {boolean}
-   */
   this.needsUpdate = true;
-}
+};
+
 
 /**
  * Calculate the appropriate size for a geometry based on the first dimension's
@@ -134,9 +172,10 @@ DecompositionView.prototype._initBaseView = function() {
   // get the correctly sized geometry
   var radius = this.getGeometryFactor(), hasConfidenceIntervals;
   var geometry = shapes.getGeometry('Sphere', radius);
+  
 
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
-
+  
   if (this.decomp.isScatterType()) {
     this.decomp.apply(function(plottable) {
       mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial());
@@ -215,7 +254,7 @@ DecompositionView.prototype._fastInit = function() {
     throw new Error('Ellipsoids are not supported in fast mode');
   }
   if (this.decomp.isArrowType()) {
-    throw new Error('Only scatter types are supported in fast mode');
+    throw new Error('Only scatter type is supported in fast mode');
   }
 
   var positions, colors, scales, opacities, visibilities, geometry, cloud;
@@ -335,6 +374,125 @@ DecompositionView.prototype._fastInit = function() {
   geometry.attributes.scale.needsUpdate = true;
 
   this.markers.push(cloud);
+};
+
+/**
+ * Parallel plots closely mirroring the shader enabled _fastInit calls
+ */
+DecompositionView.prototype._fastInitParallelPlot = function()
+{
+//  if (this.decomp.hasConfidenceIntervals()) {
+//    throw new Error('Ellipsoids are not supported in fast parallel plot mode');
+//  }
+
+  var positions, colors, scales, opacities, visibilities, geometry, cloud;
+
+  // We're really just drawing a bunch of line strips... highly doubt shaders are necessary for this...
+  var vertexShader = `
+    attribute float scale;
+    attribute vec3 color;
+    attribute float opacity;
+    attribute float visible;
+    
+    varying vec3 vColor;
+    varying float vOpacity;
+    varying float vVisible;
+    
+    void main() {
+      vColor = color;
+      vOpacity = opacity;
+      vVisible = visible;
+    
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      gl_PointSize = 2.0;
+    }
+    `
+    
+  var fragmentShader = `
+    precision mediump float;
+    varying vec3 vColor;
+    varying float vOpacity;
+    varying float vVisible;
+    
+    void main() {
+      if (vVisible <= 0.0)
+        discard;
+      gl_FragColor = vec4(vColor, vOpacity);
+    }
+  `
+  
+  //We'll build the line strips as GL_LINES for simplicity, at least for now, by doubling up vertex positions at each of the intermediate axes.
+  var numPoints = (this.visibleDimensions.length * 2 - 2) * (this.decomp.length);
+  
+  positions = new Float32Array(numPoints * 3);
+  colors = new Float32Array(numPoints * 3);
+  scales = new Float32Array(numPoints);
+  opacities = new Float32Array(numPoints);
+  visibilities = new Float32Array(numPoints);
+
+  var material = new THREE.ShaderMaterial({
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+    transparent: true
+  });
+
+  geometry = new THREE.BufferGeometry();
+  geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.addAttribute('scale', new THREE.BufferAttribute(scales, 1));
+  geometry.addAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+  geometry.addAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+
+  lines = new THREE.LineSegments(geometry, material);
+
+  
+  var i = 0;
+  var attributeIndex = 0;
+  
+  for (i = 0; i < this.decomp.length; i++)
+  {
+    var plottable = this.decomp.plottable[i];
+    //Each point in the model maps to (this.visibleDimensions.length * 2 - 2) positions due to the use of lines rather than line strips.
+    var j = 0;
+    for (j = 0; j < this.visibleDimensions.length; j++)
+    {
+      //normalize by global range bounds
+      var globalMin = this.allModels.dimensionRanges.min[this.visibleDimensions[j]];
+      var globalMax = this.allModels.dimensionRanges.max[this.visibleDimensions[j]];
+      var interpVal = (plottable.coordinates[j] - globalMin) / (globalMax - globalMin)
+      geometry.attributes.position.setXYZ(attributeIndex,
+                                        j,
+                                        interpVal,
+                                        0);
+       
+      geometry.attributes.color.setXYZ(attributeIndex, 1, 0, 0);
+      geometry.attributes.visible.setX(attributeIndex, 1);
+      geometry.attributes.opacity.setX(attributeIndex, 1);
+      geometry.attributes.scale.setX(attributeIndex, 1);
+      attributeIndex++;
+      
+      if (j == 0 || j == this.visibleDimensions.length - 1)
+        continue;
+      
+      geometry.attributes.position.setXYZ(attributeIndex,
+                                        j,
+                                        interpVal, //TODO FIXME HACK: Need to normalize positions by each axis dimension
+                                        0);
+      geometry.attributes.color.setXYZ(attributeIndex, 1, 0, 0);
+      geometry.attributes.visible.setX(attributeIndex, 1);
+      geometry.attributes.opacity.setX(attributeIndex, 1);
+      geometry.attributes.scale.setX(attributeIndex, 1);
+      attributeIndex++;
+    }
+  }
+
+  geometry.attributes.position.needsUpdate = true;
+  geometry.attributes.color.needsUpdate = true;
+  geometry.attributes.visible.needsUpdate = true;
+  geometry.attributes.opacity.needsUpdate = true;
+  geometry.attributes.scale.needsUpdate = true;
+
+  this.markers.push(lines);
 };
 
 /**
@@ -968,6 +1126,21 @@ DecompositionView.prototype._buildVegaSpec = function() {
       },
     ],
   };
+};
+
+DecompositionView.prototype.setViewType = function(viewType) {
+  if (this.viewType === viewType)
+    return;
+  
+  this.viewType = viewType;
+  this._initGeometry();
+};
+
+DecompositionView.prototype.getAndClearOldMarkers = function() {
+  this.needsSwapMarkers = false;
+  var oldMarkers = this.oldMarkers;
+  this.oldMarkers = [];
+  return oldMarkers;
 };
 
 /**

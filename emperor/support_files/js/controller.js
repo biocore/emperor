@@ -5,6 +5,7 @@ define([
     'three',
     'view',
     'scene3d',
+    'viewtype-controller',
     'colorviewcontroller',
     'visibilitycontroller',
     'opacityviewcontroller',
@@ -17,12 +18,14 @@ define([
     'svgrenderer',
     'draw',
     'canvasrenderer',
-    'canvastoblob'
+    'canvastoblob',
+    'multi-model',
+//    'view-types',
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
-            ColorViewController, VisibilityController, OpacityViewController,
+            ViewTypeController, ColorViewController, VisibilityController, OpacityViewController,
             ShapeController, AxesController, ScaleViewController,
             AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
-            CanvasRenderer, canvasToBlob) {
+            CanvasRenderer, canvasToBlob, MultiModel) {
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
 
   /**
@@ -77,18 +80,27 @@ define([
      */
     this.height = this.$divId.height();
 
-
+    /**
+     * MultiModel object containing all DecompositionModels
+     *
+     * @type {MultiModel}
+     */
+    var decModelMap = {'scatter':scatter};
+    if (biplot)
+      decModelMap['biplot'] = biplot;
+    this.decModels = new MultiModel(decModelMap);
+    
     /**
      * Object with all the available decomposition views.
      *
      * @type {object}
      */
-    this.decViews = {'scatter': new DecompositionView(scatter)};
+    this.decViews = {'scatter': new DecompositionView(this.decModels, 'scatter')};
 
     if (biplot) {
-      this.decViews.biplot = new DecompositionView(biplot);
+      this.decViews.biplot = new DecompositionView(this.decModels, 'biplot');
     }
-
+    
     /**
      * Keep track of whether or not the biplot labels should be hidden.
      *
@@ -331,7 +343,9 @@ define([
       throw Error('Cannot add another scene plot view');
     }
 
-    var spv = new ScenePlotView3D(this.renderer, this.decViews,
+    var spv = new ScenePlotView3D(this.renderer,
+                                  this.decViews,
+                                  this.decModels,
                                   this.$plotSpace, 0, 0,
                                   this.width, this.height);
     this.sceneViews.push(spv);
@@ -531,6 +545,8 @@ define([
     var scope = this, isLargeDataset = this.decViews.scatter.usesPointCloud;
 
     //FIXME: This only works for 1 scene plot view
+    this.controllers.viewType = this.addTab(this.sceneViews[0].decViews,
+                                         ViewTypeController);
     this.controllers.color = this.addTab(this.sceneViews[0].decViews,
                                          ColorViewController);
     this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,

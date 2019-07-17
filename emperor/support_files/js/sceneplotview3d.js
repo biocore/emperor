@@ -18,6 +18,8 @@ define([
    * @param {THREE.renderer} renderer THREE renderer object.
    * @param {Object} decViews dictionary of DecompositionViews shown in this
    * scene
+   * @param {MultiModel} decModels MultiModel of DecompositionModels shown in
+   * this scene (with extra global data about them)
    * @param {Node} container Div where the scene will be rendered.
    * @param {Float} xView Horizontal position of the rendered scene in the
    * container element.
@@ -29,13 +31,14 @@ define([
    * @return {ScenePlotView3D} An instance of ScenePlotView3D.
    * @constructs ScenePlotView3D
    */
-  function ScenePlotView3D(renderer, decViews, container, xView, yView,
+  function ScenePlotView3D(renderer, decViews, decModels, container, xView, yView,
                            width, height) {
     var scope = this;
 
     // convert to jquery object for consistency with the rest of the objects
     var $container = $(container);
     this.decViews = decViews;
+    this.decModels = decModels;
     this.renderer = renderer;
     /**
      * Horizontal position of the scene.
@@ -80,14 +83,6 @@ define([
      * @type {Integer[]}
      */
     this.visibleDimensions = _.clone(this.decViews.scatter.visibleDimensions);
-
-    /**
-     * Ranges for all the decompositions in this view (there's a min and a max
-     * property).
-     * @type {Object}
-     */
-    this.dimensionRanges = {'max': [], 'min': []};
-    this._unionRanges();
 
     // used to name the axis lines/labels in the scene
     this._axisPrefix = 'emperor-axis-line-';
@@ -320,91 +315,10 @@ define([
    * @return {Number} The scaling factor to use for labels.
    */
   ScenePlotView3D.prototype.getScalingConstant = function() {
-    return (this.dimensionRanges.max[0] -
-            this.dimensionRanges.min[0]) * 0.001;
+    return (this.decModels.dimensionRanges.max[0] -
+            this.decModels.dimensionRanges.min[0]) * 0.001;
   };
 
-  /**
-   *
-   * Utility method to find the union of the ranges in the decomposition views
-   * this method will populate the dimensionRanges attributes.
-   * @private
-   *
-   */
-  ScenePlotView3D.prototype._unionRanges = function() {
-    var scope = this, computeRanges;
-
-    // first check if there's any range data, if there isn't, then we need
-    // to compute it by looking at all the decompositions
-    computeRanges = scope.dimensionRanges.max.length === 0;
-
-    // if there's range data then check it lies within the global ranges
-    if (computeRanges === false) {
-      _.each(this.decViews, function(decView, name) {
-        var decomp = decView.decomp;
-
-        for (var i = 0; i < decomp.dimensionRanges.max.length; i++) {
-          // global
-          var gMax = scope.dimensionRanges.max[i];
-          var gMin = scope.dimensionRanges.min[i];
-
-          // local
-          var lMax = decomp.dimensionRanges.max[i];
-          var lMin = decomp.dimensionRanges.min[i];
-
-          // when we detect a point outside the global ranges we break and
-          // recompute them
-          if (!(gMin <= lMin && lMin <= gMax) ||
-              !(gMin <= lMax && lMax <= gMax)) {
-            computeRanges = true;
-            break;
-          }
-        }
-      });
-    }
-
-    if (computeRanges === false) {
-      // If at this point we still don't need to compute the data, it is safe
-      // to exit because all data still exists within the expected ranges
-      return;
-    }
-    else {
-      // TODO: If this entire function ever becomes a bottleneck we should only
-      // update the dimensions that changed.
-      // See: https://github.com/biocore/emperor/issues/526
-
-      // if we have to compute the data, clean up the previously known ranges
-      this.dimensionRanges.max = [];
-      this.dimensionRanges.max.length = 0;
-      this.dimensionRanges.min = [];
-      this.dimensionRanges.min.length = 0;
-    }
-
-    _.each(this.decViews, function(decView, name) {
-      // get each decomposition object
-      var decomp = decView.decomp;
-
-      if (scope.dimensionRanges.max.length === 0) {
-        scope.dimensionRanges.max = decomp.dimensionRanges.max.slice();
-        scope.dimensionRanges.min = decomp.dimensionRanges.min.slice();
-      }
-      else {
-        // when we have more than one decomposition view we need to figure out
-        // the absolute largest range that views span over
-        _.each(decomp.dimensionRanges.max, function(value, index) {
-          var vMax = decomp.dimensionRanges.max[index],
-              vMin = decomp.dimensionRanges.min[index];
-
-          if (vMax > scope.dimensionRanges.max[index]) {
-            scope.dimensionRanges.max[index] = vMax;
-          }
-          if (vMin < scope.dimensionRanges.min[index]) {
-            scope.dimensionRanges.min[index] = vMin;
-          }
-        });
-      }
-    });
-  };
   /**
    *
    * Helper method used to iterate over the ranges of the visible dimensions.
@@ -420,49 +334,63 @@ define([
    *
    */
   ScenePlotView3D.prototype._dimensionsIterator = function(action) {
-    this._unionRanges();
+    if (this.decViews['scatter'].viewType === 'scatter')
+    {
+      this.decModels._unionRanges();
 
-    // shortcut to the index of the visible dimension and the range object
-    var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
-        z = this.visibleDimensions[2], range = this.dimensionRanges,
-        is2D = (z === null || z === undefined);
+      // shortcut to the index of the visible dimension and the range object
+      var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
+          z = this.visibleDimensions[2], range = this.decModels.dimensionRanges,
+          is2D = (z === null || z === undefined);
 
-    // Adds a padding to all dimensions such that samples don't overlap
-    // with the axes lines. Determined based on the default sphere radius
-    var axesPadding = 1.07;
+      // Adds a padding to all dimensions such that samples don't overlap
+      // with the axes lines. Determined based on the default sphere radius
+      var axesPadding = 1.07;
 
-    /*
-     * We special case Z when it is a 2D plot, whenever that's the case we set
-     * the range to be zero so no lines are shown on screen.
-     */
+      /*
+       * We special case Z when it is a 2D plot, whenever that's the case we set
+       * the range to be zero so no lines are shown on screen.
+       */
 
-    // this is the "origin" of our ordination
-    var start = [range.min[x] * axesPadding,
-                 range.min[y] * axesPadding,
-                 is2D ? 0 : range.min[z] * axesPadding];
+      // this is the "origin" of our ordination
+      var start = [range.min[x] * axesPadding,
+                   range.min[y] * axesPadding,
+                   is2D ? 0 : range.min[z] * axesPadding];
 
-    var ends = [
-      [range.max[x] * axesPadding,
-       range.min[y] * axesPadding,
-       is2D ? 0 : range.min[z] * axesPadding],
-      [range.min[x] * axesPadding,
-       range.max[y] * axesPadding,
-       is2D ? 0 : range.min[z] * axesPadding],
-      [range.min[x] * axesPadding,
-       range.min[y] * axesPadding,
-       is2D ? 0 : range.max[z] * axesPadding]
-    ];
+      var ends = [
+        [range.max[x] * axesPadding,
+         range.min[y] * axesPadding,
+         is2D ? 0 : range.min[z] * axesPadding],
+        [range.min[x] * axesPadding,
+         range.max[y] * axesPadding,
+         is2D ? 0 : range.min[z] * axesPadding],
+        [range.min[x] * axesPadding,
+         range.min[y] * axesPadding,
+         is2D ? 0 : range.max[z] * axesPadding]
+      ];
 
-    action(start, ends[0], x);
-    action(start, ends[1], y);
+      action(start, ends[0], x);
+      action(start, ends[1], y);
 
-    // when transitioning to 2D disable rotation to avoid awkward angles
-    if (is2D) {
-      this.control.enableRotate = false;
+      // when transitioning to 2D disable rotation to avoid awkward angles
+      if (is2D) {
+        this.control.enableRotate = false;
+      }
+      else {
+        action(start, ends[2], z);
+        this.control.enableRotate = true;
+      }
     }
     else {
-      action(start, ends[2], z);
-      this.control.enableRotate = true;
+      //Parallel Plots show all axes and disable rotation.
+      this.decModels._unionRanges();
+      
+      var i = 0;
+      for (i = 0; i < this.visibleDimensions.length; i++)
+      {
+        action([i,0,0], [i, 1, 0], this.visibleDimensions[i]);
+      }
+      this.control.enableRotate = false;
     }
   };
 
@@ -472,7 +400,7 @@ define([
    *
    * @param {String} color A CSS-compatible value that specifies the color
    * of each of the axes lines, the length of these lines is determined by the
-   * dimensionRanges property. If the color value is null the lines will be
+   * global dimensionRanges property computed in decModels. If the color value is null the lines will be
    * removed.
    *
    */
@@ -526,7 +454,6 @@ define([
 
     this._dimensionsIterator(function(start, end, index) {
       text = decomp.axesLabels[index];
-
       axisLabel = makeLabel(end, text, color);
       axisLabel.scale.set(axisLabel.scale.x * scaling,
                           axisLabel.scale.y * scaling, 1);
@@ -606,8 +533,8 @@ define([
 
     // orthographic cameras operate in space units not in pixel units i.e.
     // the width and height of the view is based on the objects not the window
-    var owidth = this.dimensionRanges.max[x] - this.dimensionRanges.min[x];
-    var oheight = this.dimensionRanges.max[y] - this.dimensionRanges.min[y];
+    var owidth = this.decModels.dimensionRanges.max[x] - this.decModels.dimensionRanges.min[x];
+    var oheight = this.decModels.dimensionRanges.max[y] - this.decModels.dimensionRanges.min[y];
 
     var aspect = this.width / this.height;
 
@@ -633,10 +560,10 @@ define([
   ScenePlotView3D.prototype.updateCameraTarget = function() {
     var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
 
-    var owidth = this.dimensionRanges.max[x] - this.dimensionRanges.min[x];
-    var oheight = this.dimensionRanges.max[y] - this.dimensionRanges.min[y];
-    var xcenter = this.dimensionRanges.max[x] - (owidth / 2);
-    var ycenter = this.dimensionRanges.max[y] - (oheight / 2);
+    var owidth = this.decModels.dimensionRanges.max[x] - this.decModels.dimensionRanges.min[x];
+    var oheight = this.decModels.dimensionRanges.max[y] - this.decModels.dimensionRanges.min[y];
+    var xcenter = this.decModels.dimensionRanges.max[x] - (owidth / 2);
+    var ycenter = this.decModels.dimensionRanges.max[y] - (oheight / 2);
 
     var max = _.max(this.decViews.scatter.decomp.dimensionRanges.max);
 
@@ -663,6 +590,27 @@ define([
     var updateDimensions = false, updateColors = false,
         currentDimensions, backgroundColor, axesColor, scope = this;
 
+    //Check if the view type changed and swap the markers in/out of the scene tree.
+    var anyMarkersSwapped = false;
+    _.each(this.decViews, function(view) {
+      if (view.needsSwapMarkers) {
+        anyMarkersSwapped = true;
+        var oldMarkers = view.getAndClearOldMarkers();
+        var i = 0;
+        for (i = 0; i < oldMarkers.length; i++) {
+          scope.scene.remove(oldMarkers[i]);
+        }
+        var newMarkers = view.markers;
+        for (i = 0; i < newMarkers.length; i++) {
+          scope.scene.add(newMarkers[i]);
+        }
+    }});
+    
+    if (anyMarkersSwapped) {
+      this.updateCameraTarget();
+    }
+
+
     // check if any of the decomposition views have changed
     var updateData = _.any(this.decViews, function(dv) {
       // note that we may be overwriting these variables, but we have a
@@ -681,7 +629,7 @@ define([
         scope.scene.add(tube);
       });
     });
-
+    
     // check if the visible dimensions have changed
     if (!_.isEqual(currentDimensions, this.visibleDimensions)) {
       // remove the current axes
@@ -721,7 +669,7 @@ define([
       this.drawAxesWithColor(this.axesColor);
       this.drawAxesLabelsWithColor(this.axesColor);
     }
-
+    
     // if anything has changed, then trigger an update
     return (this.needsUpdate || updateData || updateDimensions ||
             updateColors || this.control.autoRotate);
