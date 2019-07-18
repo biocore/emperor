@@ -33,6 +33,30 @@ define([
     EmperorViewController.call(this, container, title, helpmenu,
                                decompViewDict);
 
+    this.$viewTypeDiv = $('<div name="emperor-viewtype-div"></div>')
+    this.$viewTypeDiv.css('margin', '0 auto');
+    this.$viewTypeDiv.css('width', '100%');
+    this.$viewTypeDiv.css('height', '100%');
+    this.$viewTypeDiv.attr('title', 'Change the selected View Type');
+    this.$radioScatter = $('<input type="radio" name="emperor.viewType" value="scatter"> Scatter </input>');
+    this.$radioParallelPlot = $('<input type="radio" name="emperor.viewType" value="parallel-plot"> Parallel Plot </input>');
+    
+    this.$viewTypeDiv.append(this.$radioScatter);
+    this.$viewTypeDiv.append(this.$radioParallelPlot);
+
+    this.$radioScatter.change(function(){
+      decompViewDict['scatter'].setViewType('scatter');
+    });
+    
+    this.$radioParallelPlot.change(function(){
+      decompViewDict['scatter'].setViewType('parallel-plot');
+    });
+    
+    this.$header.prepend($('<hr>'));
+    this.$header.prepend(this.$viewTypeDiv);
+    
+
+
     var colors = '<table style="width:inherit; border:none;" title="">';
     colors += '<tr><td>Axes and Labels Color</td>';
     colors += '<td><input type="text" name="axes-color"/></td></tr>';

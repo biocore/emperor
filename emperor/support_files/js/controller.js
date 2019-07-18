@@ -5,7 +5,6 @@ define([
     'three',
     'view',
     'scene3d',
-    'viewtype-controller',
     'colorviewcontroller',
     'visibilitycontroller',
     'opacityviewcontroller',
@@ -22,7 +21,7 @@ define([
     'multi-model',
 //    'view-types',
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
-            ViewTypeController, ColorViewController, VisibilityController, OpacityViewController,
+            ColorViewController, VisibilityController, OpacityViewController,
             ShapeController, AxesController, ScaleViewController,
             AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
             CanvasRenderer, canvasToBlob, MultiModel) {
@@ -545,8 +544,6 @@ define([
     var scope = this, isLargeDataset = this.decViews.scatter.usesPointCloud;
 
     //FIXME: This only works for 1 scene plot view
-    this.controllers.viewType = this.addTab(this.sceneViews[0].decViews,
-                                         ViewTypeController);
     this.controllers.color = this.addTab(this.sceneViews[0].decViews,
                                          ColorViewController);
     this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
