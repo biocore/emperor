@@ -386,9 +386,9 @@ define([
       this.decModels._unionRanges();
       
       var i = 0;
-      for (i = 0; i < this.visibleDimensions.length; i++)
+      for (i = 0; i < this.decViews['scatter'].decomp.dimensions; i++)
       {
-        action([i,0,0], [i, 1, 0], this.visibleDimensions[i]);
+        action([i,0,0], [i, 1, 0], i);
       }
       this.control.enableRotate = false;
     }
@@ -476,7 +476,7 @@ define([
    */
   ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix) {
     var scope = this;
-    _.each(this.visibleDimensions, function(i) {
+    _.each(_.range(this.decViews.scatter.decomp.dimensions), function(i) {
       var axisLine = scope.scene.getObjectByName(prefix + i);
       scope.scene.remove(axisLine);
     });
@@ -608,6 +608,7 @@ define([
     
     if (anyMarkersSwapped) {
       this.updateCameraTarget();
+      this.control.update();
     }
 
 
@@ -671,7 +672,7 @@ define([
     }
     
     // if anything has changed, then trigger an update
-    return (this.needsUpdate || updateData || updateDimensions ||
+    return (anyMarkersSwapped || this.needsUpdate || updateData || updateDimensions ||
             updateColors || this.control.autoRotate);
    };
 

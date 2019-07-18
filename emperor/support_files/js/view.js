@@ -131,15 +131,12 @@ DecompositionView.prototype._initGeometry = function() {
   
   if (this.viewType === 'parallel-plot')
   {
-    console.log("Fast Init Parallel Plot");
     this._fastInitParallelPlot();
   }
   else if (this.usesPointCloud) {
-    console.log("Fast Init");
     this._fastInit();
   }
   else {
-    console.log("Init Base View");
     this._initBaseView();
   }
   this.needsUpdate = true;
@@ -421,8 +418,10 @@ DecompositionView.prototype._fastInitParallelPlot = function()
     }
   `
   
+  var allDimensions = _.range(this.decomp.dimensions);
+  
   //We'll build the line strips as GL_LINES for simplicity, at least for now, by doubling up vertex positions at each of the intermediate axes.
-  var numPoints = (this.visibleDimensions.length * 2 - 2) * (this.decomp.length);
+  var numPoints = (allDimensions.length * 2 - 2) * (this.decomp.length);
   
   positions = new Float32Array(numPoints * 3);
   colors = new Float32Array(numPoints * 3);
@@ -452,13 +451,13 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   for (i = 0; i < this.decomp.length; i++)
   {
     var plottable = this.decomp.plottable[i];
-    //Each point in the model maps to (this.visibleDimensions.length * 2 - 2) positions due to the use of lines rather than line strips.
+    //Each point in the model maps to (allDimensions.length * 2 - 2) positions due to the use of lines rather than line strips.
     var j = 0;
-    for (j = 0; j < this.visibleDimensions.length; j++)
+    for (j = 0; j < allDimensions.length; j++)
     {
       //normalize by global range bounds
-      var globalMin = this.allModels.dimensionRanges.min[this.visibleDimensions[j]];
-      var globalMax = this.allModels.dimensionRanges.max[this.visibleDimensions[j]];
+      var globalMin = this.allModels.dimensionRanges.min[allDimensions[j]];
+      var globalMax = this.allModels.dimensionRanges.max[allDimensions[j]];
       var interpVal = (plottable.coordinates[j] - globalMin) / (globalMax - globalMin)
       geometry.attributes.position.setXYZ(attributeIndex,
                                         j,
@@ -471,7 +470,7 @@ DecompositionView.prototype._fastInitParallelPlot = function()
       geometry.attributes.scale.setX(attributeIndex, 1);
       attributeIndex++;
       
-      if (j == 0 || j == this.visibleDimensions.length - 1)
+      if (j == 0 || j == allDimensions.length - 1)
         continue;
       
       geometry.attributes.position.setXYZ(attributeIndex,
