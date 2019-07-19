@@ -129,11 +129,10 @@ DecompositionView.prototype._initGeometry = function() {
   //TODO FIXME HACK:  Do we need to swap lines as well?
   this.lines = {'left': null, 'right': null};
   
-  if (this.viewType === 'parallel-plot')
-  {
+  if (this.decomp.isScatterType() && this.viewType === 'parallel-plot') {
     this._fastInitParallelPlot();
   }
-  else if (this.usesPointCloud) {
+  else if (this.decomp.isScatterType() && this.usesPointCloud) {
     this._fastInit();
   }
   else {
@@ -506,7 +505,6 @@ DecompositionView.prototype.getVisibleCount = function() {
 
   if (this.usesPointCloud) {
     var cloud = this.markers[0];
-
     for (var i = 0; i < cloud.geometry.attributes.visible.count; i++) {
       visible += (cloud.geometry.attributes.visible.getX(i) + 0);
     }
@@ -817,7 +815,7 @@ DecompositionView.prototype.showEdgesForPlottables = function(plottables) {
  * 0xff0000, or a CSS color name like 'red', etc.
  * @param {Plottable[]} group An array of plottables for which the color should
  * be set. If this object is not provided, all the plottables in the view will
- * be have the color set.
+ * have the color set.
  */
 DecompositionView.prototype.setColor = function(color, group) {
   var idx, hasConfidenceIntervals, scope = this;
@@ -834,6 +832,17 @@ DecompositionView.prototype.setColor = function(color, group) {
                                              color.r, color.g, color.b);
     });
     cloud.geometry.attributes.color.needsUpdate = true;
+  }
+  else if (this.viewType == 'parallel-plot' && this.decomp.isScatterType()) {
+    var lines = this.markers[0];
+    color = new THREE.Color(color);
+    var numPoints = (this.decomp.dimensions * 2 - 2);
+    group.forEach(function(plottable) {
+    var i = 0;
+    for (i = plottable.idx * numPoints; i < (plottable.idx+1) * (numPoints); i++)
+        lines.geometry.attributes.color.setXYZ(i, color.r, color.g, color.b)
+    });
+    lines.geometry.attributes.color.needsUpdate = true;
   }
   else if (this.decomp.isScatterType()) {
     group.forEach(function(plottable) {
