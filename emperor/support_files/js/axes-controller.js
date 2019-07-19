@@ -721,6 +721,9 @@ define([
 
     json.referenceEdgeColor = this.getReferenceEdgeColor();
     json.otherEdgeColor = this.getOtherEdgeColor();
+    
+    //Save the viewType
+    json.viewType = decView.viewType;
 
     return json;
   };
@@ -762,6 +765,9 @@ define([
 
     // make sure everything is up to date in the UI
     this.buildDisplayTable();
+    
+    //Restore the viewType
+    decView.setViewType(json.viewType);
   };
 
   return AxesController;
