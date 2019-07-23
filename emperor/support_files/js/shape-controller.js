@@ -115,6 +115,10 @@ define([
    */
   ShapeController.prototype.setPlottableAttributes =
       function(scope, shape, group) {
+
+    if (scope.viewType == 'parallel-plot')
+      return;
+
     var idx, factor = scope.getGeometryFactor();
 
     // get the appropriately sized geometry
@@ -131,5 +135,6 @@ define([
     });
     scope.needsUpdate = true;
   };
+  
   return ShapeController;
 });

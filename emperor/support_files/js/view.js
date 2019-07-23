@@ -550,6 +550,9 @@ DecompositionView.prototype.updatePositions = function() {
     });
     cloud.geometry.attributes.position.needsUpdate = true;
   }
+  else if (this.decomp.isScatterType() && this.viewType === 'parallel-plot') {
+    //TODO:  Do we need to do anything when axes are changed in parallel plot mode?
+  }
   else if (this.decomp.isScatterType()) {
     this.decomp.apply(function(plottable) {
       mesh = scope.markers[plottable.idx];
@@ -885,6 +888,16 @@ DecompositionView.prototype.setVisibility = function(visible, group) {
     });
     cloud.geometry.attributes.visible.needsUpdate = true;
   }
+  else if (this.viewType == 'parallel-plot' && this.decomp.isScatterType()) {
+    var lines = this.markers[0];
+    var numPoints = (this.decomp.dimensions * 2 - 2);
+    _.each(group, function(plottable) {
+      var i = 0;
+      for (i = plottable.idx * numPoints; i < (plottable.idx+1) * (numPoints); i++)
+        lines.geometry.attributes.visible.setX(i, visible * 1)
+    });
+    lines.geometry.attributes.visible.needsUpdate = true;
+  }
   else {
     _.each(group, function(plottable) {
       scope.markers[plottable.idx].visible = visible;
@@ -931,6 +944,16 @@ DecompositionView.prototype.setScale = function(scale, group) {
     });
     cloud.geometry.attributes.scale.needsUpdate = true;
   }
+  else if (this.viewType == 'parallel-plot' && this.decomp.isScatterType()) {
+    var lines = this.markers[0];
+    var numPoints = (this.decomp.dimensions * 2 - 2);
+    _.each(group, function(plottable) {
+      var i = 0;
+      for (i = plottable.idx * numPoints; i < (plottable.idx+1) * (numPoints); i++)
+        lines.geometry.attributes.scale.setX(i, scale);
+    });
+    lines.geometry.attributes.scale.needsUpdate = true;
+  }
   else {
     _.each(group, function(element) {
       scope.markers[element.idx].scale.set(scale, scale, scale);
@@ -962,6 +985,16 @@ DecompositionView.prototype.setOpacity = function(opacity, group) {
       cloud.geometry.attributes.opacity.setX(plottable.idx, opacity);
     });
     cloud.geometry.attributes.opacity.needsUpdate = true;
+  }
+  else if (this.viewType == 'parallel-plot' && this.decomp.isScatterType()) {
+    var lines = this.markers[0];
+    var numPoints = (this.decomp.dimensions * 2 - 2);
+    _.each(group, function(plottable) {
+      var i = 0;
+      for (i = plottable.idx * numPoints; i < (plottable.idx+1) * (numPoints); i++)
+        lines.geometry.attributes.opacity.setX(i, opacity);
+    });
+    lines.geometry.attributes.opacity.needsUpdate = true;
   }
   else {
     if (this.decomp.isScatterType()) {

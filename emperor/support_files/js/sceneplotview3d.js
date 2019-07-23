@@ -580,6 +580,11 @@ define([
     this.needsUpdate = true;
   };
 
+  ScenePlotView3D.prototype.UPDATE_FLAGS = {
+    NEEDS_RENDER : 1,
+    NEEDS_CONTROLLER_REFRESH : 2
+  };
+  
   /**
    *
    * Convenience method to check if this or any of the decViews under this need
@@ -671,9 +676,15 @@ define([
       this.drawAxesLabelsWithColor(this.axesColor);
     }
     
+    var retVal = 0;
+    if (anyMarkersSwapped)
+      retVal |= ScenePlotView3D.prototype.UPDATE_FLAGS.NEEDS_CONTROLLER_REFRESH;
+    if (anyMarkersSwapped || this.needsUpdate || updateData || updateDimensions ||
+            updateColors || this.control.autoRotate)
+      retVal |= ScenePlotView3D.prototype.UPDATE_FLAGS.NEEDS_RENDER;
+
     // if anything has changed, then trigger an update
-    return (anyMarkersSwapped || this.needsUpdate || updateData || updateDimensions ||
-            updateColors || this.control.autoRotate);
+    return retVal;
    };
 
   /**

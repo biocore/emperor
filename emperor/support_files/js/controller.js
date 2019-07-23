@@ -463,7 +463,14 @@ define([
     }
 
     $.each(this.sceneViews, function(i, sv) {
-      if (sv.checkUpdate()) {
+      requiredActions = sv.checkUpdate();
+      if (requiredActions & ScenePlotView3D.prototype.UPDATE_FLAGS.NEEDS_CONTROLLER_REFRESH) {
+        //loop over controllers and update
+        for (controllerKey in scope.controllers) {
+          scope.controllers[controllerKey].forceRefresh();
+        }
+      }
+      if (requiredActions & ScenePlotView3D.prototype.UPDATE_FLAGS.NEEDS_RENDER) {
         scope.renderer.setViewport(0, 0, scope.width, scope.height);
         scope.renderer.clear();
         sv.render();
