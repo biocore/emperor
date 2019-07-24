@@ -598,7 +598,7 @@ define([
     //Check if the view type changed and swap the markers in/out of the scene tree.
     var anyMarkersSwapped = false;
     _.each(this.decViews, function(view) {
-      if (view.needsSwapMarkers) {
+      if (view.needsSwapMarkers){
         anyMarkersSwapped = true;
         var oldMarkers = view.getAndClearOldMarkers();
         var i = 0;
@@ -608,6 +608,22 @@ define([
         var newMarkers = view.markers;
         for (i = 0; i < newMarkers.length; i++) {
           scope.scene.add(newMarkers[i]);
+        }
+        
+        var lines = view.lines;
+        var ellipsoids = view.ellipsoids;
+        
+        if (view.viewType == 'parallel-plot') {
+          for (i = 0; i < lines.length; i++)
+            scope.scene.remove(lines[i]);
+          for (i = 0; i < ellipsoids.length; i++)
+            scope.scene.remove(ellipsoids[i]);
+        }
+        if (view.viewType == 'scatter') {
+          for (i = 0; i < lines.length; i++)
+            scope.scene.add(lines[i]);
+          for (i = 0; i < lines.length; i++)
+            scope.scene.add(ellipsoids[i]);
         }
     }});
     

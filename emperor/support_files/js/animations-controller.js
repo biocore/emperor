@@ -547,14 +547,14 @@ define([
       }
     });
 
-    view.tubes = this.director.trajectories.map(function(trajectory) {
-      color = scope._colors[trajectory.metadataCategoryName] || 'red';
-
-      var tube = drawTrajectoryLine(trajectory, scope.director.currentFrame,
-                                    color, radius);
-      return tube;
-    });
-
+    if (view.viewType !== 'parallel-plot') {
+      view.tubes = this.director.trajectories.map(function(trajectory) {
+        color = scope._colors[trajectory.metadataCategoryName] || 'red';
+        var tube = drawTrajectoryLine(trajectory, scope.director.currentFrame,
+                                      color, radius);
+        return tube;
+      });
+    }
     view.needsUpdate = true;
 
     this.director.updateFrame();

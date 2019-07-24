@@ -80,6 +80,7 @@ function DecompositionView(multiModel, modelKey, asPointCloud) {
    * @type {THREE.Mesh[]}
    */
   this.tubes = [];
+  
   /**
    * Array of THREE.Mesh objects on screen (represent samples).
    * @type {THREE.Mesh[]}
@@ -169,7 +170,6 @@ DecompositionView.prototype._initBaseView = function() {
   var radius = this.getGeometryFactor(), hasConfidenceIntervals;
   var geometry = shapes.getGeometry('Sphere', radius);
   
-
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
   
   if (this.decomp.isScatterType()) {
