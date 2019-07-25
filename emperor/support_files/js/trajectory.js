@@ -202,7 +202,16 @@ define([
       return null;
     if (this.interpolatedCoordinates.length -1 <= idx)
       return null;
-    return [this.coordinates[this._intervalValues[idx]], this.interpolatedCoordinates[idx]];
+      
+    lastStaticPoint = this.coordinates[this._intervalValues[idx]];
+    interpPoint = this.interpolatedCoordinates[idx];
+    if (lastStaticPoint.x === interpPoint.x
+      && lastStaticPoint.y === interpPoint.y
+      && lastStaticPoint.z === interpPoint.z) {
+      return null; //Shouldn't pass on a zero length segment
+    }
+      
+    return [lastStaticPoint, interpPoint];
   }
   
   /**
