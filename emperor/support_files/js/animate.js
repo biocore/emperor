@@ -137,6 +137,15 @@ function(_, trajectory) {
      * @default -1
      */
     this.currentFrame = -1;
+    
+    /*
+     * @type {Integer}
+     * The previous frame served by the director
+     * (Note, more or less always equals currentFrame - 1 in current implementation,
+     * but built more generically to allow rewind and frame skipping in the future)
+     */
+    this.previousFrame = -1;
+    
     /**
      * @type {Array}
      * Array where each element in the trajectory is a trajectory with the
@@ -276,6 +285,7 @@ function(_, trajectory) {
    */
   AnimationDirector.prototype.updateFrame = function() {
     if (this.animationCycleFinished() === false) {
+      this.previousFrame = this.currentFrame;
       this.currentFrame = this.currentFrame + 1;
     }
   };

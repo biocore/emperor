@@ -677,8 +677,12 @@ define([
     });
 
     _.each(this.decViews, function(view) {
-      view.tubes.forEach(function(tube) {
+      view.staticTubes.forEach(function(tube) {
         scope.scene.add(tube);
+      });
+      view.dynamicTubes.forEach(function(tube) {
+        if (tube !== null)
+          scope.scene.add(tube);
       });
     });
 

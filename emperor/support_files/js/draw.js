@@ -1,5 +1,9 @@
 /** @module draw */
 define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
+
+  var NUM_TUBE_SEGMENTS = 3;
+  var NUM_TUBE_CROSS_SECTION_POINTS = 10;
+
   // useful for some calculations
   var ZERO = new THREE.Vector3();
 
@@ -295,10 +299,79 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     // the line will contain the two vertices and the described material
     // we increase the number of points to have a smoother transition on
     // edges i. e. where the trajectory changes the direction it is going
-    lineGeometry = new THREE.TubeGeometry(path, (points.length - 1) * 3, radius,
-                                          10, false);
+    lineGeometry = new THREE.TubeGeometry(path, (points.length - 1) * NUM_TUBE_SEGMENTS, radius,
+                                          NUM_TUBE_CROSS_SECTION_POINTS, false);
 
     return new THREE.Mesh(lineGeometry, material);
+  }
+  
+  function drawTrajectoryLineDynamic(trajectory, currentFrame, color, radius) {
+    // based on the example described in:
+    // https://github.com/mrdoob/three.js/wiki/Drawing-lines
+    var material, points = [], lineGeometry, limit = 0, path;
+
+    _trajectory = trajectory.representativeInterpolatedCoordinatesAtIndex(currentFrame);
+    if (_trajectory === null || _trajectory.length == 0)
+      return null;
+
+    material = new THREE.MeshPhongMaterial({color: color});
+    material.matrixAutoUpdate = true;
+    material.transparent = false;
+
+    for (var index = 0; index < _trajectory.length; index++) {
+      points.push(new THREE.Vector3(_trajectory[index].x,
+                  _trajectory[index].y, _trajectory[index].z));
+    }
+
+    path = new THREE.EmperorTrajectory(points);
+    
+    // the line will contain the two vertices and the described material
+    // we increase the number of points to have a smoother transition on
+    // edges i. e. where the trajectory changes the direction it is going
+    lineGeometry = new THREE.TubeGeometry(path, (points.length - 1) * NUM_TUBE_SEGMENTS, radius,
+                                          NUM_TUBE_CROSS_SECTION_POINTS, false);
+
+    return new THREE.Mesh(lineGeometry, material);
+  }
+    
+  function drawTrajectoryLineStatic(trajectory, color, radius) {
+    var _trajectory = trajectory.coordinates;
+    
+    var material = new THREE.MeshPhongMaterial({color: color});
+    material.matrixAutoUpdate = true;
+    material.transparent = false;
+    
+    var allPoints = [];
+    for (var index = 0; index < _trajectory.length; index++) {
+      allPoints.push(new THREE.Vector3(_trajectory[index].x,
+                  _trajectory[index].y, _trajectory[index].z));
+    }
+
+    var path = new THREE.EmperorTrajectory(allPoints);
+    
+    //Tubes are straight segments, but adding vertices along them might change lighting effects
+    //under certain models and lighting conditions.
+    var tubeBufferGeom = new THREE.TubeBufferGeometry(path, (allPoints.length - 1) * NUM_TUBE_SEGMENTS, radius, NUM_TUBE_CROSS_SECTION_POINTS, false)
+
+    return new THREE.Mesh(tubeBufferGeom, material);
+  }
+  
+  function updateStaticTrajectoryDrawRange(trajectory, currentFrame, threeMesh)
+  {
+    //Blah, reverse engineering the number of points in a THREE tube is not fun, and may be implementation/version dependent.
+    //Number of points drawn per tube segment = 2 (triangles) * 3 (points per triangle) * NUM_TUBE_CROSS_SECTION_POINTS (number of vertices in a cross section of tube)
+    //Number of tube segments per pair of consecutive points = NUM_TUBE_SEGMENTS
+
+    var multiplier = 2 * 3 * NUM_TUBE_CROSS_SECTION_POINTS * NUM_TUBE_SEGMENTS
+    if (currentFrame < trajectory._intervalValues.length)
+    {
+      var intervalValue = trajectory._intervalValues[currentFrame];
+      threeMesh.geometry.setDrawRange(0, intervalValue * multiplier);
+    }
+    else
+    {
+      threeMesh.geometry.setDrawRange(0, (trajectory.coordinates.length - 1) * multiplier);
+    }
   }
 
 
@@ -415,5 +488,8 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
   return {'formatSVGLegend': formatSVGLegend, 'makeLine': makeLine,
           'makeLabel': makeLabel, 'makeArrow': makeArrow,
           'drawTrajectoryLine': drawTrajectoryLine,
+          'drawTrajectoryLineStatic': drawTrajectoryLineStatic,
+          'drawTrajectoryLineDynamic': drawTrajectoryLineDynamic,
+          'updateStaticTrajectoryDrawRange': updateStaticTrajectoryDrawRange,
           'makeLineCollection': makeLineCollection};
 });

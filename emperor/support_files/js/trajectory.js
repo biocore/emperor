@@ -186,7 +186,25 @@ define([
 
     return output;
   };
-
+  
+  /**
+   *
+   * Grab only the interpolated portion of representativeCoordinatesAtIndex.
+   *
+   * @param {integer} idx Value for which to determine the required number of
+   * points.
+   *
+   * @return {Array[]} Array containing the representative float x, y, z
+   * coordinates needed to draw the interpolated portion of a trajectory at the given index.
+   */
+  TrajectoryOfSamples.prototype.representativeInterpolatedCoordinatesAtIndex = function(idx) {
+    if (idx === 0)
+      return null;
+    if (this.interpolatedCoordinates.length -1 <= idx)
+      return null;
+    return [this.coordinates[this._intervalValues[idx]], this.interpolatedCoordinates[idx]];
+  }
+  
   /**
    *
    * Function to interpolate a certain number of steps between two three

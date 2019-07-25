@@ -63,10 +63,18 @@ function DecompositionView(decomp, asPointCloud) {
    */
   this.backgroundColor = '#000000';
   /**
-   * Tube objects on screen (used for animations)
+   * Static tubes objects covering an entire trajectory.
+   * Can use setDrawRange on the underlying geometry to display
+   * just part of the trajectory.
    * @type {THREE.Mesh[]}
    */
-  this.tubes = [];
+  this.staticTubes = [];
+  /**
+   * Dynamic tubes covering the final tube segment of a trajectory
+   * Must be rebuilt each frame by the animations controller
+   * @type {THREE.Mesh[]}
+   */
+  this.dynamicTubes = [];
   /**
    * Array of THREE.Mesh objects on screen (represent samples).
    * @type {THREE.Mesh[]}
