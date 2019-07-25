@@ -361,15 +361,24 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
       {'x': 6.75, 'y': 6.75, 'z': 6.75},
       {'x': 8, 'y': 8, 'z': 8}];
 
-      deepEqual(trajectory.representativeCoordinatesAtIndex(3),
+      var fullCoordinates3 = trajectory.representativeCoordinatesAtIndex(3);
+      deepEqual(fullCoordinates3,
           [{'x': 0, 'y': 0, 'z': 0},
           {'x': 0.75, 'y': 0.75, 'z': 0.75}],
           'Coordinates are retrieved correctly at index 3');
-      deepEqual(trajectory.representativeCoordinatesAtIndex(11),
+        
+      var fullCoordinates11 = trajectory.representativeCoordinatesAtIndex(11);
+      deepEqual(fullCoordinates11,
           [{'x': 0, 'y': 0, 'z': 0}, {'x': 1, 'y': 1, 'z': 1},
           {'x': -9, 'y': -9, 'z': -9}, {'x': 3, 'y': 3, 'z': 3},
           {'x': 4.25, 'y': 4.25, 'z': 4.25}],
           'Coordinates are retrieved correctly at index 11');
+         
+      var dynamicCoordinates3 = trajectory.representativeInterpolatedCoordinatesAtIndex(3);
+      var dynamicCoordinates11 = trajectory.representativeInterpolatedCoordinatesAtIndex(11);
+      
+      deepEqual(fullCoordinates3.slice(-2), dynamicCoordinates3, "Dynamic coordinates match on frame 3");
+      deepEqual(fullCoordinates11.slice(-2), dynamicCoordinates11, "Dynamic coordinates match on frame 11");
 
     });
 
