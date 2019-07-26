@@ -502,8 +502,14 @@ DecompositionView.prototype._fastInitParallelPlot = function()
  */
 DecompositionView.prototype.getVisibleCount = function() {
   var visible = 0;
-
-  if (this.usesPointCloud) {
+  if (this.viewType === 'parallel-plot') {
+    var cloud = this.markers[0];
+    var numPoints = (this.decomp.dimensions * 2 - 2);
+    for (var i = 0; i < cloud.geometry.attributes.visible.count; i+= numPoints) {
+      visible += (cloud.geometry.attributes.visible.getX(i) + 0);
+    }
+  }
+  else if (this.usesPointCloud) {
     var cloud = this.markers[0];
     for (var i = 0; i < cloud.geometry.attributes.visible.count; i++) {
       visible += (cloud.geometry.attributes.visible.getX(i) + 0);
