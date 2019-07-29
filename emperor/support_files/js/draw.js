@@ -278,32 +278,6 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
     return arrow;
   }
-
-  function drawTrajectoryLine(trajectory, currentFrame, color, radius) {
-    // based on the example described in:
-    // https://github.com/mrdoob/three.js/wiki/Drawing-lines
-    var material, points = [], lineGeometry, limit = 0, path;
-
-    _trajectory = trajectory.representativeCoordinatesAtIndex(currentFrame);
-
-    material = new THREE.MeshPhongMaterial({color: color});
-    material.matrixAutoUpdate = true;
-    material.transparent = false;
-
-    for (var index = 0; index < _trajectory.length; index++) {
-      points.push(new THREE.Vector3(_trajectory[index].x,
-                  _trajectory[index].y, _trajectory[index].z));
-    }
-
-    path = new THREE.EmperorTrajectory(points);
-    // the line will contain the two vertices and the described material
-    // we increase the number of points to have a smoother transition on
-    // edges i. e. where the trajectory changes the direction it is going
-    lineGeometry = new THREE.TubeGeometry(path, (points.length - 1) * NUM_TUBE_SEGMENTS, radius,
-                                          NUM_TUBE_CROSS_SECTION_POINTS, false);
-
-    return new THREE.Mesh(lineGeometry, material);
-  }
   
   function drawTrajectoryLineDynamic(trajectory, currentFrame, color, radius) {
     // based on the example described in:
@@ -487,7 +461,6 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
   return {'formatSVGLegend': formatSVGLegend, 'makeLine': makeLine,
           'makeLabel': makeLabel, 'makeArrow': makeArrow,
-          'drawTrajectoryLine': drawTrajectoryLine,
           'drawTrajectoryLineStatic': drawTrajectoryLineStatic,
           'drawTrajectoryLineDynamic': drawTrajectoryLineDynamic,
           'updateStaticTrajectoryDrawRange': updateStaticTrajectoryDrawRange,

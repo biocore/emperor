@@ -10,7 +10,6 @@ define([
 ], function($, _, DecompositionView, ViewControllers, AnimationDirector,
             draw, Color, ColorViewController) {
   var EmperorViewController = ViewControllers.EmperorViewController;
-  var drawTrajectoryLine = draw.drawTrajectoryLine;
   var drawTrajectoryLineStatic = draw.drawTrajectoryLineStatic;
   var drawTrajectoryLineDynamic = draw.drawTrajectoryLineDynamic;
   var updateStaticTrajectoryDrawRange = draw.updateStaticTrajectoryDrawRange;
