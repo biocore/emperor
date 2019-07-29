@@ -138,7 +138,7 @@ function(_, trajectory) {
      */
     this.currentFrame = -1;
     
-    /*
+    /**
      * @type {Integer}
      * The previous frame served by the director
      * (Note, more or less always equals currentFrame - 1 in current implementation,
