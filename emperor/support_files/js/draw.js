@@ -293,7 +293,6 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
     material = new THREE.MeshPhongMaterial({
         color: color,
-        matrixAutoUpdate: true,
         transparent: false});
 
     for (var index = 0; index < _trajectory.length; index++) {
@@ -328,7 +327,6 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     
     var material = new THREE.MeshPhongMaterial({
       color: color,
-      matrixAutoUpdate: true,
       transparent: false}
     );
     

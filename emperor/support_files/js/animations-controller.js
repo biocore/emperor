@@ -12,6 +12,8 @@ define([
   var EmperorViewController = ViewControllers.EmperorViewController;
   var drawTrajectoryLineStatic = draw.drawTrajectoryLineStatic;
   var drawTrajectoryLineDynamic = draw.drawTrajectoryLineDynamic;
+  var disposeTrajectoryLineStatic = draw.disposeTrajectoryLineStatic;
+  var disposeTrajectoryLineDynamic = draw.disposeTrajectoryLineDynamic;
   var updateStaticTrajectoryDrawRange = draw.updateStaticTrajectoryDrawRange;
   var ColorEditor = Color.ColorEditor, ColorFormatter = Color.ColorFormatter;
 
@@ -442,9 +444,16 @@ define([
     this.playing = false;
     this.director = null;
 
-    view.getTubes().forEach(function(tube) {
+    view.staticTubes.forEach(function(tube) {
       if (tube !== null && tube.parent !== null) {
         tube.parent.remove(tube);
+        disposeTrajectoryLineStatic(tube);
+      }
+    });
+    view.dynamicTubes.forEach(function(tube) {
+      if (tube !== null && tube.parent !== null) {
+        tube.parent.remove(tube);
+        disposeTrajectoryLineDynamic(tube);
       }
     });
 
@@ -563,6 +572,7 @@ define([
       }
       if (tube.parent !== null) {
         tube.parent.remove(tube);
+        disposeTrajectoryLineDynamic(tube);
       }
     });
     
