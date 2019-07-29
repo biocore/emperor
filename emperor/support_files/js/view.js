@@ -129,6 +129,14 @@ DecompositionView.prototype.getGeometryFactor = function() {
 };
 
 /**
+ * Retrieve a shallow copy of concatenated static and dynamic tube arrays
+ * @type {THREE.Mesh[]}
+ */
+DecompositionView.prototype.getTubes = function() {
+  return this.staticTubes.concat(this.dynamicTubes);
+};
+
+/**
  *
  * Helper method to initialize the base THREE.js objects.
  * @private

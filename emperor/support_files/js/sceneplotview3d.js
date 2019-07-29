@@ -677,10 +677,7 @@ define([
     });
 
     _.each(this.decViews, function(view) {
-      view.staticTubes.forEach(function(tube) {
-        scope.scene.add(tube);
-      });
-      view.dynamicTubes.forEach(function(tube) {
+      view.getTubes().forEach(function(tube) {
         if (tube !== null)
           scope.scene.add(tube);
       });

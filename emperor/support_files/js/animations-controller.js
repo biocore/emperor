@@ -443,8 +443,7 @@ define([
     this.playing = false;
     this.director = null;
 
-    var allTubes = view.staticTubes.concat(view.dynamicTubes);
-    allTubes.forEach(function(tube) {
+    view.getTubes().forEach(function(tube) {
       if (tube !== null && tube.parent !== null) {
         tube.parent.remove(tube);
       }
@@ -544,8 +543,7 @@ define([
     var radius = view.getGeometryFactor();
     radius *= 0.45 * this.getRadius();
 
-    var i = 0;
-    for (i = 0; i < this.director.trajectories.length; i++) {
+    for (var i = 0; i < this.director.trajectories.length; i++) {
       var trajectory = this.director.trajectories[i];
 
       //Ensure static tubes are constructed
