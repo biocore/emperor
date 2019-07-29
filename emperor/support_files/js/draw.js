@@ -311,9 +311,11 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
   function drawTrajectoryLineStatic(trajectory, color, radius) {
     var _trajectory = trajectory.coordinates;
     
-    var material = new THREE.MeshPhongMaterial({color: color});
-    material.matrixAutoUpdate = true;
-    material.transparent = false;
+    var material = new THREE.MeshPhongMaterial({
+      color: color,
+      matrixAutoUpdate: true,
+      transparent: false}
+    );
     
     var allPoints = [];
     for (var index = 0; index < _trajectory.length; index++) {
@@ -332,7 +334,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
   
   function updateStaticTrajectoryDrawRange(trajectory, currentFrame, threeMesh)
   {
-    //Blah, reverse engineering the number of points in a THREE tube is not fun, and may be implementation/version dependent.
+    //Reverse engineering the number of points in a THREE tube is not fun, and may be implementation/version dependent.
     //Number of points drawn per tube segment = 2 (triangles) * 3 (points per triangle) * NUM_TUBE_CROSS_SECTION_POINTS (number of vertices in a cross section of tube)
     //Number of tube segments per pair of consecutive points = NUM_TUBE_SEGMENTS
 
