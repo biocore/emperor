@@ -279,6 +279,9 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     return arrow;
   }
   
+  /**
+   * Returns a new trajectory line dynamic mesh
+   */
   function drawTrajectoryLineDynamic(trajectory, currentFrame, color, radius) {
     // based on the example described in:
     // https://github.com/mrdoob/three.js/wiki/Drawing-lines
@@ -288,9 +291,10 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     if (_trajectory === null || _trajectory.length == 0)
       return null;
 
-    material = new THREE.MeshPhongMaterial({color: color});
-    material.matrixAutoUpdate = true;
-    material.transparent = false;
+    material = new THREE.MeshPhongMaterial({
+        color: color,
+        matrixAutoUpdate: true,
+        transparent: false});
 
     for (var index = 0; index < _trajectory.length; index++) {
       points.push(new THREE.Vector3(_trajectory[index].x,
@@ -307,7 +311,18 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
     return new THREE.Mesh(lineGeometry, material);
   }
-    
+  
+  /**
+   * Disposes a trajectory line dynamic mesh
+   */
+  function disposeTrajectoryLineDynamic(mesh) {
+    mesh.geometry.dispose();
+    mesh.material.dispose();
+  }
+
+  /**
+   * Returns a new trajectory line static mesh
+   */
   function drawTrajectoryLineStatic(trajectory, color, radius) {
     var _trajectory = trajectory.coordinates;
     
@@ -332,6 +347,14 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     return new THREE.Mesh(tubeBufferGeom, material);
   }
   
+  /**
+   * Disposes a trajectory line static mesh
+   */
+  function disposeTrajectoryLineStatic(mesh) {
+    mesh.geometry.dispose();
+    mesh.material.dispose();
+  }
+
   function updateStaticTrajectoryDrawRange(trajectory, currentFrame, threeMesh)
   {
     //Reverse engineering the number of points in a THREE tube is not fun, and may be implementation/version dependent.
@@ -464,7 +487,9 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
   return {'formatSVGLegend': formatSVGLegend, 'makeLine': makeLine,
           'makeLabel': makeLabel, 'makeArrow': makeArrow,
           'drawTrajectoryLineStatic': drawTrajectoryLineStatic,
+          'disposeTrajectoryLineStatic': disposeTrajectoryLineStatic,
           'drawTrajectoryLineDynamic': drawTrajectoryLineDynamic,
+          'disposeTrajectoryLineDynamic': disposeTrajectoryLineDynamic,
           'updateStaticTrajectoryDrawRange': updateStaticTrajectoryDrawRange,
           'makeLineCollection': makeLineCollection};
 });
