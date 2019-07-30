@@ -287,7 +287,8 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     // https://github.com/mrdoob/three.js/wiki/Drawing-lines
     var material, points = [], lineGeometry, limit = 0, path;
 
-    _trajectory = trajectory.representativeInterpolatedCoordinatesAtIndex(currentFrame);
+    _trajectory = trajectory.representativeInterpolatedCoordinatesAtIndex(
+                                                                  currentFrame);
     if (_trajectory === null || _trajectory.length == 0)
       return null;
 
@@ -305,8 +306,11 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     // the line will contain the two vertices and the described material
     // we increase the number of points to have a smoother transition on
     // edges i. e. where the trajectory changes the direction it is going
-    lineGeometry = new THREE.TubeGeometry(path, (points.length - 1) * NUM_TUBE_SEGMENTS, radius,
-                                          NUM_TUBE_CROSS_SECTION_POINTS, false);
+    lineGeometry = new THREE.TubeGeometry(path,
+                                    (points.length - 1) * NUM_TUBE_SEGMENTS,
+                                    radius,
+                                    NUM_TUBE_CROSS_SECTION_POINTS,
+                                    false);
 
     return new THREE.Mesh(lineGeometry, material);
   }
@@ -338,9 +342,14 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
     var path = new THREE.EmperorTrajectory(allPoints);
 
-    //Tubes are straight segments, but adding vertices along them might change lighting effects
-    //under certain models and lighting conditions.
-    var tubeBufferGeom = new THREE.TubeBufferGeometry(path, (allPoints.length - 1) * NUM_TUBE_SEGMENTS, radius, NUM_TUBE_CROSS_SECTION_POINTS, false);
+    //Tubes are straight segments, but adding vertices along them might change
+    //lighting effects under certain models and lighting conditions.
+    var tubeBufferGeom = new THREE.TubeBufferGeometry(
+                                path,
+                                (allPoints.length - 1) * NUM_TUBE_SEGMENTS,
+                                radius,
+                                NUM_TUBE_CROSS_SECTION_POINTS,
+                                false);
 
     return new THREE.Mesh(tubeBufferGeom, material);
   }
@@ -355,9 +364,12 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
   function updateStaticTrajectoryDrawRange(trajectory, currentFrame, threeMesh)
   {
-    //Reverse engineering the number of points in a THREE tube is not fun, and may be implementation/version dependent.
-    //Number of points drawn per tube segment = 2 (triangles) * 3 (points per triangle) * NUM_TUBE_CROSS_SECTION_POINTS (number of vertices in a cross section of tube)
-    //Number of tube segments per pair of consecutive points = NUM_TUBE_SEGMENTS
+    //Reverse engineering the number of points in a THREE tube is not fun, and
+    //may be implementation/version dependent.
+    //Number of points drawn per tube segment =
+    //  2 (triangles) * 3 (points per triangle) * NUM_TUBE_CROSS_SECTION_POINTS
+    //Number of tube segments per pair of consecutive points =
+    //  NUM_TUBE_SEGMENTS
 
     var multiplier = 2 * 3 * NUM_TUBE_CROSS_SECTION_POINTS * NUM_TUBE_SEGMENTS;
     if (currentFrame < trajectory._intervalValues.length)
@@ -367,7 +379,8 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     }
     else
     {
-      threeMesh.geometry.setDrawRange(0, (trajectory.coordinates.length - 1) * multiplier);
+      threeMesh.geometry.setDrawRange(0,
+                            (trajectory.coordinates.length - 1) * multiplier);
     }
   }
 

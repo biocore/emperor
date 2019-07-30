@@ -558,11 +558,15 @@ define([
       if (view.staticTubes[i] === null || view.staticTubes[i] === undefined)
       {
         var color = this._colors[trajectory.metadataCategoryName] || 'red';
-        view.staticTubes[i] = drawTrajectoryLineStatic(trajectory, color, radius);
+        view.staticTubes[i] = drawTrajectoryLineStatic(trajectory,
+                                                        color,
+                                                        radius);
       }
 
       //Ensure static tube draw ranges are set to visible segment
-      updateStaticTrajectoryDrawRange(trajectory, this.director.currentFrame, view.staticTubes[i]);
+      updateStaticTrajectoryDrawRange(trajectory,
+                                        this.director.currentFrame,
+                                        view.staticTubes[i]);
     }
 
     //Remove any old dynamic tubes from the scene
@@ -576,11 +580,14 @@ define([
       }
     });
 
-    //Construct new dynamic tubes containing necessary interpolated segment for the current frame
+    //Construct new dynamic tubes containing necessary
+    //interpolated segment for the current frame
     view.dynamicTubes = this.director.trajectories.map(function(trajectory) {
       var color = scope._colors[trajectory.metadataCategoryName] || 'red';
-      var tube = drawTrajectoryLineDynamic(trajectory, scope.director.currentFrame,
-                                    color, radius);
+      var tube = drawTrajectoryLineDynamic(trajectory,
+                                    scope.director.currentFrame,
+                                    color,
+                                    radius);
       return tube;
     });
 

@@ -141,8 +141,6 @@ function(_, trajectory) {
     /**
      * @type {Integer}
      * The previous frame served by the director
-     * (Note, more or less always equals currentFrame - 1 in current implementation,
-     * but built more generically to allow rewind and frame skipping in the future)
      */
     this.previousFrame = -1;
 

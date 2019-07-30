@@ -195,9 +195,11 @@ define([
    * points.
    *
    * @return {Array[]} Array containing the representative float x, y, z
-   * coordinates needed to draw the interpolated portion of a trajectory at the given index.
+   * coordinates needed to draw the interpolated portion of a trajectory at the
+   * given index.
    */
-  TrajectoryOfSamples.prototype.representativeInterpolatedCoordinatesAtIndex = function(idx) {
+  TrajectoryOfSamples.prototype.representativeInterpolatedCoordinatesAtIndex =
+  function(idx) {
     if (idx === 0)
       return null;
     if (this.interpolatedCoordinates.length - 1 <= idx)
