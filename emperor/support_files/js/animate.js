@@ -137,7 +137,7 @@ function(_, trajectory) {
      * @default -1
      */
     this.currentFrame = -1;
-    
+
     /**
      * @type {Integer}
      * The previous frame served by the director
@@ -145,7 +145,7 @@ function(_, trajectory) {
      * but built more generically to allow rewind and frame skipping in the future)
      */
     this.previousFrame = -1;
-    
+
     /**
      * @type {Array}
      * Array where each element in the trajectory is a trajectory with the

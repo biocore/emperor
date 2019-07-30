@@ -278,7 +278,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
     return arrow;
   }
-  
+
   /**
    * Returns a new trajectory line dynamic mesh
    */
@@ -301,7 +301,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     }
 
     path = new THREE.EmperorTrajectory(points);
-    
+
     // the line will contain the two vertices and the described material
     // we increase the number of points to have a smoother transition on
     // edges i. e. where the trajectory changes the direction it is going
@@ -310,7 +310,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
     return new THREE.Mesh(lineGeometry, material);
   }
-  
+
   /**
    * Disposes a trajectory line dynamic mesh
    */
@@ -324,12 +324,12 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
    */
   function drawTrajectoryLineStatic(trajectory, color, radius) {
     var _trajectory = trajectory.coordinates;
-    
+
     var material = new THREE.MeshPhongMaterial({
       color: color,
       transparent: false}
     );
-    
+
     var allPoints = [];
     for (var index = 0; index < _trajectory.length; index++) {
       allPoints.push(new THREE.Vector3(_trajectory[index].x,
@@ -337,14 +337,14 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     }
 
     var path = new THREE.EmperorTrajectory(allPoints);
-    
+
     //Tubes are straight segments, but adding vertices along them might change lighting effects
     //under certain models and lighting conditions.
-    var tubeBufferGeom = new THREE.TubeBufferGeometry(path, (allPoints.length - 1) * NUM_TUBE_SEGMENTS, radius, NUM_TUBE_CROSS_SECTION_POINTS, false)
+    var tubeBufferGeom = new THREE.TubeBufferGeometry(path, (allPoints.length - 1) * NUM_TUBE_SEGMENTS, radius, NUM_TUBE_CROSS_SECTION_POINTS, false);
 
     return new THREE.Mesh(tubeBufferGeom, material);
   }
-  
+
   /**
    * Disposes a trajectory line static mesh
    */
@@ -359,7 +359,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     //Number of points drawn per tube segment = 2 (triangles) * 3 (points per triangle) * NUM_TUBE_CROSS_SECTION_POINTS (number of vertices in a cross section of tube)
     //Number of tube segments per pair of consecutive points = NUM_TUBE_SEGMENTS
 
-    var multiplier = 2 * 3 * NUM_TUBE_CROSS_SECTION_POINTS * NUM_TUBE_SEGMENTS
+    var multiplier = 2 * 3 * NUM_TUBE_CROSS_SECTION_POINTS * NUM_TUBE_SEGMENTS;
     if (currentFrame < trajectory._intervalValues.length)
     {
       var intervalValue = trajectory._intervalValues[currentFrame];

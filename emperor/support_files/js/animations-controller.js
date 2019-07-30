@@ -459,7 +459,7 @@ define([
 
     view.staticTubes = [];
     view.dynamicTubes = [];
-   
+
     view.needsUpdate = true;
 
     this._updateButtons();
@@ -575,7 +575,7 @@ define([
         disposeTrajectoryLineDynamic(tube);
       }
     });
-    
+
     //Construct new dynamic tubes containing necessary interpolated segment for the current frame
     view.dynamicTubes = this.director.trajectories.map(function(trajectory) {
       var color = scope._colors[trajectory.metadataCategoryName] || 'red';
