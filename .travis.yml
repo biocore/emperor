@@ -35,11 +35,10 @@ before_install:
   - conda update --yes conda
 
 install:
-  - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython
+  - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn
   - source activate travis
   - conda install -c conda-forge phantomjs --yes
-  # scikit-learn has to be pinned down due to a bug: https://github.com/scikit-learn/scikit-learn/issues/12671
-  - pip install https://github.com/google/closure-linter/archive/master.zip sphinx sphinx-bootstrap-theme coveralls 'scikit-learn==0.19.2' --no-binary scikit-learn
+  - pip install https://github.com/google/closure-linter/archive/master.zip sphinx sphinx-bootstrap-theme coveralls
   - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
 
