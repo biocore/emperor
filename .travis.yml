@@ -39,7 +39,7 @@ install:
   - source activate travis
   - conda install -c conda-forge phantomjs --yes
   # scikit-learn has to be pinned down due to a bug: https://github.com/scikit-learn/scikit-learn/issues/12671
-  - pip install https://github.com/google/closure-linter/archive/master.zip 'sphinx<1.6' sphinx-bootstrap-theme coveralls 'scikit-learn==0.19.2' --no-binary scikit-learn
+  - pip install https://github.com/google/closure-linter/archive/master.zip sphinx sphinx-bootstrap-theme coveralls 'scikit-learn==0.19.2' --no-binary scikit-learn
   - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
 
