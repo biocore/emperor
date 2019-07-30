@@ -39,7 +39,7 @@ install:
   - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
   - source activate travis
   - conda install -c conda-forge phantomjs --yes
-  - pip install https://github.com/google/closure-linter/archive/master.zip 'sphinx<1.6' sphinx-bootstrap-theme coveralls
+  - pip install https://github.com/google/closure-linter/archive/master.zip sphinx sphinx-bootstrap-theme coveralls
   - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
 
