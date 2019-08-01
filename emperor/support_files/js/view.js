@@ -544,7 +544,7 @@ DecompositionView.prototype.updatePositions = function() {
     radius = this.getGeometryFactor();
   }
 
-  if (this.usesPointCloud) {
+  if (this.usesPointCloud && this.viewType === 'scatter') {
     var cloud = this.markers[0];
 
     this.decomp.apply(function(plottable) {
@@ -832,7 +832,7 @@ DecompositionView.prototype.setColor = function(color, group) {
   group = group || this.decomp.plottable;
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
-  if (this.usesPointCloud) {
+  if (this.usesPointCloud && this.viewType === 'scatter') {
     var cloud = this.markers[0];
     color = new THREE.Color(color);
 
@@ -886,7 +886,7 @@ DecompositionView.prototype.setVisibility = function(visible, group) {
 
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
-  if (this.usesPointCloud) {
+  if (this.usesPointCloud && this.viewType === 'scatter') {
     var cloud = this.markers[0];
 
     _.each(group, function(plottable) {
@@ -942,7 +942,7 @@ DecompositionView.prototype.setScale = function(scale, group) {
 
   group = group || this.decomp.plottable;
 
-  if (this.usesPointCloud) {
+  if (this.usesPointCloud && this.viewType === 'scatter') {
     var cloud = this.markers[0];
 
     _.each(group, function(plottable) {
@@ -984,7 +984,7 @@ DecompositionView.prototype.setOpacity = function(opacity, group) {
 
   group = group || this.decomp.plottable;
 
-  if (this.usesPointCloud) {
+  if (this.usesPointCloud && this.viewType === 'scatter') {
     var cloud = this.markers[0];
 
     _.each(group, function(plottable) {

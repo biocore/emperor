@@ -600,6 +600,7 @@ define([
     _.each(this.decViews, function(view) {
       if (view.needsSwapMarkers){
         anyMarkersSwapped = true;
+        
         var oldMarkers = view.getAndClearOldMarkers();
         var i = 0;
         for (i = 0; i < oldMarkers.length; i++) {
