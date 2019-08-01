@@ -605,6 +605,8 @@ define([
         var i = 0;
         for (i = 0; i < oldMarkers.length; i++) {
           scope.scene.remove(oldMarkers[i]);
+          oldMarkers[i].material.dispose(); //FIXME:  What is our plan for this?
+          oldMarkers[i].geometry.dispose(); //FIXME:  What is our plan for this?
         }
         var newMarkers = view.markers;
         for (i = 0; i < newMarkers.length; i++) {
