@@ -31,7 +31,8 @@ define([
    * @return {ScenePlotView3D} An instance of ScenePlotView3D.
    * @constructs ScenePlotView3D
    */
-  function ScenePlotView3D(renderer, decViews, decModels, container, xView, yView,
+  function ScenePlotView3D(renderer, decViews, decModels, container,
+                           xView, yView,
                            width, height) {
     var scope = this;
 
@@ -400,8 +401,8 @@ define([
    *
    * @param {String} color A CSS-compatible value that specifies the color
    * of each of the axes lines, the length of these lines is determined by the
-   * global dimensionRanges property computed in decModels. If the color value is null the lines will be
-   * removed.
+   * global dimensionRanges property computed in decModels.
+   * If the color value is null the lines will be removed.
    *
    */
   ScenePlotView3D.prototype.drawAxesWithColor = function(color) {
@@ -533,8 +534,10 @@ define([
 
     // orthographic cameras operate in space units not in pixel units i.e.
     // the width and height of the view is based on the objects not the window
-    var owidth = this.decModels.dimensionRanges.max[x] - this.decModels.dimensionRanges.min[x];
-    var oheight = this.decModels.dimensionRanges.max[y] - this.decModels.dimensionRanges.min[y];
+    var owidth = this.decModels.dimensionRanges.max[x] -
+                    this.decModels.dimensionRanges.min[x];
+    var oheight = this.decModels.dimensionRanges.max[y] -
+                    this.decModels.dimensionRanges.min[y];
 
     var aspect = this.width / this.height;
 
@@ -560,8 +563,10 @@ define([
   ScenePlotView3D.prototype.updateCameraTarget = function() {
     var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
 
-    var owidth = this.decModels.dimensionRanges.max[x] - this.decModels.dimensionRanges.min[x];
-    var oheight = this.decModels.dimensionRanges.max[y] - this.decModels.dimensionRanges.min[y];
+    var owidth = this.decModels.dimensionRanges.max[x] -
+                    this.decModels.dimensionRanges.min[x];
+    var oheight = this.decModels.dimensionRanges.max[y] -
+                    this.decModels.dimensionRanges.min[y];
     var xcenter = this.decModels.dimensionRanges.max[x] - (owidth / 2);
     var ycenter = this.decModels.dimensionRanges.max[y] - (oheight / 2);
 
@@ -595,7 +600,8 @@ define([
     var updateDimensions = false, updateColors = false,
         currentDimensions, backgroundColor, axesColor, scope = this;
 
-    //Check if the view type changed and swap the markers in/out of the scene tree.
+    //Check if the view type changed and swap the markers in/out of the scene
+    //tree.
     var anyMarkersSwapped = false;
     _.each(this.decViews, function(view) {
       if (view.needsSwapMarkers) {
@@ -698,8 +704,8 @@ define([
     var retVal = 0;
     if (anyMarkersSwapped)
       retVal |= ScenePlotView3D.prototype.UPDATE_FLAGS.NEEDS_CONTROLLER_REFRESH;
-    if (anyMarkersSwapped || this.needsUpdate || updateData || updateDimensions ||
-            updateColors || this.control.autoRotate)
+    if (anyMarkersSwapped || this.needsUpdate || updateData ||
+        updateDimensions || updateColors || this.control.autoRotate)
       retVal |= ScenePlotView3D.prototype.UPDATE_FLAGS.NEEDS_RENDER;
 
     // if anything has changed, then trigger an update

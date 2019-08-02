@@ -38,8 +38,10 @@ define([
     this.$viewTypeDiv.css('width', '100%');
     this.$viewTypeDiv.css('height', '100%');
     this.$viewTypeDiv.attr('title', 'Change the selected View Type');
-    this.$radioScatter = $('<input type="radio" name="emperor.viewType" value="scatter"> Scatter </input>');
-    this.$radioParallelPlot = $('<input type="radio" name="emperor.viewType" value="parallel-plot"> Parallel Plot </input>');
+    this.$radioScatter = $('<input type="radio" name="emperor.viewType"' +
+      'value="scatter"> Scatter </input>');
+    this.$radioParallelPlot = $('<input type="radio" name="emperor.viewType"' +
+      'value="parallel-plot"> Parallel Plot </input>');
 
     this.$viewTypeDiv.append(this.$radioScatter);
     this.$viewTypeDiv.append(this.$radioParallelPlot);

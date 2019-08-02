@@ -377,13 +377,10 @@ DecompositionView.prototype._fastInit = function() {
  */
 DecompositionView.prototype._fastInitParallelPlot = function()
 {
-//  if (this.decomp.hasConfidenceIntervals()) {
-//    throw new Error('Ellipsoids are not supported in fast parallel plot mode');
-//  }
-
   var positions, colors, scales, opacities, visibilities, geometry, cloud;
 
-  // We're really just drawing a bunch of line strips... highly doubt shaders are necessary for this...
+  // We're really just drawing a bunch of line strips...
+  // highly doubt shaders are necessary for this...
   var vertexShader = `
     attribute float scale;
     attribute vec3 color;
@@ -419,7 +416,8 @@ DecompositionView.prototype._fastInitParallelPlot = function()
 
   var allDimensions = _.range(this.decomp.dimensions);
 
-  //We'll build the line strips as GL_LINES for simplicity, at least for now, by doubling up vertex positions at each of the intermediate axes.
+  // We'll build the line strips as GL_LINES for simplicity, at least for now,
+  // by doubling up vertex positions at each of the intermediate axes.
   var numPoints = (allDimensions.length * 2 - 2) * (this.decomp.length);
 
   positions = new Float32Array(numPoints * 3);
@@ -450,14 +448,16 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   for (i = 0; i < this.decomp.length; i++)
   {
     var plottable = this.decomp.plottable[i];
-    //Each point in the model maps to (allDimensions.length * 2 - 2) positions due to the use of lines rather than line strips.
+    // Each point in the model maps to (allDimensions.length * 2 - 2)
+    // positions due to the use of lines rather than line strips.
     var j = 0;
     for (j = 0; j < allDimensions.length; j++)
     {
       //normalize by global range bounds
       var globalMin = this.allModels.dimensionRanges.min[allDimensions[j]];
       var globalMax = this.allModels.dimensionRanges.max[allDimensions[j]];
-      var interpVal = (plottable.coordinates[j] - globalMin) / (globalMax - globalMin);
+      var maxMinusMin = globalMax - globalMin;
+      var interpVal = (plottable.coordinates[j] - globalMin) / (maxMinusMin);
       geometry.attributes.position.setXYZ(attributeIndex,
                                         j,
                                         interpVal,
@@ -474,7 +474,7 @@ DecompositionView.prototype._fastInitParallelPlot = function()
 
       geometry.attributes.position.setXYZ(attributeIndex,
                                         j,
-                                        interpVal, //TODO FIXME HACK: Need to normalize positions by each axis dimension
+                                        interpVal,
                                         0);
       geometry.attributes.color.setXYZ(attributeIndex, 1, 0, 0);
       geometry.attributes.visible.setX(attributeIndex, 1);
@@ -502,16 +502,17 @@ DecompositionView.prototype._fastInitParallelPlot = function()
  */
 DecompositionView.prototype.getVisibleCount = function() {
   var visible = 0;
+  var attrVisibleCount = cloud.geometry.attributes.visible.count;
   if (this.viewType === 'parallel-plot') {
     var cloud = this.markers[0];
     var numPoints = (this.decomp.dimensions * 2 - 2);
-    for (var i = 0; i < cloud.geometry.attributes.visible.count; i += numPoints) {
+    for (var i = 0; i < attrVisibleCount; i += numPoints) {
       visible += (cloud.geometry.attributes.visible.getX(i) + 0);
     }
   }
   else if (this.usesPointCloud) {
     var cloud = this.markers[0];
-    for (var i = 0; i < cloud.geometry.attributes.visible.count; i++) {
+    for (var i = 0; i < attrVisibleCount; i++) {
       visible += (cloud.geometry.attributes.visible.getX(i) + 0);
     }
   }
@@ -557,7 +558,7 @@ DecompositionView.prototype.updatePositions = function() {
     cloud.geometry.attributes.position.needsUpdate = true;
   }
   else if (this.decomp.isScatterType() && this.viewType === 'parallel-plot') {
-    //TODO:  Do we need to do anything when axes are changed in parallel plot mode?
+    //TODO:  Do we need to do anything when axes are changed in parallel plots?
   }
   else if (this.decomp.isScatterType()) {
     this.decomp.apply(function(plottable) {
@@ -848,7 +849,9 @@ DecompositionView.prototype.setColor = function(color, group) {
     var numPoints = (this.decomp.dimensions * 2 - 2);
     group.forEach(function(plottable) {
     var i = 0;
-    for (i = plottable.idx * numPoints; i < (plottable.idx + 1) * (numPoints); i++)
+    var startIndex = plottable.idx * numPoints;
+    var endIndex = (plottable.idx + 1) * numPoints;
+    for (var i = startIndex; i < endIndex; i++)
         lines.geometry.attributes.color.setXYZ(i, color.r, color.g, color.b);
     });
     lines.geometry.attributes.color.needsUpdate = true;
@@ -899,7 +902,9 @@ DecompositionView.prototype.setVisibility = function(visible, group) {
     var numPoints = (this.decomp.dimensions * 2 - 2);
     _.each(group, function(plottable) {
       var i = 0;
-      for (i = plottable.idx * numPoints; i < (plottable.idx + 1) * (numPoints); i++)
+      var startIndex = plottable.idx * numPoints;
+      var endIndex = (plottable.idx + 1) * (numPoints);
+      for (i = startIndex; i < endIndex; i++)
         lines.geometry.attributes.visible.setX(i, visible * 1);
     });
     lines.geometry.attributes.visible.needsUpdate = true;
@@ -954,8 +959,9 @@ DecompositionView.prototype.setScale = function(scale, group) {
     var lines = this.markers[0];
     var numPoints = (this.decomp.dimensions * 2 - 2);
     _.each(group, function(plottable) {
-      var i = 0;
-      for (i = plottable.idx * numPoints; i < (plottable.idx + 1) * (numPoints); i++)
+      var startIndex = plottable.idx * numPoints;
+      var endIndex = (plottable.idx + 1) * (numPoints)
+      for (var i = startIndex; i < endIndex; i++)
         lines.geometry.attributes.scale.setX(i, scale);
     });
     lines.geometry.attributes.scale.needsUpdate = true;
@@ -996,8 +1002,9 @@ DecompositionView.prototype.setOpacity = function(opacity, group) {
     var lines = this.markers[0];
     var numPoints = (this.decomp.dimensions * 2 - 2);
     _.each(group, function(plottable) {
-      var i = 0;
-      for (i = plottable.idx * numPoints; i < (plottable.idx + 1) * (numPoints); i++)
+      var startIndex = plottable.idx * numPoints;
+      var endIndex = (plottable.idx + 1) * (numPoints);
+      for (var i = ; i < endIndex; i++)
         lines.geometry.attributes.opacity.setX(i, opacity);
     });
     lines.geometry.attributes.opacity.needsUpdate = true;
