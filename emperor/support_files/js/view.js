@@ -960,7 +960,7 @@ DecompositionView.prototype.setScale = function(scale, group) {
     var numPoints = (this.decomp.dimensions * 2 - 2);
     _.each(group, function(plottable) {
       var startIndex = plottable.idx * numPoints;
-      var endIndex = (plottable.idx + 1) * (numPoints)
+      var endIndex = (plottable.idx + 1) * (numPoints);
       for (var i = startIndex; i < endIndex; i++)
         lines.geometry.attributes.scale.setX(i, scale);
     });
@@ -1004,7 +1004,7 @@ DecompositionView.prototype.setOpacity = function(opacity, group) {
     _.each(group, function(plottable) {
       var startIndex = plottable.idx * numPoints;
       var endIndex = (plottable.idx + 1) * (numPoints);
-      for (var i = ; i < endIndex; i++)
+      for (var i =; i < endIndex; i++)
         lines.geometry.attributes.opacity.setX(i, opacity);
     });
     lines.geometry.attributes.opacity.needsUpdate = true;
