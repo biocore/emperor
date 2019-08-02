@@ -502,9 +502,9 @@ DecompositionView.prototype._fastInitParallelPlot = function()
  */
 DecompositionView.prototype.getVisibleCount = function() {
   var visible = 0;
-  var attrVisibleCount = cloud.geometry.attributes.visible.count;
   if (this.viewType === 'parallel-plot') {
     var cloud = this.markers[0];
+    var attrVisibleCount = cloud.geometry.attributes.visible.count;
     var numPoints = (this.decomp.dimensions * 2 - 2);
     for (var i = 0; i < attrVisibleCount; i += numPoints) {
       visible += (cloud.geometry.attributes.visible.getX(i) + 0);
@@ -512,6 +512,7 @@ DecompositionView.prototype.getVisibleCount = function() {
   }
   else if (this.usesPointCloud) {
     var cloud = this.markers[0];
+    var attrVisibleCount = cloud.geometry.attributes.visible.count;
     for (var i = 0; i < attrVisibleCount; i++) {
       visible += (cloud.geometry.attributes.visible.getX(i) + 0);
     }
@@ -1004,7 +1005,7 @@ DecompositionView.prototype.setOpacity = function(opacity, group) {
     _.each(group, function(plottable) {
       var startIndex = plottable.idx * numPoints;
       var endIndex = (plottable.idx + 1) * (numPoints);
-      for (var i =; i < endIndex; i++)
+      for (var i = startIndex; i < endIndex; i++)
         lines.geometry.attributes.opacity.setX(i, opacity);
     });
     lines.geometry.attributes.opacity.needsUpdate = true;
