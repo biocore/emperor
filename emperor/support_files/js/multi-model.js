@@ -13,8 +13,7 @@ function(_) {
     this.models = underlyingModels;
 
     var firstModel = this.models[0];
-    var i = 1;
-    for (i = 1; i < underlyingModels.length; i++)
+    for (var i = 1; i < underlyingModels.length; i++)
       if (underlyingModels[i].dimensions != firstModel.dimensions)
         throw 'Underlying models must have same number of dimensions';
 

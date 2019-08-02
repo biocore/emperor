@@ -442,16 +442,14 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   lines = new THREE.LineSegments(geometry, material);
 
 
-  var i = 0;
   var attributeIndex = 0;
 
-  for (i = 0; i < this.decomp.length; i++)
+  for (var i = 0; i < this.decomp.length; i++)
   {
     var plottable = this.decomp.plottable[i];
     // Each point in the model maps to (allDimensions.length * 2 - 2)
     // positions due to the use of lines rather than line strips.
-    var j = 0;
-    for (j = 0; j < allDimensions.length; j++)
+    for (var j = 0; j < allDimensions.length; j++)
     {
       //normalize by global range bounds
       var globalMin = this.allModels.dimensionRanges.min[allDimensions[j]];
@@ -849,7 +847,6 @@ DecompositionView.prototype.setColor = function(color, group) {
     color = new THREE.Color(color);
     var numPoints = (this.decomp.dimensions * 2 - 2);
     group.forEach(function(plottable) {
-    var i = 0;
     var startIndex = plottable.idx * numPoints;
     var endIndex = (plottable.idx + 1) * numPoints;
     for (var i = startIndex; i < endIndex; i++)
@@ -902,7 +899,6 @@ DecompositionView.prototype.setVisibility = function(visible, group) {
     var lines = this.markers[0];
     var numPoints = (this.decomp.dimensions * 2 - 2);
     _.each(group, function(plottable) {
-      var i = 0;
       var startIndex = plottable.idx * numPoints;
       var endIndex = (plottable.idx + 1) * (numPoints);
       for (i = startIndex; i < endIndex; i++)

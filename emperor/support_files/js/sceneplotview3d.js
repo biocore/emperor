@@ -386,8 +386,7 @@ define([
       //Parallel Plots show all axes and disable rotation.
       this.decModels._unionRanges();
 
-      var i = 0;
-      for (i = 0; i < this.decViews['scatter'].decomp.dimensions; i++)
+      for (var i = 0; i < this.decViews['scatter'].decomp.dimensions; i++)
       {
         action([i, 0, 0], [i, 1, 0], i);
       }
@@ -608,8 +607,7 @@ define([
         anyMarkersSwapped = true;
 
         var oldMarkers = view.getAndClearOldMarkers();
-        var i = 0;
-        for (i = 0; i < oldMarkers.length; i++) {
+        for (var i = 0; i < oldMarkers.length; i++) {
           scope.scene.remove(oldMarkers[i]);
           oldMarkers[i].material.dispose(); //FIXME:  What is our plan for this?
           oldMarkers[i].geometry.dispose(); //FIXME:  What is our plan for this?
