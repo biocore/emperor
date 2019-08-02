@@ -135,6 +135,6 @@ define([
     });
     scope.needsUpdate = true;
   };
-  
+
   return ShapeController;
 });

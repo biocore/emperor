@@ -84,11 +84,11 @@ define([
      *
      * @type {MultiModel}
      */
-    var decModelMap = {'scatter':scatter};
+    var decModelMap = {'scatter': scatter};
     if (biplot)
       decModelMap['biplot'] = biplot;
     this.decModels = new MultiModel(decModelMap);
-    
+
     /**
      * Object with all the available decomposition views.
      *
@@ -99,7 +99,7 @@ define([
     if (biplot) {
       this.decViews.biplot = new DecompositionView(this.decModels, 'biplot');
     }
-    
+
     /**
      * Keep track of whether or not the biplot labels should be hidden.
      *

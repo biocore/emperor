@@ -16,7 +16,7 @@ function(_) {
     var i = 1;
     for (i = 1; i < underlyingModels.length; i++)
       if (underlyingModels[i].dimensions != firstModel.dimensions)
-        throw "Underlying models must have same number of dimensions";
+        throw 'Underlying models must have same number of dimensions';
 
     this.dimensionRanges = {'max': [], 'min': []};
     this._unionRanges();

@@ -182,7 +182,7 @@ define([
   EmperorViewControllerABC.prototype.fromJSON = function(jsonString) {
     throw Error('Not implemented');
   };
-  
+
   /**
    * Writes the current settings to the active decomposition view(s).
    * Will be called when the decomposition view is swapped out

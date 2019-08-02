@@ -30,13 +30,13 @@ function DecompositionView(multiModel, modelKey, asPointCloud) {
    * @type {DecompositionModel}
    */
   this.decomp = multiModel.models[modelKey];
-  
+
   /**
    * All models in the current scene and global metrics about them
    * @type {MultiModel}
    */
   this.allModels = multiModel;
-  
+
   /**
    * Number of samples represented in the view.
    * @type {integer}
@@ -80,23 +80,23 @@ function DecompositionView(multiModel, modelKey, asPointCloud) {
    * @type {THREE.Mesh[]}
    */
   this.tubes = [];
-  
+
   /**
    * Array of THREE.Mesh objects on screen (represent samples).
    * @type {THREE.Mesh[]}
    */
   this.markers = [];
-  
+
   /**
    * Meshes to be swapped out of scene when markers are modified.
    */
   this.oldMarkers = [];
-  
+
   /**
    * Flag indicating old markers must be removed from the scene tree.
    */
   this.needsSwapMarkers = false;
-  
+
   /**
    * Array of THREE.Mesh objects on screen (represent confidence intervals).
    * @type {THREE.Mesh[]}
@@ -117,7 +117,7 @@ function DecompositionView(multiModel, modelKey, asPointCloud) {
     value: (this.decomp.length > 20000) || asPointCloud,
     writable: false
   });
-    
+
   this._initGeometry();
 }
 
@@ -126,10 +126,10 @@ DecompositionView.prototype._initGeometry = function() {
   if (this.oldMarkers.length > 0)
     this.needsSwapMarkers = true;
   this.markers = [];
-  
+
   //TODO FIXME HACK:  Do we need to swap lines as well?
   this.lines = {'left': null, 'right': null};
-  
+
   if (this.decomp.isScatterType() && this.viewType === 'parallel-plot') {
     this._fastInitParallelPlot();
   }
@@ -169,9 +169,9 @@ DecompositionView.prototype._initBaseView = function() {
   // get the correctly sized geometry
   var radius = this.getGeometryFactor(), hasConfidenceIntervals;
   var geometry = shapes.getGeometry('Sphere', radius);
-  
+
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
-  
+
   if (this.decomp.isScatterType()) {
     this.decomp.apply(function(plottable) {
       mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial());
@@ -402,8 +402,8 @@ DecompositionView.prototype._fastInitParallelPlot = function()
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       gl_PointSize = 2.0;
     }
-    `
-    
+    `;
+
   var fragmentShader = `
     precision mediump float;
     varying vec3 vColor;
@@ -415,13 +415,13 @@ DecompositionView.prototype._fastInitParallelPlot = function()
         discard;
       gl_FragColor = vec4(vColor, vOpacity);
     }
-  `
-  
+  `;
+
   var allDimensions = _.range(this.decomp.dimensions);
-  
+
   //We'll build the line strips as GL_LINES for simplicity, at least for now, by doubling up vertex positions at each of the intermediate axes.
   var numPoints = (allDimensions.length * 2 - 2) * (this.decomp.length);
-  
+
   positions = new Float32Array(numPoints * 3);
   colors = new Float32Array(numPoints * 3);
   scales = new Float32Array(numPoints);
@@ -443,10 +443,10 @@ DecompositionView.prototype._fastInitParallelPlot = function()
 
   lines = new THREE.LineSegments(geometry, material);
 
-  
+
   var i = 0;
   var attributeIndex = 0;
-  
+
   for (i = 0; i < this.decomp.length; i++)
   {
     var plottable = this.decomp.plottable[i];
@@ -457,21 +457,21 @@ DecompositionView.prototype._fastInitParallelPlot = function()
       //normalize by global range bounds
       var globalMin = this.allModels.dimensionRanges.min[allDimensions[j]];
       var globalMax = this.allModels.dimensionRanges.max[allDimensions[j]];
-      var interpVal = (plottable.coordinates[j] - globalMin) / (globalMax - globalMin)
+      var interpVal = (plottable.coordinates[j] - globalMin) / (globalMax - globalMin);
       geometry.attributes.position.setXYZ(attributeIndex,
                                         j,
                                         interpVal,
                                         0);
-       
+
       geometry.attributes.color.setXYZ(attributeIndex, 1, 0, 0);
       geometry.attributes.visible.setX(attributeIndex, 1);
       geometry.attributes.opacity.setX(attributeIndex, 1);
       geometry.attributes.scale.setX(attributeIndex, 1);
       attributeIndex++;
-      
+
       if (j == 0 || j == allDimensions.length - 1)
         continue;
-      
+
       geometry.attributes.position.setXYZ(attributeIndex,
                                         j,
                                         interpVal, //TODO FIXME HACK: Need to normalize positions by each axis dimension
@@ -505,7 +505,7 @@ DecompositionView.prototype.getVisibleCount = function() {
   if (this.viewType === 'parallel-plot') {
     var cloud = this.markers[0];
     var numPoints = (this.decomp.dimensions * 2 - 2);
-    for (var i = 0; i < cloud.geometry.attributes.visible.count; i+= numPoints) {
+    for (var i = 0; i < cloud.geometry.attributes.visible.count; i += numPoints) {
       visible += (cloud.geometry.attributes.visible.getX(i) + 0);
     }
   }
@@ -848,8 +848,8 @@ DecompositionView.prototype.setColor = function(color, group) {
     var numPoints = (this.decomp.dimensions * 2 - 2);
     group.forEach(function(plottable) {
     var i = 0;
-    for (i = plottable.idx * numPoints; i < (plottable.idx+1) * (numPoints); i++)
-        lines.geometry.attributes.color.setXYZ(i, color.r, color.g, color.b)
+    for (i = plottable.idx * numPoints; i < (plottable.idx + 1) * (numPoints); i++)
+        lines.geometry.attributes.color.setXYZ(i, color.r, color.g, color.b);
     });
     lines.geometry.attributes.color.needsUpdate = true;
   }
@@ -899,8 +899,8 @@ DecompositionView.prototype.setVisibility = function(visible, group) {
     var numPoints = (this.decomp.dimensions * 2 - 2);
     _.each(group, function(plottable) {
       var i = 0;
-      for (i = plottable.idx * numPoints; i < (plottable.idx+1) * (numPoints); i++)
-        lines.geometry.attributes.visible.setX(i, visible * 1)
+      for (i = plottable.idx * numPoints; i < (plottable.idx + 1) * (numPoints); i++)
+        lines.geometry.attributes.visible.setX(i, visible * 1);
     });
     lines.geometry.attributes.visible.needsUpdate = true;
   }
@@ -955,7 +955,7 @@ DecompositionView.prototype.setScale = function(scale, group) {
     var numPoints = (this.decomp.dimensions * 2 - 2);
     _.each(group, function(plottable) {
       var i = 0;
-      for (i = plottable.idx * numPoints; i < (plottable.idx+1) * (numPoints); i++)
+      for (i = plottable.idx * numPoints; i < (plottable.idx + 1) * (numPoints); i++)
         lines.geometry.attributes.scale.setX(i, scale);
     });
     lines.geometry.attributes.scale.needsUpdate = true;
@@ -997,7 +997,7 @@ DecompositionView.prototype.setOpacity = function(opacity, group) {
     var numPoints = (this.decomp.dimensions * 2 - 2);
     _.each(group, function(plottable) {
       var i = 0;
-      for (i = plottable.idx * numPoints; i < (plottable.idx+1) * (numPoints); i++)
+      for (i = plottable.idx * numPoints; i < (plottable.idx + 1) * (numPoints); i++)
         lines.geometry.attributes.opacity.setX(i, opacity);
     });
     lines.geometry.attributes.opacity.needsUpdate = true;
@@ -1178,7 +1178,7 @@ DecompositionView.prototype._buildVegaSpec = function() {
 DecompositionView.prototype.setViewType = function(viewType) {
   if (this.viewType === viewType)
     return;
-  
+
   this.viewType = viewType;
   this._initGeometry();
 };

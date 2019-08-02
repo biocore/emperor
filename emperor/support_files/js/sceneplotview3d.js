@@ -384,11 +384,11 @@ define([
     else {
       //Parallel Plots show all axes and disable rotation.
       this.decModels._unionRanges();
-      
+
       var i = 0;
       for (i = 0; i < this.decViews['scatter'].decomp.dimensions; i++)
       {
-        action([i,0,0], [i, 1, 0], i);
+        action([i, 0, 0], [i, 1, 0], i);
       }
       this.control.enableRotate = false;
     }
@@ -581,10 +581,10 @@ define([
   };
 
   ScenePlotView3D.prototype.UPDATE_FLAGS = {
-    NEEDS_RENDER : 1,
-    NEEDS_CONTROLLER_REFRESH : 2
+    NEEDS_RENDER: 1,
+    NEEDS_CONTROLLER_REFRESH: 2
   };
-  
+
   /**
    *
    * Convenience method to check if this or any of the decViews under this need
@@ -598,9 +598,9 @@ define([
     //Check if the view type changed and swap the markers in/out of the scene tree.
     var anyMarkersSwapped = false;
     _.each(this.decViews, function(view) {
-      if (view.needsSwapMarkers){
+      if (view.needsSwapMarkers) {
         anyMarkersSwapped = true;
-        
+
         var oldMarkers = view.getAndClearOldMarkers();
         var i = 0;
         for (i = 0; i < oldMarkers.length; i++) {
@@ -612,10 +612,10 @@ define([
         for (i = 0; i < newMarkers.length; i++) {
           scope.scene.add(newMarkers[i]);
         }
-        
+
         var lines = view.lines;
         var ellipsoids = view.ellipsoids;
-        
+
         if (view.viewType == 'parallel-plot') {
           for (i = 0; i < lines.length; i++)
             scope.scene.remove(lines[i]);
@@ -629,7 +629,7 @@ define([
             scope.scene.add(ellipsoids[i]);
         }
     }});
-    
+
     if (anyMarkersSwapped) {
       this.updateCameraTarget();
       this.control.update();
@@ -654,7 +654,7 @@ define([
         scope.scene.add(tube);
       });
     });
-    
+
     // check if the visible dimensions have changed
     if (!_.isEqual(currentDimensions, this.visibleDimensions)) {
       // remove the current axes
@@ -694,7 +694,7 @@ define([
       this.drawAxesWithColor(this.axesColor);
       this.drawAxesLabelsWithColor(this.axesColor);
     }
-    
+
     var retVal = 0;
     if (anyMarkersSwapped)
       retVal |= ScenePlotView3D.prototype.UPDATE_FLAGS.NEEDS_CONTROLLER_REFRESH;
