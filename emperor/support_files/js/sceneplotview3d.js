@@ -584,10 +584,8 @@ define([
     this.needsUpdate = true;
   };
 
-  ScenePlotView3D.prototype.UPDATE_FLAGS = {
-    NEEDS_RENDER: 1,
-    NEEDS_CONTROLLER_REFRESH: 2
-  };
+  ScenePlotView3D.prototype.NEEDS_RENDER = 1;
+  ScenePlotView3D.prototype.NEEDS_CONTROLLER_REFRESH = 2;
 
   /**
    *
@@ -701,10 +699,10 @@ define([
 
     var retVal = 0;
     if (anyMarkersSwapped)
-      retVal |= ScenePlotView3D.prototype.UPDATE_FLAGS.NEEDS_CONTROLLER_REFRESH;
+      retVal |= ScenePlotView3D.prototype.NEEDS_CONTROLLER_REFRESH;
     if (anyMarkersSwapped || this.needsUpdate || updateData ||
         updateDimensions || updateColors || this.control.autoRotate)
-      retVal |= ScenePlotView3D.prototype.UPDATE_FLAGS.NEEDS_RENDER;
+      retVal |= ScenePlotView3D.prototype.NEEDS_RENDER;
 
     // if anything has changed, then trigger an update
     return retVal;
