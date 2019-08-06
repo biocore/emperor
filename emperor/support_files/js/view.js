@@ -270,7 +270,8 @@ DecompositionView.prototype._fastInit = function() {
     'varying float vVisible;',
 
     'void main() {',
-      'if (vVisible > 0.0) {',
+      // remove objects when they might be "visible" but completely transparent
+      'if (vVisible > 0.0 && vOpacity > 0.0) {',
         'vec2 cxy = 2.0 * gl_PointCoord - 1.0;',
         'float delta = 0.0, alpha = 1.0, r = dot(cxy, cxy);',
 
