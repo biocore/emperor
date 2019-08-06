@@ -579,7 +579,7 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
 DecompositionView.prototype.setCategory = function(attributes,
                                                    setPlottableAttributes,
                                                    category) {
-  var scope = this, dataView = [], plottables;
+  var scope = this, dataView = [], plottables, i = 0;
 
   _.each(attributes, function(value, key) {
     /*
@@ -594,7 +594,8 @@ DecompositionView.prototype.setCategory = function(attributes,
       setPlottableAttributes(scope, value, plottables);
     }
 
-    dataView.push({category: key, value: value, plottables: plottables});
+    dataView.push({id: i, category: key, value: value, plottables: plottables});
+    i = i + 1;
   });
   this.needsUpdate = true;
 

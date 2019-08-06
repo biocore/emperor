@@ -773,7 +773,7 @@ define([
       return;
     }
 
-    var element = this.renderer.domElement;
+    var element = this.renderer.domElement, scope = this;
     var offset = $(element).offset();
     this._mouse.x = ((event.clientX - offset.left) / element.width) * 2 - 1;
     this._mouse.y = -((event.clientY - offset.top) / element.height) * 2 + 1;

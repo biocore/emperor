@@ -308,7 +308,7 @@ define([
    * displayed by the body grid.
    */
   EmperorAttributeABC.prototype.getSlickGridDataset = function() {
-    return this.bodyGrid.getData();
+    return this.bodyGrid.getData().getItems();
   };
 
   /**
@@ -326,9 +326,9 @@ define([
     }
 
     // Re-render
-    this.bodyGrid.setData(data);
-    this.bodyGrid.invalidate();
-    this.bodyGrid.render();
+    this.bodyGrid.getData().beginUpdate();
+    this.bodyGrid.getData().setItems(data);
+    this.bodyGrid.getData().endUpdate();
   };
 
   /**
@@ -340,12 +340,13 @@ define([
    *
    */
   EmperorAttributeABC.prototype._buildGrid = function(options) {
-    var columns = [{id: 'field1', name: '', field: 'category'}];
+    var columns = [{id: 'field1', name: '', field: 'category'}], scope = this;
 
     // autoEdit enables one-click editor trigger on the entire grid, instead
     // of requiring users to click twice on a widget.
     var gridOptions = {editable: true, enableAddRow: false,
       enableCellNavigation: true, forceFitColumns: true,
+      showHeaderRow: true, headerRowHeight: 30,
       enableColumnReorder: false, autoEdit: true};
 
     // If there's a custom slickgrid column then add it to the object
@@ -353,16 +354,72 @@ define([
       columns.unshift(options.slickGridColumn);
     }
 
+    var dataView = new Slick.Data.DataView(), searchString = '';
+
     /**
      * @type {Slick.Grid}
      * Container that lists the metadata categories described under the
      * metadata column and the attribute that can be modified.
      */
-    this.bodyGrid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
+    this.bodyGrid = new Slick.Grid(this.$gridDiv, dataView, columns,
+                                   gridOptions);
+
+    /*
+     * - Identify what icon we are going to use
+     * - When there's no results there should be a message about that.
+     * - There should be an element to close the search bar
+     * - There's probably no reason why we should hide these values
+     * - Detach the search bar from the table, make it a separate element
+     *   that's always visible
+     * - Hide for continuous values?
+     */
+
+    function substringFilter(item, args) {
+      if(searchString != "" && item.category.indexOf(searchString) === -1){
+        return false;
+      }
+      return true;
+    }
+
+    dataView.onRowCountChanged.subscribe(function (e, args) {
+      scope.bodyGrid.updateRowCount();
+      scope.bodyGrid.render();
+    });
+
+    dataView.onRowsChanged.subscribe(function (e, args) {
+      scope.bodyGrid.invalidateRows(args.rows);
+      scope.bodyGrid.render();
+    });
+
+    dataView.setFilter(substringFilter);
 
     // hide the header row of the grid
     // http://stackoverflow.com/a/29827664/379593
     $(this.$body).find('.slick-header').css('display', 'none');
+
+    // keypress callback
+    $(this.bodyGrid.getHeaderRow()).on("change keyup", ":input", function (e) {
+      var columnId = $(this).data("columnId");
+      console.log(columnId);
+      if (columnId != null) {
+        searchString = $.trim($(this).val());
+        dataView.refresh();
+      }
+    });
+
+    this.bodyGrid.onHeaderRowCellRendered.subscribe(function(e, args) {
+      $(args.node).empty();
+
+      // only draw a search box in the column with the category values
+      if (args.column.id !== 'field1') {
+        return;
+      }
+
+      // 98% so that there's some space for additional padding
+      $("<input type='text' style='width:98%;' placeholder='Search for a category'>")
+         .data("columnId", args.column.id)
+         .appendTo(args.node);
+    });
 
     // subscribe to events when a cell is changed
     this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
