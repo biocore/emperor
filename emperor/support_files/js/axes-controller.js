@@ -222,6 +222,12 @@ define([
     }
 
     var view = this.getView(), scope = this;
+
+    if (view.viewType === 'parallel-plot') {
+    // Disables axes choices, not used for parallel-plot.
+      return;
+    }
+
     var $table = $('<table></table>'), $row, $td, widgets;
     var names = ['First', 'Second', 'Third'];
 
