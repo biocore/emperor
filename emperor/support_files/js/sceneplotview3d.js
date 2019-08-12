@@ -796,7 +796,7 @@ define([
       // filter out things that are not visible
       if (isPointCloud) {
         var cloud = intersects[0].object;
-        console.log(intersects);
+
         intersects = _.filter(intersects, function(marker) {
           return cloud.geometry.attributes.visible.getX(marker.index) &&
                  cloud.geometry.attributes.opacity.getX(marker.index);
@@ -804,7 +804,7 @@ define([
       }
       else {
         intersects = _.filter(intersects, function(match) {
-          return marker.visible && marker.opacity > 0.0;
+          return marker.visible && marker.opacity;
         });
       }
 
