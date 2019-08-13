@@ -2,8 +2,10 @@ define([
     'three',
     'orbitcontrols',
     'draw',
-    'underscore'
-], function(THREE, OrbitControls, draw, _) {
+    'underscore',
+    'selectionbox',
+    'selectionhelper'
+], function(THREE, OrbitControls, draw, _, SelectionBox, SelectionHelper) {
   /** @private */
   var makeLine = draw.makeLine;
   /** @private */
@@ -29,6 +31,7 @@ define([
    * @return {ScenePlotView3D} An instance of ScenePlotView3D.
    * @constructs ScenePlotView3D
    */
+
   function ScenePlotView3D(renderer, decViews, container, xView, yView,
                            width, height) {
     var scope = this;
@@ -134,7 +137,7 @@ define([
      */
     this.control = new THREE.OrbitControls(this.camera,
                                            $container.get(0));
-    this.control.enableKeys = false;
+    this.control.enableKeys = true;
     this.control.rotateSpeed = 1.0;
     this.control.zoomSpeed = 1.2;
     this.control.panSpeed = 0.8;
@@ -160,13 +163,16 @@ define([
      * Events allowed for callbacks. DO NOT EDIT.
      * @type {String[]}
      */
-    this.EVENTS = ['click', 'dblclick'];
+    this.EVENTS = ['click', 'dblclick', 'mousemove', 'mouseup', 'mousedown'];
     /** @private */
     this._subscribers = {};
 
     for (var i = 0; i < this.EVENTS.length; i++) {
       this._subscribers[this.EVENTS[i]] = [];
     }
+
+    this.selectionBox = new THREE.SelectionBox(this.camera, this.scene );
+    this.selectionHelper = new THREE.SelectionHelper( this.selectionBox, renderer, 'selectBox' );
 
     // Add callback call when sample is clicked
     // Double and single click together from: http://stackoverflow.com/a/7845282
@@ -187,6 +193,47 @@ define([
     })
     .on('dblclick', function(event) {
         event.preventDefault();  //cancel system double-click event
+    })
+    .on('mousedown', function ( event ) {
+      var element = scope.renderer.domElement;
+      var offset = $(element).offset();
+      for ( var item of scope.selectionBox.collection ) {
+        item.material.emissive.set( 0x000000 );
+      }
+      scope.selectionBox.startPoint.set(
+        (( event.clientX / offset.left )/element.width) * 2 - 1,
+        - (( event.clientY / offset.top )/element.height) * 2 + 1,
+        0.5 );
+    })
+    .on('mousemove', function(event){
+      var element = scope.renderer.domElement;
+      var offset = $(element).offset();
+        if ( scope.selectionHelper.isDown ) {
+					for ( var i = 0; i < scope.selectionBox.collection.length; i ++ ) {
+						scope.selectionBox.collection[ i ].material.emissive.set( 0x000000 );
+					}
+					scope.selectionBox.endPoint.set(
+            (( event.clientX / offset.left )/element.width) * 2 - 1,
+            - (( event.clientY / offset.top )/element.height) * 2 + 1,
+            0.5 );
+					var allSelected = scope.selectionBox.select();
+          console.log(allSelected);
+					for ( var i = 0; i < allSelected.length; i ++ ) {
+						allSelected[ i ].material.emissive.set( 0xffffff );
+					}
+				}
+    })
+    .on('mouseup', function ( event ) {
+      var element = scope.renderer.domElement;
+      var offset = $(element).offset();
+      scope.selectionBox.endPoint.set(
+        (( event.clientX / offset.left )/element.width) * 2 - 1,
+        - (( event.clientY / offset.top )/element.height) * 2 + 1,
+        0.5 );
+      var allSelected = scope.selectionBox.select();
+      for ( var i = 0; i < allSelected.length; i ++ ) {
+        allSelected[ i ].material.emissive.set( 0xffffff );
+      }
     });
 
     // register callback for populating info with clicked sample name
