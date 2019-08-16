@@ -10,7 +10,11 @@ define([
 ], function($, _, DecompositionView, ViewControllers, AnimationDirector,
             draw, Color, ColorViewController) {
   var EmperorViewController = ViewControllers.EmperorViewController;
-  var drawTrajectoryLine = draw.drawTrajectoryLine;
+  var drawTrajectoryLineStatic = draw.drawTrajectoryLineStatic;
+  var drawTrajectoryLineDynamic = draw.drawTrajectoryLineDynamic;
+  var disposeTrajectoryLineStatic = draw.disposeTrajectoryLineStatic;
+  var disposeTrajectoryLineDynamic = draw.disposeTrajectoryLineDynamic;
+  var updateStaticTrajectoryDrawRange = draw.updateStaticTrajectoryDrawRange;
   var ColorEditor = Color.ColorEditor, ColorFormatter = Color.ColorFormatter;
 
   /**
@@ -440,13 +444,22 @@ define([
     this.playing = false;
     this.director = null;
 
-    view.tubes.forEach(function(tube) {
-      if (tube.parent !== null) {
+    view.staticTubes.forEach(function(tube) {
+      if (tube !== null && tube.parent !== null) {
         tube.parent.remove(tube);
+        disposeTrajectoryLineStatic(tube);
+      }
+    });
+    view.dynamicTubes.forEach(function(tube) {
+      if (tube !== null && tube.parent !== null) {
+        tube.parent.remove(tube);
+        disposeTrajectoryLineDynamic(tube);
       }
     });
 
-    view.tubes = [];
+    view.staticTubes = [];
+    view.dynamicTubes = [];
+
     view.needsUpdate = true;
 
     this._updateButtons();
@@ -538,20 +551,43 @@ define([
     var radius = view.getGeometryFactor();
     radius *= 0.45 * this.getRadius();
 
-    view.tubes.forEach(function(tube) {
-      if (tube === undefined) {
+    for (var i = 0; i < this.director.trajectories.length; i++) {
+      var trajectory = this.director.trajectories[i];
+
+      //Ensure static tubes are constructed
+      if (view.staticTubes[i] === null || view.staticTubes[i] === undefined)
+      {
+        var color = this._colors[trajectory.metadataCategoryName] || 'red';
+        view.staticTubes[i] = drawTrajectoryLineStatic(trajectory,
+                                                        color,
+                                                        radius);
+      }
+
+      //Ensure static tube draw ranges are set to visible segment
+      updateStaticTrajectoryDrawRange(trajectory,
+                                        this.director.currentFrame,
+                                        view.staticTubes[i]);
+    }
+
+    //Remove any old dynamic tubes from the scene
+    view.dynamicTubes.forEach(function(tube) {
+      if (tube === undefined || tube === null) {
         return;
       }
       if (tube.parent !== null) {
         tube.parent.remove(tube);
+        disposeTrajectoryLineDynamic(tube);
       }
     });
 
-    view.tubes = this.director.trajectories.map(function(trajectory) {
-      color = scope._colors[trajectory.metadataCategoryName] || 'red';
-
-      var tube = drawTrajectoryLine(trajectory, scope.director.currentFrame,
-                                    color, radius);
+    //Construct new dynamic tubes containing necessary
+    //interpolated segment for the current frame
+    view.dynamicTubes = this.director.trajectories.map(function(trajectory) {
+      var color = scope._colors[trajectory.metadataCategoryName] || 'red';
+      var tube = drawTrajectoryLineDynamic(trajectory,
+                                    scope.director.currentFrame,
+                                    color,
+                                    radius);
       return tube;
     });
 
