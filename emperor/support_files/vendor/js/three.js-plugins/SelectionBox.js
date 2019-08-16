@@ -30,10 +30,22 @@ define(['three'], function(THREE){
   		this.scene = scene;
   		this.startPoint = new Vector3();
   		this.endPoint = new Vector3();
+      this.lineBox = [];
   		this.collection = [];
   		this.deep = deep || Number.MAX_VALUE;
 
   	}
+
+    SelectionBox.prototype.viewBox = function (start, end){
+      var material = new THREE.LineBasicMaterial( { color: 0xffffff } );
+      material.light = true;
+      var geometry = new THREE.Geometry();
+      geometry.vertices.push(start);
+      geometry.vertices.push(end);
+      var line = new THREE.Line( geometry, material );
+
+      return line;
+    }
 
   	SelectionBox.prototype.select = function ( startPoint, endPoint ) {
 
@@ -63,6 +75,7 @@ define(['three'], function(THREE){
   		endPoint.y = Math.min( startPoint.y, endPoint.y );
 
   		vecNear.copy( this.camera.position );
+
   		vecTopLeft.copy( tmpPoint );
   		vecTopRight.set( endPoint.x, tmpPoint.y, 0 );
   		vecDownRight.copy( endPoint );
@@ -89,14 +102,29 @@ define(['three'], function(THREE){
 
   		var planes = frustum.planes;
 
-  		planes[ 0 ].setFromCoplanarPoints( vecNear, vecTopLeft, vecTopRight );
-  		planes[ 1 ].setFromCoplanarPoints( vecNear, vecTopRight, vecDownRight );
-  		planes[ 2 ].setFromCoplanarPoints( vecDownRight, vecDownLeft, vecNear );
-  		planes[ 3 ].setFromCoplanarPoints( vecDownLeft, vecTopLeft, vecNear );
+  		planes[ 0 ].setFromCoplanarPoints( vectemp1, vecTopLeft, vecTopRight );
+  		planes[ 1 ].setFromCoplanarPoints( vectemp2, vecTopRight, vecDownRight );
+  		planes[ 2 ].setFromCoplanarPoints( vectemp3, vecDownLeft, vecNear );
+  		planes[ 3 ].setFromCoplanarPoints( vecDownLeft, vecTopLeft, vectemp1 );
   		planes[ 4 ].setFromCoplanarPoints( vecTopRight, vecDownRight, vecDownLeft );
   		planes[ 5 ].setFromCoplanarPoints( vectemp3, vectemp2, vectemp1 );
   		planes[ 5 ].normal.multiplyScalar( - 1 );
 
+      //this.lineBox = [];
+      //near plane
+      this.lineBox.push(this.viewBox(vecTopLeft,vecTopRight));
+      this.lineBox.push(this.viewBox(vecTopRight,vecDownRight));
+      this.lineBox.push(this.viewBox(vecDownRight,vecDownLeft));
+      this.lineBox.push(this.viewBox(vecDownLeft,vecTopLeft));
+      // side
+      this.lineBox.push(this.viewBox(vecTopLeft,vectemp1));
+      this.lineBox.push(this.viewBox(vecTopRight,vectemp2));
+      this.lineBox.push(this.viewBox(vecDownRight,vectemp3));
+      // far plane
+      // its a triangle b/c missing one point
+      this.lineBox.push(this.viewBox(vectemp1,vectemp2));
+      this.lineBox.push(this.viewBox(vectemp2,vectemp3));
+      this.lineBox.push(this.viewBox(vectemp3,vectemp1));
   	};
 
   	SelectionBox.prototype.searchChildInFrustum = function ( frustum, object ) {

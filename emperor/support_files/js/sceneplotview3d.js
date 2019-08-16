@@ -201,8 +201,8 @@ define([
         item.material.emissive.set( 0x000000 );
       }
       scope.selectionBox.startPoint.set(
-        (( event.clientX / offset.left )/element.width) * 2 - 1,
-        - (( event.clientY / offset.top )/element.height) * 2 + 1,
+        (( event.clientX - offset.left )/element.width) * 2 - 1,
+        - (( event.clientY - offset.top )/element.height) * 2 + 1,
         0.5 );
     })
     .on('mousemove', function(event){
@@ -213,27 +213,41 @@ define([
 						scope.selectionBox.collection[ i ].material.emissive.set( 0x000000 );
 					}
 					scope.selectionBox.endPoint.set(
-            (( event.clientX / offset.left )/element.width) * 2 - 1,
-            - (( event.clientY / offset.top )/element.height) * 2 + 1,
+            (( event.clientX - offset.left )/element.width) * 2 - 1,
+            - (( event.clientY - offset.top )/element.height) * 2 + 1,
             0.5 );
-					var allSelected = scope.selectionBox.select();
-          console.log(allSelected);
+
+          var allSelected = scope.selectionBox.select();
 					for ( var i = 0; i < allSelected.length; i ++ ) {
 						allSelected[ i ].material.emissive.set( 0xffffff );
 					}
+
+          // draw the frustm
+          for ( var i = 0; i < scope.selectionBox.lineBox.length; i ++ ) {
+            console.log(scope.selectionBox.lineBox[i]);
+						scope.scene.add( scope.selectionBox.lineBox[i] );
+					}
+
+
 				}
     })
     .on('mouseup', function ( event ) {
       var element = scope.renderer.domElement;
       var offset = $(element).offset();
       scope.selectionBox.endPoint.set(
-        (( event.clientX / offset.left )/element.width) * 2 - 1,
-        - (( event.clientY / offset.top )/element.height) * 2 + 1,
+        (( event.clientX - offset.left )/element.width) * 2 - 1,
+        - (( event.clientY - offset.top )/element.height) * 2 + 1,
         0.5 );
       var allSelected = scope.selectionBox.select();
       for ( var i = 0; i < allSelected.length; i ++ ) {
         allSelected[ i ].material.emissive.set( 0xffffff );
       }
+
+      // // draw the frustm
+      // for ( var i = 0; i < scope.selectionBox.lineBox.length; i ++ ) {
+      //   console.log(scope.selectionBox.lineBox[i]);
+      //   scope.scene.add( scope.selectionBox.lineBox[i] );
+      // }
     });
 
     // register callback for populating info with clicked sample name
