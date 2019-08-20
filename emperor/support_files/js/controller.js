@@ -49,6 +49,8 @@ define([
    *
    */
   function EmperorController(scatter, biplot, divId, webglcanvas) {
+    UIState.setProperty("view.usesPointCloud", scatter.length > 20000);
+  
     var scope = this;
     /**
      * Scaling constant for grid dimensions (read only).
@@ -76,8 +78,7 @@ define([
      * @type {float}
      */
     this.height = this.$divId.height();
-
-    UIState.setProperty("view.usesPointCloud", scatter.length > 20000)
+    
     /**
      * Object with all the available decomposition views.
      *
