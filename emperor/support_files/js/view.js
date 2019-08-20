@@ -3,8 +3,9 @@ define([
     'underscore',
     'three',
     'shapes',
-    'draw'
-], function($, _, THREE, shapes, draw) {
+    'draw',
+    'uistate'
+], function($, _, THREE, shapes, draw, UIState) {
   var makeArrow = draw.makeArrow;
   var makeLineCollection = draw.makeLineCollection;
 /**
@@ -16,14 +17,12 @@ define([
  *
  * @param {DecompositionModel} decomp a DecompositionModel object that will be
  * represented on screen.
- * @param {Bool} asPointCloud Whether or not the underlying view is represented
- * using a point cloud. This argument is exposed to facilitate testing.
  *
  * @return {DecompositionView}
  * @constructs DecompositionView
  *
  */
-function DecompositionView(decomp, asPointCloud) {
+function DecompositionView(decomp) {
   /**
    * The decomposition model that the view represents.
    * @type {DecompositionModel}
@@ -92,17 +91,8 @@ function DecompositionView(decomp, asPointCloud) {
    */
   this.lines = {'left': null, 'right': null};
 
-  /**
-   * Whether or not the view relies on a PointCloud to display the data.
-   * @type {Bool}
-   */
-  Object.defineProperty(this, 'usesPointCloud', {
-    value: (this.decomp.length > 20000) || asPointCloud,
-    writable: false
-  });
-
   // setup this.markers and this.lines
-  if (this.usesPointCloud) {
+  if (UIState["view.usesPointCloud"]) {
     this._fastInit();
   }
   else {
@@ -363,7 +353,7 @@ DecompositionView.prototype._fastInit = function() {
 DecompositionView.prototype.getVisibleCount = function() {
   var visible = 0;
 
-  if (this.usesPointCloud) {
+  if (UIState["view.usesPointCloud"]) {
     var cloud = this.markers[0];
 
     for (var i = 0; i < cloud.geometry.attributes.visible.count; i++) {
@@ -399,7 +389,7 @@ DecompositionView.prototype.updatePositions = function() {
     radius = this.getGeometryFactor();
   }
 
-  if (this.usesPointCloud) {
+  if (UIState["view.usesPointCloud"]) {
     var cloud = this.markers[0];
 
     this.decomp.apply(function(plottable) {
@@ -684,7 +674,7 @@ DecompositionView.prototype.setColor = function(color, group) {
   group = group || this.decomp.plottable;
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
-  if (this.usesPointCloud) {
+  if (UIState["view.usesPointCloud"]) {
     var cloud = this.markers[0];
     color = new THREE.Color(color);
 
@@ -727,7 +717,7 @@ DecompositionView.prototype.setVisibility = function(visible, group) {
 
   hasConfidenceIntervals = this.decomp.hasConfidenceIntervals();
 
-  if (this.usesPointCloud) {
+  if (UIState["view.usesPointCloud"]) {
     var cloud = this.markers[0];
 
     _.each(group, function(plottable) {
@@ -773,7 +763,7 @@ DecompositionView.prototype.setScale = function(scale, group) {
 
   group = group || this.decomp.plottable;
 
-  if (this.usesPointCloud) {
+  if (UIState["view.usesPointCloud"]) {
     var cloud = this.markers[0];
 
     _.each(group, function(plottable) {
@@ -805,7 +795,7 @@ DecompositionView.prototype.setOpacity = function(opacity, group) {
 
   group = group || this.decomp.plottable;
 
-  if (this.usesPointCloud) {
+  if (UIState["view.usesPointCloud"]) {
     var cloud = this.markers[0];
 
     _.each(group, function(plottable) {

@@ -2,8 +2,9 @@ define([
     'three',
     'orbitcontrols',
     'draw',
-    'underscore'
-], function(THREE, OrbitControls, draw, _) {
+    'underscore',
+    'uistate'
+], function(THREE, OrbitControls, draw, _, UIState) {
   /** @private */
   var makeLine = draw.makeLine;
   /** @private */
@@ -302,7 +303,7 @@ define([
 
       // if a decomposition uses a point cloud change the default tolerance as
       // it is otherwise too large and error-prone
-      if (this.decViews[decViewName].usesPointCloud) {
+      if (UIState.getProperty("view.usesPointCloud")) {
         this._raycaster.params.Points.threshold = 0.01;
       }
     }
@@ -746,7 +747,7 @@ define([
     // Only scatter plots that are not using a point cloud should be pointed
     // towards the camera. For arrow types and point clouds doing this will
     // results in odd visual effects
-    if (!this.decViews.scatter.usesPointCloud &&
+    if (!UIState.getProperty("view.usesPointCloud") &&
         this.decViews.scatter.decomp.isScatterType()) {
       _.each(this.decViews.scatter.markers, function(element) {
         element.quaternion.copy(camera.quaternion);

@@ -17,12 +17,13 @@ define([
     'svgrenderer',
     'draw',
     'canvasrenderer',
-    'canvastoblob'
+    'canvastoblob',
+    'uistate'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
             ColorViewController, VisibilityController, OpacityViewController,
             ShapeController, AxesController, ScaleViewController,
             AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
-            CanvasRenderer, canvasToBlob) {
+            CanvasRenderer, canvasToBlob, UIState) {
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
 
   /**
@@ -49,7 +50,6 @@ define([
    */
   function EmperorController(scatter, biplot, divId, webglcanvas) {
     var scope = this;
-
     /**
      * Scaling constant for grid dimensions (read only).
      * @type {float}
@@ -77,7 +77,7 @@ define([
      */
     this.height = this.$divId.height();
 
-
+    UIState.setProperty("view.usesPointCloud", scatter.length > 20000)
     /**
      * Object with all the available decomposition views.
      *
@@ -528,7 +528,7 @@ define([
    *
    */
   EmperorController.prototype._buildUI = function() {
-    var scope = this, isLargeDataset = this.decViews.scatter.usesPointCloud;
+    var scope = this, isLargeDataset = UIState["view.usesPointCloud"];
 
     //FIXME: This only works for 1 scene plot view
     this.controllers.color = this.addTab(this.sceneViews[0].decViews,
@@ -722,7 +722,7 @@ define([
 
       // Point clouds can't be rendered by the CanvasRenderer, therefore we
       // have to use the WebGLRenderer and can't increase the image size.
-      if (this.decViews.scatter.usesPointCloud) {
+      if (UIState["view.usesPointCloud"]) {
         pngRenderer = this.sceneViews[0].renderer;
       }
       else {
