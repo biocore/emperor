@@ -14,11 +14,10 @@ define(['three', 'underscore'], function(THREE, _) {
     //PROPERTY INITIALIZATION - (serialization and deserialization go here.)
     //Properties must be flattened into UIState until we determine how to handle
     //tiered events.
-    this["view.viewType"] = 'scatter';
+    this["controller.tabOrder"] =
+      ["color", "visibility", "opacity", "scale",
+       "shape", "axes", "animations"];
     this["view.usesPointCloud"] = false;
-    this["rules.color"] = null;
-    this["rules.shape"] = null;
-    this["favorite.numbers"] = [7, 13, 29, 42];
   }
 
   /**
@@ -35,7 +34,7 @@ define(['three', 'underscore'], function(THREE, _) {
    */
   UIState.prototype.registerProperty = function(key, onChange){
     this.events.addEventListener(key, onChange);
-    propertyValue = getProperty(key);
+    propertyValue = this.getProperty(key);
     onChange({type: key, oldVal: propertyValue, newVal: propertyValue});
   }
     
@@ -53,7 +52,7 @@ define(['three', 'underscore'], function(THREE, _) {
     this.events.addEventListener(key + "/ADD", onAdd);
     this.events.addEventListener(key + "/REMOVE", onRemove);
     this.events.addEventListener(key + "/UPDATE", onUpdate);
-    registerProperty(key, onInit);
+    this.registerProperty(key, onInit);
   }
     
   /**
@@ -67,7 +66,7 @@ define(['three', 'underscore'], function(THREE, _) {
   UIState.prototype.registerDictProperty = function(key, onInit, onPut, onRemove){
     this.events.addEventListener(key + "/PUT", onPut);
     this.events.addEventListener(key + "/REMOVE", onRemove);
-    registerProperty(key, onInit);
+    this.registerProperty(key, onInit);
   }
     
   /**
@@ -95,7 +94,7 @@ define(['three', 'underscore'], function(THREE, _) {
   UIState.prototype.setProperties = function(keyValueDict, bulkEvent = null){
     var oldValueDict = {};
     for (var key in keyValueDict){
-      oldValueDict[key] = getProperty(key);
+      oldValueDict[key] = this.getProperty(key);
     }
     for (var key in keyValueDict){
       this[key] = value;
@@ -115,15 +114,21 @@ define(['three', 'underscore'], function(THREE, _) {
   
   //Observable List Functionality
   UIState.prototype.listPropertyAdd = function(propertyKey, index, value){
-    var list = getProperty(propertyKey);
+    var list = this.getProperty(propertyKey);
     list.splice(index, 0, value);
     this.events.dispatchEvent(
       {type:propertyKey + "/ADD", index:index, val:value}
     );
   }
   
-  UIState.prototype.listPropertyRemove = function(propertyKey, index){
-    var list = getProperty(propertyKey);
+  UIState.prototype.listPropertyRemove = function(propertyKey, valueToRemove){
+    var index = this.getProperty(propertyKey).indexOf(valueToRemove);
+    if (index != -1)
+      this.listPropertyRemoveAt(propertyKey, index);
+  }
+  
+  UIState.prototype.listPropertyRemoveAt = function(propertyKey, index){
+    var list = this.getProperty(propertyKey);
     var oldVal = list[index];
     list.splice(index, 1);
     this.events.dispatchEvent(
@@ -132,7 +137,7 @@ define(['three', 'underscore'], function(THREE, _) {
   }
   
   UIState.prototype.listPropertyUpdate = function(propertyKey, index, newValue){
-    var list = getProperty(propertyKey);
+    var list = this.getProperty(propertyKey);
     var oldVal = list[index];
     list[index] = newValue;
     this.events.dispatchEvent(
@@ -145,7 +150,7 @@ define(['three', 'underscore'], function(THREE, _) {
   
   //Observable Dictionary Functionality
   UIState.prototype.dictPropertyPut = function(propertyKey, dictKey, value){
-    var dict = getProperty(propertyKey);
+    var dict = this.getProperty(propertyKey);
     var oldVal = dict[dictKey];
     dict[dictKey] = value;
     this.events.dispatchEvent(
@@ -158,7 +163,7 @@ define(['three', 'underscore'], function(THREE, _) {
   }
   
   UIState.prototype.dictPropertyRemove = function(propertyKey, dictKey){
-    var dict = getProperty(propertyKey);
+    var dict = this.getProperty(propertyKey);
     var oldVal = dict[dictKey];
     delete dict[dictKey];
     this.events.dispatchEvent(

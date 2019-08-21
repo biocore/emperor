@@ -25,6 +25,16 @@ define([
             AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
             CanvasRenderer, canvasToBlob, UIState) {
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
+  
+  var controllerConstructors = {
+      "color": ColorViewController,
+      "visibility": VisibilityController,
+      "opacity": OpacityViewController,
+      "scale": ScaleViewController,
+      "shape": ShapeController,
+      "axes": AxesController,
+      "animations": AnimationsController
+    };
 
   /**
    *
@@ -522,6 +532,36 @@ define([
 
   /**
    *
+   * Helper method to hook up the tabs for the various controllers
+   *
+   * @private
+   */
+  EmperorController.prototype._hookUpTabs = function() {
+    var scope = this;
+    
+    var onInit = function(evt){
+      for (var index in evt.newVal){
+        var item = evt.newVal[index];
+        scope.controllers[item] = scope.addTab(scope.sceneViews[0].decViews,
+                                             controllerConstructors[item]);
+      }
+    };
+    var onAdd = function(evt){
+      throw Error("Mutating tab order not supported");
+    };
+    var onRemove = function(evt){
+      throw Error("Mutating tab order not supported");
+    };
+    var onUpdate = function(evt){
+      throw Error("Mutating tab order not supported");
+    };
+  
+    UIState.registerListProperty("controller.tabOrder",
+                                 onInit, onAdd, onRemove, onUpdate);
+  }
+  
+  /**
+   *
    * Helper method to assemble UI, completely independent of HTML template.
    * This method is called when the object is constructed.
    *
@@ -531,24 +571,11 @@ define([
   EmperorController.prototype._buildUI = function() {
     var scope = this, isLargeDataset = UIState["view.usesPointCloud"];
 
-    //FIXME: This only works for 1 scene plot view
-    this.controllers.color = this.addTab(this.sceneViews[0].decViews,
-                                         ColorViewController);
-    this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
-                                              VisibilityController);
-    this.controllers.opacity = this.addTab(this.sceneViews[0].decViews,
-                                           OpacityViewController);
-    this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
-                                         ScaleViewController);
-    if (!isLargeDataset) {
-      this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
-                                           ShapeController);
-    }
-    this.controllers.axes = this.addTab(this.sceneViews[0].decViews,
-                                        AxesController);
-    this.controllers.animations = this.addTab(this.sceneViews[0].decViews,
-                                              AnimationsController);
-
+    if (isLargeDataset)
+      UIState.listPropertyRemove("controller.tabOrder", "shape");
+      
+    this._hookUpTabs();
+       
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
                                // The tabs on the plot space only get resized
