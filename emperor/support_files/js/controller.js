@@ -550,9 +550,13 @@ define([
       throw Error("Mutating tab order not supported");
     };
     var onRemove = function(evt){
+      //BE CAREFUL: If you want to support destroying controllers, make sure
+      //that you clean up all the events that they've linked!!
       throw Error("Mutating tab order not supported");
     };
     var onUpdate = function(evt){
+      //BE CAREFUL: If you want to support destroying controllers, make sure
+      //that you clean up all the events that they've linked!!
       throw Error("Mutating tab order not supported");
     };
   

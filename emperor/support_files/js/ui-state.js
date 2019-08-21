@@ -18,6 +18,7 @@ define(['three', 'underscore'], function(THREE, _) {
       ["color", "visibility", "opacity", "scale",
        "shape", "axes", "animations"];
     this["view.usesPointCloud"] = false;
+    this["view.viewType"] = 'scatter';
   }
 
   /**
@@ -35,7 +36,7 @@ define(['three', 'underscore'], function(THREE, _) {
   UIState.prototype.registerProperty = function(key, onChange){
     this.events.addEventListener(key, onChange);
     propertyValue = this.getProperty(key);
-    onChange({type: key, oldVal: propertyValue, newVal: propertyValue});
+    onChange({type: key, newVal: propertyValue});
   }
     
   /**
@@ -172,6 +173,13 @@ define(['three', 'underscore'], function(THREE, _) {
       oldVal:oldVal
       });
   }
+
+  //TODO FIXME HACK:  When we worry about removing linked event handlers
+  //(because an object that is listening to UIState needs to go out of scope)
+  //We must ensure that we are properly handling delinking of methods,
+  //especially when developers linking in their handler functions will often
+  //be careless about using function.bind vs wrapper functions vs anonymous
+  //functions unless we throw exceptions in their faces.
 
   //Note, as as singleton, we could have just defined it anonymously in this
   //function.  However, should we choose to support multiple state objects

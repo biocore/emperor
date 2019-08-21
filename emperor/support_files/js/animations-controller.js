@@ -6,9 +6,10 @@ define([
     'animationdirector',
     'draw',
     'color-editor',
-    'colorviewcontroller'
+    'colorviewcontroller',
+    'uistate'
 ], function($, _, DecompositionView, ViewControllers, AnimationDirector,
-            draw, Color, ColorViewController) {
+            draw, Color, ColorViewController, UIState) {
   var EmperorViewController = ViewControllers.EmperorViewController;
   var drawTrajectoryLineStatic = draw.drawTrajectoryLineStatic;
   var drawTrajectoryLineDynamic = draw.drawTrajectoryLineDynamic;
@@ -148,7 +149,7 @@ define([
                             'value': 1,
                             'range': 'max',
                             'slide': function(event, ui) {
-                              scope._$radiusLabel.text('Raidus: ' + ui.value);
+                              scope._$radiusLabel.text('Radius: ' + ui.value);
                             },
                             'change': function(event, ui) {
                               scope._$radiusLabel.text('Radius: ' + ui.value);
@@ -205,6 +206,10 @@ define([
       scope._buildGrid();
 
       scope.setEnabled(false);
+      
+      //Note that we can't do this before the buttons are ready.
+      UIState.registerProperty("view.viewType",
+                               scope._viewTypeChanged.bind(scope));
     });
 
     return this;
@@ -403,12 +408,14 @@ define([
    */
   AnimationsController.prototype._gradientChanged = function(evt, params) {
     if (this.getGradientCategory() !== '' &&
-        this.getTrajectoryCategory() !== '') {
+        this.getTrajectoryCategory() !== '' &&
+        UIState["view.viewType"] === 'scatter') {
       this.setEnabled(true);
       this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
-             this.getTrajectoryCategory() === '') {
+             this.getTrajectoryCategory() === '' ||
+             UIState["view.viewType"] !== 'scatter') {
       this.setEnabled(false);
     }
   };
@@ -421,13 +428,35 @@ define([
    */
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
     if (this.getGradientCategory() !== '' &&
-        this.getTrajectoryCategory() !== '') {
+        this.getTrajectoryCategory() !== '' &&
+        UIState["view.viewType"] === 'scatter') {
       this.setEnabled(true);
       this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
-             this.getTrajectoryCategory() === '') {
+             this.getTrajectoryCategory() === '' ||
+             UIState["view.viewType"] !== 'scatter') {
       this.setColors({});
+      this.setEnabled(false);
+    }
+  };
+  
+  /**
+   *
+   * Callback method executed when the UIState view.viewType changes.
+   *
+   * @private
+   */
+  AnimationsController.prototype._viewTypeChanged = function(evt) {
+    if (this.getGradientCategory() !== '' &&
+      this.getTrajectoryCategory() !== '' &&
+      UIState["view.viewType"] === 'scatter') {
+      this.setEnabled(true);
+      this._updateGrid();
+    }
+    else if (this.getGradientCategory() === '' ||
+             this.getTrajectoryCategory() === '' ||
+             UIState["view.viewType"] !== 'scatter') {
       this.setEnabled(false);
     }
   };
