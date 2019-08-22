@@ -68,18 +68,24 @@ define(['three'], function(THREE){
   		this.camera.updateProjectionMatrix();
   		this.camera.updateMatrixWorld();
 
+      var z_value = ( (this.camera.near + this.camera.far)/(this.camera.near - this.camera.far) ) * this.camera.zoom;
+
   		tmpPoint.copy( startPoint );
   		tmpPoint.x = Math.min( startPoint.x, endPoint.x );
   		tmpPoint.y = Math.max( startPoint.y, endPoint.y );
+      tmpPoint.z = z_value;
   		endPoint.x = Math.max( startPoint.x, endPoint.x );
   		endPoint.y = Math.min( startPoint.y, endPoint.y );
+      endPoint.z = z_value;
 
   		vecNear.copy( this.camera.position );
 
   		vecTopLeft.copy( tmpPoint );
-  		vecTopRight.set( endPoint.x, tmpPoint.y, 0 );
+  		vecTopRight.set( endPoint.x, tmpPoint.y, z_value );
   		vecDownRight.copy( endPoint );
-  		vecDownLeft.set( tmpPoint.x, endPoint.y, 0 );
+  		vecDownLeft.set( tmpPoint.x, endPoint.y, z_value );
+
+      console.log(this.camera.zoom);
 
   		vecTopLeft.unproject( this.camera );
   		vecTopRight.unproject( this.camera );
@@ -93,20 +99,33 @@ define(['three'], function(THREE){
   		vectemp2.normalize();
   		vectemp3.normalize();
 
-  		vectemp1.multiplyScalar( this.deep );
-  		vectemp2.multiplyScalar( this.deep );
-  		vectemp3.multiplyScalar( this.deep );
-  		vectemp1.add( vecNear );
-  		vectemp2.add( vecNear );
-  		vectemp3.add( vecNear );
+  		vectemp1.multiplyScalar( this.deep);
+  		vectemp2.multiplyScalar( this.deep);
+  		vectemp3.multiplyScalar( this.deep);
+  		vectemp1.add( vecNear);
+  		vectemp2.add( vecNear);
+  		vectemp3.add( vecNear);
+
+
 
   		var planes = frustum.planes;
 
+      // planes[ 0 ].setFromCoplanarPoints( vecNear, vecTopLeft, vecTopRight );
+  		// planes[ 1 ].setFromCoplanarPoints( vecNear, vecTopRight, vecDownRight );
+  		// planes[ 2 ].setFromCoplanarPoints( vecDownRight, vecDownLeft, vecNear );
+  		// planes[ 3 ].setFromCoplanarPoints( vecDownLeft, vecTopLeft, vecNear );
+  		// planes[ 4 ].setFromCoplanarPoints( vecTopRight, vecDownRight, vecDownLeft );
+  		// planes[ 5 ].setFromCoplanarPoints( vectemp3, vectemp2, vectemp1 );
+
   		planes[ 0 ].setFromCoplanarPoints( vectemp1, vecTopLeft, vecTopRight );
   		planes[ 1 ].setFromCoplanarPoints( vectemp2, vecTopRight, vecDownRight );
-  		planes[ 2 ].setFromCoplanarPoints( vectemp3, vecDownLeft, vecNear );
+  		planes[ 2 ].setFromCoplanarPoints( vectemp3, vecDownLeft, vecDownRight );
   		planes[ 3 ].setFromCoplanarPoints( vecDownLeft, vecTopLeft, vectemp1 );
   		planes[ 4 ].setFromCoplanarPoints( vecTopRight, vecDownRight, vecDownLeft );
+      console.log('the culprit?');
+      console.log(vectemp3);
+      console.log(vectemp2);
+      console.log(vectemp1);
   		planes[ 5 ].setFromCoplanarPoints( vectemp3, vectemp2, vectemp1 );
   		planes[ 5 ].normal.multiplyScalar( - 1 );
 
@@ -132,12 +151,15 @@ define(['three'], function(THREE){
   		if ( object.isMesh ) {
 
   			if ( object.material !== undefined ) {
+          console.log(frustum);
 
   				object.geometry.computeBoundingSphere();
 
   				center.copy( object.geometry.boundingSphere.center );
 
+
   				center.applyMatrix4( object.matrixWorld );
+          console.log(center);
 
   				if ( frustum.containsPoint( center ) ) {
 
