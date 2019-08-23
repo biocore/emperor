@@ -250,7 +250,7 @@ class Emperor(object):
             self.feature_mf = \
                 self._validate_metadata(feature_mapping_file,
                                         self.ordination.features,
-                                        ignore_missing_samples=False)
+                                        ignore_missing_samples)
 
         self._validate_ordinations()
 
