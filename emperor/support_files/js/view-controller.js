@@ -174,6 +174,9 @@ define([
     this.$select = $('<select>');
     this.$header.append(this.$select);
 
+    this.$searchBar = $("<input type='text' style='width:98%;' placeholder='Search for a category'>");
+    this.$header.append(this.$searchBar);
+
     // there's a few attributes we can only set on "ready" so list them up here
     $(function() {
       var placeholder = 'Select a ' + scope.title + ' Category';
@@ -346,7 +349,6 @@ define([
     // of requiring users to click twice on a widget.
     var gridOptions = {editable: true, enableAddRow: false,
       enableCellNavigation: true, forceFitColumns: true,
-      showHeaderRow: true, headerRowHeight: 30,
       enableColumnReorder: false, autoEdit: true};
 
     // If there's a custom slickgrid column then add it to the object
@@ -374,8 +376,13 @@ define([
      * - Hide for continuous values?
      */
 
+    // These two functions are fairly tied together
+    this.$searchBar.on("change keyup", function (e) {
+      dataView.refresh();
+    });
     function substringFilter(item, args) {
-      if(searchString != "" && item.category.indexOf(searchString) === -1){
+      if(!searchString &&
+         item.category.toLowerCase().indexOf(scope.$searchBar.val().toLowerCase()) === -1){
         return false;
       }
       return true;
@@ -396,30 +403,6 @@ define([
     // hide the header row of the grid
     // http://stackoverflow.com/a/29827664/379593
     $(this.$body).find('.slick-header').css('display', 'none');
-
-    // keypress callback
-    $(this.bodyGrid.getHeaderRow()).on("change keyup", ":input", function (e) {
-      var columnId = $(this).data("columnId");
-      console.log(columnId);
-      if (columnId != null) {
-        searchString = $.trim($(this).val());
-        dataView.refresh();
-      }
-    });
-
-    this.bodyGrid.onHeaderRowCellRendered.subscribe(function(e, args) {
-      $(args.node).empty();
-
-      // only draw a search box in the column with the category values
-      if (args.column.id !== 'field1') {
-        return;
-      }
-
-      // 98% so that there's some space for additional padding
-      $("<input type='text' style='width:98%;' placeholder='Search for a category'>")
-         .data("columnId", args.column.id)
-         .appendTo(args.node);
-    });
 
     // subscribe to events when a cell is changed
     this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
