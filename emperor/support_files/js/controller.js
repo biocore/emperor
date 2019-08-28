@@ -550,9 +550,9 @@ define([
       throw Error("Mutating tab order not supported");
     };
     var onRemove = function(evt){
-      //BE CAREFUL: If you want to support destroying controllers, make sure
-      //that you clean up all the events that they've linked!!
-      throw Error("Mutating tab order not supported");
+      var toRemove = scope.controllers[evt.oldVal];
+      var $li = $("[aria-controls='" + toRemove.identifier + "']")
+      $li.remove();
     };
     var onUpdate = function(evt){
       //BE CAREFUL: If you want to support destroying controllers, make sure
@@ -575,10 +575,12 @@ define([
   EmperorController.prototype._buildUI = function() {
     var scope = this, isLargeDataset = UIState["view.usesPointCloud"];
 
-    if (isLargeDataset)
-      UIState.listPropertyRemove("controller.tabOrder", "shape");
+//    if (isLargeDataset)
+//      UIState.listPropertyRemove("controller.tabOrder", "shape");
       
     this._hookUpTabs();
+    
+    UIState.listPropertyRemove("controller.tabOrder", "shape");
        
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
