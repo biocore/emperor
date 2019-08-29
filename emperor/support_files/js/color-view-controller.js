@@ -181,7 +181,8 @@ define([
     var ready = this.ready;
     this.ready = undefined;
 
-    this.$header.append(this.$colormapSelect);
+    // account for the searchbar
+    this.$colormapSelect.insertAfter(this.$select);
     this.$header.append(this.$scaled);
     this.$header.append(this.$scaledLabel);
     this.$body.prepend(this.$scaleDiv);

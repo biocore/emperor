@@ -369,7 +369,7 @@ define([
     /*
      * - Identify what icon we are going to use
      * - When there's no results there should be a message about that.
-     * - There should be an element to close the search bar
+     * - There should be an element to cancel the search
      * - There's probably no reason why we should hide these values
      * - Detach the search bar from the table, make it a separate element
      *   that's always visible
