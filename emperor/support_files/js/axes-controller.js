@@ -38,8 +38,8 @@ define([
     this.$viewTypeDiv.css('width', '100%');
     this.$viewTypeDiv.css({
         'margin': '0 auto',
-        'width', '100%',
-        'height', '100%'
+        'width': '100%',
+        'height': '100%'
     });
     this.$viewTypeDiv.attr('title', 'Change the selected View Type');
     this.$radioScatter = $('<input type="radio" name="emperor.viewType"' +
