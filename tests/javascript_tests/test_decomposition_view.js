@@ -82,7 +82,8 @@ requirejs([
       equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
       deepEqual(dv.visibleDimensions, [0, 1, 2],
           'visibleDimensions set correctly');
-      deepEqual(dv.tubes, [], 'tubes set correctly');
+      deepEqual(dv.staticTubes, [], 'tubes set correctly');
+      deepEqual(dv.dynamicTubes, [], 'tubes set correctly');
 
       equal(dv.axesColor, '#FFFFFF');
       equal(dv.backgroundColor, '#000000');
@@ -138,7 +139,8 @@ requirejs([
       equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
       deepEqual(dv.visibleDimensions, [0, 1],
           'visibleDimensions set correctly');
-      deepEqual(dv.tubes, [], 'tubes set correctly');
+      deepEqual(dv.staticTubes, [], 'tubes set correctly');
+      deepEqual(dv.dynamicTubes, [], 'tubes set correctly');
 
       equal(dv.axesColor, '#FFFFFF');
       equal(dv.backgroundColor, '#000000');
@@ -160,7 +162,8 @@ requirejs([
       equal(view.count, 2);
       equal(view.getVisibleCount(), 2);
       deepEqual(view.visibleDimensions, [0, 1, 2]);
-      deepEqual(view.tubes, []);
+      deepEqual(view.staticTubes, [], 'tubes set correctly');
+      deepEqual(view.dynamicTubes, [], 'tubes set correctly');
       equal(view.axesColor, '#FFFFFF');
       equal(view.backgroundColor, '#000000');
       deepEqual(view.axesOrientation, [1, 1, 1]);
@@ -199,7 +202,8 @@ requirejs([
       equal(view.count, 2);
       equal(view.getVisibleCount(), 2);
       deepEqual(view.visibleDimensions, [0, 1, 2]);
-      deepEqual(view.tubes, []);
+      deepEqual(view.staticTubes, [], 'tubes set correctly');
+      deepEqual(view.dynamicTubes, [], 'tubes set correctly');
       equal(view.axesColor, '#FFFFFF');
       equal(view.backgroundColor, '#000000');
       deepEqual(view.axesOrientation, [1, 1, 1]);

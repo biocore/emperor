@@ -76,11 +76,18 @@ function DecompositionView(multiModel, modelKey, asPointCloud) {
    */
   this.backgroundColor = '#000000';
   /**
-   * Tube objects on screen (used for animations)
+   * Static tubes objects covering an entire trajectory.
+   * Can use setDrawRange on the underlying geometry to display
+   * just part of the trajectory.
    * @type {THREE.Mesh[]}
    */
-  this.tubes = [];
-
+  this.staticTubes = [];
+  /**
+   * Dynamic tubes covering the final tube segment of a trajectory
+   * Must be rebuilt each frame by the animations controller
+   * @type {THREE.Mesh[]}
+   */
+  this.dynamicTubes = [];
   /**
    * Array of THREE.Mesh objects on screen (represent samples).
    * @type {THREE.Mesh[]}
@@ -153,6 +160,14 @@ DecompositionView.prototype.getGeometryFactor = function() {
   // geometries based on this factor.
   return (this.decomp.dimensionRanges.max[0] -
           this.decomp.dimensionRanges.min[0]) * 0.012;
+};
+
+/**
+ * Retrieve a shallow copy of concatenated static and dynamic tube arrays
+ * @type {THREE.Mesh[]}
+ */
+DecompositionView.prototype.getTubes = function() {
+  return this.staticTubes.concat(this.dynamicTubes);
 };
 
 /**

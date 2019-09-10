@@ -361,15 +361,30 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
       {'x': 6.75, 'y': 6.75, 'z': 6.75},
       {'x': 8, 'y': 8, 'z': 8}];
 
-      deepEqual(trajectory.representativeCoordinatesAtIndex(3),
+      var fullCoordinates3 = trajectory.representativeCoordinatesAtIndex(3);
+      deepEqual(fullCoordinates3,
           [{'x': 0, 'y': 0, 'z': 0},
           {'x': 0.75, 'y': 0.75, 'z': 0.75}],
           'Coordinates are retrieved correctly at index 3');
-      deepEqual(trajectory.representativeCoordinatesAtIndex(11),
+
+      var fullCoordinates11 = trajectory.representativeCoordinatesAtIndex(11);
+      deepEqual(fullCoordinates11,
           [{'x': 0, 'y': 0, 'z': 0}, {'x': 1, 'y': 1, 'z': 1},
           {'x': -9, 'y': -9, 'z': -9}, {'x': 3, 'y': 3, 'z': 3},
           {'x': 4.25, 'y': 4.25, 'z': 4.25}],
           'Coordinates are retrieved correctly at index 11');
+
+      var dynamicCoordinates3 =
+        trajectory.representativeInterpolatedCoordinatesAtIndex(3);
+      var dynamicCoordinates11 =
+        trajectory.representativeInterpolatedCoordinatesAtIndex(11);
+
+      deepEqual(fullCoordinates3.slice(-2),
+                dynamicCoordinates3,
+                'Dynamic coordinates match on frame 3');
+      deepEqual(fullCoordinates11.slice(-2),
+                dynamicCoordinates11,
+                'Dynamic coordinates match on frame 11');
 
     });
 
@@ -523,6 +538,38 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
       result = getMinimumDelta(crunchedDataTwoCategories);
       equal(result, 92, 'The minimum delta is computed correctly for one ' +
           'category');
+    });
+
+    /**
+     *
+     * Test trajectories with duplicate points.
+     *
+     */
+    test('Test Duplicate Points In Trajectories', function() {
+      var result;
+      trajectory = new TrajectoryOfSamples(['A', 'B', 'C', 'D'],
+          'Nonsense',
+          [1, 2, 3, 4],
+          [{'x': 0, 'y': 0, 'z': 0},
+           {'x': 10, 'y': 10, 'z': 10},
+           {'x': 10, 'y': 10, 'z': 10},
+           {'x': 0, 'y': 0, 'z': 0}],
+          2,
+          5);
+
+      for (var i = 0; i < 20; i++) {
+        var interpTubeCoords =
+          trajectory.representativeInterpolatedCoordinatesAtIndex(i);
+        if (interpTubeCoords !== null) {
+          var dx = interpTubeCoords[1].x - interpTubeCoords[0].x;
+          var dy = interpTubeCoords[1].y - interpTubeCoords[0].y;
+          var dz = interpTubeCoords[1].z - interpTubeCoords[0].z;
+          var lenSq = dx * dx + dy * dy + dz * dz;
+          notEqual(lenSq, 0,
+            'Interpolated tube should never be built between' +
+            'consecutive duplicate points in a trajectory');
+        }
+      }
     });
 
   });
