@@ -28,6 +28,9 @@ define([
             CanvasRenderer, canvasToBlob, MultiModel, UIState) {
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
   
+  TAB_ORDER = ["color", "visibility", "opacity", "scale",
+               "shape", "axes", "animations"];
+
   var controllerConstructors = {
       "color": ColorViewController,
       "visibility": VisibilityController,
@@ -553,40 +556,6 @@ define([
       }
     }
   };
-
-  /**
-   *
-   * Helper method to hook up the tabs for the various controllers
-   *
-   * @private
-   */
-  EmperorController.prototype._hookUpTabs = function() {
-    var scope = this;
-    
-    var onInit = function(evt){
-      for (var index in evt.newVal){
-        var item = evt.newVal[index];
-        scope.controllers[item] = scope.addTab(scope.sceneViews[0].decViews,
-                                             controllerConstructors[item]);
-      }
-    };
-    var onAdd = function(evt){
-      throw Error("Mutating tab order not supported");
-    };
-    var onRemove = function(evt){
-      var toRemove = scope.controllers[evt.oldVal];
-      var $li = $("[aria-controls='" + toRemove.identifier + "']")
-      $li.remove();
-    };
-    var onUpdate = function(evt){
-      //BE CAREFUL: If you want to support destroying controllers, make sure
-      //that you clean up all the events that they've linked!!
-      throw Error("Mutating tab order not supported");
-    };
-  
-    UIState.registerListProperty("controller.tabOrder",
-                                 onInit, onAdd, onRemove, onUpdate);
-  }
   
   /**
    *
@@ -599,12 +568,13 @@ define([
   EmperorController.prototype._buildUI = function() {
     var scope = this, isLargeDataset = UIState["view.usesPointCloud"];
 
-//    if (isLargeDataset)
-//      UIState.listPropertyRemove("controller.tabOrder", "shape");
-      
-    this._hookUpTabs();
-    
-    UIState.listPropertyRemove("controller.tabOrder", "shape");
+    for (var index in TAB_ORDER){
+      var item = TAB_ORDER[index];
+      if (item === 'shape' && isLargeDataset)
+        continue;
+      scope.controllers[item] = scope.addTab(scope.sceneViews[0].decViews,
+                                           controllerConstructors[item]);
+    }
        
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',

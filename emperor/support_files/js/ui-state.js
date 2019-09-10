@@ -14,9 +14,6 @@ define(['three', 'underscore'], function(THREE, _) {
     //PROPERTY INITIALIZATION - (serialization and deserialization go here.)
     //Properties must be flattened into UIState until we determine how to handle
     //tiered events.
-    this["controller.tabOrder"] =
-      ["color", "visibility", "opacity", "scale",
-       "shape", "axes", "animations"];
     this["view.usesPointCloud"] = false;
     this["view.viewType"] = 'scatter';
   }
