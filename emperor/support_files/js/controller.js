@@ -20,12 +20,23 @@ define([
     'canvastoblob',
     'multi-model',
 //    'view-types',
+    'uistate'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
             ColorViewController, VisibilityController, OpacityViewController,
             ShapeController, AxesController, ScaleViewController,
             AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
-            CanvasRenderer, canvasToBlob, MultiModel) {
+            CanvasRenderer, canvasToBlob, MultiModel, UIState) {
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
+  
+  var controllerConstructors = {
+      "color": ColorViewController,
+      "visibility": VisibilityController,
+      "opacity": OpacityViewController,
+      "scale": ScaleViewController,
+      "shape": ShapeController,
+      "axes": AxesController,
+      "animations": AnimationsController
+    };
 
   /**
    *
@@ -50,8 +61,9 @@ define([
    *
    */
   function EmperorController(scatter, biplot, divId, webglcanvas) {
+    UIState.setProperty("view.usesPointCloud", scatter.length > 20000);
+  
     var scope = this;
-
     /**
      * Scaling constant for grid dimensions (read only).
      * @type {float}
@@ -544,6 +556,40 @@ define([
 
   /**
    *
+   * Helper method to hook up the tabs for the various controllers
+   *
+   * @private
+   */
+  EmperorController.prototype._hookUpTabs = function() {
+    var scope = this;
+    
+    var onInit = function(evt){
+      for (var index in evt.newVal){
+        var item = evt.newVal[index];
+        scope.controllers[item] = scope.addTab(scope.sceneViews[0].decViews,
+                                             controllerConstructors[item]);
+      }
+    };
+    var onAdd = function(evt){
+      throw Error("Mutating tab order not supported");
+    };
+    var onRemove = function(evt){
+      var toRemove = scope.controllers[evt.oldVal];
+      var $li = $("[aria-controls='" + toRemove.identifier + "']")
+      $li.remove();
+    };
+    var onUpdate = function(evt){
+      //BE CAREFUL: If you want to support destroying controllers, make sure
+      //that you clean up all the events that they've linked!!
+      throw Error("Mutating tab order not supported");
+    };
+  
+    UIState.registerListProperty("controller.tabOrder",
+                                 onInit, onAdd, onRemove, onUpdate);
+  }
+  
+  /**
+   *
    * Helper method to assemble UI, completely independent of HTML template.
    * This method is called when the object is constructed.
    *
@@ -551,26 +597,15 @@ define([
    *
    */
   EmperorController.prototype._buildUI = function() {
-    var scope = this, isLargeDataset = this.decViews.scatter.usesPointCloud;
+    var scope = this, isLargeDataset = UIState["view.usesPointCloud"];
 
-    //FIXME: This only works for 1 scene plot view
-    this.controllers.color = this.addTab(this.sceneViews[0].decViews,
-                                         ColorViewController);
-    this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
-                                              VisibilityController);
-    this.controllers.opacity = this.addTab(this.sceneViews[0].decViews,
-                                           OpacityViewController);
-    this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
-                                         ScaleViewController);
-    if (!isLargeDataset) {
-      this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
-                                           ShapeController);
-    }
-    this.controllers.axes = this.addTab(this.sceneViews[0].decViews,
-                                        AxesController);
-    this.controllers.animations = this.addTab(this.sceneViews[0].decViews,
-                                              AnimationsController);
-
+//    if (isLargeDataset)
+//      UIState.listPropertyRemove("controller.tabOrder", "shape");
+      
+    this._hookUpTabs();
+    
+    UIState.listPropertyRemove("controller.tabOrder", "shape");
+       
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
                                // The tabs on the plot space only get resized
@@ -745,7 +780,7 @@ define([
 
       // Point clouds can't be rendered by the CanvasRenderer, therefore we
       // have to use the WebGLRenderer and can't increase the image size.
-      if (this.decViews.scatter.usesPointCloud) {
+      if (UIState["view.usesPointCloud"]) {
         pngRenderer = this.sceneViews[0].renderer;
       }
       else {
