@@ -312,16 +312,22 @@ define([
     });
 
     UIState.registerProperty("view.viewType", function(evt){
-      for (controller in scope.controllers){
-        selector = "li[aria-controls='"+scope.controllers[controller].identifier + "']";
+      toDisable = ["shape", "animations"]
+    
+      for (controllerName in scope.controllers){
+        var c = scope.controllers[controllerName];
+        selector = "li[aria-controls='" + c.identifier + "']";
         //jquery effects are less jarring, but also remind me of people who add
         //effects to slide transitions in powerpoint.  I'd still prefer css
         //to gray out the tab...
         //effects list at https://api.jqueryui.com/category/effects/
-        if (controller === 'shape' && evt.newVal === 'parallel-plot')
-          $(selector).hide("blind");
-        else if (controller === 'shape' && evt.newVal === 'scatter')
-          $(selector).show("blind");
+        
+        if (toDisable.includes(controllerName)) {
+          if (evt.newVal === 'parallel-plot')
+            $(selector).hide("blind");
+          else if (evt.newVal === 'scatter')
+            $(selector).show("blind");
+        }
       }
     });
   };
