@@ -336,7 +336,7 @@ define([
    *
    */
   ScenePlotView3D.prototype._dimensionsIterator = function(action) {
-    if (this.decViews['scatter'].viewType === 'scatter')
+    if (UIState['view.viewType'] === 'scatter')
     {
       this.decModels._unionRanges();
 
@@ -619,13 +619,13 @@ define([
         var lines = view.lines;
         var ellipsoids = view.ellipsoids;
 
-        if (view.viewType == 'parallel-plot') {
+        if (UIState['view.viewType'] == 'parallel-plot') {
           for (i = 0; i < lines.length; i++)
             scope.scene.remove(lines[i]);
           for (i = 0; i < ellipsoids.length; i++)
             scope.scene.remove(ellipsoids[i]);
         }
-        if (view.viewType == 'scatter') {
+        if (UIState['view.viewType'] == 'scatter') {
           for (i = 0; i < lines.length; i++)
             scope.scene.add(lines[i]);
           for (i = 0; i < lines.length; i++)

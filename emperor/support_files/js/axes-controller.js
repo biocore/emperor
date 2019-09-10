@@ -5,9 +5,10 @@ define([
     'viewcontroller',
     'd3',
     'contextmenu',
-    'filesaver'
+    'filesaver',
+    'uistate'
 ], function($, _, DecompositionView, ViewControllers, d3, contextmenu,
-            FileSaver) {
+            FileSaver, UIState) {
   var EmperorViewController = ViewControllers.EmperorViewController;
 
   /**
@@ -51,11 +52,11 @@ define([
     this.$viewTypeDiv.append(this.$radioParallelPlot);
 
     this.$radioScatter.change(function() {
-      decompViewDict['scatter'].setViewType('scatter');
+      UIState.setProperty('view.viewType', 'scatter');
     });
 
     this.$radioParallelPlot.change(function() {
-      decompViewDict['scatter'].setViewType('parallel-plot');
+      UIState.setProperty('view.viewType', 'parallel-plot');
     });
 
     this.$header.prepend($('<hr>'));
@@ -227,7 +228,7 @@ define([
 
     var view = this.getView(), scope = this;
 
-    if (view.viewType === 'parallel-plot') {
+    if (UIState["view.viewType"] === 'parallel-plot') {
     // Disables axes choices, not used for parallel-plot.
       return;
     }
@@ -735,7 +736,7 @@ define([
     json.otherEdgeColor = this.getOtherEdgeColor();
 
     //Save the viewType
-    json.viewType = decView.viewType;
+    json.viewType = UIState["view.viewType"];
 
     return json;
   };
@@ -779,7 +780,7 @@ define([
     this.buildDisplayTable();
 
     //Restore the viewType
-    decView.setViewType(json.viewType);
+    UIState.setProperty("view.viewType", json.viewType);
   };
 
   return AxesController;

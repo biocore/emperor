@@ -3,8 +3,9 @@ define([
     'underscore',
     'viewcontroller',
     'shape-editor',
-    'shapes'
-], function($, _, ViewControllers, Shape, shapes) {
+    'shapes',
+    'uistate'
+], function($, _, ViewControllers, Shape, shapes, UIState) {
 
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
@@ -116,7 +117,7 @@ define([
   ShapeController.prototype.setPlottableAttributes =
       function(scope, shape, group) {
 
-    if (scope.viewType == 'parallel-plot')
+    if (UIState['view.viewType'] == 'parallel-plot')
       return;
 
     var idx, factor = scope.getGeometryFactor();

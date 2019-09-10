@@ -4,7 +4,7 @@ define([
     'three',
     'shapes',
     'draw',
-    'multi-model'
+    'multi-model',
     'uistate'
 ], function($, _, THREE, shapes, draw, multiModel, UIState) {
   var makeArrow = draw.makeArrow;
@@ -110,7 +110,10 @@ function DecompositionView(multiModel, modelKey) {
    */
   this.lines = {'left': null, 'right': null};
 
-  this._initGeometry();
+  scope = this;
+  UIState.registerProperty("view.viewType", function(evt){
+    scope._initGeometry();
+  });
 }
 
 DecompositionView.prototype._initGeometry = function() {
@@ -122,7 +125,7 @@ DecompositionView.prototype._initGeometry = function() {
   //TODO FIXME HACK:  Do we need to swap lines as well?
   this.lines = {'left': null, 'right': null};
 
-  if (this.decomp.isScatterType() && this.viewType === 'parallel-plot') {
+  if (this.decomp.isScatterType() && UIState["view.viewType"] === 'parallel-plot') {
     this._fastInitParallelPlot();
   }
   else if (this.decomp.isScatterType() && UIState["view.usesPointCloud"]) {
@@ -842,7 +845,7 @@ DecompositionView.prototype.setColor = function(color, group) {
     });
     cloud.geometry.attributes.color.needsUpdate = true;
   }
-  else if (this.viewType == 'parallel-plot' && this.decomp.isScatterType()) {
+  else if (UIState["view.viewType"] == 'parallel-plot' && this.decomp.isScatterType()) {
     var lines = this.markers[0];
     color = new THREE.Color(color);
     var numPoints = (this.decomp.dimensions * 2 - 2);
@@ -952,7 +955,7 @@ DecompositionView.prototype.setScale = function(scale, group) {
     });
     cloud.geometry.attributes.scale.needsUpdate = true;
   }
-  else if (this.viewType == 'parallel-plot' && this.decomp.isScatterType()) {
+  else if (UIState["view.viewType"] == 'parallel-plot' && this.decomp.isScatterType()) {
     var lines = this.markers[0];
     var numPoints = (this.decomp.dimensions * 2 - 2);
     _.each(group, function(plottable) {
@@ -995,7 +998,7 @@ DecompositionView.prototype.setOpacity = function(opacity, group) {
     });
     cloud.geometry.attributes.opacity.needsUpdate = true;
   }
-  else if (this.viewType == 'parallel-plot' && this.decomp.isScatterType()) {
+  else if (UIState["view.viewType"] == 'parallel-plot' && this.decomp.isScatterType()) {
     var lines = this.markers[0];
     var numPoints = (this.decomp.dimensions * 2 - 2);
     _.each(group, function(plottable) {
@@ -1179,13 +1182,6 @@ DecompositionView.prototype._buildVegaSpec = function() {
   };
 };
 
-DecompositionView.prototype.setViewType = function(viewType) {
-  if (this.viewType === viewType)
-    return;
-
-  this.viewType = viewType;
-  this._initGeometry();
-};
 
 DecompositionView.prototype.getAndClearOldMarkers = function() {
   this.needsSwapMarkers = false;

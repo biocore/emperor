@@ -609,7 +609,7 @@ define([
       }
     });
 
-    if (view.viewType !== 'parallel-plot') {
+    if (UIState["view.viewType"] !== 'parallel-plot') {
       //Construct new dynamic tubes containing necessary
       //interpolated segment for the current frame
       view.dynamicTubes = this.director.trajectories.map(function(trajectory) {
