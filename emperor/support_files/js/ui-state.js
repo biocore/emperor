@@ -76,9 +76,11 @@ define(['three', 'underscore'], function(THREE, _) {
   UIState.prototype.setProperty = function(key, value){
     var oldValue = this.getProperty(key);
     this[key] = value;
-    this.events.dispatchEvent(
-      {type: key, oldVal: oldValue, newVal: value}
-    );
+    if (oldValue !== value){
+      this.events.dispatchEvent(
+        {type: key, oldVal: oldValue, newVal: value}
+      );
+    }
   }
     
   /**
@@ -103,9 +105,11 @@ define(['three', 'underscore'], function(THREE, _) {
     
     if (bulkEvent == null) {
       for (var key in keyValueDict){
-        this.events.dispatchEvent(
-          {type:key, oldVal: oldValueDict[key], newVal: keyValueDict[key]}
-        );
+        if (oldValueDict[key] !== keyValueDict[key]){
+          this.events.dispatchEvent(
+            {type:key, oldVal: oldValueDict[key], newVal: keyValueDict[key]}
+          );
+        }
       }
     }
     else {
