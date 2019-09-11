@@ -634,6 +634,9 @@ define([
             _.each(scope.sceneViews, function(scene) {
               scene.control.autoRotate = scene.control.autoRotate ^ true;
             });
+          },
+          disabled: function(key, opts) {
+            return UIState["view.viewType"] === 'parallel-plot'
           }
         },
         'labels' : {
@@ -706,7 +709,9 @@ define([
                 callback: function(key, opts) {
                   scope.screenshot('svg');
                 },
-                disabled: isLargeDataset
+                disabled: function(key, opt) {
+                  return isLargeDataset || UIState["view.viewType"] === 'parallel-plot'
+                }
               }
             }
         },
@@ -714,7 +719,8 @@ define([
           name: 'Experimental',
           disabled: function(key, opt) {
             // Only enable if this is a "vanilla" plot
-            if (scope.decViews.scatter.lines.left === null &&
+            if (UIState["view.viewType"] === 'scatter' &&
+                scope.decViews.scatter.lines.left === null &&
                 scope.decViews.scatter.lines.right === null &&
                 scope.decViews.biplot === undefined) {
               return false;

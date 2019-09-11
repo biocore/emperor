@@ -143,6 +143,11 @@ define([
 
     this.updateCameraTarget();
     this.control.update();
+    
+    UIState.registerProperty("view.viewType", function(evt){
+      if (evt.newVal === 'parallel-plot')
+        scope.control.autoRotate = false;
+    });
 
     /**
      * Object with "min" and "max" attributes each of which is an array with
