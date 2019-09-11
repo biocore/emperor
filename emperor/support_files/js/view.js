@@ -486,6 +486,19 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   this.markers.push(lines);
 };
 
+DecompositionView.prototype.getModelPointIndex = function(raytraceIndex, viewType)
+{
+  var allDimensions = _.range(this.decomp.dimensions);
+  var numPointsPerScatterPoint = (allDimensions.length * 2 - 2);
+
+  if (viewType === 'scatter'){
+    //Each point in the model maps to a single point in the mesh in scatter
+    return raytraceIndex;
+  }
+  else if (viewType === 'parallel-plot'){
+    return Math.floor(raytraceIndex / numPointsPerScatterPoint);
+  }
+};
 /**
  *
  * Get the number of visible elements

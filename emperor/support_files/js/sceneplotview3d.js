@@ -301,13 +301,27 @@ define([
         this.scene.add(this.decViews[decViewName].lines.left);
         this.scene.add(this.decViews[decViewName].lines.right);
       }
-
-      // if a decomposition uses a point cloud change the default tolerance as
-      // it is otherwise too large and error-prone
-      if (UIState.getProperty("view.usesPointCloud")) {
-        this._raycaster.params.Points.threshold = 0.01;
-      }
     }
+    
+    // if a decomposition uses a point cloud, or
+    // if a decomposition uses a parallel plot,
+    // update the default tolerance as
+    // it is otherwise too large and error-prone
+    var scope = this;
+    var updateRaycasterLinePrecision = function(evt){
+      if (UIState.getProperty("view.viewType") === "parallel-plot")
+        scope._raycaster.linePrecision = 0.01;
+      else
+        scope._raycaster.linePrecision = 1;
+    }
+    var updateRaycasterPointPrecision = function(evt){
+      if (UIState.getProperty("view.usesPointCloud"))
+        scope._raycaster.params.Points.threshold = 0.01;
+      else
+        scope._raycaster.params.Points.threshold = 1;
+    }
+    UIState.registerProperty("view.usesPointCloud", updateRaycasterPointPrecision);
+    UIState.registerProperty("view.viewType", updateRaycasterLinePrecision);
 
     this.needsUpdate = true;
   };
@@ -766,7 +780,7 @@ define([
     this._mouse.y = -((event.clientY - offset.top) / element.height) * 2 + 1;
 
     this._raycaster.setFromCamera(this._mouse, this.camera);
-
+    
     // get a flattened array of markers
     var objects = _.map(this.decViews, function(decomp) {
       return decomp.markers;
@@ -775,20 +789,24 @@ define([
       return memo.concat(value);
     }, []);
     var intersects = this._raycaster.intersectObjects(objects);
-
+    
     // Get first intersected item and call callback with it.
     if (intersects.length > 0) {
       var intersect;
-
+      
+      var firstObj = intersects[0].object;
       /*
        * When the intersect object is a Points object, the raycasting method
        * won't intersect individual mesh objects. Instead it intersects a point
        * and we get the index of the point. This index can then be used to
        * trace the original Plottable object.
        */
-      if (intersects[0].object.isPoints) {
-        var index = intersects[0].index;
-        intersect = this.decViews.scatter.decomp.plottable[index];
+      if (firstObj.isPoints || firstObj.isLineSegments) {
+        var meshIndex = intersects[0].index;
+        var modelIndex = this.decViews.scatter.getModelPointIndex(meshIndex,
+                                                  UIState['view.viewType']);
+       
+        intersect = this.decViews.scatter.decomp.plottable[modelIndex];
       }
       else {
         intersect = intersects[0].object;
