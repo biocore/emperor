@@ -769,7 +769,8 @@ define([
 
       // Point clouds can't be rendered by the CanvasRenderer, therefore we
       // have to use the WebGLRenderer and can't increase the image size.
-      if (UIState["view.usesPointCloud"]) {
+      if (UIState["view.usesPointCloud"] ||
+          UIState["view.viewType"] === 'parallel-plot') {
         pngRenderer = this.sceneViews[0].renderer;
       }
       else {
