@@ -336,10 +336,11 @@ define([
    *
    */
   ScenePlotView3D.prototype._dimensionsIterator = function(action) {
+    
+    this.decModels._unionRanges();
+    
     if (UIState['view.viewType'] === 'scatter')
     {
-      this.decModels._unionRanges();
-
       // shortcut to the index of the visible dimension and the range object
       var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
           z = this.visibleDimensions[2], range = this.decModels.dimensionRanges,
@@ -385,8 +386,6 @@ define([
     }
     else {
       //Parallel Plots show all axes and disable rotation.
-      this.decModels._unionRanges();
-
       for (var i = 0; i < this.decViews['scatter'].decomp.dimensions; i++)
       {
         action([i, 0, 0], [i, 1, 0], i);
@@ -628,7 +627,7 @@ define([
         if (UIState['view.viewType'] == 'scatter') {
           for (i = 0; i < lines.length; i++)
             scope.scene.add(lines[i]);
-          for (i = 0; i < lines.length; i++)
+          for (i = 0; i < ellipsoids.length; i++)
             scope.scene.add(ellipsoids[i]);
         }
     }});

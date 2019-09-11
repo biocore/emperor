@@ -1,14 +1,14 @@
 define(['underscore'],
 function(_) {
-//    /**
-//     * @class MultiModel
-//     *
-//     * A model object containing metrics merged from multiple underlying
-//     * DecompositionModel objects that share the same coordinate space.
-//     *
-//     * The multiModel contains min and max range of all model objects in the
-//     * scene, allowing you to draw axes or normalize data for a parallel plot.
-//     */
+  /**
+   * @class MultiModel
+   *
+   * A model object containing metrics merged from multiple underlying
+   * DecompositionModel objects that share the same coordinate space.
+   *
+   * The multiModel contains min and max range of all model objects in the
+   * scene, allowing you to draw axes or normalize data for a parallel plot.
+   */
   function MultiModel(underlyingModels) {
     this.models = underlyingModels;
 

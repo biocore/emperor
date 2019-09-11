@@ -19,7 +19,6 @@ define([
     'canvasrenderer',
     'canvastoblob',
     'multi-model',
-//    'view-types',
     'uistate'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
             ColorViewController, VisibilityController, OpacityViewController,
@@ -94,14 +93,15 @@ define([
      */
     this.height = this.$divId.height();
 
+    var decModelMap = {'scatter': scatter};
+    if (biplot)
+      decModelMap['biplot'] = biplot;
+
     /**
      * MultiModel object containing all DecompositionModels
      *
      * @type {MultiModel}
      */
-    var decModelMap = {'scatter': scatter};
-    if (biplot)
-      decModelMap['biplot'] = biplot;
     this.decModels = new MultiModel(decModelMap);
 
     /**

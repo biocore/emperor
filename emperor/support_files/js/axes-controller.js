@@ -72,8 +72,6 @@ define([
     this.$header.prepend($('<hr>'));
     this.$header.prepend(this.$viewTypeDiv);
 
-
-
     var colors = '<table style="width:inherit; border:none;" title="">';
     colors += '<tr><td>Axes and Labels Color</td>';
     colors += '<td><input type="text" name="axes-color"/></td></tr>';
