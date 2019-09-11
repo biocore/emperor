@@ -8,7 +8,7 @@
 from __future__ import division
 
 from unittest import TestCase, main
-from os.path import exists, join, abspath, dirname
+from os.path import exists, join
 from shutil import rmtree
 from tempfile import gettempdir
 
@@ -17,11 +17,8 @@ import warnings
 from numpy import array
 from numpy.testing import assert_almost_equal
 
-from emperor.util import (keep_columns_from_mapping_file,
-                          preprocess_mapping_file, preprocess_coords_file,
-                          EmperorInputFilesError,
-                          fill_mapping_field_from_mapping_file,
-                          sanitize_mapping_file, guess_coordinates_files,
+from emperor.util import (
+                          preprocess_coords_file,
                           nbinstall, validate_and_process_custom_axes,
                           resolve_stable_url, EmperorWarning)
 
@@ -119,152 +116,6 @@ class TopLevelTests(TestCase):
     def tearDown(self):
         for f in self.files_to_delete:
             rmtree(f)
-
-    def test_preprocess_mapping_file(self):
-        """Check correct preprocessing of metadata is done"""
-
-        # test it concatenates columns together correctly
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers, ['Treatment', 'DOB', 'Treatment&&DOB'])
-        self.assertEqual(out_headers,
-                         ['SampleID', 'Treatment', 'DOB', 'Treatment&&DOB'])
-        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_A)
-
-        # test it has a different order in the concatenated columns i. e. the
-        # value of DOB comes before the value of Treatment in the result
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['Treatment', 'DOB', 'DOB&&Treatment'])
-        self.assertEqual(out_headers,
-                         ['SampleID', 'Treatment', 'DOB', 'DOB&&Treatment'])
-        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_B)
-
-        # test it filter columns properly
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['Treatment'])
-        self.assertEqual(out_headers, ['SampleID', 'Treatment'])
-        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_C)
-
-        # check it removes columns with unique values
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'],
-            unique=True)
-        self.assertEqual(out_headers,
-                         ['SampleID', 'LinkerPrimerSequence', 'Treatment',
-                          'DOB'])
-        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_D)
-
-        # check it removes columns where there is only one value
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB', 'Description'],
-            single=True)
-        self.assertEqual(out_headers,
-                         ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB',
-                          'Description'])
-        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_E)
-
-        # keep only treatment concat treatment and DOB and remove all
-        # categories with only one value and all with unique values for field
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['Treatment', 'Treatment&&DOB'],
-            unique=True, single=True)
-        self.assertEqual(out_headers,
-                         ['SampleID', 'Treatment', 'Treatment&&DOB'])
-        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_F)
-
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['Treatment', 'DOB'], clones=3)
-        self.assertEqual(out_data, MAPPING_FILE_DATA_DUPLICATED)
-        self.assertEqual(out_headers, ['SampleID', 'Treatment', 'DOB'])
-
-        # check it doesn't remove columns because all are included in the list
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Description'],
-            unique=True)
-        self.assertEqual(out_headers,
-                         ['SampleID', 'BarcodeSequence',
-                          'LinkerPrimerSequence', 'Treatment', 'DOB',
-                          'Description'])
-        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
-
-        # check it doesn't remove columns because all are included in the list
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Description'],
-            single=True)
-        self.assertEqual(out_headers,
-                         ['SampleID', 'BarcodeSequence',
-                          'LinkerPrimerSequence', 'Treatment', 'DOB',
-                          'Description'])
-        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
-
-        # check it doesn't remove columns because all are included in the list
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Description'],
-            unique=True, single=True)
-        self.assertEqual(out_headers,
-                         ['SampleID', 'BarcodeSequence',
-                          'LinkerPrimerSequence', 'Treatment', 'DOB',
-                          'Description'])
-        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
-
-        # make sure that when keeping columns that are all unique the
-        # columns are basically intact i. e. everything in the dataset is kept
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Description'],
-            [None], unique=False)
-        self.assertEqual(out_headers,
-                         ['SampleID', 'BarcodeSequence',
-                          'LinkerPrimerSequence', 'Treatment', 'DOB',
-                          'Description'])
-        self.assertEqual(out_data, MAPPING_FILE_DATA_CAT_G)
-
-    def test_keep_columns_from_mapping_file(self):
-        """Check correct selection of metadata is being done"""
-
-        # test it returns the same data
-        out_data, out_headers = keep_columns_from_mapping_file(
-            self.mapping_file_data, self.mapping_file_headers, [])
-        self.assertEqual(out_data, [[], [], [], [], [], [], [], [], []])
-        self.assertEqual(out_headers, [])
-
-        # test it can filter a list of columns
-        out_data, out_headers = keep_columns_from_mapping_file(
-            self.mapping_file_data, self.mapping_file_headers,
-            ['SampleID', 'LinkerPrimerSequence', 'Description'])
-        self.assertEqual(out_headers,
-                         ['SampleID', 'LinkerPrimerSequence', 'Description'])
-        self.assertEqual(out_data, PRE_PROCESS_B)
-
-        # test correct negation of filtering
-        out_data, out_headers = keep_columns_from_mapping_file(
-            self.mapping_file_data, self.mapping_file_headers,
-            ['LinkerPrimerSequence', 'Description'], True)
-        self.assertEqual(out_data, PRE_PROCESS_A)
-        self.assertEqual(out_headers,
-                         ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB'])
 
     def test_preprocess_coords_file(self):
         """Check correct processing is applied to the coords"""
@@ -412,106 +263,6 @@ class TopLevelTests(TestCase):
         self.assertEqual(out_coords_low, None)
         self.assertEqual(out_coords_high, None)
         self.assertEqual(o_clones, 4)
-
-    def test_fill_mapping_field_from_mapping_file(self):
-        """Check the values are being correctly filled in"""
-
-        # common usage example
-        out_data = fill_mapping_field_from_mapping_file(
-            self.broken_mapping_file_data, self.mapping_file_headers_gradient,
-            'Time:200;Weight:800')
-        self.assertEqual(out_data, [
-            ['PC.354', 'Control', '3', '40', 'Control20061218'],
-            ['PC.355', 'Control', '200', '44', 'Control20061218'],
-            ['PC.635', 'Fast', '9', '800', 'Fast20080116'],
-            ['PC.636', 'Fast', '12', '37.22', 'Fast20080116']])
-
-        # more than one value to fill empty values with
-        self.assertRaises(
-            AssertionError, fill_mapping_field_from_mapping_file,
-            self.broken_mapping_file_data, self.mapping_file_headers_gradient,
-            'Time:200,300;Weight:800')
-
-        # non-existing header in mapping file
-        self.assertRaises(
-            EmperorInputFilesError, fill_mapping_field_from_mapping_file,
-            self.broken_mapping_file_data, self.mapping_file_headers_gradient,
-            'Spam:Foo')
-
-        # testing multiple values
-        out_data = fill_mapping_field_from_mapping_file(
-            self.broken_mapping_file_data_2_values,
-            self.mapping_file_headers_gradient,
-            'Time:Treatment==Control=444;Time:Treatment==Fast=888')
-        self.assertEqual(out_data, [
-            ['PC.354', 'Control', '3', '40', 'Control20061218'],
-            ['PC.355', 'Control', '444', '44', 'Control20061218'],
-            ['PC.635', 'Fast', '888', 'x', 'Fast20080116'],
-            ['PC.636', 'Fast', '12', '37.22', 'Fast20080116']])
-
-        # testing multiple values: blank column name
-        self.assertRaises(
-            AssertionError, fill_mapping_field_from_mapping_file,
-            self.broken_mapping_file_data_2_values,
-            self.mapping_file_headers_gradient,
-            'Time:Treatment===200600020')
-
-        # testing multiple values: wrong order
-        self.assertRaises(
-            AssertionError, fill_mapping_field_from_mapping_file,
-            self.broken_mapping_file_data_2_values,
-            self.mapping_file_headers_gradient,
-            'Time:Treatment=Control==200600020')
-
-        # testing multiple values: error when more than 1 value is passed
-        self.assertRaises(
-            AssertionError, fill_mapping_field_from_mapping_file,
-            self.broken_mapping_file_data_2_values,
-            self.mapping_file_headers_gradient,
-            'Time:Treatment=Control==200600020,435')
-
-    def test_sanitize_mapping_file(self):
-        """Check the mapping file strings are sanitized for it's use in JS"""
-
-        o_sanitized_headers, o_sanitized_data = sanitize_mapping_file(
-            UNSANITZIED_MAPPING_DATA,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Descr"""""iption'])
-
-        self.assertEqual(
-            o_sanitized_data,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Description'])
-        self.assertEqual(o_sanitized_headers, [
-            ['PC.354', "Dr. Bronners", 'Control', '20061218',
-             'Control_mouse_I.D._354'],
-            ['PC.355', 'AACTCGTCGATG', 'Control', '20061218',
-             'Control_mouse_I.D._355'],
-            ["PC356", 'ACAGACCACTCA', 'Control', '20061126',
-             'Control_mouse_I.D._356'],
-            ['PC.481', 'ACAGCACTAG', 'Control', '20070314',
-             'Control_mouse_I.D._481'],
-            ['PC.593', 'AGCAGCACTTGT', 'Control', '20071210',
-             'Control_mouse_I.D._593']])
-
-    def test_guess_coordinates_files(self):
-        dir_path = join(abspath(dirname(__file__)), 'test_data')
-
-        fps = guess_coordinates_files(dir_path)
-        # get a list of the files we expect
-        exp = [join(dir_path,
-                    'unweighted_unifrac_pc_transformed_reference.txt'),
-               join(dir_path, 'weighted_unifrac_pc_transformed_q1.txt')]
-        try:
-            self.assertItemsEqual(fps, exp)
-        except AttributeError:
-            self.assertCountEqual(fps, exp)
-
-        # testing a directory with only files that should be ignored
-        dir_path = join(abspath(dirname(__file__)), 'test_data',
-                        'dir-with-only-hidden-files')
-        fps = guess_coordinates_files(dir_path)
-        self.assertEqual(fps, [])
 
     def test_nbinstall(self):
         temp_dir = gettempdir()
