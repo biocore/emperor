@@ -90,11 +90,13 @@ function DecompositionView(multiModel, modelKey) {
 
   /**
    * Meshes to be swapped out of scene when markers are modified.
+   * @type {THREE.Mesh[]}
    */
   this.oldMarkers = [];
 
   /**
    * Flag indicating old markers must be removed from the scene tree.
+   * @type {boolean}
    */
   this.needsSwapMarkers = false;
 
@@ -136,7 +138,6 @@ DecompositionView.prototype._initGeometry = function() {
   }
   this.needsUpdate = true;
 };
-
 
 /**
  * Calculate the appropriate size for a geometry based on the first dimension's
@@ -380,12 +381,11 @@ DecompositionView.prototype._fastInit = function() {
  */
 DecompositionView.prototype._fastInitParallelPlot = function()
 {
-  var positions, colors, scales, opacities, visibilities, geometry, cloud;
+  var positions, colors, opacities, visibilities, geometry, cloud;
 
   // We're really just drawing a bunch of line strips...
   // highly doubt shaders are necessary for this...
   var vertexShader = `
-    attribute float scale;
     attribute vec3 color;
     attribute float opacity;
     attribute float visible;
@@ -400,7 +400,6 @@ DecompositionView.prototype._fastInitParallelPlot = function()
       vVisible = visible;
     
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      gl_PointSize = 2.0;
     }
     `;
 
@@ -411,7 +410,7 @@ DecompositionView.prototype._fastInitParallelPlot = function()
     varying float vVisible;
     
     void main() {
-      if (vVisible <= 0.0)
+      if (vVisible <= 0.0 || vOpacity <= 0.0)
         discard;
       gl_FragColor = vec4(vColor, vOpacity);
     }
@@ -422,10 +421,8 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   // We'll build the line strips as GL_LINES for simplicity, at least for now,
   // by doubling up vertex positions at each of the intermediate axes.
   var numPoints = (allDimensions.length * 2 - 2) * (this.decomp.length);
-
   positions = new Float32Array(numPoints * 3);
   colors = new Float32Array(numPoints * 3);
-  scales = new Float32Array(numPoints);
   opacities = new Float32Array(numPoints);
   visibilities = new Float32Array(numPoints);
 
@@ -438,12 +435,10 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   geometry = new THREE.BufferGeometry();
   geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
   geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-  geometry.addAttribute('scale', new THREE.BufferAttribute(scales, 1));
   geometry.addAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
   geometry.addAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
 
   lines = new THREE.LineSegments(geometry, material);
-
 
   var attributeIndex = 0;
 
@@ -467,7 +462,6 @@ DecompositionView.prototype._fastInitParallelPlot = function()
       geometry.attributes.color.setXYZ(attributeIndex, 1, 0, 0);
       geometry.attributes.visible.setX(attributeIndex, 1);
       geometry.attributes.opacity.setX(attributeIndex, 1);
-      geometry.attributes.scale.setX(attributeIndex, 1);
       attributeIndex++;
 
       if (j == 0 || j == allDimensions.length - 1)
@@ -480,7 +474,6 @@ DecompositionView.prototype._fastInitParallelPlot = function()
       geometry.attributes.color.setXYZ(attributeIndex, 1, 0, 0);
       geometry.attributes.visible.setX(attributeIndex, 1);
       geometry.attributes.opacity.setX(attributeIndex, 1);
-      geometry.attributes.scale.setX(attributeIndex, 1);
       attributeIndex++;
     }
   }
@@ -489,7 +482,6 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   geometry.attributes.color.needsUpdate = true;
   geometry.attributes.visible.needsUpdate = true;
   geometry.attributes.opacity.needsUpdate = true;
-  geometry.attributes.scale.needsUpdate = true;
 
   this.markers.push(lines);
 };
@@ -956,15 +948,7 @@ DecompositionView.prototype.setScale = function(scale, group) {
     cloud.geometry.attributes.scale.needsUpdate = true;
   }
   else if (UIState["view.viewType"] == 'parallel-plot' && this.decomp.isScatterType()) {
-    var lines = this.markers[0];
-    var numPoints = (this.decomp.dimensions * 2 - 2);
-    _.each(group, function(plottable) {
-      var startIndex = plottable.idx * numPoints;
-      var endIndex = (plottable.idx + 1) * (numPoints);
-      for (var i = startIndex; i < endIndex; i++)
-        lines.geometry.attributes.scale.setX(i, scale);
-    });
-    lines.geometry.attributes.scale.needsUpdate = true;
+    //Nothing to do for parallel plots.
   }
   else {
     _.each(group, function(element) {
