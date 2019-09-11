@@ -312,7 +312,7 @@ define([
     });
 
     UIState.registerProperty("view.viewType", function(evt){
-      toDisable = ["shape", "animations"]
+      toDisable = ["scale", "shape", "animations"]
     
       for (controllerName in scope.controllers){
         var c = scope.controllers[controllerName];
