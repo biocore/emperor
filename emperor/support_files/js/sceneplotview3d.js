@@ -530,7 +530,7 @@ define([
       return;
     }
 
-    // get the first decomposition object, it doesn't really mater which one
+    // get the first decomposition object, it doesn't really matter which one
     // we look at though, as all of them should have the same percentage
     // explained on each axis
     firstKey = _.keys(this.decViews)[0];
@@ -539,10 +539,48 @@ define([
     this._dimensionsIterator(function(start, end, index) {
       text = decomp.axesLabels[index];
       axisLabel = makeLabel(end, text, color);
-      axisLabel.scale.set(axisLabel.scale.x * scaling,
-                          axisLabel.scale.y * scaling, 1);
+      
+      if (UIState['view.viewType'] === 'scatter'){
+        //Scatter has a 1 to 1 aspect ratio and labels in world size
+        axisLabel.scale.set(axisLabel.scale.x * scaling,
+                            axisLabel.scale.y * scaling,
+                            1);
+      }
+      else if (UIState['view.viewType'] === 'parallel-plot'){
+        //Parallel plot aspect ratio depends on number of dimensions
+        //We have to correct label size to account for this.
+        //But we also have to fix label width so that it fits between
+        //axes, which are exactly 1 apart in world space
+        var cam = scope.camera;
+        var labelWPix = axisLabel.scale.x;
+        var labelHPix = axisLabel.scale.y;
+        var viewWPix = scope.width;
+        var viewHPix = scope.height;
+        
+        //Assuming a camera zoom of 1:
+        var viewWUnits = cam.right - cam.left;
+        var viewHUnits = cam.top - cam.bottom;
+        
+        //These are world sizes of label for a camera zoom of 1
+        var labelWUnits = labelWPix * viewWUnits / viewWPix;
+        var labelHUnits = labelHPix * viewHUnits / viewHPix;
+        
+        //TODO FIXME HACK:  Note that our options here are to scale each
+        //label to fit in its area, or to scale all labels by the same amount
+        //We choose to scale all labels by the same amount based on an
+        //empirical 'nice' label length of ~300
+        //We could replace this with a max of all label widths, but must note
+        //that label widths are always powers of 2 in the current version
+        
+        //Resize to fit labels of width 300 between axes
+        var scalingFudge = .9 / (300 * viewWUnits / viewWPix);
+        
+        axisLabel.scale.set(labelWUnits * scalingFudge,
+                            labelHUnits * scalingFudge,
+                            1);
+      }
+      
       axisLabel.name = scope._axisLabelPrefix + index;
-
       scope.scene.add(axisLabel);
     });
   };
