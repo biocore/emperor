@@ -6,9 +6,10 @@ requirejs([
     'scene3d',
     'three',
     'svgrenderer',
-    'orbitcontrols'
+    'orbitcontrols',
+    'multi-model'
 ], function($, _, model, DecompositionView, ScenePlotView3D, THREE,
-            SVGRenderer, OrbitControls) {
+            SVGRenderer, OrbitControls, MultiModel) {
   var DecompositionModel = model.DecompositionModel;
   $(document).ready(function() {
     module('ScenePlotView3D', {
@@ -37,7 +38,8 @@ requirejs([
           ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']
         ];
         var decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot',
@@ -54,7 +56,8 @@ requirejs([
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        dv = new DecompositionView(decomp);
+        multiModel = new DecompositionModel({'scatter': decomp});
+        dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.biplot = dv;
       },
 
@@ -454,7 +457,8 @@ requirejs([
       ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
 
       decomp = new DecompositionModel(data, md_headers, metadata, 'arrow');
-      dv = new DecompositionView(decomp);
+      multiModel = new MultiModel({'scatter': decomp});
+      dv = new DecompositionView(multiModel, 'scatter');
 
       // the label is not scaled upon creation
       deepEqual(dv.markers[0].label.scale.toArray(), [128, 32, 1]);
@@ -771,7 +775,8 @@ requirejs([
         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']
       ];
       var decomp = new DecompositionModel(data, md_headers, metadata);
-      var dv = new DecompositionView(decomp);
+      var multiModel = new MultiModel({'scatter': decomp});
+      var dv = new DecompositionView(multiModel, decomp);
 
       var renderer = new THREE.SVGRenderer({antialias: true}), max;
       var spv = new ScenePlotView3D(renderer, {'scatter': dv},

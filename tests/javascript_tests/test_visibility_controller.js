@@ -5,9 +5,10 @@ requirejs([
     'view',
     'viewcontroller',
     'slickgrid',
-    'visibilitycontroller'
+    'visibilitycontroller',
+    'multi-model'
 ], function($, _, model, DecompositionView, viewcontroller, SlickGrid,
-            VisibilityController) {
+            VisibilityController, MultiModel) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var DecompositionModel = model.DecompositionModel;
@@ -33,7 +34,8 @@ requirejs([
                         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
                          '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -48,7 +50,8 @@ requirejs([
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'], ['tax_2', '0']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        this.dv = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        this.dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.biplot = this.dv;
 
         // jackknifed specific
@@ -73,7 +76,8 @@ requirejs([
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        this.jackknifedDecView = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        this.jackknifedDecView = new DecompositionView(multiModel, 'scatter');
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;

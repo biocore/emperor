@@ -4,9 +4,10 @@ requirejs([
     'model',
     'view',
     'viewcontroller',
-    'animationscontroller'
+    'animationscontroller',
+    'multi-model'
 ], function($, _, model, DecompositionView, ViewControllers,
-            AnimationsController) {
+            AnimationsController, MultiModel) {
   $(document).ready(function() {
     var EmperorViewController = ViewControllers.EmperorViewController;
     var DecompositionModel = model.DecompositionModel;
@@ -34,7 +35,8 @@ requirejs([
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
         var decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.scatter = dv;
 
         var container = $('<div id="does-not-exist" style="height:1000px; ' +

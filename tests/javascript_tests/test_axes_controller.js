@@ -5,9 +5,10 @@ requirejs([
     'view',
     'abcviewcontroller',
     'slickgrid',
-    'axescontroller'
+    'axescontroller',
+    'multi-model'
 ], function($, _, model, DecompositionView, abc, SlickGrid,
-            AxesController) {
+            AxesController, MultiModel) {
   $(document).ready(function() {
     var EmperorViewControllerABC = abc.EmperorViewControllerABC;
     var DecompositionModel = model.DecompositionModel;
@@ -40,7 +41,8 @@ requirejs([
         ['PC.634', '14.7', 'Fast', '20071112']];
 
         var decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter');
         this.controllerProcrustes = new AxesController(container,
                                                        {'scatter': dv});
 
@@ -60,7 +62,8 @@ requirejs([
                                      7.55971173665, 6.24945796136]};
 
         decomp = new DecompositionModel(data, md_headers, metadata);
-        dv = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -75,7 +78,8 @@ requirejs([
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'], ['tax_2', '0']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        this.dv = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        this.dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.biplot = dv;
 
         this.controller = new AxesController(container,
@@ -96,6 +100,7 @@ requirejs([
 
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
+        this.multiModel = undefined;
       }
     });
 

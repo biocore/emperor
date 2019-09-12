@@ -4,8 +4,9 @@ requirejs([
     'three',
     'model',
     'view',
-    'viewcontroller'
-], function($, _, THREE, model, DecompositionView, viewcontroller) {
+    'viewcontroller',
+    'multi-model'
+], function($, _, THREE, model, DecompositionView, viewcontroller, MultiModel) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var ScalarViewControllerABC = viewcontroller.ScalarViewControllerABC;
@@ -35,7 +36,8 @@ requirejs([
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter' : decomp});
+        var dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -51,12 +53,14 @@ requirejs([
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
         this.decomp = new DecompositionModel(data, md_headers, metadata);
-        this.dv = new DecompositionView(this.decomp);
+        this.multiModel = new MultiModel({'scatter' : this.decomp});
+        this.dv = new DecompositionView(this.multiModel, 'scatter');
         this.sharedDecompositionViewDict.biplot = dv;
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
+        this.multiModel = undefined;
       }
     });
 

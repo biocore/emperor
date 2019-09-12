@@ -5,9 +5,10 @@ requirejs([
     'view',
     'abcviewcontroller',
     'viewcontroller',
-    'slickgrid'
+    'slickgrid',
+    'multi-model'
 ], function($, _, model, DecompositionView, abc, viewcontroller,
-            SlickGrid) {
+            SlickGrid, MultiModel) {
   var EmperorViewControllerABC = abc.EmperorViewControllerABC;
   var EmperorViewController = viewcontroller.EmperorViewController;
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
@@ -158,7 +159,8 @@ requirejs([
                         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
                          '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.pcoa = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -173,13 +175,17 @@ requirejs([
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'], ['tax_2', '0']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        dv = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.biplot = dv;
         this.decomp = decomp;
+        this.multiModel = new MultiModel({'scatter': this.decomp});
+
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
+        this.multiModel = undefined;
       }
     });
 
@@ -215,7 +221,7 @@ requirejs([
      *
      */
     test('Constructor test exceptions', function(assert) {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
 
       throws(function() {
         new EmperorViewController(container, 'foo', 'bar',
@@ -236,7 +242,7 @@ requirejs([
      *
      */
     test('Test getView', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorViewController(container, 'foo', 'bar',
                                            {'scatter': dv});
@@ -268,7 +274,8 @@ requirejs([
         ];
 
         decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.pcoa = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -283,7 +290,8 @@ requirejs([
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'], ['tax_2', '0']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        dv = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.biplot = dv;
 
         // Slickgrid
@@ -317,7 +325,7 @@ requirejs([
      *
      */
     test('Constructor tests', function(assert) {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
 
       // verify the subclassing was set properly
@@ -363,7 +371,7 @@ requirejs([
      *
      */
     asyncTest('Test resize', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist" style="height:20px; ' +
                         'width:21px"></div>');
 
@@ -383,7 +391,7 @@ requirejs([
 
 
     test('Test decompositionName method', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                          {'scatter': dv}, {});
@@ -391,7 +399,7 @@ requirejs([
     });
 
     test('Test getView method', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                          {'scatter': dv}, {});
@@ -404,7 +412,7 @@ requirejs([
      *
      */
     test('Test getMetadataField', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                          {'scatter': dv}, {});
@@ -417,7 +425,7 @@ requirejs([
      *
      */
     test('Test setMetadataField', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                          {'scatter': dv}, {});
@@ -434,7 +442,7 @@ requirejs([
      *
      */
     test('Test setMetadataField exceptions', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           {'scatter': dv}, {});
@@ -450,7 +458,7 @@ requirejs([
      *
      */
     asyncTest('Test setSlickGridDataset', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
           {'scatter': dv, 'biplot': dv}, {});
@@ -472,7 +480,7 @@ requirejs([
      *
      */
     asyncTest('Test refreshMetadata', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       var shared = {'scatter': this.sharedDecompositionViewDict.pcoa};
       var scope = this;
@@ -500,7 +508,7 @@ requirejs([
      *
      */
     asyncTest('Test setEnabled (false)', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                          {'scatter': dv}, {});
@@ -529,7 +537,7 @@ requirejs([
      *
      */
     asyncTest('Test setEnabled (true)', function() {
-      var dv = new DecompositionView(this.decomp);
+      var dv = new DecompositionView(this.multiModel, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(container, 'foo', 'bar',
                                          {'scatter': dv}, {});
@@ -567,7 +575,8 @@ requirejs([
 
       var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
                                      metadata);
-      var dv = new DecompositionView(d);
+      var mm = new MultiModel({'scatter': d});
+      var dv = new DecompositionView(mm, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       // create a dummy category selection callback
       var options = {'categorySelectionCallback': function() {}};

@@ -5,9 +5,10 @@ requirejs([
     'view',
     'viewcontroller',
     'slickgrid',
-    'colorviewcontroller'
+    'colorviewcontroller',
+    'multi-model'
 ], function($, _, model, DecompositionView, viewcontroller, SlickGrid,
-            ColorViewController) {
+            ColorViewController, MultiModel) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var DecompositionModel = model.DecompositionModel;
@@ -36,7 +37,8 @@ requirejs([
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter');
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -52,7 +54,8 @@ requirejs([
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
         this.decomp = new DecompositionModel(data, md_headers, metadata);
-        this.dv = new DecompositionView(this.decomp);
+        this.multiModel = new MultiModel({'scatter': this.decomp});
+        this.dv = new DecompositionView(this.multiModel, 'scatter');
         this.sharedDecompositionViewDict.biplot = dv;
 
         // jackknifed specific
@@ -77,13 +80,15 @@ requirejs([
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        this.jackknifedDecView = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        this.jackknifedDecView = new DecompositionView(multiModel, 'scatter');
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
         this.jackknifedDecView = undefined;
         $('#fooligans').remove();
         this.decomp = undefined;
+        this.multiModel = undefined;
       }
     });
 
@@ -690,7 +695,8 @@ requirejs([
 
       var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
                                      metadata);
-      var dv = new DecompositionView(d);
+      var mm = new MultiModel({'scatter':d});
+      var dv = new DecompositionView(mm, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       // create a dummy category selection callback
       var options = {'categorySelectionCallback': function() {}};
@@ -725,7 +731,8 @@ requirejs([
 
       var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
                                      metadata);
-      var dv = new DecompositionView(d);
+      var mm = new MultiModel({'scatter': d});
+      var dv = new DecompositionView(mm, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       // create a dummy category selection callback
       var options = {'categorySelectionCallback': function() {}};
