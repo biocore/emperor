@@ -640,6 +640,10 @@ define([
 
     this.updateCameraAspectRatio();
     this.control.update();
+    
+    //Since parallel plot labels have to correct for aspect ratio, we need
+    //to redraw when width/height of view is modified.
+    this.drawAxesLabelsWithColor(this.axesColor);
 
     this.needsUpdate = true;
   };
