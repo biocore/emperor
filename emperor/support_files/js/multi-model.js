@@ -9,14 +9,23 @@ function(_) {
    * The multiModel contains min and max range of all model objects in the
    * scene, allowing you to draw axes or normalize data for a parallel plot.
    */
-  function MultiModel(underlyingModels) {
-    this.models = underlyingModels;
+  function MultiModel(underlyingModelsDict) {
+    this.models = underlyingModelsDict;
 
-    var firstModel = this.models[0];
-    for (var i = 1; i < underlyingModels.length; i++)
-      if (underlyingModels[i].dimensions != firstModel.dimensions)
-        throw 'Underlying models must have same number of dimensions';
-
+    var first = true;
+    var firstModel = null;
+    
+    for (var key in underlyingModelsDict){
+      if (first){
+        first = false;
+        firstModel = underlyingModelsDict[key];
+      }
+      else {
+        if (underlyingModelsDict[key].dimensions != firstModel.dimensions)
+          throw 'Underlying models must have same number of dimensions';
+      }
+    }
+  
     this.dimensionRanges = {'max': [], 'min': []};
     this._unionRanges();
   }
