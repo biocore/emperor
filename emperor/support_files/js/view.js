@@ -594,7 +594,8 @@ DecompositionView.prototype.setCategory = function(attributes,
       setPlottableAttributes(scope, value, plottables);
     }
 
-    dataView.push({id: i, category: key, value: value, plottables: plottables});
+    dataView.push({id: i, category: key, value: value,
+                   plottables: plottables});
     i = i + 1;
   });
   this.needsUpdate = true;
