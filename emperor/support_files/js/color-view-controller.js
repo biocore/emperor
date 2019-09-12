@@ -121,10 +121,12 @@ define([
             scope.$scaled.prop('checked', false);
             scope.$scaled.prop('hidden', true);
             scope.$scaledLabel.prop('hidden', true);
+            scope.$searchBar.prop('hidden', false);
             scope.bodyGrid.selectionPalette = palette;
           } else {
             scope.$scaled.prop('hidden', false);
             scope.$scaledLabel.prop('hidden', false);
+            scope.$searchBar.prop('hidden', true);
             scope.bodyGrid.selectionPalette = undefined;
           }
           var scaled = scope.$scaled.is(':checked');

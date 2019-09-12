@@ -174,11 +174,28 @@ define([
     this.$select = $('<select>');
     this.$header.append(this.$select);
 
-    this.$searchBar = $("<input type='text' style='width:98%;' placeholder='Search for a category'>");
+    this.$searchBar = $("<input type='search' " +
+                        "placeholder='Search for a value ...'>"
+    ).css({
+      'width': '100%'
+    });
     this.$header.append(this.$searchBar);
 
     // there's a few attributes we can only set on "ready" so list them up here
     $(function() {
+      scope.$searchBar.tooltip({
+        disabled: true,
+        // place the element with a slight offset at the bottom of the input
+        position: { my: "center top+15", at: "center bottom" },
+        // prevent the tooltip from disappearing when there's no matches
+        close: function(){
+          if (scope.bodyGrid.getDataLength() === 0 &&
+              scope.$searchBar.val() !== '') {
+            $(this).tooltip('open');
+          }
+        }
+      });
+
       var placeholder = 'Select a ' + scope.title + ' Category';
 
       // setup the slick grid
@@ -366,19 +383,22 @@ define([
     this.bodyGrid = new Slick.Grid(this.$gridDiv, dataView, columns,
                                    gridOptions);
 
-    /*
-     * - Identify what icon we are going to use
-     * - When there's no results there should be a message about that.
-     * - There should be an element to cancel the search
-     * - There's probably no reason why we should hide these values
-     * - Detach the search bar from the table, make it a separate element
-     *   that's always visible
-     * - Hide for continuous values?
-     */
-
-    // These two functions are fairly tied together
-    this.$searchBar.on("change keyup", function (e) {
+    this.$searchBar.on("input", function (e) {
       dataView.refresh();
+
+      // show a message when no results are found
+      if (scope.bodyGrid.getDataLength() === 0 &&
+          scope.$searchBar.val() !== '') {
+        scope.$searchBar.attr('title', 'No results found!');
+        scope.$searchBar.tooltip('option', 'disabled', false);
+        scope.$searchBar.tooltip('open');
+      }
+      else{
+        scope.$searchBar.attr('title', '');
+        scope.$searchBar.tooltip('option', 'disabled', true);
+        scope.$searchBar.tooltip('close');
+      }
+
     });
     function substringFilter(item, args) {
       if(!searchString &&
@@ -528,6 +548,7 @@ define([
 
     this.$select.prop('disabled', !trulse).trigger('chosen:updated');
     this.bodyGrid.setOptions({editable: trulse});
+    this.$searchBar.prop('disabled', !trulse);
   };
 
   /**
