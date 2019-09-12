@@ -90,63 +90,77 @@ define([
     this._axisPrefix = 'emperor-axis-line-';
     this._axisLabelPrefix = 'emperor-axis-label-';
 
-    // Set up the camera
-    var max = _.max(decViews.scatter.decomp.dimensionRanges.max);
-    var frontFrust = _.min([max * 0.001, 1]);
-    var backFrust = _.max([max * 100, 100]);
-
-    /**
-     * Camera used to display the scene.
-     * @type {THREE.PerspectiveCamera}
-     */
-    // these are placeholders that are later updated in updateCameraAspectRatio
-    this.camera = new THREE.OrthographicCamera(-50, 50, 50, -50);
-    this.camera.position.set(0, 0, max * 5);
-    this.camera.zoom = 0.7;
-
     //need to initialize the scene
     this.scene = new THREE.Scene();
-    this.scene.add(this.camera);
     this.scene.background = new THREE.Color(this.backgroundColor);
-
+    
     /**
-     * Object used to light the scene, by default is set to a light and
+     * Camera used to display the scatter scene.
+     * @type {THREE.OrthographicCamera}
+     */
+    this.scatterCam = this.buildCamera('scatter');
+    
+    /**
+     * Object used to light the scene in scatter mode,
+     * by default is set to a light and
      * transparent color (0x99999999).
      * @type {THREE.DirectionalLight}
      */
     this.light = new THREE.DirectionalLight(0x999999, 2);
     this.light.position.set(1, 1, 1).normalize();
-    this.camera.add(this.light);
-
+    this.scatterCam.add(this.light);
+    
+    /**
+     * Camera used to display the parallel plot scene.
+     * @type {THREE.OrthographicCamera}
+     */
+    this.parallelCam = this.buildCamera('parallel-plot');
+    
+    // use $container.get(0) to retrieve the native DOM object
+    this.scatterController = this.buildCamController('scatter',
+                                                    this.scatterCam,
+                                                    $container.get(0));
+    this.parallelController = this.buildCamController('parallel-plot',
+                                                     this.parallelCam,
+                                                     $container.get(0));
+    
+    //Swap the camera whenever the view type changes
+    UIState.registerProperty("view.viewType", function(evt){
+      if (evt.newVal === 'parallel-plot'){
+        scope.camera = scope.parallelCam;
+        scope.control = scope.parallelController;
+        //Don't let the controller move around when its not the active camera
+        scope.scatterController.enabled = false;
+        scope.parallelController.enabled = true;
+      } else {
+        scope.camera = scope.scatterCam;
+        scope.control = scope.scatterController;
+        //Don't let the controller move around when its not the active camera
+        scope.scatterController.enabled = true;
+        scope.parallelController.enabled = false;
+      }
+      //Disable any active rotation
+      if (evt.newVal === 'parallel-plot')
+        scope.scatterController.autoRotate = false;
+    });
+    
+    this.scene.add(this.scatterCam);
+    this.scene.add(this.parallelCam);
+    
     this._raycaster = new THREE.Raycaster();
     this._mouse = new THREE.Vector2();
 
     // add all the objects to the current scene
     this.addDecompositionsToScene();
 
-    // use get(0) to retrieve the native DOM object
-    /**
-     * Object used to interact with the scene. By default it uses the mouse.
-     * @type {THREE.OrbitControls}
-     */
-    this.control = new THREE.OrbitControls(this.camera,
-                                           $container.get(0));
-    this.control.enableKeys = false;
-    this.control.rotateSpeed = 1.0;
-    this.control.zoomSpeed = 1.2;
-    this.control.panSpeed = 0.8;
-    this.control.enableZoom = true;
-    this.control.enablePan = true;
-    this.control.addEventListener('change', function() {
-      scope.needsUpdate = true;
-    });
-
     this.updateCameraTarget();
     this.control.update();
-    
-    UIState.registerProperty("view.viewType", function(evt){
-      if (evt.newVal === 'parallel-plot')
-        scope.control.autoRotate = false;
+
+    this.scatterController.addEventListener('change', function() {
+      scope.needsUpdate = true;
+    });
+    this.parallelController.addEventListener('change', function() {
+      scope.needsUpdate = true;
     });
 
     /**
@@ -264,6 +278,58 @@ define([
       showText('(copied to clipboard) ' + n, i);
     });
   };
+
+  /**
+   * Builds a camera (for scatter or parallel plot)
+   */
+  ScenePlotView3D.prototype.buildCamera = function(viewType) {
+  
+    var camera;
+    if (viewType === 'scatter')
+    {
+      // Set up the camera
+      var max = _.max(this.decViews.scatter.decomp.dimensionRanges.max);
+      var frontFrust = _.min([max * 0.001, 1]);
+      var backFrust = _.max([max * 100, 100]);
+
+      // these are placeholders that are later updated in updateCameraAspectRatio
+      camera = new THREE.OrthographicCamera(-50, 50, 50, -50);
+      camera.position.set(0, 0, max * 5);
+      camera.zoom = 0.7;
+    }
+    else if (viewType === 'parallel-plot')
+    {
+      var w = this.decModels.dimensionRanges.max.length;
+
+      // Set up the camera
+      camera = new THREE.OrthographicCamera(0,w, 1,0);
+      camera.position.set(0,0,1); //Must set positive Z because near > 0
+      camera.zoom = 0.7;
+    }
+    
+    return camera;
+  }
+  
+  /**
+   * Builds a camera controller (for scatter or parallel plot)
+   */
+  ScenePlotView3D.prototype.buildCamController = function(viewType, cam, view){
+    /**
+     * Object used to interact with the scene. By default it uses the mouse.
+     * @type {THREE.OrbitControls}
+     */
+    var control = new THREE.OrbitControls(cam,
+                                          view);
+    control.enableKeys = false;
+    control.rotateSpeed = 1.0;
+    control.zoomSpeed = 1.2;
+    control.panSpeed = 0.8;
+    control.enableZoom = true;
+    control.enablePan = true;
+    control.enableRotate = (viewType === 'scatter')
+    
+    return control;
+  }
 
   /**
    *
@@ -404,12 +470,11 @@ define([
       }
     }
     else {
-      //Parallel Plots show all axes and disable rotation.
+      //Parallel Plots show all axes
       for (var i = 0; i < this.decViews['scatter'].decomp.dimensions; i++)
       {
         action([i, 0, 0], [i, 1, 0], i);
       }
-      this.control.enableRotate = false;
     }
   };
 
@@ -548,27 +613,39 @@ define([
    *
    */
   ScenePlotView3D.prototype.updateCameraAspectRatio = function() {
-    var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
+    if (UIState['view.viewType'] === 'scatter')
+    {
+      var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
 
-    // orthographic cameras operate in space units not in pixel units i.e.
-    // the width and height of the view is based on the objects not the window
-    var owidth = this.decModels.dimensionRanges.max[x] -
-                    this.decModels.dimensionRanges.min[x];
-    var oheight = this.decModels.dimensionRanges.max[y] -
-                    this.decModels.dimensionRanges.min[y];
+      // orthographic cameras operate in space units not in pixel units i.e.
+      // the width and height of the view is based on the objects not the window
+      var owidth = this.decModels.dimensionRanges.max[x] -
+                      this.decModels.dimensionRanges.min[x];
+      var oheight = this.decModels.dimensionRanges.max[y] -
+                      this.decModels.dimensionRanges.min[y];
 
-    var aspect = this.width / this.height;
+      var aspect = this.width / this.height;
 
-    // ensure that the camera's aspect ratio is equal to the window's
-    owidth = oheight * aspect;
+      // ensure that the camera's aspect ratio is equal to the window's
+      owidth = oheight * aspect;
 
-    this.camera.left = -owidth / 2;
-    this.camera.right = owidth / 2;
-    this.camera.top = oheight / 2;
-    this.camera.bottom = -oheight / 2;
+      this.camera.left = -owidth / 2;
+      this.camera.right = owidth / 2;
+      this.camera.top = oheight / 2;
+      this.camera.bottom = -oheight / 2;
 
-    this.camera.aspect = aspect;
-    this.camera.updateProjectionMatrix();
+      this.camera.aspect = aspect;
+      this.camera.updateProjectionMatrix();
+    }
+    else if (UIState['view.viewType'] === 'parallel-plot')
+    {
+      var w = this.decModels.dimensionRanges.max.length;
+      this.camera.left = 0;
+      this.camera.right = w;
+      this.camera.top = 1;
+      this.camera.bottom = 0;
+      this.camera.updateProjectionMatrix();
+    }
   };
 
   /**
@@ -579,28 +656,39 @@ define([
    * reasonable for the data.
    */
   ScenePlotView3D.prototype.updateCameraTarget = function() {
-    var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
+    if (UIState['view.viewType'] === 'scatter')
+    {
+      var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
 
-    var owidth = this.decModels.dimensionRanges.max[x] -
-                    this.decModels.dimensionRanges.min[x];
-    var oheight = this.decModels.dimensionRanges.max[y] -
-                    this.decModels.dimensionRanges.min[y];
-    var xcenter = this.decModels.dimensionRanges.max[x] - (owidth / 2);
-    var ycenter = this.decModels.dimensionRanges.max[y] - (oheight / 2);
+      var owidth = this.decModels.dimensionRanges.max[x] -
+                      this.decModels.dimensionRanges.min[x];
+      var oheight = this.decModels.dimensionRanges.max[y] -
+                      this.decModels.dimensionRanges.min[y];
+      var xcenter = this.decModels.dimensionRanges.max[x] - (owidth / 2);
+      var ycenter = this.decModels.dimensionRanges.max[y] - (oheight / 2);
 
-    var max = _.max(this.decViews.scatter.decomp.dimensionRanges.max);
+      var max = _.max(this.decViews.scatter.decomp.dimensionRanges.max);
 
-    this.control.target.set(xcenter, ycenter, 0);
-    this.camera.position.set(xcenter, ycenter, max * 5);
-    this.camera.updateProjectionMatrix();
+      this.control.target.set(xcenter, ycenter, 0);
+      this.camera.position.set(xcenter, ycenter, max * 5);
+      this.camera.updateProjectionMatrix();
 
-    this.light.position.set(xcenter, ycenter, max * 5);
+      this.light.position.set(xcenter, ycenter, max * 5);
 
-    this.updateCameraAspectRatio();
+      this.updateCameraAspectRatio();
 
-    this.control.saveState();
+      this.control.saveState();
 
-    this.needsUpdate = true;
+      this.needsUpdate = true;
+    }
+    else if (UIState['view.viewType'] === 'parallel-plot'){
+      this.control.target.set(0,0,1); //Must set positive Z because near > 0
+      this.camera.position.set(0,0,1); //Must set positive Z because near > 0
+      this.camera.updateProjectionMatrix();
+      this.updateCameraAspectRatio();
+      this.control.saveState();
+      this.needsUpdate = true;
+    }
   };
 
   ScenePlotView3D.prototype.NEEDS_RENDER = 1;
