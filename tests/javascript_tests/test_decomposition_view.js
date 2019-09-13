@@ -75,6 +75,8 @@ requirejs([
         // teardown function
         this.decomp = null;
         this.expected = null;
+        //TODO FIXME HACK:  Agghhh, need a separate ui state per test!!
+        UIState.setProperty('view.usesPointCloud', false);
       }
     });
 

@@ -311,11 +311,13 @@ requirejs([
 
         grid = new Slick.Grid('#fooligans', data, columns, this.options);
         this.decomp = decomp;
+        this.multiModel = new MultiModel({'scatter': this.decomp});
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
         $('#fooligans').remove();
         this.decomp = undefined;
+        this.multiModel = undefined;
       }
     });
 
