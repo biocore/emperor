@@ -93,13 +93,13 @@ define([
     //need to initialize the scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(this.backgroundColor);
-    
+
     /**
      * Camera used to display the scatter scene.
      * @type {THREE.OrthographicCamera}
      */
     this.scatterCam = this.buildCamera('scatter');
-    
+
     /**
      * Object used to light the scene in scatter mode,
      * by default is set to a light and
@@ -109,13 +109,13 @@ define([
     this.light = new THREE.DirectionalLight(0x999999, 2);
     this.light.position.set(1, 1, 1).normalize();
     this.scatterCam.add(this.light);
-    
+
     /**
      * Camera used to display the parallel plot scene.
      * @type {THREE.OrthographicCamera}
      */
     this.parallelCam = this.buildCamera('parallel-plot');
-    
+
     // use $container.get(0) to retrieve the native DOM object
     this.scatterController = this.buildCamController('scatter',
                                                     this.scatterCam,
@@ -123,10 +123,10 @@ define([
     this.parallelController = this.buildCamController('parallel-plot',
                                                      this.parallelCam,
                                                      $container.get(0));
-    
+
     //Swap the camera whenever the view type changes
-    UIState.registerProperty("view.viewType", function(evt){
-      if (evt.newVal === 'parallel-plot'){
+    UIState.registerProperty('view.viewType', function(evt) {
+      if (evt.newVal === 'parallel-plot') {
         scope.camera = scope.parallelCam;
         scope.control = scope.parallelController;
         //Don't let the controller move around when its not the active camera
@@ -143,10 +143,10 @@ define([
       if (evt.newVal === 'parallel-plot')
         scope.scatterController.autoRotate = false;
     });
-    
+
     this.scene.add(this.scatterCam);
     this.scene.add(this.parallelCam);
-    
+
     this._raycaster = new THREE.Raycaster();
     this._mouse = new THREE.Vector2();
 
@@ -283,7 +283,7 @@ define([
    * Builds a camera (for scatter or parallel plot)
    */
   ScenePlotView3D.prototype.buildCamera = function(viewType) {
-  
+
     var camera;
     if (viewType === 'scatter')
     {
@@ -292,7 +292,8 @@ define([
       var frontFrust = _.min([max * 0.001, 1]);
       var backFrust = _.max([max * 100, 100]);
 
-      // these are placeholders that are later updated in updateCameraAspectRatio
+      // these are placeholders that are
+      // later updated in updateCameraAspectRatio
       camera = new THREE.OrthographicCamera(-50, 50, 50, -50);
       camera.position.set(0, 0, max * 5);
       camera.zoom = 0.7;
@@ -302,18 +303,18 @@ define([
       var w = this.decModels.dimensionRanges.max.length;
 
       // Set up the camera
-      camera = new THREE.OrthographicCamera(0,w, 1,0);
-      camera.position.set(0,0,1); //Must set positive Z because near > 0
+      camera = new THREE.OrthographicCamera(0, w, 1, 0);
+      camera.position.set(0, 0, 1); //Must set positive Z because near > 0
       camera.zoom = 0.7;
     }
-    
+
     return camera;
-  }
-  
+  };
+
   /**
    * Builds a camera controller (for scatter or parallel plot)
    */
-  ScenePlotView3D.prototype.buildCamController = function(viewType, cam, view){
+  ScenePlotView3D.prototype.buildCamController = function(viewType, cam, view) {
     /**
      * Object used to interact with the scene. By default it uses the mouse.
      * @type {THREE.OrbitControls}
@@ -326,10 +327,10 @@ define([
     control.panSpeed = 0.8;
     control.enableZoom = true;
     control.enablePan = true;
-    control.enableRotate = (viewType === 'scatter')
-    
+    control.enableRotate = (viewType === 'scatter');
+
     return control;
-  }
+  };
 
   /**
    *
@@ -368,26 +369,27 @@ define([
         this.scene.add(this.decViews[decViewName].lines.right);
       }
     }
-    
+
     // if a decomposition uses a point cloud, or
     // if a decomposition uses a parallel plot,
     // update the default tolerance as
     // it is otherwise too large and error-prone
     var scope = this;
-    var updateRaycasterLinePrecision = function(evt){
-      if (UIState.getProperty("view.viewType") === "parallel-plot")
+    var updateRaycasterLinePrecision = function(evt) {
+      if (UIState.getProperty('view.viewType') === 'parallel-plot')
         scope._raycaster.linePrecision = 0.01;
       else
         scope._raycaster.linePrecision = 1;
-    }
-    var updateRaycasterPointPrecision = function(evt){
-      if (UIState.getProperty("view.usesPointCloud"))
+    };
+    var updateRaycasterPointPrecision = function(evt) {
+      if (UIState.getProperty('view.usesPointCloud'))
         scope._raycaster.params.Points.threshold = 0.01;
       else
         scope._raycaster.params.Points.threshold = 1;
-    }
-    UIState.registerProperty("view.usesPointCloud", updateRaycasterPointPrecision);
-    UIState.registerProperty("view.viewType", updateRaycasterLinePrecision);
+    };
+    UIState.registerProperty('view.usesPointCloud',
+                             updateRaycasterPointPrecision);
+    UIState.registerProperty('view.viewType', updateRaycasterLinePrecision);
 
     this.needsUpdate = true;
   };
@@ -421,9 +423,9 @@ define([
    *
    */
   ScenePlotView3D.prototype._dimensionsIterator = function(action) {
-    
+
     this.decModels._unionRanges();
-    
+
     if (UIState['view.viewType'] === 'scatter')
     {
       // shortcut to the index of the visible dimension and the range object
@@ -539,14 +541,14 @@ define([
     this._dimensionsIterator(function(start, end, index) {
       text = decomp.axesLabels[index];
       axisLabel = makeLabel(end, text, color);
-      
-      if (UIState['view.viewType'] === 'scatter'){
+
+      if (UIState['view.viewType'] === 'scatter') {
         //Scatter has a 1 to 1 aspect ratio and labels in world size
         axisLabel.scale.set(axisLabel.scale.x * scaling,
                             axisLabel.scale.y * scaling,
                             1);
       }
-      else if (UIState['view.viewType'] === 'parallel-plot'){
+      else if (UIState['view.viewType'] === 'parallel-plot') {
         //Parallel plot aspect ratio depends on number of dimensions
         //We have to correct label size to account for this.
         //But we also have to fix label width so that it fits between
@@ -556,30 +558,30 @@ define([
         var labelHPix = axisLabel.scale.y;
         var viewWPix = scope.width;
         var viewHPix = scope.height;
-        
+
         //Assuming a camera zoom of 1:
         var viewWUnits = cam.right - cam.left;
         var viewHUnits = cam.top - cam.bottom;
-        
+
         //These are world sizes of label for a camera zoom of 1
         var labelWUnits = labelWPix * viewWUnits / viewWPix;
         var labelHUnits = labelHPix * viewHUnits / viewHPix;
-        
+
         //TODO FIXME HACK:  Note that our options here are to scale each
         //label to fit in its area, or to scale all labels by the same amount
         //We choose to scale all labels by the same amount based on an
         //empirical 'nice' label length of ~300
         //We could replace this with a max of all label widths, but must note
         //that label widths are always powers of 2 in the current version
-        
+
         //Resize to fit labels of width 300 between axes
         var scalingFudge = .9 / (300 * viewWUnits / viewWPix);
-        
+
         axisLabel.scale.set(labelWUnits * scalingFudge,
                             labelHUnits * scalingFudge,
                             1);
       }
-      
+
       axisLabel.name = scope._axisLabelPrefix + index;
       scope.scene.add(axisLabel);
     });
@@ -640,7 +642,7 @@ define([
 
     this.updateCameraAspectRatio();
     this.control.update();
-    
+
     //Since parallel plot labels have to correct for aspect ratio, we need
     //to redraw when width/height of view is modified.
     this.drawAxesLabelsWithColor(this.axesColor);
@@ -723,9 +725,9 @@ define([
 
       this.needsUpdate = true;
     }
-    else if (UIState['view.viewType'] === 'parallel-plot'){
-      this.control.target.set(0,0,1); //Must set positive Z because near > 0
-      this.camera.position.set(0,0,1); //Must set positive Z because near > 0
+    else if (UIState['view.viewType'] === 'parallel-plot') {
+      this.control.target.set(0, 0, 1); //Must set positive Z because near > 0
+      this.camera.position.set(0, 0, 1); //Must set positive Z because near > 0
       this.camera.updateProjectionMatrix();
       this.updateCameraAspectRatio();
       this.control.saveState();
@@ -876,7 +878,7 @@ define([
     // Only scatter plots that are not using a point cloud should be pointed
     // towards the camera. For arrow types and point clouds doing this will
     // results in odd visual effects
-    if (!UIState.getProperty("view.usesPointCloud") &&
+    if (!UIState.getProperty('view.usesPointCloud') &&
         this.decViews.scatter.decomp.isScatterType()) {
       _.each(this.decViews.scatter.markers, function(element) {
         element.quaternion.copy(camera.quaternion);
@@ -910,7 +912,7 @@ define([
     this._mouse.y = -((event.clientY - offset.top) / element.height) * 2 + 1;
 
     this._raycaster.setFromCamera(this._mouse, this.camera);
-    
+
     // get a flattened array of markers
     var objects = _.map(this.decViews, function(decomp) {
       return decomp.markers;
@@ -919,11 +921,11 @@ define([
       return memo.concat(value);
     }, []);
     var intersects = this._raycaster.intersectObjects(objects);
-    
+
     // Get first intersected item and call callback with it.
     if (intersects.length > 0) {
       var intersect;
-      
+
       var firstObj = intersects[0].object;
       /*
        * When the intersect object is a Points object, the raycasting method
@@ -935,7 +937,7 @@ define([
         var meshIndex = intersects[0].index;
         var modelIndex = this.decViews.scatter.getModelPointIndex(meshIndex,
                                                   UIState['view.viewType']);
-       
+
         intersect = this.decViews.scatter.decomp.plottable[modelIndex];
       }
       else {

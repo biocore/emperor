@@ -695,7 +695,7 @@ requirejs([
 
       var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
                                      metadata);
-      var mm = new MultiModel({'scatter':d});
+      var mm = new MultiModel({'scatter': d});
       var dv = new DecompositionView(mm, 'scatter');
       var container = $('<div id="does-not-exist"></div>');
       // create a dummy category selection callback

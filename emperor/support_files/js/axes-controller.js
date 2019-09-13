@@ -43,21 +43,23 @@ define([
         'height': '100%'
     });
     this.$viewTypeDiv.attr('title', 'Change the selected View Type');
-    
-    if (UIState["view.viewType"] === 'scatter')
+
+    if (UIState['view.viewType'] === 'scatter')
       this.$radioScatter = $('<input type="radio" name="emperor.viewType"' +
         'value="scatter" checked> Scatter </input>');
     else
       this.$radioScatter = $('<input type="radio" name="emperor.viewType"' +
         'value="scatter"> Scatter </input>');
-    
-    if (UIState["view.viewType"] === 'parallel-plot')
-      this.$radioParallelPlot = $('<input type="radio" name="emperor.viewType"' +
+
+    if (UIState['view.viewType'] === 'parallel-plot')
+      this.$radioParallelPlot = $(
+        '<input type="radio" name="emperor.viewType"' +
         'value="parallel-plot" checked> Parallel Plot </input>');
     else
-      this.$radioParallelPlot = $('<input type="radio" name="emperor.viewType"' +
+      this.$radioParallelPlot = $(
+        '<input type="radio" name="emperor.viewType"' +
         'value="parallel-plot"> Parallel Plot </input>');
-    
+
     this.$viewTypeDiv.append(this.$radioScatter);
     this.$viewTypeDiv.append(this.$radioParallelPlot);
 
@@ -236,7 +238,7 @@ define([
 
     var view = this.getView(), scope = this;
 
-    if (UIState["view.viewType"] === 'parallel-plot') {
+    if (UIState['view.viewType'] === 'parallel-plot') {
     // Disables axes choices, not used for parallel-plot.
       return;
     }
@@ -744,7 +746,7 @@ define([
     json.otherEdgeColor = this.getOtherEdgeColor();
 
     //Save the viewType
-    json.viewType = UIState["view.viewType"];
+    json.viewType = UIState['view.viewType'];
 
     return json;
   };
@@ -788,7 +790,7 @@ define([
     this.buildDisplayTable();
 
     //Restore the viewType
-    UIState.setProperty("view.viewType", json.viewType);
+    UIState.setProperty('view.viewType', json.viewType);
   };
 
   return AxesController;

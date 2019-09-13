@@ -53,12 +53,13 @@ requirejs([
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
         var decomp2 = new DecompositionModel(data, md_headers, metadata);
-        
-        this.multiModel = new MultiModel({'scatter': decomp, 'biplot': decomp2});
+
+        this.multiModel = new MultiModel({'scatter': decomp,
+                                          'biplot': decomp2});
 
         var dv = new DecompositionView(this.multiModel, 'scatter');
         this.sharedDecompositionViewDict.scatter = dv;
-        
+
         var dv2 = new DecompositionView(this.multiModel, 'biplot');
         this.sharedDecompositionViewDict.biplot = dv2;
       },

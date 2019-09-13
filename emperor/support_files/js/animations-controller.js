@@ -206,9 +206,9 @@ define([
       scope._buildGrid();
 
       scope.setEnabled(false);
-      
+
       //Note that we can't do this before the buttons are ready.
-      UIState.registerProperty("view.viewType",
+      UIState.registerProperty('view.viewType',
                                scope._viewTypeChanged.bind(scope));
     });
 
@@ -409,13 +409,13 @@ define([
   AnimationsController.prototype._gradientChanged = function(evt, params) {
     if (this.getGradientCategory() !== '' &&
         this.getTrajectoryCategory() !== '' &&
-        UIState["view.viewType"] === 'scatter') {
+        UIState['view.viewType'] === 'scatter') {
       this.setEnabled(true);
       this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
              this.getTrajectoryCategory() === '' ||
-             UIState["view.viewType"] !== 'scatter') {
+             UIState['view.viewType'] !== 'scatter') {
       this.setEnabled(false);
     }
   };
@@ -429,18 +429,18 @@ define([
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
     if (this.getGradientCategory() !== '' &&
         this.getTrajectoryCategory() !== '' &&
-        UIState["view.viewType"] === 'scatter') {
+        UIState['view.viewType'] === 'scatter') {
       this.setEnabled(true);
       this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
              this.getTrajectoryCategory() === '' ||
-             UIState["view.viewType"] !== 'scatter') {
+             UIState['view.viewType'] !== 'scatter') {
       this.setColors({});
       this.setEnabled(false);
     }
   };
-  
+
   /**
    *
    * Callback method executed when the UIState view.viewType changes.
@@ -450,13 +450,13 @@ define([
   AnimationsController.prototype._viewTypeChanged = function(evt) {
     if (this.getGradientCategory() !== '' &&
       this.getTrajectoryCategory() !== '' &&
-      UIState["view.viewType"] === 'scatter') {
+      UIState['view.viewType'] === 'scatter') {
       this.setEnabled(true);
       this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
              this.getTrajectoryCategory() === '' ||
-             UIState["view.viewType"] !== 'scatter') {
+             UIState['view.viewType'] !== 'scatter') {
       this.setEnabled(false);
     }
   };
@@ -609,7 +609,7 @@ define([
       }
     });
 
-    if (UIState["view.viewType"] !== 'parallel-plot') {
+    if (UIState['view.viewType'] !== 'parallel-plot') {
       //Construct new dynamic tubes containing necessary
       //interpolated segment for the current frame
       view.dynamicTubes = this.director.trajectories.map(function(trajectory) {

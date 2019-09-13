@@ -123,7 +123,7 @@ requirejs([
       var obs = this.controller.toJSON();
       var exp = {'flippedAxes': [false, false, false],
                  'visibleDimensions': [0, 1, 2],
-                 'referenceEdgeColor': null, 'viewType':'scatter',
+                 'referenceEdgeColor': null, 'viewType': 'scatter',
                  'otherEdgeColor': null, 'backgroundColor': '#000000',
                  'axesColor': '#ffffff'};
       deepEqual(obs, exp);
@@ -133,7 +133,7 @@ requirejs([
       exp = {'flippedAxes': [false, false, false],
              'visibleDimensions': [0, 1, 2],
              'otherEdgeColor': '#ff0000', 'referenceEdgeColor': '#ffffff',
-             'viewType':'scatter',
+             'viewType': 'scatter',
              'backgroundColor': '#000000', 'axesColor': '#ffffff'};
       deepEqual(obs, exp);
     });

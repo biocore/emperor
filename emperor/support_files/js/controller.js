@@ -26,18 +26,18 @@ define([
             AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
             CanvasRenderer, canvasToBlob, MultiModel, UIState) {
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
-  
-  TAB_ORDER = ["color", "visibility", "opacity", "scale",
-               "shape", "axes", "animations"];
+
+  TAB_ORDER = ['color', 'visibility', 'opacity', 'scale',
+               'shape', 'axes', 'animations'];
 
   var controllerConstructors = {
-      "color": ColorViewController,
-      "visibility": VisibilityController,
-      "opacity": OpacityViewController,
-      "scale": ScaleViewController,
-      "shape": ShapeController,
-      "axes": AxesController,
-      "animations": AnimationsController
+      'color': ColorViewController,
+      'visibility': VisibilityController,
+      'opacity': OpacityViewController,
+      'scale': ScaleViewController,
+      'shape': ShapeController,
+      'axes': AxesController,
+      'animations': AnimationsController
     };
 
   /**
@@ -63,8 +63,8 @@ define([
    *
    */
   function EmperorController(scatter, biplot, divId, webglcanvas) {
-    UIState.setProperty("view.usesPointCloud", scatter.length > 20000);
-  
+    UIState.setProperty('view.usesPointCloud', scatter.length > 20000);
+
     var scope = this;
     /**
      * Scaling constant for grid dimensions (read only).
@@ -311,22 +311,22 @@ define([
       scope.resize(scope.$divId.width(), scope.$divId.height());
     });
 
-    UIState.registerProperty("view.viewType", function(evt){
-      toDisable = ["scale", "shape", "animations"]
-    
-      for (controllerName in scope.controllers){
+    UIState.registerProperty('view.viewType', function(evt) {
+      toDisable = ['scale', 'shape', 'animations'];
+
+      for (controllerName in scope.controllers) {
         var c = scope.controllers[controllerName];
         selector = "li[aria-controls='" + c.identifier + "']";
         //jquery effects are less jarring, but also remind me of people who add
         //effects to slide transitions in powerpoint.  I'd still prefer css
         //to gray out the tab...
         //effects list at https://api.jqueryui.com/category/effects/
-        
+
         if (toDisable.includes(controllerName)) {
           if (evt.newVal === 'parallel-plot')
-            $(selector).hide("blind");
+            $(selector).hide('blind');
           else if (evt.newVal === 'scatter')
-            $(selector).show("blind");
+            $(selector).show('blind');
         }
       }
     });
@@ -575,7 +575,7 @@ define([
       }
     }
   };
-  
+
   /**
    *
    * Helper method to assemble UI, completely independent of HTML template.
@@ -585,16 +585,16 @@ define([
    *
    */
   EmperorController.prototype._buildUI = function() {
-    var scope = this, isLargeDataset = UIState["view.usesPointCloud"];
+    var scope = this, isLargeDataset = UIState['view.usesPointCloud'];
 
-    for (var index in TAB_ORDER){
+    for (var index in TAB_ORDER) {
       var item = TAB_ORDER[index];
       if (item === 'shape' && isLargeDataset)
         continue;
       scope.controllers[item] = scope.addTab(scope.sceneViews[0].decViews,
                                            controllerConstructors[item]);
     }
-       
+
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
                                // The tabs on the plot space only get resized
@@ -636,7 +636,7 @@ define([
             });
           },
           disabled: function(key, opts) {
-            return UIState["view.viewType"] === 'parallel-plot'
+            return UIState['view.viewType'] === 'parallel-plot';
           }
         },
         'labels' : {
@@ -710,7 +710,8 @@ define([
                   scope.screenshot('svg');
                 },
                 disabled: function(key, opt) {
-                  return isLargeDataset || UIState["view.viewType"] === 'parallel-plot'
+                  return isLargeDataset ||
+                         (UIState['view.viewType'] === 'parallel-plot');
                 }
               }
             }
@@ -719,7 +720,7 @@ define([
           name: 'Experimental',
           disabled: function(key, opt) {
             // Only enable if this is a "vanilla" plot
-            if (UIState["view.viewType"] === 'scatter' &&
+            if (UIState['view.viewType'] === 'scatter' &&
                 scope.decViews.scatter.lines.left === null &&
                 scope.decViews.scatter.lines.right === null &&
                 scope.decViews.biplot === undefined) {
@@ -775,8 +776,8 @@ define([
 
       // Point clouds can't be rendered by the CanvasRenderer, therefore we
       // have to use the WebGLRenderer and can't increase the image size.
-      if (UIState["view.usesPointCloud"] ||
-          UIState["view.viewType"] === 'parallel-plot') {
+      if (UIState['view.usesPointCloud'] ||
+          UIState['view.viewType'] === 'parallel-plot') {
         pngRenderer = this.sceneViews[0].renderer;
       }
       else {

@@ -14,9 +14,9 @@ function(_) {
 
     var first = true;
     var firstModel = null;
-    
-    for (var key in underlyingModelsDict){
-      if (first){
+
+    for (var key in underlyingModelsDict) {
+      if (first) {
         first = false;
         firstModel = underlyingModelsDict[key];
       }
@@ -25,7 +25,7 @@ function(_) {
           throw 'Underlying models must have same number of dimensions';
       }
     }
-  
+
     this.dimensionRanges = {'max': [], 'min': []};
     this._unionRanges();
   }

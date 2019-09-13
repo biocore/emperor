@@ -30,9 +30,9 @@ requirejs([
                          '20070314'],
                         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
                          '20071112']];
-           
+
         this.decomp = new DecompositionModel(data, md_headers, metadata);
-        
+
         data.edges = [['PC.636', 'PC.635']];
         this.decompWithEdges = new DecompositionModel(data, md_headers,
                                                       metadata);
@@ -62,13 +62,13 @@ requirejs([
         data.edges = [['PC.636', 'PC.635']];
         this.expectedWithEdges = new DecompositionModel(data, md_headers,
                                                         metadata);
-           
+
         this.multiModel = new MultiModel({'scatter': this.decomp});
         this.multiModelWithEdges = new MultiModel(
                                       {'scatter': this.decompWithEdges});
 
-           
-           
+
+
       },
 
       teardown: function() {
@@ -144,7 +144,7 @@ requirejs([
                       ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
                        '20071112']];
       decomp = new DecompositionModel(data, md_headers, metadata);
-      var mm = new MultiModel({'scatter': decomp})
+      var mm = new MultiModel({'scatter': decomp});
       var obs;
 
       UIState.setProperty('view.usesPointCloud', false);
@@ -215,7 +215,7 @@ requirejs([
       // this test is pretty much the same as above except checking for edges
       UIState.setProperty('view.usesPointCloud', false);
       var view = new DecompositionView(this.multiModelWithEdges, 'scatter');
-      
+
       deepEqual(view.decomp, this.expectedWithEdges);
       equal(view.count, 2);
       equal(view.getVisibleCount(), 2);
