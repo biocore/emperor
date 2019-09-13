@@ -240,6 +240,42 @@ requirejs([
       deepEqual(view.lines.right.geometry.attributes.position.array.length, 6);
     });
 
+    test('Test constructor fails (biplot in fast mode)', function() {
+      this.decomp.type = 'arrow';
+      throws(function() {
+        UIState.setProperty('view.usesPointCloud', true);
+        var dv = new DecompositionView(this.multiModel, 'scatter');
+      }, Error, 'Biplots are not supported in fast mode');
+    });
+
+    test('Test constructor fails (jackknifed in fast mode)', function() {
+      // setup function
+      var data = {
+        name: 'pcoa',
+        sample_ids: ['PC.636', 'PC.635'],
+        coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711, 0.176070,
+                       0.072969, -0.229889, -0.046599],
+                      [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485,
+                       -0.115211, -0.112864, 0.064794]],
+        percents_explained: [26.6887048633, 16.2563704022, 13.7754129161,
+                             11.217215823, 10.024774995, 8.22835130237,
+                             7.55971173665, 6.24945796136],
+        ci: [[0.3, 0.1, 0.06, 0.06, 0.1, 0.07, 0.2, 0.04],
+             [0.3, 0.1, 0.06, 0.06, 0.1, 0.07, 0.2, 0.04]]};
+      var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
+                        'DOB'];
+      var metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control',
+                       '20070314'],
+                      ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
+                       '20071112']];
+      this.decomp = new DecompositionModel(data, md_headers, metadata);
+
+      throws(function() {
+        UIState.setProperty('view.usesPointCloud', true);
+        var dv = new DecompositionView(this.multiModel, 'scatter');
+      }, Error, 'Jaccknifed plots are not supported in fast mode');
+    });
+
     test('Test getGeometryFactor', function() {
       UIState.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter');
