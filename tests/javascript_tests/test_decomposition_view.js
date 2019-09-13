@@ -269,10 +269,10 @@ requirejs([
                       ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
                        '20071112']];
       this.decomp = new DecompositionModel(data, md_headers, metadata);
-
+      var multiModel = new MultiModel({'scatter': this.decomp});
       throws(function() {
         UIState.setProperty('view.usesPointCloud', true);
-        var dv = new DecompositionView(this.multiModel, 'scatter');
+        var dv = new DecompositionView(multiModel, 'scatter');
       }, Error, 'Jaccknifed plots are not supported in fast mode');
     });
 

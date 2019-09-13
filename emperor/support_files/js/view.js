@@ -132,7 +132,7 @@ DecompositionView.prototype._initGeometry = function() {
       (UIState['view.viewType'] === 'parallel-plot')) {
     this._fastInitParallelPlot();
   }
-  else if (this.decomp.isScatterType() && UIState['view.usesPointCloud']) {
+  else if (UIState['view.usesPointCloud']) {
     this._fastInit();
   }
   else {
