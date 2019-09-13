@@ -186,9 +186,9 @@ define([
       scope.$searchBar.tooltip({
         disabled: true,
         // place the element with a slight offset at the bottom of the input
-        position: { my: "center top+15", at: "center bottom" },
+        position: {my: 'center top+15', at: 'center bottom'},
         // prevent the tooltip from disappearing when there's no matches
-        close: function(){
+        close: function() {
           if (scope.bodyGrid.getDataLength() === 0 &&
               scope.$searchBar.val() !== '') {
             $(this).tooltip('open');
@@ -383,7 +383,7 @@ define([
     this.bodyGrid = new Slick.Grid(this.$gridDiv, dataView, columns,
                                    gridOptions);
 
-    this.$searchBar.on("input", function (e) {
+    this.$searchBar.on('input', function(e) {
       dataView.refresh();
 
       // show a message when no results are found
@@ -393,7 +393,7 @@ define([
         scope.$searchBar.tooltip('option', 'disabled', false);
         scope.$searchBar.tooltip('open');
       }
-      else{
+      else {
         scope.$searchBar.attr('title', '');
         scope.$searchBar.tooltip('option', 'disabled', true);
         scope.$searchBar.tooltip('close');
@@ -401,19 +401,20 @@ define([
 
     });
     function substringFilter(item, args) {
-      if(!searchString &&
-         item.category.toLowerCase().indexOf(scope.$searchBar.val().toLowerCase()) === -1){
+      var val = scope.$searchBar.val();
+      if (!searchString && val &&
+         item.category.toLowerCase().indexOf(val.toLowerCase()) === -1) {
         return false;
       }
       return true;
     }
 
-    dataView.onRowCountChanged.subscribe(function (e, args) {
+    dataView.onRowCountChanged.subscribe(function(e, args) {
       scope.bodyGrid.updateRowCount();
       scope.bodyGrid.render();
     });
 
-    dataView.onRowsChanged.subscribe(function (e, args) {
+    dataView.onRowsChanged.subscribe(function(e, args) {
       scope.bodyGrid.invalidateRows(args.rows);
       scope.bodyGrid.render();
     });
@@ -462,7 +463,7 @@ define([
     json.category = this.getMetadataField();
 
     // Convert SlickGrid list of objects to single object
-    var gridData = this.bodyGrid.getData();
+    var gridData = this.getSlickGridDataset();
     var jsonData = {};
     for (var i = 0; i < gridData.length; i++) {
       jsonData[gridData[i].category] = gridData[i].value;

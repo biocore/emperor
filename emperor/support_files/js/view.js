@@ -855,7 +855,7 @@ DecompositionView.prototype._buildVegaSpec = function() {
     Ring: 'circle',
     Square: 'square',
     Icosahedron: 'cross',
-    Star: 'cross',
+    Star: 'cross'
   };
 
   function viewMarkersAsVegaDataset(markers) {
@@ -870,8 +870,8 @@ DecompositionView.prototype._buildVegaSpec = function() {
           color: rgbColor(marker.material.color),
           originalShape: marker.userData.shape,
           shape: getShape[marker.userData.shape],
-          scale: { x: marker.scale.x, y: marker.scale.y, },
-          opacity: marker.material.opacity,
+          scale: { x: marker.scale.x, y: marker.scale.y },
+          opacity: marker.material.opacity
         });
       }
     }
@@ -910,14 +910,14 @@ DecompositionView.prototype._buildVegaSpec = function() {
     padding: 5,
     background: scope.backgroundColor,
     config: {
-      axis: { labelColor: scope.axesColor, titleColor: scope.axesColor, },
-      title: { color: scope.axesColor, },
+      axis: { labelColor: scope.axesColor, titleColor: scope.axesColor },
+      title: { color: scope.axesColor }
     },
     title: 'Emperor PCoA',
     data: [
       {
         name: 'metadata',
-        values: plottablesAsMetadata(model.plottable, model.md_headers),
+        values: plottablesAsMetadata(model.plottable, model.md_headers)
       },
       {
         name: 'points', values: viewMarkersAsVegaDataset(scope.markers),
@@ -927,28 +927,28 @@ DecompositionView.prototype._buildVegaSpec = function() {
             from: 'metadata',
             key: model.md_headers[0],
             fields: ['id'],
-            as: ['metadata'],
+            as: ['metadata']
           }
-        ],
-      },
+        ]
+      }
     ],
     signals: [
       {
         name: 'width',
-        update: baseWidth + ' * ((' + rangeX[1] + ') - (' + rangeX[0] + '))',
+        update: baseWidth + ' * ((' + rangeX[1] + ') - (' + rangeX[0] + '))'
       },
       {
         name: 'height',
-        update: baseWidth + ' * ((' + rangeY[1] + ') - (' + rangeY[0] + '))',
-      },
+        update: baseWidth + ' * ((' + rangeY[1] + ') - (' + rangeY[0] + '))'
+      }
     ],
     scales: [
       { name: 'xScale', range: 'width', domain: [rangeX[0], rangeX[1]] },
       { name: 'yScale', range: 'height', domain: [rangeY[0], rangeY[1]] }
     ],
     axes: [
-      { orient: 'bottom', scale: 'xScale', title: model.axesLabels[axisX], },
-      { orient: 'left', scale: 'yScale', title: model.axesLabels[axisY], }
+      { orient: 'bottom', scale: 'xScale', title: model.axesLabels[axisX] },
+      { orient: 'left', scale: 'yScale', title: model.axesLabels[axisY] }
     ],
     marks: [
       {
@@ -956,19 +956,19 @@ DecompositionView.prototype._buildVegaSpec = function() {
         from: {data: 'points'},
         encode: {
           enter: {
-            fill: { field: 'color', },
-            x: { scale: 'xScale', field: 'x', },
-            y: { scale: 'yScale', field: 'y', },
-            shape: { field: 'shape', },
-            size: { signal: 'datum.scale.x * datum.scale.y * 100', },
-            opacity: { field: 'opacity', },
+            fill: { field: 'color' },
+            x: { scale: 'xScale', field: 'x' },
+            y: { scale: 'yScale', field: 'y' },
+            shape: { field: 'shape' },
+            size: { signal: 'datum.scale.x * datum.scale.y * 100' },
+            opacity: { field: 'opacity' }
           },
           update: {
-            tooltip: { signal: 'datum.metadata' },
-          },
-        },
-      },
-    ],
+            tooltip: { signal: 'datum.metadata' }
+          }
+        }
+      }
+    ]
   };
 };
 

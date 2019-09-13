@@ -148,7 +148,7 @@ define([
             // for rest if there are non numeric categories
             if (plottables.length > 0) {
               scope.setSlickGridDataset(
-                [{category: 'Non-numeric values', value: '#64655d',
+                [{id: 0, category: 'Non-numeric values', value: '#64655d',
                   plottables: plottables}]);
             }
             else {
@@ -270,7 +270,8 @@ define([
    */
   ColorViewController.prototype.isColoringContinuous = function() {
     // the bodygrid can have at most one element (NA values)
-    return this.$scaled.is(':checked') && this.bodyGrid.getData().length <= 1;
+    return (this.$scaled.is(':checked') &&
+            this.getSlickGridDataset().length <= 1);
   };
 
   /**
@@ -513,7 +514,7 @@ define([
     var decompViewDict = this.getView();
     if (this.$scaled.is(':checked')) {
       // Get the current SlickGrid data and update with the saved color
-      data = this.bodyGrid.getData();
+      data = this.getSlickGridDataset();
       data[0].value = json.data['Non-numeric values'];
       this.setPlottableAttributes(
         decompViewDict, json.data['Non-numeric values'], data[0].plottables);
