@@ -3,11 +3,11 @@ function(_) {
   /**
    * @class MultiModel
    *
-   * A model object containing metrics merged from multiple underlying
-   * DecompositionModel objects that share the same coordinate space.
+   * The MultiModel wraps a dictionary of DecompositionModel objects and
+   * supplies methods to compute aggregate metrics over all such model objects
    *
-   * The multiModel contains min and max range of all model objects in the
-   * scene, allowing you to draw axes or normalize data for a parallel plot.
+   * This is used to provide the 'global' dimension ranges of the scene, rather
+   * than the 'local' dimension ranges of any individual scatter or biplot.
    */
   function MultiModel(underlyingModelsDict) {
     this.models = underlyingModelsDict;

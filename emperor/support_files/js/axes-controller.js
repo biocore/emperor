@@ -35,8 +35,6 @@ define([
                                decompViewDict);
 
     this.$viewTypeDiv = $('<div name="emperor-viewtype-div"></div>');
-    this.$viewTypeDiv.css('margin', '0 auto');
-    this.$viewTypeDiv.css('width', '100%');
     this.$viewTypeDiv.css({
         'margin': '0 auto',
         'width': '100%',
@@ -44,21 +42,25 @@ define([
     });
     this.$viewTypeDiv.attr('title', 'Change the selected View Type');
 
-    if (UIState['view.viewType'] === 'scatter')
+    if (UIState['view.viewType'] === 'scatter') {
       this.$radioScatter = $('<input type="radio" name="emperor.viewType"' +
         'value="scatter" checked> Scatter </input>');
-    else
+    }
+    else {
       this.$radioScatter = $('<input type="radio" name="emperor.viewType"' +
         'value="scatter"> Scatter </input>');
+    }
 
-    if (UIState['view.viewType'] === 'parallel-plot')
+    if (UIState['view.viewType'] === 'parallel-plot') {
       this.$radioParallelPlot = $(
         '<input type="radio" name="emperor.viewType"' +
         'value="parallel-plot" checked> Parallel Plot </input>');
-    else
+    }
+    else {
       this.$radioParallelPlot = $(
         '<input type="radio" name="emperor.viewType"' +
         'value="parallel-plot"> Parallel Plot </input>');
+    }
 
     this.$viewTypeDiv.append(this.$radioScatter);
     this.$viewTypeDiv.append(this.$radioParallelPlot);
@@ -236,12 +238,12 @@ define([
       this.$table.remove();
     }
 
-    var view = this.getView(), scope = this;
-
     if (UIState['view.viewType'] === 'parallel-plot') {
     // Disables axes choices, not used for parallel-plot.
       return;
     }
+
+    var view = this.getView(), scope = this;
 
     var $table = $('<table></table>'), $row, $td, widgets;
     var names = ['First', 'Second', 'Third'];

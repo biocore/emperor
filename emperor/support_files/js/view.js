@@ -466,6 +466,12 @@ DecompositionView.prototype._fastInitParallelPlot = function()
       geometry.attributes.opacity.setX(attributeIndex, 1);
       attributeIndex++;
 
+      //Because we are drawing all line strips at once using GL_LINES
+      //(which seemed easier than multiple line strip calls)
+      //it is necessary to duplicate the end points of each line.  But the
+      //duplicate points are only necessary for points in the middle of the
+      //line strip: the first point and last point of the strip are added once
+      //all of the points in the middle of the line strip must be duplicated.
       if (j == 0 || j == allDimensions.length - 1)
         continue;
 
@@ -862,9 +868,9 @@ DecompositionView.prototype.setColor = function(color, group) {
     color = new THREE.Color(color);
     var numPoints = (this.decomp.dimensions * 2 - 2);
     group.forEach(function(plottable) {
-    var startIndex = plottable.idx * numPoints;
-    var endIndex = (plottable.idx + 1) * numPoints;
-    for (var i = startIndex; i < endIndex; i++)
+      var startIndex = plottable.idx * numPoints;
+      var endIndex = (plottable.idx + 1) * numPoints;
+      for (var i = startIndex; i < endIndex; i++)
         lines.geometry.attributes.color.setXYZ(i, color.r, color.g, color.b);
     });
     lines.geometry.attributes.color.needsUpdate = true;
@@ -1192,7 +1198,11 @@ DecompositionView.prototype._buildVegaSpec = function() {
   };
 };
 
-
+/**
+ * Called as part of the swap operation to change out objects in the scene,
+ * this function atomically clears the swap flag, clears the old markers,
+ * and returns what the old markers were.
+ */
 DecompositionView.prototype.getAndClearOldMarkers = function() {
   this.needsSwapMarkers = false;
   var oldMarkers = this.oldMarkers;
