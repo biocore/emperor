@@ -653,7 +653,6 @@ requirejs([
       equal(controller.isColoringContinuous(), false);
       equal(controller.$searchBar.val(), '');
       equal(controller.$searchBar.prop('hidden'), false);
-
     });
 
     test('Test getDiscretePaletteColor(map)', function() {
