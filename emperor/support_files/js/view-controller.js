@@ -400,6 +400,7 @@ define([
       }
 
     });
+
     function substringFilter(item, args) {
       var val = scope.$searchBar.val();
       if (!searchString && val &&
