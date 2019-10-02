@@ -96,7 +96,7 @@ class Emperor(object):
         identifiers as the identifiers in ``ordination``.
     ignore_missing_samples: bool, optional
         If set to `True` samples and features without metadata are included by
-        setting all metadata values to: ``This element has not metadata``. By
+        setting all metadata values to: ``This element has no metadata``. By
         default an exception will be raised if missing elements are
         encountered. Note, this flag only takes effect if there's at least one
         overlapping element.
@@ -337,10 +337,9 @@ class Emperor(object):
                           EmperorWarning)
 
             # pad the missing elements
-            data = np.full((len(difference), metadata.shape[1]),
-                           'This element has no metadata', dtype='<U28')
             pad = pd.DataFrame(index=difference, columns=metadata.columns,
-                               data=data)
+                               dtype=str)
+            pad.fillna('This element has no metadata', inplace=True)
             metadata = pd.concat([metadata, pad])
 
         # filter all metadata that we may have for which we don't have any
