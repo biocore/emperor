@@ -12,6 +12,7 @@ define([
    *
    * Alters the scale of points displayed on the screen.
    *
+   * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {Object} decompViewDict This object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
@@ -23,12 +24,12 @@ define([
    * @extends ScalarViewControllerABC
    *
    **/
-  function OpacityViewController(container, decompViewDict) {
+  function OpacityViewController(uiState, container, decompViewDict) {
     var helpmenu = 'Change the opacity of the attributes on the plot';
     var title = 'Opacity';
 
-    ScalarViewControllerABC.call(this, container, title, helpmenu, 0, 1, 0.05,
-                                 decompViewDict);
+    ScalarViewControllerABC.call(this, uiState, container, title, helpmenu,
+                                 0, 1, 0.05, decompViewDict);
     return this;
   }
   OpacityViewController.prototype = Object.create(

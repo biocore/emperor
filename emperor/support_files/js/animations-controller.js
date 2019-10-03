@@ -6,10 +6,9 @@ define([
     'animationdirector',
     'draw',
     'color-editor',
-    'colorviewcontroller',
-    'uistate'
+    'colorviewcontroller'
 ], function($, _, DecompositionView, ViewControllers, AnimationDirector,
-            draw, Color, ColorViewController, UIState) {
+            draw, Color, ColorViewController) {
   var EmperorViewController = ViewControllers.EmperorViewController;
   var drawTrajectoryLineStatic = draw.drawTrajectoryLineStatic;
   var drawTrajectoryLineDynamic = draw.drawTrajectoryLineDynamic;
@@ -24,6 +23,7 @@ define([
    * Controls the axes that are displayed on screen as well as their
    * orientation.
    *
+   * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {Object} decompViewDict This is object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
@@ -34,11 +34,11 @@ define([
    * @constructs AnimationsController
    * @extends EmperorViewController
    */
-  function AnimationsController(container, decompViewDict) {
+  function AnimationsController(uiState, container, decompViewDict) {
     var helpmenu = 'Animate trajectories connecting samples in your data';
     var title = 'Animations';
     var scope = this, dm, label, gradientTooltip, trajectoryTooltip;
-    EmperorViewController.call(this, container, title, helpmenu,
+    EmperorViewController.call(this, uiState, container, title, helpmenu,
                                decompViewDict);
 
     trajectoryTooltip = 'Category to group samples';
@@ -208,7 +208,7 @@ define([
       scope.setEnabled(false);
 
       //Note that we can't do this before the buttons are ready.
-      UIState.registerProperty('view.viewType',
+      scope.UIState.registerProperty('view.viewType',
                                scope._viewTypeChanged.bind(scope));
     });
 
@@ -409,13 +409,13 @@ define([
   AnimationsController.prototype._gradientChanged = function(evt, params) {
     if (this.getGradientCategory() !== '' &&
         this.getTrajectoryCategory() !== '' &&
-        UIState['view.viewType'] === 'scatter') {
+        this.UIState['view.viewType'] === 'scatter') {
       this.setEnabled(true);
       this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
              this.getTrajectoryCategory() === '' ||
-             UIState['view.viewType'] !== 'scatter') {
+             this.UIState['view.viewType'] !== 'scatter') {
       this.setEnabled(false);
     }
   };
@@ -429,13 +429,13 @@ define([
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
     if (this.getGradientCategory() !== '' &&
         this.getTrajectoryCategory() !== '' &&
-        UIState['view.viewType'] === 'scatter') {
+        this.UIState['view.viewType'] === 'scatter') {
       this.setEnabled(true);
       this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
              this.getTrajectoryCategory() === '' ||
-             UIState['view.viewType'] !== 'scatter') {
+             this.UIState['view.viewType'] !== 'scatter') {
       this.setColors({});
       this.setEnabled(false);
     }
@@ -450,13 +450,13 @@ define([
   AnimationsController.prototype._viewTypeChanged = function(evt) {
     if (this.getGradientCategory() !== '' &&
       this.getTrajectoryCategory() !== '' &&
-      UIState['view.viewType'] === 'scatter') {
+      this.UIState['view.viewType'] === 'scatter') {
       this.setEnabled(true);
       this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
              this.getTrajectoryCategory() === '' ||
-             UIState['view.viewType'] !== 'scatter') {
+             this.UIState['view.viewType'] !== 'scatter') {
       this.setEnabled(false);
     }
   };
@@ -609,7 +609,7 @@ define([
       }
     });
 
-    if (UIState['view.viewType'] !== 'parallel-plot') {
+    if (this.UIState['view.viewType'] !== 'parallel-plot') {
       //Construct new dynamic tubes containing necessary
       //interpolated segment for the current frame
       view.dynamicTubes = this.director.trajectories.map(function(trajectory) {

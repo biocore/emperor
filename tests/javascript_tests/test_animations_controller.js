@@ -5,9 +5,10 @@ requirejs([
     'view',
     'viewcontroller',
     'animationscontroller',
-    'multi-model'
+    'multi-model',
+    'uistate'
 ], function($, _, model, DecompositionView, ViewControllers,
-            AnimationsController, MultiModel) {
+            AnimationsController, MultiModel, UIState) {
   $(document).ready(function() {
     var EmperorViewController = ViewControllers.EmperorViewController;
     var DecompositionModel = model.DecompositionModel;
@@ -16,6 +17,7 @@ requirejs([
       setup: function() {
         this.sharedDecompositionViewDict = {};
 
+        var state = new UIState();
         // setup function
         var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
                     coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
@@ -36,12 +38,12 @@ requirejs([
         ['PC.634', '14.7', 'Fast', '20071112']];
         var decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
-        var dv = new DecompositionView(multiModel, 'scatter');
+        var dv = new DecompositionView(multiModel, 'scatter', state);
         this.sharedDecompositionViewDict.scatter = dv;
 
         var container = $('<div id="does-not-exist" style="height:1000px; ' +
                           'width:12px"></div>');
-        this.controller = new AnimationsController(container,
+        this.controller = new AnimationsController(state, container,
           this.sharedDecompositionViewDict);
       },
       teardown: function() {

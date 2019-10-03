@@ -21,6 +21,7 @@ define([
    * color based on metadata, as well as making colorbars if coloring by a
    * numeric metadata category.
    *
+   * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {Object} decompViewDict This is object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
@@ -31,7 +32,7 @@ define([
    * @constructs ColorViewController
    * @extends EmperorAttributeABC
    */
-  function ColorViewController(container, decompViewDict) {
+  function ColorViewController(uiState, container, decompViewDict) {
     var helpmenu = 'Change the colors of the attributes on the plot, such as ' +
       'spheres, vectors and ellipsoids.';
     var title = 'Color';
@@ -171,7 +172,7 @@ define([
       }
     };
 
-    EmperorAttributeABC.call(this, container, title, helpmenu,
+    EmperorAttributeABC.call(this, uiState, container, title, helpmenu,
                              decompViewDict, options);
 
     // the base-class will try to execute the "ready" callback, so we prevent

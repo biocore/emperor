@@ -195,5 +195,5 @@ define(['three', 'underscore'], function(THREE, _) {
   //function.  However, should we choose to support multiple state objects
   //with different responsibilities (perhaps saved to different files?)
   //it might make sense to refactor this class out of this file.
-  return new UIState();
+  return UIState;
 });

@@ -3,9 +3,8 @@ define([
     'underscore',
     'viewcontroller',
     'shape-editor',
-    'shapes',
-    'uistate'
-], function($, _, ViewControllers, Shape, shapes, UIState) {
+    'shapes'
+], function($, _, ViewControllers, Shape, shapes) {
 
   // we only use the base attribute class, no need to get the base class
   var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
@@ -16,6 +15,7 @@ define([
    *
    * Manipulates and displays the shape of objects on screen.
    *
+   * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {Object} decompViewDict This is object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
@@ -28,7 +28,7 @@ define([
    * @constructs ShapeController
    * @extends EmperorAttributeABC
    */
-  function ShapeController(container, decompViewDict) {
+  function ShapeController(uiState, container, decompViewDict) {
     var helpmenu = 'Change the shapes representing groups of data on the plot';
     var title = 'Shape';
 
@@ -80,7 +80,7 @@ define([
       }
     }
 
-    EmperorAttributeABC.call(this, container, title, helpmenu,
+    EmperorAttributeABC.call(this, uiState, container, title, helpmenu,
                              reshapeable, options);
     return this;
   }
@@ -117,7 +117,7 @@ define([
   ShapeController.prototype.setPlottableAttributes =
       function(scope, shape, group) {
 
-    if (UIState['view.viewType'] == 'parallel-plot')
+    if (scope.UIState['view.viewType'] == 'parallel-plot')
       return;
 
     var idx, factor = scope.getGeometryFactor();

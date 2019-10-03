@@ -24,7 +24,8 @@ define([
             ColorViewController, VisibilityController, OpacityViewController,
             ShapeController, AxesController, ScaleViewController,
             AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
-            CanvasRenderer, canvasToBlob, MultiModel, UIState) {
+            CanvasRenderer, canvasToBlob, MultiModel, UIStateInit) {
+
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
 
   TAB_ORDER = ['color', 'visibility', 'opacity', 'scale',
@@ -63,7 +64,13 @@ define([
    *
    */
   function EmperorController(scatter, biplot, divId, webglcanvas) {
-    UIState.setProperty('view.usesPointCloud', scatter.length > 20000);
+
+    /**
+     * The state shared across one instance of the UI
+     * @type {UIState}
+     */
+    this.UIState = new UIStateInit();
+    this.UIState.setProperty('view.usesPointCloud', scatter.length > 20000);
 
     var scope = this;
     /**
@@ -110,10 +117,14 @@ define([
      * @type {object}
      */
     this.decViews = {'scatter':
-                        new DecompositionView(this.decModels, 'scatter')};
+                        new DecompositionView(this.decModels,
+                                              'scatter',
+                                              this.UIState)};
 
     if (biplot) {
-      this.decViews.biplot = new DecompositionView(this.decModels, 'biplot');
+      this.decViews.biplot = new DecompositionView(this.decModels,
+                                                   'biplot',
+                                                   this.UIState);
     }
 
     /**
@@ -311,7 +322,7 @@ define([
       scope.resize(scope.$divId.width(), scope.$divId.height());
     });
 
-    UIState.registerProperty('view.viewType', function(evt) {
+    this.UIState.registerProperty('view.viewType', function(evt) {
       toDisable = ['scale', 'shape', 'animations'];
 
       for (controllerName in scope.controllers) {
@@ -377,7 +388,8 @@ define([
       throw Error('Cannot add another scene plot view');
     }
 
-    var spv = new ScenePlotView3D(this.renderer,
+    var spv = new ScenePlotView3D(this.UIState,
+                                  this.renderer,
                                   this.decViews,
                                   this.decModels,
                                   this.$plotSpace, 0, 0,
@@ -585,7 +597,7 @@ define([
    *
    */
   EmperorController.prototype._buildUI = function() {
-    var scope = this, isLargeDataset = UIState['view.usesPointCloud'];
+    var scope = this, isLargeDataset = this.UIState['view.usesPointCloud'];
 
     for (var index in TAB_ORDER) {
       var item = TAB_ORDER[index];
@@ -636,7 +648,7 @@ define([
             });
           },
           disabled: function(key, opts) {
-            return UIState['view.viewType'] === 'parallel-plot';
+            return scope.UIState['view.viewType'] === 'parallel-plot';
           }
         },
         'labels' : {
@@ -711,7 +723,7 @@ define([
                 },
                 disabled: function(key, opt) {
                   return isLargeDataset ||
-                         (UIState['view.viewType'] === 'parallel-plot');
+                         (scope.UIState['view.viewType'] === 'parallel-plot');
                 }
               }
             }
@@ -720,7 +732,7 @@ define([
           name: 'Experimental',
           disabled: function(key, opt) {
             // Only enable if this is a "vanilla" plot
-            if (UIState['view.viewType'] === 'scatter' &&
+            if (scope.UIState['view.viewType'] === 'scatter' &&
                 scope.decViews.scatter.lines.left === null &&
                 scope.decViews.scatter.lines.right === null &&
                 scope.decViews.biplot === undefined) {
@@ -776,8 +788,8 @@ define([
 
       // Point clouds can't be rendered by the CanvasRenderer, therefore we
       // have to use the WebGLRenderer and can't increase the image size.
-      if (UIState['view.usesPointCloud'] ||
-          UIState['view.viewType'] === 'parallel-plot') {
+      if (this.UIState['view.usesPointCloud'] ||
+          this.UIState['view.viewType'] === 'parallel-plot') {
         pngRenderer = this.sceneViews[0].renderer;
       }
       else {
@@ -989,7 +1001,7 @@ define([
 
     // dynamically instantiate the controller, see:
     // http://stackoverflow.com/a/8843181
-    var params = [null, '#' + id, dvdict];
+    var params = [null, this.UIState, '#' + id, dvdict];
     var obj = new (Function.prototype.bind.apply(viewConstructor, params));
 
     obj.ready = function() {

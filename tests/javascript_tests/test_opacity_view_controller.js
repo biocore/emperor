@@ -6,9 +6,10 @@ requirejs([
     'view',
     'viewcontroller',
     'opacityviewcontroller',
-    'multi-model'
+    'multi-model',
+    'uistate'
 ], function($, _, THREE, model, DecompositionView, viewcontroller,
-            OpacityViewController, MultiModel) {
+            OpacityViewController, MultiModel, UIState) {
   $(document).ready(function() {
     var ScalarViewControllerABC = viewcontroller.ScalarViewControllerABC;
     var DecompositionModel = model.DecompositionModel;
@@ -17,6 +18,8 @@ requirejs([
     module('OpacityViewController', {
       setup: function() {
         this.sharedDecompositionViewDict = {};
+
+        var UIState1 = new UIState();
 
         // setup function
         var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
@@ -38,7 +41,7 @@ requirejs([
         ['PC.634', '14.7', 'Fast', '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
-        var dv = new DecompositionView(multiModel, 'scatter');
+        var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -55,7 +58,7 @@ requirejs([
         ['tax_2', '0']];
         this.decomp = new DecompositionModel(data, md_headers, metadata);
         this.multiModel = new MultiModel({'scatter': this.decomp});
-        this.dv = new DecompositionView(this.multiModel, 'scatter');
+        this.dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = dv;
       },
       teardown: function() {
@@ -72,7 +75,7 @@ requirejs([
       assert.ok(OpacityViewController.prototype instanceof
                 ScalarViewControllerABC);
 
-      var controller = new OpacityViewController(container,
+      var controller = new OpacityViewController(new UIState(), container,
         this.sharedDecompositionViewDict);
 
       controller.setMetadataField('SampleID');
@@ -113,7 +116,7 @@ requirejs([
     test('Testing toJSON', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new OpacityViewController(
+      var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       controller.setMetadataField('SampleID');
 
@@ -129,7 +132,7 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new OpacityViewController(
+      var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
@@ -148,7 +151,7 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new OpacityViewController(
+      var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
@@ -163,7 +166,7 @@ requirejs([
     test('Testing toJSON (null)', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new OpacityViewController(
+      var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       controller.setMetadataField(null);
 
@@ -179,7 +182,7 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new OpacityViewController(
+      var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
@@ -194,7 +197,7 @@ requirejs([
     test('Testing getScale', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new OpacityViewController(
+      var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       var data = ['1.0', 'no', 'false', 'something', '2.0'];
 

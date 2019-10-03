@@ -2,9 +2,8 @@ define([
     'three',
     'orbitcontrols',
     'draw',
-    'underscore',
-    'uistate'
-], function(THREE, OrbitControls, draw, _, UIState) {
+    'underscore'
+], function(THREE, OrbitControls, draw, _) {
   /** @private */
   var makeLine = draw.makeLine;
   /** @private */
@@ -16,6 +15,7 @@ define([
    *
    * Represents a three dimensional scene in THREE.js.
    *
+   * @param {UIState} uiState shared UIState state object
    * @param {THREE.renderer} renderer THREE renderer object.
    * @param {Object} decViews dictionary of DecompositionViews shown in this
    * scene
@@ -32,10 +32,12 @@ define([
    * @return {ScenePlotView3D} An instance of ScenePlotView3D.
    * @constructs ScenePlotView3D
    */
-  function ScenePlotView3D(renderer, decViews, decModels, container,
+  function ScenePlotView3D(uiState, renderer, decViews, decModels, container,
                            xView, yView,
                            width, height) {
     var scope = this;
+
+    this.UIState = uiState;
 
     // convert to jquery object for consistency with the rest of the objects
     var $container = $(container);
@@ -125,7 +127,7 @@ define([
                                                      $container.get(0));
 
     //Swap the camera whenever the view type changes
-    UIState.registerProperty('view.viewType', function(evt) {
+    this.UIState.registerProperty('view.viewType', function(evt) {
       if (evt.newVal === 'parallel-plot') {
         scope.camera = scope.parallelCam;
         scope.control = scope.parallelController;
@@ -277,6 +279,28 @@ define([
       copyToClipboard(n);
       showText('(copied to clipboard) ' + n, i);
     });
+
+    // if a decomposition uses a point cloud, or
+    // if a decomposition uses a parallel plot,
+    // update the default raycasting tolerance as
+    // it is otherwise too large and error-prone
+    var scope = this;
+    var updateRaycasterLinePrecision = function(evt) {
+      if (scope.UIState.getProperty('view.viewType') === 'parallel-plot')
+        scope._raycaster.linePrecision = 0.01;
+      else
+        scope._raycaster.linePrecision = 1;
+    };
+    var updateRaycasterPointPrecision = function(evt) {
+      if (scope.UIState.getProperty('view.usesPointCloud'))
+        scope._raycaster.params.Points.threshold = 0.01;
+      else
+        scope._raycaster.params.Points.threshold = 1;
+    };
+    this.UIState.registerProperty('view.usesPointCloud',
+                             updateRaycasterPointPrecision);
+    this.UIState.registerProperty('view.viewType',
+                             updateRaycasterLinePrecision);
   };
 
   /**
@@ -370,27 +394,6 @@ define([
       }
     }
 
-    // if a decomposition uses a point cloud, or
-    // if a decomposition uses a parallel plot,
-    // update the default tolerance as
-    // it is otherwise too large and error-prone
-    var scope = this;
-    var updateRaycasterLinePrecision = function(evt) {
-      if (UIState.getProperty('view.viewType') === 'parallel-plot')
-        scope._raycaster.linePrecision = 0.01;
-      else
-        scope._raycaster.linePrecision = 1;
-    };
-    var updateRaycasterPointPrecision = function(evt) {
-      if (UIState.getProperty('view.usesPointCloud'))
-        scope._raycaster.params.Points.threshold = 0.01;
-      else
-        scope._raycaster.params.Points.threshold = 1;
-    };
-    UIState.registerProperty('view.usesPointCloud',
-                             updateRaycasterPointPrecision);
-    UIState.registerProperty('view.viewType', updateRaycasterLinePrecision);
-
     this.needsUpdate = true;
   };
 
@@ -426,7 +429,7 @@ define([
 
     this.decModels._unionRanges();
 
-    if (UIState['view.viewType'] === 'scatter')
+    if (this.UIState['view.viewType'] === 'scatter')
     {
       // shortcut to the index of the visible dimension and the range object
       var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
@@ -542,13 +545,13 @@ define([
       text = decomp.axesLabels[index];
       axisLabel = makeLabel(end, text, color);
 
-      if (UIState['view.viewType'] === 'scatter') {
+      if (scope.UIState['view.viewType'] === 'scatter') {
         //Scatter has a 1 to 1 aspect ratio and labels in world size
         axisLabel.scale.set(axisLabel.scale.x * scaling,
                             axisLabel.scale.y * scaling,
                             1);
       }
-      else if (UIState['view.viewType'] === 'parallel-plot') {
+      else if (scope.UIState['view.viewType'] === 'parallel-plot') {
         //Parallel plot aspect ratio depends on number of dimensions
         //We have to correct label size to account for this.
         //But we also have to fix label width so that it fits between
@@ -657,7 +660,7 @@ define([
    *
    */
   ScenePlotView3D.prototype.updateCameraAspectRatio = function() {
-    if (UIState['view.viewType'] === 'scatter')
+    if (this.UIState['view.viewType'] === 'scatter')
     {
       var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
 
@@ -681,7 +684,7 @@ define([
       this.camera.aspect = aspect;
       this.camera.updateProjectionMatrix();
     }
-    else if (UIState['view.viewType'] === 'parallel-plot')
+    else if (this.UIState['view.viewType'] === 'parallel-plot')
     {
       var w = this.decModels.dimensionRanges.max.length;
       this.camera.left = 0;
@@ -700,7 +703,7 @@ define([
    * reasonable for the data.
    */
   ScenePlotView3D.prototype.updateCameraTarget = function() {
-    if (UIState['view.viewType'] === 'scatter')
+    if (this.UIState['view.viewType'] === 'scatter')
     {
       var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
 
@@ -725,7 +728,7 @@ define([
 
       this.needsUpdate = true;
     }
-    else if (UIState['view.viewType'] === 'parallel-plot') {
+    else if (this.UIState['view.viewType'] === 'parallel-plot') {
       this.control.target.set(0, 0, 1); //Must set positive Z because near > 0
       this.camera.position.set(0, 0, 1); //Must set positive Z because near > 0
       this.camera.updateProjectionMatrix();
@@ -769,13 +772,13 @@ define([
         var lines = view.lines;
         var ellipsoids = view.ellipsoids;
 
-        if (UIState['view.viewType'] == 'parallel-plot') {
+        if (scope.UIState['view.viewType'] == 'parallel-plot') {
           for (i = 0; i < lines.length; i++)
             scope.scene.remove(lines[i]);
           for (i = 0; i < ellipsoids.length; i++)
             scope.scene.remove(ellipsoids[i]);
         }
-        if (UIState['view.viewType'] == 'scatter') {
+        if (scope.UIState['view.viewType'] == 'scatter') {
           for (i = 0; i < lines.length; i++)
             scope.scene.add(lines[i]);
           for (i = 0; i < ellipsoids.length; i++)
@@ -878,7 +881,7 @@ define([
     // Only scatter plots that are not using a point cloud should be pointed
     // towards the camera. For arrow types and point clouds doing this will
     // results in odd visual effects
-    if (!UIState.getProperty('view.usesPointCloud') &&
+    if (!this.UIState.getProperty('view.usesPointCloud') &&
         this.decViews.scatter.decomp.isScatterType()) {
       _.each(this.decViews.scatter.markers, function(element) {
         element.quaternion.copy(camera.quaternion);
@@ -936,7 +939,7 @@ define([
       if (firstObj.isPoints || firstObj.isLineSegments) {
         var meshIndex = intersects[0].index;
         var modelIndex = this.decViews.scatter.getModelPointIndex(meshIndex,
-                                                  UIState['view.viewType']);
+                                                this.UIState['view.viewType']);
 
         intersect = this.decViews.scatter.decomp.plottable[modelIndex];
       }

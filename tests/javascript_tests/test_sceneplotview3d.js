@@ -7,14 +7,17 @@ requirejs([
     'three',
     'svgrenderer',
     'orbitcontrols',
-    'multi-model'
+    'multi-model',
+    'uistate'
 ], function($, _, model, DecompositionView, ScenePlotView3D, THREE,
-            SVGRenderer, OrbitControls, MultiModel) {
+            SVGRenderer, OrbitControls, MultiModel, UIState) {
   var DecompositionModel = model.DecompositionModel;
   $(document).ready(function() {
     module('ScenePlotView3D', {
 
       setup: function() {
+
+        this.UIState1 = new UIState();
         // global variable shared
         this.sharedDecompositionViewDict = {};
 
@@ -57,10 +60,14 @@ requirejs([
         this.multiModel = new MultiModel({'scatter': decomp,
                                           'biplot': decomp2});
 
-        var dv = new DecompositionView(this.multiModel, 'scatter');
+        var dv = new DecompositionView(this.multiModel,
+                                       'scatter',
+                                       this.UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
 
-        var dv2 = new DecompositionView(this.multiModel, 'biplot');
+        var dv2 = new DecompositionView(this.multiModel,
+                                        'biplot',
+                                        this.UIState1);
         this.sharedDecompositionViewDict.biplot = dv2;
       },
 
@@ -85,7 +92,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // assert proper initializations for the attributes, we won't check their
@@ -141,7 +149,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
       spv.needsUpdate = false;
       spv.decViews.scatter.needsUpdate = false;
@@ -163,7 +172,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
       spv.needsUpdate = false;
 
@@ -178,7 +188,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
       spv.needsUpdate = false;
 
@@ -193,7 +204,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
       spv.needsUpdate = false;
 
@@ -208,7 +220,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // color the axis lines
@@ -231,7 +244,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       spv.removeAxes();
@@ -262,7 +276,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // color the axis lines
@@ -283,7 +298,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // remove the axis lines
@@ -305,7 +321,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // color the axis lines
@@ -338,7 +355,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // color the axis lines
@@ -357,7 +375,8 @@ requirejs([
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // remove the axis lines
@@ -376,7 +395,8 @@ requirejs([
 
     test('Test getScalingConstant', function(assert) {
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       assert.equal(spv.getScalingConstant(), 0.000762339);
@@ -393,7 +413,8 @@ requirejs([
     test('Test updateCameraAspectRatio', function() {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // same width and height
@@ -424,7 +445,8 @@ requirejs([
     test('Test addDecompositionsToScene', function() {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       equal(spv.scene.children.length, 12);
@@ -443,7 +465,8 @@ requirejs([
     test('Test addDecompositionsToScene new objects', function() {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       equal(spv.scene.children.length, 12);
@@ -464,7 +487,7 @@ requirejs([
 
       decomp = new DecompositionModel(data, md_headers, metadata, 'arrow');
       multiModel = new MultiModel({'scatter': decomp});
-      dv = new DecompositionView(multiModel, 'scatter');
+      dv = new DecompositionView(multiModel, 'scatter', new UIState());
 
       // the label is not scaled upon creation
       deepEqual(dv.markers[0].label.scale.toArray(), [128, 32, 1]);
@@ -493,7 +516,8 @@ requirejs([
     test('Test resize', function() {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
       spv.resize(11, 11, 200, 300);
 
@@ -525,7 +549,8 @@ requirejs([
     test('Test render', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // Couldn't really find a way to properly test the render method as the
@@ -548,7 +573,8 @@ requirejs([
      */
     test('Test off exceptions', function() {
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // check this happens for all the properties
@@ -569,7 +595,8 @@ requirejs([
      */
     test('Test on exceptions', function() {
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // check this happens for all the properties
@@ -611,7 +638,8 @@ requirejs([
       expect(2);
 
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       spv.on('click', function(a, b) {
@@ -647,7 +675,8 @@ requirejs([
       expect(2);
 
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       spv.on('dblclick', function(a, b) {
@@ -680,7 +709,8 @@ requirejs([
      */
     test('Check removal and addition of subscribers', function() {
       var renderer = new THREE.SVGRenderer({antialias: true});
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       var a = function() {
@@ -711,7 +741,8 @@ requirejs([
     test('Test recenterCamera', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true}), max;
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
 
       // should be the center of the scene
@@ -741,7 +772,8 @@ requirejs([
     test('Test updateCameraTarget', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true}), max;
-      var spv = new ScenePlotView3D(renderer, this.sharedDecompositionViewDict,
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
                                     this.multiModel, 'fooligans', 0, 0, 20, 20);
       spv.visibleDimensions = [1, 2, 3];
       spv.updateCameraTarget();
@@ -782,10 +814,10 @@ requirejs([
       ];
       var decomp = new DecompositionModel(data, md_headers, metadata);
       var multiModel = new MultiModel({'scatter': decomp});
-      var dv = new DecompositionView(multiModel, 'scatter');
+      var dv = new DecompositionView(multiModel, 'scatter', new UIState());
 
       var renderer = new THREE.SVGRenderer({antialias: true}), max;
-      var spv = new ScenePlotView3D(renderer, {'scatter': dv},
+      var spv = new ScenePlotView3D(new UIState(), renderer, {'scatter': dv},
                                     multiModel, 'fooligans', 0, 0, 20, 20);
 
       // do a checkup of the general attributes

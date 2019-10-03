@@ -8,9 +8,10 @@ requirejs([
     'shapecontroller',
     'shape-editor',
     'shapes',
-    'multi-model'
+    'multi-model',
+    'uistate'
 ], function($, _, model, DecompositionView, viewcontroller, THREE,
-            ShapeController, ShapeEditor, shapes, MultiModel) {
+            ShapeController, ShapeEditor, shapes, MultiModel, UIState) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var DecompositionModel = model.DecompositionModel;
@@ -22,6 +23,7 @@ requirejs([
                                 'Ring', 'Square', 'Icosahedron', 'Star'];
         this.sharedDecompositionViewDict = {};
 
+        var UIState1 = new UIState();
         // setup function
         var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635'],
                     coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
@@ -41,7 +43,7 @@ requirejs([
 
         decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
-        var dv = new DecompositionView(multiModel, 'scatter');
+        var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -58,12 +60,12 @@ requirejs([
         this.decomp = new DecompositionModel(data, md_headers, metadata,
                                              'arrow');
         this.multiModel = new MultiModel({'scatter': this.decomp});
-        this.dv = new DecompositionView(this.multiModel, 'scatter');
+        this.dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = this.dv;
 
         var container = $('<div id="does-not-exist" style="height:11px; ' +
                           'width:12px"></div>');
-        this.controller = new ShapeController(
+        this.controller = new ShapeController(UIState1,
           container, this.sharedDecompositionViewDict);
       },
 

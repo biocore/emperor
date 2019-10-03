@@ -10,6 +10,7 @@ define([
    *
    * Alters the scale of points displayed on the screen.
    *
+   * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {Object} decompViewDict This object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
@@ -23,7 +24,7 @@ define([
    * @extends ScalarViewControllerABC
    *
    **/
-  function ScaleViewController(container, decompViewDict) {
+  function ScaleViewController(uiState, container, decompViewDict) {
     var helpmenu = 'Change the size of the attributes on the plot, allowing ' +
                    'highlighting of points using size.';
     var title = 'Scale';
@@ -36,8 +37,8 @@ define([
       }
     }
 
-    ScalarViewControllerABC.call(this, container, title, helpmenu, 0, 5, 0.1,
-                                 scalable);
+    ScalarViewControllerABC.call(this, uiState, container, title, helpmenu,
+                                 0, 5, 0.1, scalable);
     return this;
   }
   ScaleViewController.prototype = Object.create(

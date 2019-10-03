@@ -6,9 +6,10 @@ requirejs([
     'abcviewcontroller',
     'viewcontroller',
     'slickgrid',
-    'multi-model'
+    'multi-model',
+    'uistate'
 ], function($, _, model, DecompositionView, abc, viewcontroller,
-            SlickGrid, MultiModel) {
+            SlickGrid, MultiModel, UIState) {
   var EmperorViewControllerABC = abc.EmperorViewControllerABC;
   var EmperorViewController = viewcontroller.EmperorViewController;
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
@@ -28,7 +29,8 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
+      var controller = new EmperorViewControllerABC(new UIState(), container,
+                                                    'foo', 'bar');
 
       equal(controller.title, 'foo', 'Check the title is correctly set');
       equal(controller.description, 'bar',
@@ -62,7 +64,8 @@ requirejs([
     test('Test the enabled method works', function() {
 
       var container = $('<div id="does-not-exist"></div>');
-      var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
+      var controller = new EmperorViewControllerABC(new UIState(), container,
+                                                    'foo', 'bar');
 
       equal(controller.enabled, true);
       controller.setEnabled(false);
@@ -81,7 +84,8 @@ requirejs([
     test('Test the setActive method works', function() {
 
       var container = $('<div id="does-not-exist"></div>');
-      var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
+      var controller = new EmperorViewControllerABC(new UIState(), container,
+                                                    'foo', 'bar');
 
       equal(controller.active, false);
       controller.setActive(true);
@@ -100,7 +104,8 @@ requirejs([
     test('Test the resize method', function() {
 
       var container = $('<div id="does-not-exist"></div>');
-      var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
+      var controller = new EmperorViewControllerABC(new UIState(), container,
+                                                    'foo', 'bar');
 
       // header of size 0
       controller.resize(20, 10);
@@ -126,7 +131,8 @@ requirejs([
     test('Test resize, toJSON and fromJSON methods', function() {
 
       var container = $('<div id="does-not-exist"></div>');
-      var controller = new EmperorViewControllerABC(container, 'foo', 'bar');
+      var controller = new EmperorViewControllerABC(new UIState(), container,
+                                                    'foo', 'bar');
 
       throws(function() {
         controller.fromJSON('{foo:11}');
@@ -142,6 +148,8 @@ requirejs([
       setup: function() {
         this.sharedDecompositionViewDict = {};
 
+        var UIState1 = new UIState();
+        this.UIState1 = UIState1;
         // setup function
         var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635'],
                     coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
@@ -160,7 +168,7 @@ requirejs([
                          '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
-        var dv = new DecompositionView(multiModel, 'scatter');
+        var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.pcoa = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -176,7 +184,7 @@ requirejs([
         metadata = [['tax_1', '1'], ['tax_2', '0']];
         decomp = new DecompositionModel(data, md_headers, metadata);
         multiModel = new MultiModel({'scatter': decomp});
-        dv = new DecompositionView(multiModel, 'scatter');
+        dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = dv;
         this.decomp = decomp;
         this.multiModel = new MultiModel({'scatter': this.decomp});
@@ -200,16 +208,16 @@ requirejs([
       // verify the subclassing was set properly
       assert.ok(EmperorViewController.prototype instanceof
                 EmperorViewControllerABC);
-      var attr = new EmperorViewController(container, 'foo', 'bar',
-          this.sharedDecompositionViewDict);
+      var attr = new EmperorViewController(this.UIState1, container,
+          'foo', 'bar', this.sharedDecompositionViewDict);
       deepEqual(_.keys(attr.decompViewDict), ['pcoa', 'biplot']);
     });
 
     test('Test hasMetadataField', function(assert) {
       var container = $('<div id="does-not-exist"></div>');
 
-      var controller = new EmperorViewController(container, 'foo', 'bar',
-          this.sharedDecompositionViewDict);
+      var controller = new EmperorViewController(this.UIState1, container,
+          'foo', 'bar', this.sharedDecompositionViewDict);
 
       equal(controller.hasMetadataField('DOB'), true);
       equal(controller.hasMetadataField('PLEL'), false);
@@ -221,17 +229,17 @@ requirejs([
      *
      */
     test('Constructor test exceptions', function(assert) {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var dv = new DecompositionView(this.multiModel, 'scatter', new UIState());
 
       throws(function() {
-        new EmperorViewController(container, 'foo', 'bar',
+        new EmperorViewController(new UIState(), container, 'foo', 'bar',
             {1: 1, 2: 2}, {});
 
       }, Error, 'The decomposition view dictionary ' +
       'can only have decomposition views');
 
       throws(function() {
-        new EmperorViewController(container, 'foo', 'bar',
+        new EmperorViewController(new UIState(), container, 'foo', 'bar',
             {}, {});
       }, Error, 'The decomposition view dictionary cannot be empty');
     });
@@ -242,9 +250,10 @@ requirejs([
      *
      */
     test('Test getView', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorViewController(container, 'foo', 'bar',
+      var attr = new EmperorViewController(state, container, 'foo', 'bar',
                                            {'scatter': dv});
       deepEqual(attr.getView(), dv);
     });
@@ -255,6 +264,8 @@ requirejs([
         this.sharedDecompositionViewDict = {};
         var $slickid = $('<div id="fooligans"></div>');
         $slickid.appendTo(document.body);
+
+        var UIState1 = new UIState();
 
         // setup function
         var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635'],
@@ -275,7 +286,7 @@ requirejs([
 
         decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
-        var dv = new DecompositionView(multiModel, 'scatter');
+        var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.pcoa = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -291,7 +302,7 @@ requirejs([
         metadata = [['tax_1', '1'], ['tax_2', '0']];
         decomp = new DecompositionModel(data, md_headers, metadata);
         multiModel = new MultiModel({'scatter': decomp});
-        dv = new DecompositionView(multiModel, 'scatter');
+        dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = dv;
 
         // Slickgrid
@@ -327,13 +338,14 @@ requirejs([
      *
      */
     test('Constructor tests', function(assert) {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
 
       // verify the subclassing was set properly
       assert.ok(EmperorAttributeABC.prototype instanceof
                 EmperorViewController);
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
           this.sharedDecompositionViewDict, {});
 
 
@@ -354,7 +366,7 @@ requirejs([
       options.slickGridColumn = {id: 'title', name: 'spam', field: 'test',
         sortable: false, maxWidth: 10, minWidth: 10};
       var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(new UIState(), container, 'foo', 'bar',
           this.sharedDecompositionViewDict,
           options);
 
@@ -373,12 +385,13 @@ requirejs([
      *
      */
     asyncTest('Test resize', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist" style="height:20px; ' +
                         'width:21px"></div>');
 
       // verify the subclassing was set properly
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
           this.sharedDecompositionViewDict, {});
 
       $(function() {
@@ -393,17 +406,19 @@ requirejs([
 
 
     test('Test decompositionName method', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, {});
       equal(attr.decompositionName(), 'scatter');
     });
 
     test('Test getView method', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, {});
       deepEqual(attr.getView(), dv);
     });
@@ -414,9 +429,10 @@ requirejs([
      *
      */
     test('Test getMetadataField', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, {});
       equal(attr.getMetadataField(), 'Gram');
     });
@@ -427,9 +443,10 @@ requirejs([
      *
      */
     test('Test setMetadataField', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, {});
       attr.setMetadataField('SampleID');
       equal(attr.getMetadataField(), 'SampleID');
@@ -444,9 +461,10 @@ requirejs([
      *
      */
     test('Test setMetadataField exceptions', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
           {'scatter': dv}, {});
       throws(function() {
               attr.setMetadataField('cheese');
@@ -460,9 +478,10 @@ requirejs([
      *
      */
     asyncTest('Test setSlickGridDataset', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
           {'scatter': dv, 'biplot': dv}, {});
 
       $(function() {
@@ -482,11 +501,12 @@ requirejs([
      *
      */
     asyncTest('Test refreshMetadata', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
       var shared = {'scatter': this.sharedDecompositionViewDict.pcoa};
       var scope = this;
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          shared, {});
 
       $(function() {
@@ -510,9 +530,10 @@ requirejs([
      *
      */
     asyncTest('Test setEnabled (false)', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, {});
       $(function() {
         // disable
@@ -539,9 +560,10 @@ requirejs([
      *
      */
     asyncTest('Test setEnabled (true)', function() {
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var state = new UIState();
+      var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, {});
       $(function() {
         // Controllers should be enabled
@@ -565,6 +587,7 @@ requirejs([
      *
      */
     asyncTest('Test large dataset', function() {
+      var state = new UIState();
       var coords = [], metadata = [];
       for (var i = 0; i < 1001; i++) {
         coords.push([Math.random(), Math.random(), Math.random(),
@@ -578,11 +601,11 @@ requirejs([
       var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
                                      metadata);
       var mm = new MultiModel({'scatter': d});
-      var dv = new DecompositionView(mm, 'scatter');
+      var dv = new DecompositionView(mm, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
       // create a dummy category selection callback
       var options = {'categorySelectionCallback': function() {}};
-      var attr = new EmperorAttributeABC(container, 'foo', 'bar',
+      var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, options);
       $(function() {
         // Controllers should be enabled

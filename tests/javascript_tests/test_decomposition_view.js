@@ -6,7 +6,7 @@ requirejs([
     'multi-model',
     'uistate',
     'three'
-], function($, _, model, DecompositionView, MultiModel, UIState, THREE) {
+], function($, _, model, DecompositionView, MultiModel, UIState, THREE,) {
   $(document).ready(function() {
     var DecompositionModel = model.DecompositionModel;
 
@@ -75,8 +75,6 @@ requirejs([
         // teardown function
         this.decomp = null;
         this.expected = null;
-        //TODO FIXME HACK:  Agghhh, need a separate ui state per test!!
-        UIState.setProperty('view.usesPointCloud', false);
       }
     });
 
@@ -87,8 +85,10 @@ requirejs([
      */
     test('Test constructor', function() {
       var obs;
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
       deepEqual(dv.decomp, this.expected, 'decomp set correctly');
       equal(dv.count, 2, 'count set correctly');
@@ -147,8 +147,9 @@ requirejs([
       var mm = new MultiModel({'scatter': decomp});
       var obs;
 
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(mm, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(mm, 'scatter', UIState1);
 
       equal(dv.count, 2, 'count set correctly');
       equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
@@ -171,8 +172,9 @@ requirejs([
       // this test is pretty much the same as above except for arrow types
       this.decomp.type = 'arrow';
 
-      UIState.setProperty('view.usesPointCloud', false);
-      var view = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var view = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
       this.expected.type = 'arrow';
       deepEqual(view.decomp, this.expected);
@@ -213,8 +215,11 @@ requirejs([
 
     test('Test constructor (with edges)', function(assert) {
       // this test is pretty much the same as above except checking for edges
-      UIState.setProperty('view.usesPointCloud', false);
-      var view = new DecompositionView(this.multiModelWithEdges, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var view = new DecompositionView(this.multiModelWithEdges,
+                                       'scatter',
+                                       UIState1);
 
       deepEqual(view.decomp, this.expectedWithEdges);
       equal(view.count, 2);
@@ -243,8 +248,9 @@ requirejs([
     test('Test constructor fails (biplot in fast mode)', function() {
       this.decomp.type = 'arrow';
       throws(function() {
+        var UIState1 = new UIState();
         UIState.setProperty('view.usesPointCloud', true);
-        var dv = new DecompositionView(this.multiModel, 'scatter');
+        var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       }, Error, 'Biplots are not supported in fast mode');
     });
 
@@ -271,14 +277,16 @@ requirejs([
       this.decomp = new DecompositionModel(data, md_headers, metadata);
       var multiModel = new MultiModel({'scatter': this.decomp});
       throws(function() {
-        UIState.setProperty('view.usesPointCloud', true);
-        var dv = new DecompositionView(multiModel, 'scatter');
+        var UIState1 = new UIState();
+        UIState1.setProperty('view.usesPointCloud', true);
+        var dv = new DecompositionView(multiModel, 'scatter', UIState1);
       }, Error, 'Jaccknifed plots are not supported in fast mode');
     });
 
     test('Test getGeometryFactor', function() {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
       equal(dv.getGeometryFactor(), 0.000466572);
     });
@@ -289,8 +297,9 @@ requirejs([
      *
      */
     test('Test getVisibleCount', function() {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       dv.markers[0].visible = false;
       equal(dv.getVisibleCount(), 1);
       dv.markers[1].visible = false;
@@ -306,8 +315,9 @@ requirejs([
      *
      */
     test('Test changeVisibleDimensions', function() {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       dv.changeVisibleDimensions([2, 3, 4]);
       obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
@@ -329,8 +339,11 @@ requirejs([
      *
      */
     test('Test changeVisibleDimensions with edges', function() {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModelWithEdges, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModelWithEdges,
+                                     'scatter',
+                                     UIState1);
       dv.changeVisibleDimensions([2, 3, 4]);
 
       obs = [dv.markers[0].position.x, dv.markers[0].position.y,
@@ -358,8 +371,9 @@ requirejs([
     });
 
     test('Test changeVisibleDimensions (2D)', function() {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       dv.changeVisibleDimensions([2, 3, null]);
       obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
@@ -384,8 +398,11 @@ requirejs([
     test('Test changeVisibleDimensions excepts', function() {
       throws(
           function() {
-            UIState.setProperty('view.usesPointCloud', false);
-            var dv = new DecompositionView(this.multiModel, 'scatter');
+            var UIState1 = new UIState();
+            UIState1.setProperty('view.usesPointCloud', false);
+            var dv = new DecompositionView(this.multiModel,
+                                           'scatter',
+                                           UIState1);
             dv.changeVisibleDimensions([2, 3, 4, 5]);
           },
           Error,
@@ -399,8 +416,9 @@ requirejs([
      *
      */
     test('Test change flip axes', function(assert) {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
       // copy the arrays
       expa = _.clone(dv.markers[0].position.toArray());
@@ -438,8 +456,9 @@ requirejs([
     });
 
     test('Test change flip axes (2D)', function(assert) {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
       var expa = [-0.276542, 0.144964, 0], expb = [-0.237661, -0.046053, 0];
 
@@ -462,8 +481,9 @@ requirejs([
     });
 
     test('Test toggling label visibility errors', function(assert) {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
       throws(
         function() {
@@ -475,8 +495,9 @@ requirejs([
 
     test('Test toggling label visibility', function(assert) {
       this.decomp.type = 'arrow';
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       assert.equal(dv.markers[0].label.visible, true);
       assert.equal(dv.markers[1].label.visible, true);
 
@@ -498,8 +519,9 @@ requirejs([
      */
     test('Test changing the orientations and then flipping a dimension',
          function() {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
       deepEqual(dv.axesOrientation, [1, 1, 1]);
 
@@ -528,8 +550,11 @@ requirejs([
     });
 
     test('Test showEdgesForPlottables', function() {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModelWithEdges, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModelWithEdges,
+                                     'scatter',
+                                     UIState1);
 
       dv.hideEdgesForPlottables();
 
@@ -554,8 +579,11 @@ requirejs([
     });
 
     test('Test hideEdgesForPlottables', function() {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModelWithEdges, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModelWithEdges,
+                                     'scatter',
+                                     UIState1);
 
       dv.hideEdgesForPlottables();
 
@@ -571,10 +599,10 @@ requirejs([
     });
 
     test('Test setters for attributes (scatter plot)', function() {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter'), plottables;
-
-      plottables = [this.decomp.plottable[1]];
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
+      var plottables = [this.decomp.plottable[1]];
 
       // color
       dv.setColor(0x0f0f0f);
@@ -621,8 +649,11 @@ requirejs([
     });
 
     test('Test setters for attributes (scatter plot with edges)', function() {
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModelWithEdges, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false, UIState1);
+      var dv = new DecompositionView(this.multiModelWithEdges,
+                                     'scatter',
+                                     UIState1);
 
       plottables = [this.decomp.plottable[1]];
 
@@ -678,10 +709,10 @@ requirejs([
 
     test('Test setters for attribures (biplot)', function(assert) {
       this.decomp.type = 'arrow';
-      UIState.setProperty('view.usesPointCloud', false);
-      var dv = new DecompositionView(this.multiModel, 'scatter'), plottables;
-
-      plottables = [this.decomp.plottable[1]];
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
+      var plottables = [this.decomp.plottable[1]];
 
       // color
       dv.setColor(0x0f0f0f);
@@ -746,8 +777,9 @@ requirejs([
     });
 
     test('Test setters for attributes (using point cloud)', function(assert) {
-      UIState.setProperty('view.usesPointCloud', true);
-      var dv = new DecompositionView(this.multiModel, 'scatter');
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', true);
+      var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       var plottables;
       var observed;
 

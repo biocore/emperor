@@ -5,10 +5,9 @@ define([
     'viewcontroller',
     'd3',
     'contextmenu',
-    'filesaver',
-    'uistate'
+    'filesaver'
 ], function($, _, DecompositionView, ViewControllers, d3, contextmenu,
-            FileSaver, UIState) {
+            FileSaver) {
   var EmperorViewController = ViewControllers.EmperorViewController;
 
   /**
@@ -17,6 +16,7 @@ define([
    * Controls the axes that are displayed on screen as well as their
    * orientation.
    *
+   * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {Object} decompViewDict This is object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
@@ -25,13 +25,14 @@ define([
    *
    * @return {AxesController}
    * @constructs AxesController
-   * @extends EmperorViewControllerABC
+   * @extends EmperorViewController
    */
-  function AxesController(container, decompViewDict) {
+  function AxesController(uiState, container, decompViewDict) {
     var helpmenu = 'Change the visible dimensions of the data';
     var title = 'Axes';
     var scope = this;
-    EmperorViewController.call(this, container, title, helpmenu,
+
+    EmperorViewController.call(this, uiState, container, title, helpmenu,
                                decompViewDict);
 
     this.$viewTypeDiv = $('<div name="emperor-viewtype-div"></div>');
@@ -42,7 +43,7 @@ define([
     });
     this.$viewTypeDiv.attr('title', 'Change the selected View Type');
 
-    if (UIState['view.viewType'] === 'scatter') {
+    if (this.UIState['view.viewType'] === 'scatter') {
       this.$radioScatter = $('<input type="radio" name="emperor.viewType"' +
         'value="scatter" checked> Scatter </input>');
     }
@@ -51,7 +52,7 @@ define([
         'value="scatter"> Scatter </input>');
     }
 
-    if (UIState['view.viewType'] === 'parallel-plot') {
+    if (this.UIState['view.viewType'] === 'parallel-plot') {
       this.$radioParallelPlot = $(
         '<input type="radio" name="emperor.viewType"' +
         'value="parallel-plot" checked> Parallel Plot </input>');
@@ -66,11 +67,11 @@ define([
     this.$viewTypeDiv.append(this.$radioParallelPlot);
 
     this.$radioScatter.change(function() {
-      UIState.setProperty('view.viewType', 'scatter');
+      scope.UIState.setProperty('view.viewType', 'scatter');
     });
 
     this.$radioParallelPlot.change(function() {
-      UIState.setProperty('view.viewType', 'parallel-plot');
+      scope.UIState.setProperty('view.viewType', 'parallel-plot');
     });
 
     this.$header.prepend($('<hr>'));
@@ -238,7 +239,7 @@ define([
       this.$table.remove();
     }
 
-    if (UIState['view.viewType'] === 'parallel-plot') {
+    if (this.UIState['view.viewType'] === 'parallel-plot') {
     // Disables axes choices, not used for parallel-plot.
       return;
     }
@@ -748,7 +749,7 @@ define([
     json.otherEdgeColor = this.getOtherEdgeColor();
 
     //Save the viewType
-    json.viewType = UIState['view.viewType'];
+    json.viewType = this.UIState['view.viewType'];
 
     return json;
   };
@@ -792,7 +793,7 @@ define([
     this.buildDisplayTable();
 
     //Restore the viewType
-    UIState.setProperty('view.viewType', json.viewType);
+    this.UIState.setProperty('view.viewType', json.viewType);
   };
 
   return AxesController;
