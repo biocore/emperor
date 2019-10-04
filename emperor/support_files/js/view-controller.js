@@ -186,7 +186,8 @@ define([
       scope.$searchBar.tooltip({
         disabled: true,
         // place the element with a slight offset at the bottom of the input
-        position: {my: 'center top+15', at: 'center bottom'},
+        // so that it doesn't overlap with the "continuous values" elements
+        position: {my: 'center top+40', at: 'center bottom'},
         // prevent the tooltip from disappearing when there's no matches
         close: function() {
           if (scope.bodyGrid.getDataLength() === 0 &&
