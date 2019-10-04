@@ -552,6 +552,7 @@ define([
     this.$select.prop('disabled', !trulse).trigger('chosen:updated');
     this.bodyGrid.setOptions({editable: trulse});
     this.$searchBar.prop('disabled', !trulse);
+    this.$searchBar.prop('hidden', !trulse);
   };
 
   /**
