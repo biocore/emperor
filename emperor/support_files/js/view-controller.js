@@ -184,15 +184,17 @@ define([
     // there's a few attributes we can only set on "ready" so list them up here
     $(function() {
       scope.$searchBar.tooltip({
+        content: 'No results found!',
         disabled: true,
         // place the element with a slight offset at the bottom of the input
         // so that it doesn't overlap with the "continuous values" elements
-        position: {my: 'center top+40', at: 'center bottom'},
+        position: {my: 'center top+40', at: 'center bottom',
+                   of: scope.$searchBar},
         // prevent the tooltip from disappearing when there's no matches
-        close: function() {
+        close: function(event, ui) {
           if (scope.bodyGrid.getDataLength() === 0 &&
               scope.$searchBar.val() !== '') {
-            $(this).tooltip('open');
+            scope.$searchBar.tooltip('open');
           }
         }
       });
@@ -390,12 +392,10 @@ define([
       // show a message when no results are found
       if (scope.bodyGrid.getDataLength() === 0 &&
           scope.$searchBar.val() !== '') {
-        scope.$searchBar.attr('title', 'No results found!');
         scope.$searchBar.tooltip('option', 'disabled', false);
         scope.$searchBar.tooltip('open');
       }
       else {
-        scope.$searchBar.attr('title', '');
         scope.$searchBar.tooltip('option', 'disabled', true);
         scope.$searchBar.tooltip('close');
       }
