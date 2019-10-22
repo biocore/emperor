@@ -103,6 +103,8 @@ requirejs([
       // verify the color value is set properly
       equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
       equal(controller.$select.val(), null);
+      equal(controller.$searchBar.val(), '');
+      equal(controller.$searchBar.is(':hidden'), true);
 
       equal(controller.$colormapSelect.is(':disabled'), true);
       equal(controller.$scaled.is(':disabled'), true);
@@ -114,6 +116,7 @@ requirejs([
 
       var controller = new ColorViewController(
         container, this.sharedDecompositionViewDict);
+
       equal(controller.title, 'Color');
 
       equal(controller.isColoringContinuous(), false);
@@ -121,14 +124,16 @@ requirejs([
       controller.setMetadataField('Mixed');
       controller.$colormapSelect.val('Viridis').trigger('chosen:updated');
       controller.$scaled.prop('checked', true).trigger('change');
+      equal(controller.$searchBar.is(':hidden'), true);
 
       equal(controller.isColoringContinuous(), true);
 
       controller.setMetadataField('DOB');
-      controller.$colormapSelect.val('Viridis').trigger('chosen:updated');
-      controller.$scaled.prop('checked', true).trigger('change');
+      controller.$colormapSelect.val('Dark2').trigger('chosen:updated');
+      controller.$scaled.prop('checked', false).trigger('change');
+      equal(controller.$searchBar.is(':hidden'), true);
 
-      equal(controller.isColoringContinuous(), true);
+      equal(controller.isColoringContinuous(), false);
     });
 
     test('Test _nonNumericPlottables', function() {
@@ -576,7 +581,7 @@ requirejs([
 
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(
-        container, this.sharedDecompositionViewDict);
+      container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
       var idx = 0;
@@ -587,6 +592,8 @@ requirejs([
       equal(controller.$select.val(), 'DOB');
       equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
       equal(controller.$scaled.is(':checked'), false);
+      equal(controller.$searchBar.val(), '');
+      equal(controller.$searchBar.prop('hidden'), false);
     });
 
     test('Testing fromJSON scaled', function() {
@@ -607,6 +614,8 @@ requirejs([
       equal(controller.$colormapSelect.val(), 'Viridis');
       equal(controller.$scaled.is(':checked'), true);
       equal(controller.isColoringContinuous(), true);
+      equal(controller.$searchBar.val(), '');
+      equal(controller.$searchBar.prop('hidden'), true);
     });
 
     test('Testing toJSON (null)', function() {
@@ -642,6 +651,8 @@ requirejs([
       equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
       equal(controller.$scaled.is(':checked'), false);
       equal(controller.isColoringContinuous(), false);
+      equal(controller.$searchBar.val(), '');
+      equal(controller.$searchBar.prop('hidden'), false);
     });
 
     test('Test getDiscretePaletteColor(map)', function() {
@@ -656,17 +667,51 @@ requirejs([
       '#e5c494', '#b3b3b3']);
     });
 
-    asyncTest('Test setEnabled', function() {
+    test('Test setEnabled', function() {
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(
         container, this.sharedDecompositionViewDict);
 
-      $(function() {
-        // disable
-        controller.setEnabled(false);
+      // disable
+      controller.setEnabled(false);
 
-        equal(controller.$colormapSelect.is(':disabled'), true);
-        equal(controller.$scaled.is(':disabled'), true);
+      equal(controller.$colormapSelect.is(':disabled'), true);
+      equal(controller.$scaled.is(':disabled'), true);
+      equal(controller.$searchBar.prop('hidden'), false);
+    });
+
+    /**
+     *
+     * Test large dataset.
+     *
+     */
+    asyncTest('Test large dataset', function() {
+      var coords = [], metadata = [];
+      for (var i = 0; i < 1001; i++) {
+        coords.push([Math.random(), Math.random(), Math.random(),
+                     Math.random()]);
+        metadata.push([i, 'b ' + Math.random(), 'c ' + Math.random()]);
+      }
+
+      var data = {coordinates: coords, percents_explained: [45, 35, 15, 5],
+                  sample_ids: _.range(1001), name: 'pcoa'};
+
+      var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
+                                     metadata);
+      var dv = new DecompositionView(d);
+      var container = $('<div id="does-not-exist"></div>');
+      // create a dummy category selection callback
+      var options = {'categorySelectionCallback': function() {}};
+      var attr = new ColorViewController(container, {'scatter': dv});
+      $(function() {
+        // Controllers should be enabled
+        equal(attr.enabled, false);
+        equal(attr.$select.val(), null);
+        equal(attr.$select.is(':disabled'), false);
+        equal(attr.$colormapSelect.is(':disabled'), true);
+        equal(attr.$scaled.is(':disabled'), true);
+        equal(attr.$searchBar.val(), '');
+        equal(attr.$searchBar.is(':disabled'), true);
 
         start(); // qunit
       });
@@ -702,41 +747,8 @@ requirejs([
         equal(attr.$select.is(':disabled'), false);
         equal(attr.$colormapSelect.is(':disabled'), true);
         equal(attr.$scaled.is(':disabled'), true);
-
-        start(); // qunit
-      });
-    });
-
-    /**
-     *
-     * Test large dataset.
-     *
-     */
-    asyncTest('Test large dataset', function() {
-      var coords = [], metadata = [];
-      for (var i = 0; i < 1001; i++) {
-        coords.push([Math.random(), Math.random(), Math.random(),
-                     Math.random()]);
-        metadata.push([i, 'b ' + Math.random(), 'c ' + Math.random()]);
-      }
-
-      var data = {coordinates: coords, percents_explained: [45, 35, 15, 5],
-                  sample_ids: _.range(1001), name: 'pcoa'};
-
-      var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
-                                     metadata);
-      var dv = new DecompositionView(d);
-      var container = $('<div id="does-not-exist"></div>');
-      // create a dummy category selection callback
-      var options = {'categorySelectionCallback': function() {}};
-      var attr = new ColorViewController(container, {'scatter': dv});
-      $(function() {
-        // Controllers should be enabled
-        equal(attr.enabled, false);
-        equal(attr.$select.val(), null);
-        equal(attr.$select.is(':disabled'), false);
-        equal(attr.$colormapSelect.is(':disabled'), true);
-        equal(attr.$scaled.is(':disabled'), true);
+        equal(attr.$searchBar.val(), '');
+        equal(attr.$searchBar.is(':disabled'), true);
 
         start(); // qunit
       });
