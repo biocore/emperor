@@ -325,11 +325,22 @@ class Emperor(object):
                              ' to the same dataset.' % kind)
 
         if difference and not ignore_missing_samples:
-            elements = ', '.join(sorted([str(i) for i in difference]))
+            # sort the elements so we have a deterministic output
+            difference = sorted([str(i) for i in difference])
+
+            # if there's more than 5 missing elements, truncate the list
+            if len(difference) > 5:
+                elements = ', '.join(difference[:5])
+                suffix = ("Showing only the first 5 %ss out of %d: %s ..." %
+                          (kind, len(difference), elements))
+            else:
+                elements = ', '.join(difference)
+                suffix = ("Offending %ss: %s" % (kind, elements))
+
             raise KeyError("There are %ss not included in the %s mapping "
                            "file. Override this error by using the "
-                           "`ignore_missing_samples` argument. Offending "
-                           "%ss: %s" % (kind, kind, kind, elements))
+                           "`ignore_missing_samples` argument. %s" %
+                           (kind, kind, suffix))
         elif difference and ignore_missing_samples:
             warnings.warn("%d out of %d %ss have no metadata and are being"
                           " included with a placeholder value." %
