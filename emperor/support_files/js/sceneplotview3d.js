@@ -791,8 +791,23 @@ define([
     var intersects = this._raycaster.intersectObjects(objects);
 
     // Get first intersected item and call callback with it.
-    if (intersects.length > 0) {
-      var intersect;
+    if (intersects && intersects.length > 0) {
+      var intersect, isPointCloud = intersects[0].object.isPoints;
+
+      // filter out things that are not visible
+      if (isPointCloud) {
+        var cloud = intersects[0].object;
+
+        intersects = _.filter(intersects, function(marker) {
+          return cloud.geometry.attributes.visible.getX(marker.index) &&
+                 cloud.geometry.attributes.opacity.getX(marker.index);
+        });
+      }
+      else {
+        intersects = _.filter(intersects, function(match) {
+          return marker.visible && marker.opacity;
+        });
+      }
 
       /*
        * When the intersect object is a Points object, the raycasting method
@@ -800,7 +815,7 @@ define([
        * and we get the index of the point. This index can then be used to
        * trace the original Plottable object.
        */
-      if (intersects[0].object.isPoints) {
+      if (isPointCloud) {
         var index = intersects[0].index;
         intersect = this.decViews.scatter.decomp.plottable[index];
       }
