@@ -746,11 +746,11 @@ define([
               name: 'Open in Vega Editor',
               callback: function(key, opts) {
                 scope.exportToVega();
-              },
+              }
             }
           }
-        },
-      },
+        }
+      }
     });
 
     // The context menu is only shown if there's a single right click. We
@@ -1065,7 +1065,7 @@ define([
     var payload = {
       mode: 'vega',
       renderer: 'canvas',
-      spec: JSON.stringify(spec),
+      spec: JSON.stringify(spec)
     };
     _postMessage(url, payload);
   };

@@ -141,13 +141,14 @@ define([
             attributes, scope.setPlottableAttributes, category);
 
           if (scaled) {
+            scope.$searchBar.prop('hidden', true);
             plottables = ColorViewController._nonNumericPlottables(
               uniqueVals, data);
             // Set SlickGrid for color of non-numeric values and show color bar
             // for rest if there are non numeric categories
             if (plottables.length > 0) {
               scope.setSlickGridDataset(
-                [{category: 'Non-numeric values', value: '#64655d',
+                [{id: 0, category: 'Non-numeric values', value: '#64655d',
                   plottables: plottables}]);
             }
             else {
@@ -157,6 +158,7 @@ define([
             scope.$colorScale.html(colorInfo[1]);
           }
           else {
+            scope.$searchBar.prop('hidden', false);
             scope.setSlickGridDataset(data);
             scope.$scaleDiv.hide();
           }
@@ -182,7 +184,8 @@ define([
     var ready = this.ready;
     this.ready = undefined;
 
-    this.$header.append(this.$colormapSelect);
+    // account for the searchbar
+    this.$colormapSelect.insertAfter(this.$select);
     this.$header.append(this.$scaled);
     this.$header.append(this.$scaledLabel);
     this.$body.prepend(this.$scaleDiv);
@@ -268,7 +271,8 @@ define([
    */
   ColorViewController.prototype.isColoringContinuous = function() {
     // the bodygrid can have at most one element (NA values)
-    return this.$scaled.is(':checked') && this.bodyGrid.getData().length <= 1;
+    return (this.$scaled.is(':checked') &&
+            this.getSlickGridDataset().length <= 1);
   };
 
   /**
@@ -511,7 +515,7 @@ define([
     var decompViewDict = this.getView();
     if (this.$scaled.is(':checked')) {
       // Get the current SlickGrid data and update with the saved color
-      data = this.bodyGrid.getData();
+      data = this.getSlickGridDataset();
       data[0].value = json.data['Non-numeric values'];
       this.setPlottableAttributes(
         decompViewDict, json.data['Non-numeric values'], data[0].plottables);

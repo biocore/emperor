@@ -485,10 +485,11 @@ requirejs([
           {'scatter': dv, 'biplot': dv}, {});
 
       $(function() {
-        attr.setSlickGridDataset([{'pc1': 1, 'pc2': 2, 'pc3': 3},
-            {'pc1': 1, 'pc2': 1, 'pc3': 2}]);
-        deepEqual(attr.getSlickGridDataset(), [{'pc1': 1, 'pc2': 2, 'pc3': 3},
-            {'pc1': 1, 'pc2': 1, 'pc3': 2}]);
+        attr.setSlickGridDataset([{'id': 1, 'pc1': 1, 'pc2': 2, 'pc3': 3},
+            {'id': 2, 'pc1': 1, 'pc2': 1, 'pc3': 2}]);
+        deepEqual(attr.getSlickGridDataset(), [
+            {'id': 1, 'pc1': 1, 'pc2': 2, 'pc3': 3},
+            {'id': 2, 'pc1': 1, 'pc2': 1, 'pc3': 2}]);
 
         start(); // qunit
       });
@@ -541,6 +542,7 @@ requirejs([
 
         equal(attr.enabled, false);
         equal(attr.$select.is(':disabled'), true);
+        equal(attr.$searchBar.is(':disabled'), true);
         equal(attr.bodyGrid.getOptions().editable, false);
 
         // enable
@@ -548,6 +550,7 @@ requirejs([
 
         equal(attr.enabled, true);
         equal(attr.$select.is(':disabled'), false);
+        equal(attr.$searchBar.is(':disabled'), false);
         equal(attr.bodyGrid.getOptions().editable, true);
 
         start(); // qunit
@@ -569,12 +572,14 @@ requirejs([
         // Controllers should be enabled
         equal(attr.enabled, true);
         equal(attr.$select.is(':disabled'), false);
+        equal(attr.$searchBar.is(':disabled'), false);
         equal(attr.bodyGrid.getOptions().editable, true);
 
         // and they should remain the same after "enabling" them again
         attr.setEnabled(true);
         equal(attr.enabled, true);
         equal(attr.$select.is(':disabled'), false);
+        equal(attr.$searchBar.is(':disabled'), false);
         equal(attr.bodyGrid.getOptions().editable, true);
 
         start(); // qunit

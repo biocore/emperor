@@ -43,6 +43,7 @@ var emperorRequire = require.config({
   'slickgrid': '{{ base_url }}/vendor/js/slick.grid.min',
   'slickformatters': '{{ base_url }}/vendor/js/slick.editors.min',
   'slickeditors': '{{ base_url }}/vendor/js/slick.formatters.min',
+  'slickdataview': '{{ base_url }}/vendor/js/slick.dataview.min',
 
   /* Emperor's objects */
   'util': '{{ base_url }}/js/util',
@@ -97,7 +98,8 @@ var emperorRequire = require.config({
     'deps': ['blob']
   },
   'slickcore': ['jqueryui'],
-  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors',
+                'slickdataview']
 }
 });
 

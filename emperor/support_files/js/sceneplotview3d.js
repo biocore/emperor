@@ -909,7 +909,7 @@ define([
       return;
     }
 
-    var element = this.renderer.domElement;
+    var element = this.renderer.domElement, scope = this;
     var offset = $(element).offset();
     this._mouse.x = ((event.clientX - offset.left) / element.width) * 2 - 1;
     this._mouse.y = -((event.clientY - offset.top) / element.height) * 2 + 1;
@@ -926,8 +926,23 @@ define([
     var intersects = this._raycaster.intersectObjects(objects);
 
     // Get first intersected item and call callback with it.
-    if (intersects.length > 0) {
-      var intersect;
+    if (intersects && intersects.length > 0) {
+      var intersect, isPointCloud = intersects[0].object.isPoints;
+
+      // filter out things that are not visible
+      if (isPointCloud) {
+        var cloud = intersects[0].object;
+
+        intersects = _.filter(intersects, function(marker) {
+          return cloud.geometry.attributes.visible.getX(marker.index) &&
+                 cloud.geometry.attributes.opacity.getX(marker.index);
+        });
+      }
+      else {
+        intersects = _.filter(intersects, function(match) {
+          return marker.visible && marker.opacity;
+        });
+      }
 
       var firstObj = intersects[0].object;
       /*

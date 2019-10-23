@@ -223,7 +223,7 @@ class TopLevelTests(TestCase):
 
         empty_mf = pd.DataFrame(index=['f.PC.636', 'f.PC.635', 'f.PC.356',
                                        'f.PC.481', 'f.PC.354'])
-        empty_mf['all'] = 'All objects'
+        empty_mf['all'] = 'All elements'
 
         pd.util.testing.assert_frame_equal(empty_mf, emp.feature_mf,
                                            check_names=False)
@@ -241,22 +241,48 @@ class TopLevelTests(TestCase):
                                      "two dimensions are not supported"):
             Emperor(self.ord_res, self.mf, remote=False)
 
-    def test_initial_unbalanced(self):
-        self.mf.drop(['PC.354'], inplace=True)
+    def test_initial_unbalanced_more_than_five(self):
+        mf = self.mf.copy()
+        mf.drop(['PC.354', 'PC.355', 'PC.356', 'PC.481', 'PC.607', 'PC.636'],
+                inplace=True)
         with self.assertRaisesRegexp(KeyError, "There are samples not "
-                                     "included in the mapping file. Override "
-                                     "this error by using the "
+                                     "included in the sample mapping file. "
+                                     "Override this error by using the "
+                                     "`ignore_missing_samples` argument. "
+                                     "Showing only the first 5 samples out of "
+                                     "6: PC.354, PC.355, PC.356, PC.481, "
+                                     "PC.607 ..."):
+            Emperor(self.ord_res, mf, remote=self.url)
+
+    def test_initial_unbalanced(self):
+        mf = self.mf.copy()
+        mf.drop(['PC.354'], inplace=True)
+        with self.assertRaisesRegexp(KeyError, "There are samples not "
+                                     "included in the sample mapping file. "
+                                     "Override this error by using the "
                                      "`ignore_missing_samples` argument. "
                                      "Offending samples: PC.354"):
-            Emperor(self.ord_res, self.mf, remote=self.url)
+            Emperor(self.ord_res, mf, remote=self.url)
+
+        # test feature metadata
+        fmf = self.feature_mf.copy()
+        fmf.drop(['f.PC.636'], inplace=True)
+        with self.assertRaisesRegexp(KeyError, "There are features not "
+                                     "included in the feature mapping file. "
+                                     "Override this error by using the "
+                                     "`ignore_missing_samples` argument. "
+                                     "Offending features: f.PC.636"):
+            Emperor(self.biplot, self.mf, fmf, remote=self.url)
 
     def test_initial_unbalanced_ignore(self):
         expected = self.mf.copy()
-        self.mf.drop(['PC.634'], inplace=True)
+
+        mf = self.mf.copy()
+        mf.drop(['PC.634'], inplace=True)
 
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter('always')
-            emp = Emperor(self.ord_res, self.mf, remote=self.url,
+            emp = Emperor(self.ord_res, mf, remote=self.url,
                           ignore_missing_samples=True)
 
             self.assertTrue(len(w) == 1)
@@ -265,21 +291,54 @@ class TopLevelTests(TestCase):
                              "being included with a placeholder value.",
                              str(w[-1].message))
 
-            expected.loc['PC.634'] = ['This sample has no metadata'] * 3
+            expected.loc['PC.634'] = ['This element has no metadata'] * 3
 
             pd.util.testing.assert_frame_equal(expected.sort_index(),
                                                emp.mf.sort_index(),
                                                check_names=False)
 
+        expected = self.feature_mf.copy()
+
+        fmf = self.feature_mf.copy()
+        fmf.drop(['f.PC.636'], inplace=True)
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            emp = Emperor(self.biplot, self.mf, fmf, remote=self.url,
+                          ignore_missing_samples=True)
+
+            self.assertTrue(len(w) == 1)
+            self.assertTrue(issubclass(w[-1].category, EmperorWarning))
+            self.assertEqual("1 out of 5 features have no metadata and are "
+                             "being included with a placeholder value.",
+                             str(w[-1].message))
+
+            expected.loc['f.PC.636'] = ['This element has no metadata'] * 2
+
+            pd.util.testing.assert_frame_equal(expected.sort_index(),
+                                               emp.feature_mf.sort_index(),
+                                               check_names=False)
+
     def test_no_overlap(self):
-        self.mf.index = self.mf.index + '.not'
+        mf = self.mf.copy()
+        mf.index = mf.index + '.not'
 
         with self.assertRaisesRegexp(ValueError, 'None of the sample '
                                      'identifiers match between the metadata '
                                      'and the coordinates. Verify that you are'
                                      ' using metadata and coordinates '
                                      'corresponding to the same dataset.'):
-            Emperor(self.ord_res, self.mf, remote=self.url)
+            Emperor(self.ord_res, mf, remote=self.url)
+
+        fmf = self.feature_mf.copy()
+        fmf.index = fmf.index + '.not'
+
+        with self.assertRaisesRegexp(ValueError, 'None of the feature '
+                                     'identifiers match between the metadata '
+                                     'and the coordinates. Verify that you are'
+                                     ' using metadata and coordinates '
+                                     'corresponding to the same dataset.'):
+            Emperor(self.biplot, self.mf, fmf, remote=self.url)
 
     def test_get_template(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
@@ -504,11 +563,11 @@ class TopLevelTests(TestCase):
                          ['f.PC.636', 'f.PC.635', 'f.PC.356', 'f.PC.481',
                           'f.PC.354'])
         self.assertEqual(bi_headers, ['id', 'all'])
-        self.assertEqual(bi_metadata, [['f.PC.636', 'All objects'],
-                                       ['f.PC.635', 'All objects'],
-                                       ['f.PC.356', 'All objects'],
-                                       ['f.PC.481', 'All objects'],
-                                       ['f.PC.354', 'All objects']])
+        self.assertEqual(bi_metadata, [['f.PC.636', 'All elements'],
+                                       ['f.PC.635', 'All elements'],
+                                       ['f.PC.356', 'All elements'],
+                                       ['f.PC.481', 'All elements'],
+                                       ['f.PC.354', 'All elements']])
 
     def test_process_data_custom_axes(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)

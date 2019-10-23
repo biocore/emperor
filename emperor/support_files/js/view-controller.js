@@ -176,8 +176,31 @@ define([
     this.$select = $('<select>');
     this.$header.append(this.$select);
 
+    this.$searchBar = $("<input type='search' " +
+                        "placeholder='Search for a value ...'>"
+    ).css({
+      'width': '100%'
+    });
+    this.$header.append(this.$searchBar);
+
     // there's a few attributes we can only set on "ready" so list them up here
     $(function() {
+      scope.$searchBar.tooltip({
+        content: 'No results found!',
+        disabled: true,
+        // place the element with a slight offset at the bottom of the input
+        // so that it doesn't overlap with the "continuous values" elements
+        position: {my: 'center top+40', at: 'center bottom',
+                   of: scope.$searchBar},
+        // prevent the tooltip from disappearing when there's no matches
+        close: function(event, ui) {
+          if (scope.bodyGrid.getDataLength() === 0 &&
+              scope.$searchBar.val() !== '') {
+            scope.$searchBar.tooltip('open');
+          }
+        }
+      });
+
       var placeholder = 'Select a ' + scope.title + ' Category';
 
       // setup the slick grid
@@ -310,7 +333,7 @@ define([
    * displayed by the body grid.
    */
   EmperorAttributeABC.prototype.getSlickGridDataset = function() {
-    return this.bodyGrid.getData();
+    return this.bodyGrid.getData().getItems();
   };
 
   /**
@@ -328,9 +351,9 @@ define([
     }
 
     // Re-render
-    this.bodyGrid.setData(data);
-    this.bodyGrid.invalidate();
-    this.bodyGrid.render();
+    this.bodyGrid.getData().beginUpdate();
+    this.bodyGrid.getData().setItems(data);
+    this.bodyGrid.getData().endUpdate();
   };
 
   /**
@@ -342,7 +365,7 @@ define([
    *
    */
   EmperorAttributeABC.prototype._buildGrid = function(options) {
-    var columns = [{id: 'field1', name: '', field: 'category'}];
+    var columns = [{id: 'field1', name: '', field: 'category'}], scope = this;
 
     // autoEdit enables one-click editor trigger on the entire grid, instead
     // of requiring users to click twice on a widget.
@@ -355,12 +378,52 @@ define([
       columns.unshift(options.slickGridColumn);
     }
 
+    var dataView = new Slick.Data.DataView(), searchString = '';
+
     /**
      * @type {Slick.Grid}
      * Container that lists the metadata categories described under the
      * metadata column and the attribute that can be modified.
      */
-    this.bodyGrid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
+    this.bodyGrid = new Slick.Grid(this.$gridDiv, dataView, columns,
+                                   gridOptions);
+
+    this.$searchBar.on('input', function(e) {
+      dataView.refresh();
+
+      // show a message when no results are found
+      if (scope.bodyGrid.getDataLength() === 0 &&
+          scope.$searchBar.val() !== '') {
+        scope.$searchBar.tooltip('option', 'disabled', false);
+        scope.$searchBar.tooltip('open');
+      }
+      else {
+        scope.$searchBar.tooltip('option', 'disabled', true);
+        scope.$searchBar.tooltip('close');
+      }
+
+    });
+
+    function substringFilter(item, args) {
+      var val = scope.$searchBar.val();
+      if (!searchString && val &&
+         item.category.toLowerCase().indexOf(val.toLowerCase()) === -1) {
+        return false;
+      }
+      return true;
+    }
+
+    dataView.onRowCountChanged.subscribe(function(e, args) {
+      scope.bodyGrid.updateRowCount();
+      scope.bodyGrid.render();
+    });
+
+    dataView.onRowsChanged.subscribe(function(e, args) {
+      scope.bodyGrid.invalidateRows(args.rows);
+      scope.bodyGrid.render();
+    });
+
+    dataView.setFilter(substringFilter);
 
     // hide the header row of the grid
     // http://stackoverflow.com/a/29827664/379593
@@ -404,7 +467,7 @@ define([
     json.category = this.getMetadataField();
 
     // Convert SlickGrid list of objects to single object
-    var gridData = this.bodyGrid.getData();
+    var gridData = this.getSlickGridDataset();
     var jsonData = {};
     for (var i = 0; i < gridData.length; i++) {
       jsonData[gridData[i].category] = gridData[i].value;
@@ -490,6 +553,8 @@ define([
 
     this.$select.prop('disabled', !trulse).trigger('chosen:updated');
     this.bodyGrid.setOptions({editable: trulse});
+    this.$searchBar.prop('disabled', !trulse);
+    this.$searchBar.prop('hidden', !trulse);
   };
 
   /**

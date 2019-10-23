@@ -95,10 +95,11 @@ class Emperor(object):
         A list of the OrdinationResults objects with the same sample
         identifiers as the identifiers in ``ordination``.
     ignore_missing_samples: bool, optional
-        If set to `True` samples without metadata are included by setting all
-        metadata values to: ``This sample has not metadata``. By default an
-        exception will be raised if missing samples are encountered. Note, this
-        flag only takes effect if there's at least one overlapping sample.
+        If set to `True` samples and features without metadata are included by
+        setting all metadata values to: ``This element has no metadata``. By
+        default an exception will be raised if missing elements are
+        encountered. Note, this flag only takes effect if there's at least one
+        overlapping element.
 
     Attributes
     ----------
@@ -250,7 +251,7 @@ class Emperor(object):
             self.feature_mf = \
                 self._validate_metadata(feature_mapping_file,
                                         self.ordination.features,
-                                        ignore_missing_samples=False)
+                                        ignore_missing_samples, kind='feature')
 
         self._validate_ordinations()
 
@@ -302,40 +303,54 @@ class Emperor(object):
 
         return display(HTML(str(self)))
 
-    def _validate_metadata(self, metadata, matrix, ignore_missing_samples):
+    def _validate_metadata(self, metadata, matrix, ignore_missing_samples,
+                           kind='sample'):
+
+        if kind not in {'sample', 'feature'}:
+            raise ValueError('Unsupported "kind" value %s' % kind)
 
         # metadata is optional for biplots, so we just create an empty table
         if metadata is None:
             metadata = pd.DataFrame(index=pd.Index(matrix.index, name='id'))
-            metadata['all'] = 'All objects'
+            metadata['all'] = 'All elements'
             return metadata
 
-        ordination_samples = set(matrix.index)
-        difference = ordination_samples - set(metadata.index)
+        ordination_elements = set(matrix.index)
+        difference = ordination_elements - set(metadata.index)
 
-        if difference == ordination_samples:
-            raise ValueError('None of the sample identifiers match between the'
+        if difference == ordination_elements:
+            raise ValueError('None of the %s identifiers match between the'
                              ' metadata and the coordinates. Verify that you '
                              'are using metadata and coordinates corresponding'
-                             ' to the same dataset.')
+                             ' to the same dataset.' % kind)
 
         if difference and not ignore_missing_samples:
-            raise KeyError("There are samples not included in the mapping "
+            # sort the elements so we have a deterministic output
+            difference = sorted([str(i) for i in difference])
+
+            # if there's more than 5 missing elements, truncate the list
+            if len(difference) > 5:
+                elements = ', '.join(difference[:5])
+                suffix = ("Showing only the first 5 %ss out of %d: %s ..." %
+                          (kind, len(difference), elements))
+            else:
+                elements = ', '.join(difference)
+                suffix = ("Offending %ss: %s" % (kind, elements))
+
+            raise KeyError("There are %ss not included in the %s mapping "
                            "file. Override this error by using the "
-                           "`ignore_missing_samples` argument. Offending "
-                           "samples: %s"
-                           % ', '.join(sorted([str(i) for i in difference])))
+                           "`ignore_missing_samples` argument. %s" %
+                           (kind, kind, suffix))
         elif difference and ignore_missing_samples:
-            warnings.warn("%d out of %d samples have no metadata and are being"
+            warnings.warn("%d out of %d %ss have no metadata and are being"
                           " included with a placeholder value." %
-                          (len(difference), len(ordination_samples)),
+                          (len(difference), len(ordination_elements), kind),
                           EmperorWarning)
 
-            # pad the missing samples
-            data = np.full((len(difference), metadata.shape[1]),
-                           'This sample has no metadata', dtype='<U27')
-            pad = pd.DataFrame(index=difference, columns=self.mf.columns,
-                               data=data)
+            # pad the missing elements
+            pad = pd.DataFrame(index=difference, columns=metadata.columns,
+                               dtype=str)
+            pad.fillna('This element has no metadata', inplace=True)
             metadata = pd.concat([metadata, pad])
 
         # filter all metadata that we may have for which we don't have any
