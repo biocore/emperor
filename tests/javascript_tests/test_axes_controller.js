@@ -5,9 +5,11 @@ requirejs([
     'view',
     'abcviewcontroller',
     'slickgrid',
-    'axescontroller'
+    'axescontroller',
+    'multi-model',
+    'uistate'
 ], function($, _, model, DecompositionView, abc, SlickGrid,
-            AxesController) {
+            AxesController, MultiModel, UIState) {
   $(document).ready(function() {
     var EmperorViewControllerABC = abc.EmperorViewControllerABC;
     var DecompositionModel = model.DecompositionModel;
@@ -17,6 +19,7 @@ requirejs([
         var container = $('<div id="does-not-exist" style="height:1000px; ' +
                           'width:12px"></div>');
 
+        var UIState1 = new UIState();
         this.sharedDecompositionViewDict = {};
 
         // setup function
@@ -40,8 +43,9 @@ requirejs([
         ['PC.634', '14.7', 'Fast', '20071112']];
 
         var decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
-        this.controllerProcrustes = new AxesController(container,
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter', UIState1);
+        this.controllerProcrustes = new AxesController(UIState1, container,
                                                        {'scatter': dv});
 
         // data without procrustes edges
@@ -60,7 +64,8 @@ requirejs([
                                      7.55971173665, 6.24945796136]};
 
         decomp = new DecompositionModel(data, md_headers, metadata);
-        dv = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -75,10 +80,11 @@ requirejs([
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'], ['tax_2', '0']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        this.dv = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        this.dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = dv;
 
-        this.controller = new AxesController(container,
+        this.controller = new AxesController(UIState1, container,
                                              this.sharedDecompositionViewDict);
       },
       teardown: function() {
@@ -96,6 +102,7 @@ requirejs([
 
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
+        this.multiModel = undefined;
       }
     });
 
@@ -118,8 +125,9 @@ requirejs([
       var obs = this.controller.toJSON();
       var exp = {'flippedAxes': [false, false, false],
                  'visibleDimensions': [0, 1, 2],
-                 'referenceEdgeColor': null, 'otherEdgeColor': null,
-                 'backgroundColor': '#000000', 'axesColor': '#ffffff'};
+                 'referenceEdgeColor': null, 'viewType': 'scatter',
+                 'otherEdgeColor': null, 'backgroundColor': '#000000',
+                 'axesColor': '#ffffff'};
       deepEqual(obs, exp);
 
       // procrustes case
@@ -127,6 +135,7 @@ requirejs([
       exp = {'flippedAxes': [false, false, false],
              'visibleDimensions': [0, 1, 2],
              'otherEdgeColor': '#ff0000', 'referenceEdgeColor': '#ffffff',
+             'viewType': 'scatter',
              'backgroundColor': '#000000', 'axesColor': '#ffffff'};
       deepEqual(obs, exp);
     });

@@ -15,9 +15,12 @@ define([
    *
    * Represents a three dimensional scene in THREE.js.
    *
+   * @param {UIState} uiState shared UIState state object
    * @param {THREE.renderer} renderer THREE renderer object.
    * @param {Object} decViews dictionary of DecompositionViews shown in this
    * scene
+   * @param {MultiModel} decModels MultiModel of DecompositionModels shown in
+   * this scene (with extra global data about them)
    * @param {Node} container Div where the scene will be rendered.
    * @param {Float} xView Horizontal position of the rendered scene in the
    * container element.
@@ -29,13 +32,17 @@ define([
    * @return {ScenePlotView3D} An instance of ScenePlotView3D.
    * @constructs ScenePlotView3D
    */
-  function ScenePlotView3D(renderer, decViews, container, xView, yView,
+  function ScenePlotView3D(uiState, renderer, decViews, decModels, container,
+                           xView, yView,
                            width, height) {
     var scope = this;
+
+    this.UIState = uiState;
 
     // convert to jquery object for consistency with the rest of the objects
     var $container = $(container);
     this.decViews = decViews;
+    this.decModels = decModels;
     this.renderer = renderer;
     /**
      * Horizontal position of the scene.
@@ -81,45 +88,66 @@ define([
      */
     this.visibleDimensions = _.clone(this.decViews.scatter.visibleDimensions);
 
-    /**
-     * Ranges for all the decompositions in this view (there's a min and a max
-     * property).
-     * @type {Object}
-     */
-    this.dimensionRanges = {'max': [], 'min': []};
-    this._unionRanges();
-
     // used to name the axis lines/labels in the scene
     this._axisPrefix = 'emperor-axis-line-';
     this._axisLabelPrefix = 'emperor-axis-label-';
 
-    // Set up the camera
-    var max = _.max(decViews.scatter.decomp.dimensionRanges.max);
-    var frontFrust = _.min([max * 0.001, 1]);
-    var backFrust = _.max([max * 100, 100]);
-
-    /**
-     * Camera used to display the scene.
-     * @type {THREE.PerspectiveCamera}
-     */
-    // these are placeholders that are later updated in updateCameraAspectRatio
-    this.camera = new THREE.OrthographicCamera(-50, 50, 50, -50);
-    this.camera.position.set(0, 0, max * 5);
-    this.camera.zoom = 0.7;
-
     //need to initialize the scene
     this.scene = new THREE.Scene();
-    this.scene.add(this.camera);
     this.scene.background = new THREE.Color(this.backgroundColor);
 
     /**
-     * Object used to light the scene, by default is set to a light and
+     * Camera used to display the scatter scene.
+     * @type {THREE.OrthographicCamera}
+     */
+    this.scatterCam = this.buildCamera('scatter');
+
+    /**
+     * Object used to light the scene in scatter mode,
+     * by default is set to a light and
      * transparent color (0x99999999).
      * @type {THREE.DirectionalLight}
      */
     this.light = new THREE.DirectionalLight(0x999999, 2);
     this.light.position.set(1, 1, 1).normalize();
-    this.camera.add(this.light);
+    this.scatterCam.add(this.light);
+
+    /**
+     * Camera used to display the parallel plot scene.
+     * @type {THREE.OrthographicCamera}
+     */
+    this.parallelCam = this.buildCamera('parallel-plot');
+
+    // use $container.get(0) to retrieve the native DOM object
+    this.scatterController = this.buildCamController('scatter',
+                                                    this.scatterCam,
+                                                    $container.get(0));
+    this.parallelController = this.buildCamController('parallel-plot',
+                                                     this.parallelCam,
+                                                     $container.get(0));
+
+    //Swap the camera whenever the view type changes
+    this.UIState.registerProperty('view.viewType', function(evt) {
+      if (evt.newVal === 'parallel-plot') {
+        scope.camera = scope.parallelCam;
+        scope.control = scope.parallelController;
+        //Don't let the controller move around when its not the active camera
+        scope.scatterController.enabled = false;
+        scope.parallelController.enabled = true;
+      } else {
+        scope.camera = scope.scatterCam;
+        scope.control = scope.scatterController;
+        //Don't let the controller move around when its not the active camera
+        scope.scatterController.enabled = true;
+        scope.parallelController.enabled = false;
+      }
+      //Disable any active rotation
+      if (evt.newVal === 'parallel-plot')
+        scope.scatterController.autoRotate = false;
+    });
+
+    this.scene.add(this.scatterCam);
+    this.scene.add(this.parallelCam);
 
     this._raycaster = new THREE.Raycaster();
     this._mouse = new THREE.Vector2();
@@ -127,25 +155,15 @@ define([
     // add all the objects to the current scene
     this.addDecompositionsToScene();
 
-    // use get(0) to retrieve the native DOM object
-    /**
-     * Object used to interact with the scene. By default it uses the mouse.
-     * @type {THREE.OrbitControls}
-     */
-    this.control = new THREE.OrbitControls(this.camera,
-                                           $container.get(0));
-    this.control.enableKeys = false;
-    this.control.rotateSpeed = 1.0;
-    this.control.zoomSpeed = 1.2;
-    this.control.panSpeed = 0.8;
-    this.control.enableZoom = true;
-    this.control.enablePan = true;
-    this.control.addEventListener('change', function() {
-      scope.needsUpdate = true;
-    });
-
     this.updateCameraTarget();
     this.control.update();
+
+    this.scatterController.addEventListener('change', function() {
+      scope.needsUpdate = true;
+    });
+    this.parallelController.addEventListener('change', function() {
+      scope.needsUpdate = true;
+    });
 
     /**
      * Object with "min" and "max" attributes each of which is an array with
@@ -261,6 +279,81 @@ define([
       copyToClipboard(n);
       showText('(copied to clipboard) ' + n, i);
     });
+
+    // if a decomposition uses a point cloud, or
+    // if a decomposition uses a parallel plot,
+    // update the default raycasting tolerance as
+    // it is otherwise too large and error-prone
+    var scope = this;
+    var updateRaycasterLinePrecision = function(evt) {
+      if (scope.UIState.getProperty('view.viewType') === 'parallel-plot')
+        scope._raycaster.linePrecision = 0.01;
+      else
+        scope._raycaster.linePrecision = 1;
+    };
+    var updateRaycasterPointPrecision = function(evt) {
+      if (scope.UIState.getProperty('view.usesPointCloud'))
+        scope._raycaster.params.Points.threshold = 0.01;
+      else
+        scope._raycaster.params.Points.threshold = 1;
+    };
+    this.UIState.registerProperty('view.usesPointCloud',
+                             updateRaycasterPointPrecision);
+    this.UIState.registerProperty('view.viewType',
+                             updateRaycasterLinePrecision);
+  };
+
+  /**
+   * Builds a camera (for scatter or parallel plot)
+   */
+  ScenePlotView3D.prototype.buildCamera = function(viewType) {
+
+    var camera;
+    if (viewType === 'scatter')
+    {
+      // Set up the camera
+      var max = _.max(this.decViews.scatter.decomp.dimensionRanges.max);
+      var frontFrust = _.min([max * 0.001, 1]);
+      var backFrust = _.max([max * 100, 100]);
+
+      // these are placeholders that are
+      // later updated in updateCameraAspectRatio
+      camera = new THREE.OrthographicCamera(-50, 50, 50, -50);
+      camera.position.set(0, 0, max * 5);
+      camera.zoom = 0.7;
+    }
+    else if (viewType === 'parallel-plot')
+    {
+      var w = this.decModels.dimensionRanges.max.length;
+
+      // Set up the camera
+      camera = new THREE.OrthographicCamera(0, w, 1, 0);
+      camera.position.set(0, 0, 1); //Must set positive Z because near > 0
+      camera.zoom = 0.7;
+    }
+
+    return camera;
+  };
+
+  /**
+   * Builds a camera controller (for scatter or parallel plot)
+   */
+  ScenePlotView3D.prototype.buildCamController = function(viewType, cam, view) {
+    /**
+     * Object used to interact with the scene. By default it uses the mouse.
+     * @type {THREE.OrbitControls}
+     */
+    var control = new THREE.OrbitControls(cam,
+                                          view);
+    control.enableKeys = false;
+    control.rotateSpeed = 1.0;
+    control.zoomSpeed = 1.2;
+    control.panSpeed = 0.8;
+    control.enableZoom = true;
+    control.enablePan = true;
+    control.enableRotate = (viewType === 'scatter');
+
+    return control;
   };
 
   /**
@@ -299,12 +392,6 @@ define([
         this.scene.add(this.decViews[decViewName].lines.left);
         this.scene.add(this.decViews[decViewName].lines.right);
       }
-
-      // if a decomposition uses a point cloud change the default tolerance as
-      // it is otherwise too large and error-prone
-      if (this.decViews[decViewName].usesPointCloud) {
-        this._raycaster.params.Points.threshold = 0.01;
-      }
     }
 
     this.needsUpdate = true;
@@ -320,91 +407,10 @@ define([
    * @return {Number} The scaling factor to use for labels.
    */
   ScenePlotView3D.prototype.getScalingConstant = function() {
-    return (this.dimensionRanges.max[0] -
-            this.dimensionRanges.min[0]) * 0.001;
+    return (this.decModels.dimensionRanges.max[0] -
+            this.decModels.dimensionRanges.min[0]) * 0.001;
   };
 
-  /**
-   *
-   * Utility method to find the union of the ranges in the decomposition views
-   * this method will populate the dimensionRanges attributes.
-   * @private
-   *
-   */
-  ScenePlotView3D.prototype._unionRanges = function() {
-    var scope = this, computeRanges;
-
-    // first check if there's any range data, if there isn't, then we need
-    // to compute it by looking at all the decompositions
-    computeRanges = scope.dimensionRanges.max.length === 0;
-
-    // if there's range data then check it lies within the global ranges
-    if (computeRanges === false) {
-      _.each(this.decViews, function(decView, name) {
-        var decomp = decView.decomp;
-
-        for (var i = 0; i < decomp.dimensionRanges.max.length; i++) {
-          // global
-          var gMax = scope.dimensionRanges.max[i];
-          var gMin = scope.dimensionRanges.min[i];
-
-          // local
-          var lMax = decomp.dimensionRanges.max[i];
-          var lMin = decomp.dimensionRanges.min[i];
-
-          // when we detect a point outside the global ranges we break and
-          // recompute them
-          if (!(gMin <= lMin && lMin <= gMax) ||
-              !(gMin <= lMax && lMax <= gMax)) {
-            computeRanges = true;
-            break;
-          }
-        }
-      });
-    }
-
-    if (computeRanges === false) {
-      // If at this point we still don't need to compute the data, it is safe
-      // to exit because all data still exists within the expected ranges
-      return;
-    }
-    else {
-      // TODO: If this entire function ever becomes a bottleneck we should only
-      // update the dimensions that changed.
-      // See: https://github.com/biocore/emperor/issues/526
-
-      // if we have to compute the data, clean up the previously known ranges
-      this.dimensionRanges.max = [];
-      this.dimensionRanges.max.length = 0;
-      this.dimensionRanges.min = [];
-      this.dimensionRanges.min.length = 0;
-    }
-
-    _.each(this.decViews, function(decView, name) {
-      // get each decomposition object
-      var decomp = decView.decomp;
-
-      if (scope.dimensionRanges.max.length === 0) {
-        scope.dimensionRanges.max = decomp.dimensionRanges.max.slice();
-        scope.dimensionRanges.min = decomp.dimensionRanges.min.slice();
-      }
-      else {
-        // when we have more than one decomposition view we need to figure out
-        // the absolute largest range that views span over
-        _.each(decomp.dimensionRanges.max, function(value, index) {
-          var vMax = decomp.dimensionRanges.max[index],
-              vMin = decomp.dimensionRanges.min[index];
-
-          if (vMax > scope.dimensionRanges.max[index]) {
-            scope.dimensionRanges.max[index] = vMax;
-          }
-          if (vMin < scope.dimensionRanges.min[index]) {
-            scope.dimensionRanges.min[index] = vMin;
-          }
-        });
-      }
-    });
-  };
   /**
    *
    * Helper method used to iterate over the ranges of the visible dimensions.
@@ -420,49 +426,60 @@ define([
    *
    */
   ScenePlotView3D.prototype._dimensionsIterator = function(action) {
-    this._unionRanges();
 
-    // shortcut to the index of the visible dimension and the range object
-    var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
-        z = this.visibleDimensions[2], range = this.dimensionRanges,
-        is2D = (z === null || z === undefined);
+    this.decModels._unionRanges();
 
-    // Adds a padding to all dimensions such that samples don't overlap
-    // with the axes lines. Determined based on the default sphere radius
-    var axesPadding = 1.07;
+    if (this.UIState['view.viewType'] === 'scatter')
+    {
+      // shortcut to the index of the visible dimension and the range object
+      var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
+          z = this.visibleDimensions[2], range = this.decModels.dimensionRanges,
+          is2D = (z === null || z === undefined);
 
-    /*
-     * We special case Z when it is a 2D plot, whenever that's the case we set
-     * the range to be zero so no lines are shown on screen.
-     */
+      // Adds a padding to all dimensions such that samples don't overlap
+      // with the axes lines. Determined based on the default sphere radius
+      var axesPadding = 1.07;
 
-    // this is the "origin" of our ordination
-    var start = [range.min[x] * axesPadding,
-                 range.min[y] * axesPadding,
-                 is2D ? 0 : range.min[z] * axesPadding];
+      /*
+       * We special case Z when it is a 2D plot, whenever that's the case we set
+       * the range to be zero so no lines are shown on screen.
+       */
 
-    var ends = [
-      [range.max[x] * axesPadding,
-       range.min[y] * axesPadding,
-       is2D ? 0 : range.min[z] * axesPadding],
-      [range.min[x] * axesPadding,
-       range.max[y] * axesPadding,
-       is2D ? 0 : range.min[z] * axesPadding],
-      [range.min[x] * axesPadding,
-       range.min[y] * axesPadding,
-       is2D ? 0 : range.max[z] * axesPadding]
-    ];
+      // this is the "origin" of our ordination
+      var start = [range.min[x] * axesPadding,
+                   range.min[y] * axesPadding,
+                   is2D ? 0 : range.min[z] * axesPadding];
 
-    action(start, ends[0], x);
-    action(start, ends[1], y);
+      var ends = [
+        [range.max[x] * axesPadding,
+         range.min[y] * axesPadding,
+         is2D ? 0 : range.min[z] * axesPadding],
+        [range.min[x] * axesPadding,
+         range.max[y] * axesPadding,
+         is2D ? 0 : range.min[z] * axesPadding],
+        [range.min[x] * axesPadding,
+         range.min[y] * axesPadding,
+         is2D ? 0 : range.max[z] * axesPadding]
+      ];
 
-    // when transitioning to 2D disable rotation to avoid awkward angles
-    if (is2D) {
-      this.control.enableRotate = false;
+      action(start, ends[0], x);
+      action(start, ends[1], y);
+
+      // when transitioning to 2D disable rotation to avoid awkward angles
+      if (is2D) {
+        this.control.enableRotate = false;
+      }
+      else {
+        action(start, ends[2], z);
+        this.control.enableRotate = true;
+      }
     }
     else {
-      action(start, ends[2], z);
-      this.control.enableRotate = true;
+      //Parallel Plots show all axes
+      for (var i = 0; i < this.decViews['scatter'].decomp.dimensions; i++)
+      {
+        action([i, 0, 0], [i, 1, 0], i);
+      }
     }
   };
 
@@ -472,8 +489,8 @@ define([
    *
    * @param {String} color A CSS-compatible value that specifies the color
    * of each of the axes lines, the length of these lines is determined by the
-   * dimensionRanges property. If the color value is null the lines will be
-   * removed.
+   * global dimensionRanges property computed in decModels.
+   * If the color value is null the lines will be removed.
    *
    */
   ScenePlotView3D.prototype.drawAxesWithColor = function(color) {
@@ -518,7 +535,7 @@ define([
       return;
     }
 
-    // get the first decomposition object, it doesn't really mater which one
+    // get the first decomposition object, it doesn't really matter which one
     // we look at though, as all of them should have the same percentage
     // explained on each axis
     firstKey = _.keys(this.decViews)[0];
@@ -526,12 +543,49 @@ define([
 
     this._dimensionsIterator(function(start, end, index) {
       text = decomp.axesLabels[index];
-
       axisLabel = makeLabel(end, text, color);
-      axisLabel.scale.set(axisLabel.scale.x * scaling,
-                          axisLabel.scale.y * scaling, 1);
-      axisLabel.name = scope._axisLabelPrefix + index;
 
+      if (scope.UIState['view.viewType'] === 'scatter') {
+        //Scatter has a 1 to 1 aspect ratio and labels in world size
+        axisLabel.scale.set(axisLabel.scale.x * scaling,
+                            axisLabel.scale.y * scaling,
+                            1);
+      }
+      else if (scope.UIState['view.viewType'] === 'parallel-plot') {
+        //Parallel plot aspect ratio depends on number of dimensions
+        //We have to correct label size to account for this.
+        //But we also have to fix label width so that it fits between
+        //axes, which are exactly 1 apart in world space
+        var cam = scope.camera;
+        var labelWPix = axisLabel.scale.x;
+        var labelHPix = axisLabel.scale.y;
+        var viewWPix = scope.width;
+        var viewHPix = scope.height;
+
+        //Assuming a camera zoom of 1:
+        var viewWUnits = cam.right - cam.left;
+        var viewHUnits = cam.top - cam.bottom;
+
+        //These are world sizes of label for a camera zoom of 1
+        var labelWUnits = labelWPix * viewWUnits / viewWPix;
+        var labelHUnits = labelHPix * viewHUnits / viewHPix;
+
+        //TODO FIXME HACK:  Note that our options here are to scale each
+        //label to fit in its area, or to scale all labels by the same amount
+        //We choose to scale all labels by the same amount based on an
+        //empirical 'nice' label length of ~300
+        //We could replace this with a max of all label widths, but must note
+        //that label widths are always powers of 2 in the current version
+
+        //Resize to fit labels of width 300 between axes
+        var scalingFudge = .9 / (300 * viewWUnits / viewWPix);
+
+        axisLabel.scale.set(labelWUnits * scalingFudge,
+                            labelHUnits * scalingFudge,
+                            1);
+      }
+
+      axisLabel.name = scope._axisLabelPrefix + index;
       scope.scene.add(axisLabel);
     });
   };
@@ -549,7 +603,7 @@ define([
    */
   ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix) {
     var scope = this;
-    _.each(this.visibleDimensions, function(i) {
+    _.each(_.range(this.decViews.scatter.decomp.dimensions), function(i) {
       var axisLine = scope.scene.getObjectByName(prefix + i);
       scope.scene.remove(axisLine);
     });
@@ -592,6 +646,10 @@ define([
     this.updateCameraAspectRatio();
     this.control.update();
 
+    //Since parallel plot labels have to correct for aspect ratio, we need
+    //to redraw when width/height of view is modified.
+    this.drawAxesLabelsWithColor(this.axesColor);
+
     this.needsUpdate = true;
   };
 
@@ -602,25 +660,39 @@ define([
    *
    */
   ScenePlotView3D.prototype.updateCameraAspectRatio = function() {
-    var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
+    if (this.UIState['view.viewType'] === 'scatter')
+    {
+      var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
 
-    // orthographic cameras operate in space units not in pixel units i.e.
-    // the width and height of the view is based on the objects not the window
-    var owidth = this.dimensionRanges.max[x] - this.dimensionRanges.min[x];
-    var oheight = this.dimensionRanges.max[y] - this.dimensionRanges.min[y];
+      // orthographic cameras operate in space units not in pixel units i.e.
+      // the width and height of the view is based on the objects not the window
+      var owidth = this.decModels.dimensionRanges.max[x] -
+                      this.decModels.dimensionRanges.min[x];
+      var oheight = this.decModels.dimensionRanges.max[y] -
+                      this.decModels.dimensionRanges.min[y];
 
-    var aspect = this.width / this.height;
+      var aspect = this.width / this.height;
 
-    // ensure that the camera's aspect ratio is equal to the window's
-    owidth = oheight * aspect;
+      // ensure that the camera's aspect ratio is equal to the window's
+      owidth = oheight * aspect;
 
-    this.camera.left = -owidth / 2;
-    this.camera.right = owidth / 2;
-    this.camera.top = oheight / 2;
-    this.camera.bottom = -oheight / 2;
+      this.camera.left = -owidth / 2;
+      this.camera.right = owidth / 2;
+      this.camera.top = oheight / 2;
+      this.camera.bottom = -oheight / 2;
 
-    this.camera.aspect = aspect;
-    this.camera.updateProjectionMatrix();
+      this.camera.aspect = aspect;
+      this.camera.updateProjectionMatrix();
+    }
+    else if (this.UIState['view.viewType'] === 'parallel-plot')
+    {
+      var w = this.decModels.dimensionRanges.max.length;
+      this.camera.left = 0;
+      this.camera.right = w;
+      this.camera.top = 1;
+      this.camera.bottom = 0;
+      this.camera.updateProjectionMatrix();
+    }
   };
 
   /**
@@ -631,27 +703,43 @@ define([
    * reasonable for the data.
    */
   ScenePlotView3D.prototype.updateCameraTarget = function() {
-    var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
+    if (this.UIState['view.viewType'] === 'scatter')
+    {
+      var x = this.visibleDimensions[0], y = this.visibleDimensions[1];
 
-    var owidth = this.dimensionRanges.max[x] - this.dimensionRanges.min[x];
-    var oheight = this.dimensionRanges.max[y] - this.dimensionRanges.min[y];
-    var xcenter = this.dimensionRanges.max[x] - (owidth / 2);
-    var ycenter = this.dimensionRanges.max[y] - (oheight / 2);
+      var owidth = this.decModels.dimensionRanges.max[x] -
+                      this.decModels.dimensionRanges.min[x];
+      var oheight = this.decModels.dimensionRanges.max[y] -
+                      this.decModels.dimensionRanges.min[y];
+      var xcenter = this.decModels.dimensionRanges.max[x] - (owidth / 2);
+      var ycenter = this.decModels.dimensionRanges.max[y] - (oheight / 2);
 
-    var max = _.max(this.decViews.scatter.decomp.dimensionRanges.max);
+      var max = _.max(this.decViews.scatter.decomp.dimensionRanges.max);
 
-    this.control.target.set(xcenter, ycenter, 0);
-    this.camera.position.set(xcenter, ycenter, max * 5);
-    this.camera.updateProjectionMatrix();
+      this.control.target.set(xcenter, ycenter, 0);
+      this.camera.position.set(xcenter, ycenter, max * 5);
+      this.camera.updateProjectionMatrix();
 
-    this.light.position.set(xcenter, ycenter, max * 5);
+      this.light.position.set(xcenter, ycenter, max * 5);
 
-    this.updateCameraAspectRatio();
+      this.updateCameraAspectRatio();
 
-    this.control.saveState();
+      this.control.saveState();
 
-    this.needsUpdate = true;
+      this.needsUpdate = true;
+    }
+    else if (this.UIState['view.viewType'] === 'parallel-plot') {
+      this.control.target.set(0, 0, 1); //Must set positive Z because near > 0
+      this.camera.position.set(0, 0, 1); //Must set positive Z because near > 0
+      this.camera.updateProjectionMatrix();
+      this.updateCameraAspectRatio();
+      this.control.saveState();
+      this.needsUpdate = true;
+    }
   };
+
+  ScenePlotView3D.prototype.NEEDS_RENDER = 1;
+  ScenePlotView3D.prototype.NEEDS_CONTROLLER_REFRESH = 2;
 
   /**
    *
@@ -662,6 +750,47 @@ define([
    ScenePlotView3D.prototype.checkUpdate = function() {
     var updateDimensions = false, updateColors = false,
         currentDimensions, backgroundColor, axesColor, scope = this;
+
+    //Check if the view type changed and swap the markers in/out of the scene
+    //tree.
+    var anyMarkersSwapped = false;
+    _.each(this.decViews, function(view) {
+      if (view.needsSwapMarkers) {
+        anyMarkersSwapped = true;
+
+        var oldMarkers = view.getAndClearOldMarkers();
+        for (var i = 0; i < oldMarkers.length; i++) {
+          scope.scene.remove(oldMarkers[i]);
+          oldMarkers[i].material.dispose(); //FIXME:  What is our plan for this?
+          oldMarkers[i].geometry.dispose(); //FIXME:  What is our plan for this?
+        }
+        var newMarkers = view.markers;
+        for (i = 0; i < newMarkers.length; i++) {
+          scope.scene.add(newMarkers[i]);
+        }
+
+        var lines = view.lines;
+        var ellipsoids = view.ellipsoids;
+
+        if (scope.UIState['view.viewType'] == 'parallel-plot') {
+          for (i = 0; i < lines.length; i++)
+            scope.scene.remove(lines[i]);
+          for (i = 0; i < ellipsoids.length; i++)
+            scope.scene.remove(ellipsoids[i]);
+        }
+        if (scope.UIState['view.viewType'] == 'scatter') {
+          for (i = 0; i < lines.length; i++)
+            scope.scene.add(lines[i]);
+          for (i = 0; i < ellipsoids.length; i++)
+            scope.scene.add(ellipsoids[i]);
+        }
+    }});
+
+    if (anyMarkersSwapped) {
+      this.updateCameraTarget();
+      this.control.update();
+    }
+
 
     // check if any of the decomposition views have changed
     var updateData = _.any(this.decViews, function(dv) {
@@ -723,9 +852,15 @@ define([
       this.drawAxesLabelsWithColor(this.axesColor);
     }
 
+    var retVal = 0;
+    if (anyMarkersSwapped)
+      retVal |= ScenePlotView3D.prototype.NEEDS_CONTROLLER_REFRESH;
+    if (anyMarkersSwapped || this.needsUpdate || updateData ||
+        updateDimensions || updateColors || this.control.autoRotate)
+      retVal |= ScenePlotView3D.prototype.NEEDS_RENDER;
+
     // if anything has changed, then trigger an update
-    return (this.needsUpdate || updateData || updateDimensions ||
-            updateColors || this.control.autoRotate);
+    return retVal;
    };
 
   /**
@@ -746,7 +881,7 @@ define([
     // Only scatter plots that are not using a point cloud should be pointed
     // towards the camera. For arrow types and point clouds doing this will
     // results in odd visual effects
-    if (!this.decViews.scatter.usesPointCloud &&
+    if (!this.UIState.getProperty('view.usesPointCloud') &&
         this.decViews.scatter.decomp.isScatterType()) {
       _.each(this.decViews.scatter.markers, function(element) {
         element.quaternion.copy(camera.quaternion);
@@ -809,15 +944,19 @@ define([
         });
       }
 
+      var firstObj = intersects[0].object;
       /*
        * When the intersect object is a Points object, the raycasting method
        * won't intersect individual mesh objects. Instead it intersects a point
        * and we get the index of the point. This index can then be used to
        * trace the original Plottable object.
        */
-      if (isPointCloud) {
-        var index = intersects[0].index;
-        intersect = this.decViews.scatter.decomp.plottable[index];
+      if (firstObj.isPoints || firstObj.isLineSegments) {
+        var meshIndex = intersects[0].index;
+        var modelIndex = this.decViews.scatter.getModelPointIndex(meshIndex,
+                                                this.UIState['view.viewType']);
+
+        intersect = this.decViews.scatter.decomp.plottable[modelIndex];
       }
       else {
         intersect = intersects[0].object;

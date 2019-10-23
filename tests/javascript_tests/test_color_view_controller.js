@@ -5,9 +5,11 @@ requirejs([
     'view',
     'viewcontroller',
     'slickgrid',
-    'colorviewcontroller'
+    'colorviewcontroller',
+    'multi-model',
+    'uistate'
 ], function($, _, model, DecompositionView, viewcontroller, SlickGrid,
-            ColorViewController) {
+            ColorViewController, MultiModel, UIState) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var DecompositionModel = model.DecompositionModel;
@@ -16,6 +18,9 @@ requirejs([
     module('ColorViewController', {
       setup: function() {
         this.sharedDecompositionViewDict = {};
+
+        var UIState1 = new UIState();
+        var UIState2 = new UIState();
 
         // setup function
         var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
@@ -36,7 +41,8 @@ requirejs([
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -52,7 +58,8 @@ requirejs([
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
         this.decomp = new DecompositionModel(data, md_headers, metadata);
-        this.dv = new DecompositionView(this.decomp);
+        this.multiModel = new MultiModel({'scatter': this.decomp});
+        this.dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = dv;
 
         // jackknifed specific
@@ -77,13 +84,17 @@ requirejs([
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        this.jackknifedDecView = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        this.jackknifedDecView = new DecompositionView(multiModel,
+                                                       'scatter',
+                                                       UIState2);
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
         this.jackknifedDecView = undefined;
         $('#fooligans').remove();
         this.decomp = undefined;
+        this.multiModel = undefined;
       }
     });
 
@@ -93,7 +104,7 @@ requirejs([
 
       assert.ok(ColorViewController.prototype instanceof EmperorAttributeABC);
 
-      var controller = new ColorViewController(
+      var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       equal(controller.title, 'Color');
 
@@ -114,7 +125,7 @@ requirejs([
       var container = $('<div id="no-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
-      var controller = new ColorViewController(
+      var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
       equal(controller.title, 'Color');
@@ -139,7 +150,7 @@ requirejs([
     test('Test _nonNumericPlottables', function() {
       var container = $('<div id="no-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ColorViewController(
+      var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       controller.setMetadataField('DOB');
       var decompViewDict = controller.getView();
@@ -556,7 +567,7 @@ requirejs([
 
     test('Testing toJSON', function() {
       var container = $('<div style="height:11px; width:12px"></div>');
-      var controller = new ColorViewController(
+      var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       // Change color on one point
       var idx = 0;
@@ -580,8 +591,8 @@ requirejs([
                   data: {20070314: '#ff0000', 20071112: '#0000ff'}};
 
       var container = $('<div style="height:11px; width:12px"></div>');
-      var controller = new ColorViewController(
-      container, this.sharedDecompositionViewDict);
+      var controller = new ColorViewController(new UIState(),
+        container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
       var idx = 0;
@@ -601,7 +612,7 @@ requirejs([
                   continuous: true, data: {'Non-numeric values': '#ae1221'}};
 
       var container = $('<div style="height:11px; width:12px"></div>');
-      var controller = new ColorViewController(
+      var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
@@ -620,7 +631,7 @@ requirejs([
 
     test('Testing toJSON (null)', function() {
       var container = $('<div style="height:11px; width:12px"></div>');
-      var controller = new ColorViewController(
+      var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       controller.setMetadataField(null);
 
@@ -639,7 +650,7 @@ requirejs([
                   data: {}};
 
       var container = $('<div style="height:11px; width:12px"></div>');
-      var controller = new ColorViewController(
+      var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
@@ -669,7 +680,7 @@ requirejs([
 
     test('Test setEnabled', function() {
       var container = $('<div style="height:11px; width:12px"></div>');
-      var controller = new ColorViewController(
+      var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
       // disable
@@ -698,11 +709,13 @@ requirejs([
 
       var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
                                      metadata);
-      var dv = new DecompositionView(d);
+      var mm = new MultiModel({'scatter': d});
+      var state = new UIState();
+      var dv = new DecompositionView(mm, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
       // create a dummy category selection callback
       var options = {'categorySelectionCallback': function() {}};
-      var attr = new ColorViewController(container, {'scatter': dv});
+      var attr = new ColorViewController(state, container, {'scatter': dv});
       $(function() {
         // Controllers should be enabled
         equal(attr.enabled, false);
@@ -735,11 +748,13 @@ requirejs([
 
       var d = new DecompositionModel(data, ['SampleID', 'foo', 'bar'],
                                      metadata);
-      var dv = new DecompositionView(d);
+      var mm = new MultiModel({'scatter': d});
+      var state = new UIState();
+      var dv = new DecompositionView(mm, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
       // create a dummy category selection callback
       var options = {'categorySelectionCallback': function() {}};
-      var attr = new ColorViewController(container, {'scatter': dv});
+      var attr = new ColorViewController(state, container, {'scatter': dv});
       $(function() {
         // Controllers should be enabled
         equal(attr.enabled, false);

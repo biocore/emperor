@@ -4,8 +4,11 @@ requirejs([
     'three',
     'model',
     'view',
-    'viewcontroller'
-], function($, _, THREE, model, DecompositionView, viewcontroller) {
+    'viewcontroller',
+    'multi-model',
+    'uistate'
+], function($, _, THREE, model, DecompositionView, viewcontroller, MultiModel,
+            UIState) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var ScalarViewControllerABC = viewcontroller.ScalarViewControllerABC;
@@ -16,6 +19,7 @@ requirejs([
       setup: function() {
         this.sharedDecompositionViewDict = {};
 
+        var UIState1 = new UIState();
         // setup function
         var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
                     coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
@@ -35,7 +39,8 @@ requirejs([
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter' : decomp});
+        var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -51,12 +56,14 @@ requirejs([
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
         this.decomp = new DecompositionModel(data, md_headers, metadata);
-        this.dv = new DecompositionView(this.decomp);
+        this.multiModel = new MultiModel({'scatter' : this.decomp});
+        this.dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = dv;
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
+        this.multiModel = undefined;
       }
     });
 
@@ -67,8 +74,9 @@ requirejs([
       assert.ok(ScalarViewControllerABC.prototype instanceof
                 EmperorAttributeABC);
 
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
       controller.setMetadataField('SampleID');
 
       equal(controller.title, 'Test');
@@ -91,8 +99,9 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
       equal(controller.$select.val(), 'SampleID');
@@ -105,8 +114,9 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
       equal(controller.$select.val(), 'DOB');
@@ -116,8 +126,9 @@ requirejs([
     test('Testing toJSON', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
       controller.setMetadataField('SampleID');
 
       var obs = controller.toJSON();
@@ -129,8 +140,9 @@ requirejs([
     test('Testing toJSON (null)', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
       controller.setMetadataField(null);
 
       var obs = controller.toJSON();
@@ -142,8 +154,9 @@ requirejs([
     test('Testing scaleValue', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
 
       // return value should be constant, awkward abstract class
       equal(controller.scaleValue(0, 0, 0), 1);
@@ -153,8 +166,9 @@ requirejs([
     test('Testing setAllPlottableAttributes', function(assert) {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
 
       controller.setAllPlottableAttributes();
       assert.ok(true);
@@ -163,8 +177,9 @@ requirejs([
     test('Test setPlottableAttributes is a noop', function(assert) {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
       controller.setMetadataField('SampleID');
       controller.setPlottableAttributes();
       assert.ok(true);
@@ -176,8 +191,9 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
       var idx = 0;
@@ -188,8 +204,9 @@ requirejs([
     test('Testing getScale', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
       var data = ['1.0', 'no', 'false', 'something', '2.0'];
 
       //test standard values
@@ -206,8 +223,9 @@ requirejs([
     asyncTest('Test setEnabled (true)', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScalarViewControllerABC(container, 'Test',
-        'Class for testing', 10, 100, 0.5, this.sharedDecompositionViewDict);
+      var controller = new ScalarViewControllerABC(new UIState(), container,
+        'Test', 'Class for testing', 10, 100, 0.5,
+        this.sharedDecompositionViewDict);
       $(function() {
         controller.setEnabled(false);
 

@@ -5,9 +5,11 @@ requirejs([
     'view',
     'viewcontroller',
     'slickgrid',
-    'visibilitycontroller'
+    'visibilitycontroller',
+    'multi-model',
+    'uistate'
 ], function($, _, model, DecompositionView, viewcontroller, SlickGrid,
-            VisibilityController) {
+            VisibilityController, MultiModel, UIState) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var DecompositionModel = model.DecompositionModel;
@@ -15,6 +17,8 @@ requirejs([
     module('VisibilityController', {
       setup: function() {
         this.sharedDecompositionViewDict = {};
+
+        var UIState1 = new UIState();
 
         // setup function
         var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635'],
@@ -33,7 +37,8 @@ requirejs([
                         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
                          '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -48,7 +53,8 @@ requirejs([
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'], ['tax_2', '0']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        this.dv = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        this.dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = this.dv;
 
         // jackknifed specific
@@ -73,7 +79,9 @@ requirejs([
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
         decomp = new DecompositionModel(data, md_headers, metadata);
-        this.jackknifedDecView = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter': decomp});
+        this.jackknifedDecView = new DecompositionView(multiModel, 'scatter',
+                                                       UIState1);
       },
       teardown: function() {
         this.sharedDecompositionViewDict = undefined;
@@ -88,7 +96,7 @@ requirejs([
 
       assert.ok(VisibilityController.prototype instanceof EmperorAttributeABC);
 
-      var controller = new VisibilityController(container,
+      var controller = new VisibilityController(new UIState(), container,
           this.sharedDecompositionViewDict);
       equal(controller.title, 'Visibility');
 
@@ -158,7 +166,7 @@ requirejs([
     test('Testing toJSON', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new VisibilityController(container,
+      var controller = new VisibilityController(new UIState(), container,
           this.sharedDecompositionViewDict);
 
       controller.setMetadataField('DOB');
@@ -172,7 +180,7 @@ requirejs([
                   data: {'PC.636': false, 'PC.635': true}};
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new VisibilityController(container,
+      var controller = new VisibilityController(new UIState(), container,
           this.sharedDecompositionViewDict);
       controller.fromJSON(json);
 
@@ -184,7 +192,7 @@ requirejs([
     test('Testing toJSON', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new VisibilityController(container,
+      var controller = new VisibilityController(new UIState(), container,
           this.sharedDecompositionViewDict);
       controller.setMetadataField(null);
 
@@ -198,7 +206,7 @@ requirejs([
                   data: {}};
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new VisibilityController(container,
+      var controller = new VisibilityController(new UIState(), container,
           this.sharedDecompositionViewDict);
       controller.fromJSON(json);
 

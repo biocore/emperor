@@ -15,6 +15,7 @@ define([
    *
    * Manipulates and displays the visibility of objects on screen.
    *
+   * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {Object} decompViewDict This object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
@@ -25,7 +26,7 @@ define([
    * @constructs VisibilityController
    * @extends EmperorAttributeABC
    */
-  function VisibilityController(container, decompViewDict) {
+  function VisibilityController(uiState, container, decompViewDict) {
     var helpmenu = 'Change the visibility of the attributes on the plot, ' +
                    'such as spheres, vectors and ellipsoids.';
     var title = 'Visibility';
@@ -65,7 +66,7 @@ define([
         formatter: Slick.Formatters.Checkmark,
         editor: Slick.Editors.Checkbox}};
 
-    EmperorAttributeABC.call(this, container, title, helpmenu,
+    EmperorAttributeABC.call(this, uiState, container, title, helpmenu,
         decompViewDict, options);
     return this;
   }

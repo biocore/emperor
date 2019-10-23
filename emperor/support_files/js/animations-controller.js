@@ -23,6 +23,7 @@ define([
    * Controls the axes that are displayed on screen as well as their
    * orientation.
    *
+   * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {Object} decompViewDict This is object is keyed by unique
    * identifiers and the values are DecompositionView objects referring to a
@@ -33,11 +34,11 @@ define([
    * @constructs AnimationsController
    * @extends EmperorViewController
    */
-  function AnimationsController(container, decompViewDict) {
+  function AnimationsController(uiState, container, decompViewDict) {
     var helpmenu = 'Animate trajectories connecting samples in your data';
     var title = 'Animations';
     var scope = this, dm, label, gradientTooltip, trajectoryTooltip;
-    EmperorViewController.call(this, container, title, helpmenu,
+    EmperorViewController.call(this, uiState, container, title, helpmenu,
                                decompViewDict);
 
     trajectoryTooltip = 'Category to group samples';
@@ -148,7 +149,7 @@ define([
                             'value': 1,
                             'range': 'max',
                             'slide': function(event, ui) {
-                              scope._$radiusLabel.text('Raidus: ' + ui.value);
+                              scope._$radiusLabel.text('Radius: ' + ui.value);
                             },
                             'change': function(event, ui) {
                               scope._$radiusLabel.text('Radius: ' + ui.value);
@@ -205,6 +206,10 @@ define([
       scope._buildGrid();
 
       scope.setEnabled(false);
+
+      //Note that we can't do this before the buttons are ready.
+      scope.UIState.registerProperty('view.viewType',
+                               scope._viewTypeChanged.bind(scope));
     });
 
     return this;
@@ -403,12 +408,14 @@ define([
    */
   AnimationsController.prototype._gradientChanged = function(evt, params) {
     if (this.getGradientCategory() !== '' &&
-        this.getTrajectoryCategory() !== '') {
+        this.getTrajectoryCategory() !== '' &&
+        this.UIState['view.viewType'] === 'scatter') {
       this.setEnabled(true);
       this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
-             this.getTrajectoryCategory() === '') {
+             this.getTrajectoryCategory() === '' ||
+             this.UIState['view.viewType'] !== 'scatter') {
       this.setEnabled(false);
     }
   };
@@ -421,13 +428,35 @@ define([
    */
   AnimationsController.prototype._trajectoryChanged = function(evt, params) {
     if (this.getGradientCategory() !== '' &&
-        this.getTrajectoryCategory() !== '') {
+        this.getTrajectoryCategory() !== '' &&
+        this.UIState['view.viewType'] === 'scatter') {
       this.setEnabled(true);
       this._updateGrid();
     }
     else if (this.getGradientCategory() === '' ||
-             this.getTrajectoryCategory() === '') {
+             this.getTrajectoryCategory() === '' ||
+             this.UIState['view.viewType'] !== 'scatter') {
       this.setColors({});
+      this.setEnabled(false);
+    }
+  };
+
+  /**
+   *
+   * Callback method executed when the UIState view.viewType changes.
+   *
+   * @private
+   */
+  AnimationsController.prototype._viewTypeChanged = function(evt) {
+    if (this.getGradientCategory() !== '' &&
+      this.getTrajectoryCategory() !== '' &&
+      this.UIState['view.viewType'] === 'scatter') {
+      this.setEnabled(true);
+      this._updateGrid();
+    }
+    else if (this.getGradientCategory() === '' ||
+             this.getTrajectoryCategory() === '' ||
+             this.UIState['view.viewType'] !== 'scatter') {
       this.setEnabled(false);
     }
   };
@@ -580,16 +609,18 @@ define([
       }
     });
 
-    //Construct new dynamic tubes containing necessary
-    //interpolated segment for the current frame
-    view.dynamicTubes = this.director.trajectories.map(function(trajectory) {
-      var color = scope._colors[trajectory.metadataCategoryName] || 'red';
-      var tube = drawTrajectoryLineDynamic(trajectory,
+    if (this.UIState['view.viewType'] !== 'parallel-plot') {
+      //Construct new dynamic tubes containing necessary
+      //interpolated segment for the current frame
+      view.dynamicTubes = this.director.trajectories.map(function(trajectory) {
+        var color = scope._colors[trajectory.metadataCategoryName] || 'red';
+        var tube = drawTrajectoryLineDynamic(trajectory,
                                     scope.director.currentFrame,
                                     color,
                                     radius);
-      return tube;
-    });
+        return tube;
+      });
+    }
 
     view.needsUpdate = true;
 

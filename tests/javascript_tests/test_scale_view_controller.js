@@ -5,9 +5,11 @@ requirejs([
     'model',
     'view',
     'viewcontroller',
-    'scaleviewcontroller'
+    'scaleviewcontroller',
+    'multi-model',
+    'uistate'
 ], function($, _, THREE, model, DecompositionView, viewcontroller,
-            ScaleViewController) {
+            ScaleViewController, MultiModel, UIState) {
   $(document).ready(function() {
     var ScalarViewControllerABC = viewcontroller.ScalarViewControllerABC;
     var DecompositionModel = model.DecompositionModel;
@@ -17,6 +19,7 @@ requirejs([
       setup: function() {
         this.sharedDecompositionViewDict = {};
 
+        var UIState1 = new UIState();
         // setup function
          var data = {name: 'pcoa', sample_ids: ['PC.636', 'PC.635', 'PC.634'],
                     coordinates: [[-0.276542, -0.144964, 0.066647, -0.067711,
@@ -36,7 +39,8 @@ requirejs([
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
         var decomp = new DecompositionModel(data, md_headers, metadata);
-        var dv = new DecompositionView(decomp);
+        var multiModel = new MultiModel({'scatter': decomp});
+        var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
 
         data = {name: 'biplot', sample_ids: ['tax_1', 'tax_2'],
@@ -51,7 +55,8 @@ requirejs([
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'], ['tax_2', '0']];
         decomp = new DecompositionModel(data, md_headers, metadata, 'arrow');
-        this.dv = new DecompositionView(decomp);
+        multiModel = new MultiModel({'scatter' : decomp});
+        this.dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = this.dv;
       },
       teardown: function() {
@@ -67,7 +72,7 @@ requirejs([
       assert.ok(ScaleViewController.prototype instanceof
                 ScalarViewControllerABC);
 
-      var controller = new ScaleViewController(container,
+      var controller = new ScaleViewController(new UIState(), container,
         this.sharedDecompositionViewDict);
 
       controller.setMetadataField('SampleID');
@@ -121,7 +126,7 @@ requirejs([
     test('Testing toJSON', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new ScaleViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       controller.setMetadataField('SampleID');
 
@@ -137,7 +142,7 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new ScaleViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
@@ -162,7 +167,7 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new ScaleViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
@@ -180,7 +185,7 @@ requirejs([
     test('Testing toJSON (null)', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new ScaleViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       controller.setMetadataField(null);
 
@@ -196,7 +201,7 @@ requirejs([
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new ScaleViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
       controller.fromJSON(json);
@@ -218,7 +223,7 @@ requirejs([
     test('Testing getScale', function() {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new ScaleViewController(
+      var controller = new ScaleViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       var data = ['1.0', 'no', 'false', 'something', '2.0'];
 

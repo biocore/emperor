@@ -11,6 +11,7 @@ define([
    * of the jQuery tab.  The description will be used as help text to describe
    * the functionality of each subclass tab.
    *
+   * @param {UIState} uiState the shared state object
    * @param {Node} container Container node to create the controller in.
    * @param {String} title Title of the tab.
    * @param {String} description Helper description.
@@ -20,7 +21,14 @@ define([
    * @constructs EmperorViewControllerABC
    *
    */
-  function EmperorViewControllerABC(container, title, description) {
+  function EmperorViewControllerABC(uiState, container, title, description) {
+
+    /**
+     * @type {UIState}
+     * The shared state
+     */
+    this.UIState = uiState;
+
     /**
      * @type {Node}
      * jQuery element for the parent container.
@@ -181,6 +189,15 @@ define([
    */
   EmperorViewControllerABC.prototype.fromJSON = function(jsonString) {
     throw Error('Not implemented');
+  };
+
+  /**
+   * Writes the current settings to the active decomposition view(s).
+   * Will be called when the decomposition view is swapped out
+   * for a different view type.
+   */
+  EmperorViewControllerABC.prototype.forceRefresh = function() {
+    this.fromJSON(this.toJSON());
   };
 
   return {'EmperorViewControllerABC': EmperorViewControllerABC};

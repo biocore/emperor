@@ -19,6 +19,7 @@ define([
    * views, but that are not controlled by a metadata category, for those
    * cases, see `EmperorAttributeABC`.
    *
+   * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {String} title title of the tab.
    * @param {String} description helper description.
@@ -33,9 +34,9 @@ define([
    * @extends EmperorViewControllerABC
    *
    */
-  function EmperorViewController(container, title, description,
+  function EmperorViewController(uiState, container, title, description,
                                  decompViewDict) {
-    EmperorViewControllerABC.call(this, container, title, description);
+    EmperorViewControllerABC.call(this, uiState, container, title, description);
     if (decompViewDict === undefined) {
       throw Error('The decomposition view dictionary cannot be undefined');
     }
@@ -112,6 +113,7 @@ define([
    * This has to be contained in a DOM object and will use the full size of
    * that container.
    *
+   * @param {UIState} uiState the shared state
    * @param {Node} container Container node to create the controller in.
    * @param {String} title title of the tab.
    * @param {String} description helper description.
@@ -141,9 +143,9 @@ define([
    * @extends EmperorViewController
    *
    */
-  function EmperorAttributeABC(container, title, description,
+  function EmperorAttributeABC(uiState, container, title, description,
                                decompViewDict, options) {
-    EmperorViewController.call(this, container, title, description,
+    EmperorViewController.call(this, uiState, container, title, description,
                                decompViewDict);
 
     /**
@@ -560,6 +562,7 @@ define([
    *
    * Alters the scale of points displayed on the screen.
    *
+   * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {String} title The name/title of the tab.
    * @param {String} helpmenu description helper description.
@@ -576,8 +579,8 @@ define([
    * @extends EmperorAttributeABC
    *
    **/
-  function ScalarViewControllerABC(container, title, helpmenu, min, max, step,
-                                   decompViewDict) {
+  function ScalarViewControllerABC(uiState, container, title, helpmenu, min,
+                                   max, step, decompViewDict) {
     // Create checkbox for scaling by values
     /**
      * jQuery node for checkbox controlling whether to scale by values or not
@@ -684,8 +687,8 @@ define([
     'editorOptions': {'min': min, 'max': max, 'step': step}
     };
 
-    EmperorAttributeABC.call(this, container, title, helpmenu, decompViewDict,
-                             options);
+    EmperorAttributeABC.call(this, uiState, container, title, helpmenu,
+                             decompViewDict, options);
 
     this.$header.append(this.$scaledValue);
     this.$header.append(this.$scaledLabel);

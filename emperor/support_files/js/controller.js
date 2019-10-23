@@ -17,13 +17,29 @@ define([
     'svgrenderer',
     'draw',
     'canvasrenderer',
-    'canvastoblob'
+    'canvastoblob',
+    'multi-model',
+    'uistate'
 ], function($, _, contextMenu, THREE, DecompositionView, ScenePlotView3D,
             ColorViewController, VisibilityController, OpacityViewController,
             ShapeController, AxesController, ScaleViewController,
             AnimationsController, FileSaver, viewcontroller, SVGRenderer, Draw,
-            CanvasRenderer, canvasToBlob) {
+            CanvasRenderer, canvasToBlob, MultiModel, UIStateInit) {
+
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
+
+  TAB_ORDER = ['color', 'visibility', 'opacity', 'scale',
+               'shape', 'axes', 'animations'];
+
+  var controllerConstructors = {
+      'color': ColorViewController,
+      'visibility': VisibilityController,
+      'opacity': OpacityViewController,
+      'scale': ScaleViewController,
+      'shape': ShapeController,
+      'axes': AxesController,
+      'animations': AnimationsController
+    };
 
   /**
    *
@@ -48,8 +64,15 @@ define([
    *
    */
   function EmperorController(scatter, biplot, divId, webglcanvas) {
-    var scope = this;
 
+    /**
+     * The state shared across one instance of the UI
+     * @type {UIState}
+     */
+    this.UIState = new UIStateInit();
+    this.UIState.setProperty('view.usesPointCloud', scatter.length > 20000);
+
+    var scope = this;
     /**
      * Scaling constant for grid dimensions (read only).
      * @type {float}
@@ -77,16 +100,31 @@ define([
      */
     this.height = this.$divId.height();
 
+    var decModelMap = {'scatter': scatter};
+    if (biplot)
+      decModelMap['biplot'] = biplot;
+
+    /**
+     * MultiModel object containing all DecompositionModels
+     *
+     * @type {MultiModel}
+     */
+    this.decModels = new MultiModel(decModelMap);
 
     /**
      * Object with all the available decomposition views.
      *
      * @type {object}
      */
-    this.decViews = {'scatter': new DecompositionView(scatter)};
+    this.decViews = {'scatter':
+                        new DecompositionView(this.decModels,
+                                              'scatter',
+                                              this.UIState)};
 
     if (biplot) {
-      this.decViews.biplot = new DecompositionView(biplot);
+      this.decViews.biplot = new DecompositionView(this.decModels,
+                                                   'biplot',
+                                                   this.UIState);
     }
 
     /**
@@ -284,6 +322,25 @@ define([
       scope.resize(scope.$divId.width(), scope.$divId.height());
     });
 
+    this.UIState.registerProperty('view.viewType', function(evt) {
+      toDisable = ['scale', 'shape', 'animations'];
+
+      for (controllerName in scope.controllers) {
+        var c = scope.controllers[controllerName];
+        selector = "li[aria-controls='" + c.identifier + "']";
+        //jquery effects are less jarring, but also remind me of people who add
+        //effects to slide transitions in powerpoint.  I'd still prefer css
+        //to gray out the tab...
+        //effects list at https://api.jqueryui.com/category/effects/
+
+        if (toDisable.includes(controllerName)) {
+          if (evt.newVal === 'parallel-plot')
+            $(selector).hide('blind');
+          else if (evt.newVal === 'scatter')
+            $(selector).show('blind');
+        }
+      }
+    });
   };
 
   /**
@@ -331,7 +388,10 @@ define([
       throw Error('Cannot add another scene plot view');
     }
 
-    var spv = new ScenePlotView3D(this.renderer, this.decViews,
+    var spv = new ScenePlotView3D(this.UIState,
+                                  this.renderer,
+                                  this.decViews,
+                                  this.decModels,
                                   this.$plotSpace, 0, 0,
                                   this.width, this.height);
     this.sceneViews.push(spv);
@@ -450,7 +510,16 @@ define([
     }
 
     $.each(this.sceneViews, function(i, sv) {
-      if (sv.checkUpdate()) {
+      requiredActions = sv.checkUpdate();
+      if (requiredActions &
+          ScenePlotView3D.prototype.NEEDS_CONTROLLER_REFRESH) {
+        //loop over controllers and update
+        for (controllerKey in scope.controllers) {
+          scope.controllers[controllerKey].forceRefresh();
+        }
+      }
+      if (requiredActions &
+          ScenePlotView3D.prototype.NEEDS_RENDER) {
         scope.renderer.setViewport(0, 0, scope.width, scope.height);
         scope.renderer.clear();
         sv.render();
@@ -528,25 +597,15 @@ define([
    *
    */
   EmperorController.prototype._buildUI = function() {
-    var scope = this, isLargeDataset = this.decViews.scatter.usesPointCloud;
+    var scope = this, isLargeDataset = this.UIState['view.usesPointCloud'];
 
-    //FIXME: This only works for 1 scene plot view
-    this.controllers.color = this.addTab(this.sceneViews[0].decViews,
-                                         ColorViewController);
-    this.controllers.visibility = this.addTab(this.sceneViews[0].decViews,
-                                              VisibilityController);
-    this.controllers.opacity = this.addTab(this.sceneViews[0].decViews,
-                                           OpacityViewController);
-    this.controllers.scale = this.addTab(this.sceneViews[0].decViews,
-                                         ScaleViewController);
-    if (!isLargeDataset) {
-      this.controllers.shape = this.addTab(this.sceneViews[0].decViews,
-                                           ShapeController);
+    for (var index in TAB_ORDER) {
+      var item = TAB_ORDER[index];
+      if (item === 'shape' && isLargeDataset)
+        continue;
+      scope.controllers[item] = scope.addTab(scope.sceneViews[0].decViews,
+                                           controllerConstructors[item]);
     }
-    this.controllers.axes = this.addTab(this.sceneViews[0].decViews,
-                                        AxesController);
-    this.controllers.animations = this.addTab(this.sceneViews[0].decViews,
-                                              AnimationsController);
 
     // We are tabifying this div, I don't know man.
     this._$tabsContainer.tabs({heightStyle: 'fill',
@@ -587,6 +646,9 @@ define([
             _.each(scope.sceneViews, function(scene) {
               scene.control.autoRotate = scene.control.autoRotate ^ true;
             });
+          },
+          disabled: function(key, opts) {
+            return scope.UIState['view.viewType'] === 'parallel-plot';
           }
         },
         'labels' : {
@@ -659,7 +721,10 @@ define([
                 callback: function(key, opts) {
                   scope.screenshot('svg');
                 },
-                disabled: isLargeDataset
+                disabled: function(key, opt) {
+                  return isLargeDataset ||
+                         (scope.UIState['view.viewType'] === 'parallel-plot');
+                }
               }
             }
         },
@@ -667,7 +732,8 @@ define([
           name: 'Experimental',
           disabled: function(key, opt) {
             // Only enable if this is a "vanilla" plot
-            if (scope.decViews.scatter.lines.left === null &&
+            if (scope.UIState['view.viewType'] === 'scatter' &&
+                scope.decViews.scatter.lines.left === null &&
                 scope.decViews.scatter.lines.right === null &&
                 scope.decViews.biplot === undefined) {
               return false;
@@ -722,7 +788,8 @@ define([
 
       // Point clouds can't be rendered by the CanvasRenderer, therefore we
       // have to use the WebGLRenderer and can't increase the image size.
-      if (this.decViews.scatter.usesPointCloud) {
+      if (this.UIState['view.usesPointCloud'] ||
+          this.UIState['view.viewType'] === 'parallel-plot') {
         pngRenderer = this.sceneViews[0].renderer;
       }
       else {
@@ -934,7 +1001,7 @@ define([
 
     // dynamically instantiate the controller, see:
     // http://stackoverflow.com/a/8843181
-    var params = [null, '#' + id, dvdict];
+    var params = [null, this.UIState, '#' + id, dvdict];
     var obj = new (Function.prototype.bind.apply(viewConstructor, params));
 
     obj.ready = function() {
