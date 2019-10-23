@@ -43,7 +43,7 @@ define([
     });
     this.$viewTypeDiv.attr('title', 'Change the selected View Type');
 
-    var radioName = "emperor.viewType_" + this.identifier;
+    var radioName = 'emperor.viewType_' + this.identifier;
     if (this.UIState['view.viewType'] === 'scatter') {
 
 

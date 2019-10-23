@@ -400,16 +400,16 @@ DecompositionView.prototype._fastInitParallelPlot = function()
     attribute vec3 color;
     attribute float opacity;
     attribute float visible;
-    
+
     varying vec3 vColor;
     varying float vOpacity;
     varying float vVisible;
-    
+
     void main() {
       vColor = color;
       vOpacity = opacity;
       vVisible = visible;
-    
+
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
     `;
@@ -419,7 +419,7 @@ DecompositionView.prototype._fastInitParallelPlot = function()
     varying vec3 vColor;
     varying float vOpacity;
     varying float vVisible;
-    
+
     void main() {
       if (vVisible <= 0.0 || vOpacity <= 0.0)
         discard;
