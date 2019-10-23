@@ -3,9 +3,10 @@ define(['three', 'underscore'], function(THREE, _) {
    *
    * @class UIState
    *
-   * A singleton that shares UI level state information globally and exposes
-   * events when this information changes.  Do not access properties directly,
-   * go through the register event handlers and use the getters/setters
+   * An object that shares UI level state information across all entities under
+   * a single emperor instance and exposes events when this information changes.
+   * Do not access properties directly, go through the register event handlers
+   * and use the getters/setters
    *
    */
   function UIState() {
@@ -191,9 +192,5 @@ define(['three', 'underscore'], function(THREE, _) {
   //be careless about using function.bind vs wrapper functions vs anonymous
   //functions unless we throw exceptions in their faces.
 
-  //Note, as as singleton, we could have just defined it anonymously in this
-  //function.  However, should we choose to support multiple state objects
-  //with different responsibilities (perhaps saved to different files?)
-  //it might make sense to refactor this class out of this file.
   return UIState;
 });
