@@ -927,23 +927,6 @@ define([
 
     // Get first intersected item and call callback with it.
     if (intersects && intersects.length > 0) {
-      var intersect, isPointCloud = intersects[0].object.isPoints;
-
-      // filter out things that are not visible
-      if (isPointCloud) {
-        var cloud = intersects[0].object;
-
-        intersects = _.filter(intersects, function(marker) {
-          return cloud.geometry.attributes.visible.getX(marker.index) &&
-                 cloud.geometry.attributes.opacity.getX(marker.index);
-        });
-      }
-      else {
-        intersects = _.filter(intersects, function(match) {
-          return marker.visible && marker.opacity;
-        });
-      }
-
       var firstObj = intersects[0].object;
       /*
        * When the intersect object is a Points object, the raycasting method
