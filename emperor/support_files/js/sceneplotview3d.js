@@ -947,7 +947,7 @@ define([
       }
       else {
         intersects = _.filter(intersects, function(marker) {
-          return marker.visible && marker.opacity;
+          return marker.object.visible && marker.object.material.opacity;
         });
         intersect = intersects[0].object;
       }
