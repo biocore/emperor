@@ -284,7 +284,6 @@ define([
     // if a decomposition uses a parallel plot,
     // update the default raycasting tolerance as
     // it is otherwise too large and error-prone
-    var scope = this;
     var updateRaycasterLinePrecision = function(evt) {
       if (scope.UIState.getProperty('view.viewType') === 'parallel-plot')
         scope._raycaster.linePrecision = 0.01;
@@ -927,24 +926,7 @@ define([
 
     // Get first intersected item and call callback with it.
     if (intersects && intersects.length > 0) {
-      var intersect, isPointCloud = intersects[0].object.isPoints;
-
-      // filter out things that are not visible
-      if (isPointCloud) {
-        var cloud = intersects[0].object;
-
-        intersects = _.filter(intersects, function(marker) {
-          return cloud.geometry.attributes.visible.getX(marker.index) &&
-                 cloud.geometry.attributes.opacity.getX(marker.index);
-        });
-      }
-      else {
-        intersects = _.filter(intersects, function(match) {
-          return marker.visible && marker.opacity;
-        });
-      }
-
-      var firstObj = intersects[0].object;
+      var firstObj = intersects[0].object, intersect;
       /*
        * When the intersect object is a Points object, the raycasting method
        * won't intersect individual mesh objects. Instead it intersects a point
@@ -952,13 +934,21 @@ define([
        * trace the original Plottable object.
        */
       if (firstObj.isPoints || firstObj.isLineSegments) {
+        // don't search over invisible things
+        intersects = _.filter(intersects, function(marker) {
+           return firstObj.geometry.attributes.visible.getX(marker.index) &&
+                  firstObj.geometry.attributes.opacity.getX(marker.index);
+        });
+
         var meshIndex = intersects[0].index;
         var modelIndex = this.decViews.scatter.getModelPointIndex(meshIndex,
                                                 this.UIState['view.viewType']);
-
         intersect = this.decViews.scatter.decomp.plottable[modelIndex];
       }
       else {
+        intersects = _.filter(intersects, function(marker) {
+          return marker.object.visible && marker.object.material.opacity;
+        });
         intersect = intersects[0].object;
       }
 
