@@ -591,21 +591,26 @@ define([
 
   /**
    *
-   * Helper method to remove objects that match a prefix from the view's scene
-   * this method is used by removeAxes and removeAxesLabels. This function
-   * iterates "num" times, and for each iteration it finds and removes objects
-   * with the name of the form "prefix" + "iteration".
+   * Helper method to remove objects with some prefix from the view's scene
    *
-   * @param {String} prefix The label that will prepended to the iterating
-   * index.
+   * @param {String} prefix The prefix of object names to remove
    *
    */
   ScenePlotView3D.prototype._removeObjectsWithPrefix = function(prefix) {
     var scope = this;
-    _.each(_.range(this.decViews.scatter.decomp.dimensions), function(i) {
-      var axisLine = scope.scene.getObjectByName(prefix + i);
-      scope.scene.remove(axisLine);
-    });
+    var recursiveRemove = function(rootObj) {
+      if (rootObj.name != null && rootObj.name.startsWith(prefix)) {
+        scope.scene.remove(rootObj)
+      }
+      else {
+        // We can't iterate the children array while removing from it,
+        // So we make a shallow copy.
+        var childCopy = Array.from(rootObj.children)
+        for (child in childCopy)
+          recursiveRemove(childCopy[child])
+      }
+    }
+    recursiveRemove(this.scene);
   };
 
   /**
