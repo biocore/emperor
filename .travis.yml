@@ -1,6 +1,5 @@
 language: python
 python:
-  - 2.7
   - 3.5
   - 3.6
   # also includes 3.7 (see below)
@@ -32,17 +31,19 @@ before_install:
   - conda update --yes conda
 
 install:
+  # run gjslint using py27
+  - pip2.7 install https://github.com/google/closure-linter/archive/master.zip
   # install requests using conda to avoid a distutils error in certifi
   - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
   - source activate travis
   - conda install -c conda-forge phantomjs --yes
-  - pip install https://github.com/google/closure-linter/archive/master.zip 'sphinx<1.6' sphinx-bootstrap-theme coveralls
+  - pip 'sphinx<1.6' sphinx-bootstrap-theme coveralls
   - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
 
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
-  # we can only run gjslint using python 2.7.x
+  # we can only run gjslint using py27
   - python2.7 $(which gjslint) --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
   # we just check coverage in the latest version of NumPy
   - coverage run tests/all_tests.py; coverage report
