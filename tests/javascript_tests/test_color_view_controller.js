@@ -584,7 +584,7 @@ requirejs([
       deepEqual(obs, exp);
     });
 
-    test('Testing fromJSON', function() {
+    test('Testing fromJSON', function(assert) {
       var json = {category: 'DOB',
                   colormap: 'discrete-coloring-qiime',
                   continuous: false,
@@ -594,7 +594,14 @@ requirejs([
       var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
+      controller.setMetadataField('Treatment');
+
       controller.fromJSON(json);
+
+      // check the data is rendered
+      assert.ok(controller.$gridDiv.find(':contains(20070314)').length > 0);
+      assert.ok(controller.$gridDiv.find(':contains(20071112)').length > 0);
+
       var idx = 0;
       var markers = controller.decompViewDict.scatter.markers;
       equal(markers[idx].material.color.getHexString(), 'ff0000');
@@ -607,7 +614,7 @@ requirejs([
       equal(controller.$searchBar.prop('hidden'), false);
     });
 
-    test('Testing fromJSON scaled', function() {
+    test('Testing fromJSON scaled', function(assert) {
       var json = {category: 'Mixed', colormap: 'Viridis',
                   continuous: true, data: {'Non-numeric values': '#ae1221'}};
 
@@ -615,7 +622,15 @@ requirejs([
       var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
+      controller.setMetadataField('Treatment');
+
       controller.fromJSON(json);
+
+      // check the data is rendered
+      assert.ok(controller.$gridDiv.find(':contains(14.2)').length > 0);
+      assert.ok(controller.$gridDiv.find(':contains(StringValue)').length > 0);
+      assert.ok(controller.$gridDiv.find(':contains(14.7)').length > 0);
+
       var idx = 0;
       var markers = controller.decompViewDict.scatter.markers;
       equal(markers[idx].material.color.getHexString(), '440154');
