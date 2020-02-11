@@ -43,10 +43,11 @@ install:
 
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
-  # we can only run gjslint using py27
-  - python2.7 $(which gjslint) --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
   # we just check coverage in the latest version of NumPy
   - coverage run tests/all_tests.py; coverage report
   - make -C doc html
+  # we can only run gjslint using py27
+  - which gjslint
+  - python2.7 $(which gjslint) --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 after_success:
   - coveralls
