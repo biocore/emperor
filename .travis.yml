@@ -54,6 +54,6 @@ script:
   # we can only run gjslint using py27
   - conda deactivate
   - conda activate gjslint
-  - gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
+  - conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 after_success:
   - coveralls
