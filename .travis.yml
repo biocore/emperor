@@ -25,7 +25,7 @@ matrix:
 
 before_install:
   # run gjslint using py27
-  - which python2.7
+  - SYSPY27=$(which python2.7)
   - sudo pip2.7 install https://github.com/google/closure-linter/archive/master.zip
   - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh && chmod +x miniconda.sh
   - ./miniconda.sh -b
@@ -49,6 +49,6 @@ script:
   - make -C doc html
   # we can only run gjslint using py27
   - which gjslint
-  - python2.7 $(which gjslint) --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
+  - $SYSPY27 $(which gjslint) --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 after_success:
   - coveralls
