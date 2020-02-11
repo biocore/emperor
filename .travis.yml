@@ -48,7 +48,7 @@ install:
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
   # we just check coverage in the latest version of NumPy
-  - coverage run tests/all_tests.py; coverage report
+  - coverage run tests/all_tests.py && coverage report
   - make -C doc html
 
   # we can only run gjslint using py27
