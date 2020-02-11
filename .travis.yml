@@ -34,7 +34,7 @@ install:
   # gjslint only runs in py27
   - conda create --yes -n gjslint python=2.7 pip six
   - source activate gjslint
-  - pip install https://github.com/google/closure-linter/archive/master.zip
+  - conda run -n gjslint pip install https://github.com/google/closure-linter/archive/master.zip
   - conda deactivate
 
   # install requests using conda to avoid a distutils error in certifi
