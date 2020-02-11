@@ -396,36 +396,34 @@ DecompositionView.prototype._fastInitParallelPlot = function()
 
   // We're really just drawing a bunch of line strips...
   // highly doubt shaders are necessary for this...
-  var vertexShader = `
-    attribute vec3 color;
-    attribute float opacity;
-    attribute float visible;
+  var vertexShader = [
+    'attribute vec3 color;',
+    'attribute float opacity;',
+    'attribute float visible;',
 
-    varying vec3 vColor;
-    varying float vOpacity;
-    varying float vVisible;
+    'varying vec3 vColor;',
+    'varying float vOpacity;',
+    'varying float vVisible;',
 
-    void main() {
-      vColor = color;
-      vOpacity = opacity;
-      vVisible = visible;
+    'void main() {',
+    '  vColor = color;',
+    '  vOpacity = opacity;',
+    '  vVisible = visible;',
 
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-    `;
+    '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+    '}'];
 
-  var fragmentShader = `
-    precision mediump float;
-    varying vec3 vColor;
-    varying float vOpacity;
-    varying float vVisible;
+  var fragmentShader = [
+    'precision mediump float;',
+    'varying vec3 vColor;',
+    'varying float vOpacity;',
+    'varying float vVisible;',
 
-    void main() {
-      if (vVisible <= 0.0 || vOpacity <= 0.0)
-        discard;
-      gl_FragColor = vec4(vColor, vOpacity);
-    }
-  `;
+    'void main() {',
+    ' if (vVisible <= 0.0 || vOpacity <= 0.0)',
+    '   discard;',
+    ' gl_FragColor = vec4(vColor, vOpacity);',
+    '}'];
 
   var allDimensions = _.range(this.decomp.dimensions);
 

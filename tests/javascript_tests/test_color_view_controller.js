@@ -688,7 +688,7 @@ requirejs([
 
       equal(controller.$colormapSelect.is(':disabled'), true);
       equal(controller.$scaled.is(':disabled'), true);
-      equal(controller.$searchBar.prop('hidden'), false);
+      equal(controller.$searchBar.prop('hidden'), true);
     });
 
     /**

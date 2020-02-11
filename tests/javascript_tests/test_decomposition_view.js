@@ -6,7 +6,7 @@ requirejs([
     'multi-model',
     'uistate',
     'three'
-], function($, _, model, DecompositionView, MultiModel, UIState, THREE,) {
+], function($, _, model, DecompositionView, MultiModel, UIState, THREE) {
   $(document).ready(function() {
     var DecompositionModel = model.DecompositionModel;
 
