@@ -350,10 +350,12 @@ define([
       this.setEnabled(true);
     }
 
-    // Re-render
+    // Re-render the grid on the DOM
     this.bodyGrid.getData().beginUpdate();
     this.bodyGrid.getData().setItems(data);
     this.bodyGrid.getData().endUpdate();
+    this.bodyGrid.invalidate();
+    this.bodyGrid.render();
   };
 
   /**
