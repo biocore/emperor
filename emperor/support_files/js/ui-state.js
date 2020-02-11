@@ -1,4 +1,4 @@
-define(['three', 'underscore'], function(THREE, _) {
+define(['three'], function(THREE) {
   /**
    *
    * @class UIState
@@ -99,17 +99,22 @@ define(['three', 'underscore'], function(THREE, _) {
    * TODO: We could allow list and dictionary mutations to be part of
    * bulk events, is that a use case we think is realistic?
    */
-  UIState.prototype.setProperties = function(keyValueDict, bulkEvent = null) {
+  UIState.prototype.setProperties = function(keyValueDict, bulkEvent) {
+
+    if (bulkEvent === undefined) {
+      bulkEvent = null;
+    }
+
     var oldValueDict = {};
     for (var key in keyValueDict) {
       oldValueDict[key] = this.getProperty(key);
     }
-    for (var key in keyValueDict) {
+    for (key in keyValueDict) {
       this[key] = value;
     }
 
-    if (bulkEvent == null) {
-      for (var key in keyValueDict) {
+    if (bulkEvent === null) {
+      for (key in keyValueDict) {
         if (oldValueDict[key] !== keyValueDict[key]) {
           this.events.dispatchEvent(
             {type: key, oldVal: oldValueDict[key], newVal: keyValueDict[key]}

@@ -7,8 +7,6 @@
 # The full license is in the file LICENSE.md, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import sys
-
 from setuptools import setup, find_packages
 
 __version__ = "1.0.0beta20-dev"
@@ -22,7 +20,6 @@ classes = """
     Topic :: Software Development :: Libraries :: Application Frameworks
     Topic :: Software Development :: User Interfaces
     Programming Language :: Python
-    Programming Language :: Python :: 2.7
     Programming Language :: Python :: 3.5
     Programming Language :: Python :: 3.6
     Programming Language :: Python :: 3.7
@@ -37,19 +34,11 @@ classifiers = [s.strip() for s in classes.split('\n') if s]
 with open('README.md') as f:
     long_description = f.read()
 
-skbio_2 = "scikit-bio >= 0.4.1, < 0.5.0"
-skbio_3 = "scikit-bio >= 0.4.1"
 base = ["numpy >= 1.7", "scipy >= 0.17.0", "click", "pandas",
-        skbio_2, "jinja2 >= 2.9", "future"]
+        "scikit-bio >= 0.4.1", "jinja2 >= 2.9", "future"]
 doc = ["Sphinx", "sphinx-bootstrap-theme"]
 test = ["pep8", "flake8", "nose"]
 all_deps = base + doc + test
-
-# prevent python2 from trying to install skbio >= 0.5.0 (which only works in
-# PY3K)
-if sys.version_info.major == 3:
-    base.remove(skbio_2)
-    base.append(skbio_3)
 
 setup(
     name='emperor',

@@ -633,9 +633,9 @@ requirejs([
      * Test the 'click' callback is resolved
      *
      */
-    test('Verifying click works', function() {
+    test('Verifying click works', function(assert) {
       // for the test to pass, two assertions should be made
-      expect(2);
+      expect(4);
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -644,7 +644,9 @@ requirejs([
 
       spv.on('click', function(a, b) {
         equal(a, 'Meshy McMeshface');
-        deepEqual(b, {'name': 'Meshy McMeshface'});
+        deepEqual(b.name, 'Meshy McMeshface');
+        assert.ok(b.visible);
+        deepEqual(b.material.opacity, 1);
       });
 
       var mockEvent = {
@@ -657,7 +659,15 @@ requirejs([
       };
       mockEvent.preventDefault = function() {};
 
-      var meshy = {'object': {'name': 'Meshy McMeshface'}};
+      var meshy = {'object': {
+        'name': 'Meshy McMeshface',
+        'visible': true,
+        'material': {'opacity': 1}
+      }};
+
+
+      // this should only result in one call to the click callback
+      spv._eventCallback('click', mockEvent);
       spv._raycaster.intersectObjects = function() { return [meshy]; };
       spv._eventCallback('click', mockEvent);
 
@@ -670,9 +680,9 @@ requirejs([
      * Test the 'dblclick' callback is resolved
      *
      */
-    test('Verifying double click works', function() {
+    test('Verifying double click works', function(assert) {
       // for the test to pass, two assertions should be made
-      expect(2);
+      expect(4);
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -681,7 +691,9 @@ requirejs([
 
       spv.on('dblclick', function(a, b) {
         equal(a, 'Meshy McMeshface');
-        deepEqual(b, {'name': 'Meshy McMeshface'});
+        deepEqual(b.name, 'Meshy McMeshface');
+        assert.ok(b.visible);
+        deepEqual(b.material.opacity, 1);
       });
 
       var mockEvent = {
@@ -694,7 +706,14 @@ requirejs([
       };
       mockEvent.preventDefault = function() {};
 
-      var meshy = {'object': {'name': 'Meshy McMeshface'}};
+      var meshy = {'object': {
+        'name': 'Meshy McMeshface',
+        'visible': true,
+        'material': {'opacity': 1}
+      }};
+
+      // this should only result in one call to the double click callback
+      spv._eventCallback('dblclick', mockEvent);
       spv._raycaster.intersectObjects = function() { return [meshy]; };
       spv._eventCallback('dblclick', mockEvent);
 

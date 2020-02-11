@@ -498,6 +498,8 @@ define([
     // settings before we load from json, as they can override the JSON when set
     this.setMetadataField(json.category);
 
+    this.setEnabled(true);
+
     // if the category is null, then there's nothing to set about the state
     // of the controller
     if (json.category === null) {

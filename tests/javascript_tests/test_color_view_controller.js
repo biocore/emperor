@@ -626,10 +626,10 @@ requirejs([
 
       controller.fromJSON(json);
 
-      // check the data is rendered
-      assert.ok(controller.$gridDiv.find(':contains(14.2)').length > 0);
-      assert.ok(controller.$gridDiv.find(':contains(StringValue)').length > 0);
-      assert.ok(controller.$gridDiv.find(':contains(14.7)').length > 0);
+      // no grid data should be rendered (continuous is set to true)
+      assert.ok(controller.$gridDiv.find(':contains(14.2)').length <= 0);
+      assert.ok(controller.$gridDiv.find(':contains(StringValue)').length <= 0);
+      assert.ok(controller.$gridDiv.find(':contains(14.7)').length <= 0);
 
       var idx = 0;
       var markers = controller.decompViewDict.scatter.markers;
@@ -703,7 +703,7 @@ requirejs([
 
       equal(controller.$colormapSelect.is(':disabled'), true);
       equal(controller.$scaled.is(':disabled'), true);
-      equal(controller.$searchBar.prop('hidden'), false);
+      equal(controller.$searchBar.prop('hidden'), true);
     });
 
     /**
