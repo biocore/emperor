@@ -33,7 +33,6 @@ before_install:
 install:
   # gjslint only runs in py27
   - conda create --yes -n gjslint python=2.7 pip six
-  - source activate gjslint
   - conda run -n gjslint pip install https://github.com/google/closure-linter/archive/master.zip
   - conda deactivate
 
@@ -52,8 +51,6 @@ script:
   - make -C doc html
 
   # we can only run gjslint using py27
-  - conda deactivate
-  - conda activate gjslint
   - conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 after_success:
   - coveralls
