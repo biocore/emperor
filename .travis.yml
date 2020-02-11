@@ -24,6 +24,8 @@ matrix:
         env: NUMPY_VERSION="<1.13"
 
 before_install:
+  # run gjslint using py27
+  - sudo pip2.7 install https://github.com/google/closure-linter/archive/master.zip
   - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh && chmod +x miniconda.sh
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda2/bin:$PATH
@@ -31,8 +33,6 @@ before_install:
   - conda update --yes conda
 
 install:
-  # run gjslint using py27
-  - pip2.7 install https://github.com/google/closure-linter/archive/master.zip
   # install requests using conda to avoid a distutils error in certifi
   - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
   - source activate travis
