@@ -114,10 +114,12 @@ var emperorRequire = require.config({
   'slickgrid': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.grid.min',
   'slickformatters': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.editors.min',
   'slickeditors': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.formatters.min',
+  'slickdataview': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.dataview.min',
 
   /* Emperor's objects */
   'util': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/util',
   'model': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/model',
+  'multi-model': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/multi-model',
   'view': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/view',
   'controller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/controller',
   'draw': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/draw',
@@ -125,6 +127,7 @@ var emperorRequire = require.config({
   'shapes': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shapes',
   'animationdirector': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/animate',
   'trajectory': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/trajectory',
+  'uistate': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/ui-state',
 
   /* controllers */
   'abcviewcontroller': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/abc-view-controller',
@@ -165,7 +168,8 @@ var emperorRequire = require.config({
     'deps': ['blob']
   },
   'slickcore': ['jqueryui'],
-  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors',
+                'slickdataview']
 }
 });
 
@@ -304,10 +308,12 @@ var emperorRequire = require.config({
   'slickgrid': './some-local-path//vendor/js/slick.grid.min',
   'slickformatters': './some-local-path//vendor/js/slick.editors.min',
   'slickeditors': './some-local-path//vendor/js/slick.formatters.min',
+  'slickdataview': './some-local-path//vendor/js/slick.dataview.min',
 
   /* Emperor's objects */
   'util': './some-local-path//js/util',
   'model': './some-local-path//js/model',
+  'multi-model': './some-local-path//js/multi-model',
   'view': './some-local-path//js/view',
   'controller': './some-local-path//js/controller',
   'draw': './some-local-path//js/draw',
@@ -315,6 +321,7 @@ var emperorRequire = require.config({
   'shapes': './some-local-path//js/shapes',
   'animationdirector': './some-local-path//js/animate',
   'trajectory': './some-local-path//js/trajectory',
+  'uistate': './some-local-path//js/ui-state',
 
   /* controllers */
   'abcviewcontroller': './some-local-path//js/abc-view-controller',
@@ -355,7 +362,8 @@ var emperorRequire = require.config({
     'deps': ['blob']
   },
   'slickcore': ['jqueryui'],
-  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors']
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors',
+                'slickdataview']
 }
 });
 
