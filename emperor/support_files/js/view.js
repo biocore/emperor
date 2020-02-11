@@ -411,7 +411,7 @@ DecompositionView.prototype._fastInitParallelPlot = function()
     '  vVisible = visible;',
 
     '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
-    '}'];
+    '}'].join('\n');
 
   var fragmentShader = [
     'precision mediump float;',
@@ -423,7 +423,7 @@ DecompositionView.prototype._fastInitParallelPlot = function()
     ' if (vVisible <= 0.0 || vOpacity <= 0.0)',
     '   discard;',
     ' gl_FragColor = vec4(vColor, vOpacity);',
-    '}'];
+    '}'].join('\n');
 
   var allDimensions = _.range(this.decomp.dimensions);
 
