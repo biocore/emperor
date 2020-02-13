@@ -1,31 +1,56 @@
 Emperor Installation Notes
 ==========================
 
-Emperor is a python package that relies in [QCLI](https://pypi.python.org/pypi/qcli) and [NumPy](http://www.numpy.org). These packages must be installed prior running the `setup.py` script.
+Emperor is a Python package that powers a JavaScript-based user interface. The
+Python library relies on several packages from the scientific Python stack.
 
-To download Emperor, use [this link](https://github.com/biocore/emperor/archive/master.zip) or use git to get the latest version of the repository:
+To install the latest release version of Emperor, you can use `pip` or
+`conda`:
 
-    git clone git://github.com/biocore/emperor.git
-
-Installation
-============
-
-By far the easiest way to install Emperor is running:
-
+```bash
+    # with pip
     pip install emperor
 
-In other case, to perform a global installation of Emperor, execute the following command from a terminal session:
-
-    python setup.py install
-
-If you do not want to do a global installation, you will have to add the Emperor scripts and libraries to the `PATH` and `PYTHONPATH` environment variables. To add these variables to your `.bash_profile` issue the following terminal commands:
-
-``` bash
-echo "export PATH=$HOME/emperor_bin/:$PATH" >> ~/.bash_profile
-echo "export PYTHONPATH=$HOME/emperor_lib/:$PYTHONPATH" >> ~/.bash_profile
-python setup.py install --install-scripts=~/emperor_bin/ --install-purelib=~/emperor_lib/ --install-lib=~/emperor_lib/
+    # with conda
+    conda install -c bioconda emperor
 ```
 
-To test for a correct installation, open a new terminal window and issue the following command to see the help of `make_emperor.py`:
 
-    make_emperor.py -h
+Pre-releases (not compatible with QIIME 1.x)
+============================================
+
+If you are interested in using a pre-release version (for example `1.0.0beta`)
+you can use `pip` or `conda`:
+
+```bash
+    # with pip
+    pip install emperor --pre
+
+    # with conda
+    conda install -c conda-forge emperor
+```
+
+Note that we will update these pre-releases as often as it makes sense.
+
+Developers
+==========
+
+If you are planning to do development, we recommend that you clone the git
+repository, create a new environment (using `conda` or `virtualenvs`) and then
+use `pip install -e` to work on the source code without having to reinstall
+when you make editions:
+
+```bash
+    # fork
+    git clone git://github.com/YOUR-USERNAME/emperor.git
+
+    # if you are using conda
+    conda create -n emperor-dev scipy numpy pandas matplotlib jupyter
+
+    # if you are using virtualenvs
+    mkvirtualenv emperor-dev && workon emperor-dev
+
+    # now install the repository
+    cd emperor
+    pip install -e '.[all]'
+```

@@ -24,14 +24,14 @@ def get_custom_coords(axis_names,mapping, coords):
     """
     for i, axis in enumerate(reversed(axis_names)):
         if not axis in mapping[0]:
-            raise ValueError, 'Warning: could not find custom axis %s in map headers: %s' \
-                % (axis, mapping[0])
+            raise ValueError('Warning: could not find custom axis %s in map '
+                             'headers: %s' % (axis, mapping[0]))
         else:
             # get index of column in mapping file
             col_idx = mapping[0].index(axis)
             # extract column data
-            col = zip(*mapping[1:])[col_idx]
-            sample_IDs = zip(*mapping[1:])[0]
+            col = list(zip(*mapping[1:]))[col_idx]
+            sample_IDs = list(zip(*mapping[1:]))[0]
             new_coords = array([])
             # load custom coord for this axis for each sample ID 
             for id in coords[0]:
@@ -60,7 +60,7 @@ def scale_custom_coords(custom_axes,coords):
     to_mx = 2*max(coords[1][:,len(custom_axes)])
 
     # affine transformation for each custom axis
-    for i in xrange(len(custom_axes)):
+    for i in range(len(custom_axes)):
         from_mn = min(coords[1][:,i])
         from_mx = max(coords[1][:,i])
         coords[1][:,i] = (coords[1][:,i]  - from_mn) / (from_mx - from_mn)

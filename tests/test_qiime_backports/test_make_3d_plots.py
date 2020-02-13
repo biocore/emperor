@@ -22,24 +22,24 @@ class TopLevelTests(TestCase):
     def setUp(self):
         """define some top-level data"""
         self.coord_header=["Sample1","Sample2","Sample3"]
-        self.coords=array([[-0.219044992,0.079674486,0.09233683],[-0.042258081,\
-                        0.000204041,0.024837603],[0.080504323,-0.212014503,\
+        self.coords=array([[-0.219044992,0.079674486,0.09233683],[-0.042258081,
+                        0.000204041,0.024837603],[0.080504323,-0.212014503,
                         -0.088353435]])
         self.pct_var=array([25.00,30.00,35.00])
-        self.mapping=[["Sample-ID","Day","Type"],["Sample1","Day1","Soil"],\
+        self.mapping=[["Sample-ID","Day","Type"],["Sample1","Day1","Soil"],
                     ["Sample2","Day1","Soil"],["Sample3","Day1","Soil"]]
-        self.mapping2=[["Sample-ID","Day","Type","Height","Weight"],\
-                        ["Sample1","Day1","Soil","10","60"],\
-                        ["Sample2","Day1","Soil","20","55"],\
+        self.mapping2=[["Sample-ID","Day","Type","Height","Weight"],
+                        ["Sample1","Day1","Soil","10","60"],
+                        ["Sample2","Day1","Soil","20","55"],
                         ["Sample3","Day1","Soil","30","50"]]
 
         self.prefs_vectors={}
         self.prefs_vectors['Sample']={}   
         self.prefs_vectors['Sample']['column']="Type"
-        self.coords2 = array([[0, -0.219044992,0.079674486,0.09233683], \
-                                [1, -0.042258081, 0.000204041, 0.024837603],\
-                                [2, 0.080504323, -0.212014503, -0.088353435],\
-                                [3, 0.012345551, -0.124512513, -01142356135]])
+        self.coords2 = array([[0, -0.219044992,0.079674486,0.09233683],
+                              [1, -0.042258081, 0.000204041, 0.024837603],
+                              [2, 0.080504323, -0.212014503, -0.088353435],
+                              [3, 0.012345551, -0.124512513, -1142356135]])
         self.custom_axes = ['Height']
         self.add_vectors = {'vectors_algorithm': 'trajectory', 'vectors_axes': 3,\
                                 'vectors': ['Height'], 'vectors_path': 'vectors_test',\

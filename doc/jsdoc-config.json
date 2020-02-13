@@ -1,0 +1,20 @@
+{
+    "tags": {
+        "allowUnknownTags": false,
+        "dictionaries": ["closure", "jsdoc"]
+    },
+    "source": {
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins": ["plugins/markdown",
+                "plugins/underscore"],
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true
+    },
+    "opts": {
+        "recurse": true,
+        "pedantic": true
+    }
+}
