@@ -946,6 +946,11 @@ define([
                   firstObj.geometry.attributes.opacity.getX(marker.index);
         });
 
+        // if there's no hits then finish the execution
+        if (intersects.length === 0) {
+          return;
+        }
+
         var meshIndex = intersects[0].index;
         var modelIndex = this.decViews.scatter.getModelPointIndex(meshIndex,
                                                 this.UIState['view.viewType']);
@@ -955,6 +960,12 @@ define([
         intersects = _.filter(intersects, function(marker) {
           return marker.object.visible && marker.object.material.opacity;
         });
+
+        // if there's no hits then finish the execution
+        if (intersects.length === 0) {
+          return;
+        }
+
         intersect = intersects[0].object;
       }
 

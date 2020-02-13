@@ -1,6 +1,5 @@
 language: python
 python:
-  - 2.7
   - 3.5
   - 3.6
   # also includes 3.7 (see below)
@@ -21,9 +20,6 @@ matrix:
       sudo: true
       env: NUMPY_VERSION="<1.13"
   exclude:
-      # for older python versions only test the latest versions of NumPy
-      - python: 2.7
-        env: NUMPY_VERSION="<1.13"
       - python: 3.5
         env: NUMPY_VERSION="<1.13"
 
@@ -35,20 +31,25 @@ before_install:
   - conda update --yes conda
 
 install:
+  # gjslint only runs in py27
+  - conda create --yes -n gjslint python=2.7 pip six
+  - conda run -n gjslint pip install https://github.com/google/closure-linter/archive/master.zip
+
   # install requests using conda to avoid a distutils error in certifi
   - conda create --yes -n travis python=$TRAVIS_PYTHON_VERSION pip numpy${NUMPY_VERSION} 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
   - source activate travis
   - conda install -c conda-forge phantomjs --yes
-  - pip install https://github.com/google/closure-linter/archive/master.zip 'sphinx<1.6' sphinx-bootstrap-theme coveralls
+  - pip install 'sphinx<1.6' sphinx-bootstrap-theme coveralls
   - pip install -e '.[all]' --verbose
   - npm install -g jsdoc
 
 script:
   - flake8 emperor/*.py tests/*.py scripts/*.py setup.py
-  # we can only run gjslint in a python 2.7.x environment
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'; fi
   # we just check coverage in the latest version of NumPy
-  - coverage run tests/all_tests.py; coverage report
+  - coverage run tests/all_tests.py && coverage report
   - make -C doc html
+
+  # we can only run gjslint using py27
+  - conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 after_success:
   - coveralls
