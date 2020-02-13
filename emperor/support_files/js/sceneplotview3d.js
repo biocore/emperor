@@ -577,7 +577,7 @@ define([
         //that label widths are always powers of 2 in the current version
 
         //Resize to fit labels of width 300 between axes
-        var scalingFudge = .9 / (300 * viewWUnits / viewWPix);
+        var scalingFudge = 0.9 / (300 * viewWUnits / viewWPix);
 
         axisLabel.scale.set(labelWUnits * scalingFudge,
                             labelHUnits * scalingFudge,
@@ -600,16 +600,17 @@ define([
     var scope = this;
     var recursiveRemove = function(rootObj) {
       if (rootObj.name != null && rootObj.name.startsWith(prefix)) {
-        scope.scene.remove(rootObj)
+        scope.scene.remove(rootObj);
       }
       else {
         // We can't iterate the children array while removing from it,
         // So we make a shallow copy.
-        var childCopy = Array.from(rootObj.children)
-        for (child in childCopy)
-          recursiveRemove(childCopy[child])
+        var childCopy = Array.from(rootObj.children);
+        for (var child in childCopy) {
+          recursiveRemove(childCopy[child]);
+        }
       }
-    }
+    };
     recursiveRemove(this.scene);
   };
 
