@@ -867,7 +867,7 @@ define([
         legend = XMLS.serializeToString(this.controllers.color.$colorScale[0]);
       }
       else {
-        _.each(this.controllers.color.bodyGrid.getData(), function(element) {
+        _.each(this.controllers.color.getSlickGridDataset(), function(element) {
           names.push(element.category);
           colors.push(element.value);
         });
