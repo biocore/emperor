@@ -50,7 +50,6 @@ setup(
     maintainer_email=__email__,
     url='http://github.com/biocore/emperor',
     packages=find_packages(),
-    scripts=['scripts/make_emperor.py'],
     package_data={
         'emperor': ['support_files/vendor/js/three.js-plugins/*.js',
                     'support_files/vendor/js/*.js',
