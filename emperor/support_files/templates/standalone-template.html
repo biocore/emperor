@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Emperor</title>
+    <!-- core dependencies that are otherwise included via the jupyter notebook -->
+    <script src="{{ base_url }}/vendor/js/require-2.1.22.min.js"></script>
+    <script src="{{ base_url }}/vendor/js/jquery-2.1.4.min.js"></script>
+    <meta charset="utf-8">
+
+    {% include style_template_path %}
+
+    <style>
+      #{{ plot_id }} {
+        height:100vh !important;
+        padding: 0px !important;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        outline: 0;
+      }
+    </style>
+  </head>
+  <body>
+    {% include logic_template_path %}
+  </body>
+</html>

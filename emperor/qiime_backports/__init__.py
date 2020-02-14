@@ -10,4 +10,4 @@ __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
-__all__ = ['biplots', 'filter', 'format', 'make_3d_plots', 'parse', 'util']
+__all__ = ['make_3d_plots', 'util']
