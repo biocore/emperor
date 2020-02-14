@@ -9,13 +9,13 @@
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.0beta20-dev"
+__version__ = "1.0.0"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
 # based on the text found in github.com/qiime/pynast
 classes = """
-    Development Status :: 4 - Beta
+    Development Status :: 5 - Production/Stable
     License :: OSI Approved :: BSD License
     Topic :: Software Development :: Libraries :: Application Frameworks
     Topic :: Software Development :: User Interfaces

@@ -15,23 +15,6 @@ To install the latest release version of Emperor, you can use `pip` or
     conda install -c bioconda emperor
 ```
 
-
-Pre-releases (not compatible with QIIME 1.x)
-============================================
-
-If you are interested in using a pre-release version (for example `1.0.0beta`)
-you can use `pip` or `conda`:
-
-```bash
-    # with pip
-    pip install emperor --pre
-
-    # with conda
-    conda install -c conda-forge emperor
-```
-
-Note that we will update these pre-releases as often as it makes sense.
-
 Developers
 ==========
 
