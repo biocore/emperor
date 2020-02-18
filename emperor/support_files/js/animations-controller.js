@@ -129,7 +129,7 @@ define([
     // initialize interface elements here
     $(this).ready(function() {
       scope.$speed.slider({'min': 0.01,
-                           'max': 10,
+                           'max': 40,
                            'step': 0.05,
                            'value': 1,
                            'range': 'max',
@@ -707,8 +707,8 @@ define([
    * greater than 10.
    */
   AnimationsController.prototype.setSpeed = function(speed) {
-    if (speed <= 0 || speed > 10) {
-      throw new Error('The speed must be greater than 0 and lesser than 10');
+    if (speed <= 0 || speed > 40) {
+      throw new Error('The speed must be greater than 0 and lesser than 40');
     }
     this.$speed.slider('option', 'value', speed);
   };

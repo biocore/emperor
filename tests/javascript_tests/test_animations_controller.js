@@ -94,7 +94,7 @@ requirejs([
 
       throws(
           function() {
-            this.controller.setSpeed(11);
+            this.controller.setSpeed(41);
           },
           Error,
           'An error is raised if an invalid speed is set'
