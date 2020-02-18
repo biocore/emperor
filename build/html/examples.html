@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Examples &#8212; Emperor 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="File Formats" href="formats.html" />
+    <link rel="prev" title="Description" href="description.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head>
+  <body role="document">
+  
+  <a href="https://github.com/biocore/emperor"
+     class="visible-desktop hidden-xs"><img
+    id="gh-banner"
+    style="position: absolute; top: 50px; right: 0; border: 0;"
+    src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+    alt="Fork me on GitHub"></a>
+  <script>
+    // Adjust banner height.
+    $(function () {
+      var navHeight = $(".navbar .container").css("height");
+      $("#gh-banner").css("top", navHeight);
+    });
+  </script>
+
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          Emperor</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="emperor_objects.html">Emperor&#8217;s public API</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="description.html">Description</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="formats.html">File Formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/animations.html">Creating an animation using Emperor</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Examples</a><ul>
+<li><a class="reference internal" href="#plotting-principal-coordinates-analysis">Plotting Principal Coordinates Analysis</a></li>
+<li><a class="reference internal" href="#distance-metric-browser">Distance Metric Browser</a><ul>
+<li><a class="reference internal" href="#sharing-a-plot">Sharing a Plot</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#in-the-jupyter-notebook">In the Jupyter Notebook</a></li>
+<li><a class="reference internal" href="#outside-the-jupyter-notebook">Outside the Jupyter Notebook</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <span class="target" id="examples"></span><div class="section" id="index-0">
+<span id="id1"></span><h1>Examples<a class="headerlink" href="#index-0" title="Permalink to this headline">¶</a></h1>
+<p>Emperor provides a Python API intended to be used
+to create interactive plots, which can be visualized in the context of
+the <a class="reference external" href="http://jupyter.org">Jupyter notebook</a>, or outside it.
+Alternatively, if you are using <a class="reference external" href="https://qiime2.org">QIIME 2</a>, these same
+capabilities are exposed through QIIME 2&#8217;s interfaces (most notably the command
+line interface and graphical user interface).</p>
+<p>The main entry point for Emperor is the <code class="docutils literal"><span class="pre">Emperor</span></code> object, this
+object relies on two pieces of information:</p>
+<ul class="simple">
+<li><strong>Sample metadata</strong>: this data is represented as a Pandas <code class="docutils literal"><span class="pre">DataFrame</span></code>
+object that describes a series of samples and any additional information that
+was measured for each of them. In the context of QIIME and QIIME 2, this is
+referred to as the <em>mapping file</em>.</li>
+<li><strong>Coordinates data</strong>: this data is represented as a scikit-bio
+<code class="docutils literal"><span class="pre">OrdinationResults</span></code> object that describes the position of a series of
+samples in an <cite>n</cite>-dimensional space.</li>
+</ul>
+<p>To try out the examples below, download a copy of the repository (<a class="reference external" href="https://github.com/biocore/emperor/archive/new-api.zip">here</a>), and navigate
+inside the examples folder.</p>
+<div class="section" id="plotting-principal-coordinates-analysis">
+<h2>Plotting Principal Coordinates Analysis<a class="headerlink" href="#plotting-principal-coordinates-analysis" title="Permalink to this headline">¶</a></h2>
+<p>In <a class="reference external" href="http://nbviewer.jupyter.org/github/biocore/emperor/blob/new-api/examples/keyboard.ipynb">this notebook</a>,
+we explore the simplest use-case, visualizing a previously computed principal
+coordinates analysis matrix. For this example, we processed the OTU table using
+<a class="reference external" href="https://qiita.ucsd.edu/">Qiita</a> (to compute a distance matrix and ordinated
+coordinates), so all we need to do is load the coordinates and metadata. To
+plot data, we use the <code class="docutils literal"><span class="pre">Emperor</span></code> constructor.</p>
+<p>Note that, we load the metadata mapping file in such a way that no data types
+are inferred (this is to guarantee data integrity) however, so as long as your
+data is in a Pandas <code class="docutils literal"><span class="pre">DataFrame</span></code>, you can load it in any way you find the most
+convenient.  Additionally, in the line where we call the <code class="docutils literal"><span class="pre">Emperor</span></code>
+constructor, we specify <code class="docutils literal"><span class="pre">remote=True</span></code>, this allows us to share the notebook
+via <a class="reference external" href="http://nbviewer.jupyter.org">nbviewer</a>, and make the plot interactive
+for anyone who accesses the notebook from their browser.</p>
+</div>
+<div class="section" id="distance-metric-browser">
+<h2>Distance Metric Browser<a class="headerlink" href="#distance-metric-browser" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://nbviewer.jupyter.org/github/biocore/emperor/blob/new-api/examples/evident.ipynb">This example</a>,
+explores how <a class="reference external" href="http://jupyter.org">Jupyter</a>&#8216;s interactive components can be
+used together with Emperor, to create a distance metric browser.</p>
+<p>There are a few important things to note from this example. First, we rely on a
+few packages that are <strong>not</strong> Emperor dependencies, but are generally useful in
+the context of microbiome data analysis (<a class="reference external" href="http://scikit-learn.org">scikit-learn</a>, <a class="reference external" href="http://biom-format.org">biom-format</a>,
+<a class="reference external" href="https://github.com/biocore/qiime-default-reference">qiime_default_reference</a>
+and <a class="reference external" href="http://ipywidgets.readthedocs.io">ipywidgets</a>).</p>
+<div class="section" id="sharing-a-plot">
+<h3>Sharing a Plot<a class="headerlink" href="#sharing-a-plot" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="in-the-jupyter-notebook">
+<h2>In the Jupyter Notebook<a class="headerlink" href="#in-the-jupyter-notebook" title="Permalink to this headline">¶</a></h2>
+<p>Emperor has the ability to display its interface inline inside a Jupyter
+notebook. By <strong>default</strong>, plots are created such that if the notebook is shared
+with someone else (using GitHub, nbviewer, or by sharing the notebook file),
+the plots can be loaded without needing any additional dependencies (in the
+examples above that&#8217;s why we set <code class="docutils literal"><span class="pre">remote=True</span></code>).  Remember, that in order to
+do this, you will need to have access to an internet connection.  Alternatively
+when there&#8217;s no internet connection available, you can use the <cite>nbinstall</cite>
+function, which will make the resources available from within your running
+notebook server.</p>
+</div>
+<div class="section" id="outside-the-jupyter-notebook">
+<h2>Outside the Jupyter Notebook<a class="headerlink" href="#outside-the-jupyter-notebook" title="Permalink to this headline">¶</a></h2>
+<p>In certain circumstances it is more convenient to create plots independent of
+the Jupyter notebook, to do this you would need to do the same thing as above
+(load the metadata and coordinates), and then instead of displaying the plot
+inline, you can use the Python API to create a folder with the plot and needed
+resources. The following snippet uses the <code class="docutils literal"><span class="pre">Emperor</span></code> object but this time it
+sets the <code class="docutils literal"><span class="pre">remote</span></code> parameter to the current directory i.e. <code class="docutils literal"><span class="pre">remote='.'</span></code>
+(like in UNIX, <code class="docutils literal"><span class="pre">'.'</span></code> refers to the current path):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">emperor</span> <span class="k">import</span> <span class="n">Emperor</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">makedirs</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span>
+<span class="kn">from</span> <span class="nn">skbio</span> <span class="k">import</span> <span class="n">OrdinationResults</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># this is just an example of how to load a metadata table and ordination</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;mapping-file.txt&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;#SampleID&#39;</span><span class="p">)</span>
+<span class="n">ordination</span> <span class="o">=</span> <span class="n">OrdinationResults</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;bray-curtis.txt&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># the remote argument refers to where the support files will be located</span>
+<span class="c1"># relative to the plot itself i.e. index.html.</span>
+<span class="n">emp</span> <span class="o">=</span> <span class="n">Emperor</span><span class="p">(</span><span class="n">ordination</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">remote</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+<span class="n">output_folder</span> <span class="o">=</span> <span class="s1">&#39;plot&#39;</span> <span class="c1"># new folder where data will be saved</span>
+
+<span class="c1"># create an output directory</span>
+<span class="n">makedirs</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="s1">&#39;index.html&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">emp</span><span class="o">.</span><span class="n">make_emperor</span><span class="p">(</span><span class="n">standalone</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">emp</span><span class="o">.</span><span class="n">copy_support_files</span><span class="p">(</span><span class="n">output_folder</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To view the plot, open the <code class="docutils literal"><span class="pre">index.html</span></code> file inside the <code class="docutils literal"><span class="pre">plot</span></code> folder. This
+will launch Emperor, but this time the interface will use the entire screen,
+as opposed to just a cell (like in the notebooks above).</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+  
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2014, Emperor Development Team.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.<br/>
+    </p>
+  </div>
+</footer>
+
+  </body>
+</html>
