@@ -5,38 +5,37 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Creating an animation using Emperor &mdash; Emperor 0.9.60 documentation</title>
+    <title>Creating an animation using Emperor &#8212; Emperor 1.0.0 documentation</title>
     
-    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootswatch-3.2.0/yeti/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.9.60',
+        VERSION:     '1.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="Emperor 0.9.60 documentation" href="../index.html" />
-    <link rel="next" title="make_emperor.py – Create three dimensional PCoA plots" href="../scripts/make_emperor.html" />
-    <link rel="prev" title="Emperor’s Documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="File Formats" href="../formats.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
 
   </head>
   <body role="document">
@@ -67,7 +66,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           Emperor</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.9.60</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -82,18 +81,16 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Creating an animation using Emperor</a></li>
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../emperor_objects.html">Emperor&#8217;s public API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../description.html">Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats.html">File Formats</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../scripts/make_emperor.html"><em>make_emperor.py</em> &#8211; Create three dimensional PCoA plots</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Creating an animation using Emperor</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../emperor_objects.html">Emperor 3D PCoA viewer (<code class="docutils literal"><span class="pre">emperor.core</span></code>)</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../formats.html">File Formats</a></li>
 </ul>
 </ul>
 </li>
@@ -148,7 +145,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-12">
+    <div class="body col-md-12 content" role="main">
       
   <span class="target" id="animations"></span><div class="section" id="creating-an-animation-using-emperor">
 <span id="index-0"></span><h1>Creating an animation using Emperor<a class="headerlink" href="#creating-an-animation-using-emperor" title="Permalink to this headline">¶</a></h1>
@@ -223,7 +220,7 @@ these changes, we are going to use the data from the Human Microbiome Project
 vaginal communities).</p>
 <p>For convenience, we combined the two datasets using <a class="reference external" href="https://qiita.ucsd.edu">Qiita</a>. Specifically the studies we used are <a class="reference external" href="https://qiita.ucsd.edu/study/description/10057">study 10057</a> (FMT) and <a class="reference external" href="https://qiita.ucsd.edu/study/description/1928">study 1928</a> (HMP). Remember you need to
 be logged in to access the studies.</p>
-<p>The files needed for this tutorial can be downloaded from this <a class="reference external" href="http://emperor.microbio.me/animations-tutorial.zip">link</a>.</p>
+<p>The files needed for this tutorial can be downloaded from this <a class="reference external" href="http://emperor.microbio.me/q2-animations/q2-animations-tutorial.zip">link</a>.</p>
 </div>
 <div class="section" id="id2">
 <h3>Processing<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
@@ -251,12 +248,13 @@ name it <code class="docutils literal"><span class="pre">animations_gradient</sp
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">When plots are generated with Emperor, only columns where all values are
-numeric will be accessible as a <em>trajectory</em> category.</p>
+numeric can be animated as a <em>gradient</em> category. Trajectories with mixed
+types or with non-numeric types will be ignored.</p>
 </div>
-<p>As for the <em>trajectory</em> category, we will ignore all subjects but the ones that
-underwent a FMT, so for all other samples (both for the HMP and FMT), we will
-set the <code class="docutils literal"><span class="pre">host_subject_id</span></code> value to <code class="docutils literal"><span class="pre">NA</span></code>. Again, we will create a new column
-to store this modified information, and we will name it
+<p>As for the <em>trajectory</em> category, we will ignore all subjects except the ones
+that underwent a FMT, so for all other samples (both for the HMP and FMT), we
+will set the <code class="docutils literal"><span class="pre">host_subject_id</span></code> value to <code class="docutils literal"><span class="pre">NA</span></code>. Again, we will create a new
+column to store this modified information, and we will name it
 <code class="docutils literal"><span class="pre">animations_subject</span></code>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -266,21 +264,20 @@ recommend clearly distinguishing the purpose.</p>
 <p>After you&#8217;ve done this, the result will be a new metadata mapping file that
 includes two new columns, <code class="docutils literal"><span class="pre">animations_gradient</span></code> and <code class="docutils literal"><span class="pre">animations_subject</span></code>
 (for an example see <code class="docutils literal"><span class="pre">mapping-file.animations.txt</span></code>). All that&#8217;s left is to
-create the plot itself, to do that we will use <code class="docutils literal"><span class="pre">make_emperor.py</span></code>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">make_emperor</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">i</span> <span class="n">unweighted</span><span class="o">-</span><span class="n">unifrac</span><span class="o">-</span><span class="n">pc</span><span class="o">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">m</span> <span class="n">mapping</span><span class="o">-</span><span class="n">file</span><span class="o">.</span><span class="n">animations</span><span class="o">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">o</span> <span class="n">animations</span> <span class="o">--</span><span class="n">add_unique_columns</span>
+create the plot itself, to do that we will use <code class="docutils literal"><span class="pre">qiime</span> <span class="pre">emperor</span> <span class="pre">plot</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">qiime</span> <span class="n">emperor</span> <span class="n">plot</span> <span class="o">--</span><span class="n">i</span><span class="o">-</span><span class="n">pcoa</span> <span class="n">unweighted</span><span class="o">-</span><span class="n">unifrac</span><span class="o">-</span><span class="n">pcoa</span><span class="o">.</span><span class="n">qza</span> <span class="o">--</span><span class="n">m</span><span class="o">-</span><span class="n">metadata</span><span class="o">-</span><span class="n">file</span> <span class="n">mapping</span><span class="o">-</span><span class="n">file</span><span class="o">.</span><span class="n">animations</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">o</span><span class="o">-</span><span class="n">visualization</span> <span class="n">unweighted</span><span class="o">-</span><span class="n">unifrac</span><span class="o">-</span><span class="n">pcoa</span><span class="o">.</span><span class="n">animations</span><span class="o">.</span><span class="n">qzv</span>
 </pre></div>
 </div>
-<p>After you do this, you can open the plot (by opening the file inside
-<code class="docutils literal"><span class="pre">animations/index.html</span></code>), select <code class="docutils literal"><span class="pre">body_habitat</span></code> as a color category (under
-the Colors tab). Now, go to the animations tab on the right. Next, in the
-<em>Gradient Category</em> menu select <em>animations_gradient</em>, and in the <em>Trajectory
-Category</em> menu select <em>animations_subject</em>. Now you can click the play
-button and visualize the changes in the microbiome of the four patients. As you
-do this, you can continue to interact with the plot, and change any colors as
-needed.</p>
-<p>The resulting plot can be found <a class="reference external" href="http://emperor.microbio.me/animation/">here</a>, please note that this plot includes
-a few presets that will be different from the plot that you generated above,
-however both plots are fundamentally the same.</p>
+<p>After you do this, you can open the plot, select <code class="docutils literal"><span class="pre">body_habitat</span></code> as a color
+category (under the Colors tab). Now, go to the animations tab on the right.
+Next, in the <em>Gradient Category</em> menu select <em>animations_gradient</em>, and in the
+<em>Trajectory Category</em> menu select <em>animations_subject</em>. Now you can click the
+play button and visualize the changes in the microbiome of the four patients.
+As you do this, you can continue to interact with the plot, and change other
+visual attributes.</p>
+<p>The resulting plot can be found <a class="reference external" href="https://view.qiime2.org/visualization/?type=html&amp;src=https%3A%2F%2Fdl.dropbox.com%2Fs%2Fh8qw76loauepnkk%2Funweighted-unifrac-pcoa.animations.qzv%3Fdl%3D1">here</a>, please note that this plot
+includes a few presets that will be different from the plot that you generated
+above, however both plots are fundamentally the same.</p>
 </div>
 </div>
 <div class="section" id="filtering-out-data">
@@ -309,7 +306,7 @@ that will not need to be animated.</p>
     </p>
     <p>
         &copy; Copyright 2014, Emperor Development Team.<br/>
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.<br/>
     </p>
   </div>
 </footer>
