@@ -176,7 +176,7 @@ function(_, trajectory) {
     var chewedDataBuffer = null;
 
     // frames we want projected in the trajectory's interval
-    var n = Math.floor((1 / (this.speed)) * 10);
+    var n = Math.floor((1 / (this.speed)) * 40);
 
     // compute a dictionary from where we will extract the germane data
     chewedData = getSampleNamesAndDataForSortedTrajectories(
