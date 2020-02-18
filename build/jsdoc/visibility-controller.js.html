@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: visibility-controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: visibility-controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>define([
+    'jquery',
+    'underscore',
+    'viewcontroller',
+    'chroma',
+    'slickformatters',
+    'slickeditors'
+], function($, _, ViewControllers, chroma, slickformatters, slickeditors) {
+
+  // we only use the base attribute class, no need to get the base class
+  /** @private */
+  var EmperorAttributeABC = ViewControllers.EmperorAttributeABC;
+  /**
+   * @class VisibilityController
+   *
+   * Manipulates and displays the visibility of objects on screen.
+   *
+   * @param {UIState} uiState The shared state
+   * @param {Node} container Container node to create the controller in.
+   * @param {Object} decompViewDict This object is keyed by unique
+   * identifiers and the values are DecompositionView objects referring to a
+   * set of objects presented on screen. This dictionary will usually be shared
+   * by all the tabs in the application. This argument is passed by reference.
+   *
+   * @return {VisibilityController} An instance of VisibilityController
+   * @constructs VisibilityController
+   * @extends EmperorAttributeABC
+   */
+  function VisibilityController(uiState, container, decompViewDict) {
+    var helpmenu = 'Change the visibility of the attributes on the plot, ' +
+                   'such as spheres, vectors and ellipsoids.';
+    var title = 'Visibility';
+
+    // Constant for width in slick-grid
+    var SLICK_WIDTH = 25, scope = this;
+
+    // Build the options dictionary
+    var options = {'valueUpdatedCallback': function(e, args) {
+      var visible = args.item.value;
+      var group = args.item.plottables;
+      var element = scope.getView();
+      scope.setPlottableAttributes(element, visible, group);
+    },
+      'categorySelectionCallback': function(evt, params) {
+        var category = scope.$select.val();
+
+        var decompViewDict = scope.getView();
+
+        // getting all unique values per categories
+        var uniqueVals = decompViewDict.decomp.getUniqueValuesByCategory(
+          category);
+        // getting color for each uniqueVals
+        var attributes = {};
+        _.each(uniqueVals, function(value) {
+          attributes[value] = true;
+        });
+        // fetch the slickgrid-formatted data
+        var data = decompViewDict.setCategory(
+          attributes, scope.setPlottableAttributes, category);
+
+        scope.setSlickGridDataset(data);
+      },
+      'slickGridColumn': {id: 'title', name: '', field: 'value',
+        sortable: false, maxWidth: SLICK_WIDTH,
+        minWidth: SLICK_WIDTH,
+        formatter: Slick.Formatters.Checkmark,
+        editor: Slick.Editors.Checkbox}};
+
+    EmperorAttributeABC.call(this, uiState, container, title, helpmenu,
+        decompViewDict, options);
+    return this;
+  }
+  VisibilityController.prototype = Object.create(EmperorAttributeABC.prototype);
+  VisibilityController.prototype.constructor = EmperorAttributeABC;
+
+  /**
+   *
+   * Private method to reset all objects to be visible.
+   *
+   * @extends EmperorAttributeABC
+   * @private
+   *
+   */
+  VisibilityController.prototype._resetAttribute = function() {
+    EmperorAttributeABC.prototype._resetAttribute.call(this);
+
+    _.each(this.decompViewDict, function(view) {
+      view.setVisibility(true);
+      view.showEdgesForPlottables();
+    });
+  };
+
+  /**
+   * Helper function to set the visibility of plottable
+   *
+   * @param {Object} scope the scope where the plottables exist
+   * @param {boolean} visible Visibility of the plottables
+   * @param {Object[]} group Array of objects that should be changed in scope
+   */
+  VisibilityController.prototype.setPlottableAttributes =
+      function(scope, visible, group) {
+    scope.setVisibility(visible, group);
+  };
+
+  return VisibilityController;
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-draw.html">draw</a></li><li><a href="module-SlickGridColors.html">SlickGridColors</a></li><li><a href="module-SlickGridScale.html">SlickGridScale</a></li><li><a href="module-SlickGridShapes.html">SlickGridShapes</a></li><li><a href="module-trajectory.html">trajectory</a></li><li><a href="module-utility-functions.html">utility-functions</a></li></ul><h3>Classes</h3><ul><li><a href="AnimationDirector.html">AnimationDirector</a></li><li><a href="AnimationsController.html">AnimationsController</a></li><li><a href="AxesController.html">AxesController</a></li><li><a href="ColorViewController.html">ColorViewController</a></li><li><a href="DecompositionModel.html">DecompositionModel</a></li><li><a href="DecompositionView.html">DecompositionView</a></li><li><a href="EmperorAttributeABC.html">EmperorAttributeABC</a></li><li><a href="EmperorController.html">EmperorController</a></li><li><a href="EmperorViewController.html">EmperorViewController</a></li><li><a href="EmperorViewControllerABC.html">EmperorViewControllerABC</a></li><li><a href="module-draw-THREE.EmperorTrajectory.html">EmperorTrajectory</a></li><li><a href="module-SlickGridColors.ColorEditor.html">ColorEditor</a></li><li><a href="module-SlickGridScale.ScaleEditor.html">ScaleEditor</a></li><li><a href="module-SlickGridShapes.ShapeEditor.html">ShapeEditor</a></li><li><a href="OpacityViewController.html">OpacityViewController</a></li><li><a href="Plottable.html">Plottable</a></li><li><a href="ScalarViewControllerABC.html">ScalarViewControllerABC</a></li><li><a href="ScaleViewController.html">ScaleViewController</a></li><li><a href="ScenePlotView3D.html">ScenePlotView3D</a></li><li><a href="ShapeController.html">ShapeController</a></li><li><a href="TrajectoryOfSamples.html">TrajectoryOfSamples</a></li><li><a href="VisibilityController.html">VisibilityController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getGeometry">getGeometry</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Feb 18 2020 10:46:36 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

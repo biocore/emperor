@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: TrajectoryOfSamples</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: TrajectoryOfSamples</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>TrajectoryOfSamples<span class="signature">(sampleNames, metadataCategoryName, gradientPoints, coordinates, minimumDelta, suppliedN<span class="signature-attributes">opt</span>, maxN<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="TrajectoryOfSamples.html">TrajectoryOfSamples</a>}</span></h2>
+        
+            <div class="class-description"><p>TrajectoryOfSamples</p>
+<p>Represents an ordered set of samples and their position in PCoA space.</p></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="TrajectoryOfSamples"><span class="type-signature"></span>new TrajectoryOfSamples<span class="signature">(sampleNames, metadataCategoryName, gradientPoints, coordinates, minimumDelta, suppliedN<span class="signature-attributes">opt</span>, maxN<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="TrajectoryOfSamples.html">TrajectoryOfSamples</a>}</span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>sampleNames</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Array of sample identifiers.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>metadataCategoryName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The name of the category in the
+mapping file used to generate this trajectory.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gradientPoints</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;float></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The position of the samples in the
+gradient.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>coordinates</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Array of objects with x, y and z properties
+where each corresponds to the position of a sample in PCoA space.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>minimumDelta</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Minimum differential between the ordered
+gradientPoints this value must be non-zero. Note that this value should be
+computed taking into account all the other trajectories that will be
+animated together, usually by an AnimationDirector object.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>suppliedN</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    5
+                
+                </td>
+            
+
+            <td class="description last"><p>Determines how many points should be found
+in the the trajectory.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maxN</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    10
+                
+                </td>
+            
+
+            <td class="description last"><p>Maximum number of samples allowed per
+interpolation interval.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="trajectory.js.html">trajectory.js</a>, <a href="trajectory.js.html#line30">line 30</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>An instance of TrajectoryOfSamples</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="TrajectoryOfSamples.html">TrajectoryOfSamples</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="interpolatedCoordinates"><span class="type-signature"></span>interpolatedCoordinates<span class="type-signature"> :Array.&lt;Object></span></h4>
+
+
+
+
+<div class="description">
+    <p>Array of objects with the corresponding interpolated x, y and z values.
+The interpolation operation takes place between subsequent samples.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;Object></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="trajectory.js.html">trajectory.js</a>, <a href="trajectory.js.html#line84">line 84</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="maxN"><span class="type-signature"></span>maxN<span class="type-signature"> :float</span></h4>
+
+
+
+
+<div class="description">
+    <p>Maximum number of samples allowed per interpolation interval.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">float</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>10</li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="trajectory.js.html">trajectory.js</a>, <a href="trajectory.js.html#line71">line 71</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="metadataCategoryName"><span class="type-signature"></span>metadataCategoryName<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    <p>The name of the category in the mapping file used to generate this
+trajectory.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="trajectory.js.html">trajectory.js</a>, <a href="trajectory.js.html#line43">line 43</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="minimumDelta"><span class="type-signature"></span>minimumDelta<span class="type-signature"> :float</span></h4>
+
+
+
+
+<div class="description">
+    <p>Minimum differential between samples in the trajectory; the value is
+computed using the gradientPoints array.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">float</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="trajectory.js.html">trajectory.js</a>, <a href="trajectory.js.html#line56">line 56</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="sampleNames"><span class="type-signature"></span>sampleNames<span class="type-signature"> :Array.&lt;string></span></h4>
+
+
+
+
+<div class="description">
+    <p>Sample identifiers</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;string></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="trajectory.js.html">trajectory.js</a>, <a href="trajectory.js.html#line37">line 37</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="suppliedN"><span class="type-signature"></span>suppliedN<span class="type-signature"> :float</span></h4>
+
+
+
+
+<div class="description">
+    <p>Minimum number of frames a distance will have in the gradient.
+This value determines how fast the animation will run.
+For now we use 5 as a good default value; 60 was way too slow.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">float</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>5</li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="trajectory.js.html">trajectory.js</a>, <a href="trajectory.js.html#line65">line 65</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="calculateNumberOfPointsForDelta"><span class="type-signature"></span>calculateNumberOfPointsForDelta<span class="signature">(delta)</span><span class="type-signature"> &rarr; {integer}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Helper method to calculate the number of points that there should be for a
+differential.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>delta</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Value for which to determine the required number of
+points.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="trajectory.js.html">trajectory.js</a>, <a href="trajectory.js.html#line153">line 153</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The number of suggested frames for the differential</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">integer</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="representativeCoordinatesAtIndex"><span class="type-signature"></span>representativeCoordinatesAtIndex<span class="signature">(idx)</span><span class="type-signature"> &rarr; {Array.&lt;Array>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Retrieve the representative coordinates needed for a trajectory to be
+drawn.</p>
+<ul>
+<li>Note that this implementation is naive and will return points that lay on
+a rect line if these were part of the original set of coordinates.</li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>idx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Value for which to determine the required number of
+points.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="trajectory.js.html">trajectory.js</a>, <a href="trajectory.js.html#line172">line 172</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Array containing the representative float x, y, z
+coordinates needed to draw a trajectory at the given index.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;Array></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="representativeInterpolatedCoordinatesAtIndex"><span class="type-signature"></span>representativeInterpolatedCoordinatesAtIndex<span class="signature">(idx)</span><span class="type-signature"> &rarr; {Array.&lt;Array>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Grab only the interpolated portion of representativeCoordinatesAtIndex.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>idx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Value for which to determine the required number of
+points.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="trajectory.js.html">trajectory.js</a>, <a href="trajectory.js.html#line201">line 201</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Array containing the representative float x, y, z
+coordinates needed to draw the interpolated portion of a trajectory at the
+given index.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;Array></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-draw.html">draw</a></li><li><a href="module-SlickGridColors.html">SlickGridColors</a></li><li><a href="module-SlickGridScale.html">SlickGridScale</a></li><li><a href="module-SlickGridShapes.html">SlickGridShapes</a></li><li><a href="module-trajectory.html">trajectory</a></li><li><a href="module-utility-functions.html">utility-functions</a></li></ul><h3>Classes</h3><ul><li><a href="AnimationDirector.html">AnimationDirector</a></li><li><a href="AnimationsController.html">AnimationsController</a></li><li><a href="AxesController.html">AxesController</a></li><li><a href="ColorViewController.html">ColorViewController</a></li><li><a href="DecompositionModel.html">DecompositionModel</a></li><li><a href="DecompositionView.html">DecompositionView</a></li><li><a href="EmperorAttributeABC.html">EmperorAttributeABC</a></li><li><a href="EmperorController.html">EmperorController</a></li><li><a href="EmperorViewController.html">EmperorViewController</a></li><li><a href="EmperorViewControllerABC.html">EmperorViewControllerABC</a></li><li><a href="module-draw-THREE.EmperorTrajectory.html">EmperorTrajectory</a></li><li><a href="module-SlickGridColors.ColorEditor.html">ColorEditor</a></li><li><a href="module-SlickGridScale.ScaleEditor.html">ScaleEditor</a></li><li><a href="module-SlickGridShapes.ShapeEditor.html">ShapeEditor</a></li><li><a href="OpacityViewController.html">OpacityViewController</a></li><li><a href="Plottable.html">Plottable</a></li><li><a href="ScalarViewControllerABC.html">ScalarViewControllerABC</a></li><li><a href="ScaleViewController.html">ScaleViewController</a></li><li><a href="ScenePlotView3D.html">ScenePlotView3D</a></li><li><a href="ShapeController.html">ShapeController</a></li><li><a href="TrajectoryOfSamples.html">TrajectoryOfSamples</a></li><li><a href="VisibilityController.html">VisibilityController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getGeometry">getGeometry</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Feb 18 2020 10:46:37 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

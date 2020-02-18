@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: AnimationDirector</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: AnimationDirector</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>AnimationDirector<span class="signature">(mappingFileHeaders, mappingFileData, coordinatesData, gradientCategory, trajectoryCategory, Positive)</span><span class="type-signature"> &rarr; {<a href="AnimationDirector.html">AnimationDirector</a>}</span></h2>
+        
+            <div class="class-description"><p>AnimationDirector</p>
+<p>This object represents an animation director, as the name implies,
+is an object that manages an animation. Takes the for a plot (mapping file
+and coordinates) as well as the metadata categories we want to animate
+over.  This object gets called in the main emperor module when an
+animation starts and an instance will only be alive for one animation
+cycle i. e. until the cycle hits the final frame of the animation.</p></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="AnimationDirector"><span class="type-signature"></span>new AnimationDirector<span class="signature">(mappingFileHeaders, mappingFileData, coordinatesData, gradientCategory, trajectoryCategory, Positive)</span><span class="type-signature"> &rarr; {<a href="AnimationDirector.html">AnimationDirector</a>}</span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>mappingFileHeaders</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>an Array of strings containing
+metadata mapping file headers.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mappingFileData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>an Array where the indices are sample
+identifiers and each of the contained elements is an Array of strings where
+the first element corresponds to the first data for the first column in the
+mapping file (mappingFileHeaders).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>coordinatesData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>an Array of Objects where the indices are
+the sample identifiers and each of the objects has the following
+properties: x, y, z, name, color, P1, P2, P3, ... PN where N is the number
+of dimensions in this dataset.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gradientCategory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a string with the name of the mapping file
+header where the data that spreads the samples over a gradient is
+contained, usually time or days_since_epoch. Note that this should be an
+all numeric category.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>trajectoryCategory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a string with the name of the mapping
+file header where the data that groups the samples is contained, this will
+usually be BODY_SITE, HOST_SUBJECT_ID, etc..</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>Positive</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">speed</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>real number determining the speed of an animation,
+this is reflected in the number of frames produced for each time interval.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line52">line 52</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>Note that this class will raise an Error in any of the
+following cases:</p>
+<ul>
+<li>One of the input arguments is undefined.</li>
+<li>If gradientCategory is not in the mappingFileHeaders.</li>
+<li>If trajectoryCategory is not in the mappingFileHeaders.</li>
+</ul>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">Error</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>returns an animation director if the parameters
+passed in were all valid.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="AnimationDirector.html">AnimationDirector</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="coordinatesData"><span class="type-signature"></span>coordinatesData<span class="type-signature"> :Array.&lt;Object></span></h4>
+
+
+
+
+<div class="description">
+    <p>an Array of Objects where the indices are thesample identifiers and each of the objects has the following properties:x, y, z, name, color, P1, P2, P3, ... PN where N is the number ofdimensions in this dataset.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;Object></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line103">line 103</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="gradientCategory"><span class="type-signature"></span>gradientCategory<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>a string with the name of the mapping fileheader where the data that spreads the samples over a gradient iscontained, usually time or days_since_epoch. Note that this should be anall numeric category</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">String</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line111">line 111</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="mappingFileData"><span class="type-signature"></span>mappingFileData<span class="type-signature"> :Array.&lt;Object></span></h4>
+
+
+
+
+<div class="description">
+    <p>an Array where the indices are sample identifiersand each of the contained elements is an Array of strings where the firstelement corresponds to the first data for the first column in the mappingfile (mappingFileHeaders).</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;Object></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line95">line 95</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="mappingFileHeaders"><span class="type-signature"></span>mappingFileHeaders<span class="type-signature"> :Array.&lt;String></span></h4>
+
+
+
+
+<div class="description">
+    <p>mappingFileHeaders an Array of strings containing metadata mapping file     headers.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;String></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line87">line 87</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="maximumTrajectoryLength"><span class="type-signature"></span>maximumTrajectoryLength<span class="type-signature"> :Integer</span></h4>
+
+
+
+
+<div class="description">
+    <p>Maximum length the groups of samples have along a gradient.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Integer</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>null</li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line133">line 133</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="minimumDelta"><span class="type-signature"></span>minimumDelta<span class="type-signature"> :Float</span></h4>
+
+
+
+
+<div class="description">
+    <p>A floating point value determining what the minimum separation betweensamples along the gradients is. Will be null until it is initialized tothe values according to the input data.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Float</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>null</li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line127">line 127</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="previousFrame"><span class="type-signature"></span>previousFrame<span class="type-signature"> :Integer</span></h4>
+
+
+
+
+<div class="description">
+    <p>The previous frame served by the director</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Integer</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line145">line 145</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="speed"><span class="type-signature"></span>speed<span class="type-signature"> :Float</span></h4>
+
+
+
+
+<div class="description">
+    <p>How fast should the animation run, has to be a postive non-zero value.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Float</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line158">line 158</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="trajectories"><span class="type-signature"></span>trajectories<span class="type-signature"> :Array</span></h4>
+
+
+
+
+<div class="description">
+    <p>Array where each element in the trajectory is a trajectory with theinterpolated points in it.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line152">line 152</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="trajectoryCategory"><span class="type-signature"></span>trajectoryCategory<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>a string with the name of the mapping fileheader where the data that groups the samples is contained, this willusually be BODY_SITE, HOST_SUBJECT_ID, etc..</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">String</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line118">line 118</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="animationCycleFinished"><span class="type-signature"></span>animationCycleFinished<span class="signature">()</span><span class="type-signature"> &rarr; {bool}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Check whether or not the animation cycle has finished for this object.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line298">line 298</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>True if the animation has reached it's end and False if the
+animation still has frames to go.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">bool</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getMaximumTrajectoryLength"><span class="type-signature"></span>getMaximumTrajectoryLength<span class="signature">()</span><span class="type-signature"> &rarr; {Integer}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Retrieves the lengths of all the trajectories and figures out which of
+them is the longest one, then assigns that value to the
+maximumTrajectoryLength property.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line251">line 251</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Maximum trajectory length</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Integer</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="initializeTrajectories"><span class="type-signature"></span>initializeTrajectories<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Initializes the trajectories that the director manages.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line171">line 171</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="updateFrame"><span class="type-signature"></span>updateFrame<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Helper method to update the value of the currentFrame property.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="animate.js.html">animate.js</a>, <a href="animate.js.html#line284">line 284</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-draw.html">draw</a></li><li><a href="module-SlickGridColors.html">SlickGridColors</a></li><li><a href="module-SlickGridScale.html">SlickGridScale</a></li><li><a href="module-SlickGridShapes.html">SlickGridShapes</a></li><li><a href="module-trajectory.html">trajectory</a></li><li><a href="module-utility-functions.html">utility-functions</a></li></ul><h3>Classes</h3><ul><li><a href="AnimationDirector.html">AnimationDirector</a></li><li><a href="AnimationsController.html">AnimationsController</a></li><li><a href="AxesController.html">AxesController</a></li><li><a href="ColorViewController.html">ColorViewController</a></li><li><a href="DecompositionModel.html">DecompositionModel</a></li><li><a href="DecompositionView.html">DecompositionView</a></li><li><a href="EmperorAttributeABC.html">EmperorAttributeABC</a></li><li><a href="EmperorController.html">EmperorController</a></li><li><a href="EmperorViewController.html">EmperorViewController</a></li><li><a href="EmperorViewControllerABC.html">EmperorViewControllerABC</a></li><li><a href="module-draw-THREE.EmperorTrajectory.html">EmperorTrajectory</a></li><li><a href="module-SlickGridColors.ColorEditor.html">ColorEditor</a></li><li><a href="module-SlickGridScale.ScaleEditor.html">ScaleEditor</a></li><li><a href="module-SlickGridShapes.ShapeEditor.html">ShapeEditor</a></li><li><a href="OpacityViewController.html">OpacityViewController</a></li><li><a href="Plottable.html">Plottable</a></li><li><a href="ScalarViewControllerABC.html">ScalarViewControllerABC</a></li><li><a href="ScaleViewController.html">ScaleViewController</a></li><li><a href="ScenePlotView3D.html">ScenePlotView3D</a></li><li><a href="ShapeController.html">ShapeController</a></li><li><a href="TrajectoryOfSamples.html">TrajectoryOfSamples</a></li><li><a href="VisibilityController.html">VisibilityController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getGeometry">getGeometry</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Feb 18 2020 10:46:36 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
