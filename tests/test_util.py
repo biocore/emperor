@@ -8,22 +8,29 @@
 from __future__ import division
 
 from unittest import TestCase, main
-from os.path import exists, join, abspath, dirname
+from os.path import exists, join
+from shutil import rmtree
 from tempfile import gettempdir
 
+import pandas as pd
+import warnings
 from numpy import array
 from numpy.testing import assert_almost_equal
 
-from emperor.util import (copy_support_files, keep_columns_from_mapping_file,
-                          preprocess_mapping_file, preprocess_coords_file,
-                          EmperorInputFilesError,
-                          fill_mapping_field_from_mapping_file,
-                          sanitize_mapping_file, guess_coordinates_files)
+from emperor.util import (
+                          preprocess_coords_file,
+                          nbinstall, validate_and_process_custom_axes,
+                          resolve_stable_url, EmperorWarning)
+
+
+warnings.simplefilter('always', category=EmperorWarning)
 
 
 class TopLevelTests(TestCase):
 
     def setUp(self):
+        self.files_to_delete = []
+
         self.mapping_file_data = MAPPING_FILE_DATA
         self.mapping_file_headers = ['SampleID', 'BarcodeSequence',
                                      'LinkerPrimerSequence', 'Treatment',
@@ -106,164 +113,9 @@ class TopLevelTests(TestCase):
         self.broken_mapping_file_data = BROKEN_MAPPING_FILE
         self.broken_mapping_file_data_2_values = BROKEN_MAPPING_FILE_2_VALUES
 
-    def test_copy_support_files(self):
-        """Test the support files are correctly copied to a file path"""
-        copy_support_files(self.support_files_filename)
-        self.assertTrue(exists(join(
-            self.support_files_filename, 'emperor_required_resources/')))
-
-        # related to https://github.com/qiime/emperor/issues/66
-        # the target path has spaces, the support files function will work fine
-        copy_support_files(self.support_files_filename_spaces)
-        self.assertTrue(exists(join(
-            self.support_files_filename_spaces,
-            'emperor_required_resources/')))
-
-    def test_preprocess_mapping_file(self):
-        """Check correct preprocessing of metadata is done"""
-
-        # test it concatenates columns together correctly
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers, ['Treatment', 'DOB', 'Treatment&&DOB'])
-        self.assertEquals(out_headers,
-                          ['SampleID', 'Treatment', 'DOB', 'Treatment&&DOB'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_A)
-
-        # test it has a different order in the concatenated columns i. e. the
-        # value of DOB comes before the value of Treatment in the result
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['Treatment', 'DOB', 'DOB&&Treatment'])
-        self.assertEquals(out_headers,
-                          ['SampleID', 'Treatment', 'DOB', 'DOB&&Treatment'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_B)
-
-        # test it filter columns properly
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['Treatment'])
-        self.assertEquals(out_headers, ['SampleID', 'Treatment'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_C)
-
-        # check it removes columns with unique values
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'],
-            unique=True)
-        self.assertEquals(out_headers,
-                          ['SampleID', 'LinkerPrimerSequence', 'Treatment',
-                           'DOB'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_D)
-
-        # check it removes columns where there is only one value
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB', 'Description'],
-            single=True)
-        self.assertEquals(out_headers,
-                          ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB',
-                           'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_E)
-
-        # keep only treatment concat treatment and DOB and remove all
-        # categories with only one value and all with unique values for field
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['Treatment', 'Treatment&&DOB'],
-            unique=True, single=True)
-        self.assertEquals(out_headers,
-                          ['SampleID', 'Treatment', 'Treatment&&DOB'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_F)
-
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['Treatment', 'DOB'], clones=3)
-        self.assertEquals(out_data, MAPPING_FILE_DATA_DUPLICATED)
-        self.assertEquals(out_headers, ['SampleID', 'Treatment', 'DOB'])
-
-        # check it doesn't remove columns because all are included in the list
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Description'],
-            unique=True)
-        self.assertEquals(out_headers,
-                          ['SampleID', 'BarcodeSequence',
-                           'LinkerPrimerSequence', 'Treatment', 'DOB',
-                           'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
-
-        # check it doesn't remove columns because all are included in the list
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Description'],
-            single=True)
-        self.assertEquals(out_headers,
-                          ['SampleID', 'BarcodeSequence',
-                           'LinkerPrimerSequence', 'Treatment', 'DOB',
-                           'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
-
-        # check it doesn't remove columns because all are included in the list
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            self.mapping_file_headers,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Description'],
-            unique=True, single=True)
-        self.assertEquals(out_headers,
-                          ['SampleID', 'BarcodeSequence',
-                           'LinkerPrimerSequence', 'Treatment', 'DOB',
-                           'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
-
-        # make sure that when keeping columns that are all unique the
-        # columns are basically intact i. e. everything in the dataset is kept
-        out_data, out_headers = preprocess_mapping_file(
-            self.mapping_file_data,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Description'],
-            [None], unique=False)
-        self.assertEquals(out_headers,
-                          ['SampleID', 'BarcodeSequence',
-                           'LinkerPrimerSequence', 'Treatment', 'DOB',
-                           'Description'])
-        self.assertEquals(out_data, MAPPING_FILE_DATA_CAT_G)
-
-    def test_keep_columns_from_mapping_file(self):
-        """Check correct selection of metadata is being done"""
-
-        # test it returns the same data
-        out_data, out_headers = keep_columns_from_mapping_file(
-            self.mapping_file_data, self.mapping_file_headers, [])
-        self.assertEquals(out_data, [[], [], [], [], [], [], [], [], []])
-        self.assertEquals(out_headers, [])
-
-        # test it can filter a list of columns
-        out_data, out_headers = keep_columns_from_mapping_file(
-            self.mapping_file_data, self.mapping_file_headers,
-            ['SampleID', 'LinkerPrimerSequence', 'Description'])
-        self.assertEquals(out_headers,
-                          ['SampleID', 'LinkerPrimerSequence', 'Description'])
-        self.assertEquals(out_data, PRE_PROCESS_B)
-
-        # test correct negation of filtering
-        out_data, out_headers = keep_columns_from_mapping_file(
-            self.mapping_file_data, self.mapping_file_headers,
-            ['LinkerPrimerSequence', 'Description'], True)
-        self.assertEquals(out_data, PRE_PROCESS_A)
-        self.assertEquals(out_headers,
-                          ['SampleID', 'BarcodeSequence', 'Treatment', 'DOB'])
+    def tearDown(self):
+        for f in self.files_to_delete:
+            rmtree(f)
 
     def test_preprocess_coords_file(self):
         """Check correct processing is applied to the coords"""
@@ -281,18 +133,18 @@ class TopLevelTests(TestCase):
              [0.2, 0.1, -0.1, -0.2, 0.08],
              [-0.3, 0.04, -0.01,  0.06, -0.34]])
 
-        self.assertEquals(out_coords_header, self.coords_header)
-        self.assertEquals(out_coords_high, None)
-        self.assertEquals(out_coords_low, None)
+        self.assertEqual(out_coords_header, self.coords_header)
+        self.assertEqual(out_coords_high, None)
+        self.assertEqual(out_coords_low, None)
         assert_almost_equal(self.coords_eigenvalues, array([1, 2, 3, 4]))
         assert_almost_equal(self.coords_pct, array([40, 30, 20, 10]))
-        self.assertEquals(o_clones, 0)
+        self.assertEqual(o_clones, 0)
 
         # check each individual value because currently cogent assertEquals
         # fails when comparing the whole matrix at once
         for out_el, exp_el in zip(out_coords_data, expected_coords_data):
             for out_el_sub, exp_el_sub in zip(out_el, exp_el):
-                self.assertAlmostEquals(out_el_sub, exp_el_sub)
+                self.assertAlmostEqual(out_el_sub, exp_el_sub)
 
         # case for jackknifing, based on qiime/tests/test_util.summarize_pcoas
         out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
@@ -302,12 +154,12 @@ class TopLevelTests(TestCase):
                 self.jk_mapping_file_headers, self.jk_mapping_file_data,
                 jackknifing_method='sdev', pct_variation_below_one=True)
 
-        self.assertEquals(out_coords_header, ['1', '2', '3'])
+        self.assertEqual(out_coords_header, ['1', '2', '3'])
         assert_almost_equal(out_coords_data, array([[1.4, -0.0125, -1.425],
                                                     [-2.475, -4.025, 4.7]]))
         assert_almost_equal(out_eigenvals, array([0.81, 0.14, 0.05]))
         assert_almost_equal(out_pcts, array([0.8, 0.1, 0.1]))
-        self.assertEquals(o_clones, 0)
+        self.assertEqual(o_clones, 0)
 
         # test the coords are working fine
         assert_almost_equal(out_coords_low,
@@ -327,8 +179,8 @@ class TopLevelTests(TestCase):
                 self.jk_mapping_file_data_gradient, custom_axes=['Time'],
                 jackknifing_method='sdev', pct_variation_below_one=True)
 
-        self.assertEquals(out_coords_header,
-                          ['PC.354', 'PC.355', 'PC.635', 'PC.636'])
+        self.assertEqual(out_coords_header,
+                         ['PC.354', 'PC.355', 'PC.635', 'PC.636'])
         assert_almost_equal(out_coords_data,
                             array([[-2.4, 1.15, 0.55, -0.95, 0.85],
                                    [0.73333333, -2.4, -3.5, 4.25, 1.025],
@@ -340,21 +192,21 @@ class TopLevelTests(TestCase):
         # test the coords are working fine
         assert_almost_equal(
             out_coords_low,
-            array([[0., -0.25980762, -0.25, -0.25],
-                   [0., -0.5, -0.25, -0.725],
-                   [0., -0.85, -0., -0.24983344],
-                   [0., -0.02809953, -0.07877976, -0.04787136]]))
+            array([[0., -0.05, -0.25980762, -0.25, -0.25],
+                   [0., -0.1, -0.5, -0.25, -0.725],
+                   [0., -0., -0.85, -0., -0.24983344],
+                   [0., -0.0283945, -0.02809953, -0.07877976, -0.04787136]]))
         assert_almost_equal(
             out_coords_high,
-            array([[1.00000000e-05, 2.59807621e-01, 2.50000000e-01,
-                    2.50000000e-01],
-                   [1.00000000e-05, 5.00000000e-01, 2.50000000e-01,
-                    7.25000000e-01],
-                   [1.00000000e-05, 8.50000000e-01, 0.00000000e+00,
+            array([[1.00000000e-05, 5.0000000e-02, 2.59807621e-01,
+                    2.50000000e-01, 2.50000000e-01],
+                   [1.00000000e-05, 1.0000000e-01, 5.00000000e-01,
+                    2.50000000e-01, 7.25000000e-01],
+                   [1.00000000e-05, 0.0, 8.50000000e-01, 0.00000000e+00,
                     2.49833445e-01],
-                   [1.00000000e-05, 2.80995255e-02, 7.87797563e-02,
-                    4.78713554e-02]]))
-        self.assertEquals(o_clones, 0)
+                   [1.00000000e-05, 2.83945417e-02, 2.80995255e-02,
+                    7.87797563e-02, 4.78713554e-02]]))
+        self.assertEqual(o_clones, 0)
 
         # test that pct_variation_below_one is working
         out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
@@ -366,8 +218,8 @@ class TopLevelTests(TestCase):
                 self.jk_mapping_file_data_gradient, custom_axes=['Time'],
                 jackknifing_method='sdev', pct_variation_below_one=False)
 
-        self.assertEquals(out_coords_header,
-                          ['PC.354', 'PC.355', 'PC.635', 'PC.636'])
+        self.assertEqual(out_coords_header,
+                         ['PC.354', 'PC.355', 'PC.635', 'PC.636'])
         assert_almost_equal(
             out_coords_data,
             array([[-2.4, 1.15, 0.55, -0.95, 0.85],
@@ -393,9 +245,9 @@ class TopLevelTests(TestCase):
                 self.jk_mapping_file_headers, self.jk_mapping_file_data,
                 is_comparison=True, pct_variation_below_one=True)
 
-        self.assertEquals(out_coords_header,
-                          ['1_0', '2_0', '3_0', '1_1', '2_1', '3_1', '1_2',
-                           '2_2', '3_2', '1_3', '2_3', '3_3'])
+        self.assertEqual(out_coords_header,
+                         ['1_0', '2_0', '3_0', '1_1', '2_1', '3_1', '1_2',
+                          '2_2', '3_2', '1_3', '2_3', '3_3'])
         assert_almost_equal(
             out_coords_data,
             array([[1.2, 0.1, -1.2],
@@ -408,106 +260,89 @@ class TopLevelTests(TestCase):
                    [2.4, 4., -4.8]]))
         assert_almost_equal(out_eigenvals, self.jk_coords_eigenvalues[0])
         assert_almost_equal(out_pcts, self.jk_coords_pcts[0])
-        self.assertEquals(out_coords_low, None)
-        self.assertEquals(out_coords_high, None)
-        self.assertEquals(o_clones, 4)
+        self.assertEqual(out_coords_low, None)
+        self.assertEqual(out_coords_high, None)
+        self.assertEqual(o_clones, 4)
 
-    def test_fill_mapping_field_from_mapping_file(self):
-        """Check the values are being correctly filled in"""
+    def test_nbinstall(self):
+        temp_dir = gettempdir()
+        target_path = join(temp_dir, 'share/jupyter/nbextensions/emperor/'
+                           'support_files')
 
-        # common usage example
-        out_data = fill_mapping_field_from_mapping_file(
-            self.broken_mapping_file_data, self.mapping_file_headers_gradient,
-            'Time:200;Weight:800')
-        self.assertEquals(out_data, [
-            ['PC.354', 'Control', '3', '40', 'Control20061218'],
-            ['PC.355', 'Control', '200', '44', 'Control20061218'],
-            ['PC.635', 'Fast', '9', '800', 'Fast20080116'],
-            ['PC.636', 'Fast', '12', '37.22', 'Fast20080116']])
+        # remove the whole tree
+        self.files_to_delete.append(join(temp_dir, 'share'))
 
-        # more than one value to fill empty values with
-        self.assertRaises(
-            AssertionError, fill_mapping_field_from_mapping_file,
-            self.broken_mapping_file_data, self.mapping_file_headers_gradient,
-            'Time:200,300;Weight:800')
+        nbinstall(prefix=temp_dir, user=None)
 
-        # non-existing header in mapping file
-        self.assertRaises(
-            EmperorInputFilesError, fill_mapping_field_from_mapping_file,
-            self.broken_mapping_file_data, self.mapping_file_headers_gradient,
-            'Spam:Foo')
+        self.assertTrue(exists(target_path))
 
-        # testing multiple values
-        out_data = fill_mapping_field_from_mapping_file(
-            self.broken_mapping_file_data_2_values,
-            self.mapping_file_headers_gradient,
-            'Time:Treatment==Control=444;Time:Treatment==Fast=888')
-        self.assertEquals(out_data, [
-            ['PC.354', 'Control', '3', '40', 'Control20061218'],
-            ['PC.355', 'Control', '444', '44', 'Control20061218'],
-            ['PC.635', 'Fast', '888', 'x', 'Fast20080116'],
-            ['PC.636', 'Fast', '12', '37.22', 'Fast20080116']])
+    def test_custom_axes(self):
+        columns = ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
+                   'Treatment', 'DOB', 'Description']
+        mf = pd.DataFrame(data=MAPPING_FILE_DATA, columns=columns)
+        obs = validate_and_process_custom_axes(mf, ['DOB'])
+        exp = pd.DataFrame(data=MAPPING_FILE_DATA_CONVERTED, columns=columns)
+        pd.util.testing.assert_frame_equal(obs, exp)
 
-        # testing multiple values: blank column name
-        self.assertRaises(
-            AssertionError, fill_mapping_field_from_mapping_file,
-            self.broken_mapping_file_data_2_values,
-            self.mapping_file_headers_gradient,
-            'Time:Treatment===200600020')
+    def test_custom_axes_non_existent_names(self):
+        columns = ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
+                   'Treatment', 'DOB', 'Description']
+        mf = pd.DataFrame(data=MAPPING_FILE_DATA, columns=columns)
 
-        # testing multiple values: wrong order
-        self.assertRaises(
-            AssertionError, fill_mapping_field_from_mapping_file,
-            self.broken_mapping_file_data_2_values,
-            self.mapping_file_headers_gradient,
-            'Time:Treatment=Control==200600020')
+        with self.assertRaises(KeyError):
+            validate_and_process_custom_axes(mf, [':L'])
 
-        # testing multiple values: error when more than 1 value is passed
-        self.assertRaises(
-            AssertionError, fill_mapping_field_from_mapping_file,
-            self.broken_mapping_file_data_2_values,
-            self.mapping_file_headers_gradient,
-            'Time:Treatment=Control==200600020,435')
+        with self.assertRaises(KeyError):
+            validate_and_process_custom_axes(mf, ['D0B'])
 
-    def test_sanitize_mapping_file(self):
-        """Check the mapping file strings are sanitized for it's use in JS"""
+    def test_custom_axes_non_numeric_values(self):
+        columns = ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
+                   'Treatment', 'DOB', 'Description']
+        mf = pd.DataFrame(data=MAPPING_FILE_DATA, columns=columns)
 
-        o_sanitized_headers, o_sanitized_data = sanitize_mapping_file(
-            UNSANITZIED_MAPPING_DATA,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Descr"""""iption'])
+        with self.assertRaises(ValueError):
+            validate_and_process_custom_axes(mf, ['Treatment'])
 
-        self.assertEquals(
-            o_sanitized_data,
-            ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-             'Treatment', 'DOB', 'Description'])
-        self.assertEquals(o_sanitized_headers, [
-            ['PC.354', "Dr. Bronners", 'Control', '20061218',
-             'Control_mouse_I.D._354'],
-            ['PC.355', 'AACTCGTCGATG', 'Control', '20061218',
-             'Control_mouse_I.D._355'],
-            ["PC356", 'ACAGACCACTCA', 'Control', '20061126',
-             'Control_mouse_I.D._356'],
-            ['PC.481', 'ACAGCACTAG', 'Control', '20070314',
-             'Control_mouse_I.D._481'],
-            ['PC.593', 'AGCAGCACTTGT', 'Control', '20071210',
-             'Control_mouse_I.D._593']])
+        with self.assertRaises(ValueError):
+            validate_and_process_custom_axes(mf, ['SampleID'])
 
-    def test_guess_coordinates_files(self):
-        dir_path = join(abspath(dirname(__file__)), 'test_data')
+    def test_custom_axes_non_numeric_values_mixed(self):
+        columns = ['SampleID', 'huey', 'dewey', 'louie', 'Description']
+        mf = pd.DataFrame(data=BROKEN_MAPPING_FILE, columns=columns)
 
-        fps = guess_coordinates_files(dir_path)
-        # get a list of the files we expect
-        exp = [join(dir_path,
-                    'unweighted_unifrac_pc_transformed_reference.txt'),
-               join(dir_path, 'weighted_unifrac_pc_transformed_q1.txt')]
-        self.assertItemsEqual(fps, exp)
+        with self.assertRaises(ValueError):
+            validate_and_process_custom_axes(mf, ['louie'])
 
-        # testing a directory with only files that should be ignored
-        dir_path = join(abspath(dirname(__file__)), 'test_data',
-                        'dir-with-only-hidden-files')
-        fps = guess_coordinates_files(dir_path)
-        self.assertItemsEqual(fps, [])
+        with self.assertRaises(ValueError):
+            validate_and_process_custom_axes(mf, ['louie', 'dewey'])
+
+    def test_resolve_stable_url_release(self):
+        # we test that no warnings are raised
+        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        with warnings.catch_warnings(record=True) as w:
+            obs = resolve_stable_url('1.0.0b7', url)
+            self.assertTrue(len(w) == 0)
+            self.assertEqual(obs, url % '1.0.0-beta.7')
+
+    def test_resolve_stable_url_release_check_warning(self):
+        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            obs = resolve_stable_url('1.0.0b7-dev', url)
+
+            self.assertTrue(len(w) == 1)
+            self.assertTrue(issubclass(w[-1].category, EmperorWarning))
+            self.assertEqual(obs, url % 'new-api')
+
+    def test_resolve_stable_url_release_number_check_warning(self):
+        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            obs = resolve_stable_url('1.0.0b7-dev0', url)
+
+            self.assertTrue(len(w) == 1)
+            self.assertTrue(issubclass(w[-1].category, EmperorWarning))
+            self.assertEqual(obs, url % 'new-api')
 
 
 MAPPING_FILE_DATA = [
@@ -528,6 +363,26 @@ MAPPING_FILE_DATA = [
     ['PC.635', 'ACCGCAGAGTCA', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116',
      'Fasting_mouse_I.D._635'],
     ['PC.636', 'ACGGTGAGTGTC', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116',
+     'Fasting_mouse_I.D._636']]
+
+MAPPING_FILE_DATA_CONVERTED = [
+    ['PC.354', 'AGCACGAGCCTA', 'YATGCTGCCTCCCGTAGGAGT', 'Control', 20061218,
+     'Control_mouse_I.D._354'],
+    ['PC.355', 'AACTCGTCGATG', 'YATGCTGCCTCCCGTAGGAGT', 'Control', 20061218,
+     'Control_mouse_I.D._355'],
+    ['PC.356', 'ACAGACCACTCA', 'YATGCTGCCTCCCGTAGGAGT', 'Control', 20061126,
+     'Control_mouse_I.D._356'],
+    ['PC.481', 'ACCAGCGACTAG', 'YATGCTGCCTCCCGTAGGAGT', 'Control', 20070314,
+     'Control_mouse_I.D._481'],
+    ['PC.593', 'AGCAGCACTTGT', 'YATGCTGCCTCCCGTAGGAGT', 'Control', 20071210,
+     'Control_mouse_I.D._593'],
+    ['PC.607', 'AACTGTGCGTAC', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', 20071112,
+     'Fasting_mouse_I.D._607'],
+    ['PC.634', 'ACAGAGTCGGCT', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', 20080116,
+     'Fasting_mouse_I.D._634'],
+    ['PC.635', 'ACCGCAGAGTCA', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', 20080116,
+     'Fasting_mouse_I.D._635'],
+    ['PC.636', 'ACGGTGAGTGTC', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', 20080116,
      'Fasting_mouse_I.D._636']]
 
 PRE_PROCESS_A = [

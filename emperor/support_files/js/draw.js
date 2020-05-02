@@ -1,90 +1,506 @@
-/**
- *
- * @author Yoshiki Vazquez Baeza
- * @copyright Copyright 2013, The Emperor Project
- * @credits Yoshiki Vazquez Baeza
- * @license BSD
- * @version 0.9.61
- * @maintainer Yoshiki Vazquez Baeza
- * @email yoshiki89@gmail.com
- * @status Development
- *
- */
+/** @module draw */
+define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
-/**
- *
- * @name THREE.EmperorTrajectory
- *
- * @class This class represents the internal logic for a linearly interpolated
- * tube/trajectory in THREE.js the object itself is a subclass of the
- * THREE.Curve.
- *
- * @credits: This answer in StackOverflow helped a lot:
- * http://stackoverflow.com/a/18580832/379593
- *
- */
-THREE.EmperorTrajectory = THREE.Curve.create(
-  function ( points) {
-    this.points = (points == undefined) ? [] : points;
-  },
+  var NUM_TUBE_SEGMENTS = 3;
+  var NUM_TUBE_CROSS_SECTION_POINTS = 10;
 
-  function ( t ) {    
-    var points = this.points;
-    var index = ( points.length - 1 ) * t;
-    var floorIndex = Math.floor(index);
+  // useful for some calculations
+  var ZERO = new THREE.Vector3();
 
-    if(floorIndex == points.length-1){
-      return points[floorIndex];
+  /**
+   *
+   * @class EmperorTrajectory
+   *
+   * This class represents the internal logic for a linearly interpolated
+   * tube/trajectory in THREE.js
+   *
+   * [This answer]{@link http://stackoverflow.com/a/18580832/379593} on
+   * StackOverflow helped a lot.
+   * @return {EmperorTrajectory}
+   * @extends THREE.Curve
+   */
+  THREE.EmperorTrajectory = THREE.Curve.create(
+      function(points) {
+        this.points = (points === undefined) ? [] : points;
+      },
+
+      function(t) {
+        var points = this.points;
+        var index = (points.length - 1) * t;
+        var floorIndex = Math.floor(index);
+
+        if (floorIndex == points.length - 1) {
+          return points[floorIndex];
+        }
+
+        var floorPoint = points[floorIndex];
+        var ceilPoint = points[floorIndex + 1];
+
+        return floorPoint.clone().lerp(ceilPoint, index - floorIndex);
+      }
+      );
+
+  /** @private */
+  THREE.EmperorTrajectory.prototype.getUtoTmapping = function(u) {
+    return u;
+  };
+
+  /**
+   *
+   * @class EmperorArrowHelper
+   *
+   * Subclass of THREE.ArrowHelper to make raycasting work on the line and cone
+   * children.
+   *
+   * For more information about the arguments, see the [online documentation]
+   * {@link https://threejs.org/docs/#api/helpers/ArrowHelper}.
+   * @return {EmperorArrowHelper}
+   * @extends THREE.ArrowHelper
+   *
+   */
+  function EmperorArrowHelper(dir, origin, length, color, headLength,
+                              headWidth, name) {
+    THREE.ArrowHelper.call(this, dir, origin, length, color, headLength,
+                           headWidth);
+
+    this.name = name;
+    this.line.name = this.name;
+    this.cone.name = this.name;
+
+    this.label = makeLabel(this.cone.position.toArray(), this.name, color);
+    this.add(this.label);
+
+    return this;
+  }
+  EmperorArrowHelper.prototype = Object.create(THREE.ArrowHelper.prototype);
+  EmperorArrowHelper.prototype.constructor = THREE.ArrowHelper;
+
+  /**
+   *
+   * Check for ray casting with arrow's cone.
+   *
+   * This class may need to disappear if THREE.ArrowHelper implements the
+   * raycast method, for more information see the [online documentation]
+   * {@link https://threejs.org/docs/#api/helpers/ArrowHelper}.
+   *
+   */
+  EmperorArrowHelper.prototype.raycast = function(raycaster, intersects) {
+    // Two considerations:
+    // * Don't raycast the label since that one is self-explanatory
+    // * Don't raycast to the line as it adds a lot of noise to the raycaster.
+    //   If raycasting is enabled for lines, this will result in incorrect
+    //   intersects showing as the closest to the ray i.e. wrong labels.
+    this.cone.raycast(raycaster, intersects);
+  };
+
+  /**
+   *
+   * Set the arrow's color
+   *
+   * @param {THREE.Color} color The color to set for the line, cone and label.
+   *
+   */
+  EmperorArrowHelper.prototype.setColor = function(color) {
+    THREE.ArrowHelper.prototype.setColor.call(this, color);
+    this.label.material.color.set(color);
+  };
+
+  /**
+   *
+   * Change the vector where the arrow points to
+   *
+   * @param {THREE.Vector3} target The vector where the arrow will point to.
+   * Note, the label will also change position.
+   *
+   */
+  EmperorArrowHelper.prototype.setPointsTo = function(target) {
+    var length;
+
+    // calculate the length before normalizing to a unit vector
+    target = target.sub(ZERO);
+    length = ZERO.distanceTo(target);
+    target.normalize();
+
+    this.setDirection(target.sub(ZERO));
+    this.setLength(length);
+
+    this.label.position.copy(this.cone.position);
+  };
+
+  /**
+   *
+   * Create a generic THREE.Line object
+   *
+   * @param {float[]} start The x, y and z coordinates of one of the ends
+   * of the line.
+   * @param {float[]} end The x, y and z coordinates of one of the ends
+   * of the line.
+   * @param {integer} color Hexadecimal base that specifies the color of the
+   * line.
+   * @param {float} width The width of the line being drawn.
+   * @param {boolean} transparent Whether the line will be transparent or not.
+   *
+   * @return {THREE.Line}
+   * @function makeLine
+   */
+  function makeLine(start, end, color, width, transparent) {
+    // based on the example described in:
+    // https://github.com/mrdoob/three.js/wiki/Drawing-lines
+    var material, geometry, line;
+
+    // make the material transparent and with full opacity
+    material = new THREE.LineBasicMaterial({color: color, linewidth: width});
+    material.matrixAutoUpdate = true;
+    material.transparent = transparent;
+    material.opacity = 1.0;
+
+    // add the two vertices to the geometry
+    geometry = new THREE.Geometry();
+    geometry.vertices.push(new THREE.Vector3(start[0], start[1], start[2]));
+    geometry.vertices.push(new THREE.Vector3(end[0], end[1], end[2]));
+
+    // the line will contain the two vertices and the described material
+    line = new THREE.Line(geometry, material);
+
+    return line;
+  }
+
+  /**
+   *
+   * @class EmperorLineSegments
+   *
+   * Subclass of THREE.LineSegments to make vertex modifications easier.
+   *
+   * @return {EmperorLineSegments}
+   * @extends THREE.LineSegments
+   */
+  function EmperorLineSegments(geometry, material) {
+    THREE.LineSegments.call(this, geometry, material);
+
+    return this;
+  }
+  EmperorLineSegments.prototype = Object.create(THREE.LineSegments.prototype);
+  EmperorLineSegments.prototype.constructor = THREE.LineSegments;
+
+  /**
+   *
+   * Set the start and end points for a line in the collection.
+   *
+   * @param {Integer} i The index of the line;
+   * @param {Float[]} start An array of the starting point of the line ([x, y,
+   * z]).
+   * @param {Float[]} start An array of the ending point of the line ([x, y,
+   * z]).
+   */
+  EmperorLineSegments.prototype.setLineAtIndex = function(i, start, end) {
+    var vertices = this.geometry.attributes.position.array;
+
+    vertices[(i * 6)] = start[0];
+    vertices[(i * 6) + 1] = start[1];
+    vertices[(i * 6) + 2] = start[2];
+    vertices[(i * 6) + 3] = end[0];
+    vertices[(i * 6) + 4] = end[1];
+    vertices[(i * 6) + 5] = end[2];
+  };
+
+  /**
+   *
+   * Create a collection of disconnected lines.
+   *
+   * This function is specially useful when creating a lot of lines as it uses
+   * a BufferGeometry for improved performance.
+   *
+   * @param {Array[]} vertices List of vertices used to create the lines. Each
+   * line is connected on as (vertices[i], vertices[i+1),
+   * (vertices[i+2], vertices[i+3]), etc.
+   * @param {integer} color Hexadecimal base that specifies the color of the
+   * line.
+   *
+   * @return {EmperorLineSegments}
+   * @function makeLineCollection
+   *
+   */
+  function makeLineCollection(vertices, color) {
+    // based on https://jsfiddle.net/wilt/bd8trrLx/
+    var material = new THREE.LineBasicMaterial({
+      color: color || 0xff0000
+    });
+
+    var positions = new Float32Array(vertices.length * 3);
+
+    for (var i = 0; i < vertices.length; i++) {
+
+      positions[i * 3] = vertices[i][0];
+      positions[i * 3 + 1] = vertices[i][1];
+      positions[i * 3 + 2] = vertices[i][2];
+
     }
 
-    var floorPoint = points[floorIndex];
-    var ceilPoint = points[floorIndex+1];
+    var indices = _.range(vertices.length);
+    var geometry = new THREE.BufferGeometry();
+    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(indices), 1));
 
-    return floorPoint.clone().lerp(ceilPoint, index - floorIndex);
-  }
-);
-
-THREE.EmperorTrajectory.prototype.getUtoTmapping = function(u) {
-    return u;
-};
-
-/**
- *
- * Format an SVG string with labels and colors.
- *
- * @param {labels} Array object with the name of the labels.
- * @param {colors} Array object with the colors for each label.
- *
- * @return Returns an SVG string with the labels and colors values formated as
- * a legend.
- *
- */
-function formatSVGLegend(labels, colors){
-  var labels_svg='', pos_y=1, increment=40, max_len=0, rect_width,
-      font_size=12;
-
-  for (var i=0; i<labels.length; i++){
-    // add the rectangle with the corresponding color
-    labels_svg += '<rect height="27" width="27" y="'+pos_y+
-        '" x="5" style="stroke-width:1;stroke:rgb(0,0,0)" fill="'+
-        colors[i]+'"/>';
-
-    // add the name of the category
-    labels_svg += '<text xml:space="preserve" y="'+(pos_y+20)+'" x="40" '+
-        'font-size="'+font_size+'" stroke-width="0" stroke="#000000" '+
-        'fill="#000000">'+labels[i]+'</text>';
-
-    pos_y += increment;
+    return new EmperorLineSegments(geometry, material);
   }
 
-  // get the name with the maximum number of characters and get the length
-  max_len = _.max(labels, function(a){return a.length}).length
+  /**
+   *
+   * Create a generic Arrow object (composite of a cone and line)
+   *
+   * @param {float[]} from The x, y and z coordinates where the arrow
+   * originates from.
+   * @param {float[]} to The x, y and z coordinates where the arrow points to.
+   * @param {integer} color Hexadecimal base that specifies the color of the
+   * line.
+   * @param {String} name The text to be used in the label, and the name of
+   * the line and cone (used for raycasting).
+   *
+   * @return {THREE.Object3D}
+   * @function makeArrow
+   */
+  function makeArrow(from, to, color, name) {
+    var target, origin, direction, length, arrow;
 
-  // duplicate the size of the rectangle to make sure it fits the labels
-  rect_width = font_size*max_len*2;
+    target = new THREE.Vector3(to[0], to[1], to[2]);
+    origin = new THREE.Vector3(from[0], from[1], from[2]);
 
-  labels_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+
-      rect_width+'" height="'+(pos_y-10)+'"><g>'+labels_svg+'</g></svg>';
+    length = origin.distanceTo(target);
 
-  return labels_svg;
-}
+    // https://stackoverflow.com/a/20558498/379593
+    direction = target.sub(origin);
+
+    direction.normalize();
+
+    // don't set the head size or width, defaults are good enough
+    arrow = new EmperorArrowHelper(direction, origin, length, color,
+                                   undefined, undefined, name);
+
+    return arrow;
+  }
+
+  /**
+   * Returns a new trajectory line dynamic mesh
+   */
+  function drawTrajectoryLineDynamic(trajectory, currentFrame, color, radius) {
+    // based on the example described in:
+    // https://github.com/mrdoob/three.js/wiki/Drawing-lines
+    var material, points = [], lineGeometry, limit = 0, path;
+
+    _trajectory = trajectory.representativeInterpolatedCoordinatesAtIndex(
+                                                                  currentFrame);
+    if (_trajectory === null || _trajectory.length == 0)
+      return null;
+
+    material = new THREE.MeshPhongMaterial({
+        color: color,
+        transparent: false});
+
+    for (var index = 0; index < _trajectory.length; index++) {
+      points.push(new THREE.Vector3(_trajectory[index].x,
+                  _trajectory[index].y, _trajectory[index].z));
+    }
+
+    path = new THREE.EmperorTrajectory(points);
+
+    // the line will contain the two vertices and the described material
+    // we increase the number of points to have a smoother transition on
+    // edges i. e. where the trajectory changes the direction it is going
+    lineGeometry = new THREE.TubeGeometry(path,
+                                    (points.length - 1) * NUM_TUBE_SEGMENTS,
+                                    radius,
+                                    NUM_TUBE_CROSS_SECTION_POINTS,
+                                    false);
+
+    return new THREE.Mesh(lineGeometry, material);
+  }
+
+  /**
+   * Disposes a trajectory line dynamic mesh
+   */
+  function disposeTrajectoryLineDynamic(mesh) {
+    mesh.geometry.dispose();
+    mesh.material.dispose();
+  }
+
+  /**
+   * Returns a new trajectory line static mesh
+   */
+  function drawTrajectoryLineStatic(trajectory, color, radius) {
+    var _trajectory = trajectory.coordinates;
+
+    var material = new THREE.MeshPhongMaterial({
+      color: color,
+      transparent: false}
+    );
+
+    var allPoints = [];
+    for (var index = 0; index < _trajectory.length; index++) {
+      allPoints.push(new THREE.Vector3(_trajectory[index].x,
+                  _trajectory[index].y, _trajectory[index].z));
+    }
+
+    var path = new THREE.EmperorTrajectory(allPoints);
+
+    //Tubes are straight segments, but adding vertices along them might change
+    //lighting effects under certain models and lighting conditions.
+    var tubeBufferGeom = new THREE.TubeBufferGeometry(
+                                path,
+                                (allPoints.length - 1) * NUM_TUBE_SEGMENTS,
+                                radius,
+                                NUM_TUBE_CROSS_SECTION_POINTS,
+                                false);
+
+    return new THREE.Mesh(tubeBufferGeom, material);
+  }
+
+  /**
+   * Disposes a trajectory line static mesh
+   */
+  function disposeTrajectoryLineStatic(mesh) {
+    mesh.geometry.dispose();
+    mesh.material.dispose();
+  }
+
+  function updateStaticTrajectoryDrawRange(trajectory, currentFrame, threeMesh)
+  {
+    //Reverse engineering the number of points in a THREE tube is not fun, and
+    //may be implementation/version dependent.
+    //Number of points drawn per tube segment =
+    //  2 (triangles) * 3 (points per triangle) * NUM_TUBE_CROSS_SECTION_POINTS
+    //Number of tube segments per pair of consecutive points =
+    //  NUM_TUBE_SEGMENTS
+
+    var multiplier = 2 * 3 * NUM_TUBE_CROSS_SECTION_POINTS * NUM_TUBE_SEGMENTS;
+    if (currentFrame < trajectory._intervalValues.length)
+    {
+      var intervalValue = trajectory._intervalValues[currentFrame];
+      threeMesh.geometry.setDrawRange(0, intervalValue * multiplier);
+    }
+    else
+    {
+      threeMesh.geometry.setDrawRange(0,
+                            (trajectory.coordinates.length - 1) * multiplier);
+    }
+  }
+
+
+  /**
+   *
+   * Create a THREE object that displays 2D text, this implementation is based
+   * on the answer found
+   * [here]{@link http://stackoverflow.com/a/14106703/379593}
+   *
+   * The text is returned scaled to its size in pixels, hence you'll need to
+   * scale it down depending on the scene's dimensions.
+   *
+   * Warning: The text sizes vary slightly depending on the browser and OS you
+   * use. This is specially important for testing.
+   *
+   * @param {float[]} position The x, y, and z location of the label.
+   * @param {string} text The text to be shown on screen.
+   * @param {integer|string} Color Hexadecimal base that represents the color
+   * of the text.
+   *
+   * @return {THREE.Sprite} Object with the text displaying in it.
+   * @function makeLabel
+   **/
+  function makeLabel(position, text, color) {
+    // the font size determines the resolution relative to the sprite object
+    var fontSize = 32, canvas, context, measure;
+
+    canvas = document.createElement('canvas');
+    context = canvas.getContext('2d');
+
+    // set the font size so we can measure the width
+    context.font = fontSize + 'px Arial';
+    measure = context.measureText(text);
+
+    // make the dimensions a power of 2 (for use in THREE.js)
+    canvas.width = THREE.Math.nextPowerOfTwo(measure.width);
+    canvas.height = THREE.Math.nextPowerOfTwo(fontSize);
+
+    // after changing the canvas' size we need to reset the font attributes
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.font = fontSize + 'px Arial';
+    if (_.isNumber(color)) {
+      context.fillStyle = '#' + color.toString(16);
+    }
+    else {
+      context.fillStyle = color;
+    }
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    var amap = new THREE.Texture(canvas);
+    amap.needsUpdate = true;
+
+    var mat = new THREE.SpriteMaterial({
+        map: amap,
+        transparent: true,
+        color: color
+    });
+
+    var sp = new THREE.Sprite(mat);
+    sp.position.set(position[0], position[1], position[2]);
+    sp.scale.set(canvas.width, canvas.height, 1);
+
+    // add an extra attribute so we can render this properly when we use
+    // SVGRenderer
+    sp.text = text;
+
+    return sp;
+  }
+
+  /**
+   *
+   * Format an SVG string with labels and colors.
+   *
+   * @param {string[]} labels The names for the label.
+   * @param {integer[]} colors The colors for each label.
+   *
+   * @return {string} SVG string with the labels and colors values formated as
+   * a legend.
+   * @function formatSVGLegend
+   */
+  function formatSVGLegend(labels, colors) {
+    var labels_svg = '', pos_y = 1, increment = 40, max_len = 0, rect_width,
+    font_size = 12;
+
+    for (var i = 0; i < labels.length; i++) {
+      // add the rectangle with the corresponding color
+      labels_svg += '<rect height="27" width="27" y="' + pos_y +
+        '" x="5" style="stroke-width:1;stroke:rgb(0,0,0)" fill="' +
+        colors[i] + '"/>';
+
+      // add the name of the category
+      labels_svg += '<text xml:space="preserve" y="' + (pos_y + 20) +
+        '" x="40" font-size="' + font_size +
+        '" stroke-width="0" stroke="#000000" fill="#000000">' + labels[i] +
+        '</text>';
+
+      pos_y += increment;
+    }
+
+    // get the name with the maximum number of characters and get the length
+    max_len = _.max(labels, function(a) {return a.length}).length;
+
+      // duplicate the size of the rectangle to make sure it fits the labels
+      rect_width = font_size * max_len * 2;
+
+    labels_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' +
+      rect_width + '" height="' + (pos_y - 10) + '"><g>' + labels_svg +
+      '</g></svg>';
+
+    return labels_svg;
+  }
+
+  return {'formatSVGLegend': formatSVGLegend, 'makeLine': makeLine,
+          'makeLabel': makeLabel, 'makeArrow': makeArrow,
+          'drawTrajectoryLineStatic': drawTrajectoryLineStatic,
+          'disposeTrajectoryLineStatic': disposeTrajectoryLineStatic,
+          'drawTrajectoryLineDynamic': drawTrajectoryLineDynamic,
+          'disposeTrajectoryLineDynamic': disposeTrajectoryLineDynamic,
+          'updateStaticTrajectoryDrawRange': updateStaticTrajectoryDrawRange,
+          'makeLineCollection': makeLineCollection};
+});

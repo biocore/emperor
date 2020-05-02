@@ -50,10 +50,11 @@ clean:
 	rm -rf $(BUILDDIR)/*
 	rm -rf source/scripts/*
 	rm -rf source/generated
+	rm -rf doc/build/jsdoc/*
 
 html:
-	qcli_make_rst -i ../scripts/*.py -o source/scripts/
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	jsdoc ../emperor/support_files/js/ -d $(BUILDDIR)/jsdoc -c jsdoc-config.json
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
