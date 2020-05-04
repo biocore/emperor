@@ -98,7 +98,7 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
      * mixture of numbers and words.
      *
      */
-    test('Test naturalSort with numbers only', function() {
+    test('Test naturalSort with numbers and words', function() {
       var res, elements;
 
       elements = ['foo', '7', 'bar', '2', 'baz', '0'];
