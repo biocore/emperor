@@ -465,10 +465,10 @@ define([
     map = chroma.brewer[map];
 
     var total = values.length;
-    var interpolator = chroma.bezier([map[0], map[3], map[4], map[5], map[8]]);
+    var interpolator = chroma.scale(map).domain([0, values.length - 1]);
     var colors = {};
     for (var i = 0; i < values.length; i++) {
-      colors[values[i]] = interpolator(i / total).hex();
+      colors[values[i]] = interpolator(i).hex();
     }
     return colors;
   };
