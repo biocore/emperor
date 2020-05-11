@@ -396,7 +396,7 @@ define([
    *
    */
   ColorViewController.getScaledColors = function(values, map, nanColor) {
-    map = map || 'viridis';
+    map = map || 'Viridis';
     nanColor = nanColor || '#64655d';
     map = chroma.brewer[map];
 
@@ -454,14 +454,14 @@ define([
    *
    * @param {String[]} values Objects to generate a color for, usually a
    * category in a given metadata column.
-   * @param {String} [map = 'Viridis'] name of the discrete color map to use.
+   * @param {String} [map = 'Viridis'] name of the color map to use.
    *
    * @return {Object} colors The object containing the hex colors keyed to
    * each sample.
    *
    */
   ColorViewController.getInterpolatedColors = function(values, map) {
-    map = map || 'viridis';
+    map = map || 'Viridis';
     map = chroma.brewer[map];
 
     var total = values.length;
