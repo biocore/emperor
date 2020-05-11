@@ -326,8 +326,10 @@ requirejs([
     test('Test getInterpolatedColors', function() {
       var five = ['0', '1', '2', '3', '4'];
       var color = ColorViewController.getInterpolatedColors(five, 'Viridis');
-      deepEqual(color, { '0': '#440154', '1':
-        '#424c79', '2': '#30758c', '3': '#398f8b', '4': '#8cb373' });
+      deepEqual(color, {
+        '0': '#440154', '1': '#3f4a8a', '2': '#26838f', '3': '#6cce5a',
+        '4': '#fee825'
+      });
     });
 
     test('Test ColorViewController.getScaledColors exceptions', function() {
