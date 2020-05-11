@@ -118,6 +118,47 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
     });
 
+    /**
+     *
+     * Test that strings like "Infinity" are sorted with words in
+     * naturalSort's output, rather than with numbers. This test was adapted
+     * from Empress.
+     *
+     */
+    test("Test that naturalSort doesn't treat Infinity / NaN as numbers", function () {
+      var eles = [
+        "1",
+        "2",
+        "3",
+        "10",
+        "4",
+        "5",
+        "invalid",
+        "nan",
+        "NaN",
+        "Infinity",
+        "-Infinity",
+        " ",
+        "zzz",
+      ];
+      res = naturalSort(eles);
+      deepEqual(res, [
+        " ",
+        "-Infinity",
+        "Infinity",
+        "invalid",
+        "nan",
+        "NaN",
+        "zzz",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "10",
+      ]);
+    });
+
     test('Test convertXMLToString', function() {
       var el;
 

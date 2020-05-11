@@ -13,8 +13,12 @@ define(['underscore'], function(_) {
     var numericPart = [], alphaPart = [], result = [];
 
     // separate the numeric and the alpha elements of the array
+    // Note that NaN and +/- Infinity are not considered numeric elements
     for (var index = 0; index < list.length; index++) {
-      if (isNaN(parseFloat(list[index]))) {
+      if (
+          isNaN(parseFloat(list[index])) ||
+          !isFinite(parseFloat(list[index]))
+      ) {
         alphaPart.push(list[index]);
       }
       else {
