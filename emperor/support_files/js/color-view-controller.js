@@ -465,6 +465,8 @@ define([
     map = chroma.brewer[map];
 
     var total = values.length;
+    // Logic here adapted from Colorer.assignOrdinalScaledColors() in Empress'
+    // codebase
     var interpolator = chroma.scale(map).domain([0, values.length - 1]);
     var colors = {};
     for (var i = 0; i < values.length; i++) {

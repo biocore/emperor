@@ -1,6 +1,7 @@
 requirejs([
     'jquery',
     'underscore',
+    'chroma',
     'model',
     'view',
     'viewcontroller',
@@ -8,7 +9,7 @@ requirejs([
     'colorviewcontroller',
     'multi-model',
     'uistate'
-], function($, _, model, DecompositionView, viewcontroller, SlickGrid,
+], function($, _, chroma, model, DecompositionView, viewcontroller, SlickGrid,
             ColorViewController, MultiModel, UIState) {
   $(document).ready(function() {
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
@@ -355,8 +356,8 @@ requirejs([
       scaled = [0, 1, 2, 3, 7, 20, 50];
 
       colors = ColorViewController.getColorList(scaled, 'Blues', false, true);
-      deepEqual(colors[0], {'0': '#f7fbff', '1': '#f3f8fd', '2': '#eff5fc',
-                            '20': '#93c4de', '3': '#ebf3fb', '50': '#08306b',
+      deepEqual(colors[0], {'0': '#f7fbff', '1': '#f3f8fe', '2': '#eff6fc',
+                            '20': '#94c4df', '3': '#ebf3fb', '50': '#08306b',
                             '7': '#dbe9f6'});
       equal(colors[1], '<defs><linearGradient id=\"Gradient\" ' +
         'x1=\"0\" x2=\"0\" y1=\"1\" y2=\"0\">' +
@@ -473,14 +474,24 @@ requirejs([
                 [{'0': '#e41a1c', '1': '#377eb8', '2': '#4daf4a',
                   '3': '#984ea3', '4': '#ff7f00'}, undefined]);
 
-      deepEqual(ColorViewController.getColorList(twenty, 'BrBG', false),
-                [{'0': '#543005', '1': '#6e4a1c', '2': '#866231',
-                  '3': '#9c7a46', '4': '#b0905a', '5': '#c1a46e',
-                  '6': '#d1b681', '7': '#dec693', '8': '#e9d4a4',
-                  '9': '#f1dfb4', '10': '#f6e8c3', '11': '#f4e9cb',
-                  '12': '#efe9d1', '13': '#e6e6d3', '14': '#dae1d2',
-                  '15': '#c9dace', '16': '#b6d1c7', '17': '#9ec6bd',
-                  '18': '#82b8b1', '19': '#61a9a1'}, undefined]);
+      // Since the scaled parameter is false, this tests "equidistant colors"
+      // (aka getInterpolatedColors()).
+      var interpolatedColorList = ColorViewController.getColorList(
+          twenty, 'BrBG', false
+      );
+      // Test that extreme values are correctly assigned to the colors at the
+      // ends of the BrBG color map
+      deepEqual(interpolatedColorList[0]["0"], "#543005");
+      deepEqual(interpolatedColorList[0]["19"], "#003c30");
+      // Now, check that all values (incl. intermediate ones) are correctly
+      // assigned colors
+      var interpolator = chroma.scale(chroma.brewer.BrBG).domain([0, 19]);
+      for (var i = 0; i < 19; i++) {
+          deepEqual(interpolatedColorList[0][String(i)], interpolator(i).hex());
+      }
+      // Lastly, check that the second element in interpolatedColorList is
+      // undefined (since we're not drawing a gradient)
+      deepEqual(interpolatedColorList[1], undefined);
 
       deepEqual(ColorViewController.getColorList(one, 'OrRd', false),
                 [{'0': '#fff7ec'}, undefined]);
