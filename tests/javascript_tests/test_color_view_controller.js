@@ -216,12 +216,12 @@ requirejs([
                          3: '#6cce5a', 4: '#fee825'},
         '<defs><linearGradient id="Gradient" x1="0" x2="0" y1="1" y2="0">' +
         '<stop offset="0%" stop-color="#440154"/>' +
-        '<stop offset="1%" stop-color="#440456"/>' +
-        '<stop offset="2%" stop-color="#440759"/>' +
-        '<stop offset="3%" stop-color="#440a5c"/>' +
+        '<stop offset="1%" stop-color="#440457"/>' +
+        '<stop offset="2%" stop-color="#45075a"/>' +
+        '<stop offset="3%" stop-color="#450a5c"/>' +
         '<stop offset="4%" stop-color="#450d5f"/>' +
-        '<stop offset="5%" stop-color="#451062"/>' +
-        '<stop offset="6%" stop-color="#451364"/>' +
+        '<stop offset="5%" stop-color="#461062"/>' +
+        '<stop offset="6%" stop-color="#461365"/>' +
         '<stop offset="7%" stop-color="#461667"/>' +
         '<stop offset="8%" stop-color="#46196a"/>' +
         '<stop offset="9%" stop-color="#461c6d"/>' +
