@@ -1,7 +1,7 @@
 Emperor ChangeLog
 =================
 
-# Emperor 1.0.0-dev (changes since 0.9.60 go here)
+# Emperor 1.0.0-dev (changes since 1.0.0 go here)
 --------------------------------------------------
 
 
