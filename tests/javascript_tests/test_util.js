@@ -60,6 +60,11 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
       deepEqual(res, ['0', '1', '2', '3', '4', '5'], 'Arrays is ' +
           'sorted correctly');
 
+      elements = ['1', '2', '1e5', '3', '4', '5', '0', '1e-3'];
+      res = naturalSort(elements);
+      deepEqual(res, ['0', '1e-3', '1', '2', '3', '4', '5', '1e5'],
+          'Array including scientific notation numbers is sorted correctly');
+
       elements = ['-100', '0', '-0', '-200', '100', '100.001'];
       res = naturalSort(elements);
       deepEqual(res, ['-200', '-100', '0', '-0', '100', '100.001'],
@@ -110,6 +115,14 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
       res = naturalSort(elements);
       deepEqual(res, ['BAAARR', 'floo', 'Foo', '-1', '0', '2'], 'Arrays is ' +
           'sorted correctly');
+
+      elements = ['lorem', 'ipsum', '1e5', 'boom.mooo', '-2.345563353', '-2.4'];
+      res = naturalSort(elements);
+      deepEqual(
+          res,
+          ['boom.mooo', 'ipsum', 'lorem', '-2.4', '-2.345563353', '1e5'],
+          'Array (including scientific notation number) is sorted correctly'
+      );
 
       elements = ['lorem', 'ipsum', 'boom.mooo', '-2.345563353', '-2.4'];
       res = naturalSort(elements);
