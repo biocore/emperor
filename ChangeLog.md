@@ -1,9 +1,14 @@
 Emperor ChangeLog
 =================
 
-# Emperor 1.0
+# Emperor 1.0.0-dev (changes since 1.0.0 go here)
+--------------------------------------------------
 
-Introducing Emperor 1.0, an improved and new version of Emperor. Including
+
+# Emperor 1.0.0
+---------------
+
+Introducing Emperor 1.0.0, an improved and new version of Emperor. Including
 a stable Python API and JavaScript API.
 
 Emperor 0.9.61 (11 Apr 2018)
