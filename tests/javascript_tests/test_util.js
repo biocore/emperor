@@ -60,6 +60,11 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
       deepEqual(res, ['0', '1', '2', '3', '4', '5'], 'Arrays is ' +
           'sorted correctly');
 
+      elements = ['1', '2', '1e5', '3', '4', '5', '0', '1e-3'];
+      res = naturalSort(elements);
+      deepEqual(res, ['0', '1e-3', '1', '2', '3', '4', '5', '1e5'],
+          'Array including scientific notation numbers is sorted correctly');
+
       elements = ['-100', '0', '-0', '-200', '100', '100.001'];
       res = naturalSort(elements);
       deepEqual(res, ['-200', '-100', '0', '-0', '100', '100.001'],
@@ -111,11 +116,60 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
       deepEqual(res, ['BAAARR', 'floo', 'Foo', '-1', '0', '2'], 'Arrays is ' +
           'sorted correctly');
 
+      elements = ['lorem', 'ipsum', '1e5', 'boom.mooo', '-2.345563353', '-2.4'];
+      res = naturalSort(elements);
+      deepEqual(
+          res,
+          ['boom.mooo', 'ipsum', 'lorem', '-2.4', '-2.345563353', '1e5'],
+          'Array (including scientific notation number) is sorted correctly'
+      );
+
       elements = ['lorem', 'ipsum', 'boom.mooo', '-2.345563353', '-2.4'];
       res = naturalSort(elements);
       deepEqual(res, ['boom.mooo', 'ipsum', 'lorem', '-2.4', '-2.345563353'],
           'Arrays is sorted correctly');
 
+    });
+
+    /**
+     *
+     * Test that strings like "Infinity" are sorted with words in
+     * naturalSort's output, rather than with numbers. This test was adapted
+     * from Empress.
+     *
+     */
+    test("Test that naturalSort doesn't treat Infinity / NaN as numbers", function () {
+      var eles = [
+        "1",
+        "2",
+        "3",
+        "10",
+        "4",
+        "5",
+        "invalid",
+        "nan",
+        "NaN",
+        "Infinity",
+        "-Infinity",
+        " ",
+        "zzz",
+      ];
+      res = naturalSort(eles);
+      deepEqual(res, [
+        " ",
+        "-Infinity",
+        "Infinity",
+        "invalid",
+        "nan",
+        "NaN",
+        "zzz",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "10",
+      ]);
     });
 
     test('Test convertXMLToString', function() {
