@@ -245,6 +245,57 @@ requirejs([
       deepEqual(view.lines.right.geometry.attributes.position.array.length, 6);
     });
 
+    /**
+     *
+     * Test sorting of field values, so that we don't accidentally regress
+     * on the issue described at https://github.com/biocore/emperor/issues/761.
+     *
+     * The boilerplate code in this test is mostly just copied from the "Test
+     * constructor with two dimensions" test above.
+     *
+     */
+    test('Test that setCategory sorts field values properly', function() {
+
+      var data = {
+        name: 'pcoa',
+        sample_ids: ['s1', 's2', 's3', 's4', 's5', 's6'],
+        coordinates: [
+            [-0.25, 0.25],
+            [0, 0.25],
+            [0.25, 0.25],
+            [0.25, -0.25],
+            [0, -0.25],
+            [-0.25, -0.25]
+        ],
+        percents_explained: [80.0, 20.0]
+      };
+      var md_headers = ['SampleID', 'DeliberatelyAnnoyingField'];
+      var metadata = [
+          ['s1', '3'],
+          ['s2', ':('],
+          ['s3', 'NotANumber'],
+          ['s4', 'Four'],
+          ['s5', '-5'],
+          ['s6', '6'],
+      ];
+      var decomp = new DecompositionModel(data, md_headers, metadata);
+      var mm = new MultiModel({'scatter': decomp});
+
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(mm, 'scatter', UIState1);
+
+      // TODO finagle this to resemble whatever is being used as json
+      // in ColorViewController.prototype.fromJSON()
+      var jsonData = {
+
+      };
+      var dataView = dv.setCategory(jsonData, null, "DeliberatelyAnnoyingField");
+
+      // TODO go through dataView and check that things are in proper order.
+      expect(0);
+    });
+
     test('Test constructor fails (biplot in fast mode)', function() {
       this.decomp.type = 'arrow';
       throws(function() {
