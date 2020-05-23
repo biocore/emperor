@@ -280,7 +280,8 @@ define([
         scope.controllers.axes.updateVisibleAxes(null, 2);
         scope.controllers.axes._colorChanged("axes-color", "#000000");
         scope.controllers.axes._colorChanged("background-color", "#ffffff");
-        // TODO: show circles instead of spheres; fix axis labels
+        scope.controllers.shape.makeEverythingACircle();
+        // TODO: fix axis labels
     });
     this.$plotSpace.append(this.$displayModeButton);
 

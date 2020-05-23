@@ -107,6 +107,25 @@ define([
   };
 
   /**
+   *
+   * haha circle go brrrrr
+   *
+   * @extends EmperorAttributeABC
+   *
+   */
+  ShapeController.prototype.makeEverythingACircle = function() {
+    EmperorAttributeABC.prototype._resetAttribute.call(this);
+    var scope = this;
+
+    _.each(this.decompViewDict, function(view) {
+      scope.setPlottableAttributes(view, 'Circle', view.decomp.plottable);
+      view.needsUpdate = true;
+    });
+  };
+
+  
+
+  /**
    * Helper function to set the shape of plottable
    *
    * @param {Object} scope The scope where the plottables exist

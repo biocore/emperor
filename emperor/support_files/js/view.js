@@ -1084,6 +1084,7 @@ DecompositionView.prototype._buildVegaSpec = function() {
   // Maps THREE.js geometries to vega shapes
   var getShape = {
     Sphere: 'circle',
+    Circle: 'circle',
     Diamond: 'diamond',
     Cone: 'triangle-down',
     Cylinder: 'square',
