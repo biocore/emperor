@@ -266,6 +266,24 @@ define([
     });
     this.$plotSpace.append(this.$optionsButton);
 
+    /**
+     * @type {Node}
+     * jQuery object
+     */
+    this.$displayModeButton = $('<button name="dm-button">&nbsp;</button>');
+    this.$displayModeButton.css({
+      'position': 'absolute',
+      'z-index': '3',
+      'top': '5px',
+      'right': '40px'
+    }).attr('title', 'Display Mode').on('click', function(event) {
+        scope.controllers.axes.updateVisibleAxes(null, 2);
+        scope.controllers.axes._colorChanged("axes-color", "#000000");
+        scope.controllers.axes._colorChanged("background-color", "#ffffff");
+        // TODO: show circles instead of spheres; fix axis labels
+    });
+    this.$plotSpace.append(this.$displayModeButton);
+
     // default decomposition view uses the full window
     this.addSceneView();
 
@@ -273,6 +291,9 @@ define([
       // setup the jquery properties of the button
       scope.$optionsButton.button({text: false,
                                    icons: {primary: ' ui-icon-gear'}});
+
+      scope.$displayModeButton.button({text: false,
+                                   icons: {primary: ' ui-icon-star'}});
 
       scope._buildUI();
       // Hide the loading splashscreen
