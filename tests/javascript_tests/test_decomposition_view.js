@@ -258,14 +258,15 @@ requirejs([
 
       var data = {
         name: 'pcoa',
-        sample_ids: ['s1', 's2', 's3', 's4', 's5', 's6'],
+        sample_ids: ['s1', 's2', 's3', 's4', 's5', 's6', 's7'],
         coordinates: [
             [-0.25, 0.25],
             [0, 0.25],
             [0.25, 0.25],
             [0.25, -0.25],
             [0, -0.25],
-            [-0.25, -0.25]
+            [-0.25, -0.25],
+            [0, 0]
         ],
         percents_explained: [80.0, 20.0]
       };
@@ -277,6 +278,7 @@ requirejs([
           ['s4', 'Four'],
           ['s5', '-5'],
           ['s6', '6'],
+          ['s7', ':(']
       ];
       var decomp = new DecompositionModel(data, md_headers, metadata);
       var mm = new MultiModel({'scatter': decomp});
@@ -285,15 +287,42 @@ requirejs([
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(mm, 'scatter', UIState1);
 
-      // TODO finagle this to resemble whatever is being used as json
-      // in ColorViewController.prototype.fromJSON()
+      // This is the "data" we'll be providing to setCategory(). This is
+      // analogous to what the "categorySelectionCallback" in the
+      // ColorViewController would pass to setCategory(): it maps unique
+      // metadata categories to colors. (The "unique" is why there are only 6
+      // entries in this, since s2 and s7 share a metadata value for
+      // DeliberatelyAnnoyingField.)
+      // Anyway, the jsonData object has been purposely shuffled to be
+      // "out of order" (... I guess Objects don't really have an order,
+      // but you get the idea.)
       var jsonData = {
-
+        "-5": "#008000",
+        "3": "#91278d",
+        "6": "#ffff00",
+        ":(": "#ff0000",
+        "Four": "#0000ff",
+        "NotANumber": "#f27304",
       };
-      var dataView = dv.setCategory(jsonData, null, "DeliberatelyAnnoyingField");
 
-      // TODO go through dataView and check that things are in proper order.
-      expect(0);
+      var expectedMetadataOrder = [":(", "Four", "NotANumber", "-5", "3", "6"];
+      // The colors I've used for this test are just the "Classic QIIME Colors"
+      var expectedColorOrder = [
+        "#ff0000", "#0000ff", "#f27304", "#008000", "#91278d", "#ffff00"
+      ];
+
+      var dataView = dv.setCategory(
+          jsonData, null, "DeliberatelyAnnoyingField"
+      );
+
+      // go through dataView and check that the metadata categories are in
+      // the correct order (as defined by expectedMetadataOrder)
+      _.each(dataView, function(fieldObject, index) {
+        deepEqual(fieldObject.category, expectedMetadataOrder[index]);
+        deepEqual(fieldObject.id, index);
+        // While we're at it, check that the colors are correct
+        deepEqual(fieldObject.value, expectedColorOrder[index]);
+      });
     });
 
     test('Test constructor fails (biplot in fast mode)', function() {
