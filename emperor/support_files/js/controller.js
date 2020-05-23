@@ -270,8 +270,8 @@ define([
      * @type {Node}
      * jQuery object
      */
-    this.$displayModeButton = $('<button name="dm-button">&nbsp;</button>');
-    this.$displayModeButton.css({
+    this.$figureModeButton = $('<button name="dm-button">&nbsp;</button>');
+    this.$figureModeButton.css({
       'position': 'absolute',
       'z-index': '3',
       'top': '5px',
@@ -283,7 +283,7 @@ define([
         scope.controllers.shape.makeEverythingACircle();
         // TODO: fix axis labels
     });
-    this.$plotSpace.append(this.$displayModeButton);
+    this.$plotSpace.append(this.$figureModeButton);
 
     // default decomposition view uses the full window
     this.addSceneView();
@@ -293,8 +293,8 @@ define([
       scope.$optionsButton.button({text: false,
                                    icons: {primary: ' ui-icon-gear'}});
 
-      scope.$displayModeButton.button({text: false,
-                                   icons: {primary: ' ui-icon-star'}});
+      scope.$figureModeButton.button({text: false,
+                                      icons: {primary: ' ui-icon-lightbulb'}});
 
       scope._buildUI();
       // Hide the loading splashscreen
