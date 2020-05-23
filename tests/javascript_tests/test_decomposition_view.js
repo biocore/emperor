@@ -145,7 +145,6 @@ requirejs([
                        '20071112']];
       decomp = new DecompositionModel(data, md_headers, metadata);
       var mm = new MultiModel({'scatter': decomp});
-      var obs;
 
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
@@ -399,7 +398,7 @@ requirejs([
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       dv.changeVisibleDimensions([2, 3, 4]);
-      obs = [dv.markers[0].position.x,
+      var obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
       dv.markers[0].position.z];
       exp = [0.066647, -0.067711, 0.176070];
@@ -426,7 +425,7 @@ requirejs([
                                      UIState1);
       dv.changeVisibleDimensions([2, 3, 4]);
 
-      obs = [dv.markers[0].position.x, dv.markers[0].position.y,
+      var obs = [dv.markers[0].position.x, dv.markers[0].position.y,
              dv.markers[0].position.z];
       var exp = [0.066647, -0.067711, 0.176070];
       deepEqual(obs, exp);
@@ -455,7 +454,7 @@ requirejs([
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       dv.changeVisibleDimensions([2, 3, null]);
-      obs = [dv.markers[0].position.x,
+      var obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
       dv.markers[0].position.z];
       exp = [0.066647, -0.067711, 0];
@@ -516,7 +515,7 @@ requirejs([
       // 1.- The position themselves
       // 2.- The ranges i.e. positions still fall within the dimensionRanges.
       // 3.- The axis orientation vector
-      obs = dv.markers[0].position.toArray();
+      var obs = dv.markers[0].position.toArray();
       deepEqual(obs, expa, 'First marker position updated correctly');
 
       assert.ok(obs[1] <= dv.decomp.dimensionRanges.max[1],
@@ -552,7 +551,7 @@ requirejs([
       // 1.- The position themselves
       // 2.- The ranges i.e. positions still fall within the dimensionRanges.
       // 3.- The axis orientation vector
-      obs = dv.markers[0].position.toArray();
+      var obs = dv.markers[0].position.toArray();
       deepEqual(obs, expa, 'First marker position updated correctly');
       obs = dv.markers[1].position.toArray();
       deepEqual(obs, expb, 'Second marker position updated correctly');
@@ -606,7 +605,7 @@ requirejs([
       deepEqual(dv.axesOrientation, [1, 1, 1]);
 
       dv.changeVisibleDimensions([2, 3, 4]);
-      obs = dv.markers[0].position.toArray();
+      var obs = dv.markers[0].position.toArray();
       exp = [0.066647, -0.067711, 0.176070];
       deepEqual(obs, exp, 'First marker position updated correctly');
 
