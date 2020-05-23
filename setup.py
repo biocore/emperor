@@ -9,7 +9,7 @@
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.0"
+__version__ = "1.0.0-dev"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
