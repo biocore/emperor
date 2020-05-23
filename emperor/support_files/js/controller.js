@@ -276,7 +276,7 @@ define([
       'z-index': '3',
       'top': '5px',
       'right': '40px'
-    }).attr('title', 'Display Mode').on('click', function(event) {
+    }).attr('title', 'Figure Mode').on('click', function(event) {
         scope.controllers.axes.updateVisibleAxes(null, 2);
         scope.controllers.axes._colorChanged("axes-color", "#000000");
         scope.controllers.axes._colorChanged("background-color", "#ffffff");
