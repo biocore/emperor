@@ -238,7 +238,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
     var indices = _.range(vertices.length);
     var geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(indices), 1));
 
     return new EmperorLineSegments(geometry, material);

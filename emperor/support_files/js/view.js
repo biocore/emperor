@@ -357,11 +357,11 @@ DecompositionView.prototype._fastInit = function() {
   material.extensions.derivatives = true;
 
   geometry = new THREE.BufferGeometry();
-  geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-  geometry.addAttribute('scale', new THREE.BufferAttribute(scales, 1));
-  geometry.addAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
-  geometry.addAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1));
+  geometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+  geometry.setAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
 
   cloud = new THREE.Points(geometry, material);
 
@@ -442,10 +442,10 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   });
 
   geometry = new THREE.BufferGeometry();
-  geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-  geometry.addAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
-  geometry.addAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+  geometry.setAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
 
   lines = new THREE.LineSegments(geometry, material);
 

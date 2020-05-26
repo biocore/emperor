@@ -427,9 +427,9 @@ define([
     // it is otherwise too large and error-prone
     var updateRaycasterLinePrecision = function(evt) {
       if (scope.UIState.getProperty('view.viewType') === 'parallel-plot')
-        scope._raycaster.linePrecision = 0.01;
+        scope._raycaster.params.Line.threshold = 0.01;
       else
-        scope._raycaster.linePrecision = 1;
+        scope._raycaster.params.Line.threshold = 1;
     };
     var updateRaycasterPointPrecision = function(evt) {
       if (scope.UIState.getProperty('view.usesPointCloud'))
