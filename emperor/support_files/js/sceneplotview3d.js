@@ -93,6 +93,23 @@ define([
     this._axisPrefix = 'emperor-axis-line-';
     this._axisLabelPrefix = 'emperor-axis-label-';
 
+    // Set up the camera
+    var max = _.max(decViews.scatter.decomp.dimensionRanges.max);
+    var frontFrust = _.min([max * 0.001, 1]);
+    var backFrust = _.max([max * 100, 100]);
+
+    // Boxselection Indicator
+    // var selectMode = false;
+
+    /**
+     * Camera used to display the scene.
+     * @type {THREE.PerspectiveCamera}
+     */
+    // these are placeholders that are later updated in updateCameraAspectRatio
+    this.camera = new THREE.OrthographicCamera(-50, 50, 50, -50);
+    this.camera.position.set(0, 0, max * 5);
+    this.camera.zoom = 0.7;
+
     //need to initialize the scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(this.backgroundColor);
