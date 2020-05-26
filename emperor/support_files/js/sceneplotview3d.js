@@ -93,23 +93,6 @@ define([
     this._axisPrefix = 'emperor-axis-line-';
     this._axisLabelPrefix = 'emperor-axis-label-';
 
-    // Set up the camera
-    var max = _.max(decViews.scatter.decomp.dimensionRanges.max);
-    var frontFrust = _.min([max * 0.001, 1]);
-    var backFrust = _.max([max * 100, 100]);
-
-    // Boxselection Indicator
-    // var selectMode = false;
-
-    /**
-     * Camera used to display the scene.
-     * @type {THREE.PerspectiveCamera}
-     */
-    // these are placeholders that are later updated in updateCameraAspectRatio
-    this.camera = new THREE.OrthographicCamera(-50, 50, 50, -50);
-    this.camera.position.set(0, 0, max * 5);
-    this.camera.zoom = 0.7;
-
     //need to initialize the scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(this.backgroundColor);
@@ -172,24 +155,6 @@ define([
 
     // add all the objects to the current scene
     this.addDecompositionsToScene();
-
-    // use get(0) to retrieve the native DOM object
-    /**
-     * Object used to interact with the scene. By default it uses the mouse.
-     * @type {THREE.OrbitControls}
-     */
-    this.control = new THREE.OrbitControls(this.camera,
-                                           $container.get(0));
-    this.control.enabled = true;
-    this.control.enableKeys = false;
-    this.control.rotateSpeed = 1.0;
-    this.control.zoomSpeed = 1.2;
-    this.control.panSpeed = 0.8;
-    this.control.enableZoom = true;
-    this.control.enablePan = true;
-    this.control.addEventListener('change', function() {
-      scope.needsUpdate = true;
-    });
 
     this.updateCameraTarget();
     this.control.update();
@@ -336,6 +301,8 @@ define([
         for (var i = 0; i < allSelected.length; i++) {
           if (allSelected[i].type !== 'Line') {
             allSelected[i].material.emissive.set(0xffffff);
+            // Remove once we decide what to do
+            console.log(allSelected[i].name);
           }
         }
       }
