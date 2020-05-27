@@ -194,7 +194,7 @@ define([
      * Events allowed for callbacks. DO NOT EDIT.
      * @type {String[]}
      */
-    this.EVENTS = ['click', 'dblclick', 'selected'];
+    this.EVENTS = ['click', 'dblclick', 'select'];
     /** @private */
     this._subscribers = {};
 
@@ -297,14 +297,17 @@ define([
           ((event.clientX - offset.left) / element.width) * 2 - 1,
           - ((event.clientY - offset.top) / element.height) * 2 + 1,
           0.5);
-        var allSelected = scope.selectionBox.select();
+        var allSelected = scope.selectionBox.select(), selected = [];
         for (var i = 0; i < allSelected.length; i++) {
           if (allSelected[i].type !== 'Line') {
             allSelected[i].material.emissive.set(0xffffff);
             // Remove once we decide what to do
             console.log(allSelected[i].name);
+            selected.push(allSelected[i]);
           }
         }
+
+        scope._selectCallback(selected);
       }
       scope.control.enabled = true;
       scope.scatterController.enabled = true;
@@ -1006,6 +1009,21 @@ define([
       val.needsUpdate = false;
     });
   };
+
+
+  ScenePlotView3D.prototype._selectCallback = function(samples) {
+    var eventType = 'select';
+
+    for (var i = 0; i < this._subscribers[eventType].length; i++) {
+      // keep going if one of the callbacks fails
+      try {
+        this._subscribers[eventType][i](samples);
+      } catch (e) {
+        console.error(e);
+      }
+      this.needsUpdate = true;
+    }
+  }
 
   /**
    *
