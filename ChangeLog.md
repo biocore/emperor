@@ -4,6 +4,15 @@ Emperor ChangeLog
 # Emperor 1.0.0-dev (changes since 1.0.0 go here)
 --------------------------------------------------
 
+### Bug Fixes
+* Fix "incomplete" interpolation when using sequential / diverging color maps
+  (e.g. `viridis`) and when not using the `Continuous values` option
+  ([#760](https://github.com/biocore/emperor/issues/760))
+* Make the order consistent between color assignment and sorting in the legend
+  ([#761](https://github.com/biocore/emperor/issues/761))
+* Update the Chroma.js version to v2.1.0 from v1.1.1; this resulted in some
+  very slight precision differences in things like color interpolation
+  ([#762](https://github.com/biocore/emperor/issues/762))
 
 # Emperor 1.0.0
 ---------------
