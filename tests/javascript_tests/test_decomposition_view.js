@@ -296,22 +296,22 @@ requirejs([
       // "out of order" (... I guess Objects don't really have an order,
       // but you get the idea.)
       var jsonData = {
-        "-5": "#008000",
-        "3": "#91278d",
-        "6": "#ffff00",
-        ":(": "#ff0000",
-        "Four": "#0000ff",
-        "NotANumber": "#f27304",
+        '-5': '#008000',
+        '3': '#91278d',
+        '6': '#ffff00',
+        ':(': '#ff0000',
+        'Four': '#0000ff',
+        'NotANumber': '#f27304',
       };
 
-      var expectedMetadataOrder = [":(", "Four", "NotANumber", "-5", "3", "6"];
-      // The colors I've used for this test are just the "Classic QIIME Colors"
+      var expectedMetadataOrder = [':(', 'Four', 'NotANumber', '-5', '3', '6'];
+      // The colors I've used for this test are just the 'Classic QIIME Colors'
       var expectedColorOrder = [
-        "#ff0000", "#0000ff", "#f27304", "#008000", "#91278d", "#ffff00"
+        '#ff0000', '#0000ff', '#f27304', '#008000', '#91278d', '#ffff00'
       ];
 
       var dataView = dv.setCategory(
-          jsonData, null, "DeliberatelyAnnoyingField"
+          jsonData, null, 'DeliberatelyAnnoyingField'
       );
 
       // go through dataView and check that the metadata categories are in
