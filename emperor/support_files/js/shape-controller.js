@@ -108,7 +108,12 @@ define([
 
   /**
    *
-   * haha circle go brrrrr
+   * Analogue of _resetAttribute() above, but makes everything a circle instead
+   *
+   * NOTE: In the future, making this pay more close attention to the current
+   * shapes of each object (like how DecompositionView._buildVegaSpec() works)
+   * may be preferable. However, that may require adding more 2D shape options
+   * to Emperor.
    *
    * @extends EmperorAttributeABC
    *
