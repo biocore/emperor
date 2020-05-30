@@ -481,8 +481,8 @@ requirejs([
       );
       // Test that extreme values are correctly assigned to the colors at the
       // ends of the BrBG color map
-      deepEqual(interpolatedColorList[0]["0"], "#543005");
-      deepEqual(interpolatedColorList[0]["19"], "#003c30");
+      deepEqual(interpolatedColorList[0]['0'], '#543005');
+      deepEqual(interpolatedColorList[0]['19'], '#003c30');
       // Now, check that all values (incl. intermediate ones) are correctly
       // assigned colors
       var interpolator = chroma.scale(chroma.brewer.BrBG).domain([0, 19]);
