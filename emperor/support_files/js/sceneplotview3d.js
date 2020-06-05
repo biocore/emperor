@@ -224,97 +224,7 @@ define([
     });
 
     // add callbacks for the plottable selection
-    $container.on('mousedown', function(event) {
-      // ignore the selection event if shift is not being held or if parallel
-      // plots are being visualized at the moment
-      if (!event.shiftKey || scope.parallelController.enabled) {
-        return;
-      }
-
-      scope.control.enabled = false;
-      scope.scatterController.enabled = false;
-      scope.selectionHelper.enabled = true;
-      scope.selectionHelper.onSelectStart(event);
-
-      var element = scope.renderer.domElement;
-      var offset = $(element).offset();
-
-      for (var i = 0; i < scope.selectionBox.collection.length; i++) {
-        if (scope.selectionBox.collection[i].type !== 'Line') {
-          scope.selectionBox.collection[i].material.emissive.set(0x000000);
-        }
-      }
-
-      scope.selectionBox.startPoint.set(
-        ((event.clientX - offset.left) / element.width) * 2 - 1,
-        -((event.clientY - offset.top) / element.height) * 2 + 1,
-        0.5);
-    })
-    .on('mousemove', function(event) {
-      // ignore if the user is not holding the shift key or the orbit control
-      // is enabled and he selection disabled
-      if (!event.shiftKey || (scope.control.enabled && !scope.selectionHelper.enabled )) {
-        return;
-      }
-
-      var element = scope.renderer.domElement;
-      var offset = $(element).offset();
-
-      for (var i = 0; i < scope.selectionBox.collection.length; i++) {
-        if (scope.selectionBox.collection[i].type !== 'Line') {
-          scope.selectionBox.collection[i].material.emissive.set(0x000000);
-        }
-      }
-      scope.selectionBox.endPoint.set(
-        ((event.clientX - offset.left) / element.width) * 2 - 1,
-        - ((event.clientY - offset.top) / element.height) * 2 + 1,
-        0.5);
-
-      var allSelected = scope.selectionBox.select();
-
-      if (allSelected) {
-        // check these are only plottables, not lines
-        for (i = 0; i < allSelected.length; i++) {
-          if (allSelected[i].type !== 'Line') {
-            allSelected[i].material.emissive.set(0xffffff);
-          }
-        }
-      }
-
-      scope.needsUpdate = true;
-    })
-    .on('mouseup', function(event) {
-      // if the user is not already selecting data then ignore
-      if (!scope.selectionHelper.enabled || scope.control.enabled) {
-        return;
-      }
-
-      // otherwise if shift is being held then keep selecting, otherwise ignore
-      if (event.shiftKey) {
-        var element = scope.renderer.domElement;
-        var offset = $(element).offset();
-        scope.selectionBox.endPoint.set(
-          ((event.clientX - offset.left) / element.width) * 2 - 1,
-          - ((event.clientY - offset.top) / element.height) * 2 + 1,
-          0.5);
-        var allSelected = scope.selectionBox.select(), selected = [];
-        for (var i = 0; i < allSelected.length; i++) {
-          if (allSelected[i].type !== 'Line') {
-            allSelected[i].material.emissive.set(0xffffff);
-            // Remove once we decide what to do
-            console.log(allSelected[i].name);
-            selected.push(allSelected[i]);
-          }
-        }
-
-        scope._selectCallback(selected);
-      }
-      scope.control.enabled = true;
-      scope.scatterController.enabled = true;
-      scope.selectionHelper.enabled = false;
-      scope.needsUpdate = true;
-    });
-
+    this._addSelectionEvents($container);
 
     this.control.update();
 
@@ -1010,7 +920,115 @@ define([
     });
   };
 
+  /**
+   *
+   * Adds the mouse selection events to the current view
+   *
+   * @param {node} $container The container to add the events to.
+   * @private
+   */
+  ScenePlotView3D.prototype._addSelectionEvents = function($container) {
+    var scope = this;
 
+    $container.on('mousedown', function(event) {
+      // ignore the selection event if shift is not being held or if parallel
+      // plots are being visualized at the moment
+      if (!event.shiftKey || scope.parallelController.enabled) {
+        return;
+      }
+
+      scope.control.enabled = false;
+      scope.scatterController.enabled = false;
+      scope.selectionHelper.enabled = true;
+      scope.selectionHelper.onSelectStart(event);
+
+      var element = scope.renderer.domElement;
+      var offset = $(element).offset();
+
+      for (var i = 0; i < scope.selectionBox.collection.length; i++) {
+        if (scope.selectionBox.collection[i].type !== 'Line') {
+          scope.selectionBox.collection[i].material.emissive.set(0x000000);
+        }
+      }
+
+      scope.selectionBox.startPoint.set(
+        ((event.clientX - offset.left) / element.width) * 2 - 1,
+        -((event.clientY - offset.top) / element.height) * 2 + 1,
+        0.5);
+    })
+    .on('mousemove', function(event) {
+      // ignore if the user is not holding the shift key or the orbit control
+      // is enabled and he selection disabled
+      if (!event.shiftKey || (scope.control.enabled && !scope.selectionHelper.enabled )) {
+        return;
+      }
+
+      var element = scope.renderer.domElement;
+      var offset = $(element).offset();
+
+      for (var i = 0; i < scope.selectionBox.collection.length; i++) {
+        if (scope.selectionBox.collection[i].type !== 'Line') {
+          scope.selectionBox.collection[i].material.emissive.set(0x000000);
+        }
+      }
+      scope.selectionBox.endPoint.set(
+        ((event.clientX - offset.left) / element.width) * 2 - 1,
+        - ((event.clientY - offset.top) / element.height) * 2 + 1,
+        0.5);
+
+      var allSelected = scope.selectionBox.select();
+
+      if (allSelected) {
+        // check these are only plottables, not lines
+        for (i = 0; i < allSelected.length; i++) {
+          if (allSelected[i].type !== 'Line') {
+            allSelected[i].material.emissive.set(0xffffff);
+          }
+        }
+      }
+
+      scope.needsUpdate = true;
+    })
+    .on('mouseup', function(event) {
+      // if the user is not already selecting data then ignore
+      if (!scope.selectionHelper.enabled || scope.control.enabled) {
+        return;
+      }
+
+      // otherwise if shift is being held then keep selecting, otherwise ignore
+      if (event.shiftKey) {
+        var element = scope.renderer.domElement;
+        var offset = $(element).offset();
+        scope.selectionBox.endPoint.set(
+          ((event.clientX - offset.left) / element.width) * 2 - 1,
+          - ((event.clientY - offset.top) / element.height) * 2 + 1,
+          0.5);
+        var allSelected = scope.selectionBox.select(), selected = [];
+        for (var i = 0; i < allSelected.length; i++) {
+          if (allSelected[i].type !== 'Line') {
+            allSelected[i].material.emissive.set(0xffffff);
+            // Remove once we decide what to do
+            console.log(allSelected[i].name);
+            selected.push(allSelected[i]);
+          }
+        }
+
+        scope._selectCallback(selected);
+      }
+      scope.control.enabled = true;
+      scope.scatterController.enabled = true;
+      scope.selectionHelper.enabled = false;
+      scope.needsUpdate = true;
+    });
+
+
+  };
+
+
+  /**
+   * Handle selection events.
+   * @private
+   */
   ScenePlotView3D.prototype._selectCallback = function(samples) {
     var eventType = 'select';
 
@@ -1023,7 +1041,7 @@ define([
       }
       this.needsUpdate = true;
     }
-  }
+  };
 
   /**
    *
