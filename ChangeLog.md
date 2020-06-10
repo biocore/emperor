@@ -14,6 +14,16 @@ Emperor ChangeLog
   very slight precision differences in things like color interpolation
   ([#762](https://github.com/biocore/emperor/issues/762))
 
+### New features
+
+* Add sample selection support. Users can select samples by holding shift and
+  dragging the mouse. Selected samples are copied to the users' clipboard
+  ([#153](https://github.com/biocore/emperor/issues/153)).
+
+### Miscellaneous
+
+* Updated THREE.js and plugins to the latest version (r116).
+
 # Emperor 1.0.0
 ---------------
 
