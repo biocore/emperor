@@ -108,6 +108,8 @@ var emperorRequire = require.config({
   'projector': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/Projector',
   'svgrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SVGRenderer',
   'canvasrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/CanvasRenderer',
+  'selectionbox': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SelectionBox',
+  'selectionhelper': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SelectionHelper',
 
   /* SlickGrid */
   'slickcore': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.core.min',
@@ -302,6 +304,8 @@ var emperorRequire = require.config({
   'projector': './some-local-path//vendor/js/three.js-plugins/Projector',
   'svgrenderer': './some-local-path//vendor/js/three.js-plugins/SVGRenderer',
   'canvasrenderer': './some-local-path//vendor/js/three.js-plugins/CanvasRenderer',
+  'selectionbox': './some-local-path//vendor/js/three.js-plugins/SelectionBox',
+  'selectionhelper': './some-local-path//vendor/js/three.js-plugins/SelectionHelper',
 
   /* SlickGrid */
   'slickcore': './some-local-path//vendor/js/slick.core.min',
