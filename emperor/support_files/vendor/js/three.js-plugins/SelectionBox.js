@@ -155,17 +155,41 @@ THREE.SelectionBox = ( function () {
 
 			if ( object.material !== undefined ) {
 
-				if ( object.geometry.boundingSphere === null ) object.geometry.computeBoundingSphere();
+        if ( object.isPoints ) {
+          // reset the attribute between selection events
+          object.userData.selected = undefined;
 
-				center.copy( object.geometry.boundingSphere.center );
+          var positions = object.geometry.getAttribute( 'position' );
+          var collection = [];
 
-				center.applyMatrix4( object.matrixWorld );
+          for (var i = 0; i < positions.count; i++) {
+            var point = new THREE.Vector3().fromBufferAttribute( positions, i );
 
-				if ( frustum.containsPoint( center ) ) {
+            if ( frustum.containsPoint( point ) ) {
+              collection.push( i );
+            }
+          }
 
-					this.collection.push( object );
+          if ( collection.length ) {
+            object.userData.selected = collection;
+            this.collection.push ( object );
+          }
 
-				}
+        }
+        else {
+
+          if ( object.geometry.boundingSphere === null ) object.geometry.computeBoundingSphere();
+
+          center.copy( object.geometry.boundingSphere.center );
+
+          center.applyMatrix4( object.matrixWorld );
+
+          if ( frustum.containsPoint( center ) ) {
+
+            this.collection.push( object );
+
+          }
+        }
 
 			}
 

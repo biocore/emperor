@@ -213,7 +213,7 @@ define([
     // Add callback call when sample is clicked
     // Double and single click together from: http://stackoverflow.com/a/7845282
     var DELAY = 200, clicks = 0, timer = null;
-    $container.on('click', function(event) {
+    $container.on('mousedown', function(event) {
         clicks++;
         if (clicks === 1) {
             timer = setTimeout(function() {
@@ -245,13 +245,16 @@ define([
 
     /**
      *
-     * The functions showText and copyToClipboard are used in the 'click' and
-     * 'dblclick' events.
+     * The functions showText and copyToClipboard are used in the 'click',
+     * 'dblclick', and 'select' events.
      *
      * When a sample is clicked we show a legend at the bottom left of the
      * view. If this legend is clicked, we copy the sample name to the
      * clipboard. When a sample is double-clicked we directly copy the sample
      * name to the clipboard and add the legend at the bottom left of the view.
+     *
+     * When samples are selected we show a message on the bottom left of the
+     * view, and copy a comma-separated list of samples to the clipboard.
      *
      */
 
@@ -303,10 +306,34 @@ define([
     });
     $(this.renderer.domElement).parent().append(this.$info);
 
+    // UI callbacks specific to emperor, not to be confused with DOM events
     this.on('click', showText);
     this.on('dblclick', function(n, i) {
       copyToClipboard(n);
       showText('(copied to clipboard) ' + n, i);
+    });
+    this.on('select', function(selected) {
+      var names = [];
+
+      // get the list of sample names from the views
+      for (var i = 0; i < selected.length; i++) {
+        if (selected[i].type === 'Points') {
+          // this is a list of indices of the selected samples
+          var indices = selected[i].userData.selected;
+
+          for (var j = 0; j < indices.length; j++) {
+            names.push(scope.decViews.scatter.decomp.ids[indices[j]]);
+          }
+        }
+        else {
+          names.push(selected[i].name);
+        }
+      }
+
+      if (names.length) {
+        showText(names.length + ' samples copied to your clipboard.');
+        copyToClipboard(names.join(','));
+      }
     });
 
     // if a decomposition uses a point cloud, or
@@ -929,8 +956,77 @@ define([
   };
 
   /**
+   * Helper method to highlight and return selected objects.
+   *
+   * This is mostly necessary because depending on the rendering type we will
+   * have a slightly different way to set and return the highlighting
+   * attributes. For large plots we return the points geometry together with
+   * a userData.selected attribute with the selected indices.
+   *
+   * @param {Array} collection An array of objects to highlight
+   * @param {Integer} color A hexadecimal-encoded color. For shaders we only
+   * use the first bit to decide if the marker is rendered in white or rendered
+   * with the original color.
+   *
+   * @returns {Array} selected objects (after checking for visibility and
+   * opacity).
+   *
+   * @private
+   */
+  ScenePlotView3D.prototype._highlightSelected = function(collection, color) {
+    var i = 0, j = 0, selected = [];
+
+    if (this.UIState.getProperty('view.usesPointCloud')) {
+      for (i = 0; i < collection.length; i++) {
+        // avoid anything that's not the main points geometry
+        if (collection[i].type === 'Points') {
+          // for shaders we only care about the first bit
+          var indices, emissiveColor = color & 1;
+
+          // if there's no selection then update everything
+          if (collection[i].userData.selected === undefined) {
+            indices = _.range(collection[i].geometry.attributes.emissive.count);
+          }
+          else {
+            indices = collection[i].userData.selected;
+          }
+
+          for (j = 0; j < indices.length; j++) {
+            if (collection[i].geometry.attributes.visible.getX(indices[j]) &&
+                collection[i].geometry.attributes.opacity.getX(indices[j])) {
+              collection[i].geometry.attributes.emissive.setX(indices[j], emissiveColor);
+            }
+          }
+
+          collection[i].geometry.attributes.emissive.needsUpdate = true;
+          selected.push(collection[i]);
+        }
+      }
+    }
+    else {
+      for (i = 0; i < collection.length; i++) {
+        // avoid axis lines
+        if (collection[i].type !== 'Line') {
+          if (collection[i].material.visible &&
+              collection[i].material.opacity) {
+
+            collection[i].material.emissive.set(color);
+            // TODO: Check if we are adding an arrow
+            selected.push(collection[i]);
+          }
+        }
+      }
+    }
+
+    return selected;
+  };
+
+
+  /**
    *
    * Adds the mouse selection events to the current view
+   *
+   * TODO: handle arrows
    *
    * @param {node} $container The container to add the events to.
    * @private
@@ -959,14 +1055,11 @@ define([
       scope._selectionHelper.enabled = true;
       scope._selectionHelper.onSelectStart(event);
 
-      var element = scope.renderer.domElement;
-      var offset = $(element).offset();
+      // clear up any color setting
+      scope._highlightSelected(scope._selectionBox.collection, 0x000000);
 
-      for (var i = 0; i < scope._selectionBox.collection.length; i++) {
-        if (scope._selectionBox.collection[i].type !== 'Line') {
-          scope._selectionBox.collection[i].material.emissive.set(0x000000);
-        }
-      }
+      var element = scope.renderer.domElement;
+      var offset = $(element).offset(), i = 0;
 
       scope._selectionBox.startPoint.set(
         ((event.clientX - offset.left) / element.width) * 2 - 1,
@@ -976,33 +1069,22 @@ define([
     .on('mousemove', function(event) {
       // ignore if the user is not holding the shift key or the orbit control
       // is enabled and he selection disabled
-      if (!event.shiftKey || (scope.control.enabled && !scope._selectionHelper.enabled )) {
+      if (!event.shiftKey ||
+          (scope.control.enabled && !scope._selectionHelper.enabled )) {
         return;
       }
 
-      var element = scope.renderer.domElement;
-      var offset = $(element).offset();
+      var element = scope.renderer.domElement, selected;
+      var offset = $(element).offset(), i = 0;
 
-      for (var i = 0; i < scope._selectionBox.collection.length; i++) {
-        if (scope._selectionBox.collection[i].type !== 'Line') {
-          scope._selectionBox.collection[i].material.emissive.set(0x000000);
-        }
-      }
       scope._selectionBox.endPoint.set(
         ((event.clientX - offset.left) / element.width) * 2 - 1,
         - ((event.clientY - offset.top) / element.height) * 2 + 1,
         0.5);
 
-      var allSelected = scope._selectionBox.select();
-
-      if (allSelected) {
-        // check these are only plottables, not lines
-        for (i = 0; i < allSelected.length; i++) {
-          if (allSelected[i].type !== 'Line') {
-            allSelected[i].material.emissive.set(0xffffff);
-          }
-        }
-      }
+      // reset everything before updating the selected color
+      scope._highlightSelected(scope._selectionBox.collection, 0x000000);
+      scope._highlightSelected(scope._selectionBox.select(), 0x8c8c8f);
 
       scope.needsUpdate = true;
     })
@@ -1020,25 +1102,16 @@ define([
           ((event.clientX - offset.left) / element.width) * 2 - 1,
           - ((event.clientY - offset.top) / element.height) * 2 + 1,
           0.5);
-        var allSelected = scope._selectionBox.select(), selected = [];
-        for (var i = 0; i < allSelected.length; i++) {
-          if (allSelected[i].type !== 'Line') {
-            allSelected[i].material.emissive.set(0xffffff);
-            // Remove once we decide what to do
-            console.log(allSelected[i].name);
-            selected.push(allSelected[i]);
-          }
-        }
 
+        selected = scope._highlightSelected(scope._selectionBox.select(), 0x8c8c8f);
         scope._selectCallback(selected);
       }
+
       scope.control.enabled = true;
       scope.scatterController.enabled = true;
       scope._selectionHelper.enabled = false;
       scope.needsUpdate = true;
     });
-
-
   };
 
 
@@ -1046,13 +1119,13 @@ define([
    * Handle selection events.
    * @private
    */
-  ScenePlotView3D.prototype._selectCallback = function(samples) {
+  ScenePlotView3D.prototype._selectCallback = function(markers) {
     var eventType = 'select';
 
     for (var i = 0; i < this._subscribers[eventType].length; i++) {
       // keep going if one of the callbacks fails
       try {
-        this._subscribers[eventType][i](samples);
+        this._subscribers[eventType][i](markers);
       } catch (e) {
         console.error(e);
       }
