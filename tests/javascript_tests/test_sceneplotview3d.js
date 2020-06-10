@@ -55,7 +55,8 @@ requirejs([
         md_headers = ['SampleID', 'Gram'];
         metadata = [['tax_1', '1'],
         ['tax_2', '0']];
-        var decomp2 = new DecompositionModel(data, md_headers, metadata);
+        var decomp2 = new DecompositionModel(data, md_headers, metadata,
+                                             'arrow');
 
         this.multiModel = new MultiModel({'scatter': decomp,
                                           'biplot': decomp2});
@@ -103,6 +104,12 @@ requirejs([
       assert.ok(spv.scene instanceof THREE.Scene);
       assert.ok(spv.camera instanceof THREE.OrthographicCamera);
       assert.ok(spv.light instanceof THREE.DirectionalLight);
+
+      assert.ok(spv._selectable instanceof THREE.Group);
+
+      // check that the selectable group is added to the scene
+      assert.ok(
+        spv.scene.getObjectById(spv._selectable.id) instanceof THREE.Group);
 
       deepEqual(spv.xView, 0);
       deepEqual(spv.yView, 0);
@@ -450,9 +457,11 @@ requirejs([
                                     this.sharedDecompositionViewDict,
                                     this.multiModel, this.div, 0, 0, 20, 20);
 
-      equal(spv.scene.children.length, 12);
+      equal(spv.scene.children.length, 11);
+      equal(spv._selectable.children.length, 2);
       spv.addDecompositionsToScene();
-      equal(spv.scene.children.length, 12);
+      equal(spv._selectable.children.length, 2);
+      equal(spv.scene.children.length, 11);
 
       // release the control back to the main page
       spv.control.dispose();
@@ -470,7 +479,7 @@ requirejs([
                                     this.sharedDecompositionViewDict,
                                     this.multiModel, this.div, 0, 0, 20, 20);
 
-      equal(spv.scene.children.length, 12);
+      equal(spv.scene.children.length, 11);
 
       var data = {name: 'PCOA',
                   sample_ids: ['PC.636', 'PC.635'],
@@ -497,7 +506,8 @@ requirejs([
       this.sharedDecompositionViewDict.pleep = dv;
       spv.addDecompositionsToScene();
 
-      equal(spv.scene.children.length, 14);
+      equal(spv.scene.children.length, 13);
+      equal(spv._selectable.children.length, 2);
 
       // after the labels are added to the scene, their scales change
       deepEqual(dv.markers[0].label.scale.toArray(),
@@ -682,7 +692,7 @@ requirejs([
      *
      */
     test('Verifying double click works', function(assert) {
-      // for the test to pass, two assertions should be made
+      // for the test to pass, four assertions should be made
       expect(4);
 
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -719,6 +729,56 @@ requirejs([
       spv._eventCallback('dblclick', mockEvent);
 
       // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    /**
+     *
+     * Test the 'select' callback is resolved
+     *
+     */
+    test('Verifying select works', function(assert) {
+      // for the test to pass, four assertions should be made
+      expect(2);
+
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
+                                    this.multiModel, this.div, 0, 0, 20, 20);
+
+      spv.on('select', function(selected) {
+        // checks the callback gets executed
+        assert.ok(true);
+        assert.equal(selected.length, 2);
+      });
+
+      spv._selectCallback(this.sharedDecompositionViewDict.scatter.markers);
+
+      // release the control back to the main page
+      spv.control.dispose();
+    });
+
+    /**
+     *
+     * Test the _highlightSelected
+     *
+     */
+    test('Check highlighting works', function(assert) {
+      // _highlightSelected
+      var renderer = new THREE.SVGRenderer({antialias: true});
+      var spv = new ScenePlotView3D(this.UIState1, renderer,
+                                    this.sharedDecompositionViewDict,
+                                    this.multiModel, this.div, 0, 0, 20, 20);
+      var dv = this.sharedDecompositionViewDict.scatter;
+
+      spv._highlightSelected(dv.markers, 0x8c8c8c);
+      equal(dv.markers[0].material.emissive.getHex(), 0x8c8c8c);
+      equal(dv.markers[1].material.emissive.getHex(), 0x8c8c8c);
+
+      spv._highlightSelected(dv.markers, 0x000000);
+      equal(dv.markers[0].material.emissive.getHex(), 0x000000);
+      equal(dv.markers[1].material.emissive.getHex(), 0x000000);
+
       spv.control.dispose();
     });
 
