@@ -153,6 +153,15 @@ define([
     this._raycaster = new THREE.Raycaster();
     this._mouse = new THREE.Vector2();
 
+    /**
+     * Special purpose group for points that are selectable with the
+     * SelectionBox.
+     * @type {THREE.Group}
+     * @private
+     */
+    this._selectable = new THREE.Group();
+    this.scene.add(this._selectable);
+
     // add all the objects to the current scene
     this.addDecompositionsToScene();
 
@@ -174,7 +183,8 @@ define([
      * @type {THREE.SelectionBox}
      * @private
      */
-    this._selectionBox = new THREE.SelectionBox(this.camera, this.scene);
+    this._selectionBox = new THREE.SelectionBox(this.camera,
+                                                this._selectable);
 
     /**
      * Helper to view the selection space when the user holds shift
@@ -424,18 +434,22 @@ define([
     // decomposition views.
 
     // Add all the meshes to the scene, iterate through all keys in
-    // decomposition view dictionary
+    // decomposition view dictionary and put points in a separate group
     for (var decViewName in this.decViews) {
       var isArrowType = this.decViews[decViewName].decomp.isArrowType();
 
       for (j = 0; j < this.decViews[decViewName].markers.length; j++) {
         marker = this.decViews[decViewName].markers[j];
-        this.scene.add(marker);
 
         // only arrows include text as part of their markers
+        // arrows are not selectable
         if (isArrowType) {
           marker.label.scale.set(marker.label.scale.x * scaling,
                                  marker.label.scale.y * scaling, 1);
+          this.scene.add(marker);
+        }
+        else {
+          this._selectable.add(marker);
         }
       }
       for (j = 0; j < this.decViews[decViewName].ellipsoids.length; j++) {
@@ -819,15 +833,19 @@ define([
       if (view.needsSwapMarkers) {
         anyMarkersSwapped = true;
 
+        // arrows are in the scene whereas points/markers are in a different
+        // group used for brush selection
+        var group = view.decomp.isArrowType() ? scope.scene : scope._selectable;
+
         var oldMarkers = view.getAndClearOldMarkers();
         for (var i = 0; i < oldMarkers.length; i++) {
-          scope.scene.remove(oldMarkers[i]);
+          group.remove(oldMarkers[i]);
           oldMarkers[i].material.dispose(); //FIXME:  What is our plan for this?
           oldMarkers[i].geometry.dispose(); //FIXME:  What is our plan for this?
         }
         var newMarkers = view.markers;
         for (i = 0; i < newMarkers.length; i++) {
-          scope.scene.add(newMarkers[i]);
+          group.add(newMarkers[i]);
         }
 
         var lines = view.lines;
@@ -963,6 +981,9 @@ define([
    * attributes. For large plots we return the points geometry together with
    * a userData.selected attribute with the selected indices.
    *
+   * Note that we created a group of selectable objects in the constructor so
+   * we don't have to check for geometry types, etc.
+   *
    * @param {Array} collection An array of objects to highlight
    * @param {Integer} color A hexadecimal-encoded color. For shaders we only
    * use the first bit to decide if the marker is rendered in white or rendered
@@ -978,41 +999,36 @@ define([
 
     if (this.UIState.getProperty('view.usesPointCloud')) {
       for (i = 0; i < collection.length; i++) {
-        // avoid anything that's not the main points geometry
-        if (collection[i].type === 'Points') {
-          // for shaders we only care about the first bit
-          var indices, emissiveColor = color & 1;
+        // for shaders we only care about the first bit
+        var indices, emissiveColor = color & 1;
 
-          // if there's no selection then update everything
-          if (collection[i].userData.selected === undefined) {
-            indices = _.range(collection[i].geometry.attributes.emissive.count);
-          }
-          else {
-            indices = collection[i].userData.selected;
-          }
-
-          for (j = 0; j < indices.length; j++) {
-            if (collection[i].geometry.attributes.visible.getX(indices[j]) &&
-                collection[i].geometry.attributes.opacity.getX(indices[j])) {
-              collection[i].geometry.attributes.emissive.setX(indices[j],
-                                                              emissiveColor);
-            }
-          }
-
-          collection[i].geometry.attributes.emissive.needsUpdate = true;
-          selected.push(collection[i]);
+        // if there's no selection then update all the points
+        if (collection[i].userData.selected === undefined) {
+          indices = _.range(collection[i].geometry.attributes.emissive.count);
         }
+        else {
+          indices = collection[i].userData.selected;
+        }
+
+        for (j = 0; j < indices.length; j++) {
+          if (collection[i].geometry.attributes.visible.getX(indices[j]) &&
+              collection[i].geometry.attributes.opacity.getX(indices[j])) {
+            collection[i].geometry.attributes.emissive.setX(indices[j],
+                                                            emissiveColor);
+          }
+        }
+
+        collection[i].geometry.attributes.emissive.needsUpdate = true;
+        selected.push(collection[i]);
       }
     }
     else {
       for (i = 0; i < collection.length; i++) {
-        // avoid axis lines
-        if (collection[i].type !== 'Line') {
-          if (collection[i].material.visible &&
-              collection[i].material.opacity) {
-            collection[i].material.emissive.set(color);
-            selected.push(collection[i]);
-          }
+        var material = collection[i].material;
+
+        if (material.visible && material.opacity && material.emissive) {
+          collection[i].material.emissive.set(color);
+          selected.push(collection[i]);
         }
       }
     }
