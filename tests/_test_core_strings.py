@@ -220,6 +220,18 @@ function($, model, EmperorController) {
       // any other code that needs to be executed when emperor is loaded should
       // go here
       ec.loadConfig(data.plot.settings);
+
+      // sets up generic callbacks for 3rd party consumers
+      var plotView = ec.sceneViews[0];
+      plotView.on('click', function(sampleName){
+        /*__click_callback__*/
+      });
+      plotView.on('dblclick', function(sampleName){
+        /*__dblclick_callback__*/
+      });
+      plotView.on('select', function(sampleName){
+        /*__select_callback__*/
+      });
     }
   });
 
@@ -416,6 +428,18 @@ function($, model, EmperorController) {
       // any other code that needs to be executed when emperor is loaded should
       // go here
       ec.loadConfig(data.plot.settings);
+
+      // sets up generic callbacks for 3rd party consumers
+      var plotView = ec.sceneViews[0];
+      plotView.on('click', function(sampleName){
+        /*__click_callback__*/
+      });
+      plotView.on('dblclick', function(sampleName){
+        /*__dblclick_callback__*/
+      });
+      plotView.on('select', function(sampleName){
+        /*__select_callback__*/
+      });
     }
   });
 
