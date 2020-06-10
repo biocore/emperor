@@ -155,6 +155,7 @@ THREE.SelectionBox = ( function () {
 
 			if ( object.material !== undefined ) {
 
+        /* Added for support in Emperor */
         if ( object.isPoints ) {
           // reset the attribute between selection events
           object.userData.selected = undefined;
@@ -174,8 +175,7 @@ THREE.SelectionBox = ( function () {
             object.userData.selected = collection;
             this.collection.push ( object );
           }
-
-        }
+        } /* end emperor addition */
         else {
 
           if ( object.geometry.boundingSphere === null ) object.geometry.computeBoundingSphere();
