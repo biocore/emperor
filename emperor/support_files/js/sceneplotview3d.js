@@ -968,7 +968,7 @@ define([
    * use the first bit to decide if the marker is rendered in white or rendered
    * with the original color.
    *
-   * @returns {Array} selected objects (after checking for visibility and
+   * @return {Array} selected objects (after checking for visibility and
    * opacity).
    *
    * @private
@@ -1067,7 +1067,7 @@ define([
       // ignore if the user is not holding the shift key or the orbit control
       // is enabled and he selection disabled
       if (!event.shiftKey ||
-          (scope.control.enabled && !scope._selectionHelper.enabled )) {
+          (scope.control.enabled && !scope._selectionHelper.enabled)) {
         return;
       }
 
@@ -1100,7 +1100,8 @@ define([
           - ((event.clientY - offset.top) / element.height) * 2 + 1,
           0.5);
 
-        selected = scope._highlightSelected(scope._selectionBox.select(), 0x8c8c8f);
+        selected = scope._highlightSelected(scope._selectionBox.select(),
+                                            0x8c8c8f);
         scope._selectCallback(selected);
       }
 

@@ -138,37 +138,38 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
      * from Empress.
      *
      */
-    test("Test that naturalSort doesn't treat Infinity / NaN as numbers", function () {
+    test("Test that naturalSort doesn't treat Infinity / NaN as numbers",
+         function() {
       var eles = [
-        "1",
-        "2",
-        "3",
-        "10",
-        "4",
-        "5",
-        "invalid",
-        "nan",
-        "NaN",
-        "Infinity",
-        "-Infinity",
-        " ",
-        "zzz",
+        '1',
+        '2',
+        '3',
+        '10',
+        '4',
+        '5',
+        'invalid',
+        'nan',
+        'NaN',
+        'Infinity',
+        '-Infinity',
+        ' ',
+        'zzz',
       ];
       res = naturalSort(eles);
       deepEqual(res, [
-        " ",
-        "-Infinity",
-        "Infinity",
-        "invalid",
-        "nan",
-        "NaN",
-        "zzz",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "10",
+        ' ',
+        '-Infinity',
+        'Infinity',
+        'invalid',
+        'nan',
+        'NaN',
+        'zzz',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '10',
       ]);
     });
 

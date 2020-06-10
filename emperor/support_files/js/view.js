@@ -267,7 +267,8 @@ DecompositionView.prototype._fastInit = function() {
     throw new Error('Only scatter type is supported in fast mode');
   }
 
-  var positions, colors, scales, opacities, visibilities, emissives, geometry, cloud;
+  var positions, colors, scales, opacities, visibilities, emissives, geometry,
+      cloud;
 
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2];
