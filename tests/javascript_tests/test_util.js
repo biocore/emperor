@@ -133,13 +133,12 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
     /**
      *
-     * Test that strings like "Infinity" are sorted with words in
+     * Test that strings like 'Infinity' are sorted with words in
      * naturalSort's output, rather than with numbers. This test was adapted
      * from Empress.
      *
      */
-    test("Test that naturalSort doesn't treat Infinity / NaN as numbers",
-         function() {
+    test("Test naturalSort doesn't treat Infinity/NaN as numbers", function() {
       var eles = [
         '1',
         '2',

@@ -145,7 +145,6 @@ requirejs([
                        '20071112']];
       decomp = new DecompositionModel(data, md_headers, metadata);
       var mm = new MultiModel({'scatter': decomp});
-      var obs;
 
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
@@ -245,6 +244,86 @@ requirejs([
       deepEqual(view.lines.right.geometry.attributes.position.array.length, 6);
     });
 
+    /**
+     *
+     * Test sorting of field values, so that we don't accidentally regress
+     * on the issue described at https://github.com/biocore/emperor/issues/761.
+     *
+     * The boilerplate code in this test is mostly just copied from the "Test
+     * constructor with two dimensions" test above.
+     *
+     */
+    test('Test that setCategory sorts field values properly', function() {
+
+      var data = {
+        name: 'pcoa',
+        sample_ids: ['s1', 's2', 's3', 's4', 's5', 's6', 's7'],
+        coordinates: [
+            [-0.25, 0.25],
+            [0, 0.25],
+            [0.25, 0.25],
+            [0.25, -0.25],
+            [0, -0.25],
+            [-0.25, -0.25],
+            [0, 0]
+        ],
+        percents_explained: [80.0, 20.0]
+      };
+      var md_headers = ['SampleID', 'DeliberatelyAnnoyingField'];
+      var metadata = [
+          ['s1', '3'],
+          ['s2', ':('],
+          ['s3', 'NotANumber'],
+          ['s4', 'Four'],
+          ['s5', '-5'],
+          ['s6', '6'],
+          ['s7', ':(']
+      ];
+      var decomp = new DecompositionModel(data, md_headers, metadata);
+      var mm = new MultiModel({'scatter': decomp});
+
+      var UIState1 = new UIState();
+      UIState1.setProperty('view.usesPointCloud', false);
+      var dv = new DecompositionView(mm, 'scatter', UIState1);
+
+      // This is the "data" we'll be providing to setCategory(). This is
+      // analogous to what the "categorySelectionCallback" in the
+      // ColorViewController would pass to setCategory(): it maps unique
+      // metadata categories to colors. (The "unique" is why there are only 6
+      // entries in this, since s2 and s7 share a metadata value for
+      // DeliberatelyAnnoyingField.)
+      // Anyway, the jsonData object has been purposely shuffled to be
+      // "out of order" (... I guess Objects don't really have an order,
+      // but you get the idea.)
+      var jsonData = {
+        '-5': '#008000',
+        '3': '#91278d',
+        '6': '#ffff00',
+        ':(': '#ff0000',
+        'Four': '#0000ff',
+        'NotANumber': '#f27304',
+      };
+
+      var expectedMetadataOrder = [':(', 'Four', 'NotANumber', '-5', '3', '6'];
+      // The colors I've used for this test are just the 'Classic QIIME Colors'
+      var expectedColorOrder = [
+        '#ff0000', '#0000ff', '#f27304', '#008000', '#91278d', '#ffff00'
+      ];
+
+      var dataView = dv.setCategory(
+          jsonData, null, 'DeliberatelyAnnoyingField'
+      );
+
+      // go through dataView and check that the metadata categories are in
+      // the correct order (as defined by expectedMetadataOrder)
+      _.each(dataView, function(fieldObject, index) {
+        deepEqual(fieldObject.category, expectedMetadataOrder[index]);
+        deepEqual(fieldObject.id, index);
+        // While we're at it, check that the colors are correct
+        deepEqual(fieldObject.value, expectedColorOrder[index]);
+      });
+    });
+
     test('Test constructor fails (biplot in fast mode)', function() {
       this.decomp.type = 'arrow';
       throws(function() {
@@ -319,7 +398,7 @@ requirejs([
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       dv.changeVisibleDimensions([2, 3, 4]);
-      obs = [dv.markers[0].position.x,
+      var obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
       dv.markers[0].position.z];
       exp = [0.066647, -0.067711, 0.176070];
@@ -346,7 +425,7 @@ requirejs([
                                      UIState1);
       dv.changeVisibleDimensions([2, 3, 4]);
 
-      obs = [dv.markers[0].position.x, dv.markers[0].position.y,
+      var obs = [dv.markers[0].position.x, dv.markers[0].position.y,
              dv.markers[0].position.z];
       var exp = [0.066647, -0.067711, 0.176070];
       deepEqual(obs, exp);
@@ -375,7 +454,7 @@ requirejs([
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       dv.changeVisibleDimensions([2, 3, null]);
-      obs = [dv.markers[0].position.x,
+      var obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
       dv.markers[0].position.z];
       exp = [0.066647, -0.067711, 0];
@@ -436,7 +515,7 @@ requirejs([
       // 1.- The position themselves
       // 2.- The ranges i.e. positions still fall within the dimensionRanges.
       // 3.- The axis orientation vector
-      obs = dv.markers[0].position.toArray();
+      var obs = dv.markers[0].position.toArray();
       deepEqual(obs, expa, 'First marker position updated correctly');
 
       assert.ok(obs[1] <= dv.decomp.dimensionRanges.max[1],
@@ -472,7 +551,7 @@ requirejs([
       // 1.- The position themselves
       // 2.- The ranges i.e. positions still fall within the dimensionRanges.
       // 3.- The axis orientation vector
-      obs = dv.markers[0].position.toArray();
+      var obs = dv.markers[0].position.toArray();
       deepEqual(obs, expa, 'First marker position updated correctly');
       obs = dv.markers[1].position.toArray();
       deepEqual(obs, expb, 'Second marker position updated correctly');
@@ -526,7 +605,7 @@ requirejs([
       deepEqual(dv.axesOrientation, [1, 1, 1]);
 
       dv.changeVisibleDimensions([2, 3, 4]);
-      obs = dv.markers[0].position.toArray();
+      var obs = dv.markers[0].position.toArray();
       exp = [0.066647, -0.067711, 0.176070];
       deepEqual(obs, exp, 'First marker position updated correctly');
 

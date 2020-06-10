@@ -4,8 +4,9 @@ define([
     'three',
     'shapes',
     'draw',
-    'multi-model'
-], function($, _, THREE, shapes, draw, multiModel) {
+    'multi-model',
+    'util'
+], function($, _, THREE, shapes, draw, multiModel, util) {
   var makeArrow = draw.makeArrow;
   var makeLineCollection = draw.makeLineCollection;
 /**
@@ -785,9 +786,11 @@ DecompositionView.prototype.flipVisibleDimension = function(index) {
 DecompositionView.prototype.setCategory = function(attributes,
                                                    setPlottableAttributes,
                                                    category) {
-  var scope = this, dataView = [], plottables, i = 0;
+  var scope = this, dataView = [], plottables;
 
-  _.each(attributes, function(value, key) {
+  var fieldValues = util.naturalSort(_.keys(attributes));
+
+  _.each(fieldValues, function(fieldVal, index) {
     /*
      *
      * WARNING: This is mixing attributes of the view with the model ...
@@ -795,14 +798,13 @@ DecompositionView.prototype.setCategory = function(attributes,
      *
      **/
     plottables = scope.decomp.getPlottablesByMetadataCategoryValue(category,
-                                                                   key);
+                                                                   fieldVal);
     if (setPlottableAttributes !== null) {
-      setPlottableAttributes(scope, value, plottables);
+      setPlottableAttributes(scope, attributes[fieldVal], plottables);
     }
 
-    dataView.push({id: i, category: key, value: value,
+    dataView.push({id: index, category: fieldVal, value: attributes[fieldVal],
                    plottables: plottables});
-    i = i + 1;
   });
   this.needsUpdate = true;
 
