@@ -994,7 +994,8 @@ define([
           for (j = 0; j < indices.length; j++) {
             if (collection[i].geometry.attributes.visible.getX(indices[j]) &&
                 collection[i].geometry.attributes.opacity.getX(indices[j])) {
-              collection[i].geometry.attributes.emissive.setX(indices[j], emissiveColor);
+              collection[i].geometry.attributes.emissive.setX(indices[j],
+                                                              emissiveColor);
             }
           }
 
@@ -1009,9 +1010,7 @@ define([
         if (collection[i].type !== 'Line') {
           if (collection[i].material.visible &&
               collection[i].material.opacity) {
-
             collection[i].material.emissive.set(color);
-            // TODO: Check if we are adding an arrow
             selected.push(collection[i]);
           }
         }
@@ -1025,8 +1024,6 @@ define([
   /**
    *
    * Adds the mouse selection events to the current view
-   *
-   * TODO: handle arrows
    *
    * @param {node} $container The container to add the events to.
    * @private

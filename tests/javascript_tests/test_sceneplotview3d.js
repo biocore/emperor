@@ -21,8 +21,8 @@ requirejs([
         // global variable shared
         this.sharedDecompositionViewDict = {};
 
-        var div = $('<div id="fooligans"></div>');
-        div.appendTo(document.body);
+        this.div = $('<div id="fooligans"></div>');
+        this.div.appendTo(document.body);
 
         var data = {name: 'PCOA',
                     sample_ids: ['PC.636', 'PC.635'],
@@ -76,7 +76,7 @@ requirejs([
         this.sharedDecompositionViewDict = undefined;
 
         // appended to the body during setup
-        $('#fooligans').remove();
+        this.div.remove();
         this.multiModel = undefined;
       }
 
@@ -94,7 +94,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // assert proper initializations for the attributes, we won't check their
       // initialization values as these are subject to change
@@ -137,9 +137,10 @@ requirejs([
       assert.ok(spv._mouse instanceof THREE.Vector2);
 
       // pub/sub
-      deepEqual(spv.EVENTS, ['click', 'dblclick']);
+      deepEqual(spv.EVENTS, ['click', 'dblclick', 'select']);
       deepEqual(spv._subscribers.click.length, 1);
       deepEqual(spv._subscribers.dblclick.length, 1);
+      deepEqual(spv._subscribers.select.length, 1);
 
       // release the control back to the main page
       spv.control.dispose();
@@ -151,7 +152,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
       spv.needsUpdate = false;
       spv.decViews.scatter.needsUpdate = false;
       spv.decViews.biplot.needsUpdate = false;
@@ -174,7 +175,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
       spv.needsUpdate = false;
 
       spv.decViews.scatter.backgroundColor = 0x00FF00;
@@ -190,7 +191,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
       spv.needsUpdate = false;
 
       spv.decViews.scatter.axesColor = 0x00FF00;
@@ -206,7 +207,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
       spv.needsUpdate = false;
 
       spv.decViews.scatter.visibleDimensions = [1, 2, 3];
@@ -222,7 +223,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // color the axis lines
       spv.drawAxesWithColor(0x00FF0F);
@@ -246,7 +247,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       spv.removeAxes();
       spv.visibleDimensions[2] = null;
@@ -278,7 +279,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // color the axis lines
       spv.drawAxesWithColor(null);
@@ -300,7 +301,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // remove the axis lines
       spv.removeAxes();
@@ -323,7 +324,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // color the axis lines
       spv.drawAxesLabelsWithColor('#00FF0F');
@@ -357,7 +358,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // color the axis lines
       spv.drawAxesLabelsWithColor(null);
@@ -377,7 +378,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // remove the axis lines
       spv.removeAxesLabels();
@@ -397,7 +398,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       assert.equal(spv.getScalingConstant(), 0.000762339);
 
@@ -415,7 +416,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // same width and height
       spv.updateCameraAspectRatio();
@@ -447,7 +448,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       equal(spv.scene.children.length, 12);
       spv.addDecompositionsToScene();
@@ -467,7 +468,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       equal(spv.scene.children.length, 12);
 
@@ -518,7 +519,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
       spv.resize(11, 11, 200, 300);
 
       equal(spv.xView, 11);
@@ -551,7 +552,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // Couldn't really find a way to properly test the render method as the
       // properties it modifies are not publicly exposed by the renderer object.
@@ -575,7 +576,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // check this happens for all the properties
       throws(
@@ -597,7 +598,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // check this happens for all the properties
       throws(
@@ -640,7 +641,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       spv.on('click', function(a, b) {
         equal(a, 'Meshy McMeshface');
@@ -687,7 +688,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       spv.on('dblclick', function(a, b) {
         equal(a, 'Meshy McMeshface');
@@ -730,7 +731,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       var a = function() {
         return 42;
@@ -762,7 +763,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true}), max;
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
 
       // should be the center of the scene
       var reset = spv.control.position0.clone(), zero = new THREE.Vector3();
@@ -793,7 +794,7 @@ requirejs([
       var renderer = new THREE.SVGRenderer({antialias: true}), max;
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
-                                    this.multiModel, 'fooligans', 0, 0, 20, 20);
+                                    this.multiModel, this.div, 0, 0, 20, 20);
       spv.visibleDimensions = [1, 2, 3];
       spv.updateCameraTarget();
 
@@ -837,7 +838,7 @@ requirejs([
 
       var renderer = new THREE.SVGRenderer({antialias: true}), max;
       var spv = new ScenePlotView3D(new UIState(), renderer, {'scatter': dv},
-                                    multiModel, 'fooligans', 0, 0, 20, 20);
+                                    multiModel, this.div, 0, 0, 20, 20);
 
       // do a checkup of the general attributes
       deepEqual(spv.xView, 0);
