@@ -1066,7 +1066,7 @@ define([
   ScenePlotView3D.prototype._addSelectionEvents = function($container) {
     var scope = this;
 
-    // There's three stages to the mouse selection:
+    // There're three stages to the mouse selection:
     //  mousedown -> mousemove -> mouseup
     //
     // The mousdown event is ignored unless the user is holding Shift. Once
