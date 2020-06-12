@@ -238,7 +238,7 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
 
     var indices = _.range(vertices.length);
     var geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(indices), 1));
 
     return new EmperorLineSegments(geometry, material);
@@ -417,8 +417,8 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     measure = context.measureText(text);
 
     // make the dimensions a power of 2 (for use in THREE.js)
-    canvas.width = THREE.Math.nextPowerOfTwo(measure.width);
-    canvas.height = THREE.Math.nextPowerOfTwo(fontSize);
+    canvas.width = THREE.Math.ceilPowerOfTwo(measure.width);
+    canvas.height = THREE.Math.ceilPowerOfTwo(fontSize);
 
     // after changing the canvas' size we need to reset the font attributes
     context.textAlign = 'center';
