@@ -237,6 +237,8 @@ define([
         scope.$select.chosen().change(options.categorySelectionCallback);
       }
 
+      // general events
+      scope._setupEvents();
     });
 
     return this;
@@ -434,6 +436,39 @@ define([
     // subscribe to events when a cell is changed
     this.bodyGrid.onCellChange.subscribe(options.valueUpdatedCallback);
   };
+
+  EmperorAttributeABC.prototype._setupEvents = function() {
+    var scope = this;
+
+    // dispatch an event when the category changes
+    this.$select.on('change', function() {
+      scope.dispatchEvent({type: 'category-changed',
+                           message: {category: scope.getMetadataField(),
+                                     controller: scope}
+      });
+    });
+
+    // dispatch an event when a value changes and send the plottable objects
+    this.bodyGrid.onCellChange.subscribe(function(e, args) {
+      scope.dispatchEvent({type: 'value-changed',
+                           message: {category: scope.getMetadataField(),
+                                     value: args.item.value,
+                                     group: args.item.plottables,
+                                     controller: scope}
+      });
+    });
+
+    // dispatch an event when a category is double-clicked
+    this.bodyGrid.onDblClick.subscribe(function(e, args) {
+      var item = scope.bodyGrid.getDataItem(args.row);
+      scope.dispatchEvent({type: 'value-double-clicked',
+                           message: {category: scope.getMetadataField(),
+                                     value: item.value,
+                                     group: item.plottables,
+                                     controller: scope}
+      });
+    });
+  }
 
   /**
    * Resizes the container and the individual elements.

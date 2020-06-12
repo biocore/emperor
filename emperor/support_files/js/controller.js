@@ -604,7 +604,7 @@ define([
       if (item === 'shape' && isLargeDataset)
         continue;
       scope.controllers[item] = scope.addTab(scope.sceneViews[0].decViews,
-                                           controllerConstructors[item]);
+                                             controllerConstructors[item]);
     }
 
     // We are tabifying this div, I don't know man.
