@@ -127,25 +127,6 @@ define([
                                                      this.parallelCam,
                                                      $container.get(0));
 
-    //Swap the camera whenever the view type changes
-    this.UIState.registerProperty('view.viewType', function(evt) {
-      if (evt.newVal === 'parallel-plot') {
-        scope.camera = scope.parallelCam;
-        scope.control = scope.parallelController;
-        //Don't let the controller move around when its not the active camera
-        scope.scatterController.enabled = false;
-        scope.parallelController.enabled = true;
-      } else {
-        scope.camera = scope.scatterCam;
-        scope.control = scope.scatterController;
-        //Don't let the controller move around when its not the active camera
-        scope.scatterController.enabled = true;
-        scope.parallelController.enabled = false;
-      }
-      //Disable any active rotation
-      if (evt.newVal === 'parallel-plot')
-        scope.scatterController.autoRotate = false;
-    });
 
     this.scene.add(this.scatterCam);
     this.scene.add(this.parallelCam);
@@ -161,19 +142,6 @@ define([
      */
     this._selectable = new THREE.Group();
     this.scene.add(this._selectable);
-
-    // add all the objects to the current scene
-    this.addDecompositionsToScene();
-
-    this.updateCameraTarget();
-    this.control.update();
-
-    this.scatterController.addEventListener('change', function() {
-      scope.needsUpdate = true;
-    });
-    this.parallelController.addEventListener('change', function() {
-      scope.needsUpdate = true;
-    });
 
     /**
      * Object to compute bounding boxes from a selection area
@@ -198,6 +166,40 @@ define([
                                                      renderer,
                                                      'emperor-selection-area');
     this._selectionHelper.enabled = false;
+
+    //Swap the camera whenever the view type changes
+    this.UIState.registerProperty('view.viewType', function(evt) {
+      if (evt.newVal === 'parallel-plot') {
+        scope.camera = scope.parallelCam;
+        scope.control = scope.parallelController;
+        //Don't let the controller move around when its not the active camera
+        scope.scatterController.enabled = false;
+        scope.parallelController.enabled = true;
+        scope._selectionBox.camera = scope.camera;
+      } else {
+        scope.camera = scope.scatterCam;
+        scope.control = scope.scatterController;
+        //Don't let the controller move around when its not the active camera
+        scope.scatterController.enabled = true;
+        scope.parallelController.enabled = false;
+        scope._selectionBox.camera = scope.camera;
+      }
+      //Disable any active rotation
+      if (evt.newVal === 'parallel-plot')
+        scope.scatterController.autoRotate = false;
+    });
+
+    this.addDecompositionsToScene();
+
+    this.updateCameraTarget();
+    this.control.update();
+
+    this.scatterController.addEventListener('change', function() {
+      scope.needsUpdate = true;
+    });
+    this.parallelController.addEventListener('change', function() {
+      scope.needsUpdate = true;
+    });
 
     /**
      * Object with "min" and "max" attributes each of which is an array with
@@ -323,17 +325,34 @@ define([
       showText('(copied to clipboard) ' + n, i);
     });
     this.on('select', function(selected) {
-      var names = [];
+      var names = [], indices;
 
       // get the list of sample names from the views
       for (var i = 0; i < selected.length; i++) {
-        if (selected[i].type === 'Points') {
+        if (selected[i].isPoints) {
           // this is a list of indices of the selected samples
-          var indices = selected[i].userData.selected;
+          indices = selected[i].userData.selected;
 
           for (var j = 0; j < indices.length; j++) {
             names.push(scope.decViews.scatter.decomp.ids[indices[j]]);
           }
+        }
+        else if (selected[i].isLineSegments) {
+          var index, viewType, view;
+
+          view = scope.decViews.scatter;
+          viewType = scope.UIState['view.viewType'];
+
+          // this is a list of indices of the selected samples
+          indices = selected[i].userData.selected;
+
+          for (var k = 0; k < indices.length; k++) {
+            index = view.getModelPointIndex(indices[k], viewType);
+            names.push(view.decomp.ids[index]);
+          }
+
+          // every segment is labeled the same for each sample
+          names = _.unique(names);
         }
         else {
           names.push(selected[i].name);
@@ -997,7 +1016,8 @@ define([
   ScenePlotView3D.prototype._highlightSelected = function(collection, color) {
     var i = 0, j = 0, selected = [];
 
-    if (this.UIState.getProperty('view.usesPointCloud')) {
+    if (this.UIState.getProperty('view.usesPointCloud') ||
+        this.UIState.getProperty('view.viewType') === 'parallel-plot') {
       for (i = 0; i < collection.length; i++) {
         // for shaders we only care about the first bit
         var indices, emissiveColor = color & 1;
@@ -1059,7 +1079,7 @@ define([
     $container.on('mousedown', function(event) {
       // ignore the selection event if shift is not being held or if parallel
       // plots are being visualized at the moment
-      if (!event.shiftKey || scope.parallelController.enabled) {
+      if (!event.shiftKey) {
         return;
       }
 

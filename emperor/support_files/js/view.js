@@ -416,15 +416,18 @@ DecompositionView.prototype._fastInitParallelPlot = function()
     'attribute vec3 color;',
     'attribute float opacity;',
     'attribute float visible;',
+    'attribute float emissive;',
 
     'varying vec3 vColor;',
     'varying float vOpacity;',
     'varying float vVisible;',
+    'varying float vEmissive;',
 
     'void main() {',
     '  vColor = color;',
     '  vOpacity = opacity;',
     '  vVisible = visible;',
+    '  vEmissive = emissive;',
 
     '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
     '}'].join('\n');
@@ -434,11 +437,19 @@ DecompositionView.prototype._fastInitParallelPlot = function()
     'varying vec3 vColor;',
     'varying float vOpacity;',
     'varying float vVisible;',
+    'varying float vEmissive;',
 
     'void main() {',
     ' if (vVisible <= 0.0 || vOpacity <= 0.0)',
     '   discard;',
-    ' gl_FragColor = vec4(vColor, vOpacity);',
+
+    // if the object is selected make it white
+    ' if (vEmissive > 0.0) {',
+    '   gl_FragColor = vec4(1, 1, 1, vOpacity);',
+    ' }',
+    ' else {',
+    '   gl_FragColor = vec4(vColor, vOpacity);',
+    ' }',
     '}'].join('\n');
 
   var allDimensions = _.range(this.decomp.dimensions);
@@ -450,7 +461,7 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   colors = new Float32Array(numPoints * 3);
   opacities = new Float32Array(numPoints);
   visibilities = new Float32Array(numPoints);
-  visibilities = new Float32Array(numPoints);
+  emissives = new Float32Array(numPoints);
 
   var material = new THREE.ShaderMaterial({
     vertexShader: vertexShader,
@@ -463,6 +474,7 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   geometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
   geometry.setAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+  geometry.setAttribute('emissive', new THREE.BufferAttribute(emissives, 1));
 
   lines = new THREE.LineSegments(geometry, material);
 
