@@ -156,21 +156,21 @@ THREE.SelectionBox = ( function () {
 			if ( object.material !== undefined ) {
 
         /* Added for support in Emperor */
-        if ( object.isPoints ) {
+        if ( object.isPoints || object.isLineSegments) {
           // reset the attribute between selection events
           object.userData.selected = undefined;
 
           var positions = object.geometry.getAttribute( 'position' );
           var collection = [];
 
+          var point = new THREE.Vector3();
           for (var i = 0; i < positions.count; i++) {
-            var point = new THREE.Vector3().fromBufferAttribute( positions, i );
+            point = point.fromBufferAttribute( positions, i );
 
             if ( frustum.containsPoint( point ) ) {
               collection.push( i );
             }
           }
-
           if ( collection.length ) {
             object.userData.selected = collection;
             this.collection.push ( object );

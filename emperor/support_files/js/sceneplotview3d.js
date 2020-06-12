@@ -1056,7 +1056,6 @@ define([
     return selected;
   };
 
-
   /**
    *
    * Adds the mouse selection events to the current view
