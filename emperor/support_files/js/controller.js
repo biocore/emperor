@@ -28,8 +28,8 @@ define([
 
   var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
 
-  TAB_ORDER = ['color', 'visibility', 'opacity', 'scale',
-               'shape', 'axes', 'animations'];
+  var TAB_ORDER = ['color', 'visibility', 'opacity', 'scale',
+                   'shape', 'axes', 'animations'];
 
   var controllerConstructors = {
       'color': ColorViewController,
