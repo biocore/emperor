@@ -232,6 +232,8 @@ function($, model, EmperorController) {
       plotView.on('select', function(samples){
         /*__select_callback__*/
       });
+
+      /*__custom_on_ready_code__*/
     }
   });
 
@@ -440,6 +442,8 @@ function($, model, EmperorController) {
       plotView.on('select', function(samples){
         /*__select_callback__*/
       });
+
+      /*__custom_on_ready_code__*/
     }
   });
 
