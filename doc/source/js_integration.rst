@@ -17,13 +17,13 @@ In general, users won't need to do low-level manipulation of visual aspects but
 instead would like to subscribe to specific events and act as needed. For these
 cases, Emperor provides access to the following events:
 
-- When a sample is clicked.
-- When a sample is double-clicked.
-- When a group of samples is selected.
-- When the selected metadata category in a tab is changed.
+- When a sample is clicked (`click`).
+- When a sample is double-clicked (`dblclick`).
+- When a group of samples is selected (`select`).
+- When the selected metadata category in a tab is changed (`category-changed`).
 - When an attribute for a group of samples is changed (for example when a
-  metadata value's color or visibility is changed).
-- When a group of samples is double-clicked via a tab.
+  metadata value's color or visibility is changed) (`value-changed`).
+- When a group of samples is double-clicked via a tab (`value-double-clicked`).
 
 
 Subscribing to Events from a 3rd Party application
