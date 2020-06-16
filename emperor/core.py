@@ -1283,7 +1283,7 @@ class Emperor(object):
                              'of range.')
 
         if view_type not in {'scatter', 'parallel-plot'}:
-            raise ValueError('Unknown vew type options are "scatter" or '
+            raise ValueError('Unknown view type options are "scatter" or '
                              '"paralle-plot"')
 
         # prevent obscure JavaScript errors by validating the data
