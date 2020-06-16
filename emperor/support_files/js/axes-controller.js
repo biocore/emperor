@@ -796,7 +796,9 @@ define([
     this.buildDisplayTable();
 
     //Restore the viewType
-    this.UIState.setProperty('view.viewType', json.viewType);
+    if (json.viewType !== undefined) {
+      this.UIState.setProperty('view.viewType', json.viewType);
+    }
   };
 
   return AxesController;

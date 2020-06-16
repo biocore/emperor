@@ -13,6 +13,7 @@ Emperor ChangeLog
 * Update the Chroma.js version to v2.1.0 from v1.1.1; this resulted in some
   very slight precision differences in things like color interpolation
   ([#762](https://github.com/biocore/emperor/issues/762))
+* Fix issue failing to correctly load axes settings.
 
 ### New features
 

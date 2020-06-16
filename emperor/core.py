@@ -1218,7 +1218,8 @@ class Emperor(object):
 
         return self
 
-    def set_axes(self, visible=None, invert=None, color='white'):
+    def set_axes(self, visible=None, invert=None, color='white',
+                 view_type='scatter'):
         """Change visual aspects about visible dimensions in a plot
 
         Parameters
@@ -1228,9 +1229,12 @@ class Emperor(object):
         invert: list of bools, optional
             List of three bools that determine whether each axis is inverted or
             not.
-        color: str
+        color: str, optional
             Color of the axes lines in the plot, should be a name or value in
             CSS format.
+        view_type: str, optional
+            Plot type to show either "scatter" for scatter plot or
+            "parallel-plot" for a parallel plot view.
 
         Returns
         -------
@@ -1278,6 +1282,10 @@ class Emperor(object):
             raise ValueError('One or more of your visible dimensions are out '
                              'of range.')
 
+        if view_type not in {'scatter', 'parallel-plot'}:
+            raise ValueError('Unknown vew type options are "scatter" or '
+                             '"paralle-plot"')
+
         # prevent obscure JavaScript errors by validating the data
         if any([not isinstance(v, int) for v in visible]):
             raise TypeError('All axes indices should be integers')
@@ -1296,7 +1304,8 @@ class Emperor(object):
             'visibleDimensions': visible,
             'flippedAxes': invert,
             'axesColor': color,
-            'backgroundColor': bc
+            'backgroundColor': bc,
+            'viewType': view_type
         }})
 
         return self
