@@ -34,6 +34,14 @@ Animations:
 
    tutorials/animations
 
+JavaScript Integration
+======================
+
+.. toctree::
+   :maxdepth: 2
+
+   js_integration
+
 Citing Emperor
 ==============
 

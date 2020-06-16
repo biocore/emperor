@@ -139,11 +139,11 @@ THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### THREE.js ([r87](https://github.com/mrdoob/three.js/tree/r87) is released under the MIT License
+### THREE.js ([r116](https://github.com/mrdoob/three.js/tree/r116) is released under the MIT License
 
 The MIT License
 
-Copyright (c) 2010-2013 three.js authors
+Copyright (c) 2010-2020 three.js authors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

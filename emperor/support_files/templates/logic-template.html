@@ -37,6 +37,8 @@ var emperorRequire = require.config({
   'projector': '{{ base_url }}/vendor/js/three.js-plugins/Projector',
   'svgrenderer': '{{ base_url }}/vendor/js/three.js-plugins/SVGRenderer',
   'canvasrenderer': '{{ base_url }}/vendor/js/three.js-plugins/CanvasRenderer',
+  'selectionbox': '{{ base_url }}/vendor/js/three.js-plugins/SelectionBox',
+  'selectionhelper': '{{ base_url }}/vendor/js/three.js-plugins/SelectionHelper',
 
   /* SlickGrid */
   'slickcore': '{{ base_url }}/vendor/js/slick.core.min',
@@ -147,6 +149,20 @@ function($, model, EmperorController) {
       // any other code that needs to be executed when emperor is loaded should
       // go here
       ec.loadConfig(data.plot.settings);
+
+      // sets up generic callbacks for 3rd party consumers
+      var plotView = ec.sceneViews[0];
+      plotView.on('click', function(sampleName){
+        /*__click_callback__*/
+      });
+      plotView.on('dblclick', function(sampleName){
+        /*__dblclick_callback__*/
+      });
+      plotView.on('select', function(samples){
+        /*__select_callback__*/
+      });
+
+      /*__custom_on_ready_code__*/
     }
   });
 

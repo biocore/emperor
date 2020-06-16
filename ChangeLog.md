@@ -13,6 +13,18 @@ Emperor ChangeLog
 * Update the Chroma.js version to v2.1.0 from v1.1.1; this resulted in some
   very slight precision differences in things like color interpolation
   ([#762](https://github.com/biocore/emperor/issues/762))
+* Fix issue failing to correctly load axes settings.
+
+### New features
+
+* Add sample selection support. Users can select samples by holding shift and
+  dragging the mouse. Selected samples are copied to the users' clipboard
+  ([#153](https://github.com/biocore/emperor/issues/153)).
+* Add callback support for multiple grid events.
+
+### Miscellaneous
+
+* Updated THREE.js and plugins to the latest version (r116).
 
 # Emperor 1.0.0
 ---------------

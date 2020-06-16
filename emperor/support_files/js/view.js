@@ -268,7 +268,8 @@ DecompositionView.prototype._fastInit = function() {
     throw new Error('Only scatter type is supported in fast mode');
   }
 
-  var positions, colors, scales, opacities, visibilities, geometry, cloud;
+  var positions, colors, scales, opacities, visibilities, emissives, geometry,
+      cloud;
 
   var x = this.visibleDimensions[0], y = this.visibleDimensions[1],
       z = this.visibleDimensions[2];
@@ -298,15 +299,18 @@ DecompositionView.prototype._fastInit = function() {
     'attribute vec3 color;',
     'attribute float opacity;',
     'attribute float visible;',
+    'attribute float emissive;',
 
     'varying vec3 vColor;',
     'varying float vOpacity;',
     'varying float vVisible;',
+    'varying float vEmissive;',
 
     'void main() {',
       'vColor = color;',
       'vOpacity = opacity;',
       'vVisible = visible;',
+      'vEmissive = emissive;',
 
       'vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);',
       'gl_Position = projectionMatrix * mvPosition; ',
@@ -318,6 +322,7 @@ DecompositionView.prototype._fastInit = function() {
     'varying vec3 vColor;',
     'varying float vOpacity;',
     'varying float vVisible;',
+    'varying float vEmissive;',
 
     'void main() {',
       // remove objects when they might be "visible" but completely transparent
@@ -332,7 +337,13 @@ DecompositionView.prototype._fastInit = function() {
         'delta = fwidth(r);',
         'alpha = 1.0 - smoothstep(1.0 - delta, 1.0 + delta, r);',
 
-        'gl_FragColor = vec4(vColor, vOpacity) * alpha;',
+        // if the object is selected make it white
+        'if (vEmissive > 0.0) {',
+        '  gl_FragColor = vec4(1, 1, 1, vOpacity) * alpha;',
+        '}',
+        'else {',
+        '  gl_FragColor = vec4(vColor, vOpacity) * alpha;',
+        '}',
       '}',
       'else {',
         'discard;',
@@ -344,6 +355,7 @@ DecompositionView.prototype._fastInit = function() {
   scales = new Float32Array(this.decomp.length);
   opacities = new Float32Array(this.decomp.length);
   visibilities = new Float32Array(this.decomp.length);
+  emissives = new Float32Array(this.decomp.length);
 
   var material = new THREE.ShaderMaterial({
     vertexShader: vertexShader,
@@ -358,11 +370,12 @@ DecompositionView.prototype._fastInit = function() {
   material.extensions.derivatives = true;
 
   geometry = new THREE.BufferGeometry();
-  geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-  geometry.addAttribute('scale', new THREE.BufferAttribute(scales, 1));
-  geometry.addAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
-  geometry.addAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1));
+  geometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+  geometry.setAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+  geometry.setAttribute('emissive', new THREE.BufferAttribute(emissives, 1));
 
   cloud = new THREE.Points(geometry, material);
 
@@ -376,6 +389,7 @@ DecompositionView.prototype._fastInit = function() {
     geometry.attributes.color.setXYZ(plottable.idx, 1, 0, 0);
     geometry.attributes.visible.setX(plottable.idx, 1);
     geometry.attributes.opacity.setX(plottable.idx, 1);
+    geometry.attributes.emissive.setX(plottable.idx, 0);
     geometry.attributes.scale.setX(plottable.idx, 1);
   });
 
@@ -384,6 +398,7 @@ DecompositionView.prototype._fastInit = function() {
   geometry.attributes.visible.needsUpdate = true;
   geometry.attributes.opacity.needsUpdate = true;
   geometry.attributes.scale.needsUpdate = true;
+  geometry.attributes.emissive.needsUpdate = true;
 
   this.markers.push(cloud);
 };
@@ -401,15 +416,18 @@ DecompositionView.prototype._fastInitParallelPlot = function()
     'attribute vec3 color;',
     'attribute float opacity;',
     'attribute float visible;',
+    'attribute float emissive;',
 
     'varying vec3 vColor;',
     'varying float vOpacity;',
     'varying float vVisible;',
+    'varying float vEmissive;',
 
     'void main() {',
     '  vColor = color;',
     '  vOpacity = opacity;',
     '  vVisible = visible;',
+    '  vEmissive = emissive;',
 
     '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
     '}'].join('\n');
@@ -419,11 +437,19 @@ DecompositionView.prototype._fastInitParallelPlot = function()
     'varying vec3 vColor;',
     'varying float vOpacity;',
     'varying float vVisible;',
+    'varying float vEmissive;',
 
     'void main() {',
     ' if (vVisible <= 0.0 || vOpacity <= 0.0)',
     '   discard;',
-    ' gl_FragColor = vec4(vColor, vOpacity);',
+
+    // if the object is selected make it white
+    ' if (vEmissive > 0.0) {',
+    '   gl_FragColor = vec4(1, 1, 1, vOpacity);',
+    ' }',
+    ' else {',
+    '   gl_FragColor = vec4(vColor, vOpacity);',
+    ' }',
     '}'].join('\n');
 
   var allDimensions = _.range(this.decomp.dimensions);
@@ -435,6 +461,7 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   colors = new Float32Array(numPoints * 3);
   opacities = new Float32Array(numPoints);
   visibilities = new Float32Array(numPoints);
+  emissives = new Float32Array(numPoints);
 
   var material = new THREE.ShaderMaterial({
     vertexShader: vertexShader,
@@ -443,10 +470,11 @@ DecompositionView.prototype._fastInitParallelPlot = function()
   });
 
   geometry = new THREE.BufferGeometry();
-  geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-  geometry.addAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
-  geometry.addAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+  geometry.setAttribute('visible', new THREE.BufferAttribute(visibilities, 1));
+  geometry.setAttribute('emissive', new THREE.BufferAttribute(emissives, 1));
 
   lines = new THREE.LineSegments(geometry, material);
 

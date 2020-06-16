@@ -2,8 +2,10 @@ define([
     'three',
     'orbitcontrols',
     'draw',
-    'underscore'
-], function(THREE, OrbitControls, draw, _) {
+    'underscore',
+    'selectionbox',
+    'selectionhelper'
+], function(THREE, OrbitControls, draw, _, SelectionBox, SelectionHelper) {
   /** @private */
   var makeLine = draw.makeLine;
   /** @private */
@@ -33,8 +35,7 @@ define([
    * @constructs ScenePlotView3D
    */
   function ScenePlotView3D(uiState, renderer, decViews, decModels, container,
-                           xView, yView,
-                           width, height) {
+                           xView, yView, width, height) {
     var scope = this;
 
     this.UIState = uiState;
@@ -126,6 +127,46 @@ define([
                                                      this.parallelCam,
                                                      $container.get(0));
 
+
+    this.scene.add(this.scatterCam);
+    this.scene.add(this.parallelCam);
+
+    this._raycaster = new THREE.Raycaster();
+    this._mouse = new THREE.Vector2();
+
+    /**
+     * Special purpose group for points that are selectable with the
+     * SelectionBox.
+     * @type {THREE.Group}
+     * @private
+     */
+    this._selectable = new THREE.Group();
+    this.scene.add(this._selectable);
+
+    /**
+     * Object to compute bounding boxes from a selection area
+     *
+     * Selection is only enabled when the user is holding Shift.
+     *
+     * @type {THREE.SelectionBox}
+     * @private
+     */
+    this._selectionBox = new THREE.SelectionBox(this.camera,
+                                                this._selectable);
+
+    /**
+     * Helper to view the selection space when the user holds shift
+     *
+     * This object is disabled by default, and is only renabled when the user
+     * holds the shift key.
+     * @type {THREE.SelectionHelper}
+     * @private
+     */
+    this._selectionHelper = new THREE.SelectionHelper(this._selectionBox,
+                                                     renderer,
+                                                     'emperor-selection-area');
+    this._selectionHelper.enabled = false;
+
     //Swap the camera whenever the view type changes
     this.UIState.registerProperty('view.viewType', function(evt) {
       if (evt.newVal === 'parallel-plot') {
@@ -134,25 +175,20 @@ define([
         //Don't let the controller move around when its not the active camera
         scope.scatterController.enabled = false;
         scope.parallelController.enabled = true;
+        scope._selectionBox.camera = scope.camera;
       } else {
         scope.camera = scope.scatterCam;
         scope.control = scope.scatterController;
         //Don't let the controller move around when its not the active camera
         scope.scatterController.enabled = true;
         scope.parallelController.enabled = false;
+        scope._selectionBox.camera = scope.camera;
       }
       //Disable any active rotation
       if (evt.newVal === 'parallel-plot')
         scope.scatterController.autoRotate = false;
     });
 
-    this.scene.add(this.scatterCam);
-    this.scene.add(this.parallelCam);
-
-    this._raycaster = new THREE.Raycaster();
-    this._mouse = new THREE.Vector2();
-
-    // add all the objects to the current scene
     this.addDecompositionsToScene();
 
     this.updateCameraTarget();
@@ -178,7 +214,7 @@ define([
      * Events allowed for callbacks. DO NOT EDIT.
      * @type {String[]}
      */
-    this.EVENTS = ['click', 'dblclick'];
+    this.EVENTS = ['click', 'dblclick', 'select'];
     /** @private */
     this._subscribers = {};
 
@@ -189,7 +225,7 @@ define([
     // Add callback call when sample is clicked
     // Double and single click together from: http://stackoverflow.com/a/7845282
     var DELAY = 200, clicks = 0, timer = null;
-    $container.on('click', function(event) {
+    $container.on('mousedown', function(event) {
         clicks++;
         if (clicks === 1) {
             timer = setTimeout(function() {
@@ -207,6 +243,11 @@ define([
         event.preventDefault();  //cancel system double-click event
     });
 
+    // setup the selectionBox and selectionHelper objects and callbacks
+    this._addSelectionEvents($container);
+
+    this.control.update();
+
     // register callback for populating info with clicked sample name
     // set the timeout for fading out the info div
     var infoDuration = 4000;
@@ -216,13 +257,16 @@ define([
 
     /**
      *
-     * The functions showText and copyToClipboard are used in the 'click' and
-     * 'dblclick' events.
+     * The functions showText and copyToClipboard are used in the 'click',
+     * 'dblclick', and 'select' events.
      *
      * When a sample is clicked we show a legend at the bottom left of the
      * view. If this legend is clicked, we copy the sample name to the
      * clipboard. When a sample is double-clicked we directly copy the sample
      * name to the clipboard and add the legend at the bottom left of the view.
+     *
+     * When samples are selected we show a message on the bottom left of the
+     * view, and copy a comma-separated list of samples to the clipboard.
      *
      */
 
@@ -274,10 +318,51 @@ define([
     });
     $(this.renderer.domElement).parent().append(this.$info);
 
+    // UI callbacks specific to emperor, not to be confused with DOM events
     this.on('click', showText);
     this.on('dblclick', function(n, i) {
       copyToClipboard(n);
       showText('(copied to clipboard) ' + n, i);
+    });
+    this.on('select', function(selected) {
+      var names = [], indices;
+
+      // get the list of sample names from the views
+      for (var i = 0; i < selected.length; i++) {
+        if (selected[i].isPoints) {
+          // this is a list of indices of the selected samples
+          indices = selected[i].userData.selected;
+
+          for (var j = 0; j < indices.length; j++) {
+            names.push(scope.decViews.scatter.decomp.ids[indices[j]]);
+          }
+        }
+        else if (selected[i].isLineSegments) {
+          var index, viewType, view;
+
+          view = scope.decViews.scatter;
+          viewType = scope.UIState['view.viewType'];
+
+          // this is a list of indices of the selected samples
+          indices = selected[i].userData.selected;
+
+          for (var k = 0; k < indices.length; k++) {
+            index = view.getModelPointIndex(indices[k], viewType);
+            names.push(view.decomp.ids[index]);
+          }
+
+          // every segment is labeled the same for each sample
+          names = _.unique(names);
+        }
+        else {
+          names.push(selected[i].name);
+        }
+      }
+
+      if (names.length) {
+        showText(names.length + ' samples copied to your clipboard.');
+        copyToClipboard(names.join(','));
+      }
     });
 
     // if a decomposition uses a point cloud, or
@@ -286,9 +371,9 @@ define([
     // it is otherwise too large and error-prone
     var updateRaycasterLinePrecision = function(evt) {
       if (scope.UIState.getProperty('view.viewType') === 'parallel-plot')
-        scope._raycaster.linePrecision = 0.01;
+        scope._raycaster.params.Line.threshold = 0.01;
       else
-        scope._raycaster.linePrecision = 1;
+        scope._raycaster.params.Line.threshold = 1;
     };
     var updateRaycasterPointPrecision = function(evt) {
       if (scope.UIState.getProperty('view.usesPointCloud'))
@@ -368,18 +453,22 @@ define([
     // decomposition views.
 
     // Add all the meshes to the scene, iterate through all keys in
-    // decomposition view dictionary
+    // decomposition view dictionary and put points in a separate group
     for (var decViewName in this.decViews) {
       var isArrowType = this.decViews[decViewName].decomp.isArrowType();
 
       for (j = 0; j < this.decViews[decViewName].markers.length; j++) {
         marker = this.decViews[decViewName].markers[j];
-        this.scene.add(marker);
 
         // only arrows include text as part of their markers
+        // arrows are not selectable
         if (isArrowType) {
           marker.label.scale.set(marker.label.scale.x * scaling,
                                  marker.label.scale.y * scaling, 1);
+          this.scene.add(marker);
+        }
+        else {
+          this._selectable.add(marker);
         }
       }
       for (j = 0; j < this.decViews[decViewName].ellipsoids.length; j++) {
@@ -763,15 +852,19 @@ define([
       if (view.needsSwapMarkers) {
         anyMarkersSwapped = true;
 
+        // arrows are in the scene whereas points/markers are in a different
+        // group used for brush selection
+        var group = view.decomp.isArrowType() ? scope.scene : scope._selectable;
+
         var oldMarkers = view.getAndClearOldMarkers();
         for (var i = 0; i < oldMarkers.length; i++) {
-          scope.scene.remove(oldMarkers[i]);
+          group.remove(oldMarkers[i]);
           oldMarkers[i].material.dispose(); //FIXME:  What is our plan for this?
           oldMarkers[i].geometry.dispose(); //FIXME:  What is our plan for this?
         }
         var newMarkers = view.markers;
         for (i = 0; i < newMarkers.length; i++) {
-          scope.scene.add(newMarkers[i]);
+          group.add(newMarkers[i]);
         }
 
         var lines = view.lines;
@@ -897,6 +990,180 @@ define([
     $.each(this.decViews, function(key, val) {
       val.needsUpdate = false;
     });
+  };
+
+  /**
+   * Helper method to highlight and return selected objects.
+   *
+   * This is mostly necessary because depending on the rendering type we will
+   * have a slightly different way to set and return the highlighting
+   * attributes. For large plots we return the points geometry together with
+   * a userData.selected attribute with the selected indices.
+   *
+   * Note that we created a group of selectable objects in the constructor so
+   * we don't have to check for geometry types, etc.
+   *
+   * @param {Array} collection An array of objects to highlight
+   * @param {Integer} color A hexadecimal-encoded color. For shaders we only
+   * use the first bit to decide if the marker is rendered in white or rendered
+   * with the original color.
+   *
+   * @return {Array} selected objects (after checking for visibility and
+   * opacity).
+   *
+   * @private
+   */
+  ScenePlotView3D.prototype._highlightSelected = function(collection, color) {
+    var i = 0, j = 0, selected = [];
+
+    if (this.UIState.getProperty('view.usesPointCloud') ||
+        this.UIState.getProperty('view.viewType') === 'parallel-plot') {
+      for (i = 0; i < collection.length; i++) {
+        // for shaders we only care about the first bit
+        var indices, emissiveColor = color & 1;
+
+        // if there's no selection then update all the points
+        if (collection[i].userData.selected === undefined) {
+          indices = _.range(collection[i].geometry.attributes.emissive.count);
+        }
+        else {
+          indices = collection[i].userData.selected;
+        }
+
+        for (j = 0; j < indices.length; j++) {
+          if (collection[i].geometry.attributes.visible.getX(indices[j]) &&
+              collection[i].geometry.attributes.opacity.getX(indices[j])) {
+            collection[i].geometry.attributes.emissive.setX(indices[j],
+                                                            emissiveColor);
+          }
+        }
+
+        collection[i].geometry.attributes.emissive.needsUpdate = true;
+        selected.push(collection[i]);
+      }
+    }
+    else {
+      for (i = 0; i < collection.length; i++) {
+        var material = collection[i].material;
+
+        if (material.visible && material.opacity && material.emissive) {
+          collection[i].material.emissive.set(color);
+          selected.push(collection[i]);
+        }
+      }
+    }
+
+    return selected;
+  };
+
+  /**
+   *
+   * Adds the mouse selection events to the current view
+   *
+   * @param {node} $container The container to add the events to.
+   * @private
+   */
+  ScenePlotView3D.prototype._addSelectionEvents = function($container) {
+    var scope = this;
+
+    // There're three stages to the mouse selection:
+    //  mousedown -> mousemove -> mouseup
+    //
+    // The mousdown event is ignored unless the user is holding Shift. Once
+    // selection has started the rotation controls are disabled. The mousemove
+    // event continues until the user releases the mouse. Once this happens
+    // rotation is re-enabled and the selection box disappears. Selected
+    // markers are highlighted by changing the light they emit.
+    //
+    $container.on('mousedown', function(event) {
+      // ignore the selection event if shift is not being held or if parallel
+      // plots are being visualized at the moment
+      if (!event.shiftKey) {
+        return;
+      }
+
+      scope.control.enabled = false;
+      scope.scatterController.enabled = false;
+      scope._selectionHelper.enabled = true;
+      scope._selectionHelper.onSelectStart(event);
+
+      // clear up any color setting
+      scope._highlightSelected(scope._selectionBox.collection, 0x000000);
+
+      var element = scope.renderer.domElement;
+      var offset = $(element).offset(), i = 0;
+
+      scope._selectionBox.startPoint.set(
+        ((event.clientX - offset.left) / element.width) * 2 - 1,
+        -((event.clientY - offset.top) / element.height) * 2 + 1,
+        0.5);
+    })
+    .on('mousemove', function(event) {
+      // ignore if the user is not holding the shift key or the orbit control
+      // is enabled and he selection disabled
+      if (!event.shiftKey ||
+          (scope.control.enabled && !scope._selectionHelper.enabled)) {
+        return;
+      }
+
+      var element = scope.renderer.domElement, selected;
+      var offset = $(element).offset(), i = 0;
+
+      scope._selectionBox.endPoint.set(
+        ((event.clientX - offset.left) / element.width) * 2 - 1,
+        - ((event.clientY - offset.top) / element.height) * 2 + 1,
+        0.5);
+
+      // reset everything before updating the selected color
+      scope._highlightSelected(scope._selectionBox.collection, 0x000000);
+      scope._highlightSelected(scope._selectionBox.select(), 0x8c8c8f);
+
+      scope.needsUpdate = true;
+    })
+    .on('mouseup', function(event) {
+      // if the user is not already selecting data then ignore
+      if (!scope._selectionHelper.enabled || scope.control.enabled) {
+        return;
+      }
+
+      // otherwise if shift is being held then keep selecting, otherwise ignore
+      if (event.shiftKey) {
+        var element = scope.renderer.domElement;
+        var offset = $(element).offset();
+        scope._selectionBox.endPoint.set(
+          ((event.clientX - offset.left) / element.width) * 2 - 1,
+          - ((event.clientY - offset.top) / element.height) * 2 + 1,
+          0.5);
+
+        selected = scope._highlightSelected(scope._selectionBox.select(),
+                                            0x8c8c8f);
+        scope._selectCallback(selected);
+      }
+
+      scope.control.enabled = true;
+      scope.scatterController.enabled = true;
+      scope._selectionHelper.enabled = false;
+      scope.needsUpdate = true;
+    });
+  };
+
+
+  /**
+   * Handle selection events.
+   * @private
+   */
+  ScenePlotView3D.prototype._selectCallback = function(markers) {
+    var eventType = 'select';
+
+    for (var i = 0; i < this._subscribers[eventType].length; i++) {
+      // keep going if one of the callbacks fails
+      try {
+        this._subscribers[eventType][i](markers);
+      } catch (e) {
+        console.error(e);
+      }
+      this.needsUpdate = true;
+    }
   };
 
   /**

@@ -108,6 +108,8 @@ var emperorRequire = require.config({
   'projector': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/Projector',
   'svgrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SVGRenderer',
   'canvasrenderer': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/CanvasRenderer',
+  'selectionbox': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SelectionBox',
+  'selectionhelper': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/three.js-plugins/SelectionHelper',
 
   /* SlickGrid */
   'slickcore': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.core.min',
@@ -218,6 +220,20 @@ function($, model, EmperorController) {
       // any other code that needs to be executed when emperor is loaded should
       // go here
       ec.loadConfig(data.plot.settings);
+
+      // sets up generic callbacks for 3rd party consumers
+      var plotView = ec.sceneViews[0];
+      plotView.on('click', function(sampleName){
+        /*__click_callback__*/
+      });
+      plotView.on('dblclick', function(sampleName){
+        /*__dblclick_callback__*/
+      });
+      plotView.on('select', function(samples){
+        /*__select_callback__*/
+      });
+
+      /*__custom_on_ready_code__*/
     }
   });
 
@@ -302,6 +318,8 @@ var emperorRequire = require.config({
   'projector': './some-local-path//vendor/js/three.js-plugins/Projector',
   'svgrenderer': './some-local-path//vendor/js/three.js-plugins/SVGRenderer',
   'canvasrenderer': './some-local-path//vendor/js/three.js-plugins/CanvasRenderer',
+  'selectionbox': './some-local-path//vendor/js/three.js-plugins/SelectionBox',
+  'selectionhelper': './some-local-path//vendor/js/three.js-plugins/SelectionHelper',
 
   /* SlickGrid */
   'slickcore': './some-local-path//vendor/js/slick.core.min',
@@ -412,6 +430,20 @@ function($, model, EmperorController) {
       // any other code that needs to be executed when emperor is loaded should
       // go here
       ec.loadConfig(data.plot.settings);
+
+      // sets up generic callbacks for 3rd party consumers
+      var plotView = ec.sceneViews[0];
+      plotView.on('click', function(sampleName){
+        /*__click_callback__*/
+      });
+      plotView.on('dblclick', function(sampleName){
+        /*__dblclick_callback__*/
+      });
+      plotView.on('select', function(samples){
+        /*__select_callback__*/
+      });
+
+      /*__custom_on_ready_code__*/
     }
   });
 
