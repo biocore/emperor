@@ -61,7 +61,7 @@ when a metadata value is double-clicked in the **opacity** table.
     ec.controllers.visibility.addEventListener('value-changed',
                                                function(container){
       console.log('Name of the event', container.type);
-      console.log('Selected  category', container.message.category);
+      console.log('Selected category', container.message.category);
 
       // the new visibility attribute
       console.log('New attribute', container.message.attribute)
