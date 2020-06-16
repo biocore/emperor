@@ -1453,7 +1453,21 @@ class EmperorSettingsTests(TestCase):
         exp = {'axes': {"visibleDimensions": [3, 2, 0],
                         "flippedAxes": [False, False, False],
                         "backgroundColor": 'black',
-                        "axesColor": 'white'
+                        "axesColor": 'white',
+                        "viewType": 'scatter'
+                        }
+               }
+        self.assertEqual(obs.settings['axes'], exp['axes'])
+
+    def test_set_axes_parallel(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False)
+
+        obs = emp.set_axes([3, 2, 0], view_type='parallel-plot')
+        exp = {'axes': {"visibleDimensions": [3, 2, 0],
+                        "flippedAxes": [False, False, False],
+                        "backgroundColor": 'black',
+                        "axesColor": 'white',
+                        "viewType": 'parallel-plot'
                         }
                }
         self.assertEqual(obs.settings['axes'], exp['axes'])
@@ -1465,7 +1479,8 @@ class EmperorSettingsTests(TestCase):
         exp = {'axes': {"visibleDimensions": [0, 1, 2],
                         "flippedAxes": [True, False, False],
                         "backgroundColor": 'black',
-                        "axesColor": 'white'
+                        "axesColor": 'white',
+                        "viewType": 'scatter'
                         }
                }
         self.assertEqual(obs.settings['axes'], exp['axes'])
@@ -1477,10 +1492,17 @@ class EmperorSettingsTests(TestCase):
         exp = {'axes': {"visibleDimensions": [0, 1, 2],
                         "flippedAxes": [False, False, False],
                         "backgroundColor": 'black',
-                        "axesColor": 'red'
+                        "axesColor": 'red',
+                        "viewType": 'scatter'
                         }
                }
         self.assertEqual(obs.settings['axes'], exp['axes'])
+
+    def test_set_axes_errors_view_type(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False)
+
+        with self.assertRaises(ValueError):
+            emp.set_axes(view_type='whodis')
 
     def test_set_axes_errors_dimensions(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
@@ -1507,7 +1529,8 @@ class EmperorSettingsTests(TestCase):
         exp = {'axes': {"visibleDimensions": [0, 1, 2],
                         "flippedAxes": [False, False, False],
                         "backgroundColor": 'yellow',
-                        "axesColor": 'white'
+                        "axesColor": 'white',
+                        "viewType": 'scatter'
                         }
                }
         self.assertEqual(obs.settings['axes'], exp['axes'])
@@ -1524,7 +1547,8 @@ class EmperorSettingsTests(TestCase):
         exp = {'axes': {"visibleDimensions": [3, 2, 0],
                         "flippedAxes": [False, True, True],
                         "backgroundColor": 'green',
-                        "axesColor": 'red'
+                        "axesColor": 'red',
+                        "viewType": 'scatter'
                         }
                }
         self.assertEqual(obs.settings['axes'], exp['axes'])
@@ -1543,7 +1567,8 @@ class EmperorSettingsTests(TestCase):
                         'axes': {"visibleDimensions": [3, 2, 0],
                                  "flippedAxes": [False, True, True],
                                  "backgroundColor": 'blue',
-                                 "axesColor": 'red'
+                                 "axesColor": 'red',
+                                 "viewType": 'scatter'
                                  }
                         }
 
@@ -1574,7 +1599,8 @@ class EmperorSettingsTests(TestCase):
                         'axes': {"visibleDimensions": [3, 2, 0],
                                  "flippedAxes": [False, True, True],
                                  "backgroundColor": 'blue',
-                                 "axesColor": 'red'
+                                 "axesColor": 'red',
+                                 "viewType": 'scatter'
                                  }
                         }
 
@@ -1597,7 +1623,8 @@ class EmperorSettingsTests(TestCase):
                         'axes': {"visibleDimensions": [3, 2, 0],
                                  "flippedAxes": [False, True, True],
                                  "backgroundColor": 'blue',
-                                 "axesColor": 'red'
+                                 "axesColor": 'red',
+                                 "viewType": 'scatter'
                                  },
                         'color': {"category": 'DOB',
                                   "colormap": 'discrete-coloring-qiime',
