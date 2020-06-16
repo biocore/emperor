@@ -20,6 +20,7 @@ Emperor ChangeLog
 * Add sample selection support. Users can select samples by holding shift and
   dragging the mouse. Selected samples are copied to the users' clipboard
   ([#153](https://github.com/biocore/emperor/issues/153)).
+* Add callback support for multiple grid events.
 
 ### Miscellaneous
 

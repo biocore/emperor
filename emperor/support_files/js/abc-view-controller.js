@@ -1,7 +1,8 @@
 define([
     'jquery',
-    'underscore'
-], function($, _) {
+    'underscore',
+    'three'
+], function($, _, THREE) {
   /**
    *
    * @class EmperorViewControllerABC
@@ -22,6 +23,7 @@ define([
    *
    */
   function EmperorViewControllerABC(uiState, container, title, description) {
+    THREE.EventDispatcher.call(this);
 
     /**
      * @type {UIState}
@@ -117,6 +119,9 @@ define([
 
     return this;
   }
+  EmperorViewControllerABC.prototype = Object.create(
+      THREE.EventDispatcher.prototype);
+  EmperorViewControllerABC.prototype.constructor = THREE.EventDispatcher;
 
   /**
    * Sets whether or not elements in the tab can be modified.
