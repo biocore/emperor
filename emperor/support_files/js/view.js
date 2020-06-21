@@ -552,27 +552,31 @@ DecompositionView.prototype.getModelPointIndex = function(raytraceIndex,
  *
  */
 DecompositionView.prototype.getVisibleCount = function() {
-  var visible = 0;
-  if (this.UIState['view.viewType'] === 'parallel-plot') {
-    var cloud = this.markers[0];
-    var attrVisibleCount = cloud.geometry.attributes.visible.count;
-    var numPoints = (this.decomp.dimensions * 2 - 2);
-    for (var i = 0; i < attrVisibleCount; i += numPoints) {
-      visible += (cloud.geometry.attributes.visible.getX(i) + 0);
+  var visible = 0, attrVisible, numPoints = 0, scope = this;
+
+  visible = _.reduce(this.markers, function(acc, marker) {
+    var perMarkerCount = 0;
+
+    // shader objects need to be counted different from meshes
+    if (marker.isLineSegments || marker.isPoints) {
+      attrVisible = marker.geometry.attributes.visible;
+
+      // for line segments we need to go in jumps of dimensions*2
+      if (marker.isLineSegments) {
+        numPoints = (scope.decomp.dimensions * 2 - 2);
+      }
+
+      for (var i = 0; i < attrVisible.count; i += numPoints) {
+        perMarkerCount += (attrVisible.getX(i) + 0);
+      }
     }
-  }
-  else if (this.UIState['view.usesPointCloud']) {
-    var cloud = this.markers[0];
-    var attrVisibleCount = cloud.geometry.attributes.visible.count;
-    for (var i = 0; i < attrVisibleCount; i++) {
-      visible += (cloud.geometry.attributes.visible.getX(i) + 0);
+    else {
+      // +0 cast bool to int
+      perMarkerCount += (marker.visible + 0);
     }
-  }
-  else {
-    visible = _.reduce(this.markers, function(acc, marker) {
-      return acc + (marker.visible + 0);
-    }, 0);
-  }
+
+    return acc + perMarkerCount;
+  }, 0);
 
   return visible;
 };

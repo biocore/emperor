@@ -847,24 +847,48 @@ define([
 
     //Check if the view type changed and swap the markers in/out of the scene
     //tree.
-    var anyMarkersSwapped = false;
+    var anyMarkersSwapped = false, isArrowType;
+
     _.each(this.decViews, function(view) {
       if (view.needsSwapMarkers) {
+        isArrowType = view.decomp.isArrowType();
         anyMarkersSwapped = true;
 
         // arrows are in the scene whereas points/markers are in a different
         // group used for brush selection
-        var group = view.decomp.isArrowType() ? scope.scene : scope._selectable;
+        var group = isArrowType ? scope.scene : scope._selectable;
+        var oldMarkers = view.getAndClearOldMarkers(), marker;
 
-        var oldMarkers = view.getAndClearOldMarkers();
         for (var i = 0; i < oldMarkers.length; i++) {
-          group.remove(oldMarkers[i]);
-          oldMarkers[i].material.dispose(); //FIXME:  What is our plan for this?
-          oldMarkers[i].geometry.dispose(); //FIXME:  What is our plan for this?
+          marker = oldMarkers[i];
+
+          group.remove(marker);
+
+          if (isArrowType) {
+            marker.dispose();
+          }
+          else {
+            marker.material.dispose();
+            marker.geometry.dispose();
+          }
         }
+
+        // do not show arrows in a parallel plot
         var newMarkers = view.markers;
-        for (i = 0; i < newMarkers.length; i++) {
-          group.add(newMarkers[i]);
+        if (isArrowType && scope.UIState['view.viewType'] === 'scatter' ||
+            view.decomp.isScatterType()) {
+          var scaling = scope.getScalingConstant();
+
+          for (i = 0; i < newMarkers.length; i++) {
+            marker = newMarkers[i];
+
+            // when we re-add arrows we need to re-scale the labels
+            if (isArrowType) {
+              marker.label.scale.set(marker.label.scale.x * scaling,
+                                     marker.label.scale.y * scaling, 1);
+            }
+            group.add(marker);
+          }
         }
 
         var lines = view.lines;
