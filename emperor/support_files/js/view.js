@@ -565,6 +565,9 @@ DecompositionView.prototype.getVisibleCount = function() {
       if (marker.isLineSegments) {
         numPoints = (scope.decomp.dimensions * 2 - 2);
       }
+      else {
+        numPoints = 1;
+      }
 
       for (var i = 0; i < attrVisible.count; i += numPoints) {
         perMarkerCount += (attrVisible.getX(i) + 0);
@@ -1099,6 +1102,79 @@ DecompositionView.prototype.toggleLabelVisibility = function() {
     arrow.label.visible = Boolean(arrow.label.visible ^ true);
   });
   this.needsUpdate = true;
+};
+
+
+/**
+ * Set the emissive attribute of the markers
+ *
+ * @param {Bool} emissive Whether the object should be emissive.
+ * @param {Plottable[]} group An array of plottables for which the emissive
+ * attribute. If this object is not provided, all the plottables in the
+ * view will be have the scale set.
+ */
+DecompositionView.prototype.setEmissive = function(emissive, group) {
+  group = group || this.decomp.plottable;
+
+  var i = 0;
+
+  if (this.UIState.getProperty('view.usesPointCloud') ||
+      this.UIState.getProperty('view.viewType') === 'parallel-plot') {
+    var emissives = this.markers[0].geometry.attributes.emmissive;
+
+    // the emissive attribute is a boolean one
+    emissive = (emissive > 0) * 1;
+
+    for (i = 0; i < group.length; i++) {
+      emissives.setX(i, emissive);
+    }
+  }
+  else {
+    for (i = 0; i < group.length; i++) {
+      var material = group[i].material;
+      collection[i].material.emissive.set(color);
+    }
+  }
+};
+
+/**
+ * Group by color
+ *
+ * @param {Aarray} names An array of strings with the sample names.
+ */
+DecompositionView.prototype.groupByColor = function(names) {
+
+  var colorGroups = {}, groupping;
+  var plottables = this.decomp.getPlottableByIDs(names);
+
+  // we need to retrieve colors in a very different way
+  if (this.UIState['view.viewType'] === 'parallel-plot' ||
+      this.UIState['view.usesPointCloud']) {
+    var colors = cloud.geometry.attributes.color;
+
+    groupping = function(plottable) {
+      // taken from Color.getHexString in THREE.js
+      r = (colors.getX(plottable.idx) * 255) << 16;
+      g = (colors.getY(plottable.idx) * 255) << 8;
+      b = (colors.getZ(plottable.idx) * 255) << 0;
+      return r ^ g ^ b;
+    };
+  }
+  else {
+    if (this.decomp.isScatterType) {
+      groupping = function(plottable) {
+        return plottable.material.color.getHexString();
+      };
+    }
+    else {
+      // check that this getColor method works
+      groupping = function(plottable) {
+        return plottable.getColor().getHexString();
+      };
+    }
+  }
+
+  return _.groupBy(plottables, groupping);
 };
 
 /**
