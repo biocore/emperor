@@ -1126,7 +1126,7 @@ DecompositionView.prototype.setEmissive = function(emissive, group) {
     emissive = (emissive > 0) * 1;
 
     for (i = 0; i < group.length; i++) {
-      emissives.setX(i, emissive);
+      emissives.setX(group[i].idx, emissive);
     }
   }
   else {
@@ -1140,7 +1140,8 @@ DecompositionView.prototype.setEmissive = function(emissive, group) {
 /**
  * Group by color
  *
- * @param {Aarray} names An array of strings with the sample names.
+ * @param {Array} names An array of strings with the sample names.
+ * @returns {Object} Mapping of colors to objects.
  */
 DecompositionView.prototype.groupByColor = function(names) {
 
