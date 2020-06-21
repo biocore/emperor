@@ -1162,7 +1162,7 @@ define([
           }
         }
 
-        scope._selectCallback(names, scope.decViews);
+        scope._selectCallback(names, scope.decViews.scatter);
       }
 
       scope.control.enabled = true;
@@ -1177,13 +1177,13 @@ define([
    * Handle selection events.
    * @private
    */
-  ScenePlotView3D.prototype._selectCallback = function(markers) {
+  ScenePlotView3D.prototype._selectCallback = function(names, view) {
     var eventType = 'select';
 
     for (var i = 0; i < this._subscribers[eventType].length; i++) {
       // keep going if one of the callbacks fails
       try {
-        this._subscribers[eventType][i](markers);
+        this._subscribers[eventType][i](names, view);
       } catch (e) {
         console.error(e);
       }

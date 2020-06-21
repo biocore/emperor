@@ -1120,19 +1120,21 @@ DecompositionView.prototype.setEmissive = function(emissive, group) {
 
   if (this.UIState.getProperty('view.usesPointCloud') ||
       this.UIState.getProperty('view.viewType') === 'parallel-plot') {
-    var emissives = this.markers[0].geometry.attributes.emmissive;
+    var emissives = this.markers[0].geometry.attributes.emissive;
 
     // the emissive attribute is a boolean one
     emissive = (emissive > 0) * 1;
 
+    console.log(group);
     for (i = 0; i < group.length; i++) {
       emissives.setX(group[i].idx, emissive);
     }
+    emissives.needsUpdate = true;
   }
   else {
     for (i = 0; i < group.length; i++) {
-      var material = group[i].material;
-      collection[i].material.emissive.set(color);
+      var material = this.markers[group[i].idx].material;
+      material.emissive.set(emissive);
     }
   }
 };
@@ -1141,17 +1143,17 @@ DecompositionView.prototype.setEmissive = function(emissive, group) {
  * Group by color
  *
  * @param {Array} names An array of strings with the sample names.
- * @returns {Object} Mapping of colors to objects.
+ * @return {Object} Mapping of colors to objects.
  */
 DecompositionView.prototype.groupByColor = function(names) {
 
-  var colorGroups = {}, groupping;
+  var colorGroups = {}, groupping, markers = this.markers;
   var plottables = this.decomp.getPlottableByIDs(names);
 
   // we need to retrieve colors in a very different way
   if (this.UIState['view.viewType'] === 'parallel-plot' ||
       this.UIState['view.usesPointCloud']) {
-    var colors = cloud.geometry.attributes.color;
+    var colors = this.markers[0].geometry.attributes.color;
 
     groupping = function(plottable) {
       // taken from Color.getHexString in THREE.js
@@ -1162,15 +1164,15 @@ DecompositionView.prototype.groupByColor = function(names) {
     };
   }
   else {
-    if (this.decomp.isScatterType) {
+    if (this.decomp.isScatterType()) {
       groupping = function(plottable) {
-        return plottable.material.color.getHexString();
+        return markers[plottable.idx].material.color.getHexString();
       };
     }
     else {
       // check that this getColor method works
       groupping = function(plottable) {
-        return plottable.getColor().getHexString();
+        return markers[plottable.idx].getColor().getHexString();
       };
     }
   }
