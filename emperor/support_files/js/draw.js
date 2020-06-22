@@ -128,6 +128,30 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
   };
 
   /**
+   * Dispose of underlying objects
+   */
+  EmperorArrowHelper.prototype.dispose = function() {
+    // dispose each object according to THREE's guide
+    this.label.material.map.dispose();
+    this.label.material.dispose();
+    this.label.geometry.dispose();
+
+    this.cone.material.dispose();
+    this.cone.geometry.dispose();
+
+    this.line.material.dispose();
+    this.line.geometry.dispose();
+
+    this.remove(this.label);
+    this.remove(this.cone);
+    this.remove(this.line);
+
+    this.label = null;
+    this.cone = null;
+    this.line = null;
+  };
+
+  /**
    *
    * Create a generic THREE.Line object
    *
