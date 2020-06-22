@@ -229,7 +229,7 @@ function($, model, EmperorController) {
       plotView.on('dblclick', function(sampleName){
         /*__dblclick_callback__*/
       });
-      plotView.on('select', function(samples){
+      plotView.on('select', function(samples, view){
         /*__select_callback__*/
       });
 
@@ -439,7 +439,7 @@ function($, model, EmperorController) {
       plotView.on('dblclick', function(sampleName){
         /*__dblclick_callback__*/
       });
-      plotView.on('select', function(samples){
+      plotView.on('select', function(samples, view){
         /*__select_callback__*/
       });
 

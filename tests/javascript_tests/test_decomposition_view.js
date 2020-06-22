@@ -732,7 +732,7 @@ requirejs([
       UIState1.setProperty('view.usesPointCloud', false, UIState1);
       var dv = new DecompositionView(this.multiModelWithEdges,
                                      'scatter',
-                                     UIState1);
+                                     UIState1), obs;
 
       plottables = [this.decomp.plottable[1]];
 
@@ -789,6 +789,12 @@ requirejs([
       deepEqual(dv.markers[0].material.emissive.getHex(), 0x000000);
       deepEqual(dv.markers[1].material.emissive.getHex(), 0xffffff);
 
+      dv.setColor(0xf0f0f0, [this.decomp.plottable[0]]);
+      dv.setColor(0x0f0f0f, [this.decomp.plottable[1]]);
+      obs = dv.groupByColor(['PC.636', 'PC.635']);
+      console.log(obs);
+      equal(obs['f0f0f0'].length, 1);
+      equal(obs['0f0f0f'].length, 1);
     });
 
     test('Test setters for attribures (biplot)', function(assert) {
@@ -927,6 +933,15 @@ requirejs([
       dv.setEmissive(0xffffff, plottables);
       equal(observed.geometry.attributes.emissive.getX(0), 0);
       equal(observed.geometry.attributes.emissive.getX(1), 1);
+
+      obs = dv.groupByColor(['PC.636', 'PC.635']);
+      equal(obs['0000ff'].length, 1);
+
+      dv.setColor(0xf0f0f0, [this.decomp.plottable[0]]);
+      dv.setColor(0x0f0f0f, [this.decomp.plottable[1]]);
+      obs = dv.groupByColor(['PC.636', 'PC.635']);
+      equal(obs['f0f0f0'].length, 1);
+      equal(obs['0f0f0f'].length, 1);
     });
 
   });

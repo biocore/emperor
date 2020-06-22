@@ -739,7 +739,7 @@ requirejs([
      */
     test('Verifying select works', function(assert) {
       // for the test to pass, four assertions should be made
-      expect(2);
+      expect(3);
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -750,10 +750,11 @@ requirejs([
         // checks the callback gets executed
         assert.ok(true);
         assert.equal(selected.length, 2);
-        assert.ok(view.isScatterType());
+        assert.ok(view.decomp.isScatterType());
       });
 
-      spv._selectCallback(this.sharedDecompositionViewDict.scatter.markers);
+      spv._selectCallback(['PC.636', 'PC.635'],
+                          this.sharedDecompositionViewDict.scatter);
 
       // release the control back to the main page
       spv.control.dispose();

@@ -1164,7 +1164,7 @@ DecompositionView.prototype.groupByColor = function(names) {
       r = (colors.getX(plottable.idx) * 255) << 16;
       g = (colors.getY(plottable.idx) * 255) << 8;
       b = (colors.getZ(plottable.idx) * 255) << 0;
-      return r ^ g ^ b;
+      return ('000000' + (r ^ g ^ b).toString(16)).slice(-6);
     };
   }
   else {
