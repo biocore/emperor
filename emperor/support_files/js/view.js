@@ -1120,7 +1120,7 @@ DecompositionView.prototype.setEmissive = function(emissive, group) {
     throw new Error('Cannot set emissive attribute of arrows');
   }
 
-  var i = 0;
+  var i = 0, j = 0;
 
   if (this.UIState.getProperty('view.usesPointCloud') ||
       this.UIState.getProperty('view.viewType') === 'parallel-plot') {
@@ -1129,9 +1129,22 @@ DecompositionView.prototype.setEmissive = function(emissive, group) {
     // the emissive attribute is a boolean one
     emissive = (emissive > 0) * 1;
 
-    console.log(group);
-    for (i = 0; i < group.length; i++) {
-      emissives.setX(group[i].idx, emissive);
+    if (this.markers[0].isPoints) {
+      for (i = 0; i < group.length; i++) {
+        emissives.setX(group[i].idx, emissive);
+      }
+    }
+    else if (this.markers[0].isLineSegments) {
+      // line segments need to be repeated one per dimension
+      for (i = 0; i < group.length; i++) {
+        var numPoints = (this.decomp.dimensions * 2 - 2);
+        var startIndex = group[i].idx * numPoints;
+        var endIndex = (group[i].idx + 1) * (numPoints);
+
+        for (j = startIndex; j < endIndex; j++) {
+          emissives.setX(j, emissive);
+        }
+      }
     }
     emissives.needsUpdate = true;
   }
@@ -1141,6 +1154,8 @@ DecompositionView.prototype.setEmissive = function(emissive, group) {
       material.emissive.set(emissive);
     }
   }
+
+  this.needsUpdate = true;
 };
 
 /**
