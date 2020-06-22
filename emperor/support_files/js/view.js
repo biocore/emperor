@@ -1116,6 +1116,10 @@ DecompositionView.prototype.toggleLabelVisibility = function() {
 DecompositionView.prototype.setEmissive = function(emissive, group) {
   group = group || this.decomp.plottable;
 
+  if (this.decomp.isArrowType()) {
+    throw new Error('Cannot set emissive attribute of arrows');
+  }
+
   var i = 0;
 
   if (this.UIState.getProperty('view.usesPointCloud') ||

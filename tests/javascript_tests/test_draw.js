@@ -160,6 +160,17 @@ requirejs(['draw', 'three'], function(draw, THREE) {
       equal(arrow.name, 'test');
     });
 
+    test('Test dispose method in arrow works', function(assert) {
+      var arrow = makeArrow([0, 0, 0], [9, 1, 1], 0x00ff00, 'test');
+      arrow.dispose();
+
+      assert.ok(arrow.line === null);
+      assert.ok(arrow.label === null);
+      assert.ok(arrow.cone === null);
+
+      equal(arrow.children.length, 0);
+    });
+
     /**
      *
      * Test that the SVG file is generated correctly.

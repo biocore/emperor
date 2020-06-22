@@ -784,6 +784,11 @@ requirejs([
       deepEqual(dv.markers[0].material.opacity, 0.5);
       deepEqual(dv.markers[1].material.transparent, false);
       deepEqual(dv.markers[1].material.opacity, 1.0);
+
+      dv.setEmissive(0xffffff, plottables);
+      deepEqual(dv.markers[0].material.emissive.getHex(), 0x000000);
+      deepEqual(dv.markers[1].material.emissive.getHex(), 0xffffff);
+
     });
 
     test('Test setters for attribures (biplot)', function(assert) {
@@ -832,6 +837,12 @@ requirejs([
           dv.setScale(0.8, plottables);
         },
         Error, 'Arrow types cannot change scale');
+
+      throws(
+        function() {
+          dv.setEmissive(0x888888, plottables);
+        },
+        Error, 'Arrow types cannot change emissive value');
 
       // opacity
       dv.setOpacity(0.5);
@@ -912,6 +923,10 @@ requirejs([
       dv.setOpacity(1.0, plottables);
       equal(observed.geometry.attributes.opacity.getX(0), 0.5);
       equal(observed.geometry.attributes.opacity.getX(1), 1.0);
+
+      dv.setEmissive(0xffffff, plottables);
+      equal(observed.geometry.attributes.emissive.getX(0), 0);
+      equal(observed.geometry.attributes.emissive.getX(1), 1);
     });
 
   });

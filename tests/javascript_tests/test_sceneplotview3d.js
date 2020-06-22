@@ -746,10 +746,11 @@ requirejs([
                                     this.sharedDecompositionViewDict,
                                     this.multiModel, this.div, 0, 0, 20, 20);
 
-      spv.on('select', function(selected) {
+      spv.on('select', function(selected, view) {
         // checks the callback gets executed
         assert.ok(true);
         assert.equal(selected.length, 2);
+        assert.ok(view.isScatterType());
       });
 
       spv._selectCallback(this.sharedDecompositionViewDict.scatter.markers);
