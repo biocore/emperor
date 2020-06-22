@@ -1,8 +1,8 @@
 Emperor ChangeLog
 =================
 
-# Emperor 1.0.0-dev (changes since 1.0.0 go here)
---------------------------------------------------
+# Emperor 1.0.1 (22 Jun 2020)
+-----------------------------
 
 ### Bug Fixes
 * Fix "incomplete" interpolation when using sequential / diverging color maps
@@ -28,8 +28,8 @@ Emperor ChangeLog
 
 * Updated THREE.js and plugins to the latest version (r116).
 
-# Emperor 1.0.0
----------------
+# Emperor 1.0.0 (13 Feb 2020)
+-----------------------------
 
 Introducing Emperor 1.0.0, an improved and new version of Emperor. Including
 a stable Python API and JavaScript API.
