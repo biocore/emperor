@@ -1173,12 +1173,17 @@ DecompositionView.prototype.groupByColor = function(names) {
   if (this.UIState['view.viewType'] === 'parallel-plot' ||
       this.UIState['view.usesPointCloud']) {
     var colors = this.markers[0].geometry.attributes.color;
+    var numPoints = 1;
+
+    if (this.markers[0].isLineSegments) {
+        numPoints = (this.decomp.dimensions * 2 - 2);
+    }
 
     groupping = function(plottable) {
       // taken from Color.getHexString in THREE.js
-      r = (colors.getX(plottable.idx) * 255) << 16;
-      g = (colors.getY(plottable.idx) * 255) << 8;
-      b = (colors.getZ(plottable.idx) * 255) << 0;
+      r = (colors.getX(plottable.idx * numPoints) * 255) << 16;
+      g = (colors.getY(plottable.idx * numPoints) * 255) << 8;
+      b = (colors.getZ(plottable.idx * numPoints) * 255) << 0;
       return ('000000' + (r ^ g ^ b).toString(16)).slice(-6);
     };
   }
