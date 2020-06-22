@@ -126,7 +126,7 @@ define([
     this.parallelController = this.buildCamController('parallel-plot',
                                                      this.parallelCam,
                                                      $container.get(0));
-
+    this.control = this.scatterController;
 
     this.scene.add(this.scatterCam);
     this.scene.add(this.parallelCam);
@@ -174,6 +174,7 @@ define([
         scope.control = scope.parallelController;
         //Don't let the controller move around when its not the active camera
         scope.scatterController.enabled = false;
+        scope.scatterController.autoRotate = false;
         scope.parallelController.enabled = true;
         scope._selectionBox.camera = scope.camera;
       } else {
@@ -184,9 +185,6 @@ define([
         scope.parallelController.enabled = false;
         scope._selectionBox.camera = scope.camera;
       }
-      //Disable any active rotation
-      if (evt.newVal === 'parallel-plot')
-        scope.scatterController.autoRotate = false;
     });
 
     this.addDecompositionsToScene();
@@ -427,14 +425,16 @@ define([
      * Object used to interact with the scene. By default it uses the mouse.
      * @type {THREE.OrbitControls}
      */
-    var control = new THREE.OrbitControls(cam,
-                                          view);
+    var control = new THREE.OrbitControls(cam, view);
     control.enableKeys = false;
     control.rotateSpeed = 1.0;
     control.zoomSpeed = 1.2;
     control.panSpeed = 0.8;
     control.enableZoom = true;
     control.enablePan = true;
+
+    // don't free panning and rotation for paralle plots
+    control.screenSpacePanning = (viewType === 'scatter');
     control.enableRotate = (viewType === 'scatter');
 
     return control;
@@ -1084,6 +1084,7 @@ define([
 
       scope.control.enabled = false;
       scope.scatterController.enabled = false;
+      scope.parallelController.enabled = false;
       scope._selectionHelper.enabled = true;
       scope._selectionHelper.onSelectStart(event);
 
@@ -1142,6 +1143,7 @@ define([
 
       scope.control.enabled = true;
       scope.scatterController.enabled = true;
+      scope.parallelController.enabled = true;
       scope._selectionHelper.enabled = false;
       scope.needsUpdate = true;
     });
