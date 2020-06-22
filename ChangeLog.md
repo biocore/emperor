@@ -14,6 +14,8 @@ Emperor ChangeLog
   very slight precision differences in things like color interpolation
   ([#762](https://github.com/biocore/emperor/issues/762))
 * Fix issue failing to correctly load axes settings.
+* Fix issue where biplots and parallel plots would not work well together
+  ([#747](https://github.com/biocore/emperor/issues/747)).
 
 ### New features
 

@@ -552,27 +552,34 @@ DecompositionView.prototype.getModelPointIndex = function(raytraceIndex,
  *
  */
 DecompositionView.prototype.getVisibleCount = function() {
-  var visible = 0;
-  if (this.UIState['view.viewType'] === 'parallel-plot') {
-    var cloud = this.markers[0];
-    var attrVisibleCount = cloud.geometry.attributes.visible.count;
-    var numPoints = (this.decomp.dimensions * 2 - 2);
-    for (var i = 0; i < attrVisibleCount; i += numPoints) {
-      visible += (cloud.geometry.attributes.visible.getX(i) + 0);
+  var visible = 0, attrVisible, numPoints = 0, scope = this;
+
+  visible = _.reduce(this.markers, function(acc, marker) {
+    var perMarkerCount = 0;
+
+    // shader objects need to be counted different from meshes
+    if (marker.isLineSegments || marker.isPoints) {
+      attrVisible = marker.geometry.attributes.visible;
+
+      // for line segments we need to go in jumps of dimensions*2
+      if (marker.isLineSegments) {
+        numPoints = (scope.decomp.dimensions * 2 - 2);
+      }
+      else {
+        numPoints = 1;
+      }
+
+      for (var i = 0; i < attrVisible.count; i += numPoints) {
+        perMarkerCount += (attrVisible.getX(i) + 0);
+      }
     }
-  }
-  else if (this.UIState['view.usesPointCloud']) {
-    var cloud = this.markers[0];
-    var attrVisibleCount = cloud.geometry.attributes.visible.count;
-    for (var i = 0; i < attrVisibleCount; i++) {
-      visible += (cloud.geometry.attributes.visible.getX(i) + 0);
+    else {
+      // +0 cast bool to int
+      perMarkerCount += (marker.visible + 0);
     }
-  }
-  else {
-    visible = _.reduce(this.markers, function(acc, marker) {
-      return acc + (marker.visible + 0);
-    }, 0);
-  }
+
+    return acc + perMarkerCount;
+  }, 0);
 
   return visible;
 };
@@ -1095,6 +1102,106 @@ DecompositionView.prototype.toggleLabelVisibility = function() {
     arrow.label.visible = Boolean(arrow.label.visible ^ true);
   });
   this.needsUpdate = true;
+};
+
+
+/**
+ * Set the emissive attribute of the markers
+ *
+ * @param {Bool} emissive Whether the object should be emissive.
+ * @param {Plottable[]} group An array of plottables for which the emissive
+ * attribute will be set. If this object is not provided, all the plottables in the
+ * view will be have the scale set.
+ */
+DecompositionView.prototype.setEmissive = function(emissive, group) {
+  group = group || this.decomp.plottable;
+
+  if (this.decomp.isArrowType()) {
+    throw new Error('Cannot set emissive attribute of arrows');
+  }
+
+  var i = 0, j = 0;
+
+  if (this.UIState.getProperty('view.usesPointCloud') ||
+      this.UIState.getProperty('view.viewType') === 'parallel-plot') {
+    var emissives = this.markers[0].geometry.attributes.emissive;
+
+    // the emissive attribute is a boolean one
+    emissive = (emissive > 0) * 1;
+
+    if (this.markers[0].isPoints) {
+      for (i = 0; i < group.length; i++) {
+        emissives.setX(group[i].idx, emissive);
+      }
+    }
+    else if (this.markers[0].isLineSegments) {
+      // line segments need to be repeated one per dimension
+      for (i = 0; i < group.length; i++) {
+        var numPoints = (this.decomp.dimensions * 2 - 2);
+        var startIndex = group[i].idx * numPoints;
+        var endIndex = (group[i].idx + 1) * (numPoints);
+
+        for (j = startIndex; j < endIndex; j++) {
+          emissives.setX(j, emissive);
+        }
+      }
+    }
+    emissives.needsUpdate = true;
+  }
+  else {
+    for (i = 0; i < group.length; i++) {
+      var material = this.markers[group[i].idx].material;
+      material.emissive.set(emissive);
+    }
+  }
+
+  this.needsUpdate = true;
+};
+
+/**
+ * Group by color
+ *
+ * @param {Array} names An array of strings with the sample names.
+ * @return {Object} Mapping of colors to objects.
+ */
+DecompositionView.prototype.groupByColor = function(names) {
+
+  var colorGroups = {}, groupping, markers = this.markers;
+  var plottables = this.decomp.getPlottableByIDs(names);
+
+  // we need to retrieve colors in a very different way
+  if (this.UIState['view.viewType'] === 'parallel-plot' ||
+      this.UIState['view.usesPointCloud']) {
+    var colors = this.markers[0].geometry.attributes.color;
+    var numPoints = 1;
+
+    if (this.markers[0].isLineSegments) {
+        numPoints = (this.decomp.dimensions * 2 - 2);
+    }
+
+    groupping = function(plottable) {
+      // taken from Color.getHexString in THREE.js
+      r = (colors.getX(plottable.idx * numPoints) * 255) << 16;
+      g = (colors.getY(plottable.idx * numPoints) * 255) << 8;
+      b = (colors.getZ(plottable.idx * numPoints) * 255) << 0;
+      return ('000000' + (r ^ g ^ b).toString(16)).slice(-6);
+    };
+  }
+  else {
+    if (this.decomp.isScatterType()) {
+      groupping = function(plottable) {
+        return markers[plottable.idx].material.color.getHexString();
+      };
+    }
+    else {
+      // check that this getColor method works
+      groupping = function(plottable) {
+        return markers[plottable.idx].getColor().getHexString();
+      };
+    }
+  }
+
+  return _.groupBy(plottables, groupping);
 };
 
 /**

@@ -177,6 +177,7 @@ define([
         scope.scatterController.autoRotate = false;
         scope.parallelController.enabled = true;
         scope._selectionBox.camera = scope.camera;
+        scope._selectionBox.collection = [];
       } else {
         scope.camera = scope.scatterCam;
         scope.control = scope.scatterController;
@@ -184,6 +185,7 @@ define([
         scope.scatterController.enabled = true;
         scope.parallelController.enabled = false;
         scope._selectionBox.camera = scope.camera;
+        scope._selectionBox.collection = [];
       }
     });
 
@@ -322,41 +324,7 @@ define([
       copyToClipboard(n);
       showText('(copied to clipboard) ' + n, i);
     });
-    this.on('select', function(selected) {
-      var names = [], indices;
-
-      // get the list of sample names from the views
-      for (var i = 0; i < selected.length; i++) {
-        if (selected[i].isPoints) {
-          // this is a list of indices of the selected samples
-          indices = selected[i].userData.selected;
-
-          for (var j = 0; j < indices.length; j++) {
-            names.push(scope.decViews.scatter.decomp.ids[indices[j]]);
-          }
-        }
-        else if (selected[i].isLineSegments) {
-          var index, viewType, view;
-
-          view = scope.decViews.scatter;
-          viewType = scope.UIState['view.viewType'];
-
-          // this is a list of indices of the selected samples
-          indices = selected[i].userData.selected;
-
-          for (var k = 0; k < indices.length; k++) {
-            index = view.getModelPointIndex(indices[k], viewType);
-            names.push(view.decomp.ids[index]);
-          }
-
-          // every segment is labeled the same for each sample
-          names = _.unique(names);
-        }
-        else {
-          names.push(selected[i].name);
-        }
-      }
-
+    this.on('select', function(names, view) {
       if (names.length) {
         showText(names.length + ' samples copied to your clipboard.');
         copyToClipboard(names.join(','));
@@ -847,24 +815,48 @@ define([
 
     //Check if the view type changed and swap the markers in/out of the scene
     //tree.
-    var anyMarkersSwapped = false;
+    var anyMarkersSwapped = false, isArrowType;
+
     _.each(this.decViews, function(view) {
       if (view.needsSwapMarkers) {
+        isArrowType = view.decomp.isArrowType();
         anyMarkersSwapped = true;
 
         // arrows are in the scene whereas points/markers are in a different
         // group used for brush selection
-        var group = view.decomp.isArrowType() ? scope.scene : scope._selectable;
+        var group = isArrowType ? scope.scene : scope._selectable;
+        var oldMarkers = view.getAndClearOldMarkers(), marker;
 
-        var oldMarkers = view.getAndClearOldMarkers();
         for (var i = 0; i < oldMarkers.length; i++) {
-          group.remove(oldMarkers[i]);
-          oldMarkers[i].material.dispose(); //FIXME:  What is our plan for this?
-          oldMarkers[i].geometry.dispose(); //FIXME:  What is our plan for this?
+          marker = oldMarkers[i];
+
+          group.remove(marker);
+
+          if (isArrowType) {
+            marker.dispose();
+          }
+          else {
+            marker.material.dispose();
+            marker.geometry.dispose();
+          }
         }
+
+        // do not show arrows in a parallel plot
         var newMarkers = view.markers;
-        for (i = 0; i < newMarkers.length; i++) {
-          group.add(newMarkers[i]);
+        if (isArrowType && scope.UIState['view.viewType'] === 'scatter' ||
+            view.decomp.isScatterType()) {
+          var scaling = scope.getScalingConstant();
+
+          for (i = 0; i < newMarkers.length; i++) {
+            marker = newMarkers[i];
+
+            // when we re-add arrows we need to re-scale the labels
+            if (isArrowType) {
+              marker.label.scale.set(marker.label.scale.x * scaling,
+                                     marker.label.scale.y * scaling, 1);
+            }
+            group.add(marker);
+          }
         }
 
         var lines = view.lines;
@@ -1019,8 +1011,8 @@ define([
     if (this.UIState.getProperty('view.usesPointCloud') ||
         this.UIState.getProperty('view.viewType') === 'parallel-plot') {
       for (i = 0; i < collection.length; i++) {
-        // for shaders we only care about the first bit
-        var indices, emissiveColor = color & 1;
+        // for shaders the emissive attribute is an int
+        var indices, emissiveColor = (color > 0) * 1;
 
         // if there's no selection then update all the points
         if (collection[i].userData.selected === undefined) {
@@ -1130,7 +1122,7 @@ define([
       // otherwise if shift is being held then keep selecting, otherwise ignore
       if (event.shiftKey) {
         var element = scope.renderer.domElement;
-        var offset = $(element).offset();
+        var offset = $(element).offset(), indices = [], names = [];
         scope._selectionBox.endPoint.set(
           ((event.clientX - offset.left) / element.width) * 2 - 1,
           - ((event.clientY - offset.top) / element.height) * 2 + 1,
@@ -1138,7 +1130,40 @@ define([
 
         selected = scope._highlightSelected(scope._selectionBox.select(),
                                             0x8c8c8f);
-        scope._selectCallback(selected);
+
+        // get the list of sample names from the views
+        for (var i = 0; i < selected.length; i++) {
+          if (selected[i].isPoints) {
+            // this is a list of indices of the selected samples
+            indices = selected[i].userData.selected;
+
+            for (var j = 0; j < indices.length; j++) {
+              names.push(scope.decViews.scatter.decomp.ids[indices[j]]);
+            }
+          }
+          else if (selected[i].isLineSegments) {
+            var index, viewType, view;
+
+            view = scope.decViews.scatter;
+            viewType = scope.UIState['view.viewType'];
+
+            // this is a list of indices of the selected samples
+            indices = selected[i].userData.selected;
+
+            for (var k = 0; k < indices.length; k++) {
+              index = view.getModelPointIndex(indices[k], viewType);
+              names.push(view.decomp.ids[index]);
+            }
+
+            // every segment is labeled the same for each sample
+            names = _.unique(names);
+          }
+          else {
+            names.push(selected[i].name);
+          }
+        }
+
+        scope._selectCallback(names, scope.decViews.scatter);
       }
 
       scope.control.enabled = true;
@@ -1154,13 +1179,13 @@ define([
    * Handle selection events.
    * @private
    */
-  ScenePlotView3D.prototype._selectCallback = function(markers) {
+  ScenePlotView3D.prototype._selectCallback = function(names, view) {
     var eventType = 'select';
 
     for (var i = 0; i < this._subscribers[eventType].length; i++) {
       // keep going if one of the callbacks fails
       try {
-        this._subscribers[eventType][i](markers);
+        this._subscribers[eventType][i](names, view);
       } catch (e) {
         console.error(e);
       }
