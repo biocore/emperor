@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>emperor.Emperor.shape_by &#8212; Emperor 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="emperor.Emperor.visibility_by" href="emperor.Emperor.visibility_by.html" />
+    <link rel="prev" title="emperor.Emperor.set_background_color" href="emperor.Emperor.set_background_color.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head>
+  <body role="document">
+  
+  <a href="https://github.com/biocore/emperor"
+     class="visible-desktop hidden-xs"><img
+    id="gh-banner"
+    style="position: absolute; top: 50px; right: 0; border: 0;"
+    src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+    alt="Fork me on GitHub"></a>
+  <script>
+    // Adjust banner height.
+    $(function () {
+      var navHeight = $(".navbar .container").css("height");
+      $("#gh-banner").css("top", navHeight);
+    });
+  </script>
+
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Emperor</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../emperor_objects.html">Emperor&#8217;s public API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../description.html">Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats.html">File Formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/animations.html">Creating an animation using Emperor</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../js_integration.html">Integrating Emperor&#8217;s JavaScript API with other applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../js_integration.html#subscribing-to-events-from-a-3rd-party-application">Subscribing to Events from a 3rd Party application</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">emperor.Emperor.shape_by</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="emperor-emperor-shape-by">
+<h1>emperor.Emperor.shape_by<a class="headerlink" href="#emperor-emperor-shape-by" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="emperor.Emperor.shape_by">
+<code class="descclassname">Emperor.</code><code class="descname">shape_by</code><span class="sig-paren">(</span><em>category</em>, <em>shapes=None</em><span class="sig-paren">)</span><a class="headerlink" href="#emperor.Emperor.shape_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the shape settings for the plot elements</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>category: str</strong></p>
+<blockquote>
+<div><p>Name of the metadata column.</p>
+</div></blockquote>
+<p><strong>shapes: dict or pd.Series, optional</strong></p>
+<blockquote>
+<div><p>Mapping of categories to string values determining the shape of
+the objects. See the notes for the valid options.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">emperor.Emperor</p>
+<blockquote>
+<div><p>Emperor object with updated settings.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>KeyError</strong></p>
+<blockquote>
+<div><p>If <code class="docutils literal"><span class="pre">category</span></code> is not part of the metadata.</p>
+</div></blockquote>
+<p><strong>TypeError</strong></p>
+<blockquote>
+<div><p>If <code class="docutils literal"><span class="pre">category</span></code> is not a string.</p>
+</div></blockquote>
+<p><strong>ValueError</strong></p>
+<blockquote class="last">
+<div><p>If <code class="docutils literal"><span class="pre">shapes</span></code> describes fewer or more categories than the
+ones present in the <code class="docutils literal"><span class="pre">category</span></code> column.
+If <code class="docutils literal"><span class="pre">shapes</span></code> has shapes in a non-string format.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">emperor.core.Emperor.color_by</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">emperor.core.Emperor.scale_by</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">emperor.core.Emperor.opacity_by</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">emperor.core.Emperor.visibility_by</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">emperor.core.Emperor.set_background_color</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">emperor.core.Emperor.set_axes</span></code></p>
+</div>
+<p class="rubric">Notes</p>
+<p>The valid shape names are <code class="docutils literal"><span class="pre">&quot;Sphere&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Cube&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;Cone&quot;</span></code>,
+<code class="docutils literal"><span class="pre">&quot;Icosahedron&quot;</span></code> and <code class="docutils literal"><span class="pre">&quot;Cylinder&quot;</span></code>.</p>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+  
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2014, Emperor Development Team.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.<br/>
+    </p>
+  </div>
+</footer>
+
+  </body>
+</html>

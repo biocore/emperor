@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>emperor.Emperor &#8212; Emperor 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="emperor.Emperor.animations_by" href="emperor.Emperor.animations_by.html" />
+    <link rel="prev" title="Emperor’s public API" href="../emperor_objects.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head>
+  <body role="document">
+  
+  <a href="https://github.com/biocore/emperor"
+     class="visible-desktop hidden-xs"><img
+    id="gh-banner"
+    style="position: absolute; top: 50px; right: 0; border: 0;"
+    src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+    alt="Fork me on GitHub"></a>
+  <script>
+    // Adjust banner height.
+    $(function () {
+      var navHeight = $(".navbar .container").css("height");
+      $("#gh-banner").css("top", navHeight);
+    });
+  </script>
+
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Emperor</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../emperor_objects.html">Emperor&#8217;s public API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../description.html">Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formats.html">File Formats</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/animations.html">Creating an animation using Emperor</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../js_integration.html">Integrating Emperor&#8217;s JavaScript API with other applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../js_integration.html#subscribing-to-events-from-a-3rd-party-application">Subscribing to Events from a 3rd Party application</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">emperor.Emperor</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="emperor-emperor">
+<h1>emperor.Emperor<a class="headerlink" href="#emperor-emperor" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="emperor.Emperor">
+<em class="property">class </em><code class="descclassname">emperor.</code><code class="descname">Emperor</code><span class="sig-paren">(</span><em>ordination</em>, <em>mapping_file</em>, <em>feature_mapping_file=None</em>, <em>dimensions=5</em>, <em>remote=True</em>, <em>jackknifed=None</em>, <em>procrustes=None</em>, <em>ignore_missing_samples=False</em><span class="sig-paren">)</span><a class="headerlink" href="#emperor.Emperor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display principal coordinates analysis plots</p>
+<p>Use this object to interactively display a PCoA plot using the Emperor
+GUI. IPython provides a rich display system that will let you display a
+plot inline, without the need of creating a temprorary file or having to
+write to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ordination: skbio.OrdinationResults</strong></p>
+<blockquote>
+<div><p>Object containing the computed values for an ordination method in
+scikit-bio. Currently supports skbio.stats.ordination.PCoA and
+skbio.stats.ordination.RDA results.</p>
+</div></blockquote>
+<p><strong>mapping_file: pd.DataFrame</strong></p>
+<blockquote>
+<div><p>DataFrame object with the metadata associated to the samples in the
+<code class="docutils literal"><span class="pre">ordination</span></code> object, should have an index set and it should match the
+identifiers in the <code class="docutils literal"><span class="pre">ordination</span></code> object.</p>
+</div></blockquote>
+<p><strong>feature_mapping_file: pd.DataFrame, optional</strong></p>
+<blockquote>
+<div><p>DataFrame object with the metadata associated to the features in the
+<code class="docutils literal"><span class="pre">ordination</span></code> object, should have an index set and it should match the
+identifiers in the <code class="docutils literal"><span class="pre">ordination.features</span></code> object.</p>
+</div></blockquote>
+<p><strong>dimensions: int, optional</strong></p>
+<blockquote>
+<div><p>Number of dimensions to keep from the ordination data, defaults to 5.
+Be aware that this value will determine the number of dimensions for
+all computations.</p>
+</div></blockquote>
+<p><strong>remote: bool or str, optional</strong></p>
+<blockquote>
+<div><p>This parameter can have one of the following three behaviors according
+to the value: (1) <code class="docutils literal"><span class="pre">str</span></code> - load the resources from a user-specified
+remote location, (2) <code class="docutils literal"><span class="pre">False</span></code> - load the resources from the
+nbextensions folder in the Jupyter installation or (3) <code class="docutils literal"><span class="pre">True</span></code> - load
+the resources from the GitHub repository. This parameter defaults to
+<code class="docutils literal"><span class="pre">True</span></code>. See the Notes section for more information.</p>
+</div></blockquote>
+<p><strong>jackknifed: list of OrdinationResults, optional</strong></p>
+<blockquote>
+<div><p>A list of the OrdinationResults objects with the same sample
+identifiers as the identifiers in <code class="docutils literal"><span class="pre">ordination</span></code>.</p>
+</div></blockquote>
+<p><strong>procrustes: list of OrdinationResults, optional</strong></p>
+<blockquote>
+<div><p>A list of the OrdinationResults objects with the same sample
+identifiers as the identifiers in <code class="docutils literal"><span class="pre">ordination</span></code>.</p>
+</div></blockquote>
+<p><strong>ignore_missing_samples: bool, optional</strong></p>
+<blockquote>
+<div><p>If set to <cite>True</cite> samples and features without metadata are included by
+setting all metadata values to: <code class="docutils literal"><span class="pre">This</span> <span class="pre">element</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">metadata</span></code>. By
+default an exception will be raised if missing elements are
+encountered. Note, this flag only takes effect if there&#8217;s at least one
+overlapping element.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
+<blockquote>
+<div><p>If the remote argument is not of <code class="docutils literal"><span class="pre">bool</span></code> or <code class="docutils literal"><span class="pre">str</span></code> type.
+If none of the samples in the ordination matrix are in the metadata.
+If the data is one-dimensional.</p>
+</div></blockquote>
+<p><strong>KeyError</strong></p>
+<blockquote class="last">
+<div><p>If there&#8217;s samples in the ordination matrix but not in the metadata.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This object currently does not support the full range of actions that the
+GUI does support and should be considered experimental at the moment.</p>
+<p>The <code class="docutils literal"><span class="pre">remote</span></code> parameter is intended for different use-cases, you should
+use the first option &#8220;(1) - URL&#8221; when you want to load the data from a
+location different than the GitHub repository or your Jupyter notebook
+resources i.e. a custom URL. The second option &#8220;(2) - <code class="docutils literal"><span class="pre">False</span></code>&#8221; loads
+resources from your local Jupyter installation, note that you <strong>need</strong> to
+execute <code class="docutils literal"><span class="pre">nbinstall</span></code> at least once or the application will error, this
+option is ideal for developers modifying the JavaScript source code, and in
+environments of limited internet connection. Finally, the third option &#8220;(3)
+- <code class="docutils literal"><span class="pre">True</span></code>&#8221; should be used if you intend to embed an Emperor plot in a
+notebook and then publish it using <a class="reference external" href="http://nbviewer.jupyter.org">http://nbviewer.jupyter.org</a>.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[R3]</a></td><td>EMPeror: a tool for visualizing high-throughput microbial community
+data Vazquez-Baeza Y, Pirrung M, Gonzalez A, Knight R.  Gigascience.
+2013 Nov 26;2(1):16.</td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create an Emperor object and display it from the Jupyter notebook:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emperor</span> <span class="k">import</span> <span class="n">Emperor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skbio</span> <span class="k">import</span> <span class="n">OrdinationResults</span>
+</pre></div>
+</div>
+<p>Ordination plots are almost invariantly associated with a set of data, that
+relates each sample to its scientific context, we refer to this as the
+<em>sample metadata</em>, and represent it using Pandas DataFrames. For this
+example we will need some metadata, we start by creating our metadata
+object:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;PC.354&#39;</span><span class="p">,</span> <span class="s1">&#39;Control&#39;</span><span class="p">,</span> <span class="s1">&#39;20061218&#39;</span><span class="p">,</span> <span class="s1">&#39;Control_mouse_I.D._354&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.355&#39;</span><span class="p">,</span> <span class="s1">&#39;Control&#39;</span><span class="p">,</span> <span class="s1">&#39;20061218&#39;</span><span class="p">,</span> <span class="s1">&#39;Control_mouse_I.D._355&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.356&#39;</span><span class="p">,</span> <span class="s1">&#39;Control&#39;</span><span class="p">,</span> <span class="s1">&#39;20061126&#39;</span><span class="p">,</span> <span class="s1">&#39;Control_mouse_I.D._356&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.481&#39;</span><span class="p">,</span> <span class="s1">&#39;Control&#39;</span><span class="p">,</span> <span class="s1">&#39;20070314&#39;</span><span class="p">,</span> <span class="s1">&#39;Control_mouse_I.D._481&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.593&#39;</span><span class="p">,</span> <span class="s1">&#39;Control&#39;</span><span class="p">,</span> <span class="s1">&#39;20071210&#39;</span><span class="p">,</span> <span class="s1">&#39;Control_mouse_I.D._593&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.607&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;20071112&#39;</span><span class="p">,</span> <span class="s1">&#39;Fasting_mouse_I.D._607&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.634&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;20080116&#39;</span><span class="p">,</span> <span class="s1">&#39;Fasting_mouse_I.D._634&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.635&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;20080116&#39;</span><span class="p">,</span> <span class="s1">&#39;Fasting_mouse_I.D._635&#39;</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="s1">&#39;PC.636&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;20080116&#39;</span><span class="p">,</span> <span class="s1">&#39;Fasting_mouse_I.D._636&#39;</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SampleID&#39;</span><span class="p">,</span> <span class="s1">&#39;Treatment&#39;</span><span class="p">,</span> <span class="s1">&#39;DOB&#39;</span><span class="p">,</span> <span class="s1">&#39;Description&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Before we can use this mapping file in Emperor, we should set the index
+to be <cite>SampleID</cite>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;SampleID&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then let&#8217;s create some artificial ordination data:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ids</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;PC.636&#39;</span><span class="p">,</span> <span class="s1">&#39;PC.635&#39;</span><span class="p">,</span> <span class="s1">&#39;PC.356&#39;</span><span class="p">,</span> <span class="s1">&#39;PC.481&#39;</span><span class="p">,</span> <span class="s1">&#39;PC.354&#39;</span><span class="p">,</span> <span class="s1">&#39;PC.593&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s1">&#39;PC.355&#39;</span><span class="p">,</span> <span class="s1">&#39;PC.607&#39;</span><span class="p">,</span> <span class="s1">&#39;PC.634&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eigvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.47941212</span><span class="p">,</span> <span class="mf">0.29201496</span><span class="p">,</span> <span class="mf">0.24744925</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="mf">0.20149607</span><span class="p">,</span> <span class="mf">0.18007613</span><span class="p">,</span> <span class="mf">0.14780677</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="mf">0.13579593</span><span class="p">,</span> <span class="mf">0.1122597</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eigvals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">eigvals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ids</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">eigvals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">site</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ids</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p_explained</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.26688705</span><span class="p">,</span> <span class="mf">0.1625637</span><span class="p">,</span> <span class="mf">0.13775413</span><span class="p">,</span> <span class="mf">0.11217216</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="mf">0.10024775</span><span class="p">,</span> <span class="mf">0.08228351</span><span class="p">,</span> <span class="mf">0.07559712</span><span class="p">,</span> <span class="mf">0.06249458</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="mf">0.</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p_explained</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">p_explained</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ids</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And encapsulate it inside an <code class="docutils literal"><span class="pre">OrdinationResults</span></code> object:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ores</span> <span class="o">=</span> <span class="n">OrdinationResults</span><span class="p">(</span><span class="n">eigvals</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
+<span class="gp">... </span>                         <span class="n">proportion_explained</span><span class="o">=</span><span class="n">p_explained</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally import the Emperor object and display it using Jupyter, note that
+this call will have no effect under a regular Python session:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Emperor</span><span class="p">(</span><span class="n">ores</span><span class="p">,</span> <span class="n">mf</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>jackknifed: list</td>
+<td>List of OrdinationResults objects in the same sample-order as <code class="docutils literal"><span class="pre">self.ordination</span></code>.</td>
+</tr>
+<tr class="row-even"><td>procrustes: list</td>
+<td>List of OrdinationResults objects in the same sample-order as <code class="docutils literal"><span class="pre">self.ordination</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>procrustes_names: list</td>
+<td>A list of names that will be used to distinguish samples from each ordination in a procrustes plot. The GUI will display a category labeled <code class="docutils literal"><span class="pre">__Procrustes_Names__</span></code>.</td>
+</tr>
+<tr class="row-even"><td>width: str</td>
+<td>Width of the plot when displayed in the Jupyter notebook (in CSS units).</td>
+</tr>
+<tr class="row-odd"><td>height: str</td>
+<td>Height of the plot when displayed in the Jupyter notebook (in CSS units).</td>
+</tr>
+<tr class="row-even"><td>settings: dict</td>
+<td>A dictionary of settings that is loaded when a plot is displayed. Settings generated from the graphical user interface are stored as JSON files that can be loaded, and directly set to this attribute. Alternatively, each aspect of the plot can be changed with dedicated methods, for example see <code class="docutils literal"><span class="pre">color_by</span></code>, <code class="docutils literal"><span class="pre">set_background_color</span></code>, etc. This attribute can also be serialized as a JSON string and loaded from the GUI.</td>
+</tr>
+<tr class="row-odd"><td>feature_mf: pd.DataFrame</td>
+<td>DataFrame object with the metadata associated to the features in the <code class="docutils literal"><span class="pre">ordination</span></code> object, should have an index set and it should match the identifiers in the <code class="docutils literal"><span class="pre">ordination.features</span></code> property.</td>
+</tr>
+<tr class="row-even"><td>custom_axes</td>
+<td>(list of str, optional) Custom axes to embed in the ordination.</td>
+</tr>
+<tr class="row-odd"><td>jackknifing_method</td>
+<td>({&#8216;IQR&#8217;, &#8216;sdev&#8217;}, optional) Used only when plotting ellipsoids for jackknifed beta diversity (i.e. using a directory of coord files instead of a single coord file). Valid values are <code class="docutils literal"><span class="pre">&quot;IQR&quot;</span></code> (for inter-quartile ranges) and <code class="docutils literal"><span class="pre">&quot;sdev&quot;</span></code> (for standard deviation). This argument is ignored if <code class="docutils literal"><span class="pre">self.jackknifed</span></code> is <code class="docutils literal"><span class="pre">None</span></code> or an empty list.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="emperor.Emperor.animations_by.html#emperor.Emperor.animations_by" title="emperor.Emperor.animations_by"><code class="xref py py-obj docutils literal"><span class="pre">animations_by</span></code></a>(gradient,&nbsp;trajectory,&nbsp;colors)</td>
+<td>Set the shape settings for the plot elements</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="emperor.Emperor.color_by.html#emperor.Emperor.color_by" title="emperor.Emperor.color_by"><code class="xref py py-obj docutils literal"><span class="pre">color_by</span></code></a>(category[,&nbsp;colors,&nbsp;colormap,&nbsp;...])</td>
+<td>Set the coloring settings for the plot elements</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="emperor.Emperor.copy_support_files.html#emperor.Emperor.copy_support_files" title="emperor.Emperor.copy_support_files"><code class="xref py py-obj docutils literal"><span class="pre">copy_support_files</span></code></a>([target])</td>
+<td>Copies the support files to a target directory</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="emperor.Emperor.make_emperor.html#emperor.Emperor.make_emperor" title="emperor.Emperor.make_emperor"><code class="xref py py-obj docutils literal"><span class="pre">make_emperor</span></code></a>([standalone])</td>
+<td>Build an emperor plot</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="emperor.Emperor.opacity_by.html#emperor.Emperor.opacity_by" title="emperor.Emperor.opacity_by"><code class="xref py py-obj docutils literal"><span class="pre">opacity_by</span></code></a>(category[,&nbsp;opacities,&nbsp;...])</td>
+<td>Set the scaling settings for the plot elements</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="emperor.Emperor.scale_by.html#emperor.Emperor.scale_by" title="emperor.Emperor.scale_by"><code class="xref py py-obj docutils literal"><span class="pre">scale_by</span></code></a>(category[,&nbsp;scales,&nbsp;global_scale,&nbsp;...])</td>
+<td>Set the scaling settings for the plot elements</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="emperor.Emperor.set_axes.html#emperor.Emperor.set_axes" title="emperor.Emperor.set_axes"><code class="xref py py-obj docutils literal"><span class="pre">set_axes</span></code></a>([visible,&nbsp;invert,&nbsp;color,&nbsp;view_type])</td>
+<td>Change visual aspects about visible dimensions in a plot</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="emperor.Emperor.set_background_color.html#emperor.Emperor.set_background_color" title="emperor.Emperor.set_background_color"><code class="xref py py-obj docutils literal"><span class="pre">set_background_color</span></code></a>([color])</td>
+<td>Changes the background color of the plot</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="emperor.Emperor.shape_by.html#emperor.Emperor.shape_by" title="emperor.Emperor.shape_by"><code class="xref py py-obj docutils literal"><span class="pre">shape_by</span></code></a>(category[,&nbsp;shapes])</td>
+<td>Set the shape settings for the plot elements</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="emperor.Emperor.visibility_by.html#emperor.Emperor.visibility_by" title="emperor.Emperor.visibility_by"><code class="xref py py-obj docutils literal"><span class="pre">visibility_by</span></code></a>(category[,&nbsp;visibilities,&nbsp;negate])</td>
+<td>Set the visibility settings for the plot elements</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+  
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2014, Emperor Development Team.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.<br/>
+    </p>
+  </div>
+</footer>
+
+  </body>
+</html>
