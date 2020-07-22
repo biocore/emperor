@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Emperor’s public API &#8212; Emperor 1.0.0 documentation</title>
+    <title>Emperor’s public API &#8212; Emperor 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0.0',
+        VERSION:     '1.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/copybutton.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Description" href="description.html" />
+    <link rel="next" title="emperor.Emperor" href="generated/emperor.Emperor.html" />
     <link rel="prev" title="Emperor’s Documentation" href="index.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -67,7 +67,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           Emperor</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.0.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -93,6 +93,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/animations.html">Creating an animation using Emperor</a></li>
 </ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="js_integration.html">Integrating Emperor&#8217;s JavaScript API with other applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="js_integration.html#subscribing-to-events-from-a-3rd-party-application">Subscribing to Events from a 3rd Party application</a></li>
+</ul>
 </ul>
 </li>
               
@@ -105,7 +109,14 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Emperor&#8217;s public API</a></li>
+<li><a class="reference internal" href="#">Emperor&#8217;s public API</a><ul>
+<li><a class="reference internal" href="#emperor-3d-pcoa-viewer-emperor">Emperor 3D PCoA viewer (<code class="docutils literal"><span class="pre">emperor</span></code>)</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </ul>
 </li>
@@ -137,6 +148,44 @@
       
   <div class="section" id="module-emperor">
 <span id="emperor-s-public-api"></span><h1>Emperor&#8217;s public API<a class="headerlink" href="#module-emperor" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="emperor-3d-pcoa-viewer-emperor">
+<span id="emperor-python-docs"></span><h2>Emperor 3D PCoA viewer (<a class="reference internal" href="#module-emperor" title="emperor"><code class="xref py py-mod docutils literal"><span class="pre">emperor</span></code></a>)<a class="headerlink" href="#emperor-3d-pcoa-viewer-emperor" title="Permalink to this headline">¶</a></h2>
+<p>This module provides objects and functions to interact and visualize a set of
+coordinates using the Emperor interface user interface. The <cite>Emperor</cite> class,
+and the functions present here are all intended to be compatible with the
+Jupyter notebook.</p>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/emperor.Emperor.html#emperor.Emperor" title="emperor.Emperor"><code class="xref py py-obj docutils literal"><span class="pre">Emperor</span></code></a>(ordination,&nbsp;mapping_file[,&nbsp;...])</td>
+<td>Display principal coordinates analysis plots</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/emperor.nbinstall.html#emperor.nbinstall" title="emperor.nbinstall"><code class="xref py py-obj docutils literal"><span class="pre">nbinstall</span></code></a>([overwrite,&nbsp;user,&nbsp;prefix])</td>
+<td>Copies resources to the &#8216;/nbextensions&#8217; folder in your IPython directory</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/emperor.scatterplot.html#emperor.scatterplot" title="emperor.scatterplot"><code class="xref py py-obj docutils literal"><span class="pre">scatterplot</span></code></a>(df[,&nbsp;x,&nbsp;y,&nbsp;z,&nbsp;remote])</td>
+<td>Create an Emperor scatter plot from a Pandas DataFrame</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 
 
