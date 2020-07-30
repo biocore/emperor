@@ -157,6 +157,15 @@ function(_, trajectory) {
      */
     this.speed = speed;
 
+    /**
+     * @type {Array}
+     * Points in the gradient that all trajectories go through.
+     */
+    this.gradientPoints = [];
+
+    // frames we want projected in the trajectory's interval
+    this.n = Math.floor((1 / (this.speed)) * 10);
+
     this.initializeTrajectories();
     this.getMaximumTrajectoryLength();
 
@@ -174,9 +183,6 @@ function(_, trajectory) {
     var sampleNamesBuffer = [], gradientPointsBuffer = [];
     var coordinatesBuffer = [];
     var chewedDataBuffer = null;
-
-    // frames we want projected in the trajectory's interval
-    var n = Math.floor((1 / (this.speed)) * 10);
 
     // compute a dictionary from where we will extract the germane data
     chewedData = getSampleNamesAndDataForSortedTrajectories(
@@ -231,14 +237,41 @@ function(_, trajectory) {
       // create the trajectory object, we use Infinity to draw as many frames
       // as they may be needed
       trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer, key,
-          gradientPointsBuffer, coordinatesBuffer, this.minimumDelta, n,
+          gradientPointsBuffer, coordinatesBuffer, this.minimumDelta, this.n,
           Infinity);
 
       this.trajectories.push(trajectoryBuffer);
 
+      // keep track of all gradient points so we can track uninterpolated
+      // frames - only for trajectories that are added into the animation
+      this.gradientPoints = this.gradientPoints.concat(gradientPointsBuffer);
     }
+
+    // javascript sorting is a hot mess
+    this.gradientPoints = _.map(_.uniq(this.gradientPoints), parseFloat);
+    this.gradientPoints = _.sortBy(this.gradientPoints);
+
     return;
   };
+
+
+  AnimationDirector.prototype.computeFrameIndices = function() {
+    // 1 is the first frame
+    var delta = 0, out = [0];
+    console.log(this.gradientPoints);
+
+    for (var i = 0; i < this.gradientPoints.length - 1; i++) {
+      delta = Math.abs(Math.abs(this.gradientPoints[i]) -
+                       Math.abs(this.gradientPoints[i + 1]));
+
+      // no need to truncate since we use Infinity when creating the trajectory
+      pointsPerStep =  Math.floor((delta * this.n) / this.minimumDelta);
+
+      out.push(out[i] + pointsPerStep);
+    }
+
+    return out;
+  }
 
   /**
    *

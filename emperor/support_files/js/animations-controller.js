@@ -492,6 +492,12 @@ define([
     view.needsUpdate = true;
 
     this._updateButtons();
+
+    this.dispatchEvent({type: 'animation-cancelled', message: {
+      gradient: this.getGradientCategory(),
+      trajectory: this.getTrajectoryCategory(),
+      controller: this
+    }});
   };
 
   /**
@@ -505,6 +511,13 @@ define([
       this.playing = false;
     }
     this._updateButtons();
+
+    this.dispatchEvent({type: 'animation-paused', message: {
+      gradient: this.getGradientCategory(),
+      trajectory: this.getTrajectoryCategory(),
+      controller: this
+    }});
+
   };
 
   /**
@@ -556,8 +569,18 @@ define([
                                           trajectory, speed);
     this.director.updateFrame();
 
+    this._currentFrame = 0;
+    this._frameIndices = this.director.computeFrameIndices();
+    console.log(this._frameIndices);
+
     this.playing = true;
     this._updateButtons();
+
+    this.dispatchEvent({type: 'animation-started', message: {
+      gradient: this.getGradientCategory(),
+      trajectory: this.getTrajectoryCategory(),
+      controller: this
+    }});
   };
 
   /**
@@ -624,6 +647,23 @@ define([
 
     view.needsUpdate = true;
 
+    if(this.director.currentFrame >= this._frameIndices[0]) {
+      this.dispatchEvent({type: 'animation-new-frame-started', message: {
+        frame: this._currentFrame,
+        gradientPoint: this.director.gradientPoints[this._currentFrame],
+        controller: this
+      }});
+
+      this._frameIndices.shift();
+      this._currentFrame += 1;
+
+      // this.
+      console.log(this._frameIndices.length, 'frames left');
+      console.log(this.director.currentFrame, 'current frame');
+      // post notification
+    }
+
+
     this.director.updateFrame();
 
     if (this.director.animationCycleFinished()) {
@@ -635,6 +675,13 @@ define([
       // screen.
       this._updateButtons();
       this.$rewind.prop('disabled', false).button('refresh');
+
+      this.dispatchEvent({type: 'animation-ended', message: {
+        gradient: this.getGradientCategory(),
+        trajectory: this.getTrajectoryCategory(),
+        controller: this
+      }});
+
     }
   };
 
