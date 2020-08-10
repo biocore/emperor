@@ -11,7 +11,7 @@ Before contributing code to Emperor, please familiarize yourself with the [contr
 
 ## Usage
 
-You can start using Emperor through [QIIME2](https://qiime2.org)'s [interfaces](https://docs.qiime2.org/2018.8/interfaces/) (the command line interface or the graphical user interface), or alternatively using the Python interface (compatible with the Jupyter notebook, see [this example](http://nbviewer.jupyter.org/github/biocore/emperor/blob/new-api/examples/keyboard.ipynb)). For more detalis, refer to our [online documentation](http://emperor.microbio.me).
+You can start using Emperor through [QIIME2](https://qiime2.org)'s [interfaces](https://docs.qiime2.org/2018.8/interfaces/) (the command line or the graphical user interface), or alternatively using the Python interface (compatible with the Jupyter notebook, see [this example](http://nbviewer.jupyter.org/github/biocore/emperor/blob/new-api/examples/keyboard.ipynb)). For more details, refer to our [online documentation](http://emperor.microbio.me).
 
 ## Publications
 
