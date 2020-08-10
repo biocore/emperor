@@ -159,9 +159,11 @@ function(_, trajectory) {
 
     /**
      * @type {Array}
-     * Points in the gradient that all trajectories go through.
+     * Sorted array of values in the gradient that all trajectories go through.
      */
     this.gradientPoints = [];
+
+    this._frameIndices = null;
 
     // frames we want projected in the trajectory's interval
     this.n = Math.floor((1 / (this.speed)) * 10);
@@ -247,18 +249,34 @@ function(_, trajectory) {
       this.gradientPoints = this.gradientPoints.concat(gradientPointsBuffer);
     }
 
-    // javascript sorting is a hot mess
+    // javascript sorting is a hot mess, we need to convert to float first
     this.gradientPoints = _.map(_.uniq(this.gradientPoints), parseFloat);
     this.gradientPoints = _.sortBy(this.gradientPoints);
+
+    this._frameIndices = this._computeFrameIndices();
 
     return;
   };
 
+  /**
+   * Check if the current frame represents one of the gradient points.
+   *
+   * This is useful to keep track of when a new segment of the gradient has
+   * started.
+   */
+  AnimationDirector.prototype.currentFrameIsGradientPoint = function () {
+    return this._frameIndices.indexOf(this.currentFrame) !== -1;
+  };
 
-  AnimationDirector.prototype.computeFrameIndices = function() {
-    // 1 is the first frame
-    var delta = 0, out = [0];
-    console.log(this.gradientPoints);
+
+  /**
+   * Compute the indices where a gradient point is found
+   * @return {Array} Array of index values where the gradient points fall.
+   * @private
+   */
+  AnimationDirector.prototype._computeFrameIndices = function() {
+    // 1 represents the first frame
+    var delta = 0, out = [1];
 
     for (var i = 0; i < this.gradientPoints.length - 1; i++) {
       delta = Math.abs(Math.abs(this.gradientPoints[i]) -
@@ -271,7 +289,7 @@ function(_, trajectory) {
     }
 
     return out;
-  }
+  };
 
   /**
    *

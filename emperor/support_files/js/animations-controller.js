@@ -84,6 +84,7 @@ define([
     this._$mediaContainer.append(this.$pause);
 
     this._colors = {};
+    this._currentFrame = 0;
 
     // make the buttons squared
     this._$mediaContainer.find('button').css({'width': '30px',
@@ -567,11 +568,9 @@ define([
 
     this.director = new AnimationDirector(headers, data, positions, gradient,
                                           trajectory, speed);
-    this.director.updateFrame();
 
+    this.director.updateFrame();
     this._currentFrame = 0;
-    this._frameIndices = this.director.computeFrameIndices();
-    console.log(this._frameIndices);
 
     this.playing = true;
     this._updateButtons();
@@ -611,14 +610,13 @@ define([
       {
         var color = this._colors[trajectory.metadataCategoryName] || 'red';
         view.staticTubes[i] = drawTrajectoryLineStatic(trajectory,
-                                                        color,
-                                                        radius);
+                                                       color,
+                                                       radius);
       }
 
       //Ensure static tube draw ranges are set to visible segment
-      updateStaticTrajectoryDrawRange(trajectory,
-                                        this.director.currentFrame,
-                                        view.staticTubes[i]);
+      updateStaticTrajectoryDrawRange(trajectory, this.director.currentFrame,
+                                      view.staticTubes[i]);
     }
 
     //Remove any old dynamic tubes from the scene
@@ -647,14 +645,13 @@ define([
 
     view.needsUpdate = true;
 
-    if(this.director.currentFrame >= this._frameIndices[0]) {
+    if(this.director.currentFrameIsGradientPoint()) {
       this.dispatchEvent({type: 'animation-new-frame-started', message: {
         frame: this._currentFrame,
         gradientPoint: this.director.gradientPoints[this._currentFrame],
         controller: this
       }});
 
-      this._frameIndices.shift();
       this._currentFrame += 1;
 
       // this.
