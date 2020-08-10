@@ -179,11 +179,40 @@ requirejs([
       deepEqual(this.controller.getColors(), {'Fast': 'green'});
     });
 
+
+    test('Test drawFrame', function(assert) {
+      // 3 event tests
+      expect(3);
+
+      this.controller.setGradientCategory('DOB');
+      this.controller.setTrajectoryCategory('Treatment');
+
+      this.controller.addEventListener('animation-new-frame-started',
+                                       function(cont) {
+        equal(cont.message.frame, 0);
+        equal(cont.message.gradientPoint, 20070314);
+        equal(cont.type, 'animation-new-frame-started');
+      });
+
+      this.controller._playButtonClicked();
+      this.controller.drawFrame();
+      this.controller.drawFrame();
+    });
+
     test('Test _pauseButtonClicked', function(assert) {
+      // 7 UI tests + 3 event tests
+      expect(10);
+
       this.controller.setGradientCategory('DOB');
       this.controller.setTrajectoryCategory('Treatment');
       this.controller.playing = true;
       this.controller._updateButtons();
+
+      this.controller.addEventListener('animation-paused', function(cont) {
+        equal(cont.message.gradient, 'DOB');
+        equal(cont.message.trajectory, 'Treatment');
+        equal(cont.type, 'animation-paused');
+      });
 
       this.controller._pauseButtonClicked();
 
@@ -197,9 +226,18 @@ requirejs([
     });
 
     test('Test _playButtonClicked', function(assert) {
+      // 9 UI tests + 3 event tests
+      expect(12);
+
       this.controller.setGradientCategory('DOB');
       this.controller.setTrajectoryCategory('Treatment');
       equal(this.controller.playing, false);
+
+      this.controller.addEventListener('animation-started', function(cont) {
+        equal(cont.message.gradient, 'DOB');
+        equal(cont.message.trajectory, 'Treatment');
+        equal(cont.type, 'animation-started');
+      });
 
       this.controller._playButtonClicked();
 
@@ -215,11 +253,21 @@ requirejs([
     });
 
     test('Test _rewindButtonClicked', function(assert) {
+      // 9 UI tests + 3 event tests
+      expect(12);
+
       this.controller.setGradientCategory('DOB');
       this.controller.setTrajectoryCategory('Treatment');
       equal(this.controller.playing, false);
 
       this.controller._playButtonClicked();
+
+      this.controller.addEventListener('animation-cancelled', function(cont) {
+        equal(cont.message.gradient, 'DOB');
+        equal(cont.message.trajectory, 'Treatment');
+        equal(cont.type, 'animation-cancelled');
+      });
+
       this.controller._rewindButtonClicked();
 
       equal(this.controller.playing, false);

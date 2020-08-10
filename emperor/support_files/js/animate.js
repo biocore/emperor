@@ -166,7 +166,7 @@ function(_, trajectory) {
     this._frameIndices = null;
 
     // frames we want projected in the trajectory's interval
-    this.n = Math.floor((1 / (this.speed)) * 10);
+    this._n = Math.floor((1 / this.speed) * 10);
 
     this.initializeTrajectories();
     this.getMaximumTrajectoryLength();
@@ -239,7 +239,7 @@ function(_, trajectory) {
       // create the trajectory object, we use Infinity to draw as many frames
       // as they may be needed
       trajectoryBuffer = new TrajectoryOfSamples(sampleNamesBuffer, key,
-          gradientPointsBuffer, coordinatesBuffer, this.minimumDelta, this.n,
+          gradientPointsBuffer, coordinatesBuffer, this.minimumDelta, this._n,
           Infinity);
 
       this.trajectories.push(trajectoryBuffer);
@@ -263,9 +263,14 @@ function(_, trajectory) {
    *
    * This is useful to keep track of when a new segment of the gradient has
    * started.
+   * @return {boolean} True if the currentFrame represents a point in the
+   * animation's gradient. False if it represents an interpolated frame.
    */
-  AnimationDirector.prototype.currentFrameIsGradientPoint = function () {
-    return this._frameIndices.indexOf(this.currentFrame) !== -1;
+  AnimationDirector.prototype.currentFrameIsGradientPoint = function() {
+    // use _.sortedIndex instead of .indexOf to do a binary search because the
+    // array is guaranteed to be sorted
+    var i = _.sortedIndex(this._frameIndices, this.currentFrame);
+    return this._frameIndices[i] === this.currentFrame;
   };
 
 
@@ -283,7 +288,7 @@ function(_, trajectory) {
                        Math.abs(this.gradientPoints[i + 1]));
 
       // no need to truncate since we use Infinity when creating the trajectory
-      pointsPerStep =  Math.floor((delta * this.n) / this.minimumDelta);
+      pointsPerStep = Math.floor((delta * this._n) / this.minimumDelta);
 
       out.push(out[i] + pointsPerStep);
     }
@@ -342,8 +347,8 @@ function(_, trajectory) {
   /**
    *
    * Check whether or not the animation cycle has finished for this object.
-   * @return {bool} True if the animation has reached it's end and False if the
-   * animation still has frames to go.
+   * @return {boolean} True if the animation has reached it's end and False if
+   * the animation still has frames to go.
    *
    */
   AnimationDirector.prototype.animationCycleFinished = function() {

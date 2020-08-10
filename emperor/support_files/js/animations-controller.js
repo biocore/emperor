@@ -292,7 +292,7 @@ define([
   /**
    * Sets whether or not the tab can be modified or accessed.
    *
-   * @param {Boolean} trulse option to enable tab.
+   * @param {boolean} trulse option to enable tab.
    */
   AnimationsController.prototype.setEnabled = function(trulse) {
     EmperorViewController.prototype.setEnabled.call(this, trulse);
@@ -645,7 +645,7 @@ define([
 
     view.needsUpdate = true;
 
-    if(this.director.currentFrameIsGradientPoint()) {
+    if (this.director.currentFrameIsGradientPoint()) {
       this.dispatchEvent({type: 'animation-new-frame-started', message: {
         frame: this._currentFrame,
         gradientPoint: this.director.gradientPoints[this._currentFrame],
@@ -653,11 +653,6 @@ define([
       }});
 
       this._currentFrame += 1;
-
-      // this.
-      console.log(this._frameIndices.length, 'frames left');
-      console.log(this.director.currentFrame, 'current frame');
-      // post notification
     }
 
 

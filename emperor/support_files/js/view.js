@@ -1110,8 +1110,8 @@ DecompositionView.prototype.toggleLabelVisibility = function() {
  *
  * @param {Bool} emissive Whether the object should be emissive.
  * @param {Plottable[]} group An array of plottables for which the emissive
- * attribute will be set. If this object is not provided, all the plottables in the
- * view will be have the scale set.
+ * attribute will be set. If this object is not provided, all the plottables in
+ * the view will be have the scale set.
  */
 DecompositionView.prototype.setEmissive = function(emissive, group) {
   group = group || this.decomp.plottable;
