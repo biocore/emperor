@@ -157,7 +157,11 @@ define([
                           'color': 'white',
                           'border': '1px solid',
                           'border-color': 'white',
-                          'position': 'absolute'});
+                          'position': 'absolute',
+                          '-webkit-user-select': 'none',
+                          '-moz-user-select': 'none',
+                          '-ms-user-select': 'none',
+                          'user-select': 'none'});
 
     // add the sample count to the plot space
     this.$plotSpace.append(this.$plotBanner);
