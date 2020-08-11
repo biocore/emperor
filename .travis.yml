@@ -1,8 +1,7 @@
 language: python
 python:
-  - 3.5
   - 3.6
-  # also includes 3.7 (see below)
+  # also includes 3.7 and 3.8 (see below)
 env:
   - NUMPY_VERSION=""  # environment to test with the latest version of NumPy
   - NUMPY_VERSION="<1.13"
@@ -19,9 +18,10 @@ matrix:
       dist: xenial
       sudo: true
       env: NUMPY_VERSION="<1.13"
-  exclude:
-      - python: 3.5
-        env: NUMPY_VERSION="<1.13"
+    - python: 3.8
+      dist: xenial
+      sudo: true
+      env: NUMPY_VERSION=""
 
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh && chmod +x miniconda.sh
