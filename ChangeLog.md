@@ -8,6 +8,8 @@ Emperor ChangeLog
 
 ### New Features
 
+* Add support for synchronized animations with Empress.
+
 ### Miscellaneous
 
 
