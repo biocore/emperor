@@ -22,10 +22,6 @@ matrix:
       dist: xenial
       sudo: true
       env: NUMPY_VERSION=""
-    - python: 3.8
-      dist: xenial
-      sudo: true
-      env: NUMPY_VERSION="<1.13"
 
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh && chmod +x miniconda.sh
