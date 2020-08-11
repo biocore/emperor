@@ -12,6 +12,7 @@ Emperor ChangeLog
 
 ### Miscellaneous
 
+* Add testing for Python 3.8 and drop support for Python 3.5.
 
 # Emperor 1.0.1 (22 Jun 2020)
 -----------------------------
