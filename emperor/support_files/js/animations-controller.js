@@ -84,6 +84,7 @@ define([
     this._$mediaContainer.append(this.$pause);
 
     this._colors = {};
+    this._currentFrame = 0;
 
     // make the buttons squared
     this._$mediaContainer.find('button').css({'width': '30px',
@@ -291,7 +292,7 @@ define([
   /**
    * Sets whether or not the tab can be modified or accessed.
    *
-   * @param {Boolean} trulse option to enable tab.
+   * @param {boolean} trulse option to enable tab.
    */
   AnimationsController.prototype.setEnabled = function(trulse) {
     EmperorViewController.prototype.setEnabled.call(this, trulse);
@@ -492,6 +493,12 @@ define([
     view.needsUpdate = true;
 
     this._updateButtons();
+
+    this.dispatchEvent({type: 'animation-cancelled', message: {
+      gradient: this.getGradientCategory(),
+      trajectory: this.getTrajectoryCategory(),
+      controller: this
+    }});
   };
 
   /**
@@ -505,6 +512,13 @@ define([
       this.playing = false;
     }
     this._updateButtons();
+
+    this.dispatchEvent({type: 'animation-paused', message: {
+      gradient: this.getGradientCategory(),
+      trajectory: this.getTrajectoryCategory(),
+      controller: this
+    }});
+
   };
 
   /**
@@ -554,10 +568,18 @@ define([
 
     this.director = new AnimationDirector(headers, data, positions, gradient,
                                           trajectory, speed);
+
     this.director.updateFrame();
+    this._currentFrame = 0;
 
     this.playing = true;
     this._updateButtons();
+
+    this.dispatchEvent({type: 'animation-started', message: {
+      gradient: this.getGradientCategory(),
+      trajectory: this.getTrajectoryCategory(),
+      controller: this
+    }});
   };
 
   /**
@@ -588,14 +610,13 @@ define([
       {
         var color = this._colors[trajectory.metadataCategoryName] || 'red';
         view.staticTubes[i] = drawTrajectoryLineStatic(trajectory,
-                                                        color,
-                                                        radius);
+                                                       color,
+                                                       radius);
       }
 
       //Ensure static tube draw ranges are set to visible segment
-      updateStaticTrajectoryDrawRange(trajectory,
-                                        this.director.currentFrame,
-                                        view.staticTubes[i]);
+      updateStaticTrajectoryDrawRange(trajectory, this.director.currentFrame,
+                                      view.staticTubes[i]);
     }
 
     //Remove any old dynamic tubes from the scene
@@ -624,6 +645,17 @@ define([
 
     view.needsUpdate = true;
 
+    if (this.director.currentFrameIsGradientPoint()) {
+      this.dispatchEvent({type: 'animation-new-frame-started', message: {
+        frame: this._currentFrame,
+        gradientPoint: this.director.gradientPoints[this._currentFrame],
+        controller: this
+      }});
+
+      this._currentFrame += 1;
+    }
+
+
     this.director.updateFrame();
 
     if (this.director.animationCycleFinished()) {
@@ -635,6 +667,13 @@ define([
       // screen.
       this._updateButtons();
       this.$rewind.prop('disabled', false).button('refresh');
+
+      this.dispatchEvent({type: 'animation-ended', message: {
+        gradient: this.getGradientCategory(),
+        trajectory: this.getTrajectoryCategory(),
+        controller: this
+      }});
+
     }
   };
 

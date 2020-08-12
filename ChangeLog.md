@@ -8,6 +8,8 @@ Emperor ChangeLog
 
 ### New Features
 
+* Add support for synchronized animations with Empress.
+
 ### Miscellaneous
 
 * Add testing for Python 3.8 and drop support for Python 3.5.

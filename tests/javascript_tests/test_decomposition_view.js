@@ -792,7 +792,6 @@ requirejs([
       dv.setColor(0xf0f0f0, [this.decomp.plottable[0]]);
       dv.setColor(0x0f0f0f, [this.decomp.plottable[1]]);
       obs = dv.groupByColor(['PC.636', 'PC.635']);
-      console.log(obs);
       equal(obs['f0f0f0'].length, 1);
       equal(obs['0f0f0f'].length, 1);
     });

@@ -310,6 +310,9 @@ requirejs([
           'LinkerPrimerSequence', 1000);
       equal(director.trajectories.length, 1, 'Correct number of trajectories');
 
+      var gradientPoints = director.gradientPoints;
+      deepEqual(gradientPoints,
+                [20061126, 20061218, 20070314, 20071112, 20071210, 20080116]);
     });
 
     /**
@@ -325,5 +328,24 @@ requirejs([
       equal(director.trajectories.length, 1, 'Correct number of trajectories');
 
     });
+
+
+    test('Test currentFrameIsGradientPoint works', function(assert) {
+      var director = new AnimationDirector(mappingFileHeaders,
+                                           mappingFileDataShort,
+                                           coordinatesDataShort,
+                                           'DOB', 'Treatment', 1);
+
+      director.currentFrame = 1;
+      assert.ok(director.currentFrameIsGradientPoint());
+
+      director.currentFrame = 2;
+      assert.ok(!director.currentFrameIsGradientPoint());
+
+      director.currentFrame = 11;
+      assert.ok(director.currentFrameIsGradientPoint());
+    });
+
+
   });
 });
