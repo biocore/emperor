@@ -91,7 +91,7 @@ def scatterplot(df, x=None, y=None, z=None, remote=True):
     df = df.loc[samples.index]
 
     ores = OrdinationResults(short_method_name='', long_method_name='',
-                             eigvals=np.zeros_like(samples.columns),
+                             eigvals=pd.Series(np.zeros_like(samples.columns)),
                              samples=samples, proportion_explained=variance)
 
     df.index.name = '#SampleID'
