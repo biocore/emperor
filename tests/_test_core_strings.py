@@ -606,7 +606,7 @@ function($, model, EmperorController) {
       // sets up generic callbacks for 3rd party consumers
       var plotView = ec.sceneViews[0];
       /*__custom_on_ready_code__*/
-      
+      console.log('Hello from the other side');
     }
   });
 

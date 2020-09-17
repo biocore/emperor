@@ -364,6 +364,7 @@ class TopLevelTests(TestCase):
 
     def test_render_js(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
+        emp.js_on_ready = "console.log('Hello from the other side');"
         obs = emp.render_js('emperor-notebook-0x9cb72f54')
         self.assertEqual(tcs.JS_STRING, obs)
 
