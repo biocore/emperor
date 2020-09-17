@@ -432,6 +432,186 @@ function($, model, EmperorController) {
   </body>
 </html>"""
 
+STYLE_STRING = """<script type="text/javascript">
+
+if ($("#emperor-css").length == 0){{
+    $("head").append([
+
+        '<link id="emperor-css" rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/css/emperor.css">',
+        '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/jquery-ui.min.css">',
+        '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/slick.grid.min.css">',
+        '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/spectrum.min.css">',
+        '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/chosen.min.css">',
+        '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/jquery.contextMenu.min.css">'
+    ]);
+}}
+</script>
+"""
+
+DIV_STRING = """<div id='emperor-notebook-0x9cb72f54' style="position: relative; width:100%; height:500px;">
+  <div class='loading' style="position: absolute;top: 50%;left: 50%;margin-left: -229px; margin-top: -59px; z-index: 10000;height:118px;width:458px;padding:0px"><img src='/nbextensions/emperor/support_files/img/emperor.png' alt='Emperor resources missing. Expected them to be found in /nbextensions/emperor/support_files'></div>
+</div>
+</div>"""
+
+DEPS_STRING = """<!-- core dependencies that are otherwise included via the jupyter notebook -->
+<script src="/nbextensions/emperor/support_files/vendor/js/require-2.1.22.min.js"></script>
+<script src="/nbextensions/emperor/support_files/vendor/js/jquery-2.1.4.min.js"></script>"""
+
+JS_STRING = """// When running in the Jupyter notebook we've encountered version conflicts
+// with some dependencies. So instead of polluting the global require context,
+// we define a new context.
+var emperorRequire = require.config({
+'context': 'emperor',
+// the left side is the module name, and the right side is the path
+// relative to the baseUrl attribute, do NOT include the .js extension
+'paths': {
+  /* jQuery */
+  'jquery': '/nbextensions/emperor/support_files/vendor/js/jquery-2.1.4.min',
+  'jqueryui': '/nbextensions/emperor/support_files/vendor/js/jquery-ui.min',
+  'jquery_drag': '/nbextensions/emperor/support_files/vendor/js/jquery.event.drag-2.2.min',
+
+  /* jQuery plugins */
+  'chosen': '/nbextensions/emperor/support_files/vendor/js/chosen.jquery.min',
+  'spectrum': '/nbextensions/emperor/support_files/vendor/js/spectrum.min',
+  'position': '/nbextensions/emperor/support_files/vendor/js/jquery.ui.position.min',
+  'contextmenu': '/nbextensions/emperor/support_files/vendor/js/jquery.contextMenu.min',
+
+  /* other libraries */
+  'underscore': '/nbextensions/emperor/support_files/vendor/js/underscore-min',
+  'chroma': '/nbextensions/emperor/support_files/vendor/js/chroma.min',
+  'filesaver': '/nbextensions/emperor/support_files/vendor/js/FileSaver.min',
+  'blob': '/nbextensions/emperor/support_files/vendor/js/Blob',
+  'canvastoblob': '/nbextensions/emperor/support_files/vendor/js/canvas-toBlob',
+  'd3': '/nbextensions/emperor/support_files/vendor/js/d3.min',
+
+  /* THREE.js and plugins */
+  'three': '/nbextensions/emperor/support_files/vendor/js/three.min',
+  'orbitcontrols': '/nbextensions/emperor/support_files/vendor/js/three.js-plugins/OrbitControls',
+  'projector': '/nbextensions/emperor/support_files/vendor/js/three.js-plugins/Projector',
+  'svgrenderer': '/nbextensions/emperor/support_files/vendor/js/three.js-plugins/SVGRenderer',
+  'canvasrenderer': '/nbextensions/emperor/support_files/vendor/js/three.js-plugins/CanvasRenderer',
+  'selectionbox': '/nbextensions/emperor/support_files/vendor/js/three.js-plugins/SelectionBox',
+  'selectionhelper': '/nbextensions/emperor/support_files/vendor/js/three.js-plugins/SelectionHelper',
+
+  /* SlickGrid */
+  'slickcore': '/nbextensions/emperor/support_files/vendor/js/slick.core.min',
+  'slickgrid': '/nbextensions/emperor/support_files/vendor/js/slick.grid.min',
+  'slickformatters': '/nbextensions/emperor/support_files/vendor/js/slick.editors.min',
+  'slickeditors': '/nbextensions/emperor/support_files/vendor/js/slick.formatters.min',
+  'slickdataview': '/nbextensions/emperor/support_files/vendor/js/slick.dataview.min',
+
+  /* Emperor's objects */
+  'util': '/nbextensions/emperor/support_files/js/util',
+  'model': '/nbextensions/emperor/support_files/js/model',
+  'multi-model': '/nbextensions/emperor/support_files/js/multi-model',
+  'view': '/nbextensions/emperor/support_files/js/view',
+  'controller': '/nbextensions/emperor/support_files/js/controller',
+  'draw': '/nbextensions/emperor/support_files/js/draw',
+  'scene3d': '/nbextensions/emperor/support_files/js/sceneplotview3d',
+  'shapes': '/nbextensions/emperor/support_files/js/shapes',
+  'animationdirector': '/nbextensions/emperor/support_files/js/animate',
+  'trajectory': '/nbextensions/emperor/support_files/js/trajectory',
+  'uistate': '/nbextensions/emperor/support_files/js/ui-state',
+
+  /* controllers */
+  'abcviewcontroller': '/nbextensions/emperor/support_files/js/abc-view-controller',
+  'viewcontroller': '/nbextensions/emperor/support_files/js/view-controller',
+  'colorviewcontroller': '/nbextensions/emperor/support_files/js/color-view-controller',
+  'visibilitycontroller': '/nbextensions/emperor/support_files/js/visibility-controller',
+  'opacityviewcontroller': '/nbextensions/emperor/support_files/js/opacity-view-controller',
+  'scaleviewcontroller': '/nbextensions/emperor/support_files/js/scale-view-controller',
+  'shapecontroller': '/nbextensions/emperor/support_files/js/shape-controller',
+  'axescontroller': '/nbextensions/emperor/support_files/js/axes-controller',
+  'animationscontroller': '/nbextensions/emperor/support_files/js/animations-controller',
+
+  /* editors */
+  'shape-editor': '/nbextensions/emperor/support_files/js/shape-editor',
+  'color-editor': '/nbextensions/emperor/support_files/js/color-editor',
+  'scale-editor': '/nbextensions/emperor/support_files/js/scale-editor'
+
+},
+/*
+   Libraries that are not AMD compatible need shim to declare their
+   dependencies.
+ */
+'shim': {
+  'jquery_drag': {
+    'deps': ['jquery', 'jqueryui']
+  },
+  'chosen': {
+    'deps': ['jquery'],
+    'exports': 'jQuery.fn.chosen'
+  },
+  'contextmenu' : {
+    'deps': ['jquery', 'jqueryui', 'position']
+  },
+  'filesaver' : {
+    'deps': ['blob']
+  },
+  'canvastoblob' : {
+    'deps': ['blob']
+  },
+  'slickcore': ['jqueryui'],
+  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors',
+                'slickdataview']
+}
+});
+
+emperorRequire(
+["jquery", "model", "controller"],
+function($, model, EmperorController) {
+  var DecompositionModel = model.DecompositionModel;
+
+  var div = $('#emperor-notebook-0x9cb72f54');
+
+  var data = {"plot": {"decomposition": {"axes_names": [0, 1, 2, 3, 4], "ci": null, "coordinates": [[-0.651995810831719, -0.3417784983371589, 0.15713116241738878, -0.15964022322388774, 0.41511600449567154], [-0.5603276951316744, 0.10857735915373172, -0.32567898978232684, 0.3750137797216106, -0.583487828830988], [0.5394835270542403, -0.3068324227225251, -0.6770043110217822, 0.203820501907719, 0.1044335488558445], [0.09964194790906594, -0.03293232371368659, 0.14978636968698092, -0.8160388524355932, -0.301343079001781], [0.661089243947507, -0.014176279685000464, 0.05537095913733857, -0.11036487613740434, -0.3456924105084198], [0.5490376828031979, 0.32957520954888647, 0.7612242145083941, 0.4322721667939822, 0.04825249860931067], [0.40202458647314415, -0.4576554852461752, -0.0728438902229666, 0.04670222577076932, 0.36567512814466946], [-0.21532604614952783, 1.0, -0.31976501999316115, -0.13561208920603846, 0.35686551552017187], [-0.8236274360749414, -0.2847775589983077, 0.27177950526966277, 0.16384736680860681, -0.05981937728235736]], "edges": [], "percents_explained": [26.6887048633, 16.256370402199998, 13.775412916099999, 11.217215823, 10.024774995000001], "sample_ids": ["PC.636", "PC.635", "PC.356", "PC.481", "PC.354", "PC.593", "PC.355", "PC.607", "PC.634"]}, "metadata": [["PC.636", "Fast", "20080116", "Fasting_mouse_I.D._636"], ["PC.635", "Fast", "20080116", "Fasting_mouse_I.D._635"], ["PC.356", "Control", "20061126", "Control_mouse_I.D._356"], ["PC.481", "Control", "20070314", "Control_mouse_I.D._481"], ["PC.354", "Control", "20061218", "Ctrol_mouse_I.D._354"], ["PC.593", "Control", "20071210", "Control_mouse_I.D._593"], ["PC.355", "Control", "20061218", "Control_mouse_I.D._355"], ["PC.607", "Fast", "20071112", "Fasting_mouse_I.D._607"], ["PC.634", "Fast", "20080116", "Fasting_mouse_I.D._634"]], "metadata_headers": ["SampleID", "Treatment", "DOB", "Description"], "settings": {}, "type": "scatter"}};
+
+  var plot, biplot = null, ec;
+
+  function init() {
+    // Initialize the DecompositionModel for the scatter plot, and optionally
+    // add one for the biplot arrows
+    plot = new DecompositionModel(data.plot.decomposition,
+                                  data.plot.metadata_headers,
+                                  data.plot.metadata,
+                                  data.plot.type);
+
+    if (data.biplot) {
+      biplot = new DecompositionModel(data.biplot.decomposition,
+                                      data.biplot.metadata_headers,
+                                      data.biplot.metadata,
+                                      data.biplot.type);
+    }
+
+    ec = new EmperorController(plot, biplot, "emperor-notebook-0x9cb72f54");
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    ec.render();
+  }
+  $(window).resize(function() {
+    ec.resize(div.innerWidth(), div.innerHeight());
+  });
+
+  $(function(){
+    init();
+    animate();
+
+    ec.ready = function () {
+      // any other code that needs to be executed when emperor is loaded should
+      // go here
+      ec.loadConfig(data.plot.settings);
+
+      // sets up generic callbacks for 3rd party consumers
+      var plotView = ec.sceneViews[0];
+      /*__custom_on_ready_code__*/
+      
+    }
+  });
+
+}); // END REQUIRE.JS block"""
+
 MAP_PANDAS = """#SampleID	cat_a	cat_b	cat_c	num_1	num_2	num_3	num_4
 s1	foo	a	o	21	18	75	51
 s2	foo	b	p	3	42	44	36

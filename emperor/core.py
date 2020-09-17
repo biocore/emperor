@@ -533,19 +533,57 @@ class Emperor(object):
         return data
 
     def render_base_dependencies(self):
+        """Render Emperor's Base dependencies
+
+        Returns
+        -------
+        str
+            A string with the base dependencies (require.js and jQuery).
+        """
         template = self._environment.get_template(BASE_DEPENDENCIES_PATH)
         return template.render(base_url=self.base_url)
 
     def render_style(self):
+        """Render Emperor's CSS
+
+        Returns
+        -------
+        str
+            A string with the CSS.
+        """
         template = self._environment.get_template(STYLE_PATH)
         return template.render(base_url=self.base_url)
 
     def render_html(self, plot_id):
+        """Render Emperor's HTML container
+
+        Parameters
+        ----------
+        plot_id : str
+            The name for Emperor's div.
+
+        Returns
+        -------
+        str
+            A string with the main container where Emperor will instantiate.
+        """
         template = self._environment.get_template(HTML_CONTAINER_PATH)
         return template.render(base_url=self.base_url, plot_id=plot_id,
                                width=self.width, height=self.height)
 
     def render_js(self, plot_id):
+        """Render Emperor's JavaScript code
+
+        Parameters
+        ----------
+        plot_id : str
+            The name for Emperor's div.
+
+        Returns
+        -------
+        str
+            A string with Emperor's main JavaScript code.
+        """
         data = self._to_dict(self._process_data(self.custom_axes,
                                                 self.jackknifing_method))
 

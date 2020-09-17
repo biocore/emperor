@@ -347,6 +347,26 @@ class TopLevelTests(TestCase):
         self.assertTrue(isinstance(obs, Template))
         self.assertTrue(obs.filename.endswith('/jupyter-template.html'))
 
+    def test_render_style(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False)
+        obs = emp.render_style()
+        self.assertEqual(tcs.STYLE_STRING, obs)
+
+    def test_render_html(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False)
+        obs = emp.render_html('emperor-notebook-0x9cb72f54')
+        self.assertEqual(tcs.DIV_STRING, obs)
+
+    def test_render_base_dependencies(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False)
+        obs = emp.render_base_dependencies()
+        self.assertEqual(tcs.DEPS_STRING, obs)
+
+    def test_render_js(self):
+        emp = Emperor(self.ord_res, self.mf, remote=False)
+        obs = emp.render_js('emperor-notebook-0x9cb72f54')
+        self.assertEqual(tcs.JS_STRING, obs)
+
     def test_get_template_standalone(self):
         emp = Emperor(self.ord_res, self.mf, remote=False)
         obs = emp._get_template(True)
