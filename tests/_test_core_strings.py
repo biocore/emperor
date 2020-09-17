@@ -73,7 +73,6 @@ if ($("#emperor-css").length == 0){{
   <div class='loading' style="position: absolute;top: 50%;left: 50%;margin-left: -229px; margin-top: -59px; z-index: 10000;height:118px;width:458px;padding:0px"><img src='https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/img/emperor.png' alt='Emperor resources missing. Expected them to be found in https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files'></div>
 </div>
 </div>
-
 <script type="text/javascript">
 // When running in the Jupyter notebook we've encountered version conflicts
 // with some dependencies. So instead of polluting the global require context,
@@ -223,17 +222,8 @@ function($, model, EmperorController) {
 
       // sets up generic callbacks for 3rd party consumers
       var plotView = ec.sceneViews[0];
-      plotView.on('click', function(sampleName){
-        /*__click_callback__*/
-      });
-      plotView.on('dblclick', function(sampleName){
-        /*__dblclick_callback__*/
-      });
-      plotView.on('select', function(samples, view){
-        /*__select_callback__*/
-      });
-
       /*__custom_on_ready_code__*/
+      
     }
   });
 
@@ -245,8 +235,8 @@ STANDALONE_HTML_STRING = """<!DOCTYPE html>
   <head>
     <title>Emperor</title>
     <!-- core dependencies that are otherwise included via the jupyter notebook -->
-    <script src="./some-local-path//vendor/js/require-2.1.22.min.js"></script>
-    <script src="./some-local-path//vendor/js/jquery-2.1.4.min.js"></script>
+<script src="./some-local-path//vendor/js/require-2.1.22.min.js"></script>
+<script src="./some-local-path//vendor/js/jquery-2.1.4.min.js"></script>
     <meta charset="utf-8">
 
     <script type="text/javascript">
@@ -283,8 +273,7 @@ if ($("#emperor-css").length == 0){{
   <div class='loading' style="position: absolute;top: 50%;left: 50%;margin-left: -229px; margin-top: -59px; z-index: 10000;height:118px;width:458px;padding:0px"><img src='./some-local-path//img/emperor.png' alt='Emperor resources missing. Expected them to be found in ./some-local-path/'></div>
 </div>
 </div>
-
-<script type="text/javascript">
+    <script type="text/javascript">
 // When running in the Jupyter notebook we've encountered version conflicts
 // with some dependencies. So instead of polluting the global require context,
 // we define a new context.
@@ -433,17 +422,8 @@ function($, model, EmperorController) {
 
       // sets up generic callbacks for 3rd party consumers
       var plotView = ec.sceneViews[0];
-      plotView.on('click', function(sampleName){
-        /*__click_callback__*/
-      });
-      plotView.on('dblclick', function(sampleName){
-        /*__dblclick_callback__*/
-      });
-      plotView.on('select', function(samples, view){
-        /*__select_callback__*/
-      });
-
       /*__custom_on_ready_code__*/
+      
     }
   });
 

@@ -358,11 +358,6 @@ class TopLevelTests(TestCase):
         emp = Emperor(self.ord_res, self.mf, remote=self.url)
 
         obs = str(emp)
-
-        try:
-            self.assertItemsEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
-        except AttributeError:
-            self.assertCountEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
         self.assertEqual(tcs.HTML_STRING, obs)
 
     def test_formatting_standalone(self):
@@ -373,12 +368,6 @@ class TopLevelTests(TestCase):
 
         obs = emp.make_emperor(standalone=True)
 
-        try:
-            self.assertItemsEqual(tcs.STANDALONE_HTML_STRING.split('\n'),
-                                  obs.split('\n'))
-        except AttributeError:
-            self.assertCountEqual(tcs.STANDALONE_HTML_STRING.split('\n'),
-                                  obs.split('\n'))
         self.assertEqual(tcs.STANDALONE_HTML_STRING, obs)
 
     def test_remote_url(self):
@@ -393,11 +382,6 @@ class TopLevelTests(TestCase):
         self.mf.index.name = None
         emp = Emperor(self.ord_res, self.mf, remote=self.url)
         obs = str(emp)
-
-        try:
-            self.assertItemsEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
-        except AttributeError:
-            self.assertCountEqual(tcs.HTML_STRING.split('\n'), obs.split('\n'))
 
         self.assertEqual(tcs.HTML_STRING, obs)
 

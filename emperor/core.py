@@ -44,15 +44,13 @@ REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/%s/emperor'
               '/support_files')
 LOCAL_URL = "/nbextensions/emperor/support_files"
 
-STYLE_PATH = join(get_emperor_support_files_dir(), 'templates',
-                  'style-template.html')
-LOGIC_PATH = join(get_emperor_support_files_dir(), 'templates',
-                  'logic-template.html')
+BASE_DEPENDENCIES_PATH = 'base-dependencies.html'
+STYLE_PATH = 'style-template.html'
+LOGIC_PATH = 'logic-template.html'
+HTML_CONTAINER_PATH = 'html-container-template.html'
 
-STANDALONE_PATH = join(get_emperor_support_files_dir(), 'templates',
-                       'standalone-template.html')
-JUPYTER_PATH = join(get_emperor_support_files_dir(), 'templates',
-                    'jupyter-template.html')
+STANDALONE_PATH = 'standalone-template.html'
+JUPYTER_PATH = 'jupyter-template.html'
 
 
 class Emperor(object):
@@ -283,6 +281,13 @@ class Emperor(object):
 
         self.custom_axes = []
 
+        # based on: http://stackoverflow.com/a/6196098
+        loader = FileSystemLoader(join(get_emperor_support_files_dir(),
+                                       'templates'))
+        self._environment = Environment(loader=loader)
+
+        self.js_on_ready = ''
+
         # label each ordination by index
         self.procrustes_names = []
         self.jackknifing_method = 'IQR'
@@ -463,12 +468,13 @@ class Emperor(object):
         plot_id = 'emperor-notebook-' + str(hex(np.random.randint(2**32)))
 
         # need to do something about low and high
-        plot = main_template.render(data=data, plot_id=plot_id,
-                                    logic_template_path=basename(LOGIC_PATH),
-                                    style_template_path=basename(STYLE_PATH),
-                                    base_url=self.base_url,
-                                    width=self.width,
-                                    height=self.height)
+        plot = main_template.render(
+            data=data, plot_id=plot_id,
+            logic_template_path=LOGIC_PATH, style_template_path=STYLE_PATH,
+            base_dependencies_path=BASE_DEPENDENCIES_PATH,
+            html_container_path=HTML_CONTAINER_PATH,
+            base_url=self.base_url, js_on_ready=self.js_on_ready,
+            width=self.width, height=self.height)
 
         return plot
 
@@ -526,6 +532,32 @@ class Emperor(object):
 
         return data
 
+    def render_base_dependencies(self):
+        template = self._environment.get_template(BASE_DEPENDENCIES_PATH)
+        return template.render(base_url=self.base_url)
+
+    def render_style(self):
+        template = self._environment.get_template(STYLE_PATH)
+        return template.render(base_url=self.base_url)
+
+    def render_html(self, plot_id):
+        template = self._environment.get_template(HTML_CONTAINER_PATH)
+        return template.render(base_url=self.base_url, plot_id=plot_id,
+                               width=self.width, height=self.height)
+
+    def render_js(self, plot_id):
+        data = self._to_dict(self._process_data(self.custom_axes,
+                                                self.jackknifing_method))
+
+        template = self._environment.get_template(LOGIC_PATH)
+
+        plot = template.render(
+            data=data, plot_id=plot_id,
+            base_url=self.base_url, js_on_ready=self.js_on_ready,
+            width=self.width, height=self.height)
+
+        return plot
+
     def _get_template(self, standalone=False):
         """Get the jinja template object
 
@@ -540,17 +572,13 @@ class Emperor(object):
         jinja2.Template
             Template where the plot is created.
         """
-        # based on: http://stackoverflow.com/a/6196098
-        loader = FileSystemLoader(join(get_emperor_support_files_dir(),
-                                       'templates'))
 
         if standalone:
-            main_path = basename(STANDALONE_PATH)
+            main_path = STANDALONE_PATH
         else:
-            main_path = basename(JUPYTER_PATH)
-        env = Environment(loader=loader)
+            main_path = JUPYTER_PATH
 
-        return env.get_template(main_path)
+        return self._environment.get_template(main_path)
 
     def _process_data(self, custom_axes, jackknifing_method):
         """Handle the coordinates data
