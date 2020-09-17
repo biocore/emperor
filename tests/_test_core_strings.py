@@ -274,7 +274,7 @@ if ($("#emperor-css").length == 0){{
 </div>
 </div>
     <script type="text/javascript">
-// When running in the Jupyter notebook we've encountered version conflicts
+    // When running in the Jupyter notebook we've encountered version conflicts
 // with some dependencies. So instead of polluting the global require context,
 // we define a new context.
 var emperorRequire = require.config({
@@ -428,7 +428,7 @@ function($, model, EmperorController) {
   });
 
 }); // END REQUIRE.JS block
-</script>
+    </script>
   </body>
 </html>"""
 
