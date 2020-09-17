@@ -65,7 +65,7 @@ events.
       console.log('One sample was double-clicked', sampleName);
     });
     plotView.on('select', function(samples, view){
-      console.log(samples.length, 'were clicked');
+      console.log(samples.length, 'samples were selected');
     });
 
 
