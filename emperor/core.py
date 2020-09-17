@@ -24,7 +24,7 @@ Classes
 from __future__ import division
 
 from copy import deepcopy
-from os.path import join, basename
+from os.path import join
 from distutils.dir_util import copy_tree
 import warnings
 import numpy as np
