@@ -2,9 +2,7 @@
 <html lang="en">
   <head>
     <title>Emperor</title>
-    <!-- core dependencies that are otherwise included via the jupyter notebook -->
-    <script src="{{ base_url }}/vendor/js/require-2.1.22.min.js"></script>
-    <script src="{{ base_url }}/vendor/js/jquery-2.1.4.min.js"></script>
+    {% include base_dependencies_path %}
     <meta charset="utf-8">
 
     {% include style_template_path %}
@@ -23,6 +21,9 @@
     </style>
   </head>
   <body>
+    {% include html_container_path %}
+    <script type="text/javascript">
     {% include logic_template_path %}
+    </script>
   </body>
 </html>

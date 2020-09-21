@@ -9,7 +9,7 @@ Emperor provides a rich API to manipulate the application live from the
 browser. The majority of this functionality is provided by attribute (Color,
 Visibility, Opacity, etc), or if needed the underlying `THREE` objects can
 be accessed as needed. For more information, the documentation for the
-`EmperorController` and other JavaScript classes can be accessed `here
+``EmperorController`` and other JavaScript classes can be accessed `here
 <../jsdoc/index.html>`_.
 
 
@@ -17,35 +17,67 @@ In general, users won't need to do low-level manipulation of visual aspects but
 instead would like to subscribe to specific events and act as needed. For these
 cases, Emperor provides access to the following events:
 
-- When a sample is clicked (`click`).
-- When a sample is double-clicked (`dblclick`).
-- When a group of samples is selected (`select`).
-- When the selected metadata category in a tab is changed (`category-changed`).
+- When a sample is clicked (``click``).
+- When a sample is double-clicked (``dblclick``).
+- When a group of samples is selected (``select``).
+- When the selected metadata category in a tab is changed (``category-changed``).
 - When an attribute for a group of samples is changed (for example when a
-  metadata value's color or visibility is changed) (`value-changed`).
-- When a group of samples is double-clicked via a tab (`value-double-clicked`).
+  metadata value's color or visibility is changed) (``value-changed``).
+- When a group of samples is double-clicked via a tab (``value-double-clicked``).
+- For animations the following events are also published ``animation-started``,
+  ``animation-new-frame-started``, ``animation-ended``, ``animation-paused``,
+  and ``animation-cancelled``.
 
 
 Subscribing to Events from a 3rd Party application
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For sample clicking, double-clicking and selection three special tags are
-provided for users to insert their custom code:
+Custom code can be optionally executed via the ``Emperor.js_on_ready`` attribute.
+For example to set callbacks when a sample is clicked you can insert the
+following block of code.
 
-- `/*__click_callback*/`: This callback receives an object with the sample that
-  was clicked.
-- `/*__dblclick_callback*/`: This callback receives an object with the sample
-  that was double-clicked.
-- `/*__select_callback*/`: This callback receives a list of the selected
-  objects.
+.. code-block:: python
 
-The rest of the callbacks are recommended to be written and inserted
-via the `/*__custom_on_ready_code__*/`. This code is executed once all the
-controllers have finished loading and can accept subscriptions to events.
+    # this JavaScript code is executed when the UI finishes loading
+    callback = """
+    plotView.on('click', function(sampleName){
+      console.log('One sample was clicked', sampleName);
+    });
+    """
+    # viz is an Emperor object, for example: viz = Emperor(...)
+    viz.js_on_ready = callback
 
-The following example shows how we would subscribe to metadata category changes
-in the **color** tab, **visibility** values changing for a metadata value, and
-when a metadata value is double-clicked in the **opacity** table.
+
+For convenience, this block is inserted in a closure with the following two
+objects: ``EmperorController`` (``ec``) and a ``ScenePlotView3D``
+(``plotView``). The first object orchestrates and organizes all the controllers
+available in Emperor. ``plotView`` is mainly used to render plots and interact
+with the rendered objects.
+
+``plotView`` publishes a ``click``, ``dblclick``, and a ``select`` event when a
+sample is clicked, double-clicked or when a group of samples is selected. The
+block shows how you would subscribe to the ``dblclick`` and the ``select``
+events.
+
+.. code-block:: javascript
+
+    plotView.on('dblclick', function(sampleName){
+      console.log('One sample was double-clicked', sampleName);
+    });
+    plotView.on('select', function(samples, view){
+      console.log(samples.length, 'samples were selected');
+    });
+
+
+The following example shows how to use the ``EmperorController`` (``ec``) to
+subscribe to the following events:
+
+- When a metadata category changes in the **color** tab.
+
+- When a value changes in the **visibility** tab.
+
+- When a metadata value is double-clicked in the **opacity** tab.
+
 
 .. code-block:: javascript
 
@@ -87,16 +119,3 @@ when a metadata value is double-clicked in the **opacity** table.
       // this is an instance of the opacity controller
       console.log('Attribute controller', container.message.controller);
     });
-
-
-And in order to insert the custom code you can use Python's string replacement
-operations:
-
-
-.. code-block:: python
-
-    viz = Emperor(...)
-
-    # custom JS - this example prints the name of the sample when that sample is
-    # clicked
-    html = str(viz).replace('/*__custom_on_ready_code__*/', 'console.log(sample)')

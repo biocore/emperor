@@ -1,9 +1,3 @@
-<div id='{{ plot_id }}' style="position: relative; width:{{ width }}; height:{{ height }};">
-  <div class='loading' style="position: absolute;top: 50%;left: 50%;margin-left: -229px; margin-top: -59px; z-index: 10000;height:118px;width:458px;padding:0px"><img src='{{ base_url }}/img/emperor.png' alt='Emperor resources missing. Expected them to be found in {{ base_url }}'></div>
-</div>
-</div>
-
-<script type="text/javascript">
 // When running in the Jupyter notebook we've encountered version conflicts
 // with some dependencies. So instead of polluting the global require context,
 // we define a new context.
@@ -152,19 +146,9 @@ function($, model, EmperorController) {
 
       // sets up generic callbacks for 3rd party consumers
       var plotView = ec.sceneViews[0];
-      plotView.on('click', function(sampleName){
-        /*__click_callback__*/
-      });
-      plotView.on('dblclick', function(sampleName){
-        /*__dblclick_callback__*/
-      });
-      plotView.on('select', function(samples, view){
-        /*__select_callback__*/
-      });
-
       /*__custom_on_ready_code__*/
+      {{ js_on_ready }}
     }
   });
 
 }); // END REQUIRE.JS block
-</script>
