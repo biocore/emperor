@@ -419,17 +419,17 @@ define([
     _.each(split.numeric, function(element) {
       colors[element] = interpolator(+element).hex();
     });
-    //Gray out non-numeric values
+    // Gray out (or assign a user-specified color for) non-numeric values
     _.each(split.nonNumeric, function(element) {
       colors[element] = nanColor;
     });
-    //build the SVG showing the gradient of colors for values
+    // Build the SVG showing the gradient of colors for numeric values
     var mid = (min + max) / 2;
-    var step = (max - min) / 100;
-    var stopColors = [];
-    for (var s = min; s <= max; s += step) {
-      stopColors.push(interpolator(s).hex());
-    }
+    // We retrieve 101 colors from along the gradient. This is because we want
+    // to specify a color for each integer percentage in the range [0%, 100%],
+    // which contains 101 integers (since we're starting at 0:
+    // 100 - 0 + 1 = 101). See https://github.com/biocore/emperor/issues/788.
+    var stopColors = interpolator.colors(101);
     var gradientSVG = '<defs>';
     gradientSVG += '<linearGradient id="Gradient" x1="0" x2="0" y1="1" y2="0">';
     for (var pos = 0; pos < stopColors.length; pos++) {
