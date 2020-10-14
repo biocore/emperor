@@ -325,7 +325,7 @@ requirejs([
       ]);
     });
 
-    test('Test getScaledColors even number of values and outlier', function() {
+    test('Test getScaledColors: even num of values and outlier', function() {
       var vals = ['5', '6', '7', '10000'];
       var color = ColorViewController.getScaledColors(vals, 'PiYG');
       // The outlier's effect is so strong that 5, 6, and 7 all get assigned
