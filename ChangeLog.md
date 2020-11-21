@@ -1,10 +1,12 @@
 Emperor ChangeLog
 =================
 
-# Emperor 1.0.1-dev (changes since 1.0.1 go here)
--------------------------------------------------
+# Emperor 1.0.2 (20 Nov 2020)
+-----------------------------
 
 ### Bug Fixes
+
+* Fix a bug with `scatterplot`.
 
 ### New Features
 
