@@ -4,7 +4,6 @@ python:
   # also includes 3.7 and 3.8 (see below)
 env:
   - NUMPY_VERSION=""  # environment to test with the latest version of NumPy
-  - NUMPY_VERSION="<1.13"
 
 matrix:
   # support for python 3.7 is rather awkward via Travis CI
@@ -14,10 +13,6 @@ matrix:
       dist: xenial
       sudo: true
       env: NUMPY_VERSION=""
-    - python: 3.7
-      dist: xenial
-      sudo: true
-      env: NUMPY_VERSION="<1.13"
     - python: 3.8
       dist: xenial
       sudo: true
