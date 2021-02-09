@@ -63,7 +63,7 @@ define([
    * @constructs EmperorController
    *
    */
-  function EmperorController(scatter, biplot, divId, webglcanvas) {
+  function EmperorController(scatter, biplot, divId, webglcanvas, info) {
 
     /**
      * The state shared across one instance of the UI
@@ -99,6 +99,12 @@ define([
      * @type {float}
      */
     this.height = this.$divId.height();
+
+    /**
+     * Information to be displayed in the plot banner. 
+     * @type {string}
+     */
+    this.info = info; 
 
     var decModelMap = {'scatter': scatter};
     if (biplot)
@@ -560,9 +566,11 @@ define([
     });
 
     this.$plotBanner.css({'color': color, 'border-color': color});
-
+    if (this.info) {
+        message += '<br>' + this.info;
+    }
     if (visible !== total) {
-      message = ' <br> WARNING: hiding samples in an ordination can be ' +
+      message += ' <br> WARNING: hiding samples in an ordination can be ' +
                 'misleading';
     }
 
