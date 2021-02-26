@@ -39,7 +39,7 @@ jobs:
         run: |
           conda create --yes -n gjslint python=2.7 pip six
           wget https://github.com/google/closure-linter/archive/master.zip
-          conda run -n gjslint 'pip install master.zip'
+          # conda run -n gjslint 'pip install master.zip'
 
       - name: Install Emperor
         run: |
