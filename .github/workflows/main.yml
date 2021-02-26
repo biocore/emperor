@@ -39,14 +39,14 @@ jobs:
         run: |
           conda update --yes conda
           conda create --yes -n gjslint python=2.7 pip six
-          conda run -n gjslint pip install https://github.com/google/closure-linter/archive/master.zip
+          conda run -n gjslint 'pip install https://github.com/google/closure-linter/archive/master.zip'
 
       - name: Install Emperor
         run: |
           conda create --yes -n ci-env python=${{ matrix.python-version }} pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
           conda install -n ci-env -c conda-forge phantomjs --yes
-          conda run -n ci-env pip install 'sphinx<1.6' sphinx-bootstrap-theme coveralls
-          conda run -n ci-env pip install -e '.[all]' --verbose
+          conda run -n ci-env 'pip install "sphinx<1.6" sphinx-bootstrap-theme coveralls'
+          conda run -n ci-env 'pip install -e ".[all]" --verbose'
           npm install -g jsdoc
 
       - name: Run tests
