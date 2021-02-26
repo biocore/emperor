@@ -1,0 +1,65 @@
+name: Emperor CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on pull request and push events, only on the master
+  # branch
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  # name of job
+  build:
+    # The type of runner that the job will run on (available options are window/macOS/linux)
+    runs-on: ubuntu-latest
+    # we can add more versions of node.js in the future
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8']
+        node-version: [14.x]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # first grab branch from github
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+  
+      - name: Set up conda
+        uses: s-weigand/setup-conda@v1
+        with:
+          update-conda: true
+          python-version: 3.6
+          conda-channels: anaconda, conda-forge
+
+      - name: Install JS Linter
+        run: |
+          conda update --yes conda
+          conda create --yes -n gjslint python=2.7 pip six
+          conda run -n gjslint pip install https://github.com/google/closure-linter/archive/master.zip
+
+      - name: Install Emperor
+        run: |
+          conda create --yes -n ci-env python=${{ matrix.python-version }} pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
+          conda install -n ci-env -c conda-forge phantomjs --yes
+          conda run -n ci-env pip install 'sphinx<1.6' sphinx-bootstrap-theme coveralls
+          conda run -n ci-env pip install -e '.[all]' --verbose
+          npm install -g jsdoc
+
+      - name: Run tests
+        run: conda run -n ci-env coverage run tests/all_tests.py && coverage report
+
+      - name: Python linter
+        run: conda run -n ci-env flake8 emperor/*.py tests/*.py setup.py
+
+      - name: JS linter
+        run: conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
+
+      - name: Documentation building
+        run: conda run -n ci-env make -C doc html
+
+      - name: Report coverage
+        run: conda run -n ci-env coveralls
