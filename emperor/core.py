@@ -101,6 +101,14 @@ class Emperor(object):
     height: str
         Height of the plot when displayed in the Jupyter notebook (in CSS
         units).
+    settings: dict
+        A dictionary of settings that is loaded when a plot is displayed.
+        Settings generated from the graphical user interface are stored as JSON
+        files that can be loaded, and directly set to this attribute.
+        Alternatively, each aspect of the plot can be changed with dedicated
+        methods, for example see ``color_by``, ``set_background_color``, etc.
+        This attribute can also be serialized as a JSON string and loaded from
+        the GUI.
     feature_mf: pd.DataFrame
         DataFrame object with the metadata associated to the features in the
         ``ordination`` object, should have an index set and it should match the
@@ -1399,15 +1407,7 @@ class Emperor(object):
 
     @property
     def settings(self):
-        """A dictionary of settings that is loaded when a plot is displayed.
-
-        Settings generated from the graphical user interface are stored as JSON
-        files that can be loaded, and directly set to this attribute.
-        Alternatively, each aspect of the plot can be changed with dedicated
-        methods, for example see ``color_by``, ``set_background_color``, etc.
-        This attribute can also be serialized as a JSON string and loaded from
-        the GUI.
-        """
+        "The settings property"
         return self._settings
 
     @settings.setter
