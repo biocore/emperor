@@ -9,10 +9,34 @@ Emperor's Documentation
 Emperor is an interactive next generation tool for the analysis, visualization
 and understanding of high throughput microbial ecology datasets.
 
-The :ref:`genindex` lists the contents of this documentation.
+API
+===
+
+Classes
+-------
+.. autosummary::
+   :toctree: generated/
+
+   emperor.Emperor
+
+   emperor.Emperor.settings
+
+Utility Functions
+-----------------
+.. autosummary::
+   :toctree: generated/
+
+   emperor.nbinstall
+   emperor.scatterplot
+
+JavaScript Integration
+----------------------
 
 .. toctree::
-   emperor
+   :maxdepth: 2
+
+   js_integration
+
 
 General Documentation:
 ======================
@@ -32,13 +56,6 @@ Animations:
 
    tutorials/animations
 
-JavaScript Integration
-======================
-
-.. toctree::
-   :maxdepth: 2
-
-   js_integration
 
 Citing Emperor
 ==============
