@@ -12,9 +12,7 @@ and understanding of high throughput microbial ecology datasets.
 The :ref:`genindex` lists the contents of this documentation.
 
 .. toctree::
-   :maxdepth: 4
-
-   emperor_objects
+   emperor
 
 General Documentation:
 ======================

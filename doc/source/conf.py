@@ -18,15 +18,8 @@ import glob
 
 import sphinx_bootstrap_theme
 
-# NOTE: parts of this file were taken from scipy's doc/source/conf.py. See
-# biom-format/licenses/scipy.txt for scipy's license.
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('sphinxext/numpydoc/'))
-
 # -- Options for autosummary ----------------------------------------------
-autosummary_generate = glob.glob('*.rst') + glob.glob('source/*.rst')
+autosummary_generate = True
 
 # -- General configuration ------------------------------------------------
 
@@ -38,7 +31,7 @@ autosummary_generate = glob.glob('*.rst') + glob.glob('source/*.rst')
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.imgmath',
-              'numpydoc',
+              'sphinx.ext.napoleon',
               'sphinx.ext.coverage',
               'sphinx.ext.doctest',
               'sphinx.ext.autosummary'

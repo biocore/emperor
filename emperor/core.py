@@ -1,19 +1,3 @@
-r"""
-Emperor 3D PCoA viewer (:mod:`emperor.core`)
-============================================
-
-This module provides an Object to interact and visualize an Emperor plot
-from the IPython notebook.
-
-.. currentmodule:: emperor.core
-
-Classes
--------
-.. autosummary::
-    :toctree: generated/
-
-    Emperor
-"""
 # ----------------------------------------------------------------------------
 # Copyright (c) 2013--, emperor development team.
 #
@@ -117,14 +101,6 @@ class Emperor(object):
     height: str
         Height of the plot when displayed in the Jupyter notebook (in CSS
         units).
-    settings: dict
-        A dictionary of settings that is loaded when a plot is displayed.
-        Settings generated from the graphical user interface are stored as JSON
-        files that can be loaded, and directly set to this attribute.
-        Alternatively, each aspect of the plot can be changed with dedicated
-        methods, for example see ``color_by``, ``set_background_color``, etc.
-        This attribute can also be serialized as a JSON string and loaded from
-        the GUI.
     feature_mf: pd.DataFrame
         DataFrame object with the metadata associated to the features in the
         ``ordination`` object, should have an index set and it should match the
@@ -140,7 +116,7 @@ class Emperor(object):
 
     Examples
     --------
-    Create an Emperor object and display it from the Jupyter notebook:
+    Create an Emperor [1]_ object and display it from the Jupyter notebook:
 
     >>> import pandas as pd, numpy as np
     >>> from emperor import Emperor
@@ -887,7 +863,7 @@ class Emperor(object):
         Notes
         -----
         Valid colormaps are listed below (under the `Code` column), for
-        examples see [1]_ or [2]_.
+        examples see [3]_ or [4]_.
 
         +----------+---------------------+------------+
         | Code     | Name                | Type       |
@@ -974,8 +950,8 @@ class Emperor(object):
 
         References
         ----------
-        .. [1] https://matplotlib.org/examples/color/colormaps_reference.html
-        .. [2] http://colorbrewer2.org/
+        .. [3] https://matplotlib.org/examples/color/colormaps_reference.html
+        .. [4] http://colorbrewer2.org/
         """
         colors = self._base_data_checks(category, colors, str)
 
@@ -1423,7 +1399,15 @@ class Emperor(object):
 
     @property
     def settings(self):
-        """Dictionary to load default settings from, when displaying a plot"""
+        """ A dictionary of settings that is loaded when a plot is displayed.
+
+        Settings generated from the graphical user interface are stored as JSON
+        files that can be loaded, and directly set to this attribute.
+        Alternatively, each aspect of the plot can be changed with dedicated
+        methods, for example see ``color_by``, ``set_background_color``, etc.
+        This attribute can also be serialized as a JSON string and loaded from
+        the GUI.
+        """
         return self._settings
 
     @settings.setter
