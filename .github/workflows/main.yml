@@ -45,9 +45,8 @@ jobs:
         run: |
           conda create --yes -n tester python=${{ matrix.python-version }} pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
           conda install -n tester -c conda-forge phantomjs --yes
-          conda run -n tester echo hello
-          conda run -n tester 'pip install "sphinx<1.6" sphinx-bootstrap-theme coveralls'
-          conda run -n tester 'pip install -e ".[all]" --verbose'
+          conda run -n tester pip install sphinx sphinx-bootstrap-theme coveralls
+          conda run -n tester pip install -e ".[all]" --verbose
           npm install -g jsdoc
 
       - name: Run tests
