@@ -27,9 +27,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
+      - uses: andstor/jsdoc-action@v1
   
       - name: Set up conda
         uses: s-weigand/setup-conda@v1
@@ -64,7 +62,6 @@ jobs:
 
       - name: Documentation building
         run: |
-          # npm install jsdoc
           conda run -n tester make -C doc html
 
       - name: Report coverage
