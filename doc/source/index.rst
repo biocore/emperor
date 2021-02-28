@@ -16,10 +16,9 @@ Classes
 -------
 .. autosummary::
    :toctree: generated/
+   :recursive:
 
    emperor.Emperor
-
-   emperor.Emperor.settings
 
 Utility Functions
 -----------------

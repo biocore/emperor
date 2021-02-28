@@ -75,7 +75,7 @@ release = '1.0.2-dev'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['build', '_templates/autosummary/*.rst', 'sphinxext']
+exclude_patterns = ['build', '_templates/autosummary/*.rst']
 
 # If true, links to the reST sources are added to the pages.
 html_show_sourcelink = False
