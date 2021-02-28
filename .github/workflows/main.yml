@@ -64,7 +64,7 @@ jobs:
 
       - name: Documentation building
         run: |
-          npm install jsdoc
+          # npm install jsdoc
           conda run -n tester make -C doc html
 
       - name: Report coverage
