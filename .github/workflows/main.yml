@@ -27,9 +27,6 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-
-      - name: Build
-        uses: andstor/jsdoc-action@v1
   
       - name: Set up conda
         uses: s-weigand/setup-conda@v1
@@ -49,7 +46,8 @@ jobs:
           conda create --yes -n tester python=${{ matrix.python-version }} pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
           conda install -n tester -c conda-forge phantomjs --yes
           conda run -n tester pip install sphinx sphinx-bootstrap-theme coveralls
-          conda run -n tester pip install -e ".[all]" --verbose
+          conda run -n tester pip install -e ".[all]"
+          npm install jsdoc
 
       - name: Run tests
         run: conda run -n tester coverage run tests/all_tests.py && coverage report
