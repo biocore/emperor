@@ -51,7 +51,7 @@ jobs:
 
       - name: Documentation building
         run: |
-          jsdoc --help
+          ./node_modules/jsdoc/jsdoc.js --help
           conda run -n tester -- jsdoc
           conda run -n tester make -C doc html
 
