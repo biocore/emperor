@@ -31,7 +31,7 @@ autosummary_generate = True
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.imgmath',
-              'sphinx.ext.napoleon',
+              'numpydoc',
               'sphinx.ext.coverage',
               'sphinx.ext.doctest',
               'sphinx.ext.autosummary'

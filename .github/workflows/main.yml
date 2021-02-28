@@ -47,7 +47,7 @@ jobs:
           conda install -n tester -c conda-forge phantomjs --yes
           conda run -n tester pip install sphinx sphinx-bootstrap-theme coveralls
           conda run -n tester pip install -e ".[all]" --verbose
-          npm install -g jsdoc
+          npm install jsdoc
 
       - name: Run tests
         run: conda run -n tester coverage run tests/all_tests.py && coverage report

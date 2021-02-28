@@ -1399,7 +1399,7 @@ class Emperor(object):
 
     @property
     def settings(self):
-        """ A dictionary of settings that is loaded when a plot is displayed.
+        """A dictionary of settings that is loaded when a plot is displayed.
 
         Settings generated from the graphical user interface are stored as JSON
         files that can be loaded, and directly set to this attribute.
