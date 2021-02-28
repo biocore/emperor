@@ -26,6 +26,10 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
   
       - name: Set up conda
         uses: s-weigand/setup-conda@v1
@@ -59,9 +63,6 @@ jobs:
         run: conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 
       - name: Documentation building
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
         run: |
           npm install jsdoc
           conda run -n tester make -C doc html
