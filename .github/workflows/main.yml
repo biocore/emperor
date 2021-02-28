@@ -50,7 +50,9 @@ jobs:
           npm install jsdoc
 
       - name: Run tests
-        run: conda run -n tester coverage run tests/all_tests.py && coverage report
+        run: |
+          conda run -n tester coverage run tests/all_tests.py
+          conda run -n tester coverage report
 
       - name: Python linter
         run: conda run -n tester flake8 emperor/*.py tests/*.py setup.py
