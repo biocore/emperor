@@ -48,6 +48,7 @@ jobs:
           conda run -n tester pip install sphinx sphinx-bootstrap-theme coveralls
           conda run -n tester pip install -e ".[all]"
           npm install jsdoc
+          conda run -n tester which jsdoc
 
       - name: Run tests
         run: |
