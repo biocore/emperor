@@ -49,6 +49,12 @@ jobs:
           conda run -n tester pip install sphinx sphinx-bootstrap-theme coveralls
           conda run -n tester pip install -e ".[all]"
 
+      - name: Documentation building
+        run: |
+          jsdoc --help
+          conda run -n tester -- jsdoc
+          conda run -n tester make -C doc html
+
       - name: Run tests
         run: |
           conda run -n tester coverage run tests/all_tests.py
@@ -60,9 +66,6 @@ jobs:
       - name: JS linter
         run: conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 
-      - name: Documentation building
-        run: |
-          conda run -n tester make -C doc html
 
       - name: Report coverage
         run: conda run -n tester coveralls
