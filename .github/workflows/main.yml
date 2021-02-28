@@ -18,7 +18,6 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.7', '3.8']
-        node-version: [14.x]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -47,8 +46,6 @@ jobs:
           conda install -n tester -c conda-forge phantomjs --yes
           conda run -n tester pip install sphinx sphinx-bootstrap-theme coveralls
           conda run -n tester pip install -e ".[all]"
-          npm install jsdoc
-          conda run -n tester which jsdoc
 
       - name: Run tests
         run: |
@@ -62,7 +59,12 @@ jobs:
         run: conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 
       - name: Documentation building
-        run: conda run -n tester make -C doc html
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+        run: |
+          npm install jsdoc
+          conda run -n tester make -C doc html
 
       - name: Report coverage
         run: conda run -n tester coveralls
