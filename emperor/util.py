@@ -60,7 +60,7 @@ def get_emperor_support_files_dir():
 def nbinstall(overwrite=False, user=True, prefix=None):
     """Copies resources to the '/nbextensions' folder in your IPython directory
 
-    This function was taken from [1] and modified to match our usecase.
+    This function was taken from [5]_ and modified to match our usecase.
 
     Parameters
     ----------
@@ -90,7 +90,7 @@ def nbinstall(overwrite=False, user=True, prefix=None):
 
     References
     ----------
-    .. [1] GitHub repository for qgrid https://github.com/quantopian/qgrid
+    .. [5] GitHub repository for qgrid https://github.com/quantopian/qgrid
     """
 
     # Lazy imports so we don't pollute the namespace.

@@ -1,7 +1,7 @@
 Emperor
 =======
 
-[![Join the chat at https://gitter.im/biocore/emperor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/biocore/emperor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/biocore/emperor.png?branch=master)](https://travis-ci.org/biocore/emperor) [![Coverage Status](https://coveralls.io/repos/biocore/emperor/badge.svg)](https://coveralls.io/r/biocore/emperor)
+[![Join the chat at https://gitter.im/biocore/emperor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/biocore/emperor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![](https://github.com/biocore/emperor/workflows/Emperor%20CI/badge.svg)](https://github.com/biocore/emperor/actions) [![Coverage Status](https://coveralls.io/repos/biocore/emperor/badge.svg)](https://coveralls.io/r/biocore/emperor)
 
 Emperor is a next-generation tool for the analysis and visualization of large microbial ecology datasets; amongst its many features Emperor provides a modern user interface that will rapidly adjust to your data analysis workflow.
 
