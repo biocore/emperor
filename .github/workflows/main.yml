@@ -27,14 +27,20 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - uses: andstor/jsdoc-action@v1
-  
+      - name: Set up Node.js enviroment
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
       - name: Set up conda
         uses: s-weigand/setup-conda@v1
         with:
           update-conda: true
           python-version: 3.6
           conda-channels: anaconda, conda-forge
+
+      - name: Install Node.js modules
+        run: npm install -g jsdoc
 
       - name: Install JS Linter
         run: |
@@ -51,7 +57,7 @@ jobs:
 
       - name: Documentation building
         run: |
-          ./node_modules/jsdoc/jsdoc.js --help
+          jsdoc --help
           conda run -n tester -- jsdoc
           conda run -n tester make -C doc html
 
