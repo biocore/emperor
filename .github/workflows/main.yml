@@ -55,11 +55,11 @@ jobs:
           conda run -n tester pip install sphinx numpydoc sphinx-bootstrap-theme coveralls
           conda run -n tester pip install -e ".[all]"
 
-      - name: Documentation building
+      - name: Build documentation
         run: |
           conda run -n tester make -C doc html
 
-      - name: Run tests
+      - name: Run tests and measure coverage
         run: |
           conda run -n tester coverage run tests/all_tests.py
           conda run -n tester coverage report
@@ -71,5 +71,7 @@ jobs:
         run: conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 
 
-      - name: Report coverage
-        run: conda run -n tester coveralls
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
