@@ -2,3 +2,4 @@
 branch = True
 omit = emperor/qiime_backports/*
 source = emperor,scripts
+relative_files = True

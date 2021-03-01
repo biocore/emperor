@@ -32,6 +32,9 @@ jobs:
         with:
           node-version: 14
 
+      - name: Coveralls
+        uses: AndreMiras/coveralls-python-action@v20201129
+
       - name: Set up conda
         uses: s-weigand/setup-conda@v1
         with:
@@ -52,7 +55,7 @@ jobs:
         run: |
           conda create --yes -n tester python=${{ matrix.python-version }} pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
           conda install -n tester -c conda-forge phantomjs --yes
-          conda run -n tester pip install sphinx numpydoc sphinx-bootstrap-theme coveralls
+          conda run -n tester pip install sphinx numpydoc sphinx-bootstrap-theme
           conda run -n tester pip install -e ".[all]"
 
       - name: Build documentation
@@ -70,8 +73,17 @@ jobs:
       - name: JS linter
         run: conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 
-
       - name: Coveralls
-        uses: coverallsapp/github-action@master
+        uses: AndreMiras/coveralls-python-action@develop
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel: true
+          flag-name: Unit Test
+
+coveralls_finish:
+  needs: build
+  runs-on: ubuntu-latest
+  steps:
+  - name: Coveralls Finished
+    uses: AndreMiras/coveralls-python-action@develop
+    with:
+      parallel-finished: true
