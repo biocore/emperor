@@ -101,10 +101,10 @@ define([
     this.height = this.$divId.height();
 
     /**
-     * Information to be displayed in the plot banner. 
+     * Information to be displayed in the plot banner.
      * @type {string}
      */
-    this.info = info; 
+    this.info = info;
 
     var decModelMap = {'scatter': scatter};
     if (biplot)
