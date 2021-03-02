@@ -1,6 +1,16 @@
 Emperor ChangeLog
 =================
 
+# Emperor 1.0.2-dev (changes since 1.0.2 go here)
+-------------------------------------------------
+
+### Bug Fixes
+
+### New Features
+
+### Miscellaneous
+
+
 # Emperor 1.0.2 (20 Nov 2020)
 -----------------------------
 
