@@ -5,7 +5,7 @@
 Examples
 ^^^^^^^^
 
-Emperor provides a Python API (:ref:`emperor-python-docs`) intended to be used
+Emperor provides a Python API intended to be used
 to create interactive plots, which can be visualized in the context of
 the `Jupyter notebook <http://jupyter.org>`_, or outside it.
 Alternatively, if you are using `QIIME 2 <https://qiime2.org>`_, these same

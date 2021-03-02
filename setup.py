@@ -9,7 +9,7 @@
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.2"
+__version__ = "1.0.2-dev"
 __maintainer__ = "Emperor development team"
 __email__ = "yoshiki89@gmail.com"
 
@@ -36,7 +36,7 @@ with open('README.md') as f:
 
 base = ["numpy >= 1.7", "scipy >= 0.17.0", "click", "pandas",
         "scikit-bio >= 0.4.1", "jinja2 >= 2.9", "future"]
-doc = ["Sphinx", "sphinx-bootstrap-theme"]
+doc = ["Sphinx", "sphinx-bootstrap-theme", "numpydoc"]
 test = ["pep8", "flake8", "nose"]
 all_deps = base + doc + test
 

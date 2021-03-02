@@ -1,0 +1,86 @@
+name: Emperor CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on pull request and push events, only on the master
+  # branch
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  # name of job
+  build:
+    # The type of runner that the job will run on (available options are window/macOS/linux)
+    runs-on: ubuntu-latest
+    # we can add more versions of node.js in the future
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8']
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # first grab branch from github
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Node.js enviroment
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - name: Set up conda
+        uses: s-weigand/setup-conda@v1
+        with:
+          update-conda: true
+          python-version: 3.6
+          conda-channels: anaconda, conda-forge
+
+      - name: Install Node.js modules
+        run: npm install -g jsdoc
+
+      - name: Install JS Linter
+        run: |
+          conda create --yes -n gjslint python=2.7 pip six
+          wget https://github.com/google/closure-linter/archive/master.zip
+          conda run -n gjslint pip install master.zip
+
+      - name: Install Emperor
+        run: |
+          conda create --yes -n tester python=${{ matrix.python-version }} pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
+          conda install -n tester -c conda-forge phantomjs --yes
+          conda run -n tester pip install sphinx numpydoc sphinx-bootstrap-theme
+          conda run -n tester pip install -e ".[all]"
+
+      - name: Build documentation
+        run: |
+          conda run -n tester make -C doc html
+
+      - name: Run tests and measure coverage
+        run: |
+          conda run -n tester coverage run tests/all_tests.py
+          conda run -n tester coverage report
+
+      - name: Python linter
+        run: conda run -n tester flake8 emperor/*.py tests/*.py setup.py
+
+      - name: JS linter
+        run: conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
+
+      - name: Coveralls
+        uses: AndreMiras/coveralls-python-action@develop
+        with:
+          parallel: true
+          flag-name: Unit Test
+
+  coveralls_finish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel-finished: true
