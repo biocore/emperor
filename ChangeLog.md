@@ -8,6 +8,10 @@ Emperor ChangeLog
 
 ### New Features
 
+* Added a new "info" attribute to display statistics
+  and other pertinent information directly on emperor
+  plot.
+
 ### Miscellaneous
 
 
