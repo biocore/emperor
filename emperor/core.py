@@ -252,6 +252,7 @@ class Emperor(object):
         # Jupyter notebook, can be a "percent" or "number of pixels".
         self.width = '100%'
         self.height = '500px'
+        self.info = None
 
         self._settings = {}
 
@@ -490,7 +491,8 @@ class Emperor(object):
                 'metadata_headers': headers,
                 'metadata': metadata,
                 'settings': self.settings,
-            }
+            },
+            'info': self.info
         }
 
         # we can rely on the fact that the dictionary above will exist

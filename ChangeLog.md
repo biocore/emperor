@@ -11,6 +11,10 @@ Emperor ChangeLog
 
 ### New Features
 
+* Added a new "info" attribute to display statistics
+  and other pertinent information directly on emperor
+  plot.
+
 ### Miscellaneous
 
 * Fix wording in the README slightly; update a link to QIIME 2's documentation.
