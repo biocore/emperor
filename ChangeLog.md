@@ -13,6 +13,8 @@ Emperor ChangeLog
 
 ### Miscellaneous
 
+* Fix wording in the README slightly; update a link to QIIME 2's documentation.
+
 
 # Emperor 1.0.2 (20 Nov 2020)
 -----------------------------
