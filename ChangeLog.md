@@ -6,9 +6,14 @@ Emperor ChangeLog
 
 ### Bug Fixes
 
+* Fix a bug causing slight inaccuracies in how color gradients were drawn
+  ([#788](https://github.com/biocore/emperor/issues/788)).
+
 ### New Features
 
 ### Miscellaneous
+
+* Fix wording in the README slightly; update a link to QIIME 2's documentation.
 
 
 # Emperor 1.0.2 (20 Nov 2020)

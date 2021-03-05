@@ -314,7 +314,8 @@ requirejs([
         '<stop offset="96%" stop-color="#e7e527"/>' +
         '<stop offset="97%" stop-color="#ede626"/>' +
         '<stop offset="98%" stop-color="#f2e626"/>' +
-        '<stop offset="99%" stop-color="#f8e725"/></linearGradient></defs>' +
+        '<stop offset="99%" stop-color="#f8e725"/>' +
+        '<stop offset="100%" stop-color="#fee825"/></linearGradient></defs>' +
         '<rect id="gradientRect" width="20" height="95%" ' +
         'fill="url(#Gradient)"/><text x="25" y="12px" ' +
         'font-family="sans-serif" font-size="12px" text-anchor="start">4' +
@@ -322,6 +323,34 @@ requirejs([
         'font-size="12px" text-anchor="start">2</text><text x="25" y="95%" ' +
         'font-family="sans-serif" font-size="12px" text-anchor="start">0</text>'
       ]);
+    });
+
+    test('Test getScaledColors: even number of vals & an outlier', function() {
+      var vals = ['5', '6', '7', '10000'];
+      var color = ColorViewController.getScaledColors(vals, 'PiYG');
+      // The outlier's effect is so strong that 5, 6, and 7 all get assigned
+      // the same hex color (because hex color doesn't have _that_ much
+      // resolution). This is as expected.
+      deepEqual(
+          color[0],
+          {5: '#8e0152', 6: '#8e0152', 7: '#8e0152', 10000: '#276419'}
+      );
+      // Check that the gradient includes 0%, 50%, and 100% with the correct
+      // colors. Furthermore, check that the 100% stop color is the last one
+      // in the gradient.
+      // Note that the color at 50% should exactly correspond to the middle of
+      // this color map (i.e. if you go to Chroma.js' docs and type in
+      // chroma.scale("PiYG")(0.5) you should get #f7f7f7). The reason for this
+      // is that the range [0, 100] has 101 elements (i.e. an odd number of
+      // elements), of which 50 is the middle element.
+      // (This is also the case for the Viridis test above.)
+      ok(/<stop offset="0%" stop-color="#8e0152"\/>/.test(color[1]));
+      ok(/<stop offset="50%" stop-color="#f7f7f7"\/>/.test(color[1]));
+      ok(
+          /<stop offset="100%" stop-color="#276419"\/><\/linearGradient>/.test(
+              color[1]
+          )
+      );
     });
 
     test('Test getInterpolatedColors', function() {
