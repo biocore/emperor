@@ -1,8 +1,8 @@
 Emperor ChangeLog
 =================
 
-# Emperor 1.0.2-dev (changes since 1.0.2 go here)
--------------------------------------------------
+# Emperor 1.0.3
+---------------
 
 ### Bug Fixes
 
