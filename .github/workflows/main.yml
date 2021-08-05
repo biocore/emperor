@@ -54,7 +54,6 @@ jobs:
         run: |
           conda install pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
           conda install -c conda-forge phantomjs --yes
-          pip install 'sphinx<4' numpydoc sphinx-bootstrap-theme
           pip install -e ".[all]"
 
       - name: Build documentation
