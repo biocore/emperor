@@ -32,42 +32,47 @@ jobs:
         with:
           node-version: 14
 
-      - name: Set up conda
-        uses: s-weigand/setup-conda@v1
+      - uses: conda-incubator/setup-miniconda@v2
         with:
-          update-conda: true
-          python-version: 3.6
+          activate-environment: tester
+          python-version: ${{ matrix.python-version }}
           conda-channels: anaconda, conda-forge
+          auto-update-conda: true
 
       - name: Install Node.js modules
         run: npm install -g jsdoc
 
       - name: Install JS Linter
+        shell: bash -l {0}
         run: |
           conda create --yes -n gjslint python=2.7 pip six
           wget https://github.com/google/closure-linter/archive/master.zip
           conda run -n gjslint pip install master.zip
 
       - name: Install Emperor
+        shell: bash -l {0}
         run: |
-          conda create --yes -n tester python=${{ matrix.python-version }} pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
-          conda install -n tester -c conda-forge phantomjs --yes
-          conda run -n tester pip install sphinx numpydoc sphinx-bootstrap-theme
-          conda run -n tester pip install -e ".[all]"
+          conda install pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
+          conda install -c conda-forge phantomjs --yes
+          pip install -e ".[all]"
 
       - name: Build documentation
+        shell: bash -l {0}
         run: |
-          conda run -n tester make -C doc html
+          make -C doc html
 
       - name: Run tests and measure coverage
+        shell: bash -l {0}
         run: |
-          conda run -n tester coverage run tests/all_tests.py
-          conda run -n tester coverage report
+          coverage run tests/all_tests.py
+          coverage report
 
       - name: Python linter
-        run: conda run -n tester flake8 emperor/*.py tests/*.py setup.py
+        shell: bash -l {0}
+        run: flake8 emperor/*.py tests/*.py setup.py
 
       - name: JS linter
+        shell: bash -l {0}
         run: conda run -n gjslint gjslint --custom_jsdoc_tags 'module,function,constructs,alias,default' 'emperor/support_files/js/*.js' 'tests/javascript_tests/*.js'
 
       - name: Coveralls
