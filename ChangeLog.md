@@ -9,6 +9,8 @@ Emperor ChangeLog
 
 ### Miscellaneous
 
+* Pin Sphinx version to be less than 4.0.
+
 
 # Emperor 1.0.3 (14 Apr 2021)
 -----------------------------
