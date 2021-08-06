@@ -126,7 +126,7 @@ requirejs([
       // set the first group to false the second group to true
       groupVisibility = controller.getSlickGridDataset();
       groupVisibility[0].value = false;
-      groupVisibility[1].value =  true;
+      groupVisibility[1].value = true;
       controller.getView().setVisibility(false, groupVisibility[0].plottables);
       controller.getView().setVisibility(true, groupVisibility[1].plottables);
       controller.setSlickGridDataset(groupVisibility);
