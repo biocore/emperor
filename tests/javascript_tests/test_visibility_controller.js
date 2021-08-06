@@ -107,6 +107,39 @@ requirejs([
       equal(controller.getMetadataField(), null);
     });
 
+    test('Testing toggleVisibility', function(assert) {
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                        'width:12px"></div>');
+      var controller = new VisibilityController(new UIState(), container,
+          this.sharedDecompositionViewDict);
+      controller.setMetadataField('Treatment');
+
+      // trun everything off
+      controller.toggleVisibility();
+      equal(controller.decompViewDict.scatter.markers[0].visible, false);
+      equal(controller.decompViewDict.scatter.markers[1].visible, false);
+
+      var groupVisibility = controller.getSlickGridDataset();
+      equal(groupVisibility[0].value, false);
+      equal(groupVisibility[1].value, false);
+
+      // set the first group to false the second group to true
+      groupVisibility = controller.getSlickGridDataset();
+      groupVisibility[0].value = false;
+      groupVisibility[1].value =  true;
+      controller.getView().setVisibility(false, groupVisibility[0].plottables);
+      controller.getView().setVisibility(true, groupVisibility[1].plottables);
+      controller.setSlickGridDataset(groupVisibility);
+
+      controller.toggleVisibility();
+      equal(controller.decompViewDict.scatter.markers[0].visible, true);
+      equal(controller.decompViewDict.scatter.markers[1].visible, false);
+
+      groupVisibility = controller.getSlickGridDataset();
+      equal(groupVisibility[0].value, true);
+      equal(groupVisibility[1].value, false);
+    });
+
     test('Testing setPlottableAttributes helper function', function(assert) {
       // testing with one plottable
       var idx = 0;

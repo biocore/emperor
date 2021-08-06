@@ -7,6 +7,8 @@ Emperor ChangeLog
 
 ### New Features
 
+* Add `Toggle Visible` button to `Visibility` tab.
+
 ### Miscellaneous
 
 * Pin Sphinx version to be less than 4.0.
