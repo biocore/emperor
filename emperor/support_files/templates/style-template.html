@@ -1,8 +1,6 @@
 <script type="text/javascript">
-{% raw %}
-if ($("#emperor-css").length == 0){{
-    $("head").append([
-{% endraw %}
+if (document.querySelector("#emperor-css") === null){
+    document.querySelector("head").insertAdjacentHTML("beforeend",[
         '<link id="emperor-css" rel="stylesheet" type="text/css" href="{{ base_url }}/css/emperor.css">',
         '<link rel="stylesheet" type="text/css" href="{{ base_url }}/vendor/css/jquery-ui.min.css">',
         '<link rel="stylesheet" type="text/css" href="{{ base_url }}/vendor/css/slick.grid.min.css">',
@@ -10,6 +8,6 @@ if ($("#emperor-css").length == 0){{
         '<link rel="stylesheet" type="text/css" href="{{ base_url }}/vendor/css/chosen.min.css">',
         '<link rel="stylesheet" type="text/css" href="{{ base_url }}/vendor/css/jquery.contextMenu.min.css">'
     ]);
-}}
+}
 </script>
 

@@ -318,31 +318,31 @@ class TopLevelTests(TestCase):
 
     def test_resolve_stable_url_release(self):
         # we test that no warnings are raised
-        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        url = 'https://github.com/biocore/emperor@%s/emperor/support_files'
         with warnings.catch_warnings(record=True) as w:
             obs = resolve_stable_url('1.0.0b7', url)
             self.assertTrue(len(w) == 0)
             self.assertEqual(obs, url % '1.0.0-beta.7')
 
     def test_resolve_stable_url_release_check_warning(self):
-        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        url = 'https://github.com/biocore/emperor@%s/emperor/support_files'
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter('always')
-            obs = resolve_stable_url('1.0.0b7-dev', url)
+            obs = resolve_stable_url('1.0.0b7.dev', url)
 
             self.assertTrue(len(w) == 1)
             self.assertTrue(issubclass(w[-1].category, EmperorWarning))
-            self.assertEqual(obs, url % 'new-api')
+            self.assertEqual(obs, url % '1.0.0-beta.7')
 
     def test_resolve_stable_url_release_number_check_warning(self):
-        url = 'https://github.com/biocore/emperor/%s/emperor/support_files'
+        url = 'https://github.com/biocore/emperor@%s/emperor/support_files'
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter('always')
-            obs = resolve_stable_url('1.0.0b7-dev0', url)
+            obs = resolve_stable_url('1.0.0b7.dev0', url)
 
             self.assertTrue(len(w) == 1)
             self.assertTrue(issubclass(w[-1].category, EmperorWarning))
-            self.assertEqual(obs, url % 'new-api')
+            self.assertEqual(obs, url % '1.0.0-beta.7')
 
 
 MAPPING_FILE_DATA = [
