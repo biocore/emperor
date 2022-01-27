@@ -24,8 +24,8 @@ from emperor.util import (get_emperor_support_files_dir,
                           validate_and_process_custom_axes, EmperorWarning)
 
 # we are going to use this remote location to load external resources
-REMOTE_URL = ('https://cdn.rawgit.com/biocore/emperor/%s/emperor'
-              '/support_files')
+REMOTE_URL = ('https://cdn.jsdelivr.net/gh/biocore/emperor@%s/emperor/'
+              'support_files')
 LOCAL_URL = "/nbextensions/emperor/support_files"
 
 BASE_DEPENDENCIES_PATH = 'base-dependencies.html'

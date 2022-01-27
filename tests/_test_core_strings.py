@@ -55,10 +55,8 @@ Site constraints	0	0
 
 HTML_STRING = u"""
 <script type="text/javascript">
-
-if ($("#emperor-css").length == 0){{
-    $("head").append([
-
+if (document.querySelector("#emperor-css") === null){
+    document.querySelector("head").insertAdjacentHTML("beforeend",[
         '<link id="emperor-css" rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/css/emperor.css">',
         '<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/css/jquery-ui.min.css">',
         '<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/css/slick.grid.min.css">',
@@ -66,7 +64,7 @@ if ($("#emperor-css").length == 0){{
         '<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/css/chosen.min.css">',
         '<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/css/jquery.contextMenu.min.css">'
     ]);
-}}
+}
 </script>
 
 <div id='emperor-notebook-0x9cb72f54' style="position: relative; width:100%; height:500px;">
@@ -241,10 +239,8 @@ STANDALONE_HTML_STRING = """<!DOCTYPE html>
     <meta charset="utf-8">
 
     <script type="text/javascript">
-
-if ($("#emperor-css").length == 0){{
-    $("head").append([
-
+if (document.querySelector("#emperor-css") === null){
+    document.querySelector("head").insertAdjacentHTML("beforeend",[
         '<link id="emperor-css" rel="stylesheet" type="text/css" href="./some-local-path//css/emperor.css">',
         '<link rel="stylesheet" type="text/css" href="./some-local-path//vendor/css/jquery-ui.min.css">',
         '<link rel="stylesheet" type="text/css" href="./some-local-path//vendor/css/slick.grid.min.css">',
@@ -252,7 +248,7 @@ if ($("#emperor-css").length == 0){{
         '<link rel="stylesheet" type="text/css" href="./some-local-path//vendor/css/chosen.min.css">',
         '<link rel="stylesheet" type="text/css" href="./some-local-path//vendor/css/jquery.contextMenu.min.css">'
     ]);
-}}
+}
 </script>
 
 
@@ -435,10 +431,8 @@ function($, model, EmperorController) {
 </html>"""
 
 STYLE_STRING = """<script type="text/javascript">
-
-if ($("#emperor-css").length == 0){{
-    $("head").append([
-
+if (document.querySelector("#emperor-css") === null){
+    document.querySelector("head").insertAdjacentHTML("beforeend",[
         '<link id="emperor-css" rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/css/emperor.css">',
         '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/jquery-ui.min.css">',
         '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/slick.grid.min.css">',
@@ -446,7 +440,7 @@ if ($("#emperor-css").length == 0){{
         '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/chosen.min.css">',
         '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/jquery.contextMenu.min.css">'
     ]);
-}}
+}
 </script>
 """
 
