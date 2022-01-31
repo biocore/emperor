@@ -68,6 +68,22 @@ define([
 
     EmperorAttributeABC.call(this, uiState, container, title, helpmenu,
         decompViewDict, options);
+
+    this.$applyAll = $("<input type='button' value='Toggle Visible'>"
+    ).css({
+      'margin': '0 auto',
+      'display': 'block'
+    });
+    this.$header.append(this.$applyAll);
+
+    $(function() {
+      scope.$applyAll.hide();
+      scope.$applyAll.on('click', function() {
+        scope.toggleVisibility();
+      });
+    });
+
+
     return this;
   }
   VisibilityController.prototype = Object.create(EmperorAttributeABC.prototype);
@@ -101,6 +117,44 @@ define([
       function(scope, visible, group) {
     scope.setVisibility(visible, group);
   };
+
+  /**
+   * Sets whether or not elements in the tab can be modified.
+   *
+   * @param {Boolean} trulse option to enable elements.
+   */
+  VisibilityController.prototype.setEnabled = function(trulse) {
+    EmperorAttributeABC.prototype.setEnabled.call(this, trulse);
+
+    // prevent errors when this method is called before the element exists
+    if (this.$applyAll) {
+      if (trulse) {
+        this.$applyAll.show();
+      }
+      else {
+        this.$applyAll.hide();
+      }
+    }
+  };
+
+  /**
+   * Toggle visible objects
+   */
+  VisibilityController.prototype.toggleVisibility = function() {
+    var view = this.getView();
+
+    var groups = this.getSlickGridDataset();
+    _.each(groups, function(group) {
+
+      // toggle the value in the data container and update the view
+      group.value = Boolean(true ^ group.value);
+      view.setVisibility(group.value, group.plottables);
+    });
+
+    // lastly, update the grid table
+    this.setSlickGridDataset(groups);
+  };
+
 
   return VisibilityController;
 });
