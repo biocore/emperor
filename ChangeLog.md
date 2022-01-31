@@ -5,12 +5,15 @@ Emperor ChangeLog
 
 ### Bug Fixes
 
+* Update remote URL to no longer use rawgit.
+  ([#751(https://github.com/biocore/emperor/issues/751)]).
+
 ### New Features
 
 ### Miscellaneous
 
 * Pin Sphinx version to be less than 4.0.
-
+* Jupyter templates no longer require jQuery to add the CSS headers.
 
 # Emperor 1.0.3 (14 Apr 2021)
 -----------------------------

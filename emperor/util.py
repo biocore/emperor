@@ -363,16 +363,24 @@ def resolve_stable_url(version, base_url):
     An EmperorWarning is shown when development URLs are used.
     """
     if 'dev' in version:
-        warnings.warn("Plots generated with `remote=True` using a development "
-                      "version of Emperor, may fail to load in the future "
-                      "(only the logo may be displayed instead of the plot). "
-                      "To avoid this, use a release version of Emperor.",
+        warnings.warn("Plots generated with `remote=True` using a development"
+                      " version of Emperor may fail to load (only the logo "
+                      "may be displayed instead of the plot). Using this flag"
+                      " might also load outdated JS or CSS files. If you are "
+                      "doing development, we recommend running nbinstall and "
+                      "sourcing JS and CSS files locally. Otherwise use "
+                      "`remote=True` only with a release version of Emperor.",
                       EmperorWarning)
 
-        # this will need to be fixed when new-api is merged to master
-        return base_url % 'new-api'
-    else:
-        # version names are changed for git tags from betaxx to -beta.xx
-        if 'b' in version:
-            version = version.replace('b', '-beta.')
-        return base_url % version
+        version = version.rstrip('.dev0')
+
+    if 'b' in version:
+        # Version numbers appear in slightly different formats in different
+        # places. Setuptools converts 1.0.0beta19 into 1.0.0b19. This is then
+        # converted to 1.0.0-beta.19 for the git tag.
+        #
+        # The replacement below makes the setuptools version string match what
+        # the git tag will look like.
+        version = version.replace('b', '-beta.')
+
+    return base_url % version
