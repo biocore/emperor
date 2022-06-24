@@ -489,11 +489,12 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
    */
   function formatSVGLegend(labels, colors) {
     var labels_svg = '', pos_y = 1, increment = 40, max_len = 0, rect_width,
-    font_size = 12;
+    font_size = 12, swatch_len = 27;
 
     for (var i = 0; i < labels.length; i++) {
       // add the rectangle with the corresponding color
-      labels_svg += '<rect height="27" width="27" y="' + pos_y +
+      labels_svg += '<rect height="' + swatch_len + '" width="' + swatch_len +
+        '" y="' + pos_y +
         '" x="5" style="stroke-width:1;stroke:rgb(0,0,0)" fill="' +
         colors[i] + '"/>';
 
@@ -509,8 +510,8 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     // get the name with the maximum number of characters and get the length
     max_len = _.max(labels, function(a) {return a.length}).length;
 
-      // duplicate the size of the rectangle to make sure it fits the labels
-      rect_width = font_size * max_len * 2;
+    // duplicate the size of the rectangle to make sure it fits the labels
+    rect_width = swatch_len + (font_size * max_len * 2);
 
     labels_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' +
       rect_width + '" height="' + (pos_y - 10) + '"><g>' + labels_svg +
