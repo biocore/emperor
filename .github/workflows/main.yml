@@ -30,7 +30,7 @@ jobs:
       - name: Set up Node.js enviroment
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 16
 
       - uses: conda-incubator/setup-miniconda@v2
         with:

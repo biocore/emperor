@@ -6,7 +6,7 @@ Emperor ChangeLog
 ### Bug Fixes
 
 * Update remote URL to no longer use rawgit.
-  ([#751(https://github.com/biocore/emperor/issues/751)]).
+  ([#751](https://github.com/biocore/emperor/issues/751)).
 
 ### New Features
 
@@ -16,6 +16,8 @@ Emperor ChangeLog
 
 * Pin Sphinx version to be less than 4.0.
 * Jupyter templates no longer require jQuery to add the CSS headers.
+* Fix broken test suite with Pandas >=1.5 ([#810](https://github.com/biocore/emperor/issues/810)).
+* Limit jinja2 version for doc dependencies in setup.py. Allowed versions are: `>=2.9` and `<3.1`.
 
 # Emperor 1.0.3 (14 Apr 2021)
 -----------------------------

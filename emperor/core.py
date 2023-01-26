@@ -306,9 +306,9 @@ class Emperor(object):
                              'are using metadata and coordinates corresponding'
                              ' to the same dataset.' % kind)
 
+        # sort the elements so we have a deterministic output
+        difference = sorted([str(i) for i in difference])
         if difference and not ignore_missing_samples:
-            # sort the elements so we have a deterministic output
-            difference = sorted([str(i) for i in difference])
 
             # if there's more than 5 missing elements, truncate the list
             if len(difference) > 5:
