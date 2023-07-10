@@ -16,6 +16,7 @@ Emperor ChangeLog
 
 * Pin Sphinx version to be less than 4.0.
 * Jupyter templates no longer require jQuery to add the CSS headers.
+* Limit jinja2 version for doc dependencies in setup.py. Allowed versions are: `>=2.9` and `<3.1`.
 * Fix broken test suite with Pandas >=1.5 ([#810](https://github.com/biocore/emperor/issues/810)).
 
 # Emperor 1.0.3 (14 Apr 2021)
