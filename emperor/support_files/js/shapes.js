@@ -3,12 +3,12 @@
 // shapes.
 define(['jquery', 'three', 'underscore'], function($, THREE, _) {
 
-  var SPHERE = 'Sphere', SQUARE = 'Square', CONE = 'Cone',
+  var SPHERE = 'Sphere', CIRCLE = 'Circle', SQUARE = 'Square', CONE = 'Cone',
       ICOSAHEDRON = 'Icosahedron', CYLINDER = 'Cylinder',
       OCTAHEDRON = 'Diamond', RING = 'Ring', STAR = 'Star';
 
-  var shapes = [SPHERE, OCTAHEDRON, CONE, CYLINDER, RING, SQUARE, ICOSAHEDRON,
-                STAR];
+  var shapes = [SPHERE, CIRCLE, OCTAHEDRON, CONE, CYLINDER, RING, SQUARE,
+                ICOSAHEDRON, STAR];
 
   /**
    *
@@ -35,6 +35,10 @@ define(['jquery', 'three', 'underscore'], function($, THREE, _) {
     switch (shapeName) {
       case SPHERE:
         return new THREE.SphereGeometry(factor, 8, 8);
+      case CIRCLE:
+        geom = new THREE.CircleGeometry(factor, 16);
+        geom.rotateX(0.3);
+        return geom;
       case SQUARE:
         geom = new THREE.PlaneGeometry(factor * 2, factor * 2, 2, 2);
         geom.rotateX(0.3);
