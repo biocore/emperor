@@ -121,7 +121,7 @@ class TopLevelTests(TestCase):
         """Check correct processing is applied to the coords"""
 
         # case with custom axes
-        out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
+        out_coords_header, out_coords_data, out_eigenvals, out_pcts, \
             out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
                 self.coords_header, self.coords_data, self.coords_eigenvalues,
                 self.coords_pct, self.mapping_file_headers_gradient,
@@ -147,7 +147,7 @@ class TopLevelTests(TestCase):
                 self.assertAlmostEqual(out_el_sub, exp_el_sub)
 
         # case for jackknifing, based on qiime/tests/test_util.summarize_pcoas
-        out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
+        out_coords_header, out_coords_data, out_eigenvals, out_pcts, \
             out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
                 self.jk_coords_header, self.jk_coords_data,
                 self.jk_coords_eigenvalues, self.jk_coords_pcts,
@@ -170,7 +170,7 @@ class TopLevelTests(TestCase):
                                    [0.04787136, 0.025, 0.07071068]]))
 
         # test custom axes and jackknifed plots
-        out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
+        out_coords_header, out_coords_data, out_eigenvals, out_pcts, \
             out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
                 self.jk_coords_header_gradient, self.jk_coords_data_gradient,
                 self.jk_coords_eigenvalues_gradient,
@@ -209,7 +209,7 @@ class TopLevelTests(TestCase):
         self.assertEqual(o_clones, 0)
 
         # test that pct_variation_below_one is working
-        out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
+        out_coords_header, out_coords_data, out_eigenvals, out_pcts, \
             out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
                 self.jk_coords_header_gradient, self.jk_coords_data_gradient,
                 self.jk_coords_eigenvalues_gradient,
@@ -238,7 +238,7 @@ class TopLevelTests(TestCase):
             self.coords_pct, self.mapping_file_headers_gradient,
             self.mapping_file_data_gradient, None, None, True)
 
-        out_coords_header, out_coords_data, out_eigenvals, out_pcts,\
+        out_coords_header, out_coords_data, out_eigenvals, out_pcts, \
             out_coords_low, out_coords_high, o_clones = preprocess_coords_file(
                 self.jk_coords_header, self.jk_coords_data,
                 self.jk_coords_eigenvalues, self.jk_coords_pcts,

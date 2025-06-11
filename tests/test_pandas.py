@@ -69,7 +69,7 @@ class TopLevelTests(TestCase):
         pd.testing.assert_frame_equal(self.df, emp.mf)
 
         pd.testing.assert_frame_equal(emp.ordination.samples,
-                                           self.samples)
+                                      self.samples)
 
     def test_scatterplot_reordered(self):
         emp = scatterplot(self.df, x='num_3', y='num_2', z='num_1',
@@ -85,7 +85,7 @@ class TopLevelTests(TestCase):
         reordered = self.samples[['num_3', 'num_2', 'num_1', 'num_4']].copy()
 
         pd.testing.assert_frame_equal(emp.ordination.samples,
-                                           reordered)
+                                      reordered)
 
     def test_bad_column_names(self):
         np.testing.assert_raises(ValueError, scatterplot, self.df, x=':L')

@@ -205,7 +205,7 @@ class TopLevelTests(TestCase):
 
         # it is redundant, but the mapping file should remain untouched
         pd.testing.assert_frame_equal(feature_mf, emp.feature_mf,
-                                           check_names=False)
+                                      check_names=False)
 
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
                                        '/new-api/emperor/support_files')
@@ -226,7 +226,7 @@ class TopLevelTests(TestCase):
         empty_mf['all'] = 'All elements'
 
         pd.testing.assert_frame_equal(empty_mf, emp.feature_mf,
-                                           check_names=False)
+                                      check_names=False)
 
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
                                        '/new-api/emperor/support_files')
@@ -294,8 +294,8 @@ class TopLevelTests(TestCase):
             expected.loc['PC.634'] = ['This element has no metadata'] * 3
 
             pd.testing.assert_frame_equal(expected.sort_index(),
-                                               emp.mf.sort_index(),
-                                               check_names=False)
+                                          emp.mf.sort_index(),
+                                          check_names=False)
 
         expected = self.feature_mf.copy()
 
@@ -316,8 +316,8 @@ class TopLevelTests(TestCase):
             expected.loc['f.PC.636'] = ['This element has no metadata'] * 2
 
             pd.testing.assert_frame_equal(expected.sort_index(),
-                                               emp.feature_mf.sort_index(),
-                                               check_names=False)
+                                          emp.feature_mf.sort_index(),
+                                          check_names=False)
 
     def test_no_overlap(self):
         mf = self.mf.copy()
