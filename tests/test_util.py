@@ -282,7 +282,7 @@ class TopLevelTests(TestCase):
         mf = pd.DataFrame(data=MAPPING_FILE_DATA, columns=columns)
         obs = validate_and_process_custom_axes(mf, ['DOB'])
         exp = pd.DataFrame(data=MAPPING_FILE_DATA_CONVERTED, columns=columns)
-        pd.util.testing.assert_frame_equal(obs, exp)
+        pd.testing.assert_frame_equal(obs, exp)
 
     def test_custom_axes_non_existent_names(self):
         columns = ['SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',

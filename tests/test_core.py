@@ -204,7 +204,7 @@ class TopLevelTests(TestCase):
         feature_mf['Second'] = ['No', 'Yes', 'Noes', 'Noooo', 'Yep']
 
         # it is redundant, but the mapping file should remain untouched
-        pd.util.testing.assert_frame_equal(feature_mf, emp.feature_mf,
+        pd.testing.assert_frame_equal(feature_mf, emp.feature_mf,
                                            check_names=False)
 
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
@@ -225,7 +225,7 @@ class TopLevelTests(TestCase):
                                        'f.PC.481', 'f.PC.354'])
         empty_mf['all'] = 'All elements'
 
-        pd.util.testing.assert_frame_equal(empty_mf, emp.feature_mf,
+        pd.testing.assert_frame_equal(empty_mf, emp.feature_mf,
                                            check_names=False)
 
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/emperor'
@@ -293,7 +293,7 @@ class TopLevelTests(TestCase):
 
             expected.loc['PC.634'] = ['This element has no metadata'] * 3
 
-            pd.util.testing.assert_frame_equal(expected.sort_index(),
+            pd.testing.assert_frame_equal(expected.sort_index(),
                                                emp.mf.sort_index(),
                                                check_names=False)
 
@@ -315,7 +315,7 @@ class TopLevelTests(TestCase):
 
             expected.loc['f.PC.636'] = ['This element has no metadata'] * 2
 
-            pd.util.testing.assert_frame_equal(expected.sort_index(),
+            pd.testing.assert_frame_equal(expected.sort_index(),
                                                emp.feature_mf.sort_index(),
                                                check_names=False)
 
