@@ -7,9 +7,8 @@ var emperorRequire = require.config({
 // relative to the baseUrl attribute, do NOT include the .js extension
 'paths': {
   /* jQuery */
-  'jquery': '{{ base_url }}/vendor/js/jquery-2.1.4.min',
+  'jquery': '{{ base_url }}/vendor/js/jquery-3.7.1.min',
   'jqueryui': '{{ base_url }}/vendor/js/jquery-ui.min',
-  'jquery_drag': '{{ base_url }}/vendor/js/jquery.event.drag-2.2.min',
 
   /* jQuery plugins */
   'chosen': '{{ base_url }}/vendor/js/chosen.jquery.min',
@@ -40,6 +39,7 @@ var emperorRequire = require.config({
   'slickformatters': '{{ base_url }}/vendor/js/slick.editors.min',
   'slickeditors': '{{ base_url }}/vendor/js/slick.formatters.min',
   'slickdataview': '{{ base_url }}/vendor/js/slick.dataview.min',
+  'slickinteractions': '{{ base_url }}/vendor/js/slick.interactions.min',
 
   /* Emperor's objects */
   'util': '{{ base_url }}/js/util',
@@ -68,7 +68,10 @@ var emperorRequire = require.config({
   /* editors */
   'shape-editor': '{{ base_url }}/js/shape-editor',
   'color-editor': '{{ base_url }}/js/color-editor',
-  'scale-editor': '{{ base_url }}/js/scale-editor'
+  'scale-editor': '{{ base_url }}/js/scale-editor',
+
+  /* Sortable */
+  'sortable': '{{ base_url }}/vendor/js/Sortable.min'
 
 },
 /*
@@ -76,9 +79,6 @@ var emperorRequire = require.config({
    dependencies.
  */
 'shim': {
-  'jquery_drag': {
-    'deps': ['jquery', 'jqueryui']
-  },
   'chosen': {
     'deps': ['jquery'],
     'exports': 'jQuery.fn.chosen'
@@ -92,9 +92,13 @@ var emperorRequire = require.config({
   'canvastoblob' : {
     'deps': ['blob']
   },
-  'slickcore': ['jqueryui'],
-  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors',
-                'slickdataview']
+  'slickcore': ['jqueryui', 'sortable'],
+  'slickeditors': ['slickcore'],
+  'slickformatters': ['slickcore'],
+  'slickdataview': ['slickcore'],
+  'slickinteractions': ['slickcore'],
+  'slickgrid': ['slickcore', 'slickformatters', 'slickeditors',
+                'slickdataview', 'slickinteractions']
 }
 });
 

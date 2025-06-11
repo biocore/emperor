@@ -95,3 +95,8 @@ div.emperor-selection-area {
   background-color: rgba(75, 160, 255, 0.3);
   position: fixed;
 }
+
+.ui-button.media-control {
+  padding-left: 0px;
+  padding-right: 0px;
+}
