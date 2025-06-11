@@ -63,6 +63,8 @@ jobs:
 
       - name: Run tests and measure coverage
         shell: bash -l {0}
+        env:
+          OPENSSL_CONF: /dev/null
         run: |
           coverage run tests/all_tests.py
           coverage report
