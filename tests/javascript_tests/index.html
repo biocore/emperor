@@ -50,9 +50,8 @@
         // relative to the baseUrl attribute, do NOT include the .js extension
         'paths': {
           /* jQuery */
-          'jquery': './vendor/js/jquery-2.1.4.min',
-          'jqueryui': './vendor/js/jquery-ui.min',
-          'jquery_drag': './vendor/js/jquery.event.drag-2.2.min',
+          'jquery': '{{ base_url }}/vendor/js/jquery-3.7.1.min',
+          'jqueryui': '{{ base_url }}/vendor/js/jquery-ui.min',
 
           /* jQuery plugins */
           'chosen': './vendor/js/chosen.jquery.min',
@@ -128,6 +127,10 @@
           'test_shape_controller': '../../tests/javascript_tests/test_shape_controller',
           'test_axes_controller': '../../tests/javascript_tests/test_axes_controller',
           'test_animations_controller': '../../tests/javascript_tests/test_animations_controller'
+
+          /* Sortable */
+          'sortable': '{{ base_url }}/vendor/js/Sortable.min'
+
         },
         /*
            Libraries that are not AMD compatible need shim to declare their
@@ -150,10 +153,13 @@
           'canvastoblob' : {
             'deps': ['blob']
           },
-          'slickcore': ['jqueryui'],
-          'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters',
-                        'slickeditors', 'slickdataview']
-          }
+          'slickeditors': ['slickcore'],
+          'slickformatters': ['slickcore'],
+          'slickdataview': ['slickcore'],
+          'slickinteractions': ['slickcore'],
+          'slickgrid': ['slickcore', 'slickformatters', 'slickeditors',
+          'slickdataview', 'slickinteractions']
+
       });
 
       //load tests using require
