@@ -33,7 +33,7 @@ define(['three'], function(THREE) {
    */
   UIState.prototype.registerProperty = function(key, onChange) {
     this.events.addEventListener(key, onChange);
-    propertyValue = this.getProperty(key);
+    var propertyValue = this.getProperty(key);
     onChange({type: key, newVal: propertyValue});
   };
 

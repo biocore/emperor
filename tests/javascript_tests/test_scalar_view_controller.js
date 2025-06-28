@@ -15,8 +15,8 @@ requirejs([
     var DecompositionModel = model.DecompositionModel;
     var Plottable = model.Plottable;
 
-    module('ScalarViewControllerABC', {
-      setup: function() {
+    QUnit.module('ScalarViewControllerABC', {
+      beforeEach () {
         this.sharedDecompositionViewDict = {};
 
         var UIState1 = new UIState();
@@ -34,11 +34,11 @@ requirejs([
                                          13.7754129161, 11.217215823,
                                          10.024774995, 8.22835130237,
                                          7.55971173665, 6.24945796136]};
-        md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
-        metadata = [['PC.636', '14.2', 'Control', '20070314'],
+        var md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
+        var metadata = [['PC.636', '14.2', 'Control', '20070314'],
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
-        decomp = new DecompositionModel(data, md_headers, metadata);
+        var decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter' : decomp});
         var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
@@ -60,14 +60,15 @@ requirejs([
         this.dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = dv;
       },
-      teardown: function() {
+      afterEach () {
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
         this.multiModel = undefined;
       }
     });
 
-    test('Constructor tests', function(assert) {
+   QUnit.test('Constructor tests', function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
@@ -77,23 +78,28 @@ requirejs([
       var controller = new ScalarViewControllerABC(new UIState(), container,
         'Test', 'Class for testing', 10, 100, 0.5,
         this.sharedDecompositionViewDict);
-      controller.setMetadataField('SampleID');
 
-      equal(controller.title, 'Test');
-      equal(controller.description, 'Class for testing');
+     $(function() {
+       controller.setMetadataField('SampleID');
 
-      var testColumn = controller.bodyGrid.getColumns()[0];
-      equal(testColumn.field, 'value');
+       assert.equal(controller.title, 'Test');
+       assert.equal(controller.description, 'Class for testing');
 
-      equal(controller.$sliderGlobal.slider('value'), 10);
+       var testColumn = controller.bodyGrid.getColumns()[0];
+       assert.equal(testColumn.field, 'value');
 
-      // verify the checked value is set properly
-      equal(controller.$scaledValue.is(':checked'), false);
-      equal(controller.$select.val(), 'SampleID');
-      equal(controller.getMetadataField(), 'SampleID');
+       assert.equal(controller.$sliderGlobal.slider('value'), 10);
+
+       // verify the checked value is set properly
+       assert.equal(controller.$scaledValue.is(':checked'), false);
+       assert.equal(controller.$select.val(), 'SampleID');
+       assert.equal(controller.getMetadataField(), 'SampleID');
+       done();
+     });
     });
 
-    test('Testing fromJSON', function() {
+   QUnit.test('Testing fromJSON',  function(assert) {
+      const done = assert.async();
       var json = {category: 'SampleID', globalScale: '1.0', scaleVal: false,
                  data: {'PC.636': 1.1, 'PC.635': 1, 'PC.634': 0.7}};
 
@@ -102,13 +108,17 @@ requirejs([
       var controller = new ScalarViewControllerABC(new UIState(), container,
         'Test', 'Class for testing', 10, 100, 0.5,
         this.sharedDecompositionViewDict);
-
-      controller.fromJSON(json);
-      equal(controller.$select.val(), 'SampleID');
-      equal(controller.$scaledValue.is(':checked'), false);
+     
+     $(function() {
+       controller.fromJSON(json);
+       assert.equal(controller.$select.val(), 'SampleID');
+       assert.equal(controller.$scaledValue.is(':checked'), false);
+       done();
+     });
     });
 
-    test('Testing fromJSON scaled', function() {
+   QUnit.test('Testing fromJSON scaled',  function(assert) {
+      const done = assert.async();
       var json = {category: 'DOB', globalScale: '1.0', scaleVal: true,
                   data: {'20070314': 1, '20071112': 5}};
 
@@ -117,41 +127,52 @@ requirejs([
       var controller = new ScalarViewControllerABC(new UIState(), container,
         'Test', 'Class for testing', 10, 100, 0.5,
         this.sharedDecompositionViewDict);
-
-      controller.fromJSON(json);
-      equal(controller.$select.val(), 'DOB');
-      equal(controller.$scaledValue.is(':checked'), true);
+     $(function() {
+       controller.fromJSON(json);
+       assert.equal(controller.$select.val(), 'DOB');
+       assert.equal(controller.$scaledValue.is(':checked'), true);
+       done();
+     });
     });
 
-    test('Testing toJSON', function() {
+   QUnit.test('Testing toJSON',  function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new ScalarViewControllerABC(new UIState(), container,
         'Test', 'Class for testing', 10, 100, 0.5,
         this.sharedDecompositionViewDict);
-      controller.setMetadataField('SampleID');
 
-      var obs = controller.toJSON();
-      var exp = {category: 'SampleID', globalScale: '1', scaleVal: false,
+      $(function() {
+        controller.setMetadataField('SampleID');
+
+        var obs = controller.toJSON();
+        var exp = {category: 'SampleID', globalScale: '1', scaleVal: false,
                  data: {'PC.636': 1, 'PC.635': 1, 'PC.634': 1}};
-      deepEqual(obs, exp);
+        assert.deepEqual(obs, exp);
+        done();
+      });
     });
 
-    test('Testing toJSON (null)', function() {
+   QUnit.test('Testing toJSON (null)',  function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new ScalarViewControllerABC(new UIState(), container,
         'Test', 'Class for testing', 10, 100, 0.5,
         this.sharedDecompositionViewDict);
-      controller.setMetadataField(null);
+     $(function() {
+       controller.setMetadataField(null);
 
-      var obs = controller.toJSON();
-      var exp = {category: null, globalScale: '1.0', scaleVal: false,
-                 data: {}};
-      deepEqual(obs, exp);
+       var obs = controller.toJSON();
+       var exp = {category: null, globalScale: '1.0', scaleVal: false,
+                  data: {}};
+       assert.deepEqual(obs, exp);
+       done();
+     });
     });
 
-    test('Testing scaleValue', function() {
+   QUnit.test('Testing scaleValue',  function(assert) {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new ScalarViewControllerABC(new UIState(), container,
@@ -159,11 +180,11 @@ requirejs([
         this.sharedDecompositionViewDict);
 
       // return value should be constant, awkward abstract class
-      equal(controller.scaleValue(0, 0, 0), 1);
-      equal(controller.scaleValue(), 1);
+     assert.equal(controller.scaleValue(0, 0, 0), 1);
+     assert.equal(controller.scaleValue(), 1);
     });
 
-    test('Testing setAllPlottableAttributes', function(assert) {
+   QUnit.test('Testing setAllPlottableAttributes', function(assert) {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new ScalarViewControllerABC(new UIState(), container,
@@ -174,7 +195,7 @@ requirejs([
       assert.ok(true);
     });
 
-    test('Test setPlottableAttributes is a noop', function(assert) {
+   QUnit.test('Test setPlottableAttributes is a noop', function(assert) {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new ScalarViewControllerABC(new UIState(), container,
@@ -185,7 +206,8 @@ requirejs([
       assert.ok(true);
     });
 
-    test('Testing fromJSON (null)', function() {
+   QUnit.test('Testing fromJSON (null)',  function(assert) {
+      const done = assert.async();
       var json = {category: null, globalScale: '1.0', scaleVal: false,
                   data: {}};
 
@@ -195,13 +217,16 @@ requirejs([
         'Test', 'Class for testing', 10, 100, 0.5,
         this.sharedDecompositionViewDict);
 
-      controller.fromJSON(json);
-      var idx = 0;
-      equal(controller.getMetadataField(), null);
-      equal(controller.$scaledValue.is(':checked'), false);
+     $(function() {
+       controller.fromJSON(json);
+       var idx = 0;
+       assert.equal(controller.getMetadataField(), null);
+       assert.equal(controller.$scaledValue.is(':checked'), false);
+       done();
+     });
     });
 
-    test('Testing getScale', function() {
+   QUnit.test('Testing getScale',  function(assert) {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new ScalarViewControllerABC(new UIState(), container,
@@ -212,15 +237,16 @@ requirejs([
       //test standard values
       var obs = controller.getScale(data, false);
       var exp = {'1.0': 1, 'no': 1, 'false': 1, 'something': 1, '2.0': 1};
-      deepEqual(obs, exp);
+     assert.deepEqual(obs, exp);
 
       //test scaled values
       obs = controller.getScale(data, true);
       exp = {'1.0': 1, 'no': 0, 'false': 0, 'something': 0, '2.0': 1};
-      deepEqual(obs, exp);
+     assert.deepEqual(obs, exp);
     });
 
-    asyncTest('Test setEnabled (true)', function() {
+    QUnit.test('Test setEnabled (true)',  function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new ScalarViewControllerABC(new UIState(), container,
@@ -229,10 +255,10 @@ requirejs([
       $(function() {
         controller.setEnabled(false);
 
-        equal(controller.$scaledValue.is(':disabled'), true);
-        equal(controller.$sliderGlobal.slider('option', 'disabled'), true);
+       assert.equal(controller.$scaledValue.is(':disabled'), true);
+       assert.equal(controller.$sliderGlobal.slider('option', 'disabled'), true);
 
-        start(); // qunit
+        done();
       });
     });
   });

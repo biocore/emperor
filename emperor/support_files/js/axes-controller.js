@@ -19,6 +19,7 @@ define([
    * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {Object} decompViewDict This is object is keyed by unique
+   * @param {Object} appendTo Where to append the spectrum containers.
    * identifiers and the values are DecompositionView objects referring to a
    * set of objects presented on screen. This dictionary will usually be shared
    * by all the tabs in the application. This argument is passed by reference.
@@ -27,7 +28,7 @@ define([
    * @constructs AxesController
    * @extends EmperorViewController
    */
-  function AxesController(uiState, container, decompViewDict) {
+  function AxesController(uiState, container, decompViewDict, appendTo) {
     var helpmenu = 'Change the visible dimensions of the data';
     var title = 'Axes';
     var scope = this;
@@ -114,6 +115,10 @@ define([
                   scope._colorChanged($(this).attr('name'), color);
                 }
     };
+
+    if (appendTo !== undefined) {
+	opts.appendTo = appendTo;
+    }
 
 
     // Don't propagate the keydown and keypress events so that inputing a color

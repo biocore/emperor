@@ -16,8 +16,8 @@ requirejs([
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var DecompositionModel = model.DecompositionModel;
 
-    module('Shape Controller', {
-      setup: function() {
+    QUnit.module('Shape Controller', {
+      beforeEach () {
         // setup function
         this.shapesAvailable = ['Sphere', 'Diamond', 'Cone', 'Cylinder',
                                 'Ring', 'Square', 'Icosahedron', 'Star'];
@@ -41,7 +41,7 @@ requirejs([
           ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']
         ];
 
-        decomp = new DecompositionModel(data, md_headers, metadata);
+        var decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
         var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
@@ -63,152 +63,230 @@ requirejs([
         this.dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = this.dv;
 
-        var container = $('<div id="does-not-exist" style="height:11px; ' +
-                          'width:12px"></div>');
-        this.controller = new ShapeController(UIState1,
-          container, this.sharedDecompositionViewDict);
       },
 
-      teardown: function() {
+      afterEach () {
         // teardown function
         this.sharedDecompositionViewDict = undefined;
         this.controller = undefined;
       }
     });
 
-    test('Shapes dropdown', function() {
+   QUnit.test('Shapes dropdown',  function(assert) {
       var values = [];
       shapes.$shapesDropdown.find('option').each(function() {
           values.push($(this).attr('value'));
       });
-      deepEqual(values, this.shapesAvailable);
+     assert.deepEqual(values, this.shapesAvailable);
     });
 
-    test('Constructor tests', function(assert) {
+   QUnit.test('Constructor tests', function(assert) {
+      const done = assert.async();
       assert.ok(ShapeController.prototype instanceof EmperorAttributeABC);
 
-      equal(this.controller.title, 'Shape');
+       var container = $('<div id="does-not-exist" style="height:11px; ' +
+                         'width:12px"></div>');
 
-      var testColumn = this.controller.bodyGrid.getColumns()[0];
-      equal(testColumn.field, 'value');
+      var controller = new ShapeController(new UIState(),
+                                           container,
+                                           this.sharedDecompositionViewDict);
 
-      // test filtering of the decompositon
-      assert.ok(this.controller.decompViewDict.biplot === undefined);
+
+     $(function() {
+         assert.equal(controller.title, 'Shape');
+         
+         var testColumn = controller.bodyGrid.getColumns()[0];
+         assert.equal(testColumn.field, 'value');
+
+         // test filtering of the decompositon
+         assert.ok(controller.decompViewDict.biplot === undefined);
+         done();
+     });
 
     });
 
-    test('Test getGeometry', function() {
+   QUnit.test('Test getGeometry',  function(assert) {
       var geom;
 
       geom = shapes.getGeometry('Sphere', 0.06);
-      equal(geom.parameters.radius, 0.06);
+     assert.equal(geom.parameters.radius, 0.06);
 
       geom = shapes.getGeometry('Square', 0.06);
-      equal(geom.parameters.width, 0.12);
-      equal(geom.parameters.height, 0.12);
+     assert.equal(geom.parameters.width, 0.12);
+     assert.equal(geom.parameters.height, 0.12);
 
       geom = shapes.getGeometry('Cone', 0.06);
-      equal(geom.parameters.radiusTop, 0.06);
-      equal(geom.parameters.radiusBottom, 0);
-      equal(geom.parameters.height, 0.12);
+     assert.equal(geom.parameters.radiusTop, 0.06);
+     assert.equal(geom.parameters.radiusBottom, 0);
+     assert.equal(geom.parameters.height, 0.12);
 
       geom = shapes.getGeometry('Icosahedron', 0.06);
-      equal(geom.parameters.radius, 0.06);
+     assert.equal(geom.parameters.radius, 0.06);
 
       geom = shapes.getGeometry('Diamond', 0.06);
-      equal(geom.parameters.radius, 0.06);
+     assert.equal(geom.parameters.radius, 0.06);
 
       geom = shapes.getGeometry('Ring', 0.06);
-      equal(geom.parameters.innerRadius, 0.06 / 1.618033);
-      equal(geom.parameters.outerRadius, 0.06);
+     assert.equal(geom.parameters.innerRadius, 0.06 / 1.618033);
+     assert.equal(geom.parameters.outerRadius, 0.06);
 
       geom = shapes.getGeometry('Cylinder', 0.06);
-      equal(geom.parameters.radiusTop, 0.06);
-      equal(geom.parameters.radiusBottom, 0.06);
-      equal(geom.parameters.height, 0.12);
+     assert.equal(geom.parameters.radiusTop, 0.06);
+     assert.equal(geom.parameters.radiusBottom, 0.06);
+     assert.equal(geom.parameters.height, 0.12);
     });
 
-    test('Check getGeometry raises an exception with unknown shape',
-         function() {
-      throws(function() {
+   QUnit.test('Check getGeometry raises an exception with unknown shape',
+         function(assert) {
+     assert.throws(function() {
         shapes.getGeometry('Geometry McGeometryface', 0.06);
       }, Error, 'Throw error if unknown shape given');
     });
 
-    test('Testing setPlottableAttributes helper function', function(assert) {
+   QUnit.test('Testing setPlottableAttributes helper function',
+     function(assert) {
       // testing with one plottable
       var idx = 0, view = this.sharedDecompositionViewDict.scatter;
 
-      plottables = [{idx: idx}];
-      equal(view.markers[idx].geometry.type, 'SphereGeometry');
-      equal(view.markers[idx + 1].geometry.type, 'SphereGeometry');
-      this.controller.setPlottableAttributes(view, 'Square', plottables);
+       var container = $('<div id="does-not-exist" style="height:11px; ' +
+                         'width:12px"></div>');
 
-      equal(view.markers[idx].geometry.type, 'PlaneGeometry');
-      equal(view.markers[idx + 1].geometry.type, 'SphereGeometry');
-      equal(view.needsUpdate, true);
+      var controller = new ShapeController(new UIState(),
+                                           container,
+                                           this.sharedDecompositionViewDict);
+
+
+     var plottables = [{idx: idx}];
+     assert.equal(view.markers[idx].geometry.type, 'SphereGeometry');
+     assert.equal(view.markers[idx + 1].geometry.type, 'SphereGeometry');
+     controller.setPlottableAttributes(view, 'Square', plottables);
+
+     assert.equal(view.markers[idx].geometry.type, 'PlaneGeometry');
+     assert.equal(view.markers[idx + 1].geometry.type, 'SphereGeometry');
+     assert.equal(view.needsUpdate, true);
 
       // testing with multiple plottable
       plottables = [{idx: idx}, {idx: idx + 1}];
-      this.controller.setPlottableAttributes(view, 'Cylinder', plottables);
+     controller.setPlottableAttributes(view, 'Cylinder', plottables);
 
-      equal(view.markers[idx].geometry.type, 'CylinderGeometry');
-      equal(view.markers[idx + 1].geometry.type, 'CylinderGeometry');
-      equal(view.needsUpdate, true);
+     assert.equal(view.markers[idx].geometry.type, 'CylinderGeometry');
+     assert.equal(view.markers[idx + 1].geometry.type, 'CylinderGeometry');
+     assert.equal(view.needsUpdate, true);
     });
 
-    test('Testing setPlottableAttributes unknown shape', function(assert) {
+   QUnit.test('Testing setPlottableAttributes unknown shape', function(assert) {
       // testing with one plottable
       var plottables = [{0: 0}], view;
       view = this.sharedDecompositionViewDict.scatter;
-      throws(function() {
-        this.controller.setPlottableAttributes(view, 'WEIRD', plottables);
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                         'width:12px"></div>');
+
+      var controller = new ShapeController(new UIState(),
+                                           container,
+                                           this.sharedDecompositionViewDict);
+
+     assert.throws(function() {
+        controller.setPlottableAttributes(view, 'WEIRD', plottables);
       }, Error, 'Throw error if unknown shape given');
 
     });
 
-    test('Testing toJSON', function() {
-      this.controller.setMetadataField('DOB');
-      var obs = this.controller.toJSON();
-      var exp = {category: 'DOB',
-                 data: {'20070314': 'Sphere', '20071112': 'Sphere'}
-      };
-      deepEqual(obs, exp);
+   QUnit.test('Testing toJSON',  function(assert) {
+      const done = assert.async();
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                         'width:12px"></div>');
+
+      var controller = new ShapeController(new UIState(),
+                                           container,
+                                           this.sharedDecompositionViewDict);
+      
+      $(function() {
+          controller.setMetadataField('DOB');
+          var obs = controller.toJSON();
+          var exp = {category: 'DOB',
+                     data: {'20070314': 'Sphere', '20071112': 'Sphere'}
+                    };
+          assert.deepEqual(obs, exp);
+          done();
+      });
     });
 
-    test('Testing fromJSON', function() {
+   QUnit.test('Testing fromJSON',  function(assert) {
+      const done = assert.async();
+
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                         'width:12px"></div>');
+
+      var controller = new ShapeController(new UIState(),
+                                           container,
+                                           this.sharedDecompositionViewDict);
+
       var json = {'category': 'SampleID',
                   'data': {'PC.636': 'Square', 'PC.635': 'Sphere'}
       };
+      
+      $(function() {
+          controller.fromJSON(json);
+          var idx = 0;
+          assert.equal(
+              controller.decompViewDict.scatter.markers[idx].geometry.type,
+              'PlaneGeometry'
+          );
 
-      this.controller.fromJSON(json);
-      var idx = 0;
-      equal(this.controller.decompViewDict.scatter.markers[idx].geometry.type,
-            'PlaneGeometry');
-
-      idx += 1;
-      equal(this.controller.decompViewDict.scatter.markers[idx].geometry.type,
-            'SphereGeometry');
+          idx += 1;
+          assert.equal(
+              controller.decompViewDict.scatter.markers[idx].geometry.type,
+              'SphereGeometry'
+          );
+          done();
+      });
     });
 
-    test('Testing toJSON (null)', function() {
-      this.controller.setMetadataField(null);
-      var obs = this.controller.toJSON();
-      var exp = {category: null, data: {}};
-      deepEqual(obs, exp);
+   QUnit.test('Testing toJSON (null)',  function(assert) {
+      const done = assert.async();
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                         'width:12px"></div>');
+
+      var controller = new ShapeController(new UIState(),
+                                           container,
+                                           this.sharedDecompositionViewDict);
+
+      $(function() {
+          controller.setMetadataField(null);
+          var obs = controller.toJSON();
+          var exp = {category: null, data: {}};
+          assert.deepEqual(obs, exp);
+          done();
+      });
     });
 
-    test('Testing fromJSON (null)', function() {
+   QUnit.test('Testing fromJSON (null)',  function(assert) {
+      const done = assert.async();
+
+      var container = $('<div id="does-not-exist" style="height:11px; ' +
+                         'width:12px"></div>');
+
+      var controller = new ShapeController(new UIState(),
+                                           container,
+                                           this.sharedDecompositionViewDict);
+
       var json = {'category': null, 'data': {}};
-
-      this.controller.fromJSON(json);
-      var idx = 0;
-      equal(this.controller.decompViewDict.scatter.markers[idx].geometry.type,
-            'SphereGeometry');
-
-      idx += 1;
-      equal(this.controller.decompViewDict.scatter.markers[idx].geometry.type,
-            'SphereGeometry');
+      
+      $(function() {
+          controller.fromJSON(json);
+          var idx = 0;
+          assert.equal(
+              controller.decompViewDict.scatter.markers[idx].geometry.type,
+              'SphereGeometry'
+          );
+          
+          idx += 1;
+          assert.equal(
+              controller.decompViewDict.scatter.markers[idx].geometry.type,
+              'SphereGeometry'
+          );
+          done();
+      });
     });
 
   });

@@ -14,8 +14,8 @@ requirejs([
     var EmperorAttributeABC = viewcontroller.EmperorAttributeABC;
     var DecompositionModel = model.DecompositionModel;
 
-    module('VisibilityController', {
-      setup: function() {
+    QUnit.module('VisibilityController', {
+      beforeEach () {
         this.sharedDecompositionViewDict = {};
 
         var UIState1 = new UIState();
@@ -36,7 +36,7 @@ requirejs([
                          '20070314'],
                         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
                          '20071112']];
-        decomp = new DecompositionModel(data, md_headers, metadata);
+        var decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
         var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
@@ -83,14 +83,15 @@ requirejs([
         this.jackknifedDecView = new DecompositionView(multiModel, 'scatter',
                                                        UIState1);
       },
-      teardown: function() {
+      afterEach () {
         this.sharedDecompositionViewDict = undefined;
         $('#fooligans').remove();
         this.decomp = undefined;
       }
     });
 
-    test('Constructor tests', function(assert) {
+   QUnit.test('Constructor tests', function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
@@ -98,153 +99,201 @@ requirejs([
 
       var controller = new VisibilityController(new UIState(), container,
           this.sharedDecompositionViewDict);
-      equal(controller.title, 'Visibility');
+     assert.equal(controller.title, 'Visibility');
 
-      var testColumn = controller.bodyGrid.getColumns()[0];
-      equal(testColumn.field, 'value');
+       
+     $(function() {
+         var testColumn = controller.bodyGrid.getColumns()[0];
+         assert.equal(testColumn.field, 'value');
 
-      // verify the visibility value is set properly
-      equal(controller.getMetadataField(), null);
+         // verify the visibility value is set properly
+         assert.equal(controller.getMetadataField(), null);
+         done();
+     });
     });
 
-    test('Testing toggleVisibility', function(assert) {
+   QUnit.test('Testing toggleVisibility', function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new VisibilityController(new UIState(), container,
-          this.sharedDecompositionViewDict);
-      controller.setMetadataField('Treatment');
+       var controller = new VisibilityController(new UIState(),
+                                                container,
+                                                this.sharedDecompositionViewDict
+                                                );
 
-      // trun everything off
-      controller.toggleVisibility();
-      equal(controller.decompViewDict.scatter.markers[0].visible, false);
-      equal(controller.decompViewDict.scatter.markers[1].visible, false);
 
-      var groupVisibility = controller.getSlickGridDataset();
-      equal(groupVisibility[0].value, false);
-      equal(groupVisibility[1].value, false);
+       $(function() {
+           controller.setMetadataField('Treatment');
 
-      // set the first group to false the second group to true
-      groupVisibility = controller.getSlickGridDataset();
-      groupVisibility[0].value = false;
-      groupVisibility[1].value = true;
-      controller.getView().setVisibility(false, groupVisibility[0].plottables);
-      controller.getView().setVisibility(true, groupVisibility[1].plottables);
-      controller.setSlickGridDataset(groupVisibility);
+           // trun everything off
+           controller.toggleVisibility();
+           assert.equal(controller.decompViewDict.scatter.markers[0].visible,
+                        false);
+           assert.equal(controller.decompViewDict.scatter.markers[1].visible,
+                        false);
 
-      controller.toggleVisibility();
-      equal(controller.decompViewDict.scatter.markers[0].visible, true);
-      equal(controller.decompViewDict.scatter.markers[1].visible, false);
+           var groupVisibility = controller.getSlickGridDataset();
+           assert.equal(groupVisibility[0].value, false);
+           assert.equal(groupVisibility[1].value, false);
 
-      groupVisibility = controller.getSlickGridDataset();
-      equal(groupVisibility[0].value, true);
-      equal(groupVisibility[1].value, false);
+           // set the first group to false the second group to true
+           groupVisibility = controller.getSlickGridDataset();
+           groupVisibility[0].value = false;
+           groupVisibility[1].value = true;
+           controller.getView().setVisibility(false,
+                                              groupVisibility[0].plottables);
+           controller.getView().setVisibility(true,
+                                              groupVisibility[1].plottables);
+           controller.setSlickGridDataset(groupVisibility);
+
+           controller.toggleVisibility();
+           assert.equal(controller.decompViewDict.scatter.markers[0].visible,
+                        true);
+           assert.equal(controller.decompViewDict.scatter.markers[1].visible,
+                        false);
+
+           groupVisibility = controller.getSlickGridDataset();
+           assert.equal(groupVisibility[0].value, true);
+           assert.equal(groupVisibility[1].value, false);
+           done();
+       });
     });
 
-    test('Testing setPlottableAttributes helper function', function(assert) {
-      // testing with one plottable
-      var idx = 0;
-      plottables = [{idx: idx}];
-      equal(this.dv.markers[idx].visible, true);
-      equal(this.dv.markers[idx + 1].visible, true);
-      VisibilityController.prototype.setPlottableAttributes(this.dv, false,
-                                                            plottables);
-      equal(this.dv.needsUpdate, true);
+   QUnit.test('Testing setPlottableAttributes helper function',
+     function(assert) {
+         // testing with one plottable
+         var idx = 0;
+         var plottables = [{idx: idx}];
+         assert.equal(this.dv.markers[idx].visible, true);
+         assert.equal(this.dv.markers[idx + 1].visible, true);
+         VisibilityController.prototype.setPlottableAttributes(this.dv, false,
+                                                               plottables);
+         assert.equal(this.dv.needsUpdate, true);
 
-      // testing with multiple plottable
-      plottables = [{idx: idx}, {idx: idx + 1}];
-      equal(this.dv.markers[idx].visible, false);
-      equal(this.dv.markers[idx + 1].visible, true);
-      VisibilityController.prototype.setPlottableAttributes(this.dv, true,
-                                                            plottables);
-      equal(this.dv.markers[idx].visible, true);
-      equal(this.dv.markers[idx + 1].visible, true);
-      equal(this.dv.needsUpdate, true);
+         // testing with multiple plottable
+         plottables = [{idx: idx}, {idx: idx + 1}];
+         assert.equal(this.dv.markers[idx].visible, false);
+         assert.equal(this.dv.markers[idx + 1].visible, true);
+         VisibilityController.prototype.setPlottableAttributes(this.dv, true,
+                                                               plottables);
+         assert.equal(this.dv.markers[idx].visible, true);
+         assert.equal(this.dv.markers[idx + 1].visible, true);
+         assert.equal(this.dv.needsUpdate, true);
     });
 
-    test('Testing setPlottableAttributes (jackknifed)', function(assert) {
+   QUnit.test('Testing setPlottableAttributes (jackknifed)', function(assert) {
       // testing with one plottable
       var idx = 0, dv = this.jackknifedDecView;
-      plottables = [{idx: idx}];
+      var plottables = [{idx: idx}];
 
       // all should be visible
-      equal(dv.markers[0].visible, true);
-      equal(dv.markers[1].visible, true);
-      equal(dv.ellipsoids[0].visible, true);
-      equal(dv.ellipsoids[1].visible, true);
+     assert.equal(dv.markers[0].visible, true);
+     assert.equal(dv.markers[1].visible, true);
+     assert.equal(dv.ellipsoids[0].visible, true);
+     assert.equal(dv.ellipsoids[1].visible, true);
 
       VisibilityController.prototype.setPlottableAttributes(dv, false,
                                                             plottables);
-      equal(dv.needsUpdate, true);
+     assert.equal(dv.needsUpdate, true);
 
       // sample zero should be hidden
-      equal(dv.markers[0].visible, false);
-      equal(dv.markers[1].visible, true);
-      equal(dv.ellipsoids[0].visible, false);
-      equal(dv.ellipsoids[1].visible, true);
+     assert.equal(dv.markers[0].visible, false);
+     assert.equal(dv.markers[1].visible, true);
+     assert.equal(dv.ellipsoids[0].visible, false);
+     assert.equal(dv.ellipsoids[1].visible, true);
 
 
       // testing with multiple plottables
       plottables = [{idx: idx}, {idx: idx + 1}];
       VisibilityController.prototype.setPlottableAttributes(dv, true,
                                                             plottables);
-      equal(dv.needsUpdate, true);
+     assert.equal(dv.needsUpdate, true);
 
       // none should be visible
-      equal(dv.markers[0].visible, true);
-      equal(dv.markers[1].visible, true);
-      equal(dv.ellipsoids[0].visible, true);
-      equal(dv.ellipsoids[1].visible, true);
+     assert.equal(dv.markers[0].visible, true);
+     assert.equal(dv.markers[1].visible, true);
+     assert.equal(dv.ellipsoids[0].visible, true);
+     assert.equal(dv.ellipsoids[1].visible, true);
     });
 
-    test('Testing toJSON', function() {
+   QUnit.test('Testing toJSON',  function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new VisibilityController(new UIState(), container,
           this.sharedDecompositionViewDict);
-
-      controller.setMetadataField('DOB');
-      var obs = controller.toJSON();
-      var exp = {category: 'DOB', data: {'20070314': true, '20071112': true}};
-      deepEqual(obs, exp);
+     $(function() {
+         controller.setMetadataField('DOB');
+         var obs = controller.toJSON();
+         var exp = {
+             category: 'DOB',
+             data: {'20070314': true, '20071112': true}
+         };
+         assert.deepEqual(obs, exp);
+         done();
+     });
     });
 
-    test('Testing fromJSON', function() {
+   QUnit.test('Testing fromJSON',  function(assert) {
+      const done = assert.async();
       var json = {category: 'SampleID',
                   data: {'PC.636': false, 'PC.635': true}};
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
-      var controller = new VisibilityController(new UIState(), container,
-          this.sharedDecompositionViewDict);
-      controller.fromJSON(json);
+      var controller = new VisibilityController(new UIState(),
+                                               container,
+                                               this.sharedDecompositionViewDict
+                                               );
 
-      var idx = 0;
-      equal(controller.decompViewDict.scatter.markers[idx].visible, false);
-      equal(controller.decompViewDict.scatter.markers[idx + 1].visible, true);
+       $(function() {
+           controller.fromJSON(json);
+
+           var idx = 0;
+           assert.equal(controller.decompViewDict.scatter.markers[idx].visible,
+                        false);
+           assert.equal(
+               controller.decompViewDict.scatter.markers[idx + 1].visible,
+               true
+           );
+           done();
+       });
     });
 
-    test('Testing toJSON', function() {
+   QUnit.test('Testing toJSON',  function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new VisibilityController(new UIState(), container,
           this.sharedDecompositionViewDict);
-      controller.setMetadataField(null);
 
-      var obs = controller.toJSON();
-      var exp = {category: null, data: {}};
-      deepEqual(obs, exp);
+      $(function() {
+          controller.setMetadataField(null);
+
+          var obs = controller.toJSON();
+          var exp = {category: null, data: {}};
+          assert.deepEqual(obs, exp);
+          done();
+      });
     });
 
-    test('Testing fromJSON', function() {
+   QUnit.test('Testing fromJSON',  function(assert) {
+      const done = assert.async();
       var json = {category: null,
                   data: {}};
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new VisibilityController(new UIState(), container,
           this.sharedDecompositionViewDict);
-      controller.fromJSON(json);
+      
+      $(function() {
+          controller.fromJSON(json);
 
-      equal(controller.decompViewDict.scatter.markers[0].visible, true);
-      equal(controller.decompViewDict.scatter.markers[1].visible, true);
+          assert.equal(controller.decompViewDict.scatter.markers[0].visible,
+                       true);
+          assert.equal(controller.decompViewDict.scatter.markers[1].visible,
+                       true);
+          done();
+      });
     });
 
   });

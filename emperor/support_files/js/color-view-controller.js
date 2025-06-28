@@ -142,7 +142,7 @@ define([
 
           if (scaled) {
             scope.$searchBar.prop('hidden', true);
-            plottables = ColorViewController._nonNumericPlottables(
+            var plottables = ColorViewController._nonNumericPlottables(
               uniqueVals, data);
             // Set SlickGrid for color of non-numeric values and show color bar
             // for rest if there are non numeric categories
@@ -182,7 +182,8 @@ define([
     // This controller is not ready until the colormapSelect has signaled that
     // it is indeed ready.
     var ready = this.ready;
-    this.ready = undefined;
+      // this.ready = undefined;
+      this.ready = null;
 
     // account for the searchbar
     this.$colormapSelect.insertAfter(this.$select);
@@ -214,7 +215,7 @@ define([
    *
    * @param {String[]} uniqueVals Array of unique values for the category
    * @param {Object} data SlickGrid formatted data from setCategory function
-   *
+   *,
    * @return {Plottable[]} Array of plottables for all non-numeric values
    * @private
    *
@@ -352,7 +353,7 @@ define([
     var size = map.length;
     var colors = {};
     for (var i = 0; i < values.length; i++) {
-        mapIndex = i - (Math.floor(i / size) * size);
+        var mapIndex = i - (Math.floor(i / size) * size);
         colors[values[i]] = map[mapIndex];
     }
     return colors;
@@ -409,8 +410,8 @@ define([
     // convert objects to numbers so we can map them to a color, we keep a copy
     // of the untransformed object so we can search the metadata
     numbers = _.map(split.numeric, parseFloat);
-    min = _.min(numbers);
-    max = _.max(numbers);
+    var min = _.min(numbers);
+    var max = _.max(numbers);
 
     var interpolator = chroma.scale(map).domain([min, max]);
     var colors = {};

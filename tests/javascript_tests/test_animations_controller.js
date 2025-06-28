@@ -13,8 +13,8 @@ requirejs([
     var EmperorViewController = ViewControllers.EmperorViewController;
     var DecompositionModel = model.DecompositionModel;
 
-    module('AnimationsController', {
-      setup: function() {
+    QUnit.module('AnimationsController', {
+      beforeEach () {
         this.sharedDecompositionViewDict = {};
 
         var state = new UIState();
@@ -41,351 +41,543 @@ requirejs([
         var dv = new DecompositionView(multiModel, 'scatter', state);
         this.sharedDecompositionViewDict.scatter = dv;
 
-        var container = $('<div id="does-not-exist" style="height:1000px; ' +
-                          'width:12px"></div>');
-        this.controller = new AnimationsController(state, container,
-          this.sharedDecompositionViewDict);
       },
-      teardown: function() {
-        this.controller = undefined;
+      afterEach () {
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
       }
     });
 
-    test('Constructor tests', function(assert) {
+   QUnit.test('Constructor tests', function(assert) {
+     const done = assert.async();
+
+     var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                          'width:12px"></div>');
+     var controller = new AnimationsController(
+         new UIState(),
+         container,
+          this.sharedDecompositionViewDict
+     );
+
       assert.ok(AnimationsController.prototype instanceof
                 EmperorViewController);
 
-      equal(this.controller.title, 'Animations');
-      equal(this.controller.director, null);
-      equal(this.controller.playing, false);
-      equal(this.controller.enabled, false);
+     assert.equal(controller.title, 'Animations');
+     assert.equal(controller.director, null);
+     assert.equal(controller.playing, false);
 
-      equal(this.controller.$speed.slider('option', 'disabled'), true);
-      equal(this.controller._grid.getOptions().editable, false);
-      equal(this.controller.$radius.slider('option', 'disabled'), true);
-      equal(this.controller.$play.prop('disabled'), true);
-      equal(this.controller.$pause.prop('disabled'), true);
-      equal(this.controller.$rewind.prop('disabled'), true);
+     $(function() {
+         assert.equal(controller.enabled, false);
+         assert.equal(controller.$speed.slider('option', 'disabled'),
+                      true);
+         assert.equal(controller._grid.getOptions().editable, false);
+         assert.equal(controller.$radius.slider('option', 'disabled'),
+                      true);
+         assert.equal(controller.$play.prop('disabled'),
+                      true);
+         assert.equal(controller.$pause.prop('disabled'),
+                      true);
+         assert.equal(controller.$rewind.prop('disabled'),
+                      true);
 
-      equal(this.controller.getGradientCategory(), '');
-      equal(this.controller.getTrajectoryCategory(), '');
-      equal(this.controller.getSpeed(), 1);
-      equal(this.controller.getRadius(), 1);
+         assert.equal(controller.getGradientCategory(), '');
+         assert.equal(controller.getTrajectoryCategory(), '');
+         assert.equal(controller.getSpeed(), 1);
+         assert.equal(controller.getRadius(), 1);
+
+         done();
+     });
     });
 
-    test('Test speed setter/getter', function(assert) {
-      equal(this.controller.getSpeed(), 1);
+   QUnit.test('Test speed setter/getter', function(assert) {
+     const done = assert.async();
+     var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                          'width:12px"></div>');
+     var controller = new AnimationsController(
+         new UIState(),
+         container,
+          this.sharedDecompositionViewDict
+     );
 
-      this.controller.setSpeed(1.11);
-      equal(this.controller.getSpeed(), 1.11);
+     $(function() {
+         assert.equal(controller.getSpeed(), 1);
 
-      throws(
-          function() {
-            this.controller.setSpeed(-1);
-          },
-          Error,
-          'An error is raised if an invalid speed is set'
+         controller.setSpeed(1.11);
+         assert.equal(controller.getSpeed(), 1.11);
+
+         assert.throws(
+             function() {
+                 controller.setSpeed(-1);
+             },
+             Error,
+             'An error is raised if an invalid speed is set'
+         );
+
+         controller.setSpeed(3.11);
+         assert.equal(controller.getSpeed(), 3.11);
+
+         assert.throws(
+             function() {
+                 controller.setSpeed(11);
+             },
+             Error,
+             'An error is raised if an invalid speed is set'
+         );
+         done();
+     });
+    });
+
+   QUnit.test('Test radius setter/getter', function(assert) {
+     const done = assert.async();
+     var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                          'width:12px"></div>');
+     var controller = new AnimationsController(
+         new UIState(),
+         container,
+          this.sharedDecompositionViewDict
+     );
+
+     $(function() {
+         assert.equal(controller.getRadius(), 1);
+
+         controller.setRadius(1.11);
+         assert.equal(controller.getRadius(), 1.11);
+
+         assert.throws(
+             function() {
+                 controller.setRadius(-1);
+             },
+             Error,
+             'An error is raised if an invalid radius is set'
+         );
+
+         controller.setRadius(3.11);
+         assert.equal(controller.getRadius(), 3.11);
+
+         assert.throws(
+             function() {
+                 controller.setRadius(11);
+             },
+             Error,
+             'An error is raised if an invalid radius is set'
+         );
+         done();
+     });
+    });
+
+   QUnit.test('Test gradient category setter/getter', function(assert) {
+     var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                       'width:12px"></div>');
+
+     var controller = new AnimationsController(
+          new UIState(),
+          container,
+          this.sharedDecompositionViewDict
       );
 
-      this.controller.setSpeed(3.11);
-      equal(this.controller.getSpeed(), 3.11);
+     controller.setGradientCategory('Treatment');
+     assert.deepEqual(controller.getGradientCategory(), 'Treatment');
 
-      throws(
-          function() {
-            this.controller.setSpeed(11);
-          },
-          Error,
-          'An error is raised if an invalid speed is set'
-      );
+      controller.setGradientCategory('Does not exist');
+     assert.deepEqual(controller.getGradientCategory(), '');
+
+      controller.setGradientCategory('DOB');
+     assert.deepEqual(controller.getGradientCategory(), 'DOB');
     });
 
-    test('Test radius setter/getter', function(assert) {
-      equal(this.controller.getRadius(), 1);
+   QUnit.test('Test trajectory category setter/getter', function(assert) {
+     var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                       'width:12px"></div>');
 
-      this.controller.setRadius(1.11);
-      equal(this.controller.getRadius(), 1.11);
-
-      throws(
-          function() {
-            this.controller.setRadius(-1);
-          },
-          Error,
-          'An error is raised if an invalid radius is set'
+     var controller = new AnimationsController(
+          new UIState(),
+          container,
+          this.sharedDecompositionViewDict
       );
 
-      this.controller.setRadius(3.11);
-      equal(this.controller.getRadius(), 3.11);
+     controller.setTrajectoryCategory('DOB');
+     assert.equal(controller.getTrajectoryCategory(), 'DOB');
+     assert.deepEqual(controller.getColors(), {});
 
-      throws(
-          function() {
-            this.controller.setRadius(11);
-          },
-          Error,
-          'An error is raised if an invalid radius is set'
+      controller.setGradientCategory('Does not exist either');
+     assert.equal(controller.getGradientCategory(), '');
+
+      controller.setTrajectoryCategory('Treatment');
+     assert.equal(controller.getTrajectoryCategory(), 'Treatment');
+     assert.deepEqual(controller.getColors(), {});
+    });
+
+   QUnit.test('Test trajectory and category methods together',
+     function(assert) {
+         const done = assert.async();
+
+         var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                           'width:12px"></div>');
+         var controller = new AnimationsController(
+             new UIState(),
+             container,
+             this.sharedDecompositionViewDict
+         );
+         
+         $(function() {
+             assert.equal(controller.getTrajectoryCategory(), '');
+             assert.equal(controller.getGradientCategory(), '');
+             assert.equal(controller.enabled, false);
+
+             controller.setTrajectoryCategory('Treatment');
+             assert.equal(controller.enabled, false);
+             assert.deepEqual(controller.getColors(), {});
+
+             controller.setGradientCategory('DOB');
+             assert.equal(controller.enabled, true);
+             assert.deepEqual(controller.getColors(), {'Fast': '#ff0000'});
+
+             controller.setTrajectoryCategory('');
+             assert.equal(controller.enabled, false);
+             assert.deepEqual(controller.getColors(), {});
+
+             done();
+         });
+    });
+
+   QUnit.test('Test colors setter/getter', function(assert) {     
+     const done = assert.async();
+     var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                          'width:12px"></div>');
+     var controller = new AnimationsController(
+         new UIState(),
+         container,
+          this.sharedDecompositionViewDict
+     );
+
+       controller.setTrajectoryCategory('Treatment');
+       controller.setGradientCategory('DOB');
+      
+      $(function() {
+          assert.deepEqual(controller.getColors(), {'Fast': '#ff0000'});
+
+          controller.setColors({'Fast': 'green'});
+          assert.deepEqual(controller.getColors(), {'Fast': 'green'});
+
+          done();
+      });
+    });
+
+
+   QUnit.test('Test drawFrame', function(assert) {
+      const done = assert.async();
+      var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                          'width:12px"></div>');
+      var controller = new AnimationsController(
+          new UIState(),
+          container,
+          this.sharedDecompositionViewDict
       );
-    });
 
-    test('Test gradient category setter/getter', function(assert) {
-      this.controller.setGradientCategory('Treatment');
-      deepEqual(this.controller.getGradientCategory(), 'Treatment');
-
-      this.controller.setGradientCategory('Does not exist');
-      deepEqual(this.controller.getGradientCategory(), '');
-
-      this.controller.setGradientCategory('DOB');
-      deepEqual(this.controller.getGradientCategory(), 'DOB');
-    });
-
-    test('Test trajectory category setter/getter', function(assert) {
-      this.controller.setTrajectoryCategory('DOB');
-      equal(this.controller.getTrajectoryCategory(), 'DOB');
-      deepEqual(this.controller.getColors(), {});
-
-      this.controller.setGradientCategory('Does not exist either');
-      equal(this.controller.getGradientCategory(), '');
-
-      this.controller.setTrajectoryCategory('Treatment');
-      equal(this.controller.getTrajectoryCategory(), 'Treatment');
-      deepEqual(this.controller.getColors(), {});
-    });
-
-    test('Test trajectory and category methods together', function(assert) {
-      equal(this.controller.getTrajectoryCategory(), '');
-      equal(this.controller.getGradientCategory(), '');
-      equal(this.controller.enabled, false);
-
-      this.controller.setTrajectoryCategory('Treatment');
-      equal(this.controller.enabled, false);
-      deepEqual(this.controller.getColors(), {});
-
-      this.controller.setGradientCategory('DOB');
-      equal(this.controller.enabled, true);
-      deepEqual(this.controller.getColors(), {'Fast': '#ff0000'});
-
-      this.controller.setTrajectoryCategory('');
-      equal(this.controller.enabled, false);
-      deepEqual(this.controller.getColors(), {});
-    });
-
-    test('Test colors setter/getter', function(assert) {
-      this.controller.setTrajectoryCategory('Treatment');
-      this.controller.setGradientCategory('DOB');
-
-      deepEqual(this.controller.getColors(), {'Fast': '#ff0000'});
-
-      this.controller.setColors({'Fast': 'green'});
-      deepEqual(this.controller.getColors(), {'Fast': 'green'});
-    });
-
-
-    test('Test drawFrame', function(assert) {
       // 3 event tests
-      expect(3);
+      assert.expect(3);
 
-      this.controller.setGradientCategory('DOB');
-      this.controller.setTrajectoryCategory('Treatment');
+      controller.setGradientCategory('DOB');
+      controller.setTrajectoryCategory('Treatment');
 
-      this.controller.addEventListener('animation-new-frame-started',
+      controller.addEventListener('animation-new-frame-started',
                                        function(cont) {
-        equal(cont.message.frame, 0);
-        equal(cont.message.gradientPoint, 20070314);
-        equal(cont.type, 'animation-new-frame-started');
+       assert.equal(cont.message.frame, 0);
+       assert.equal(cont.message.gradientPoint, 20070314);
+       assert.equal(cont.type, 'animation-new-frame-started');
+       done();
       });
 
-      this.controller._playButtonClicked();
-      this.controller.drawFrame();
-      this.controller.drawFrame();
+      $(function() {
+          controller._playButtonClicked();
+          controller.drawFrame();
+          controller.drawFrame();
+      });
     });
 
-    test('Test _pauseButtonClicked', function(assert) {
+   QUnit.test('Test _pauseButtonClicked', function(assert) {
+     const done = assert.async();
+     var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                       'width:12px"></div>');
+
+     var controller = new AnimationsController(
+          new UIState(),
+          container,
+          this.sharedDecompositionViewDict
+      );
+
       // 7 UI tests + 3 event tests
-      expect(10);
+      assert.expect(10);
 
-      this.controller.setGradientCategory('DOB');
-      this.controller.setTrajectoryCategory('Treatment');
-      this.controller.playing = true;
-      this.controller._updateButtons();
+      controller.setGradientCategory('DOB');
+      controller.setTrajectoryCategory('Treatment');
+      controller.playing = true;
+      
+      $(function() {
+          controller._updateButtons();
 
-      this.controller.addEventListener('animation-paused', function(cont) {
-        equal(cont.message.gradient, 'DOB');
-        equal(cont.message.trajectory, 'Treatment');
-        equal(cont.type, 'animation-paused');
+          controller.addEventListener('animation-paused', function(cont) {
+              assert.equal(cont.message.gradient, 'DOB');
+              assert.equal(cont.message.trajectory, 'Treatment');
+              assert.equal(cont.type, 'animation-paused');
+          });
+
+          controller._pauseButtonClicked();
+          
+          setTimeout(function() {
+              assert.equal(controller.playing, false);
+              assert.equal(controller.$speed.slider('option', 'disabled'),
+                           false);
+              assert.equal(controller._grid.getOptions().editable, true);
+              assert.equal(controller.$radius.slider('option', 'disabled'),
+                           false);
+              assert.equal(controller.$play.prop('disabled'), false);
+              assert.equal(controller.$pause.prop('disabled'), true);
+              assert.equal(controller.$rewind.prop('disabled'), true);
+              done();
+          }, 0);
       });
-
-      this.controller._pauseButtonClicked();
-
-      equal(this.controller.playing, false);
-      equal(this.controller.$speed.slider('option', 'disabled'), false);
-      equal(this.controller._grid.getOptions().editable, true);
-      equal(this.controller.$radius.slider('option', 'disabled'), false);
-      equal(this.controller.$play.prop('disabled'), false);
-      equal(this.controller.$pause.prop('disabled'), true);
-      equal(this.controller.$rewind.prop('disabled'), true);
     });
 
-    test('Test _playButtonClicked', function(assert) {
+   QUnit.test('Test _playButtonClicked', function(assert) {
+      const done = assert.async();
+      var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                        'width:12px"></div>');
+
+      var controller = new AnimationsController(
+          new UIState(),
+          container,
+          this.sharedDecompositionViewDict
+      );
+
       // 9 UI tests + 3 event tests
-      expect(12);
+      assert.expect(12);
 
-      this.controller.setGradientCategory('DOB');
-      this.controller.setTrajectoryCategory('Treatment');
-      equal(this.controller.playing, false);
+      controller.setGradientCategory('DOB');
+      controller.setTrajectoryCategory('Treatment');
+     assert.equal(controller.playing, false);
 
-      this.controller.addEventListener('animation-started', function(cont) {
-        equal(cont.message.gradient, 'DOB');
-        equal(cont.message.trajectory, 'Treatment');
-        equal(cont.type, 'animation-started');
+      controller.addEventListener('animation-started', function(cont) {
+       assert.equal(cont.message.gradient, 'DOB');
+       assert.equal(cont.message.trajectory, 'Treatment');
+       assert.equal(cont.type, 'animation-started');
       });
+      
+      $(function() {
+          controller._playButtonClicked();
 
-      this.controller._playButtonClicked();
-
-      equal(this.controller.playing, true);
-      assert.ok(this.controller.director !== null);
-
-      equal(this.controller.$speed.slider('option', 'disabled'), true);
-      equal(this.controller._grid.getOptions().editable, false);
-      equal(this.controller.$radius.slider('option', 'disabled'), true);
-      equal(this.controller.$play.prop('disabled'), true);
-      equal(this.controller.$pause.prop('disabled'), false);
-      equal(this.controller.$rewind.prop('disabled'), false);
+          setTimeout(function() {
+              assert.equal(controller.playing, true);
+              assert.ok(controller.director !== null);
+              
+              assert.equal(controller.$speed.slider('option', 'disabled'),
+                           true);
+              assert.equal(controller._grid.getOptions().editable, false);
+              assert.equal(controller.$radius.slider('option', 'disabled'),
+                           true);
+              assert.equal(controller.$play.prop('disabled'), true);
+              assert.equal(controller.$pause.prop('disabled'), false);
+              assert.equal(controller.$rewind.prop('disabled'), false);
+              done();
+          }, 0);
+      });
     });
 
-    test('Test _rewindButtonClicked', function(assert) {
+   QUnit.test('Test _rewindButtonClicked', function(assert) {
+      const done = assert.async();
+      var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                        'width:12px"></div>');
+
+      var controller = new AnimationsController(
+          new UIState(),
+          container,
+          this.sharedDecompositionViewDict
+      );
+
       // 9 UI tests + 3 event tests
-      expect(12);
+      assert.expect(12);
 
-      this.controller.setGradientCategory('DOB');
-      this.controller.setTrajectoryCategory('Treatment');
-      equal(this.controller.playing, false);
+      controller.setGradientCategory('DOB');
+      controller.setTrajectoryCategory('Treatment');
+     assert.equal(controller.playing, false);
+      $(function() {
+          controller._playButtonClicked();
 
-      this.controller._playButtonClicked();
+          new Promise(function(resolve) {
+              setTimeout(function() {
+                  controller.addEventListener('animation-cancelled',
+                  function(cont) {
+                      assert.equal(cont.message.gradient, 'DOB');
+                      assert.equal(cont.message.trajectory, 'Treatment');
+                      assert.equal(cont.type, 'animation-cancelled');
+                  });
+                  controller._rewindButtonClicked();
+                  resolve();
+              }, 0);
+          }).then(function() {
+              setTimeout(function() {
+                  assert.equal(controller.playing, false);
+                  assert.ok(controller.director === null);
 
-      this.controller.addEventListener('animation-cancelled', function(cont) {
-        equal(cont.message.gradient, 'DOB');
-        equal(cont.message.trajectory, 'Treatment');
-        equal(cont.type, 'animation-cancelled');
+                  assert.equal(controller.$speed.slider('option', 'disabled'),
+                               false);
+                  assert.equal(controller._grid.getOptions().editable, true);
+                  assert.equal(controller.$radius.slider('option', 'disabled'),
+                               false);
+                  assert.equal(controller.$play.prop('disabled'), false);
+                  assert.equal(controller.$pause.prop('disabled'), true);
+                  assert.equal(controller.$rewind.prop('disabled'), true);
+                  done();
+              }, 0);
+          });
       });
-
-      this.controller._rewindButtonClicked();
-
-      equal(this.controller.playing, false);
-      assert.ok(this.controller.director === null);
-
-      equal(this.controller.$speed.slider('option', 'disabled'), false);
-      equal(this.controller._grid.getOptions().editable, true);
-      equal(this.controller.$radius.slider('option', 'disabled'), false);
-      equal(this.controller.$play.prop('disabled'), false);
-      equal(this.controller.$pause.prop('disabled'), true);
-      equal(this.controller.$rewind.prop('disabled'), true);
     });
 
-    test('Test _updateButtons', function(assert) {
-      this.controller._updateButtons();
+   QUnit.test('Test _updateButtons', function(assert) {
+      const done = assert.async();
+      var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                        'width:12px"></div>');
 
-      equal(this.controller.$speed.slider('option', 'disabled'), true);
-      equal(this.controller._grid.getOptions().editable, false);
-      equal(this.controller.$radius.slider('option', 'disabled'), true);
-      equal(this.controller.$play.prop('disabled'), true);
-      equal(this.controller.$pause.prop('disabled'), true);
-      equal(this.controller.$rewind.prop('disabled'), true);
+      var controller = new AnimationsController(
+          new UIState(),
+          container,
+          this.sharedDecompositionViewDict
+      );
 
-      this.controller.setGradientCategory('DOB');
-      this.controller.setTrajectoryCategory('Treatment');
+     $(function() {
+         controller._updateButtons();
 
-      equal(this.controller.$speed.slider('option', 'disabled'), false);
-      equal(this.controller._grid.getOptions().editable, true);
-      equal(this.controller.$radius.slider('option', 'disabled'), false);
-      equal(this.controller.$play.prop('disabled'), false);
-      equal(this.controller.$pause.prop('disabled'), true);
-      equal(this.controller.$rewind.prop('disabled'), true);
+         assert.equal(controller.$speed.slider('option', 'disabled'), true);
+         assert.equal(controller._grid.getOptions().editable, false);
+         assert.equal(controller.$radius.slider('option', 'disabled'), true);
+         assert.equal(controller.$play.prop('disabled'), true);
+         assert.equal(controller.$pause.prop('disabled'), true);
+         assert.equal(controller.$rewind.prop('disabled'), true);
 
-      /**
-       *
-       * The next few tests use a "dummy" director and pretend that the
-       * animation is running, but can't actually run because there's no
-       * render loop in the test suite.
-       *
-       */
-      this.controller.director = {'Dummy object': 'placeholder'};
-      this.controller.playing = true;
-      this.controller._updateButtons();
+         controller.setGradientCategory('DOB');
+         controller.setTrajectoryCategory('Treatment');
 
-      equal(this.controller.$speed.slider('option', 'disabled'), true);
-      equal(this.controller._grid.getOptions().editable, false);
-      equal(this.controller.$radius.slider('option', 'disabled'), true);
-      equal(this.controller.$play.prop('disabled'), true);
-      equal(this.controller.$pause.prop('disabled'), false);
-      equal(this.controller.$rewind.prop('disabled'), false);
+         assert.equal(controller.$speed.slider('option', 'disabled'), false);
+         assert.equal(controller._grid.getOptions().editable, true);
+         assert.equal(controller.$radius.slider('option', 'disabled'), false);
+         assert.equal(controller.$play.prop('disabled'), false);
+         assert.equal(controller.$pause.prop('disabled'), true);
+         assert.equal(controller.$rewind.prop('disabled'), true);
 
-      this.controller.playing = false;
-      this.controller._updateButtons();
+         /**
+          *
+          * The next few tests use a "dummy" director and pretend that the
+          * animation is running, but can't actually run because there's no
+          * render loop in the test suite.
+          *
+          */
+         controller.director = {'Dummy object': 'placeholder'};
+         controller.playing = true;
+         controller._updateButtons();
 
-      equal(this.controller.$speed.slider('option', 'disabled'), true);
-      equal(this.controller._grid.getOptions().editable, false);
-      equal(this.controller.$radius.slider('option', 'disabled'), true);
-      equal(this.controller.$play.prop('disabled'), false);
-      equal(this.controller.$pause.prop('disabled'), true);
-      equal(this.controller.$rewind.prop('disabled'), false);
+         assert.equal(controller.$speed.slider('option', 'disabled'), true);
+         assert.equal(controller._grid.getOptions().editable, false);
+         assert.equal(controller.$radius.slider('option', 'disabled'), true);
+         assert.equal(controller.$play.prop('disabled'), true);
+         assert.equal(controller.$pause.prop('disabled'), false);
+         assert.equal(controller.$rewind.prop('disabled'), false);
+
+         controller.playing = false;
+         controller._updateButtons();
+
+         assert.equal(controller.$speed.slider('option', 'disabled'), true);
+         assert.equal(controller._grid.getOptions().editable, false);
+         assert.equal(controller.$radius.slider('option', 'disabled'), true);
+         assert.equal(controller.$play.prop('disabled'), false);
+         assert.equal(controller.$pause.prop('disabled'), true);
+         assert.equal(controller.$rewind.prop('disabled'), false);
+         done();
+     });
     });
 
-    test('Testing toJSON', function() {
-      this.controller.setGradientCategory('DOB');
-      this.controller.setTrajectoryCategory('Treatment');
-      this.controller.setSpeed(1.11);
-      this.controller.setRadius(0.5);
-      this.controller.setColors({'Fast': 'black'});
+   QUnit.test('Testing toJSON',  function(assert) {
+      const done = assert.async();
+      var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                        'width:12px"></div>');
 
-      var obs = this.controller.toJSON();
-      var exp = {'gradientCategory': 'DOB',
-                 'trajectoryCategory': 'Treatment',
-                 'speed': 1.11, 'radius': 0.5, 'colors': {'Fast': 'black'}};
-      deepEqual(obs, exp);
+      var controller = new AnimationsController(
+          new UIState(),
+          container,
+          this.sharedDecompositionViewDict
+      );
+
+      controller.setGradientCategory('DOB');
+      controller.setTrajectoryCategory('Treatment');
+
+      $(function() {
+          controller.setSpeed(1.11);
+          controller.setRadius(0.5);
+          controller.setColors({'Fast': 'black'});
+
+          var obs = controller.toJSON();
+          var exp = {'gradientCategory': 'DOB',
+                     'trajectoryCategory': 'Treatment',
+                     'speed': 1.11, 'radius': 0.5, 'colors': {'Fast': 'black'}};
+          assert.deepEqual(obs, exp);
+          done()
+      });
     });
 
-    test('Testing fromJSON', function() {
+   QUnit.test('Testing fromJSON',  function(assert) {
+      const done = assert.async();
+      var container = $('<div id="does-not-exist" style="height:1000px; ' +
+                        'width:12px"></div>');
+
+      var controller = new AnimationsController(
+          new UIState(),
+          container,
+          this.sharedDecompositionViewDict
+      );
+
       var json = {'gradientCategory': 'Treatment',
                   'trajectoryCategory': 'DOB',
                   'speed': 3.33, 'radius': 0.5, 'colors': {'Fast': 'blue'}};
+     
+     $(function() {
+         controller.fromJSON(json);
+         assert.equal(controller.getTrajectoryCategory(), 'DOB');
+         assert.equal(controller.getGradientCategory(), 'Treatment');
+         assert.equal(controller.getSpeed(), 3.33);
+         assert.equal(controller.getRadius(), 0.5);
+         assert.deepEqual(controller.getColors(), {'Fast': 'blue'});
 
-      this.controller.fromJSON(json);
-      equal(this.controller.getTrajectoryCategory(), 'DOB');
-      equal(this.controller.getGradientCategory(), 'Treatment');
-      equal(this.controller.getSpeed(), 3.33);
-      equal(this.controller.getRadius(), 0.5);
-      deepEqual(this.controller.getColors(), {'Fast': 'blue'});
+         assert.equal(controller.$speed.slider('option', 'disabled'), false);
+         assert.equal(controller._grid.getOptions().editable, true);
+         assert.equal(controller.$radius.slider('option', 'disabled'), false);
+         assert.equal(controller.$play.prop('disabled'), false);
+         assert.equal(controller.$pause.prop('disabled'), true);
+         assert.equal(controller.$rewind.prop('disabled'), true);
 
-      equal(this.controller.$speed.slider('option', 'disabled'), false);
-      equal(this.controller._grid.getOptions().editable, true);
-      equal(this.controller.$radius.slider('option', 'disabled'), false);
-      equal(this.controller.$play.prop('disabled'), false);
-      equal(this.controller.$pause.prop('disabled'), true);
-      equal(this.controller.$rewind.prop('disabled'), true);
+         assert.equal(controller.playing, false);
+         assert.equal(controller.director, null);
 
-      equal(this.controller.playing, false);
-      equal(this.controller.director, null);
+         // let's add a dummy director and pretend there was something playing
+         controller.director = {'This is a': 'dummy object'};
+         controller.playing = true;
 
-      // let's add a dummy director and pretend there was something playing
-      this.controller.director = {'This is a': 'dummy object'};
-      this.controller.playing = true;
+         controller.fromJSON(json);
+         assert.equal(controller.getTrajectoryCategory(), 'DOB');
+         assert.equal(controller.getGradientCategory(), 'Treatment');
+         assert.equal(controller.getSpeed(), 3.33);
+         assert.equal(controller.getRadius(), 0.5);
+         assert.deepEqual(controller.getColors(), {'Fast': 'blue'});
 
-      this.controller.fromJSON(json);
-      equal(this.controller.getTrajectoryCategory(), 'DOB');
-      equal(this.controller.getGradientCategory(), 'Treatment');
-      equal(this.controller.getSpeed(), 3.33);
-      equal(this.controller.getRadius(), 0.5);
-      deepEqual(this.controller.getColors(), {'Fast': 'blue'});
+         assert.equal(controller.$speed.slider('option', 'disabled'), false);
+         assert.equal(controller._grid.getOptions().editable, true);
+         assert.equal(controller.$radius.slider('option', 'disabled'), false);
+         assert.equal(controller.$play.prop('disabled'), false);
+         assert.equal(controller.$pause.prop('disabled'), true);
+         assert.equal(controller.$rewind.prop('disabled'), true);
 
-      equal(this.controller.$speed.slider('option', 'disabled'), false);
-      equal(this.controller._grid.getOptions().editable, true);
-      equal(this.controller.$radius.slider('option', 'disabled'), false);
-      equal(this.controller.$play.prop('disabled'), false);
-      equal(this.controller.$pause.prop('disabled'), true);
-      equal(this.controller.$rewind.prop('disabled'), true);
-
-      equal(this.controller.playing, false);
-      equal(this.controller.director, null);
+         assert.equal(controller.playing, false);
+         assert.equal(controller.director, null);
+         done();
+     });
     });
 
   });

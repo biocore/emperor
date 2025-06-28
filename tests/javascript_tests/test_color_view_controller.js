@@ -16,8 +16,8 @@ requirejs([
     var DecompositionModel = model.DecompositionModel;
     var Plottable = model.Plottable;
 
-    module('ColorViewController', {
-      setup: function() {
+    QUnit.module('ColorViewController', {
+      beforeEach () {
         this.sharedDecompositionViewDict = {};
 
         var UIState1 = new UIState();
@@ -37,11 +37,11 @@ requirejs([
                                          13.7754129161, 11.217215823,
                                          10.024774995, 8.22835130237,
                                          7.55971173665, 6.24945796136]};
-        md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
-        metadata = [['PC.636', '14.2', 'Control', '20070314'],
+        var md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
+        var metadata = [['PC.636', '14.2', 'Control', '20070314'],
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
-        decomp = new DecompositionModel(data, md_headers, metadata);
+        var decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
         var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
@@ -90,7 +90,7 @@ requirejs([
                                                        'scatter',
                                                        UIState2);
       },
-      teardown: function() {
+      afterEach () {
         this.sharedDecompositionViewDict = undefined;
         this.jackknifedDecView = undefined;
         $('#fooligans').remove();
@@ -99,7 +99,8 @@ requirejs([
       }
     });
 
-    test('Constructor tests', function(assert) {
+   QUnit.test('Constructor tests', function(assert) {
+      const done = assert.async();
       var container = $('<div id="no-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
@@ -107,92 +108,114 @@ requirejs([
 
       var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
-      equal(controller.title, 'Color');
+       assert.equal(controller.title, 'Color');
 
-      var testColumn = controller.bodyGrid.getColumns()[0];
-      equal(testColumn.field, 'value');
+       $(function() {
 
-      // verify the color value is set properly
-      equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
-      equal(controller.$select.val(), null);
-      equal(controller.$searchBar.val(), '');
-      equal(controller.$searchBar.is(':hidden'), true);
+           var testColumn = controller.bodyGrid.getColumns()[0];
+           assert.equal(testColumn.field, 'value');
 
-      equal(controller.$colormapSelect.is(':disabled'), true);
-      equal(controller.$scaled.is(':disabled'), true);
+           // verify the color value is set properly
+           assert.equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
+           assert.equal(controller.$select.val(), null);
+           assert.equal(controller.$searchBar.val(), '');
+           assert.equal(controller.$searchBar.is(':hidden'), true);
+
+           assert.equal(controller.$colormapSelect.is(':disabled'), true);
+           assert.equal(controller.$scaled.is(':disabled'), true);
+
+           done();
+       });
     });
 
-    test('Is coloring continuous', function() {
+   QUnit.test('Is coloring continuous',  function(assert) {
+      const done = assert.async();
       var container = $('<div id="no-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
       var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
-      equal(controller.title, 'Color');
+     assert.equal(controller.title, 'Color');
 
-      equal(controller.isColoringContinuous(), false);
+       $(function() {
+           assert.equal(controller.isColoringContinuous(), false);
 
-      controller.setMetadataField('Mixed');
-      controller.$colormapSelect.val('Viridis').trigger('chosen:updated');
-      controller.$scaled.prop('checked', true).trigger('change');
-      equal(controller.$searchBar.is(':hidden'), true);
+           controller.setMetadataField('Mixed');
+           controller.$colormapSelect.val('Viridis').trigger('chosen:updated');
+           controller.$scaled.prop('checked', true).trigger('change');
+           assert.equal(controller.$searchBar.is(':hidden'), true);
 
-      equal(controller.isColoringContinuous(), true);
+           assert.equal(controller.isColoringContinuous(), true);
 
-      controller.setMetadataField('DOB');
-      controller.$colormapSelect.val('Dark2').trigger('chosen:updated');
-      controller.$scaled.prop('checked', false).trigger('change');
-      equal(controller.$searchBar.is(':hidden'), true);
+           controller.setMetadataField('DOB');
+           controller.$colormapSelect.val('Dark2').trigger('chosen:updated');
+           controller.$scaled.prop('checked', false).trigger('change');
+           assert.equal(controller.$searchBar.is(':hidden'), true);
 
-      equal(controller.isColoringContinuous(), false);
+           assert.equal(controller.isColoringContinuous(), false);
+
+           done();
+       });
     });
 
-    test('Test _nonNumericPlottables', function() {
+   QUnit.test('Test _nonNumericPlottables',  function(assert) {
+      const done = assert.async();
       var container = $('<div id="no-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new ColorViewController(new UIState(),
-        container, this.sharedDecompositionViewDict);
-      controller.setMetadataField('DOB');
-      var decompViewDict = controller.getView();
+                          container, this.sharedDecompositionViewDict);
 
-      var colors = {'14.7': '#f7fbff',
-                    '14.2': '#f3f8fd',
-                    'StringValue': '#e8f2fd'};
-      var data = decompViewDict.setCategory(
-        colors, ColorViewController.prototype.setPlottableAttributes, 'Mixed');
-      var uniqueVars = ['14.7', '14.2', 'StringValue'];
+       $(function() {
+           controller.setMetadataField('DOB');
+           var decompViewDict = controller.getView();
 
-      // Test all are string
-      ColorViewController._nonNumericPlottables(uniqueVars, data);
-      var plottables = ColorViewController._nonNumericPlottables(uniqueVars,
-                                                                 data);
-      var exp = [
-        new Plottable(
-            'PC.635',
-            ['PC.635', 'StringValue', 'Fast', '20071112'],
-            [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-            -0.112864, 0.064794],
-            1)
-        ];
-      deepEqual(plottables, exp);
+           var colors = {'14.7': '#f7fbff',
+                         '14.2': '#f3f8fd',
+                         'StringValue': '#e8f2fd'};
+           var data = decompViewDict.setCategory(colors,
+               ColorViewController.prototype.setPlottableAttributes,
+               'Mixed');
+           var uniqueVars = ['14.7', '14.2', 'StringValue'];
 
-      // Test all are numeric
-      var colors = {'20070314': '#f7fbff', '20071112': '#f3f8fd'};
-      var data = decompViewDict.setCategory(
-        colors, ColorViewController.prototype.setPlottableAttributes, 'DOB');
-      var uniqueVars = ['20070314', '20071112'];
-      var plottables = ColorViewController._nonNumericPlottables(uniqueVars,
-                                                                 data);
-      deepEqual(plottables, []);
+           // Test all are string
+           ColorViewController._nonNumericPlottables(uniqueVars, data);
+           var plottables = ColorViewController._nonNumericPlottables(
+               uniqueVars,
+               data);
+           var exp = [
+               new Plottable(
+                   'PC.635',
+                   ['PC.635', 'StringValue', 'Fast', '20071112'],
+                   [-0.237661, 0.046053, -0.138136, 0.159061,
+                    -0.247485, -0.115211,
+                    -0.112864, 0.064794],
+                   1)
+           ];
+           assert.deepEqual(plottables, exp);
+
+           // Test all are numeric
+           var colors = {'20070314': '#f7fbff', '20071112': '#f3f8fd'};
+           var data = decompViewDict.setCategory(
+               colors,
+               ColorViewController.prototype.setPlottableAttributes,
+               'DOB');
+           var uniqueVars = ['20070314', '20071112'];
+           var plottables = ColorViewController._nonNumericPlottables(
+               uniqueVars,
+               data);
+           assert.deepEqual(plottables, []);
+
+           done();
+       });
     });
 
-    test('Test discrete colors are retrieved correctly', function() {
-      deepEqual(ColorViewController.getDiscreteColors([0, 1, 2]),
+   QUnit.test('Test discrete colors are retrieved correctly',  function(assert) {
+     assert.deepEqual(ColorViewController.getDiscreteColors([0, 1, 2]),
                 {0: '#ff0000', 1: '#0000ff', 2: '#f27304'});
     });
 
-    test('Test discrete colors are retrieved on roll-over', function() {
+   QUnit.test('Test discrete colors are retrieved on roll-over',  function(assert) {
       var fifteen = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
       var obs = ColorViewController.getDiscreteColors(fifteen, 'Pastel1');
       var exp = {'0': '#fbb4ae', '1': '#b3cde3', '2': '#ccebc5',
@@ -200,19 +223,19 @@ requirejs([
                  '6': '#e5d8bd', '7': '#fddaec', '8': '#f2f2f2',
                  '9': '#fbb4ae', '10': '#b3cde3', '11': '#ccebc5',
                  '12': '#decbe4', '13': '#fed9a6', '14': '#ffffcc'};
-      deepEqual(obs, exp);
+     assert.deepEqual(obs, exp);
     });
 
-    test('Test discrete colors with other maps', function() {
-      deepEqual(ColorViewController.getDiscreteColors([0], 'Set1'),
+   QUnit.test('Test discrete colors with other maps',  function(assert) {
+     assert.deepEqual(ColorViewController.getDiscreteColors([0], 'Set1'),
                 {0: '#e41a1c'});
     });
 
 
-    test('Test getScaledColors', function() {
+   QUnit.test('Test getScaledColors',  function(assert) {
       var five = ['0', '1', '2', '3', '4'];
       var color = ColorViewController.getScaledColors(five, 'Viridis');
-      deepEqual(color, [{0: '#440154', 1: '#3f4a8a', 2: '#26838f',
+     assert.deepEqual(color, [{0: '#440154', 1: '#3f4a8a', 2: '#26838f',
                          3: '#6cce5a', 4: '#fee825'},
         '<defs><linearGradient id="Gradient" x1="0" x2="0" y1="1" y2="0">' +
         '<stop offset="0%" stop-color="#440154"/>' +
@@ -325,13 +348,13 @@ requirejs([
       ]);
     });
 
-    test('Test getScaledColors: even number of vals & an outlier', function() {
+   QUnit.test('Test getScaledColors: even number of vals & an outlier',  function(assert) {
       var vals = ['5', '6', '7', '10000'];
       var color = ColorViewController.getScaledColors(vals, 'PiYG');
       // The outlier's effect is so strong that 5, 6, and 7 all get assigned
       // the same hex color (because hex color doesn't have _that_ much
       // resolution). This is as expected.
-      deepEqual(
+     assert.deepEqual(
           color[0],
           {5: '#8e0152', 6: '#8e0152', 7: '#8e0152', 10000: '#276419'}
       );
@@ -344,28 +367,28 @@ requirejs([
       // is that the range [0, 100] has 101 elements (i.e. an odd number of
       // elements), of which 50 is the middle element.
       // (This is also the case for the Viridis test above.)
-      ok(/<stop offset="0%" stop-color="#8e0152"\/>/.test(color[1]));
-      ok(/<stop offset="50%" stop-color="#f7f7f7"\/>/.test(color[1]));
-      ok(
+     assert.ok(/<stop offset="0%" stop-color="#8e0152"\/>/.test(color[1]));
+     assert.ok(/<stop offset="50%" stop-color="#f7f7f7"\/>/.test(color[1]));
+     assert.ok(
           /<stop offset="100%" stop-color="#276419"\/><\/linearGradient>/.test(
               color[1]
           )
       );
     });
 
-    test('Test getInterpolatedColors', function() {
+   QUnit.test('Test getInterpolatedColors',  function(assert) {
       var five = ['0', '1', '2', '3', '4'];
       var color = ColorViewController.getInterpolatedColors(five, 'Viridis');
-      deepEqual(color, {
+     assert.deepEqual(color, {
         '0': '#440154', '1': '#3f4a8a', '2': '#26838f', '3': '#6cce5a',
         '4': '#fee825'
       });
     });
 
-    test('Test ColorViewController.getScaledColors exceptions', function() {
+   QUnit.test('Test ColorViewController.getScaledColors exceptions',  function(assert) {
       var five = ['0', 'string1', 'string2', 'string3', 'string4'];
 
-      throws(
+     assert.throws(
           function() {
             var color = ColorViewController.getScaledColors(five, 'Viridis');
           },
@@ -374,7 +397,7 @@ requirejs([
           );
     });
 
-    test('Test ColorViewController.getColorList works', function() {
+   QUnit.test('Test ColorViewController.getColorList works',  function(assert) {
       var one, five, ten, twenty, scaled, colors;
 
       one = [0];
@@ -385,10 +408,10 @@ requirejs([
       scaled = [0, 1, 2, 3, 7, 20, 50];
 
       colors = ColorViewController.getColorList(scaled, 'Blues', false, true);
-      deepEqual(colors[0], {'0': '#f7fbff', '1': '#f3f8fe', '2': '#eff6fc',
+     assert.deepEqual(colors[0], {'0': '#f7fbff', '1': '#f3f8fe', '2': '#eff6fc',
                             '20': '#94c4df', '3': '#ebf3fb', '50': '#08306b',
                             '7': '#dbe9f6'});
-      equal(colors[1],
+     assert.equal(colors[1],
         '<defs><linearGradient id="Gradient" x1="0" x2="0" y1="1" y2="0">' +
         '<stop offset="0%" stop-color="#f7fbff"/>' +
         '<stop offset="1%" stop-color="#f5fafe"/>' +
@@ -499,7 +522,7 @@ requirejs([
         'font-family="sans-serif" font-size="12px" text-anchor="start">0</text>'
       );
 
-      deepEqual(ColorViewController.getColorList(five, 'Set1', true),
+     assert.deepEqual(ColorViewController.getColorList(five, 'Set1', true),
                 [{'0': '#e41a1c', '1': '#377eb8', '2': '#4daf4a',
                   '3': '#984ea3', '4': '#ff7f00'}, undefined]);
 
@@ -510,29 +533,29 @@ requirejs([
       );
       // Test that extreme values are correctly assigned to the colors at the
       // ends of the BrBG color map
-      deepEqual(interpolatedColorList[0]['0'], '#543005');
-      deepEqual(interpolatedColorList[0]['19'], '#003c30');
+     assert.deepEqual(interpolatedColorList[0]['0'], '#543005');
+     assert.deepEqual(interpolatedColorList[0]['19'], '#003c30');
       // Now, check that all values (incl. intermediate ones) are correctly
       // assigned colors
       var interpolator = chroma.scale(chroma.brewer.BrBG).domain([0, 19]);
       for (var i = 0; i < 19; i++) {
-          deepEqual(interpolatedColorList[0][String(i)], interpolator(i).hex());
+         assert.deepEqual(interpolatedColorList[0][String(i)], interpolator(i).hex());
       }
       // Lastly, check that the second element in interpolatedColorList is
       // undefined (since we're not drawing a gradient)
-      deepEqual(interpolatedColorList[1], undefined);
+     assert.deepEqual(interpolatedColorList[1], undefined);
 
-      deepEqual(ColorViewController.getColorList(one, 'OrRd', false),
+     assert.deepEqual(ColorViewController.getColorList(one, 'OrRd', false),
                 [{'0': '#fff7ec'}, undefined]);
-      deepEqual(ColorViewController.getColorList(one, 'RdGy', true),
+     assert.deepEqual(ColorViewController.getColorList(one, 'RdGy', true),
                 [{'0': '#67001f'}, undefined]);
 
     });
 
-    test('Test ColorViewController.getColorList exceptions', function() {
+   QUnit.test('Test ColorViewController.getColorList exceptions',  function(assert) {
       var five;
       five = [0, 1, 2, 3, 4];
-      throws(
+     assert.throws(
           function() {
             ColorViewController.getColorList(five, false, 'Non-existant');
           },
@@ -541,7 +564,7 @@ requirejs([
           );
 
       five = [0, 'string1', 'string2', 'string3', 'string4'];
-      throws(
+     assert.throws(
           function() {
             ColorViewController.getColorList(five, 'Blues', false, true);
           },
@@ -550,157 +573,213 @@ requirejs([
           );
     });
 
-    test('Testing setPlottableAttributes helper function', function(assert) {
-      // testing with one plottable
-      var idx = 0;
-      plottables = [{idx: idx}];
-      equal(this.dv.markers[idx].material.color.getHexString(), 'ff0000');
-      equal(this.dv.markers[idx + 1].material.color.getHexString(), 'ff0000');
-      ColorViewController.prototype.setPlottableAttributes(this.dv, '#00ff00',
-                                                           plottables);
-      equal(this.dv.markers[idx].material.color.getHexString(), '00ff00');
-      equal(this.dv.markers[idx + 1].material.color.getHexString(), 'ff0000');
-      equal(this.dv.needsUpdate, true);
+   QUnit.test('Testing setPlottableAttributes helper function',
+      function(assert) {
+          // testing with one plottable
+          var idx = 0;
+          var plottables = [{idx: idx}];
+          assert.equal(this.dv.markers[idx].material.color.getHexString(),
+                       'ff0000');
+          assert.equal(this.dv.markers[idx + 1].material.color.getHexString(),
+                       'ff0000');
+          ColorViewController.prototype.setPlottableAttributes(this.dv,
+                                                               '#00ff00',
+                                                               plottables);
+          assert.equal(this.dv.markers[idx].material.color.getHexString(),
+                       '00ff00');
+          assert.equal(this.dv.markers[idx + 1].material.color.getHexString(),
+                       'ff0000');
+          assert.equal(this.dv.needsUpdate,
+                       true);
 
-      // testing with multiple plottable
-      plottables = [{idx: idx}, {idx: idx + 1}];
-      ColorViewController.prototype.setPlottableAttributes(this.dv, '#000000',
-                                                           plottables);
-      equal(this.dv.markers[idx].material.color.getHexString(), '000000');
-      equal(this.dv.markers[idx + 1].material.color.getHexString(), '000000');
-      equal(this.dv.needsUpdate, true);
+          // testing with multiple plottable
+          var plottables = [{idx: idx}, {idx: idx + 1}];
+          ColorViewController.prototype.setPlottableAttributes(this.dv,
+                                                               '#000000',
+                                                               plottables);
+          assert.equal(this.dv.markers[idx].material.color.getHexString(),
+                       '000000');
+          assert.equal(this.dv.markers[idx + 1].material.color.getHexString(),
+                       '000000');
+          assert.equal(this.dv.needsUpdate, true);
     });
 
-    test('Testing setPlottableAttributes (jackknifing)', function(assert) {
+   QUnit.test('Testing setPlottableAttributes (jackknifing)', function(assert) {
       // In this test we validate that ellipsoids can be changed in color
       // one by one and a few at a time.
 
       // testing with one plottable
       var idx = 0, dv = this.jackknifedDecView;
-      plottables = [{idx: idx}];
+      var plottables = [{idx: idx}];
 
       // assert initial state
-      equal(dv.markers[0].material.color.getHexString(), 'ff0000');
-      equal(dv.markers[1].material.color.getHexString(), 'ff0000');
-      equal(dv.ellipsoids[0].material.color.getHexString(), 'ff0000');
-      equal(dv.ellipsoids[1].material.color.getHexString(), 'ff0000');
+     assert.equal(dv.markers[0].material.color.getHexString(), 'ff0000');
+     assert.equal(dv.markers[1].material.color.getHexString(), 'ff0000');
+     assert.equal(dv.ellipsoids[0].material.color.getHexString(), 'ff0000');
+     assert.equal(dv.ellipsoids[1].material.color.getHexString(), 'ff0000');
 
       // change color to green (only one sample)
       ColorViewController.prototype.setPlottableAttributes(dv, '#00ff00',
                                                            plottables);
-      equal(dv.needsUpdate, true);
+     assert.equal(dv.needsUpdate, true);
 
-      equal(dv.markers[0].material.color.getHexString(), '00ff00');
-      equal(dv.markers[1].material.color.getHexString(), 'ff0000');
-      equal(dv.ellipsoids[0].material.color.getHexString(), '00ff00');
-      equal(dv.ellipsoids[1].material.color.getHexString(), 'ff0000');
+     assert.equal(dv.markers[0].material.color.getHexString(), '00ff00');
+     assert.equal(dv.markers[1].material.color.getHexString(), 'ff0000');
+     assert.equal(dv.ellipsoids[0].material.color.getHexString(), '00ff00');
+     assert.equal(dv.ellipsoids[1].material.color.getHexString(), 'ff0000');
 
       // change color to black (two samples)
       plottables = [{idx: idx}, {idx: idx + 1}];
       ColorViewController.prototype.setPlottableAttributes(dv, '#000000',
                                                            plottables);
-      equal(dv.needsUpdate, true);
+     assert.equal(dv.needsUpdate, true);
 
-      equal(dv.markers[0].material.color.getHexString(), '000000');
-      equal(dv.markers[1].material.color.getHexString(), '000000');
-      equal(dv.ellipsoids[0].material.color.getHexString(), '000000');
-      equal(dv.ellipsoids[1].material.color.getHexString(), '000000');
+     assert.equal(dv.markers[0].material.color.getHexString(), '000000');
+     assert.equal(dv.markers[1].material.color.getHexString(), '000000');
+     assert.equal(dv.ellipsoids[0].material.color.getHexString(), '000000');
+     assert.equal(dv.ellipsoids[1].material.color.getHexString(), '000000');
     });
 
-    test('Testing toJSON', function() {
+   QUnit.test('Testing toJSON',  function(assert) {
+      const done = assert.async();
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
       // Change color on one point
       var idx = 0;
-      plottables = [{idx: idx}];
+      var plottables = [{idx: idx}];
       ColorViewController.prototype.setPlottableAttributes(this.dv, '#00ff00',
                                                            plottables);
 
-      controller.setMetadataField('DOB');
-      var obs = controller.toJSON();
-      var exp = {'category': 'DOB',
-                 'colormap': 'discrete-coloring-qiime',
-                 'continuous': false,
-                 'data': { '20070314': '#ff0000', '20071112': '#0000ff'}};
-      deepEqual(obs, exp);
+       $(function() {
+           controller.setMetadataField('DOB');
+           var obs = controller.toJSON();
+           var exp = {'category': 'DOB',
+                      'colormap': 'discrete-coloring-qiime',
+                      'continuous': false,
+                      'data': { '20070314': '#ff0000', '20071112': '#0000ff'}};
+           assert.deepEqual(obs, exp);
+
+           done();
+       });
     });
 
-    test('Testing fromJSON', function(assert) {
+   QUnit.test('Testing fromJSON', function(assert) {
+      const done = assert.async();
       var json = {category: 'DOB',
                   colormap: 'discrete-coloring-qiime',
                   continuous: false,
                   data: {20070314: '#ff0000', 20071112: '#0000ff'}};
 
-      var container = $('<div style="height:11px; width:12px"></div>');
+      // The new version of SlickGrid depends on getComputedStyle to determine
+      // its height and width. In turn, SlickGrid uses its dimensions to
+      // determine which cells are visible. Hence, it's necessary to make the
+      // div big enough and put it in the qunit-fixture element.       
+      var container = $('<div style="height:600px; width:600px"></div>');
+      $("#qunit-fixture").append(container);
+       
       var controller = new ColorViewController(new UIState(),
-        container, this.sharedDecompositionViewDict);
+                                               container,
+                                               this.sharedDecompositionViewDict
+                                              );
 
-      controller.setMetadataField('Treatment');
+       $(function() {
+           controller.setMetadataField('Treatment');
 
-      controller.fromJSON(json);
+           controller.fromJSON(json);
 
-      // check the data is rendered
-      assert.ok(controller.$gridDiv.find(':contains(20070314)').length > 0);
-      assert.ok(controller.$gridDiv.find(':contains(20071112)').length > 0);
+           // check the data is rendered
+           assert.ok(
+               controller.$gridDiv.find(':contains(20070314)').length > 0);
+           assert.ok(
+               controller.$gridDiv.find(':contains(20071112)').length > 0);
 
-      var idx = 0;
-      var markers = controller.decompViewDict.scatter.markers;
-      equal(markers[idx].material.color.getHexString(), 'ff0000');
-      equal(markers[idx + 1].material.color.getHexString(), '0000ff');
-      equal(markers[idx + 2].material.color.getHexString(), '0000ff');
-      equal(controller.$select.val(), 'DOB');
-      equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
-      equal(controller.$scaled.is(':checked'), false);
-      equal(controller.$searchBar.val(), '');
-      equal(controller.$searchBar.prop('hidden'), false);
+           var idx = 0;
+           var markers = controller.decompViewDict.scatter.markers;
+           assert.equal(markers[idx].material.color.getHexString(), 'ff0000');
+           assert.equal(
+               markers[idx + 1].material.color.getHexString(),
+               '0000ff'
+           );
+           assert.equal(
+               markers[idx + 2].material.color.getHexString(),
+               '0000ff'
+           );
+           assert.equal(controller.$select.val(), 'DOB');
+           assert.equal(
+               controller.$colormapSelect.val(),
+               'discrete-coloring-qiime'
+           );
+           assert.equal(controller.$scaled.is(':checked'), false);
+           assert.equal(controller.$searchBar.val(), '');
+           assert.equal(controller.$searchBar.prop('hidden'), false);
+
+           done();
+       });
     });
 
-    test('Testing fromJSON scaled', function(assert) {
+    QUnit.test('Testing fromJSON scaled', function(assert) {
+      const done = assert.async();
       var json = {category: 'Mixed', colormap: 'Viridis',
                   continuous: true, data: {'Non-numeric values': '#ae1221'}};
 
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(new UIState(),
-        container, this.sharedDecompositionViewDict);
+                                               container,
+                                               this.sharedDecompositionViewDict
+                                              );
+        
+      $(function() {
+          controller.setMetadataField('Treatment');
 
-      controller.setMetadataField('Treatment');
+          controller.fromJSON(json);
 
-      controller.fromJSON(json);
+          // no grid data should be rendered (continuous is set to true)
+          assert.ok(controller.$gridDiv.find(':contains(14.2)').length <= 0);
+          assert.ok(controller.$gridDiv.find(':contains(StringValue)').length
+                    <= 0);
+          assert.ok(controller.$gridDiv.find(':contains(14.7)').length <= 0);
 
-      // no grid data should be rendered (continuous is set to true)
-      assert.ok(controller.$gridDiv.find(':contains(14.2)').length <= 0);
-      assert.ok(controller.$gridDiv.find(':contains(StringValue)').length <= 0);
-      assert.ok(controller.$gridDiv.find(':contains(14.7)').length <= 0);
-
-      var idx = 0;
-      var markers = controller.decompViewDict.scatter.markers;
-      equal(markers[idx].material.color.getHexString(), '440154');
-      equal(markers[idx + 1].material.color.getHexString(), 'ae1221');
-      equal(markers[idx + 2].material.color.getHexString(), 'fee825');
-      equal(controller.$select.val(), 'Mixed');
-      equal(controller.$colormapSelect.val(), 'Viridis');
-      equal(controller.$scaled.is(':checked'), true);
-      equal(controller.isColoringContinuous(), true);
-      equal(controller.$searchBar.val(), '');
-      equal(controller.$searchBar.prop('hidden'), true);
+          var idx = 0;
+          var markers = controller.decompViewDict.scatter.markers;
+          assert.equal(markers[idx].material.color.getHexString(), '440154');
+          assert.equal(markers[idx + 1].material.color.getHexString(),
+                       'ae1221');
+          assert.equal(markers[idx + 2].material.color.getHexString(),
+                       'fee825');
+          assert.equal(controller.$select.val(), 'Mixed');
+          assert.equal(controller.$colormapSelect.val(), 'Viridis');
+          assert.equal(controller.$scaled.is(':checked'), true);
+          assert.equal(controller.isColoringContinuous(), true);
+          assert.equal(controller.$searchBar.val(), '');
+          assert.equal(controller.$searchBar.prop('hidden'), true);
+          done();
+        });
     });
 
-    test('Testing toJSON (null)', function() {
+   QUnit.test('Testing toJSON (null)',  function(assert) {
+      const done = assert.async();
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(new UIState(),
-        container, this.sharedDecompositionViewDict);
-      controller.setMetadataField(null);
+                                               container,
+                                               this.sharedDecompositionViewDict
+                                              );
+       $(function() {
+           controller.setMetadataField(null);
+           
+           var obs = controller.toJSON();
+           var exp = {'category': null,
+                      'colormap': 'discrete-coloring-qiime',
+                      'continuous': false,
+                      'data': {}};
+           assert.deepEqual(obs, exp);
 
-      var obs = controller.toJSON();
-      var exp = {'category': null,
-                 'colormap': 'discrete-coloring-qiime',
-                 'continuous': false,
-                 'data': {}};
-      deepEqual(obs, exp);
+           done();
+       });
     });
 
-    test('Testing fromJSON (null)', function() {
+   QUnit.test('Testing fromJSON (null)',  function(assert) {
+      const done = assert.async();
       var json = {category: null,
                   colormap: 'discrete-coloring-qiime',
                   continuous: false,
@@ -708,44 +787,54 @@ requirejs([
 
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(new UIState(),
-        container, this.sharedDecompositionViewDict);
-
-      controller.fromJSON(json);
-      var markers = controller.decompViewDict.scatter.markers;
-      equal(markers[0].material.color.getHexString(), 'ff0000');
-      equal(markers[1].material.color.getHexString(), 'ff0000');
-      equal(markers[2].material.color.getHexString(), 'ff0000');
-      equal(controller.$select.val(), null);
-      equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
-      equal(controller.$scaled.is(':checked'), false);
-      equal(controller.isColoringContinuous(), false);
-      equal(controller.$searchBar.val(), '');
-      equal(controller.$searchBar.prop('hidden'), false);
+                                               container,
+                                               this.sharedDecompositionViewDict
+                                              );
+       
+       $(function() {
+           controller.fromJSON(json);
+           var markers = controller.decompViewDict.scatter.markers;
+           assert.equal(markers[0].material.color.getHexString(), 'ff0000');
+           assert.equal(markers[1].material.color.getHexString(), 'ff0000');
+           assert.equal(markers[2].material.color.getHexString(), 'ff0000');
+           assert.equal(controller.$select.val(), null);
+           assert.equal(controller.$colormapSelect.val(),
+                        'discrete-coloring-qiime');
+           assert.equal(controller.$scaled.is(':checked'), false);
+           assert.equal(controller.isColoringContinuous(), false);
+           assert.equal(controller.$searchBar.val(), '');
+           assert.equal(controller.$searchBar.prop('hidden'), false);
+           done();
+       });
     });
 
-    test('Test getDiscretePaletteColor(map)', function() {
-      deepEqual(ColorViewController.getPaletteColor('OrRd'),
+   QUnit.test('Test getDiscretePaletteColor(map)',  function(assert) {
+     assert.deepEqual(ColorViewController.getPaletteColor('OrRd'),
       ['#fff7ec', '#fee8c8', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548',
       '#d7301f', '#b30000', '#7f0000']);
-      deepEqual(ColorViewController.getPaletteColor('RdGy'),
+     assert.deepEqual(ColorViewController.getPaletteColor('RdGy'),
       ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#ffffff',
       '#e0e0e0', '#bababa', '#878787', '#4d4d4d', '#1a1a1a']);
-      deepEqual(ColorViewController.getPaletteColor('Set2'),
+     assert.deepEqual(ColorViewController.getPaletteColor('Set2'),
       ['#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3', '#a6d854', '#ffd92f',
       '#e5c494', '#b3b3b3']);
     });
 
-    test('Test setEnabled', function() {
+   QUnit.test('Test setEnabled',  function(assert) {
+      const done = assert.async();
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
-      // disable
-      controller.setEnabled(false);
+       $(function() {
+           // disable
+           controller.setEnabled(false);
 
-      equal(controller.$colormapSelect.is(':disabled'), true);
-      equal(controller.$scaled.is(':disabled'), true);
-      equal(controller.$searchBar.prop('hidden'), true);
+           assert.equal(controller.$colormapSelect.is(':disabled'), true);
+           assert.equal(controller.$scaled.is(':disabled'), true);
+           assert.equal(controller.$searchBar.prop('hidden'), true);
+           done();
+       });
     });
 
     /**
@@ -753,7 +842,8 @@ requirejs([
      * Test large dataset.
      *
      */
-    asyncTest('Test large dataset', function() {
+    QUnit.test('Test large dataset',  function(assert) {
+	const done = assert.async();
       var coords = [], metadata = [];
       for (var i = 0; i < 1001; i++) {
         coords.push([Math.random(), Math.random(), Math.random(),
@@ -775,15 +865,15 @@ requirejs([
       var attr = new ColorViewController(state, container, {'scatter': dv});
       $(function() {
         // Controllers should be enabled
-        equal(attr.enabled, false);
-        equal(attr.$select.val(), null);
-        equal(attr.$select.is(':disabled'), false);
-        equal(attr.$colormapSelect.is(':disabled'), true);
-        equal(attr.$scaled.is(':disabled'), true);
-        equal(attr.$searchBar.val(), '');
-        equal(attr.$searchBar.is(':disabled'), true);
+       assert.equal(attr.enabled, false);
+       assert.equal(attr.$select.val(), null);
+       assert.equal(attr.$select.is(':disabled'), false);
+       assert.equal(attr.$colormapSelect.is(':disabled'), true);
+       assert.equal(attr.$scaled.is(':disabled'), true);
+       assert.equal(attr.$searchBar.val(), '');
+       assert.equal(attr.$searchBar.is(':disabled'), true);
 
-        start(); // qunit
+	done();
       });
     });
 
@@ -792,7 +882,8 @@ requirejs([
      * Test large dataset.
      *
      */
-    asyncTest('Test large dataset', function() {
+    QUnit.test('Test large dataset',  function(assert) {
+      const done = assert.async();
       var coords = [], metadata = [];
       for (var i = 0; i < 1001; i++) {
         coords.push([Math.random(), Math.random(), Math.random(),
@@ -814,15 +905,15 @@ requirejs([
       var attr = new ColorViewController(state, container, {'scatter': dv});
       $(function() {
         // Controllers should be enabled
-        equal(attr.enabled, false);
-        equal(attr.$select.val(), null);
-        equal(attr.$select.is(':disabled'), false);
-        equal(attr.$colormapSelect.is(':disabled'), true);
-        equal(attr.$scaled.is(':disabled'), true);
-        equal(attr.$searchBar.val(), '');
-        equal(attr.$searchBar.is(':disabled'), true);
+       assert.equal(attr.enabled, false);
+       assert.equal(attr.$select.val(), null);
+       assert.equal(attr.$select.is(':disabled'), false);
+       assert.equal(attr.$colormapSelect.is(':disabled'), true);
+       assert.equal(attr.$scaled.is(':disabled'), true);
+       assert.equal(attr.$searchBar.val(), '');
+       assert.equal(attr.$searchBar.is(':disabled'), true);
 
-        start(); // qunit
+        done();
       });
     });
 

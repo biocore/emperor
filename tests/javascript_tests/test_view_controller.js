@@ -17,7 +17,7 @@ requirejs([
 
   $(document).ready(function() {
 
-    module('EmperorViewControllerABC', {
+    QUnit.module('EmperorViewControllerABC', {
     });
 
     /**
@@ -25,23 +25,23 @@ requirejs([
      * Test that the constructor for EmperorViewControllerABC.
      *
      */
-    test('Constructor tests', function(assert) {
+   QUnit.test('Constructor tests', function(assert) {
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new EmperorViewControllerABC(new UIState(), container,
                                                     'foo', 'bar');
 
-      equal(controller.title, 'foo', 'Check the title is correctly set');
-      equal(controller.description, 'bar',
+     assert.equal(controller.title, 'foo', 'Check the title is correctly set');
+     assert.equal(controller.description, 'bar',
             'Check the description is correctly set');
-      equal(controller.$container.id, container.id, 'Check the id of the ' +
+     assert.equal(controller.$container.id, container.id, 'Check the id of the ' +
           'parent is correct');
-      equal(controller.active, false, 'Check the active property');
-      equal(controller.identifier.slice(0, 7), 'EMPtab-',
+     assert.equal(controller.active, false, 'Check the active property');
+     assert.equal(controller.identifier.slice(0, 7), 'EMPtab-',
             'Check the identifier property');
       parseFloat(controller.identifier.slice(7));
-      equal(controller.enabled, true, 'Check the enabled property');
+     assert.equal(controller.enabled, true, 'Check the enabled property');
 
       // check all the elements were successfully created
       assert.ok(controller.$canvas.length);
@@ -51,8 +51,8 @@ requirejs([
       assert.ok($.contains(controller.$canvas[0], controller.$header[0]));
       assert.ok($.contains(controller.$canvas[0], controller.$body[0]));
 
-      equal(controller.$body.width(), 12);
-      equal(controller.$body.height(), 11);
+     assert.equal(controller.$body.width(), 12);
+     assert.equal(controller.$body.height(), 11);
 
     });
 
@@ -61,17 +61,17 @@ requirejs([
      * Test the enabled method
      *
      */
-    test('Test the enabled method works', function() {
+   QUnit.test('Test the enabled method works',  function(assert) {
 
       var container = $('<div id="does-not-exist"></div>');
       var controller = new EmperorViewControllerABC(new UIState(), container,
                                                     'foo', 'bar');
 
-      equal(controller.enabled, true);
+     assert.equal(controller.enabled, true);
       controller.setEnabled(false);
-      equal(controller.enabled, false);
+     assert.equal(controller.enabled, false);
 
-      throws(function() {
+     assert.throws(function() {
         controller.setEnabled('shenanigans');
       }, Error, 'setEnabled can only take a boolean');
     });
@@ -81,17 +81,17 @@ requirejs([
      * Test the enabled method
      *
      */
-    test('Test the setActive method works', function() {
+   QUnit.test('Test the setActive method works',  function(assert) {
 
       var container = $('<div id="does-not-exist"></div>');
       var controller = new EmperorViewControllerABC(new UIState(), container,
                                                     'foo', 'bar');
 
-      equal(controller.active, false);
+     assert.equal(controller.active, false);
       controller.setActive(true);
-      equal(controller.active, true);
+     assert.equal(controller.active, true);
 
-      throws(function() {
+     assert.throws(function() {
         controller.setActive('shenanigans');
       }, Error, 'setActive can only take a boolean');
     });
@@ -101,7 +101,7 @@ requirejs([
      * Test the resize method.
      *
      */
-    test('Test the resize method', function() {
+   QUnit.test('Test the resize method',  function(assert) {
 
       var container = $('<div id="does-not-exist"></div>');
       var controller = new EmperorViewControllerABC(new UIState(), container,
@@ -109,17 +109,17 @@ requirejs([
 
       // header of size 0
       controller.resize(20, 10);
-      equal(controller.$header.height(), 0);
-      equal(controller.$header.width(), 10); // because of padding
-      equal(controller.$body.height(), 10);
-      equal(controller.$body.width(), 10); // because of padding
+     assert.equal(controller.$header.height(), 0);
+     assert.equal(controller.$header.width(), 10); // because of padding
+     assert.equal(controller.$body.height(), 10);
+     assert.equal(controller.$body.width(), 10); // because of padding
 
       controller.$header.height(11);
       controller.resize(30, 30);
-      equal(controller.$header.height(), 11);
-      equal(controller.$header.width(), 20); //because of padding
-      equal(controller.$body.height(), 19);
-      equal(controller.$body.width(), 20); //because of padding
+     assert.equal(controller.$header.height(), 11);
+     assert.equal(controller.$header.width(), 20); //because of padding
+     assert.equal(controller.$body.height(), 19);
+     assert.equal(controller.$body.width(), 20); //because of padding
     });
 
     /**
@@ -128,24 +128,24 @@ requirejs([
      * errors.
      *
      */
-    test('Test resize, toJSON and fromJSON methods', function() {
+   QUnit.test('Test resize, toJSON and fromJSON methods',  function(assert) {
 
       var container = $('<div id="does-not-exist"></div>');
       var controller = new EmperorViewControllerABC(new UIState(), container,
                                                     'foo', 'bar');
 
-      throws(function() {
+     assert.throws(function() {
         controller.fromJSON('{foo:11}');
       }, Error, 'Cannot call this abstract method');
 
-      throws(function() {
+     assert.throws(function() {
         controller.toJSON();
       }, Error, 'Cannot call this abstract method');
     });
 
-    module('EmperorViewController', {
+    QUnit.module('EmperorViewController', {
 
-      setup: function() {
+      beforeEach () {
         this.sharedDecompositionViewDict = {};
 
         var UIState1 = new UIState();
@@ -166,7 +166,7 @@ requirejs([
                          '20070314'],
                         ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
                          '20071112']];
-        decomp = new DecompositionModel(data, md_headers, metadata);
+        var decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
         var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.pcoa = dv;
@@ -190,7 +190,7 @@ requirejs([
         this.multiModel = new MultiModel({'scatter': this.decomp});
 
       },
-      teardown: function() {
+      afterEach () {
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
         this.multiModel = undefined;
@@ -202,7 +202,7 @@ requirejs([
      * Test the constructor for EmperorViewController.
      *
      */
-    test('Constructor tests', function(assert) {
+   QUnit.test('Constructor tests', function(assert) {
       var container = $('<div id="does-not-exist"></div>');
 
       // verify the subclassing was set properly
@@ -210,17 +210,17 @@ requirejs([
                 EmperorViewControllerABC);
       var attr = new EmperorViewController(this.UIState1, container,
           'foo', 'bar', this.sharedDecompositionViewDict);
-      deepEqual(_.keys(attr.decompViewDict), ['pcoa', 'biplot']);
+     assert.deepEqual(_.keys(attr.decompViewDict), ['pcoa', 'biplot']);
     });
 
-    test('Test hasMetadataField', function(assert) {
+   QUnit.test('Test hasMetadataField', function(assert) {
       var container = $('<div id="does-not-exist"></div>');
 
       var controller = new EmperorViewController(this.UIState1, container,
           'foo', 'bar', this.sharedDecompositionViewDict);
 
-      equal(controller.hasMetadataField('DOB'), true);
-      equal(controller.hasMetadataField('PLEL'), false);
+     assert.equal(controller.hasMetadataField('DOB'), true);
+     assert.equal(controller.hasMetadataField('PLEL'), false);
     });
 
     /**
@@ -228,17 +228,17 @@ requirejs([
      * Tests to make sure the exceptions are being raised as expected
      *
      */
-    test('Constructor test exceptions', function(assert) {
+   QUnit.test('Constructor test exceptions', function(assert) {
       var dv = new DecompositionView(this.multiModel, 'scatter', new UIState());
 
-      throws(function() {
+     assert.throws(function() {
         new EmperorViewController(new UIState(), container, 'foo', 'bar',
             {1: 1, 2: 2}, {});
 
       }, Error, 'The decomposition view dictionary ' +
       'can only have decomposition views');
 
-      throws(function() {
+     assert.throws(function() {
         new EmperorViewController(new UIState(), container, 'foo', 'bar',
             {}, {});
       }, Error, 'The decomposition view dictionary cannot be empty');
@@ -249,18 +249,18 @@ requirejs([
      * Test the active decomposition view can be correctly retrieved
      *
      */
-    test('Test getView', function() {
+   QUnit.test('Test getView',  function(assert) {
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorViewController(state, container, 'foo', 'bar',
                                            {'scatter': dv});
-      deepEqual(attr.getView(), dv);
+     assert.deepEqual(attr.getView(), dv);
     });
 
-    module('EmperorAttributeABC', {
+    QUnit.module('EmperorAttributeABC', {
 
-      setup: function() {
+      beforeEach () {
         this.sharedDecompositionViewDict = {};
         var $slickid = $('<div id="fooligans"></div>');
         $slickid.appendTo(document.body);
@@ -284,7 +284,7 @@ requirejs([
           ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']
         ];
 
-        decomp = new DecompositionModel(data, md_headers, metadata);
+        var decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
         var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.pcoa = dv;
@@ -320,11 +320,11 @@ requirejs([
         data.push({'pc1': 1, 'pc2': 1, 'pc3': 1});
         data.push({'pc1': 1, 'pc2': 1, 'pc3': 2});
 
-        grid = new Slick.Grid('#fooligans', data, columns, this.options);
+        var grid = new Slick.Grid('#fooligans', data, columns, this.options);
         this.decomp = decomp;
         this.multiModel = new MultiModel({'scatter': this.decomp});
       },
-      teardown: function() {
+      afterEach () {
         this.sharedDecompositionViewDict = undefined;
         $('#fooligans').remove();
         this.decomp = undefined;
@@ -337,7 +337,8 @@ requirejs([
      * Test the constructor for EmperorViewControllerABC.
      *
      */
-    test('Constructor tests', function(assert) {
+   QUnit.test('Constructor tests', function(assert) {
+      const done = assert.async();
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
@@ -353,7 +354,11 @@ requirejs([
                  'pcoa': ['DOB', 'LinkerPrimerSequence', 'SampleID',
                           'Treatment']};
 
-      deepEqual(attr._metadata, met);
+       $(function() {
+           assert.deepEqual(attr._metadata, met);
+           done();
+       }
+        )
     });
 
     /**
@@ -361,9 +366,10 @@ requirejs([
      * Test to see if the grid is being built correctly
      *
      */
-    asyncTest('Constructor test buildGrid', function(assert) {
+    QUnit.test('Constructor test buildGrid', function(assert) {
+      const done = assert.async();
       var options = {};
-      options.slickGridColumn = {id: 'title', name: 'spam', field: 'test',
+      options.slickGridColumn =  {id: 'title', name: 'spam', field: 'test',
         sortable: false, maxWidth: 10, minWidth: 10};
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(new UIState(), container, 'foo', 'bar',
@@ -372,10 +378,10 @@ requirejs([
 
       $(function() {
         var testColumn = attr.bodyGrid.getColumns()[0];
-        equal(testColumn.name, 'spam');
-        equal(testColumn.field, 'test');
+       assert.equal(testColumn.name, 'spam');
+       assert.equal(testColumn.field, 'test');
 
-        start(); // qunit
+        done();
       });
     });
 
@@ -384,7 +390,8 @@ requirejs([
      * Test to see if the grid is being built correctly
      *
      */
-    asyncTest('Test resize', function() {
+    QUnit.test('Test resize',  function(assert) {
+      const done = assert.async();
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist" style="height:20px; ' +
@@ -396,31 +403,39 @@ requirejs([
 
       $(function() {
         attr.resize(20, 30);
-        equal(attr.$body.width(), 10); // because of padding
-        equal(attr.$body.height(), 30 - attr.$header.height());
-        equal(attr.$header.width(), 10); // because of padding
+       assert.equal(attr.$body.width(), 10); // because of padding
+       assert.equal(attr.$body.height(), 30 - attr.$header.height());
+       assert.equal(attr.$header.width(), 10); // because of padding
 
-        start(); // qunit
+        done();
       });
     });
 
 
-    test('Test decompositionName method', function() {
+   QUnit.test('Test decompositionName method',  function(assert) {
+      const done = assert.async()
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, {});
-      equal(attr.decompositionName(), 'scatter');
+       $(function() {
+           assert.equal(attr.decompositionName(), 'scatter');
+           done();
+       });
     });
 
-    test('Test getView method', function() {
+   QUnit.test('Test getView method',  function(assert) {
+      const done  = assert.async();
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, {});
-      deepEqual(attr.getView(), dv);
+       $(function() {
+           assert.deepEqual(attr.getView(), dv);
+           done()
+       });
     });
 
     /**
@@ -428,13 +443,17 @@ requirejs([
      * Test get metadata field
      *
      */
-    test('Test getMetadataField', function() {
+   QUnit.test('Test getMetadataField',  function(assert) {
+      const done = assert.async();
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, {});
-      equal(attr.getMetadataField(), 'Gram');
+       $(function() {
+           assert.equal(attr.getMetadataField(), 'Gram');
+           done();
+       });
     });
 
     /**
@@ -442,17 +461,23 @@ requirejs([
      * Test set metadata field
      *
      */
-    test('Test setMetadataField', function() {
+   QUnit.test('Test setMetadataField',  function(assert) {
+      const done = assert.async();
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
                                          {'scatter': dv}, {});
-      attr.setMetadataField('SampleID');
-      equal(attr.getMetadataField(), 'SampleID');
 
-      attr.setMetadataField(null);
-      equal(attr.getMetadataField(), null);
+       $(function() {
+           attr.setMetadataField('SampleID');
+           assert.equal(attr.getMetadataField(), 'SampleID');
+
+           attr.setMetadataField(null);
+           assert.equal(attr.getMetadataField(), null);
+
+           done();
+       });
     });
 
     /**
@@ -460,13 +485,13 @@ requirejs([
      * Test set metadata field
      *
      */
-    test('Test setMetadataField exceptions', function() {
+   QUnit.test('Test setMetadataField exceptions',  function(assert) {
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
       var attr = new EmperorAttributeABC(state, container, 'foo', 'bar',
           {'scatter': dv}, {});
-      throws(function() {
+     assert.throws(function() {
               attr.setMetadataField('cheese');
              }, /cheese/, 'Raise error that contains the word cheese');
     });
@@ -477,7 +502,8 @@ requirejs([
      * Test get/set slick grid dataset.
      *
      */
-    asyncTest('Test setSlickGridDataset', function() {
+    QUnit.test('Test setSlickGridDataset',  function(assert) {
+      const done = assert.async();
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
@@ -487,11 +513,11 @@ requirejs([
       $(function() {
         attr.setSlickGridDataset([{'id': 1, 'pc1': 1, 'pc2': 2, 'pc3': 3},
             {'id': 2, 'pc1': 1, 'pc2': 1, 'pc3': 2}]);
-        deepEqual(attr.getSlickGridDataset(), [
+       assert.deepEqual(attr.getSlickGridDataset(), [
             {'id': 1, 'pc1': 1, 'pc2': 2, 'pc3': 3},
             {'id': 2, 'pc1': 1, 'pc2': 1, 'pc3': 2}]);
 
-        start(); // qunit
+        done();
       });
     });
 
@@ -501,7 +527,8 @@ requirejs([
      * Test refresh metadata.
      *
      */
-    asyncTest('Test refreshMetadata', function() {
+    QUnit.test('Test refreshMetadata',  function(assert) {
+      const done = assert.async();
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
@@ -514,14 +541,14 @@ requirejs([
         // modify the decomposition view dictionary
         shared.biplot = scope.sharedDecompositionViewDict.biplot;
 
-        deepEqual(attr._metadata, {'scatter': ['DOB', 'LinkerPrimerSequence',
+       assert.deepEqual(attr._metadata, {'scatter': ['DOB', 'LinkerPrimerSequence',
                                                'SampleID', 'Treatment']});
         attr.refreshMetadata();
-        deepEqual(attr._metadata, {'scatter': ['DOB', 'LinkerPrimerSequence',
+       assert.deepEqual(attr._metadata, {'scatter': ['DOB', 'LinkerPrimerSequence',
                                                'SampleID', 'Treatment'],
                                    'biplot': ['Gram', 'SampleID']});
 
-        start(); // qunit
+        done();
       });
     });
 
@@ -530,7 +557,8 @@ requirejs([
      * Test setEnabled (false)
      *
      */
-    asyncTest('Test setEnabled (false)', function() {
+    QUnit.test('Test setEnabled (false)',  function(assert) {
+      const done = assert.async();
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
@@ -540,20 +568,20 @@ requirejs([
         // disable
         attr.setEnabled(false);
 
-        equal(attr.enabled, false);
-        equal(attr.$select.is(':disabled'), true);
-        equal(attr.$searchBar.is(':disabled'), true);
-        equal(attr.bodyGrid.getOptions().editable, false);
+       assert.equal(attr.enabled, false);
+       assert.equal(attr.$select.is(':disabled'), true);
+       assert.equal(attr.$searchBar.is(':disabled'), true);
+       assert.equal(attr.bodyGrid.getOptions().editable, false);
 
         // enable
         attr.setEnabled(true);
 
-        equal(attr.enabled, true);
-        equal(attr.$select.is(':disabled'), false);
-        equal(attr.$searchBar.is(':disabled'), false);
-        equal(attr.bodyGrid.getOptions().editable, true);
+       assert.equal(attr.enabled, true);
+       assert.equal(attr.$select.is(':disabled'), false);
+       assert.equal(attr.$searchBar.is(':disabled'), false);
+       assert.equal(attr.bodyGrid.getOptions().editable, true);
 
-        start(); // qunit
+        done();
       });
     });
 
@@ -562,7 +590,8 @@ requirejs([
      * Test setEnabled (true)
      *
      */
-    asyncTest('Test setEnabled (true)', function() {
+    QUnit.test('Test setEnabled (true)',  function(assert) {
+      const done = assert.async();
       var state = new UIState();
       var dv = new DecompositionView(this.multiModel, 'scatter', state);
       var container = $('<div id="does-not-exist"></div>');
@@ -570,19 +599,19 @@ requirejs([
                                          {'scatter': dv}, {});
       $(function() {
         // Controllers should be enabled
-        equal(attr.enabled, true);
-        equal(attr.$select.is(':disabled'), false);
-        equal(attr.$searchBar.is(':disabled'), false);
-        equal(attr.bodyGrid.getOptions().editable, true);
+       assert.equal(attr.enabled, true);
+       assert.equal(attr.$select.is(':disabled'), false);
+       assert.equal(attr.$searchBar.is(':disabled'), false);
+       assert.equal(attr.bodyGrid.getOptions().editable, true);
 
         // and they should remain the same after "enabling" them again
         attr.setEnabled(true);
-        equal(attr.enabled, true);
-        equal(attr.$select.is(':disabled'), false);
-        equal(attr.$searchBar.is(':disabled'), false);
-        equal(attr.bodyGrid.getOptions().editable, true);
+       assert.equal(attr.enabled, true);
+       assert.equal(attr.$select.is(':disabled'), false);
+       assert.equal(attr.$searchBar.is(':disabled'), false);
+       assert.equal(attr.bodyGrid.getOptions().editable, true);
 
-        start(); // qunit
+        done();
       });
     });
 
@@ -591,7 +620,8 @@ requirejs([
      * Test large dataset.
      *
      */
-    asyncTest('Test large dataset', function() {
+    QUnit.test('Test large dataset',  function(assert) {
+      const done = assert.async();
       var state = new UIState();
       var coords = [], metadata = [];
       for (var i = 0; i < 1001; i++) {
@@ -614,11 +644,11 @@ requirejs([
                                          {'scatter': dv}, options);
       $(function() {
         // Controllers should be enabled
-        equal(attr.enabled, false);
-        equal(attr.$select.val(), null);
-        equal(attr.$select.is(':disabled'), false);
+       assert.equal(attr.enabled, false);
+       assert.equal(attr.$select.val(), null);
+       assert.equal(attr.$select.is(':disabled'), false);
 
-        start(); // qunit
+        done();
       });
     });
 

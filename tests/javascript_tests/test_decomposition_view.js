@@ -10,8 +10,8 @@ requirejs([
   $(document).ready(function() {
     var DecompositionModel = model.DecompositionModel;
 
-    module('Decomposition View', {
-      setup: function() {
+    QUnit.module('Decomposition View', {
+      beforeEach () {
         // setup function
         var data = {
           name: 'pcoa',
@@ -71,7 +71,7 @@ requirejs([
 
       },
 
-      teardown: function() {
+      afterEach () {
         // teardown function
         this.decomp = null;
         this.expected = null;
@@ -83,25 +83,25 @@ requirejs([
      * Test that the Decomposition View object is initialized correctly
      *
      */
-    test('Test constructor', function() {
+   QUnit.test('Test constructor',  function(assert) {
       var obs;
 
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
-      deepEqual(dv.decomp, this.expected, 'decomp set correctly');
-      equal(dv.count, 2, 'count set correctly');
-      equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
-      deepEqual(dv.visibleDimensions, [0, 1, 2],
+     assert.deepEqual(dv.decomp, this.expected, 'decomp set correctly');
+     assert.equal(dv.count, 2, 'count set correctly');
+     assert.equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
+     assert.deepEqual(dv.visibleDimensions, [0, 1, 2],
           'visibleDimensions set correctly');
-      deepEqual(dv.staticTubes, [], 'tubes set correctly');
-      deepEqual(dv.dynamicTubes, [], 'tubes set correctly');
+     assert.deepEqual(dv.staticTubes, [], 'tubes set correctly');
+     assert.deepEqual(dv.dynamicTubes, [], 'tubes set correctly');
 
-      equal(dv.axesColor, '#FFFFFF');
-      equal(dv.backgroundColor, '#000000');
+     assert.equal(dv.axesColor, '#FFFFFF');
+     assert.equal(dv.backgroundColor, '#000000');
 
-      deepEqual(dv.axesOrientation, [1, 1, 1]);
+     assert.deepEqual(dv.axesOrientation, [1, 1, 1]);
 
       /*
          I'm unsure on how to test this, so right now just testing what I think
@@ -110,18 +110,18 @@ requirejs([
       obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
       dv.markers[0].position.z];
-      exp = [-0.276542, -0.144964, 0.066647];
-      deepEqual(obs, exp, 'First marker position set correctly');
+      var exp = [-0.276542, -0.144964, 0.066647];
+     assert.deepEqual(obs, exp, 'First marker position set correctly');
       obs = [dv.markers[1].position.x,
       dv.markers[1].position.y,
       dv.markers[1].position.z];
       exp = [-0.237661, 0.046053, -0.138136];
-      deepEqual(obs, exp, 'Second marker position set correctly');
-      deepEqual(dv.lines, {'left': null, 'right': null});
+     assert.deepEqual(obs, exp, 'Second marker position set correctly');
+     assert.deepEqual(dv.lines, {'left': null, 'right': null});
       /*
          TODO: How do we test this?
          */
-      // deepEqual(dv._genericSphere, undefined,
+      //assert.deepEqual(dv._genericSphere, undefined,
       //           "_genericSphere set correctly");
     });
 
@@ -130,7 +130,7 @@ requirejs([
      * Test that the Decomposition View object is initialized correctly
      *
      */
-    test('Test constructor with two dimensions', function() {
+   QUnit.test('Test constructor with two dimensions',  function(assert) {
 
       var data = {
         name: 'pcoa',
@@ -143,31 +143,31 @@ requirejs([
                        '20070314'],
                       ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast',
                        '20071112']];
-      decomp = new DecompositionModel(data, md_headers, metadata);
+      var decomp = new DecompositionModel(data, md_headers, metadata);
       var mm = new MultiModel({'scatter': decomp});
 
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(mm, 'scatter', UIState1);
 
-      equal(dv.count, 2, 'count set correctly');
-      equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
-      deepEqual(dv.visibleDimensions, [0, 1],
+     assert.equal(dv.count, 2, 'count set correctly');
+     assert.equal(dv.getVisibleCount(), 2, 'visibleCount set correctly');
+     assert.deepEqual(dv.visibleDimensions, [0, 1],
           'visibleDimensions set correctly');
-      deepEqual(dv.staticTubes, [], 'tubes set correctly');
-      deepEqual(dv.dynamicTubes, [], 'tubes set correctly');
+     assert.deepEqual(dv.staticTubes, [], 'tubes set correctly');
+     assert.deepEqual(dv.dynamicTubes, [], 'tubes set correctly');
 
-      equal(dv.axesColor, '#FFFFFF');
-      equal(dv.backgroundColor, '#000000');
+     assert.equal(dv.axesColor, '#FFFFFF');
+     assert.equal(dv.backgroundColor, '#000000');
 
-      deepEqual(dv.axesOrientation, [1, 1]);
+     assert.deepEqual(dv.axesOrientation, [1, 1]);
 
-      deepEqual(dv.markers[0].position.toArray(), [-0.276542, -0.144964, 0]);
-      deepEqual(dv.markers[1].position.toArray(), [-0.237661, 0.046053, 0]);
-      deepEqual(dv.lines, {'left': null, 'right': null});
+     assert.deepEqual(dv.markers[0].position.toArray(), [-0.276542, -0.144964, 0]);
+     assert.deepEqual(dv.markers[1].position.toArray(), [-0.237661, 0.046053, 0]);
+     assert.deepEqual(dv.lines, {'left': null, 'right': null});
     });
 
-    test('Test constructor (biplot)', function(assert) {
+   QUnit.test('Test constructor (biplot)', function(assert) {
       // this test is pretty much the same as above except for arrow types
       this.decomp.type = 'arrow';
 
@@ -176,43 +176,43 @@ requirejs([
       var view = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
       this.expected.type = 'arrow';
-      deepEqual(view.decomp, this.expected);
-      equal(view.count, 2);
-      equal(view.getVisibleCount(), 2);
-      deepEqual(view.visibleDimensions, [0, 1, 2]);
-      deepEqual(view.staticTubes, [], 'tubes set correctly');
-      deepEqual(view.dynamicTubes, [], 'tubes set correctly');
-      equal(view.axesColor, '#FFFFFF');
-      equal(view.backgroundColor, '#000000');
-      deepEqual(view.axesOrientation, [1, 1, 1]);
+     assert.deepEqual(view.decomp, this.expected);
+     assert.equal(view.count, 2);
+     assert.equal(view.getVisibleCount(), 2);
+     assert.deepEqual(view.visibleDimensions, [0, 1, 2]);
+     assert.deepEqual(view.staticTubes, [], 'tubes set correctly');
+     assert.deepEqual(view.dynamicTubes, [], 'tubes set correctly');
+     assert.equal(view.axesColor, '#FFFFFF');
+     assert.equal(view.backgroundColor, '#000000');
+     assert.deepEqual(view.axesOrientation, [1, 1, 1]);
 
       // testing the markers
       assert.ok(view.markers.length === 2);
 
-      equal(view.markers[0].line.name, 'PC.636');
-      equal(view.markers[0].cone.name, 'PC.636');
-      equal(view.markers[1].line.name, 'PC.635');
-      equal(view.markers[1].cone.name, 'PC.635');
+     assert.equal(view.markers[0].line.name, 'PC.636');
+     assert.equal(view.markers[0].cone.name, 'PC.636');
+     assert.equal(view.markers[1].line.name, 'PC.635');
+     assert.equal(view.markers[1].cone.name, 'PC.635');
 
       var a = [0.19977209326971626, 0, 0.8289251461730293, 0.52246934148585];
       var b = [-0.3246511569372691, 0, 0.5585576432564162, 0.7632922018854449];
 
-      deepEqual(view.markers[0].quaternion.toArray(), a);
-      deepEqual(view.markers[1].quaternion.toArray(), b);
+     assert.deepEqual(view.markers[0].quaternion.toArray(), a);
+     assert.deepEqual(view.markers[1].quaternion.toArray(), b);
 
-      deepEqual(view.markers[0].position.toArray(), [0, 0, 0]);
-      deepEqual(view.markers[1].position.toArray(), [0, 0, 0]);
+     assert.deepEqual(view.markers[0].position.toArray(), [0, 0, 0]);
+     assert.deepEqual(view.markers[1].position.toArray(), [0, 0, 0]);
 
       // bulk checks
       view.markers.map(function(marker) {
         assert.ok(marker instanceof THREE.ArrowHelper);
 
-        deepEqual(marker.line.material.color.getHex(), 0xc0c0c0);
-        deepEqual(marker.cone.material.color.getHex(), 0xc0c0c0);
+       assert.deepEqual(marker.line.material.color.getHex(), 0xc0c0c0);
+       assert.deepEqual(marker.cone.material.color.getHex(), 0xc0c0c0);
       });
     });
 
-    test('Test constructor (with edges)', function(assert) {
+   QUnit.test('Test constructor (with edges)', function(assert) {
       // this test is pretty much the same as above except checking for edges
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
@@ -220,15 +220,15 @@ requirejs([
                                        'scatter',
                                        UIState1);
 
-      deepEqual(view.decomp, this.expectedWithEdges);
-      equal(view.count, 2);
-      equal(view.getVisibleCount(), 2);
-      deepEqual(view.visibleDimensions, [0, 1, 2]);
-      deepEqual(view.staticTubes, [], 'tubes set correctly');
-      deepEqual(view.dynamicTubes, [], 'tubes set correctly');
-      equal(view.axesColor, '#FFFFFF');
-      equal(view.backgroundColor, '#000000');
-      deepEqual(view.axesOrientation, [1, 1, 1]);
+     assert.deepEqual(view.decomp, this.expectedWithEdges);
+     assert.equal(view.count, 2);
+     assert.equal(view.getVisibleCount(), 2);
+     assert.deepEqual(view.visibleDimensions, [0, 1, 2]);
+     assert.deepEqual(view.staticTubes, [], 'tubes set correctly');
+     assert.deepEqual(view.dynamicTubes, [], 'tubes set correctly');
+     assert.equal(view.axesColor, '#FFFFFF');
+     assert.equal(view.backgroundColor, '#000000');
+     assert.deepEqual(view.axesOrientation, [1, 1, 1]);
 
       // testing the markers
       assert.ok(view.markers.length === 2);
@@ -237,11 +237,11 @@ requirejs([
       assert.ok(view.lines.left instanceof THREE.LineSegments);
       assert.ok(view.lines.right instanceof THREE.LineSegments);
 
-      equal(view.lines.left.material.color.getHex(), 0xffffff);
-      equal(view.lines.right.material.color.getHex(), 0xff0000);
+     assert.equal(view.lines.left.material.color.getHex(), 0xffffff);
+     assert.equal(view.lines.right.material.color.getHex(), 0xff0000);
 
-      deepEqual(view.lines.left.geometry.attributes.position.array.length, 6);
-      deepEqual(view.lines.right.geometry.attributes.position.array.length, 6);
+     assert.deepEqual(view.lines.left.geometry.attributes.position.array.length, 6);
+     assert.deepEqual(view.lines.right.geometry.attributes.position.array.length, 6);
     });
 
     /**
@@ -253,7 +253,7 @@ requirejs([
      * constructor with two dimensions" test above.
      *
      */
-    test('Test that setCategory sorts field values properly', function() {
+   QUnit.test('Test that setCategory sorts field values properly',  function(assert) {
 
       var data = {
         name: 'pcoa',
@@ -317,23 +317,23 @@ requirejs([
       // go through dataView and check that the metadata categories are in
       // the correct order (as defined by expectedMetadataOrder)
       _.each(dataView, function(fieldObject, index) {
-        deepEqual(fieldObject.category, expectedMetadataOrder[index]);
-        deepEqual(fieldObject.id, index);
+       assert.deepEqual(fieldObject.category, expectedMetadataOrder[index]);
+       assert.deepEqual(fieldObject.id, index);
         // While we're at it, check that the colors are correct
-        deepEqual(fieldObject.value, expectedColorOrder[index]);
+       assert.deepEqual(fieldObject.value, expectedColorOrder[index]);
       });
     });
 
-    test('Test constructor fails (biplot in fast mode)', function() {
+   QUnit.test('Test constructor fails (biplot in fast mode)',  function(assert) {
       this.decomp.type = 'arrow';
-      throws(function() {
+     assert.throws(function() {
         var UIState1 = new UIState();
         UIState.setProperty('view.usesPointCloud', true);
         var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       }, Error, 'Biplots are not supported in fast mode');
     });
 
-    test('Test constructor fails (jackknifed in fast mode)', function() {
+   QUnit.test('Test constructor fails (jackknifed in fast mode)',  function(assert) {
       // setup function
       var data = {
         name: 'pcoa',
@@ -355,19 +355,19 @@ requirejs([
                        '20071112']];
       this.decomp = new DecompositionModel(data, md_headers, metadata);
       var multiModel = new MultiModel({'scatter': this.decomp});
-      throws(function() {
+     assert.throws(function() {
         var UIState1 = new UIState();
         UIState1.setProperty('view.usesPointCloud', true);
         var dv = new DecompositionView(multiModel, 'scatter', UIState1);
       }, Error, 'Jaccknifed plots are not supported in fast mode');
     });
 
-    test('Test getGeometryFactor', function() {
+   QUnit.test('Test getGeometryFactor',  function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
-      equal(dv.getGeometryFactor(), 0.000466572);
+     assert.equal(dv.getGeometryFactor(), 0.000466572);
     });
 
     /**
@@ -375,17 +375,17 @@ requirejs([
      * Test that getVisibleCount is correctly updated
      *
      */
-    test('Test getVisibleCount', function() {
+   QUnit.test('Test getVisibleCount',  function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
       dv.markers[0].visible = false;
-      equal(dv.getVisibleCount(), 1);
+     assert.equal(dv.getVisibleCount(), 1);
       dv.markers[1].visible = false;
-      equal(dv.getVisibleCount(), 0);
+     assert.equal(dv.getVisibleCount(), 0);
       dv.markers[0].visible = true;
       dv.markers[1].visible = true;
-      equal(dv.getVisibleCount(), 2);
+     assert.equal(dv.getVisibleCount(), 2);
     });
 
     /**
@@ -393,7 +393,7 @@ requirejs([
      * Test that changeVisibleDimensions updates the meshes position
      *
      */
-    test('Test changeVisibleDimensions', function() {
+   QUnit.test('Test changeVisibleDimensions',  function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
@@ -401,15 +401,15 @@ requirejs([
       var obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
       dv.markers[0].position.z];
-      exp = [0.066647, -0.067711, 0.176070];
-      deepEqual(obs, exp, 'First marker position updated correctly');
+      var exp = [0.066647, -0.067711, 0.176070];
+     assert.deepEqual(obs, exp, 'First marker position updated correctly');
       obs = [dv.markers[1].position.x,
       dv.markers[1].position.y,
       dv.markers[1].position.z];
       exp = [-0.138136, 0.159061, -0.247485];
-      deepEqual(obs, exp, 'Second marker position updated correctly');
+     assert.deepEqual(obs, exp, 'Second marker position updated correctly');
 
-      deepEqual(dv.axesOrientation, [1, 1, 1]);
+     assert.deepEqual(dv.axesOrientation, [1, 1, 1]);
     });
 
     /**
@@ -417,7 +417,7 @@ requirejs([
      * Test that changeVisibleDimensions with edges
      *
      */
-    test('Test changeVisibleDimensions with edges', function() {
+   QUnit.test('Test changeVisibleDimensions with edges',  function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModelWithEdges,
@@ -428,28 +428,28 @@ requirejs([
       var obs = [dv.markers[0].position.x, dv.markers[0].position.y,
              dv.markers[0].position.z];
       var exp = [0.066647, -0.067711, 0.176070];
-      deepEqual(obs, exp);
+     assert.deepEqual(obs, exp);
 
       obs = [dv.markers[1].position.x,
       dv.markers[1].position.y,
       dv.markers[1].position.z];
       exp = [-0.138136, 0.159061, -0.247485];
-      deepEqual(obs, exp);
+     assert.deepEqual(obs, exp);
 
       exp = [0.0666470006108284, -0.0677110031247139, 0.17607000470161438,
              -0.035744499415159225, 0.04567499831318855, -0.0357074998319149];
       exp = new Float32Array(exp);
-      deepEqual(dv.lines.left.geometry.attributes.position.array, exp);
+     assert.deepEqual(dv.lines.left.geometry.attributes.position.array, exp);
 
       exp = [-0.13813599944114685, 0.159060999751091, -0.2474849969148636,
              -0.035744499415159225, 0.04567499831318855, -0.0357074998319149];
       exp = new Float32Array(exp);
-      deepEqual(dv.lines.right.geometry.attributes.position.array, exp);
+     assert.deepEqual(dv.lines.right.geometry.attributes.position.array, exp);
 
-      deepEqual(dv.axesOrientation, [1, 1, 1]);
+     assert.deepEqual(dv.axesOrientation, [1, 1, 1]);
     });
 
-    test('Test changeVisibleDimensions (2D)', function() {
+   QUnit.test('Test changeVisibleDimensions (2D)',  function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
@@ -457,15 +457,15 @@ requirejs([
       var obs = [dv.markers[0].position.x,
       dv.markers[0].position.y,
       dv.markers[0].position.z];
-      exp = [0.066647, -0.067711, 0];
-      deepEqual(obs, exp);
+      var exp = [0.066647, -0.067711, 0];
+     assert.deepEqual(obs, exp);
       obs = [dv.markers[1].position.x,
       dv.markers[1].position.y,
       dv.markers[1].position.z];
       exp = [-0.138136, 0.159061, 0];
-      deepEqual(obs, exp);
+     assert.deepEqual(obs, exp);
 
-      deepEqual(dv.axesOrientation, [1, 1, 1]);
+     assert.deepEqual(dv.axesOrientation, [1, 1, 1]);
     });
 
     /**
@@ -474,8 +474,8 @@ requirejs([
      * dimensions passes is different the 3
      *
      */
-    test('Test changeVisibleDimensions excepts', function() {
-      throws(
+   QUnit.test('Test changeVisibleDimensions excepts',  function(assert) {
+     assert.throws(
           function() {
             var UIState1 = new UIState();
             UIState1.setProperty('view.usesPointCloud', false);
@@ -494,14 +494,14 @@ requirejs([
      * Test that changeVisibleDimensions updates the meshes position
      *
      */
-    test('Test change flip axes', function(assert) {
+   QUnit.test('Test change flip axes', function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
       // copy the arrays
-      expa = _.clone(dv.markers[0].position.toArray());
-      expb = _.clone(dv.markers[1].position.toArray());
+      var expa = _.clone(dv.markers[0].position.toArray());
+      var expb = _.clone(dv.markers[1].position.toArray());
 
       // flip the orientation of the position
       expb[1] = expb[1] * -1;
@@ -516,7 +516,7 @@ requirejs([
       // 2.- The ranges i.e. positions still fall within the dimensionRanges.
       // 3.- The axis orientation vector
       var obs = dv.markers[0].position.toArray();
-      deepEqual(obs, expa, 'First marker position updated correctly');
+     assert.deepEqual(obs, expa, 'First marker position updated correctly');
 
       assert.ok(obs[1] <= dv.decomp.dimensionRanges.max[1],
                 'Falls within range (max)');
@@ -524,17 +524,17 @@ requirejs([
                 'Falls within range (min)');
 
       obs = dv.markers[1].position.toArray();
-      deepEqual(obs, expb, 'Second marker position updated correctly');
+     assert.deepEqual(obs, expb, 'Second marker position updated correctly');
 
       assert.ok(obs[1] <= dv.decomp.dimensionRanges.max[1],
                 'Falls within range (max)');
       assert.ok(obs[1] >= dv.decomp.dimensionRanges.min[1],
                 'Falls within range (min)');
 
-      deepEqual(dv.axesOrientation, [1, -1, 1]);
+     assert.deepEqual(dv.axesOrientation, [1, -1, 1]);
     });
 
-    test('Test change flip axes (2D)', function(assert) {
+   QUnit.test('Test change flip axes (2D)', function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
@@ -552,19 +552,19 @@ requirejs([
       // 2.- The ranges i.e. positions still fall within the dimensionRanges.
       // 3.- The axis orientation vector
       var obs = dv.markers[0].position.toArray();
-      deepEqual(obs, expa, 'First marker position updated correctly');
+     assert.deepEqual(obs, expa, 'First marker position updated correctly');
       obs = dv.markers[1].position.toArray();
-      deepEqual(obs, expb, 'Second marker position updated correctly');
+     assert.deepEqual(obs, expb, 'Second marker position updated correctly');
 
-      deepEqual(dv.axesOrientation, [1, -1, 1]);
+     assert.deepEqual(dv.axesOrientation, [1, -1, 1]);
     });
 
-    test('Test toggling label visibility errors', function(assert) {
+   QUnit.test('Test toggling label visibility errors', function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
-      throws(
+     assert.throws(
         function() {
           dv.toggleLabelVisibility();
         },
@@ -572,7 +572,7 @@ requirejs([
       );
     });
 
-    test('Test toggling label visibility', function(assert) {
+   QUnit.test('Test toggling label visibility', function(assert) {
       this.decomp.type = 'arrow';
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
@@ -596,39 +596,39 @@ requirejs([
      * Test that changeVisibleDimensions and flip axis
      *
      */
-    test('Test changing the orientations and then flipping a dimension',
-         function() {
+   QUnit.test('Test changing the orientations and then flipping a dimension',
+         function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
 
-      deepEqual(dv.axesOrientation, [1, 1, 1]);
+     assert.deepEqual(dv.axesOrientation, [1, 1, 1]);
 
       dv.changeVisibleDimensions([2, 3, 4]);
       var obs = dv.markers[0].position.toArray();
-      exp = [0.066647, -0.067711, 0.176070];
-      deepEqual(obs, exp, 'First marker position updated correctly');
+      var exp = [0.066647, -0.067711, 0.176070];
+     assert.deepEqual(obs, exp, 'First marker position updated correctly');
 
       obs = dv.markers[1].position.toArray();
       exp = [-0.138136, 0.159061, -0.247485];
-      deepEqual(obs, exp, 'Second marker position updated correctly');
+     assert.deepEqual(obs, exp, 'Second marker position updated correctly');
 
-      deepEqual(dv.axesOrientation, [1, 1, 1]);
+     assert.deepEqual(dv.axesOrientation, [1, 1, 1]);
 
       dv.flipVisibleDimension(3);
 
       obs = dv.markers[0].position.toArray();
       exp = [0.066647, 0.067711, 0.176070];
-      deepEqual(obs, exp, 'First marker position updated correctly');
+     assert.deepEqual(obs, exp, 'First marker position updated correctly');
 
       obs = dv.markers[1].position.toArray();
       exp = [-0.138136, -0.159061, -0.247485];
-      deepEqual(obs, exp, 'Second marker position updated correctly');
+     assert.deepEqual(obs, exp, 'Second marker position updated correctly');
 
-      deepEqual(dv.axesOrientation, [1, -1, 1]);
+     assert.deepEqual(dv.axesOrientation, [1, -1, 1]);
     });
 
-    test('Test showEdgesForPlottables', function() {
+   QUnit.test('Test showEdgesForPlottables',  function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModelWithEdges,
@@ -639,25 +639,25 @@ requirejs([
 
       dv.showEdgesForPlottables();
 
-      exp = [-0.2765420079231262, -0.14496399462223053, 0.0666470006108284,
-             -0.25710150599479675, -0.04945550113916397,
-             -0.035744499415159225];
+      var exp = [-0.2765420079231262, -0.14496399462223053, 0.0666470006108284,
+		 -0.25710150599479675, -0.04945550113916397,
+		 -0.035744499415159225];
       exp = new Float32Array(exp);
-      deepEqual(dv.lines.left.geometry.attributes.position.array, exp);
+     assert.deepEqual(dv.lines.left.geometry.attributes.position.array, exp);
 
       exp = [-0.23766100406646729, 0.046052999794483185, -0.13813599944114685,
              -0.25710150599479675, -0.04945550113916397,
              -0.035744499415159225];
 
       exp = new Float32Array(exp);
-      deepEqual(dv.lines.right.geometry.attributes.position.array, exp);
+     assert.deepEqual(dv.lines.right.geometry.attributes.position.array, exp);
 
       // shouldn't error and work fine
       dv.showEdgesForPlottables('Not a plottable');
 
     });
 
-    test('Test hideEdgesForPlottables', function() {
+   QUnit.test('Test hideEdgesForPlottables',  function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModelWithEdges,
@@ -666,18 +666,18 @@ requirejs([
 
       dv.hideEdgesForPlottables();
 
-      exp = [0, 0, 0, 0, 0, 0];
+      var exp = [0, 0, 0, 0, 0, 0];
       exp = new Float32Array(exp);
-      deepEqual(dv.lines.left.geometry.attributes.position.array, exp);
+     assert.deepEqual(dv.lines.left.geometry.attributes.position.array, exp);
 
       exp = [0, 0, 0, 0, 0, 0];
       exp = new Float32Array(exp);
-      deepEqual(dv.lines.right.geometry.attributes.position.array, exp);
+     assert.deepEqual(dv.lines.right.geometry.attributes.position.array, exp);
 
       dv.hideEdgesForPlottables('Not a plottable');
     });
 
-    test('Test setters for attributes (scatter plot)', function() {
+   QUnit.test('Test setters for attributes (scatter plot)',  function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
@@ -685,118 +685,118 @@ requirejs([
 
       // color
       dv.setColor(0x0f0f0f);
-      deepEqual(dv.markers[0].material.color.toArray(),
+     assert.deepEqual(dv.markers[0].material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
-      deepEqual(dv.markers[1].material.color.toArray(),
+     assert.deepEqual(dv.markers[1].material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
 
       dv.setColor(0xff00ff, plottables);
-      deepEqual(dv.markers[0].material.color.toArray(),
+     assert.deepEqual(dv.markers[0].material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
-      deepEqual(dv.markers[1].material.color.toArray(), [1, 0, 1]);
+     assert.deepEqual(dv.markers[1].material.color.toArray(), [1, 0, 1]);
 
       // visibility
       dv.setVisibility(false);
-      deepEqual(dv.markers[0].visible, false);
-      deepEqual(dv.markers[1].visible, false);
+     assert.deepEqual(dv.markers[0].visible, false);
+     assert.deepEqual(dv.markers[1].visible, false);
 
       dv.setVisibility(true, plottables);
-      deepEqual(dv.markers[0].visible, false);
-      deepEqual(dv.markers[1].visible, true);
+     assert.deepEqual(dv.markers[0].visible, false);
+     assert.deepEqual(dv.markers[1].visible, true);
 
       // scale
       dv.setScale(3);
-      deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
-      deepEqual(dv.markers[1].scale.toArray(), [3, 3, 3]);
+     assert.deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
+     assert.deepEqual(dv.markers[1].scale.toArray(), [3, 3, 3]);
 
       dv.setScale(0.8, plottables);
-      deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
-      deepEqual(dv.markers[1].scale.toArray(), [0.8, 0.8, 0.8]);
+     assert.deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
+     assert.deepEqual(dv.markers[1].scale.toArray(), [0.8, 0.8, 0.8]);
 
       // opacity
       dv.setOpacity(0.5);
-      deepEqual(dv.markers[0].material.transparent, true);
-      deepEqual(dv.markers[0].material.opacity, 0.5);
-      deepEqual(dv.markers[1].material.transparent, true);
-      deepEqual(dv.markers[1].material.opacity, 0.5);
+     assert.deepEqual(dv.markers[0].material.transparent, true);
+     assert.deepEqual(dv.markers[0].material.opacity, 0.5);
+     assert.deepEqual(dv.markers[1].material.transparent, true);
+     assert.deepEqual(dv.markers[1].material.opacity, 0.5);
 
       dv.setOpacity(1.0, plottables);
-      deepEqual(dv.markers[0].material.transparent, true);
-      deepEqual(dv.markers[0].material.opacity, 0.5);
-      deepEqual(dv.markers[1].material.transparent, false);
-      deepEqual(dv.markers[1].material.opacity, 1.0);
+     assert.deepEqual(dv.markers[0].material.transparent, true);
+     assert.deepEqual(dv.markers[0].material.opacity, 0.5);
+     assert.deepEqual(dv.markers[1].material.transparent, false);
+     assert.deepEqual(dv.markers[1].material.opacity, 1.0);
     });
 
-    test('Test setters for attributes (scatter plot with edges)', function() {
+   QUnit.test('Test setters for attributes (scatter plot with edges)',  function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false, UIState1);
       var dv = new DecompositionView(this.multiModelWithEdges,
                                      'scatter',
                                      UIState1), obs;
 
-      plottables = [this.decomp.plottable[1]];
+      var plottables = [this.decomp.plottable[1]];
 
       // color
       dv.setColor(0x0f0f0f);
-      deepEqual(dv.markers[0].material.color.toArray(),
+     assert.deepEqual(dv.markers[0].material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
-      deepEqual(dv.markers[1].material.color.toArray(),
+     assert.deepEqual(dv.markers[1].material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
 
       dv.setColor(0xff00ff, plottables);
-      deepEqual(dv.markers[0].material.color.toArray(),
+     assert.deepEqual(dv.markers[0].material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
-      deepEqual(dv.markers[1].material.color.toArray(), [1, 0, 1]);
+     assert.deepEqual(dv.markers[1].material.color.toArray(), [1, 0, 1]);
 
       // visibility
       dv.setVisibility(false);
-      deepEqual(dv.markers[0].visible, false);
-      deepEqual(dv.markers[1].visible, false);
+     assert.deepEqual(dv.markers[0].visible, false);
+     assert.deepEqual(dv.markers[1].visible, false);
 
       // also check for the edges' visibility since the two are tied
-      deepEqual(dv.lines.left.geometry.attributes.position.array,
+     assert.deepEqual(dv.lines.left.geometry.attributes.position.array,
                 new Float32Array([0, 0, 0, 0, 0, 0]));
-      deepEqual(dv.lines.right.geometry.attributes.position.array,
+     assert.deepEqual(dv.lines.right.geometry.attributes.position.array,
                 new Float32Array([0, 0, 0, 0, 0, 0]));
 
       dv.setVisibility(true, plottables);
-      deepEqual(dv.markers[0].visible, false);
-      deepEqual(dv.markers[1].visible, true);
+     assert.deepEqual(dv.markers[0].visible, false);
+     assert.deepEqual(dv.markers[1].visible, true);
 
       // scale
       dv.setScale(3);
-      deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
-      deepEqual(dv.markers[1].scale.toArray(), [3, 3, 3]);
+     assert.deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
+     assert.deepEqual(dv.markers[1].scale.toArray(), [3, 3, 3]);
 
       dv.setScale(0.8, plottables);
-      deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
-      deepEqual(dv.markers[1].scale.toArray(), [0.8, 0.8, 0.8]);
+     assert.deepEqual(dv.markers[0].scale.toArray(), [3, 3, 3]);
+     assert.deepEqual(dv.markers[1].scale.toArray(), [0.8, 0.8, 0.8]);
 
       // opacity
       dv.setOpacity(0.5);
-      deepEqual(dv.markers[0].material.transparent, true);
-      deepEqual(dv.markers[0].material.opacity, 0.5);
-      deepEqual(dv.markers[1].material.transparent, true);
-      deepEqual(dv.markers[1].material.opacity, 0.5);
+     assert.deepEqual(dv.markers[0].material.transparent, true);
+     assert.deepEqual(dv.markers[0].material.opacity, 0.5);
+     assert.deepEqual(dv.markers[1].material.transparent, true);
+     assert.deepEqual(dv.markers[1].material.opacity, 0.5);
 
       dv.setOpacity(1.0, plottables);
-      deepEqual(dv.markers[0].material.transparent, true);
-      deepEqual(dv.markers[0].material.opacity, 0.5);
-      deepEqual(dv.markers[1].material.transparent, false);
-      deepEqual(dv.markers[1].material.opacity, 1.0);
+     assert.deepEqual(dv.markers[0].material.transparent, true);
+     assert.deepEqual(dv.markers[0].material.opacity, 0.5);
+     assert.deepEqual(dv.markers[1].material.transparent, false);
+     assert.deepEqual(dv.markers[1].material.opacity, 1.0);
 
       dv.setEmissive(0xffffff, plottables);
-      deepEqual(dv.markers[0].material.emissive.getHex(), 0x000000);
-      deepEqual(dv.markers[1].material.emissive.getHex(), 0xffffff);
+     assert.deepEqual(dv.markers[0].material.emissive.getHex(), 0x000000);
+     assert.deepEqual(dv.markers[1].material.emissive.getHex(), 0xffffff);
 
       dv.setColor(0xf0f0f0, [this.decomp.plottable[0]]);
       dv.setColor(0x0f0f0f, [this.decomp.plottable[1]]);
       obs = dv.groupByColor(['PC.636', 'PC.635']);
-      equal(obs['f0f0f0'].length, 1);
-      equal(obs['0f0f0f'].length, 1);
+     assert.equal(obs['f0f0f0'].length, 1);
+     assert.equal(obs['0f0f0f'].length, 1);
     });
 
-    test('Test setters for attribures (biplot)', function(assert) {
+   QUnit.test('Test setters for attribures (biplot)', function(assert) {
       this.decomp.type = 'arrow';
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', false);
@@ -805,45 +805,45 @@ requirejs([
 
       // color
       dv.setColor(0x0f0f0f);
-      deepEqual(dv.markers[0].line.material.color.toArray(),
+     assert.deepEqual(dv.markers[0].line.material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
-      deepEqual(dv.markers[0].cone.material.color.toArray(),
+     assert.deepEqual(dv.markers[0].cone.material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
-      deepEqual(dv.markers[1].line.material.color.toArray(),
+     assert.deepEqual(dv.markers[1].line.material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
-      deepEqual(dv.markers[1].cone.material.color.toArray(),
+     assert.deepEqual(dv.markers[1].cone.material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
 
       dv.setColor(0xff00ff, plottables);
-      deepEqual(dv.markers[0].line.material.color.toArray(),
+     assert.deepEqual(dv.markers[0].line.material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
-      deepEqual(dv.markers[0].cone.material.color.toArray(),
+     assert.deepEqual(dv.markers[0].cone.material.color.toArray(),
                 [15 / 255, 15 / 255, 15 / 255]);
-      deepEqual(dv.markers[1].line.material.color.toArray(), [1, 0, 1]);
-      deepEqual(dv.markers[1].cone.material.color.toArray(), [1, 0, 1]);
+     assert.deepEqual(dv.markers[1].line.material.color.toArray(), [1, 0, 1]);
+     assert.deepEqual(dv.markers[1].cone.material.color.toArray(), [1, 0, 1]);
 
       // visibility
       dv.setVisibility(false);
-      deepEqual(dv.markers[0].visible, false);
-      deepEqual(dv.markers[1].visible, false);
+     assert.deepEqual(dv.markers[0].visible, false);
+     assert.deepEqual(dv.markers[1].visible, false);
 
       dv.setVisibility(true, plottables);
-      deepEqual(dv.markers[0].visible, false);
-      deepEqual(dv.markers[1].visible, true);
+     assert.deepEqual(dv.markers[0].visible, false);
+     assert.deepEqual(dv.markers[1].visible, true);
 
-      throws(
+     assert.throws(
         function() {
           dv.setScale(3);
         },
         Error, 'Arrow types cannot change scale');
 
-      throws(
+     assert.throws(
         function() {
           dv.setScale(0.8, plottables);
         },
         Error, 'Arrow types cannot change scale');
 
-      throws(
+     assert.throws(
         function() {
           dv.setEmissive(0x888888, plottables);
         },
@@ -851,27 +851,27 @@ requirejs([
 
       // opacity
       dv.setOpacity(0.5);
-      deepEqual(dv.markers[0].line.material.transparent, true);
-      deepEqual(dv.markers[0].cone.material.transparent, true);
-      deepEqual(dv.markers[0].line.material.opacity, 0.5);
-      deepEqual(dv.markers[0].cone.material.opacity, 0.5);
-      deepEqual(dv.markers[1].line.material.transparent, true);
-      deepEqual(dv.markers[1].cone.material.transparent, true);
-      deepEqual(dv.markers[1].line.material.opacity, 0.5);
-      deepEqual(dv.markers[1].cone.material.opacity, 0.5);
+     assert.deepEqual(dv.markers[0].line.material.transparent, true);
+     assert.deepEqual(dv.markers[0].cone.material.transparent, true);
+     assert.deepEqual(dv.markers[0].line.material.opacity, 0.5);
+     assert.deepEqual(dv.markers[0].cone.material.opacity, 0.5);
+     assert.deepEqual(dv.markers[1].line.material.transparent, true);
+     assert.deepEqual(dv.markers[1].cone.material.transparent, true);
+     assert.deepEqual(dv.markers[1].line.material.opacity, 0.5);
+     assert.deepEqual(dv.markers[1].cone.material.opacity, 0.5);
 
       dv.setOpacity(1.0, plottables);
-      deepEqual(dv.markers[0].line.material.transparent, true);
-      deepEqual(dv.markers[0].cone.material.transparent, true);
-      deepEqual(dv.markers[0].line.material.opacity, 0.5);
-      deepEqual(dv.markers[0].cone.material.opacity, 0.5);
-      deepEqual(dv.markers[1].line.material.transparent, false);
-      deepEqual(dv.markers[1].cone.material.transparent, false);
-      deepEqual(dv.markers[1].line.material.opacity, 1.0);
-      deepEqual(dv.markers[1].cone.material.opacity, 1.0);
+     assert.deepEqual(dv.markers[0].line.material.transparent, true);
+     assert.deepEqual(dv.markers[0].cone.material.transparent, true);
+     assert.deepEqual(dv.markers[0].line.material.opacity, 0.5);
+     assert.deepEqual(dv.markers[0].cone.material.opacity, 0.5);
+     assert.deepEqual(dv.markers[1].line.material.transparent, false);
+     assert.deepEqual(dv.markers[1].cone.material.transparent, false);
+     assert.deepEqual(dv.markers[1].line.material.opacity, 1.0);
+     assert.deepEqual(dv.markers[1].cone.material.opacity, 1.0);
     });
 
-    test('Test setters for attributes (using point cloud)', function(assert) {
+   QUnit.test('Test setters for attributes (using point cloud)', function(assert) {
       var UIState1 = new UIState();
       UIState1.setProperty('view.usesPointCloud', true);
       var dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
@@ -885,62 +885,62 @@ requirejs([
 
       // color
       dv.setColor(0x00ff00);
-      equal(observed.geometry.attributes.color.getX(0), 0);
-      equal(observed.geometry.attributes.color.getY(0), 1);
-      equal(observed.geometry.attributes.color.getZ(0), 0);
+     assert.equal(observed.geometry.attributes.color.getX(0), 0);
+     assert.equal(observed.geometry.attributes.color.getY(0), 1);
+     assert.equal(observed.geometry.attributes.color.getZ(0), 0);
 
-      equal(observed.geometry.attributes.color.getX(1), 0);
-      equal(observed.geometry.attributes.color.getY(1), 1);
-      equal(observed.geometry.attributes.color.getZ(1), 0);
+     assert.equal(observed.geometry.attributes.color.getX(1), 0);
+     assert.equal(observed.geometry.attributes.color.getY(1), 1);
+     assert.equal(observed.geometry.attributes.color.getZ(1), 0);
 
       dv.setColor(0x0000ff, plottables);
-      equal(observed.geometry.attributes.color.getX(0), 0);
-      equal(observed.geometry.attributes.color.getY(0), 1);
-      equal(observed.geometry.attributes.color.getZ(0), 0);
+     assert.equal(observed.geometry.attributes.color.getX(0), 0);
+     assert.equal(observed.geometry.attributes.color.getY(0), 1);
+     assert.equal(observed.geometry.attributes.color.getZ(0), 0);
 
-      equal(observed.geometry.attributes.color.getX(1), 0);
-      equal(observed.geometry.attributes.color.getY(1), 0);
-      equal(observed.geometry.attributes.color.getZ(1), 1);
+     assert.equal(observed.geometry.attributes.color.getX(1), 0);
+     assert.equal(observed.geometry.attributes.color.getY(1), 0);
+     assert.equal(observed.geometry.attributes.color.getZ(1), 1);
 
       // visibility
       dv.setVisibility(false);
-      equal(observed.geometry.attributes.visible.getX(0), 0);
-      equal(observed.geometry.attributes.visible.getX(1), 0);
+     assert.equal(observed.geometry.attributes.visible.getX(0), 0);
+     assert.equal(observed.geometry.attributes.visible.getX(1), 0);
 
       dv.setVisibility(true, plottables);
-      equal(observed.geometry.attributes.visible.getX(0), 0);
-      equal(observed.geometry.attributes.visible.getX(1), 1);
+     assert.equal(observed.geometry.attributes.visible.getX(0), 0);
+     assert.equal(observed.geometry.attributes.visible.getX(1), 1);
 
       // scale
       dv.setScale(3);
-      equal(observed.geometry.attributes.scale.getX(0), 3);
-      equal(observed.geometry.attributes.scale.getX(1), 3);
+     assert.equal(observed.geometry.attributes.scale.getX(0), 3);
+     assert.equal(observed.geometry.attributes.scale.getX(1), 3);
 
       dv.setScale(1, plottables);
-      equal(observed.geometry.attributes.scale.getX(0), 3);
-      equal(observed.geometry.attributes.scale.getX(1), 1);
+     assert.equal(observed.geometry.attributes.scale.getX(0), 3);
+     assert.equal(observed.geometry.attributes.scale.getX(1), 1);
 
       // opacity
       dv.setOpacity(0.5);
-      equal(observed.geometry.attributes.opacity.getX(0), 0.5);
-      equal(observed.geometry.attributes.opacity.getX(1), 0.5);
+     assert.equal(observed.geometry.attributes.opacity.getX(0), 0.5);
+     assert.equal(observed.geometry.attributes.opacity.getX(1), 0.5);
 
       dv.setOpacity(1.0, plottables);
-      equal(observed.geometry.attributes.opacity.getX(0), 0.5);
-      equal(observed.geometry.attributes.opacity.getX(1), 1.0);
+     assert.equal(observed.geometry.attributes.opacity.getX(0), 0.5);
+     assert.equal(observed.geometry.attributes.opacity.getX(1), 1.0);
 
       dv.setEmissive(0xffffff, plottables);
-      equal(observed.geometry.attributes.emissive.getX(0), 0);
-      equal(observed.geometry.attributes.emissive.getX(1), 1);
+     assert.equal(observed.geometry.attributes.emissive.getX(0), 0);
+     assert.equal(observed.geometry.attributes.emissive.getX(1), 1);
 
-      obs = dv.groupByColor(['PC.636', 'PC.635']);
-      equal(obs['0000ff'].length, 1);
+     var obs = dv.groupByColor(['PC.636', 'PC.635']);
+     assert.equal(obs['0000ff'].length, 1);
 
       dv.setColor(0xf0f0f0, [this.decomp.plottable[0]]);
       dv.setColor(0x0f0f0f, [this.decomp.plottable[1]]);
       obs = dv.groupByColor(['PC.636', 'PC.635']);
-      equal(obs['f0f0f0'].length, 1);
-      equal(obs['0f0f0f'].length, 1);
+     assert.equal(obs['f0f0f0'].length, 1);
+     assert.equal(obs['0f0f0f'].length, 1);
     });
 
   });

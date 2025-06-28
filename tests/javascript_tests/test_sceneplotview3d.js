@@ -13,9 +13,9 @@ requirejs([
             SVGRenderer, OrbitControls, MultiModel, UIState) {
   var DecompositionModel = model.DecompositionModel;
   $(document).ready(function() {
-    module('ScenePlotView3D', {
+    QUnit.module('ScenePlotView3D', {
 
-      setup: function() {
+      beforeEach () {
 
         this.UIState1 = new UIState();
         // global variable shared
@@ -72,7 +72,7 @@ requirejs([
         this.sharedDecompositionViewDict.biplot = dv2;
       },
 
-      teardown: function() {
+      afterEach () {
         // created as global during the setup function
         this.sharedDecompositionViewDict = undefined;
 
@@ -88,7 +88,7 @@ requirejs([
      * Test the constructor for ScenePlotView3D
      *
      */
-    test('Test the constructor', function(assert) {
+   QUnit.test('Test the constructor', function(assert) {
 
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
@@ -111,22 +111,22 @@ requirejs([
       assert.ok(
         spv.scene.getObjectById(spv._selectable.id) instanceof THREE.Group);
 
-      deepEqual(spv.xView, 0);
-      deepEqual(spv.yView, 0);
+     assert.deepEqual(spv.xView, 0);
+     assert.deepEqual(spv.yView, 0);
 
-      equal(spv.width, 20);
-      equal(spv.height, 20);
-      equal(spv.checkUpdate(), true);
+     assert.equal(spv.width, 20);
+     assert.equal(spv.height, 20);
+     assert.equal(spv.checkUpdate(), true);
 
-      equal(spv.axesColor, '#FFFFFF');
-      equal(spv.backgroundColor, '#000000');
+     assert.equal(spv.axesColor, '#FFFFFF');
+     assert.equal(spv.backgroundColor, '#000000');
 
-      deepEqual(spv.visibleDimensions, [0, 1, 2]);
-      deepEqual(this.multiModel.dimensionRanges.max,
+     assert.deepEqual(spv.visibleDimensions, [0, 1, 2]);
+     assert.deepEqual(this.multiModel.dimensionRanges.max,
                                           [-0.237661, 0.046053, 0.066647,
                                           0.159061, 0.17607, 0.072969,
                                           -0.112864, 0.064794]);
-      deepEqual(this.multiModel.dimensionRanges.min,
+     assert.deepEqual(this.multiModel.dimensionRanges.min,
                                           [-1, -0.144964, -0.138136, -0.067711,
                                           -0.247485, -0.115211, -0.229889,
                                           -0.046599]);
@@ -144,16 +144,16 @@ requirejs([
       assert.ok(spv._mouse instanceof THREE.Vector2);
 
       // pub/sub
-      deepEqual(spv.EVENTS, ['click', 'dblclick', 'select']);
-      deepEqual(spv._subscribers.click.length, 1);
-      deepEqual(spv._subscribers.dblclick.length, 1);
-      deepEqual(spv._subscribers.select.length, 1);
+     assert.deepEqual(spv.EVENTS, ['click', 'dblclick', 'select']);
+     assert.deepEqual(spv._subscribers.click.length, 1);
+     assert.deepEqual(spv._subscribers.dblclick.length, 1);
+     assert.deepEqual(spv._subscribers.select.length, 1);
 
       // release the control back to the main page
       spv.control.dispose();
     });
 
-    test('Test checkUpdate', function() {
+   QUnit.test('Test checkUpdate',  function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -163,20 +163,20 @@ requirejs([
       spv.needsUpdate = false;
       spv.decViews.scatter.needsUpdate = false;
       spv.decViews.biplot.needsUpdate = false;
-      equal(spv.checkUpdate(), false);
+     assert.equal(spv.checkUpdate(), false);
 
       spv.needsUpdate = true;
-      equal(spv.checkUpdate(), true);
+     assert.equal(spv.checkUpdate(), true);
       spv.needsUpdate = false;
 
       spv.decViews.scatter.needsUpdate = true;
-      equal(spv.checkUpdate(), true);
+     assert.equal(spv.checkUpdate(), true);
 
       // release the control back to the main page
       spv.control.dispose();
     });
 
-    test('Test checkUpdate background color', function() {
+   QUnit.test('Test checkUpdate background color',  function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -186,13 +186,13 @@ requirejs([
       spv.needsUpdate = false;
 
       spv.decViews.scatter.backgroundColor = 0x00FF00;
-      equal(spv.checkUpdate(), true);
+     assert.equal(spv.checkUpdate(), true);
 
       // release the control back to the main page
       spv.control.dispose();
     });
 
-    test('Test checkUpdate axes color', function() {
+   QUnit.test('Test checkUpdate axes color',  function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -202,13 +202,13 @@ requirejs([
       spv.needsUpdate = false;
 
       spv.decViews.scatter.axesColor = 0x00FF00;
-      equal(spv.checkUpdate(), true);
+     assert.equal(spv.checkUpdate(), true);
 
       // release the control back to the main page
       spv.control.dispose();
     });
 
-    test('Test checkUpdate visible dimensions', function() {
+   QUnit.test('Test checkUpdate visible dimensions',  function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -218,13 +218,13 @@ requirejs([
       spv.needsUpdate = false;
 
       spv.decViews.scatter.visibleDimensions = [1, 2, 3];
-      equal(spv.checkUpdate(), true);
+     assert.equal(spv.checkUpdate(), true);
 
       // release the control back to the main page
       spv.control.dispose();
     });
 
-    test('Test draw axes', function(assert) {
+   QUnit.test('Test draw axes', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -239,16 +239,16 @@ requirejs([
 
       for (var i = 0; i < 3; i++) {
         line = spv.scene.getObjectByName('emperor-axis-line-' + i);
-        equal(line.material.color.r, 0);
-        equal(line.material.color.g, 1);
-        equal(line.material.color.b, 0.058823529411764705);
+       assert.equal(line.material.color.r, 0);
+       assert.equal(line.material.color.g, 1);
+       assert.equal(line.material.color.b, 0.058823529411764705);
       }
 
       // release the control back to the main page
       spv.control.dispose();
     });
 
-    test('Test draw axes 2D', function(assert) {
+   QUnit.test('Test draw axes 2D', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -266,12 +266,12 @@ requirejs([
         line = spv.scene.getObjectByName('emperor-axis-line-' + i);
 
         if (i !== 2) {
-          equal(line.material.color.r, 0);
-          equal(line.material.color.g, 0);
-          equal(line.material.color.b, 1);
+         assert.equal(line.material.color.r, 0);
+         assert.equal(line.material.color.g, 0);
+         assert.equal(line.material.color.b, 1);
         }
         else {
-          equal(line, undefined);
+         assert.equal(line, undefined);
         }
       }
 
@@ -280,7 +280,7 @@ requirejs([
     });
 
 
-    test('Test axes color as null', function(assert) {
+   QUnit.test('Test axes color as null', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -295,14 +295,14 @@ requirejs([
 
       for (var i = 0; i < 3; i++) {
         line = spv.scene.getObjectByName('emperor-axis-line-' + i);
-        equal(line, undefined);
+       assert.equal(line, undefined);
       }
 
       // release the control back to the main page
       spv.control.dispose();
     });
 
-    test('Test removing axes', function(assert) {
+   QUnit.test('Test removing axes', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -325,7 +325,7 @@ requirejs([
     });
 
 
-    test('Test the draw axes labels', function(assert) {
+   QUnit.test('Test the draw axes labels', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -348,18 +348,18 @@ requirejs([
         assert.ok((label.position.y - positions[i][1]) < tolerance);
         assert.ok((label.position.z - positions[i][2]) < tolerance);
 
-        equal(label.material.color.r, 0);
-        equal(label.material.color.g, 1);
-        equal(label.material.color.b, 0.058823529411764705);
+       assert.equal(label.material.color.r, 0);
+       assert.equal(label.material.color.g, 1);
+       assert.equal(label.material.color.b, 0.058823529411764705);
 
-        deepEqual(label.scale.toArray(), [0.390317568, 0.024394848, 1]);
+       assert.deepEqual(label.scale.toArray(), [0.390317568, 0.024394848, 1]);
       }
 
       // release the control back to the main page
       spv.control.dispose();
     });
 
-    test('Test the draw axes labels as null', function(assert) {
+   QUnit.test('Test the draw axes labels as null', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -371,15 +371,15 @@ requirejs([
       spv.drawAxesLabelsWithColor(null);
 
       for (var i = 0; i < 3; i++) {
-        label = spv.scene.getObjectByName('emperor-axis-label-' + i);
-        equal(label, undefined);
+        let label = spv.scene.getObjectByName('emperor-axis-label-' + i);
+	assert.equal(label, undefined);
       }
 
       // release the control back to the main page
       spv.control.dispose();
     });
 
-    test('Test removing axes labels', function(assert) {
+   QUnit.test('Test removing axes labels', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -401,7 +401,7 @@ requirejs([
       spv.control.dispose();
     });
 
-    test('Test getScalingConstant', function(assert) {
+   QUnit.test('Test getScalingConstant', function(assert) {
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
@@ -418,7 +418,7 @@ requirejs([
      * Test the updateCameraAspectRatio method for ScenePlotView3D
      *
      */
-    test('Test updateCameraAspectRatio', function() {
+   QUnit.test('Test updateCameraAspectRatio',  function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -427,19 +427,19 @@ requirejs([
 
       // same width and height
       spv.updateCameraAspectRatio();
-      equal(spv.camera.left, -0.0955085);
-      equal(spv.camera.right, 0.0955085);
-      equal(spv.camera.top, 0.0955085);
-      equal(spv.camera.bottom, -0.0955085);
-      equal(spv.camera.aspect, 1);
+     assert.equal(spv.camera.left, -0.0955085);
+     assert.equal(spv.camera.right, 0.0955085);
+     assert.equal(spv.camera.top, 0.0955085);
+     assert.equal(spv.camera.bottom, -0.0955085);
+     assert.equal(spv.camera.aspect, 1);
 
       spv.width = 30;
       spv.updateCameraAspectRatio();
-      equal(spv.camera.left, -0.14326275);
-      equal(spv.camera.right, 0.14326275);
-      equal(spv.camera.top, 0.0955085);
-      equal(spv.camera.bottom, -0.0955085);
-      equal(spv.camera.aspect, 1.5);
+     assert.equal(spv.camera.left, -0.14326275);
+     assert.equal(spv.camera.right, 0.14326275);
+     assert.equal(spv.camera.top, 0.0955085);
+     assert.equal(spv.camera.bottom, -0.0955085);
+     assert.equal(spv.camera.aspect, 1.5);
 
       // release the control back to the main page
       spv.control.dispose();
@@ -450,18 +450,18 @@ requirejs([
      * Test the addDecompositionsToScene method for ScenePlotView3D
      *
      */
-    test('Test addDecompositionsToScene', function() {
+   QUnit.test('Test addDecompositionsToScene',  function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
                                     this.multiModel, this.div, 0, 0, 20, 20);
 
-      equal(spv.scene.children.length, 11);
-      equal(spv._selectable.children.length, 2);
+     assert.equal(spv.scene.children.length, 11);
+     assert.equal(spv._selectable.children.length, 2);
       spv.addDecompositionsToScene();
-      equal(spv._selectable.children.length, 2);
-      equal(spv.scene.children.length, 11);
+     assert.equal(spv._selectable.children.length, 2);
+     assert.equal(spv.scene.children.length, 11);
 
       // release the control back to the main page
       spv.control.dispose();
@@ -472,14 +472,14 @@ requirejs([
      * Test the addDecompositionsToScene method for ScenePlotView3D
      *
      */
-    test('Test addDecompositionsToScene new objects', function() {
+   QUnit.test('Test addDecompositionsToScene new objects',  function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
                                     this.multiModel, this.div, 0, 0, 20, 20);
 
-      equal(spv.scene.children.length, 11);
+     assert.equal(spv.scene.children.length, 11);
 
       var data = {name: 'PCOA',
                   sample_ids: ['PC.636', 'PC.635'],
@@ -491,28 +491,30 @@ requirejs([
                                        13.7754129161, 11.217215823,
                                        10.024774995, 8.22835130237,
                                        7.55971173665, 6.24945796136]};
-      md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
-      metadata = [['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-      ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']];
+      var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
+      var metadata = [
+	  ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+	  ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']
+      ];
 
-      decomp = new DecompositionModel(data, md_headers, metadata, 'arrow');
-      multiModel = new MultiModel({'scatter': decomp});
-      dv = new DecompositionView(multiModel, 'scatter', new UIState());
+      var decomp = new DecompositionModel(data, md_headers, metadata, 'arrow');
+      var multiModel = new MultiModel({'scatter': decomp});
+      var dv = new DecompositionView(multiModel, 'scatter', new UIState());
 
       // the label is not scaled upon creation
-      deepEqual(dv.markers[0].label.scale.toArray(), [128, 32, 1]);
-      deepEqual(dv.markers[1].label.scale.toArray(), [128, 32, 1]);
+     assert.deepEqual(dv.markers[0].label.scale.toArray(), [128, 32, 1]);
+     assert.deepEqual(dv.markers[1].label.scale.toArray(), [128, 32, 1]);
 
       this.sharedDecompositionViewDict.pleep = dv;
       spv.addDecompositionsToScene();
 
-      equal(spv.scene.children.length, 13);
-      equal(spv._selectable.children.length, 2);
+     assert.equal(spv.scene.children.length, 13);
+     assert.equal(spv._selectable.children.length, 2);
 
       // after the labels are added to the scene, their scales change
-      deepEqual(dv.markers[0].label.scale.toArray(),
+     assert.deepEqual(dv.markers[0].label.scale.toArray(),
                 [0.097579392, 0.024394848, 1]);
-      deepEqual(dv.markers[1].label.scale.toArray(),
+     assert.deepEqual(dv.markers[1].label.scale.toArray(),
                 [0.097579392, 0.024394848, 1]);
 
       // release the control back to the main page
@@ -524,7 +526,7 @@ requirejs([
      * Test the resize method for ScenePlotView3D
      *
      */
-    test('Test resize', function() {
+   QUnit.test('Test resize',  function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -532,21 +534,21 @@ requirejs([
                                     this.multiModel, this.div, 0, 0, 20, 20);
       spv.resize(11, 11, 200, 300);
 
-      equal(spv.xView, 11);
-      equal(spv.yView, 11);
+     assert.equal(spv.xView, 11);
+     assert.equal(spv.yView, 11);
 
-      equal(spv.width, 200);
-      equal(spv.height, 300);
+     assert.equal(spv.width, 200);
+     assert.equal(spv.height, 300);
 
-      equal(spv.needsUpdate, true);
+     assert.equal(spv.needsUpdate, true);
 
       spv.resize(8, 6, 75, 309);
 
-      equal(spv.xView, 8);
-      equal(spv.yView, 6);
+     assert.equal(spv.xView, 8);
+     assert.equal(spv.yView, 6);
 
-      equal(spv.width, 75);
-      equal(spv.height, 309);
+     assert.equal(spv.width, 75);
+     assert.equal(spv.height, 309);
 
       // release the control back to the main page
       spv.control.dispose();
@@ -557,7 +559,7 @@ requirejs([
      * Test the render method for ScenePlotView3D
      *
      */
-    test('Test render', function(assert) {
+   QUnit.test('Test render', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -582,14 +584,14 @@ requirejs([
      * Test exceptions are correctly raised on unknown events
      *
      */
-    test('Test off exceptions', function() {
+   QUnit.test('Test off exceptions',  function(assert) {
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
                                     this.multiModel, this.div, 0, 0, 20, 20);
 
       // check this happens for all the properties
-      throws(
+     assert.throws(
         function() {
           spv.off('does not exist', function(a, b) { return a;});
         }, Error, 'An error is raised if the event is unknown'
@@ -604,14 +606,14 @@ requirejs([
      * Test exceptions are correctly raised on unknown events
      *
      */
-    test('Test on exceptions', function() {
+   QUnit.test('Test on exceptions',  function(assert) {
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
                                     this.multiModel, this.div, 0, 0, 20, 20);
 
       // check this happens for all the properties
-      throws(
+     assert.throws(
         function() {
           spv.on('does not exist', function(a, b) { return a;});
         }, Error, 'An error is raised if the event is unknown'
@@ -644,9 +646,9 @@ requirejs([
      * Test the 'click' callback is resolved
      *
      */
-    test('Verifying click works', function(assert) {
+   QUnit.test('Verifying click works', function(assert) {
       // for the test to pass, two assertions should be made
-      expect(4);
+      assert.expect(4);
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -654,10 +656,10 @@ requirejs([
                                     this.multiModel, this.div, 0, 0, 20, 20);
 
       spv.on('click', function(a, b) {
-        equal(a, 'Meshy McMeshface');
-        deepEqual(b.name, 'Meshy McMeshface');
+       assert.equal(a, 'Meshy McMeshface');
+       assert.deepEqual(b.name, 'Meshy McMeshface');
         assert.ok(b.visible);
-        deepEqual(b.material.opacity, 1);
+       assert.deepEqual(b.material.opacity, 1);
       });
 
       var mockEvent = {
@@ -691,9 +693,9 @@ requirejs([
      * Test the 'dblclick' callback is resolved
      *
      */
-    test('Verifying double click works', function(assert) {
+   QUnit.test('Verifying double click works', function(assert) {
       // for the test to pass, four assertions should be made
-      expect(4);
+      assert.expect(4);
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -701,10 +703,10 @@ requirejs([
                                     this.multiModel, this.div, 0, 0, 20, 20);
 
       spv.on('dblclick', function(a, b) {
-        equal(a, 'Meshy McMeshface');
-        deepEqual(b.name, 'Meshy McMeshface');
+       assert.equal(a, 'Meshy McMeshface');
+       assert.deepEqual(b.name, 'Meshy McMeshface');
         assert.ok(b.visible);
-        deepEqual(b.material.opacity, 1);
+       assert.deepEqual(b.material.opacity, 1);
       });
 
       var mockEvent = {
@@ -737,9 +739,9 @@ requirejs([
      * Test the 'select' callback is resolved
      *
      */
-    test('Verifying select works', function(assert) {
+   QUnit.test('Verifying select works', function(assert) {
       // for the test to pass, four assertions should be made
-      expect(3);
+      assert.expect(3);
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -765,7 +767,7 @@ requirejs([
      * Test the _highlightSelected
      *
      */
-    test('Check highlighting works', function(assert) {
+   QUnit.test('Check highlighting works', function(assert) {
       // _highlightSelected
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -774,12 +776,12 @@ requirejs([
       var dv = this.sharedDecompositionViewDict.scatter;
 
       spv._highlightSelected(dv.markers, 0x8c8c8c);
-      equal(dv.markers[0].material.emissive.getHex(), 0x8c8c8c);
-      equal(dv.markers[1].material.emissive.getHex(), 0x8c8c8c);
+     assert.equal(dv.markers[0].material.emissive.getHex(), 0x8c8c8c);
+     assert.equal(dv.markers[1].material.emissive.getHex(), 0x8c8c8c);
 
       spv._highlightSelected(dv.markers, 0x000000);
-      equal(dv.markers[0].material.emissive.getHex(), 0x000000);
-      equal(dv.markers[1].material.emissive.getHex(), 0x000000);
+     assert.equal(dv.markers[0].material.emissive.getHex(), 0x000000);
+     assert.equal(dv.markers[1].material.emissive.getHex(), 0x000000);
 
       spv.control.dispose();
     });
@@ -789,7 +791,7 @@ requirejs([
      * Check we can add/remove subscribers
      *
      */
-    test('Check removal and addition of subscribers', function() {
+   QUnit.test('Check removal and addition of subscribers',  function(assert) {
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
@@ -805,11 +807,11 @@ requirejs([
 
       spv.on('click', a);
       spv.on('click', b);
-      equal(spv._subscribers.click.length, 3);
+     assert.equal(spv._subscribers.click.length, 3);
       spv.off('click', a);
-      equal(spv._subscribers.click.length, 2);
+     assert.equal(spv._subscribers.click.length, 2);
       spv.off('click', b);
-      equal(spv._subscribers.click.length, 1);
+     assert.equal(spv._subscribers.click.length, 1);
 
       // release the control back to the main page
       spv.control.dispose();
@@ -820,7 +822,7 @@ requirejs([
      * Test the recenterCamera method for ScenePlotView3D
      *
      */
-    test('Test recenterCamera', function(assert) {
+   QUnit.test('Test recenterCamera', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true}), max;
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -851,7 +853,7 @@ requirejs([
      * Test the updateCameraTarget method for ScenePlotView3D
      *
      */
-    test('Test updateCameraTarget', function(assert) {
+   QUnit.test('Test updateCameraTarget', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true}), max;
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -881,7 +883,7 @@ requirejs([
      * Test object for 2D decomposition view
      *
      */
-    test('Test for 2D object', function(assert) {
+   QUnit.test('Test for 2D object', function(assert) {
 
       var data = {name: 'PCOA',
                   sample_ids: ['PC.636', 'PC.635'],
@@ -903,19 +905,19 @@ requirejs([
                                     multiModel, this.div, 0, 0, 20, 20);
 
       // do a checkup of the general attributes
-      deepEqual(spv.xView, 0);
-      deepEqual(spv.yView, 0);
+     assert.deepEqual(spv.xView, 0);
+     assert.deepEqual(spv.yView, 0);
 
-      equal(spv.width, 20);
-      equal(spv.height, 20);
-      equal(spv.checkUpdate(), true);
+     assert.equal(spv.width, 20);
+     assert.equal(spv.height, 20);
+     assert.equal(spv.checkUpdate(), true);
 
-      equal(spv.axesColor, '#FFFFFF');
-      equal(spv.backgroundColor, '#000000');
+     assert.equal(spv.axesColor, '#FFFFFF');
+     assert.equal(spv.backgroundColor, '#000000');
 
-      deepEqual(spv.visibleDimensions, [0, 1]);
-      deepEqual(multiModel.dimensionRanges.max, [-0.237661, 0.046053]);
-      deepEqual(multiModel.dimensionRanges.min, [-0.276542, -0.144964]);
+     assert.deepEqual(spv.visibleDimensions, [0, 1]);
+     assert.deepEqual(multiModel.dimensionRanges.max, [-0.237661, 0.046053]);
+     assert.deepEqual(multiModel.dimensionRanges.min, [-0.276542, -0.144964]);
 
       // check that updateCameraTarget is working as expected
       var expTarget = new THREE.Vector3(-0.2571015, -0.0494555, 0);

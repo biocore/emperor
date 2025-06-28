@@ -15,8 +15,8 @@ requirejs([
     var DecompositionModel = model.DecompositionModel;
     var Plottable = model.Plottable;
 
-    module('OpacityViewController', {
-      setup: function() {
+    QUnit.module('OpacityViewController', {
+      beforeEach () {
         this.sharedDecompositionViewDict = {};
 
         var UIState1 = new UIState();
@@ -35,11 +35,11 @@ requirejs([
                                          13.7754129161, 11.217215823,
                                          10.024774995, 8.22835130237,
                                          7.55971173665, 6.24945796136]};
-        md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
-        metadata = [['PC.636', '14.2', 'Control', '20070314'],
+        var md_headers = ['SampleID', 'Mixed', 'Treatment', 'DOB'];
+        var metadata = [['PC.636', '14.2', 'Control', '20070314'],
         ['PC.635', 'StringValue', 'Fast', '20071112'],
         ['PC.634', '14.7', 'Fast', '20071112']];
-        decomp = new DecompositionModel(data, md_headers, metadata);
+        var decomp = new DecompositionModel(data, md_headers, metadata);
         var multiModel = new MultiModel({'scatter': decomp});
         var dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.scatter = dv;
@@ -61,14 +61,15 @@ requirejs([
         this.dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = dv;
       },
-      teardown: function() {
+      afterEach () {
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
         this.multiModel = undefined;
       }
     });
 
-    test('Constructor tests', function(assert) {
+   QUnit.test('Constructor tests', function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
 
@@ -78,55 +79,65 @@ requirejs([
       var controller = new OpacityViewController(new UIState(), container,
         this.sharedDecompositionViewDict);
 
-      controller.setMetadataField('SampleID');
-      equal(controller.title, 'Opacity');
+     $(function() {
+         controller.setMetadataField('SampleID');
+         assert.equal(controller.title, 'Opacity');
 
-      var testColumn = controller.bodyGrid.getColumns()[0];
-      equal(testColumn.field, 'value');
+         var testColumn = controller.bodyGrid.getColumns()[0];
+         assert.equal(testColumn.field, 'value');
 
-      // verify the checked value is set properly
-      equal(controller.$scaledValue.is(':checked'), false);
-      equal(controller.$select.val(), 'SampleID');
-      equal(controller.getMetadataField(), 'SampleID');
+         // verify the checked value is set properly
+         assert.equal(controller.$scaledValue.is(':checked'), false);
+         assert.equal(controller.$select.val(), 'SampleID');
+         assert.equal(controller.getMetadataField(), 'SampleID');
+         done();
+     });
     });
 
-    test('Testing setPlottableAttributes helper function', function(assert) {
-      // testing with one plottable
-      var idx = 0;
-      plottables = [{idx: idx}];
-      deepEqual(this.dv.markers[idx].material.opacity, 1);
-      deepEqual(this.dv.markers[idx + 1].material.opacity, 1);
+   QUnit.test('Testing setPlottableAttributes helper function',
+     function(assert) {
+         // testing with one plottable
+         var idx = 0;
+         var plottables = [{idx: idx}];
+         assert.deepEqual(this.dv.markers[idx].material.opacity, 1);
+         assert.deepEqual(this.dv.markers[idx + 1].material.opacity, 1);
 
-      OpacityViewController.prototype.setPlottableAttributes(this.dv, 0.5,
-                                                             plottables);
+         OpacityViewController.prototype.setPlottableAttributes(this.dv, 0.5,
+                                                                plottables);
 
-      deepEqual(this.dv.markers[idx].material.opacity, 0.5);
-      deepEqual(this.dv.markers[idx + 1].material.opacity, 1);
-      equal(this.dv.needsUpdate, true);
+         assert.deepEqual(this.dv.markers[idx].material.opacity, 0.5);
+         assert.deepEqual(this.dv.markers[idx + 1].material.opacity, 1);
+         assert.equal(this.dv.needsUpdate, true);
 
-      // testing with multiple plottable
-      plottables = [{idx: idx}, {idx: idx + 1}];
-      OpacityViewController.prototype.setPlottableAttributes(this.dv, 0.4,
-                                                             plottables);
-      deepEqual(this.dv.markers[idx].material.opacity, 0.4);
-      deepEqual(this.dv.markers[idx + 1].material.opacity, 0.4);
-      equal(this.dv.needsUpdate, true);
+         // testing with multiple plottable
+         plottables = [{idx: idx}, {idx: idx + 1}];
+         OpacityViewController.prototype.setPlottableAttributes(this.dv, 0.4,
+                                                                plottables);
+         assert.deepEqual(this.dv.markers[idx].material.opacity, 0.4);
+         assert.deepEqual(this.dv.markers[idx + 1].material.opacity, 0.4);
+         assert.equal(this.dv.needsUpdate, true);
     });
 
-    test('Testing toJSON', function() {
+   QUnit.test('Testing toJSON',  function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
-      controller.setMetadataField('SampleID');
 
-      var obs = controller.toJSON();
-      var exp = {category: 'SampleID', globalScale: '1', scaleVal: false,
-                 data: {'PC.636': 1, 'PC.635': 1, 'PC.634': 1}};
-      deepEqual(obs, exp);
+      $(function() {
+          controller.setMetadataField('SampleID');
+
+          var obs = controller.toJSON();
+          var exp = {category: 'SampleID', globalScale: '1', scaleVal: false,
+                     data: {'PC.636': 1, 'PC.635': 1, 'PC.634': 1}};
+          assert.deepEqual(obs, exp);
+          done();
+      });
     });
 
-    test('Testing fromJSON', function() {
+   QUnit.test('Testing fromJSON',  function(assert) {
+      const done = assert.async();
       var json = {category: 'SampleID', globalScale: '1.0', scaleVal: false,
                   data: {'PC.636': 0.1, 'PC.635': 1, 'PC.634': 0.7}};
 
@@ -135,17 +146,22 @@ requirejs([
       var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
-      controller.fromJSON(json);
+      $(function() {
+          controller.fromJSON(json);
 
-      var scatter = controller.decompViewDict.scatter;
-      deepEqual(scatter.markers[0].material.opacity, 0.1);
-      deepEqual(scatter.markers[1].material.opacity, 1);
-      deepEqual(scatter.markers[2].material.opacity, 0.7);
-      equal(controller.$select.val(), 'SampleID');
-      equal(controller.$scaledValue.is(':checked'), false);
+          var scatter = controller.decompViewDict.scatter;
+          assert.deepEqual(scatter.markers[0].material.opacity, 0.1);
+          assert.deepEqual(scatter.markers[1].material.opacity, 1);
+          assert.deepEqual(scatter.markers[2].material.opacity, 0.7);
+          assert.equal(controller.$select.val(), 'SampleID');
+          assert.equal(controller.$scaledValue.is(':checked'), false);
+
+          done();
+      });
     });
 
-    test('Testing fromJSON scaled', function() {
+   QUnit.test('Testing fromJSON scaled',  function(assert) {
+      const done = assert.async();
       var json = {category: 'DOB', globalScale: '1.0', scaleVal: true,
                   data: {'20070314': 0.1, '20071112': 0.5}};
 
@@ -154,29 +170,40 @@ requirejs([
       var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
 
-      controller.fromJSON(json);
-      var scatter = controller.decompViewDict.scatter;
-      deepEqual(scatter.markers[0].material.opacity, 0.1);
-      deepEqual(scatter.markers[1].material.opacity, 0.5);
+      $(function() {
+          controller.fromJSON(json);
+          var scatter = controller.decompViewDict.scatter;
+          assert.deepEqual(scatter.markers[0].material.opacity, 0.1);
+          assert.deepEqual(scatter.markers[1].material.opacity, 0.5);
 
-      equal(controller.$select.val(), 'DOB');
-      equal(controller.$scaledValue.is(':checked'), true);
+          assert.equal(controller.$select.val(), 'DOB');
+          assert.equal(controller.$scaledValue.is(':checked'), true);
+
+          done();
+      });
     });
 
-    test('Testing toJSON (null)', function() {
+   QUnit.test('Testing toJSON (null)',  function(assert) {
+      const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
-      controller.setMetadataField(null);
 
-      var obs = controller.toJSON();
-      var exp = {category: null, globalScale: '1.0', scaleVal: false,
-                 data: {}};
-      deepEqual(obs, exp);
+      $(function() {
+          controller.setMetadataField(null);
+
+          var obs = controller.toJSON();
+          var exp = {category: null, globalScale: '1.0', scaleVal: false,
+                     data: {}};
+          assert.deepEqual(obs, exp);
+
+          done();
+      });
     });
 
-    test('Testing fromJSON (null)', function() {
+   QUnit.test('Testing fromJSON (null)',  function(assert) {
+      const done = assert.async();
       var json = {category: null, globalScale: '1.0', scaleVal: false,
                   data: {}};
 
@@ -184,17 +211,20 @@ requirejs([
                         'width:12px"></div>');
       var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
-
-      controller.fromJSON(json);
-      var idx = 0;
-      var scatter = controller.decompViewDict.scatter;
-      deepEqual(scatter.markers[0].material.opacity, 1);
-      deepEqual(scatter.markers[1].material.opacity, 1);
-      equal(controller.getMetadataField(), null);
-      equal(controller.$scaledValue.is(':checked'), false);
+      
+      $(function() {
+          controller.fromJSON(json);
+          var idx = 0;
+          var scatter = controller.decompViewDict.scatter;
+          assert.deepEqual(scatter.markers[0].material.opacity, 1);
+          assert.deepEqual(scatter.markers[1].material.opacity, 1);
+          assert.equal(controller.getMetadataField(), null);
+          assert.equal(controller.$scaledValue.is(':checked'), false);
+          done();
+      });
     });
 
-    test('Testing getScale', function() {
+   QUnit.test('Testing getScale',  function(assert) {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new OpacityViewController(new UIState(),
@@ -204,12 +234,12 @@ requirejs([
       //test standard values
       var obs = controller.getScale(data, false);
       var exp = {'1.0': 1, 'no': 1, 'false': 1, 'something': 1, '2.0': 1};
-      deepEqual(obs, exp);
+     assert.deepEqual(obs, exp);
 
       //test scaled values
       obs = controller.getScale(data, true);
       exp = {'1.0': 0, 'no': 0, 'false': 0, 'something': 0, '2.0': 1};
-      deepEqual(obs, exp);
+     assert.deepEqual(obs, exp);
     });
   });
 });

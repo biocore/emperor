@@ -6,12 +6,12 @@ requirejs(['draw', 'three'], function(draw, THREE) {
   var makeLineCollection = draw.makeLineCollection;
   $(document).ready(function() {
 
-    module('Drawing utilities', {
+    QUnit.module('Drawing utilities', {
 
-      setup: function() {
+      beforeEach () {
       },
 
-      teardown: function() {
+      afterEach () {
       }
 
     });
@@ -21,43 +21,43 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      * Test that makeLine works
      *
      */
-    test('Test makeLine works correctly', function(assert) {
+   QUnit.test('Test makeLine works correctly', function(assert) {
       var testLine = makeLine([0, 0, 0], [1, 1, 1], 0x00ff00, 1, true);
 
-      equal(testLine.material.opacity, 1.0);
-      equal(testLine.material.transparent, true);
+     assert.equal(testLine.material.opacity, 1.0);
+     assert.equal(testLine.material.transparent, true);
 
-      equal(testLine.geometry.vertices[0].x, 0);
-      equal(testLine.geometry.vertices[0].y, 0);
-      equal(testLine.geometry.vertices[0].z, 0);
+     assert.equal(testLine.geometry.vertices[0].x, 0);
+     assert.equal(testLine.geometry.vertices[0].y, 0);
+     assert.equal(testLine.geometry.vertices[0].z, 0);
 
-      equal(testLine.geometry.vertices[1].x, 1);
-      equal(testLine.geometry.vertices[1].y, 1);
-      equal(testLine.geometry.vertices[1].z, 1);
+     assert.equal(testLine.geometry.vertices[1].x, 1);
+     assert.equal(testLine.geometry.vertices[1].y, 1);
+     assert.equal(testLine.geometry.vertices[1].z, 1);
 
-      equal(testLine.material.color.r, 0);
-      equal(testLine.material.color.g, 1);
-      equal(testLine.material.color.b, 0);
+     assert.equal(testLine.material.color.r, 0);
+     assert.equal(testLine.material.color.g, 1);
+     assert.equal(testLine.material.color.b, 0);
 
       testLine = makeLine([0, 0, 0], [1, 1, 1], 0x00ff00, 1, false);
 
-      equal(testLine.material.opacity, 1.0);
-      equal(testLine.material.transparent, false);
+     assert.equal(testLine.material.opacity, 1.0);
+     assert.equal(testLine.material.transparent, false);
 
-      equal(testLine.geometry.vertices[0].x, 0);
-      equal(testLine.geometry.vertices[0].y, 0);
-      equal(testLine.geometry.vertices[0].z, 0);
+     assert.equal(testLine.geometry.vertices[0].x, 0);
+     assert.equal(testLine.geometry.vertices[0].y, 0);
+     assert.equal(testLine.geometry.vertices[0].z, 0);
 
-      equal(testLine.geometry.vertices[1].x, 1);
-      equal(testLine.geometry.vertices[1].y, 1);
-      equal(testLine.geometry.vertices[1].z, 1);
+     assert.equal(testLine.geometry.vertices[1].x, 1);
+     assert.equal(testLine.geometry.vertices[1].y, 1);
+     assert.equal(testLine.geometry.vertices[1].z, 1);
 
-      equal(testLine.material.color.r, 0);
-      equal(testLine.material.color.g, 1);
-      equal(testLine.material.color.b, 0);
+     assert.equal(testLine.material.color.r, 0);
+     assert.equal(testLine.material.color.g, 1);
+     assert.equal(testLine.material.color.b, 0);
     });
 
-    test('Test makeLineCollection', function(assert) {
+   QUnit.test('Test makeLineCollection', function(assert) {
       var vertices = [
         [1, 0, 0],
         [0, 1, 0],
@@ -68,10 +68,10 @@ requirejs(['draw', 'three'], function(draw, THREE) {
 
       assert.ok(lines instanceof THREE.LineSegments);
 
-      equal(lines.material.color.getHex(), 0xf0f0f0);
+     assert.equal(lines.material.color.getHex(), 0xf0f0f0);
 
       expected = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0]);
-      deepEqual(lines.geometry.attributes.position.array, expected);
+     assert.deepEqual(lines.geometry.attributes.position.array, expected);
     });
 
     /**
@@ -81,16 +81,16 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      * The validity of the scaling factor was tested visually and by hand.
      *
      */
-    test('Test makeLabel works correctly', function(assert) {
+   QUnit.test('Test makeLabel works correctly', function(assert) {
       var label = makeLabel([0, 0, 0], 'ab', 0x00FF00);
 
-      equal(label.material.color.r, 0);
-      equal(label.material.color.g, 1);
-      equal(label.material.color.b, 0);
+     assert.equal(label.material.color.r, 0);
+     assert.equal(label.material.color.g, 1);
+     assert.equal(label.material.color.b, 0);
 
-      deepEqual(label.position.toArray(), [0, 0, 0]);
-      equal(label.text, 'ab');
-      deepEqual(label.scale.toArray(), [64, 32, 1]);
+     assert.deepEqual(label.position.toArray(), [0, 0, 0]);
+     assert.equal(label.text, 'ab');
+     assert.deepEqual(label.scale.toArray(), [64, 32, 1]);
     });
 
     /**
@@ -100,16 +100,16 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      * The validity of the scaling factor was tested visually and by hand.
      *
      */
-    test('Test makeLabel works correctly with color name', function(assert) {
+   QUnit.test('Test makeLabel works correctly with color name', function(assert) {
       var label = makeLabel([0, 0, 0], 'DaysSinceExperimentStart', 'red');
 
-      equal(label.material.color.r, 1);
-      equal(label.material.color.g, 0);
-      equal(label.material.color.b, 0);
+     assert.equal(label.material.color.r, 1);
+     assert.equal(label.material.color.g, 0);
+     assert.equal(label.material.color.b, 0);
 
-      deepEqual(label.position.toArray(), [0, 0, 0]);
-      equal(label.text, 'DaysSinceExperimentStart');
-      deepEqual(label.scale.toArray(), [512, 32, 1]);
+     assert.deepEqual(label.position.toArray(), [0, 0, 0]);
+     assert.equal(label.text, 'DaysSinceExperimentStart');
+     assert.deepEqual(label.scale.toArray(), [512, 32, 1]);
     });
 
     /**
@@ -119,48 +119,48 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      * The validity of the scaling factor was tested visually and by hand.
      *
      */
-    test('Test makeLabel scales right', function(assert) {
+   QUnit.test('Test makeLabel scales right', function(assert) {
       var label = makeLabel([0, 0, 0], 'PC1 (35.17 %)', 0xFFFF00);
 
-      equal(label.material.color.r, 1);
-      equal(label.material.color.g, 1);
-      equal(label.material.color.b, 0);
+     assert.equal(label.material.color.r, 1);
+     assert.equal(label.material.color.g, 1);
+     assert.equal(label.material.color.b, 0);
 
-      deepEqual(label.position.toArray(), [0, 0, 0]);
-      equal(label.text, 'PC1 (35.17 %)');
+     assert.deepEqual(label.position.toArray(), [0, 0, 0]);
+     assert.equal(label.text, 'PC1 (35.17 %)');
 
-      deepEqual(label.scale.toArray(), [256, 32, 1]);
+     assert.deepEqual(label.scale.toArray(), [256, 32, 1]);
 
     });
 
-    test('Test makeArrow works correctly', function(assert) {
+   QUnit.test('Test makeArrow works correctly', function(assert) {
       var arrow = makeArrow([0, 0, 0], [9, 1, 1], 0x00ff00, 'test');
 
-      equal(arrow.line.material.color.r, 0);
-      equal(arrow.line.material.color.g, 1);
-      equal(arrow.line.material.color.b, 0);
+     assert.equal(arrow.line.material.color.r, 0);
+     assert.equal(arrow.line.material.color.g, 1);
+     assert.equal(arrow.line.material.color.b, 0);
 
-      equal(arrow.cone.material.color.r, 0);
-      equal(arrow.cone.material.color.g, 1);
-      equal(arrow.cone.material.color.b, 0);
+     assert.equal(arrow.cone.material.color.r, 0);
+     assert.equal(arrow.cone.material.color.g, 1);
+     assert.equal(arrow.cone.material.color.b, 0);
 
-      equal(arrow.position.x, 0);
-      equal(arrow.position.y, 0);
-      equal(arrow.position.z, 0);
+     assert.equal(arrow.position.x, 0);
+     assert.equal(arrow.position.y, 0);
+     assert.equal(arrow.position.z, 0);
 
-      deepEqual(arrow.cone.position.toArray(), arrow.label.position.toArray());
+     assert.deepEqual(arrow.cone.position.toArray(), arrow.label.position.toArray());
 
-      equal(arrow.quaternion.x, 0.07367677183061115);
-      equal(arrow.quaternion.y, 0);
-      equal(arrow.quaternion.z, -0.6630909464755004);
-      equal(arrow.quaternion.w, 0.7449041079191638);
+     assert.equal(arrow.quaternion.x, 0.07367677183061115);
+     assert.equal(arrow.quaternion.y, 0);
+     assert.equal(arrow.quaternion.z, -0.6630909464755004);
+     assert.equal(arrow.quaternion.w, 0.7449041079191638);
 
-      equal(arrow.line.name, 'test');
-      equal(arrow.cone.name, 'test');
-      equal(arrow.name, 'test');
+     assert.equal(arrow.line.name, 'test');
+     assert.equal(arrow.cone.name, 'test');
+     assert.equal(arrow.name, 'test');
     });
 
-    test('Test dispose method in arrow works', function(assert) {
+   QUnit.test('Test dispose method in arrow works', function(assert) {
       var arrow = makeArrow([0, 0, 0], [9, 1, 1], 0x00ff00, 'test');
       arrow.dispose();
 
@@ -168,7 +168,7 @@ requirejs(['draw', 'three'], function(draw, THREE) {
       assert.ok(arrow.label === null);
       assert.ok(arrow.cone === null);
 
-      equal(arrow.children.length, 0);
+     assert.equal(arrow.children.length, 0);
     });
 
     /**
@@ -176,8 +176,8 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      * Test that the SVG file is generated correctly.
      *
      */
-    test('Test formatSVGLegend works correctly', function() {
-      var res, names = [], colors = [], exp = '';
+   QUnit.test('Test formatSVGLegend works correctly',  function(assert) {
+      var res, names = [], colors = [], e = '';
 
       e = '<svg xmlns="http://www.w3.org/2000/svg" width="168" height="191">' +
       '<g><rect height="27" width="27" y="1" x="5" style="stroke-width:1;str' +
@@ -201,7 +201,7 @@ requirejs(['draw', 'three'], function(draw, THREE) {
       colors = ['#0000ff', '#ff00ff', '#000000', '#00ffff', '#aa00bb'];
 
       res = formatSVGLegend(names, colors);
-      deepEqual(res, e, 'SVG file is formatted correcly');
+     assert.deepEqual(res, e, 'SVG file is formatted correcly');
     });
 
     /**
@@ -209,8 +209,8 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      * Test that the SVG file is generated correctly when there are long labels.
      *
      */
-    test('Test formatSVGLegend works correctly with long names', function() {
-      var res, names = [], colors = [], exp = '';
+   QUnit.test('Test formatSVGLegend works correctly with long names',  function(assert) {
+      var res, names = [], colors = [], e = '';
 
       e = '<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="191"' +
       '><g><rect height="27" width="27" y="1" x="5" style="stroke-width:1;st' +
@@ -236,7 +236,7 @@ requirejs(['draw', 'three'], function(draw, THREE) {
       colors = ['#0000ff', '#ff00ff', '#000000', '#00ffff', '#aa00bb'];
 
       res = formatSVGLegend(names, colors);
-      deepEqual(res, e, 'SVG file is formatted correcly');
+     assert.deepEqual(res, e, 'SVG file is formatted correcly');
     });
   });
 });
