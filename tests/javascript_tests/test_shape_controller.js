@@ -17,7 +17,7 @@ requirejs([
     var DecompositionModel = model.DecompositionModel;
 
     QUnit.module('Shape Controller', {
-      beforeEach () {
+      beforeEach() {
         // setup function
         this.shapesAvailable = ['Sphere', 'Diamond', 'Cone', 'Cylinder',
                                 'Ring', 'Square', 'Icosahedron', 'Star'];
@@ -65,14 +65,14 @@ requirejs([
 
       },
 
-      afterEach () {
+      afterEach() {
         // teardown function
         this.sharedDecompositionViewDict = undefined;
         this.controller = undefined;
       }
     });
 
-   QUnit.test('Shapes dropdown',  function(assert) {
+   QUnit.test('Shapes dropdown', function(assert) {
       var values = [];
       shapes.$shapesDropdown.find('option').each(function() {
           values.push($(this).attr('value'));
@@ -94,7 +94,7 @@ requirejs([
 
      $(function() {
          assert.equal(controller.title, 'Shape');
-         
+
          var testColumn = controller.bodyGrid.getColumns()[0];
          assert.equal(testColumn.field, 'value');
 
@@ -105,7 +105,7 @@ requirejs([
 
     });
 
-   QUnit.test('Test getGeometry',  function(assert) {
+   QUnit.test('Test getGeometry', function(assert) {
       var geom;
 
       geom = shapes.getGeometry('Sphere', 0.06);
@@ -191,7 +191,7 @@ requirejs([
 
     });
 
-   QUnit.test('Testing toJSON',  function(assert) {
+   QUnit.test('Testing toJSON', function(assert) {
       const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                          'width:12px"></div>');
@@ -199,7 +199,7 @@ requirejs([
       var controller = new ShapeController(new UIState(),
                                            container,
                                            this.sharedDecompositionViewDict);
-      
+
       $(function() {
           controller.setMetadataField('DOB');
           var obs = controller.toJSON();
@@ -211,7 +211,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing fromJSON',  function(assert) {
+   QUnit.test('Testing fromJSON', function(assert) {
       const done = assert.async();
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
@@ -224,7 +224,7 @@ requirejs([
       var json = {'category': 'SampleID',
                   'data': {'PC.636': 'Square', 'PC.635': 'Sphere'}
       };
-      
+
       $(function() {
           controller.fromJSON(json);
           var idx = 0;
@@ -242,7 +242,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing toJSON (null)',  function(assert) {
+   QUnit.test('Testing toJSON (null)', function(assert) {
       const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                          'width:12px"></div>');
@@ -260,7 +260,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing fromJSON (null)',  function(assert) {
+   QUnit.test('Testing fromJSON (null)', function(assert) {
       const done = assert.async();
 
       var container = $('<div id="does-not-exist" style="height:11px; ' +
@@ -271,7 +271,7 @@ requirejs([
                                            this.sharedDecompositionViewDict);
 
       var json = {'category': null, 'data': {}};
-      
+
       $(function() {
           controller.fromJSON(json);
           var idx = 0;
@@ -279,7 +279,7 @@ requirejs([
               controller.decompViewDict.scatter.markers[idx].geometry.type,
               'SphereGeometry'
           );
-          
+
           idx += 1;
           assert.equal(
               controller.decompViewDict.scatter.markers[idx].geometry.type,

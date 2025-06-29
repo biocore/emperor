@@ -5,12 +5,12 @@ requirejs([
 ], function(_, $, AnimationDirector) {
   $(document).ready(function() {
 
-    QUnit.module('Animate',{
+    QUnit.module('Animate', {
 
-      beforeEach () {
+      beforeEach() {
         // setup function
         this.mappingFileHeaders = ['SampleID', 'LinkerPrimerSequence',
-				  'Treatment', 'DOB'];
+                                   'Treatment', 'DOB'];
         this.mappingFileData = {
           'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
           'PC.607': ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
@@ -96,7 +96,7 @@ requirejs([
         // (1) all timepoints with the same value
         // (2) a single timepoint
         this.mappingFileHeadersUnique = ['SampleID', 'LinkerPrimerSequence',
-					 'Treatment', 'DOB'];
+                                         'Treatment', 'DOB'];
         this.mappingFileDataUnique = {
           'PC.481': ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'A', '0'],
           'PC.607': ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'B', '0'],
@@ -109,7 +109,7 @@ requirejs([
           'PC.356': ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'D', '100000'] };
       },
 
-      afterEach () {
+      afterEach() {
         // teardown function
         this.mappingFileHeaders = null;
         this.mappingFileData = null;
@@ -124,7 +124,7 @@ requirejs([
      * and check that the attributes are set correctly.
      *
      */
-   QUnit.test('Test constructor',  function(assert) {
+   QUnit.test('Test constructor', function(assert) {
 
       var director = new AnimationDirector(this.mappingFileHeaders,
                                            this.mappingFileData,
@@ -200,13 +200,14 @@ requirejs([
                   'The number of trajectories is correct');
     });
 
-   QUnit.test('Test useless trajectories are removed',  function(assert) {
+   QUnit.test('Test useless trajectories are removed', function(assert) {
       var director = new AnimationDirector(this.mappingFileHeadersUnique,
                                            this.mappingFileDataUnique,
                                            this.coordinatesData, 'DOB',
                                            'Treatment', 2);
-     assert.equal(director.trajectories.length, 2, 'The number of trajectories is ' +
-          'correct');
+     assert.equal(director.trajectories.length,
+                  2,
+                  'The number of trajectories is correct');
      assert.equal(director.trajectories[0].metadataCategoryName, 'C', 'The ' +
           'category name (C) is assigned correctly');
      assert.equal(director.trajectories[1].metadataCategoryName, 'D', 'The ' +
@@ -223,7 +224,7 @@ requirejs([
      * missing arguments.
      *
      */
-   QUnit.test('Test constructor exceptions',  function(assert) {
+   QUnit.test('Test constructor exceptions', function(assert) {
       var result;
 
       // check this happens for all the properties
@@ -281,7 +282,7 @@ requirejs([
      * the correct value for different cases.
      *
      */
-   QUnit.test('Test maximum trajectory length method',  function(assert) {
+   QUnit.test('Test maximum trajectory length method', function(assert) {
 
       var director = new AnimationDirector(this.mappingFileHeaders,
                                            this.mappingFileData,
@@ -313,7 +314,7 @@ requirejs([
      * when needed.
      *
      */
-   QUnit.test('Test the current frame is updated correctly',  function(assert) {
+   QUnit.test('Test the current frame is updated correctly', function(assert) {
       var director = new AnimationDirector(this.mappingFileHeaders,
                                            this.mappingFileData,
                                            this.coordinatesData,
@@ -370,7 +371,7 @@ requirejs([
      * Test that the animation object ignores one-sample trajectories
      *
      */
-   QUnit.test('Test that tricky trajectories are initialized correctly', 
+   QUnit.test('Test that tricky trajectories are initialized correctly',
    function(assert) {
       var director = new AnimationDirector(this.mappingFileHeaders,
                                            this.mappingFileDataShort,

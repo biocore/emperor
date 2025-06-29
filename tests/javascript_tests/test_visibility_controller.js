@@ -15,7 +15,7 @@ requirejs([
     var DecompositionModel = model.DecompositionModel;
 
     QUnit.module('VisibilityController', {
-      beforeEach () {
+      beforeEach() {
         this.sharedDecompositionViewDict = {};
 
         var UIState1 = new UIState();
@@ -83,7 +83,7 @@ requirejs([
         this.jackknifedDecView = new DecompositionView(multiModel, 'scatter',
                                                        UIState1);
       },
-      afterEach () {
+      afterEach() {
         this.sharedDecompositionViewDict = undefined;
         $('#fooligans').remove();
         this.decomp = undefined;
@@ -101,7 +101,7 @@ requirejs([
           this.sharedDecompositionViewDict);
      assert.equal(controller.title, 'Visibility');
 
-       
+
      $(function() {
          var testColumn = controller.bodyGrid.getColumns()[0];
          assert.equal(testColumn.field, 'value');
@@ -216,7 +216,7 @@ requirejs([
      assert.equal(dv.ellipsoids[1].visible, true);
     });
 
-   QUnit.test('Testing toJSON',  function(assert) {
+   QUnit.test('Testing toJSON', function(assert) {
       const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
@@ -234,7 +234,7 @@ requirejs([
      });
     });
 
-   QUnit.test('Testing fromJSON',  function(assert) {
+   QUnit.test('Testing fromJSON', function(assert) {
       const done = assert.async();
       var json = {category: 'SampleID',
                   data: {'PC.636': false, 'PC.635': true}};
@@ -259,7 +259,7 @@ requirejs([
        });
     });
 
-   QUnit.test('Testing toJSON',  function(assert) {
+   QUnit.test('Testing toJSON', function(assert) {
       const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
@@ -276,7 +276,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing fromJSON',  function(assert) {
+   QUnit.test('Testing fromJSON', function(assert) {
       const done = assert.async();
       var json = {category: null,
                   data: {}};
@@ -284,7 +284,7 @@ requirejs([
                         'width:12px"></div>');
       var controller = new VisibilityController(new UIState(), container,
           this.sharedDecompositionViewDict);
-      
+
       $(function() {
           controller.fromJSON(json);
 

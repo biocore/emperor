@@ -14,7 +14,7 @@ requirejs([
     var DecompositionModel = model.DecompositionModel;
 
     QUnit.module('AnimationsController', {
-      beforeEach () {
+      beforeEach() {
         this.sharedDecompositionViewDict = {};
 
         var state = new UIState();
@@ -42,7 +42,7 @@ requirejs([
         this.sharedDecompositionViewDict.scatter = dv;
 
       },
-      afterEach () {
+      afterEach() {
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
       }
@@ -218,7 +218,7 @@ requirejs([
              container,
              this.sharedDecompositionViewDict
          );
-         
+
          $(function() {
              assert.equal(controller.getTrajectoryCategory(), '');
              assert.equal(controller.getGradientCategory(), '');
@@ -240,7 +240,7 @@ requirejs([
          });
     });
 
-   QUnit.test('Test colors setter/getter', function(assert) {     
+   QUnit.test('Test colors setter/getter', function(assert) {
      const done = assert.async();
      var container = $('<div id="does-not-exist" style="height:1000px; ' +
                           'width:12px"></div>');
@@ -252,7 +252,7 @@ requirejs([
 
        controller.setTrajectoryCategory('Treatment');
        controller.setGradientCategory('DOB');
-      
+
       $(function() {
           assert.deepEqual(controller.getColors(), {'Fast': '#ff0000'});
 
@@ -312,7 +312,7 @@ requirejs([
       controller.setGradientCategory('DOB');
       controller.setTrajectoryCategory('Treatment');
       controller.playing = true;
-      
+
       $(function() {
           controller._updateButtons();
 
@@ -323,7 +323,7 @@ requirejs([
           });
 
           controller._pauseButtonClicked();
-          
+
           setTimeout(function() {
               assert.equal(controller.playing, false);
               assert.equal(controller.$speed.slider('option', 'disabled'),
@@ -362,14 +362,14 @@ requirejs([
        assert.equal(cont.message.trajectory, 'Treatment');
        assert.equal(cont.type, 'animation-started');
       });
-      
+
       $(function() {
           controller._playButtonClicked();
 
           setTimeout(function() {
               assert.equal(controller.playing, true);
               assert.ok(controller.director !== null);
-              
+
               assert.equal(controller.$speed.slider('option', 'disabled'),
                            true);
               assert.equal(controller._grid.getOptions().editable, false);
@@ -495,7 +495,7 @@ requirejs([
      });
     });
 
-   QUnit.test('Testing toJSON',  function(assert) {
+   QUnit.test('Testing toJSON', function(assert) {
       const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:1000px; ' +
                         'width:12px"></div>');
@@ -519,11 +519,11 @@ requirejs([
                      'trajectoryCategory': 'Treatment',
                      'speed': 1.11, 'radius': 0.5, 'colors': {'Fast': 'black'}};
           assert.deepEqual(obs, exp);
-          done()
+          done();
       });
     });
 
-   QUnit.test('Testing fromJSON',  function(assert) {
+   QUnit.test('Testing fromJSON', function(assert) {
       const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:1000px; ' +
                         'width:12px"></div>');
@@ -537,7 +537,7 @@ requirejs([
       var json = {'gradientCategory': 'Treatment',
                   'trajectoryCategory': 'DOB',
                   'speed': 3.33, 'radius': 0.5, 'colors': {'Fast': 'blue'}};
-     
+
      $(function() {
          controller.fromJSON(json);
          assert.equal(controller.getTrajectoryCategory(), 'DOB');

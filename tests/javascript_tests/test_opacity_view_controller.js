@@ -16,7 +16,7 @@ requirejs([
     var Plottable = model.Plottable;
 
     QUnit.module('OpacityViewController', {
-      beforeEach () {
+      beforeEach() {
         this.sharedDecompositionViewDict = {};
 
         var UIState1 = new UIState();
@@ -61,7 +61,7 @@ requirejs([
         this.dv = new DecompositionView(this.multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = dv;
       },
-      afterEach () {
+      afterEach() {
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
         this.multiModel = undefined;
@@ -118,7 +118,7 @@ requirejs([
          assert.equal(this.dv.needsUpdate, true);
     });
 
-   QUnit.test('Testing toJSON',  function(assert) {
+   QUnit.test('Testing toJSON', function(assert) {
       const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
@@ -136,7 +136,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing fromJSON',  function(assert) {
+   QUnit.test('Testing fromJSON', function(assert) {
       const done = assert.async();
       var json = {category: 'SampleID', globalScale: '1.0', scaleVal: false,
                   data: {'PC.636': 0.1, 'PC.635': 1, 'PC.634': 0.7}};
@@ -160,7 +160,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing fromJSON scaled',  function(assert) {
+   QUnit.test('Testing fromJSON scaled', function(assert) {
       const done = assert.async();
       var json = {category: 'DOB', globalScale: '1.0', scaleVal: true,
                   data: {'20070314': 0.1, '20071112': 0.5}};
@@ -183,7 +183,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing toJSON (null)',  function(assert) {
+   QUnit.test('Testing toJSON (null)', function(assert) {
       const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
@@ -202,7 +202,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing fromJSON (null)',  function(assert) {
+   QUnit.test('Testing fromJSON (null)', function(assert) {
       const done = assert.async();
       var json = {category: null, globalScale: '1.0', scaleVal: false,
                   data: {}};
@@ -211,7 +211,7 @@ requirejs([
                         'width:12px"></div>');
       var controller = new OpacityViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
-      
+
       $(function() {
           controller.fromJSON(json);
           var idx = 0;
@@ -224,7 +224,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing getScale',  function(assert) {
+   QUnit.test('Testing getScale', function(assert) {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new OpacityViewController(new UIState(),

@@ -15,7 +15,7 @@ requirejs([
     var DecompositionModel = model.DecompositionModel;
 
     QUnit.module('AxesController', {
-      beforeEach () {
+      beforeEach() {
 
         var UIState1 = new UIState();
         this.sharedDecompositionViewDict = {};
@@ -81,7 +81,7 @@ requirejs([
         this.sharedDecompositionViewDict.biplot = dv;
 
       },
-      afterEach () {
+      afterEach() {
         // cleanup all the unwanted DOM elements
         // if (this.controller !== undefined) {
         //     this.controller._$backgroundColor.spectrum('destroy');
@@ -109,7 +109,7 @@ requirejs([
      var container = $('<div id="does-not-exist" style="height:1000px; ' +
                        'width:12px"></div>');
 
-     $("#qunit-fixture").append(container);
+     $('#qunit-fixture').append(container);
 
      var controller = new AxesController(new UIState(),
                                          container,
@@ -134,7 +134,7 @@ requirejs([
      });
     });
 
-   QUnit.test('Testing toJSON',  function(assert) {
+   QUnit.test('Testing toJSON', function(assert) {
      const done = assert.async();
      var container = $('<div id="does-not-exist" style="height:1000px; ' +
                        'width:12px"></div>');
@@ -144,7 +144,7 @@ requirejs([
                                          this.sharedDecompositionViewDict,
                                         QUnit.config.fixture);
 
-     var controllerProcrustes = new AxesController(new  UIState(),
+     var controllerProcrustes = new AxesController(new UIState(),
                                                    container,
                                                    {'scatter': this.dv},
                                                   QUnit.config.fixture);
@@ -171,7 +171,7 @@ requirejs([
      });
     });
 
-   QUnit.test('Testing fromJSON',  function(assert) {
+   QUnit.test('Testing fromJSON', function(assert) {
      const done = assert.async();
      var container = $('<div id="does-not-exist" style="height:1000px; ' +
                        'width:12px"></div>');
@@ -181,7 +181,7 @@ requirejs([
                                          this.sharedDecompositionViewDict,
                                         QUnit.config.fixture);
 
-     var controllerProcrustes = new AxesController(new  UIState(),
+     var controllerProcrustes = new AxesController(new UIState(),
                                                    container,
                                                    {'scatter': this.dv},
                                                   QUnit.config.fixture);
@@ -225,7 +225,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Test fromJSON issue #717',  function(assert) {
+   QUnit.test('Test fromJSON issue #717', function(assert) {
      const done = assert.async();
      var container = $('<div id="does-not-exist" style="height:1000px; ' +
                        'width:12px"></div>');
@@ -234,7 +234,7 @@ requirejs([
                                          container,
                                          this.sharedDecompositionViewDict,
                                         QUnit.config.fixture);
-     
+
      // update the inversion of two axes before loading from JSON
      controller.flipAxis(0);
      controller.flipAxis(1);
@@ -259,7 +259,7 @@ requirejs([
      });
     });
 
-   QUnit.test('Testing _colorChanged',  function(assert) {
+   QUnit.test('Testing _colorChanged', function(assert) {
      var container = $('<div id="does-not-exist" style="height:1000px; ' +
                        'width:12px"></div>');
 
@@ -289,7 +289,7 @@ requirejs([
                                          this.sharedDecompositionViewDict,
                                         QUnit.config.fixture);
 
-     var controllerProcrustes = new AxesController(new  UIState(),
+     var controllerProcrustes = new AxesController(new UIState(),
                                                    container,
                                                    {'scatter': this.dv},
                                                   QUnit.config.fixture);
@@ -316,7 +316,7 @@ requirejs([
                                          this.sharedDecompositionViewDict,
                                         QUnit.config.fixture);
 
-     var controllerProcrustes = new AxesController(new  UIState(),
+     var controllerProcrustes = new AxesController(new UIState(),
                                                    container,
                                                    {'scatter': this.dv},
                                                   QUnit.config.fixture);
@@ -341,7 +341,7 @@ requirejs([
                                          this.sharedDecompositionViewDict,
                                         QUnit.config.fixture);
 
-     var controllerProcrustes = new AxesController(new  UIState(),
+     var controllerProcrustes = new AxesController(new UIState(),
                                                    container,
                                                    {'scatter': this.dv},
                                                    QUnit.config.fixture);
@@ -365,7 +365,7 @@ requirejs([
                                          this.sharedDecompositionViewDict,
                                          QUnit.config.fixture);
 
-     var controllerProcrustes = new AxesController(new  UIState(),
+     var controllerProcrustes = new AxesController(new UIState(),
                                                    container,
                                                    {'scatter': this.dv},
                                                    QUnit.config.fixture);
@@ -394,32 +394,32 @@ requirejs([
       var res;
 
       $(function() {
-	  res = controller.$header.find(':checkbox');
+          res = controller.$header.find(':checkbox');
 
-	  // verify the checkboxes change as expected
-	  assert.deepEqual([res[0].checked, res[1].checked, res[2].checked],
-			   [false, false, false]);
-	  assert.deepEqual(controller._flippedAxes, [false, false, false]);
+          // verify the checkboxes change as expected
+          assert.deepEqual([res[0].checked, res[1].checked, res[2].checked],
+                           [false, false, false]);
+          assert.deepEqual(controller._flippedAxes, [false, false, false]);
 
-	  controller.flipAxis(1);
+          controller.flipAxis(1);
 
-	  res = controller.$header.find(':checkbox');
-	  assert.deepEqual([res[0].checked, res[1].checked, res[2].checked],
-			   [false, true, false]);
-	  assert.deepEqual(controller._flippedAxes, [false, true, false]);
+          res = controller.$header.find(':checkbox');
+          assert.deepEqual([res[0].checked, res[1].checked, res[2].checked],
+                           [false, true, false]);
+          assert.deepEqual(controller._flippedAxes, [false, true, false]);
 
-	  controller.flipAxis(1);
+          controller.flipAxis(1);
 
-	  res = controller.$header.find(':checkbox');
-	  assert.deepEqual([res[0].checked, res[1].checked, res[2].checked],
-			   [false, false, false]);
-	  assert.deepEqual(controller._flippedAxes, [false, false, false]);
+          res = controller.$header.find(':checkbox');
+          assert.deepEqual([res[0].checked, res[1].checked, res[2].checked],
+                           [false, false, false]);
+          assert.deepEqual(controller._flippedAxes, [false, false, false]);
 
-	  done();
+          done();
       });
     });
 
-   QUnit.test('Test updateVisibleAxes',  function(assert) {
+   QUnit.test('Test updateVisibleAxes', function(assert) {
      const done = assert.async();
 
      var container = $('<div id="does-not-exist" style="height:1000px; ' +
@@ -431,7 +431,7 @@ requirejs([
                                         QUnit.config.fixture);
 
       var res;
-       
+
       $(function() {
           // check that we can turn to a 2D plot
           controller.updateVisibleAxes(null, 2);

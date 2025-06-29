@@ -16,7 +16,7 @@ requirejs([
     var Plottable = model.Plottable;
 
     QUnit.module('ScaleViewController', {
-      beforeEach () {
+      beforeEach() {
         this.sharedDecompositionViewDict = {};
 
         var UIState1 = new UIState();
@@ -59,7 +59,7 @@ requirejs([
         this.dv = new DecompositionView(multiModel, 'scatter', UIState1);
         this.sharedDecompositionViewDict.biplot = this.dv;
       },
-      afterEach () {
+      afterEach() {
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
       }
@@ -129,7 +129,7 @@ requirejs([
          assert.equal(view.needsUpdate, true);
     });
 
-   QUnit.test('Testing toJSON',  function(assert) {
+   QUnit.test('Testing toJSON', function(assert) {
       const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
@@ -147,7 +147,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing fromJSON',  function(assert) {
+   QUnit.test('Testing fromJSON', function(assert) {
       const done = assert.async();
       var json = {category: 'SampleID', globalScale: '1.0', scaleVal: false,
                   data: {'PC.636': 1.1, 'PC.635': 1, 'PC.634': 0.7}};
@@ -176,7 +176,7 @@ requirejs([
      });
     });
 
-   QUnit.test('Testing fromJSON scaled',  function(assert) {
+   QUnit.test('Testing fromJSON scaled', function(assert) {
       const done = assert.async();
       var json = {category: 'DOB', globalScale: '1.0', scaleVal: true,
                   data: {'20070314': 1, '20071112': 5}};
@@ -219,7 +219,7 @@ requirejs([
      });
     });
 
-   QUnit.test('Testing toJSON (null)',  function(assert) {
+   QUnit.test('Testing toJSON (null)', function(assert) {
       const done = assert.async();
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
@@ -227,7 +227,7 @@ requirejs([
         container, this.sharedDecompositionViewDict);
       $(function() {
           controller.setMetadataField(null);
-        
+
           var obs = controller.toJSON();
           var exp = {category: null, globalScale: '1.0', scaleVal: false,
                      data: {}};
@@ -236,7 +236,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing fromJSON (null)',  function(assert) {
+   QUnit.test('Testing fromJSON (null)', function(assert) {
       const done = assert.async();
       var json = {category: null, globalScale: '1.0', scaleVal: false,
                   data: {}};
@@ -245,7 +245,7 @@ requirejs([
                         'width:12px"></div>');
       var controller = new ScaleViewController(new UIState(),
         container, this.sharedDecompositionViewDict);
-      
+
       $(function() {
           controller.fromJSON(json);
           var idx = 0;
@@ -265,7 +265,7 @@ requirejs([
       });
     });
 
-   QUnit.test('Testing getScale',  function(assert) {
+   QUnit.test('Testing getScale', function(assert) {
       var container = $('<div id="does-not-exist" style="height:11px; ' +
                         'width:12px"></div>');
       var controller = new ScaleViewController(new UIState(),

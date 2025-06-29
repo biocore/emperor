@@ -15,7 +15,7 @@ requirejs([
   $(document).ready(function() {
     QUnit.module('ScenePlotView3D', {
 
-      beforeEach () {
+      beforeEach() {
 
         this.UIState1 = new UIState();
         // global variable shared
@@ -72,7 +72,7 @@ requirejs([
         this.sharedDecompositionViewDict.biplot = dv2;
       },
 
-      afterEach () {
+      afterEach() {
         // created as global during the setup function
         this.sharedDecompositionViewDict = undefined;
 
@@ -153,7 +153,7 @@ requirejs([
       spv.control.dispose();
     });
 
-   QUnit.test('Test checkUpdate',  function(assert) {
+   QUnit.test('Test checkUpdate', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -176,7 +176,7 @@ requirejs([
       spv.control.dispose();
     });
 
-   QUnit.test('Test checkUpdate background color',  function(assert) {
+   QUnit.test('Test checkUpdate background color', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -192,7 +192,7 @@ requirejs([
       spv.control.dispose();
     });
 
-   QUnit.test('Test checkUpdate axes color',  function(assert) {
+   QUnit.test('Test checkUpdate axes color', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -208,7 +208,7 @@ requirejs([
       spv.control.dispose();
     });
 
-   QUnit.test('Test checkUpdate visible dimensions',  function(assert) {
+   QUnit.test('Test checkUpdate visible dimensions', function(assert) {
       // We will use SVGRenderer here and in the other tests as we cannot use
       // WebGLRenderer and test with phantom.js
       var renderer = new THREE.SVGRenderer({antialias: true});
@@ -372,7 +372,7 @@ requirejs([
 
       for (var i = 0; i < 3; i++) {
         let label = spv.scene.getObjectByName('emperor-axis-label-' + i);
-	assert.equal(label, undefined);
+        assert.equal(label, undefined);
       }
 
       // release the control back to the main page
@@ -418,7 +418,7 @@ requirejs([
      * Test the updateCameraAspectRatio method for ScenePlotView3D
      *
      */
-   QUnit.test('Test updateCameraAspectRatio',  function(assert) {
+   QUnit.test('Test updateCameraAspectRatio', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -450,7 +450,7 @@ requirejs([
      * Test the addDecompositionsToScene method for ScenePlotView3D
      *
      */
-   QUnit.test('Test addDecompositionsToScene',  function(assert) {
+   QUnit.test('Test addDecompositionsToScene', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -472,7 +472,7 @@ requirejs([
      * Test the addDecompositionsToScene method for ScenePlotView3D
      *
      */
-   QUnit.test('Test addDecompositionsToScene new objects',  function(assert) {
+   QUnit.test('Test addDecompositionsToScene new objects', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -493,8 +493,8 @@ requirejs([
                                        7.55971173665, 6.24945796136]};
       var md_headers = ['SampleID', 'LinkerPrimerSequence', 'Treatment', 'DOB'];
       var metadata = [
-	  ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-	  ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']
+        ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+        ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112']
       ];
 
       var decomp = new DecompositionModel(data, md_headers, metadata, 'arrow');
@@ -526,7 +526,7 @@ requirejs([
      * Test the resize method for ScenePlotView3D
      *
      */
-   QUnit.test('Test resize',  function(assert) {
+   QUnit.test('Test resize', function(assert) {
 
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
@@ -584,7 +584,7 @@ requirejs([
      * Test exceptions are correctly raised on unknown events
      *
      */
-   QUnit.test('Test off exceptions',  function(assert) {
+   QUnit.test('Test off exceptions', function(assert) {
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
@@ -606,7 +606,7 @@ requirejs([
      * Test exceptions are correctly raised on unknown events
      *
      */
-   QUnit.test('Test on exceptions',  function(assert) {
+   QUnit.test('Test on exceptions', function(assert) {
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,
@@ -791,7 +791,7 @@ requirejs([
      * Check we can add/remove subscribers
      *
      */
-   QUnit.test('Check removal and addition of subscribers',  function(assert) {
+   QUnit.test('Check removal and addition of subscribers', function(assert) {
       var renderer = new THREE.SVGRenderer({antialias: true});
       var spv = new ScenePlotView3D(this.UIState1, renderer,
                                     this.sharedDecompositionViewDict,

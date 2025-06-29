@@ -12,7 +12,7 @@ requirejs([
     var name, ids, coords, pct_var, md_headers, metadata;
 
     QUnit.module('Decomposition Model', {
-      beforeEach () {
+      beforeEach() {
         // setup function
         var name = 'pcoa';
         this.data = {
@@ -57,7 +57,7 @@ requirejs([
         ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
         ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126']];
       },
-      afterEach () {
+      afterEach() {
         // teardown function
         this.data = null;
         this.md_headers = null;
@@ -154,7 +154,8 @@ requirejs([
                                          0.140148]);
 
      assert.equal(dm.length, 9, 'Length set correctly');
-     assert.deepEqual(dm.axesNames, ['pcoa 1', 'pcoa 2', 'pcoa 3', 'pcoa 4', 'pcoa 5',
+     assert.deepEqual(dm.axesNames,
+                      ['pcoa 1', 'pcoa 2', 'pcoa 3', 'pcoa 4', 'pcoa 5',
                                'pcoa 6', 'pcoa 7', 'pcoa 8']);
 
      assert.deepEqual(dm.edges, []);
@@ -182,7 +183,7 @@ requirejs([
           }, Error);
     });
 
-   QUnit.test('Test axesNames',  function(assert) {
+   QUnit.test('Test axesNames', function(assert) {
       var names = ['PC 1', 'PC 2', 'PC 3', 'PC 4', 'PC 5', 'PC 6', 'PC 7',
                    'PC 8', 'PC 9'];
       this.data.axes_names = names;
@@ -217,34 +218,35 @@ requirejs([
      * not the same as the number of ids
      *
      */
-   QUnit.test('Test constructor excepts num rows coord != num ids',  function(assert) {
-      var result;
+   QUnit.test('Test constructor excepts num rows coord != num ids',
+     function(assert) {
+         var result;
 
-     assert.throws(
-          function() {
-            var err_coords = [
-              [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070, 0.072969,
-              -0.229889, -0.046599],
-              [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485, -0.115211,
-              -0.112864, 0.064794],
-              [0.228820, -0.130142, -0.287149, 0.086450, 0.044295, 0.206043,
-              0.031000, 0.071992],
-              [0.042263, -0.013968, 0.063531, -0.346121, -0.127814, 0.013935,
-              0.030021, 0.140148],
-              [0.280399, -0.006013, 0.023485, -0.046811, -0.146624, 0.005670,
-              -0.035430, -0.255786],
-              [0.232873, 0.139788, 0.322871, 0.183347, 0.020466, 0.054059,
-              -0.036625, 0.099824],
-              [0.170518, -0.194113, -0.030897, 0.019809, 0.155100, -0.279924,
-              0.057609, 0.024248]];
-            this.data.coordinates = err_coords;
-            result = new DecompositionModel(this.data, this.md_headers,
-                                            this.metadata);
-          },
-          Error,
-          'An error is raised if the number of rows in the coords parameter ' +
-            'does not correspond to the number of ids'
-            );
+         assert.throws(
+             function() {
+                 var err_coords = [
+                     [-0.276542, -0.144964, 0.066647, -0.067711, 0.176070,
+                     0.072969, -0.229889, -0.046599],
+                     [-0.237661, 0.046053, -0.138136, 0.159061, -0.247485,
+                     -0.115211, -0.112864, 0.064794],
+                     [0.228820, -0.130142, -0.287149, 0.086450, 0.044295,
+                      0.206043, 0.031000, 0.071992],
+                     [0.042263, -0.013968, 0.063531, -0.346121, -0.127814,
+                      0.013935, 0.030021, 0.140148],
+                     [0.280399, -0.006013, 0.023485, -0.046811, -0.146624,
+                     0.005670, -0.035430, -0.255786],
+                     [0.232873, 0.139788, 0.322871, 0.183347, 0.020466,
+                     0.054059, -0.036625, 0.099824],
+                     [0.170518, -0.194113, -0.030897, 0.019809, 0.155100,
+                      -0.279924, 0.057609, 0.024248]];
+                 this.data.coordinates = err_coords;
+                 result = new DecompositionModel(this.data, this.md_headers,
+                                                 this.metadata);
+             },
+             Error,
+             'An error is raised if the number of rows in the coords ' +
+             'parameter does not correspond to the number of ids'
+         );
     });
 
     /**
@@ -292,20 +294,21 @@ requirejs([
      * pct_var does not correspond to the number of coords.
      *
      */
-   QUnit.test('Test constructor excepts num pct_var != num coords',  function(assert) {
-      var result;
-     assert.throws(
-          function(assert) {
-            var err_pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
-            11.217215823, 10.024774995, 8.22835130237];
-            this.data.percents_explained = err_pct_var;
-            result = new DecompositionModel(this.data, this.md_headers,
-                                            this.metadata);
-          },
-          Error,
-          'An error is raised if the number of percentage explained does not ' +
-          'correspond to the number of coords'
-          );
+   QUnit.test('Test constructor excepts num pct_var != num coords',
+     function(assert) {
+         var result;
+         assert.throws(
+             function(assert) {
+                 var err_pct_var = [26.6887048633, 16.2563704022, 13.7754129161,
+                                    11.217215823, 10.024774995, 8.22835130237];
+                 this.data.percents_explained = err_pct_var;
+                 result = new DecompositionModel(this.data, this.md_headers,
+                                                 this.metadata);
+             },
+             Error,
+             'An error is raised if the number of percentage explained does ' +
+             'not correspond to the number of coords'
+         );
     });
 
     /**
@@ -313,17 +316,18 @@ requirejs([
      * Test the initializer raises an error if no coordinates are provided.
      *
      */
-   QUnit.test('Test constructor excepts when no coords are provided',  function(assert) {
-      var result;
-     assert.throws(
-          function() {
-            this.data.coordinates = undefined;
-            result = new DecompositionModel(this.data, this.md_headers,
-                                            this.metadata);
-          },
-          Error,
-          'An error is raised if no coordinates are provided'
-          );
+   QUnit.test('Test constructor excepts when no coords are provided',
+     function(assert) {
+         var result;
+         assert.throws(
+             function() {
+                 this.data.coordinates = undefined;
+                 result = new DecompositionModel(this.data, this.md_headers,
+                                                 this.metadata);
+             },
+             Error,
+             'An error is raised if no coordinates are provided'
+         );
     });
 
     /**
@@ -332,23 +336,24 @@ requirejs([
      * is not the same as the number of ids
      *
      */
-   QUnit.test('Test constructor excepts num rows metadata != num ids',  function(assert) {
-      var result;
+   QUnit.test('Test constructor excepts num rows metadata != num ids',
+     function(assert) {
+         var result;
 
-     assert.throws(
-          function() {
-            var err_metadata = [
-              ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-              ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
-              ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
-              ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116']];
-            result = new DecompositionModel(this.data, this.md_headers,
-                                            err_metadata);
-          },
-          Error,
-          'An error is raised if the number of rows in the metadata parameter' +
-          ' does not correspond to the number of ids'
-          );
+         assert.throws(
+             function() {
+                 var err_metadata = [
+                     ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+                     ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
+                     ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+                     ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116']];
+                 result = new DecompositionModel(this.data, this.md_headers,
+                                                 err_metadata);
+             },
+             Error,
+             'An error is raised if the number of rows in the metadata ' +
+             'parameter does not correspond to the number of ids'
+         );
     });
 
     /**
@@ -357,28 +362,31 @@ requirejs([
      * is not the same as the number of metadata headers
      *
      */
-   QUnit.test('Test constructor excepts metadata cols != num headers',  function(assert) {
-      var result;
+   QUnit.test('Test constructor excepts metadata cols != num headers',
+     function(assert) {
+         var result;
 
-     assert.throws(
-          function() {
-            var err_metadata = [
-              ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
-              ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
-              ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
-              ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
-              ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
-              ['PC.593', 'YATGCTGCCTCCCGTAGGAGT', '20080116'],
-              ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
-              ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
-              ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061126']];
-            result = new DecompositionModel(this.data, this.md_headers,
-                                            err_metadata);
-          },
-          Error,
-          'An error is raised if the number of elements in each row in the ' +
-          'metadata parameter does not match the number of metadata columns'
-          );
+         assert.throws(
+             function() {
+                 var err_metadata = [
+                     ['PC.636', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20070314'],
+                     ['PC.635', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20071112'],
+                     ['PC.356', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+                     ['PC.481', 'YATGCTGCCTCCCGTAGGAGT', 'Fast', '20080116'],
+                     ['PC.354', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20071210'],
+                     ['PC.593', 'YATGCTGCCTCCCGTAGGAGT', '20080116'],
+                     ['PC.355', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+                     ['PC.607', 'YATGCTGCCTCCCGTAGGAGT', 'Control', '20061218'],
+                     ['PC.634', 'YATGCTGCCTCCCGTAGGAGT', 'Control',
+                     '20061126']];
+                 result = new DecompositionModel(this.data, this.md_headers,
+                                                 err_metadata);
+             },
+             Error,
+             'An error is raised if the number of elements in each row in ' +
+             'the metadata parameter does not match the number of metadata ' +
+             'columns'
+         );
     });
 
     /**
@@ -386,7 +394,7 @@ requirejs([
      * Test hasConfidenceIntervals returns true
      *
      */
-   QUnit.test('Test hasConfidenceIntervals (true)',  function(assert) {
+   QUnit.test('Test hasConfidenceIntervals (true)', function(assert) {
       this.data.ci = [[2, 1, 2, 0, 2, 2, 1, 1],
                       [0, 1, 1, 0, 0, 1, 2, 0],
                       [2, 1, 2, 1, 1, 1, 2, 0],
@@ -406,7 +414,7 @@ requirejs([
      * Test hasConfidenceIntervals returns false
      *
      */
-   QUnit.test('Test hasConfidenceIntervals (false)',  function(assert) {
+   QUnit.test('Test hasConfidenceIntervals (false)', function(assert) {
       this.data.ci = [];
       var dm = new DecompositionModel(this.data, this.md_headers,
                                       this.metadata);
@@ -418,7 +426,7 @@ requirejs([
      * Test getPlottableByID returns the correct plottable object
      *
      */
-   QUnit.test('Test getPlottableByID',  function(assert) {
+   QUnit.test('Test getPlottableByID', function(assert) {
       var dm = new DecompositionModel(this.data, this.md_headers,
                                       this.metadata);
 
@@ -440,18 +448,19 @@ requirejs([
      * DecompositionModel object
      *
      */
-   QUnit.test('Test getPlottableByID excepts unrecognized id',  function(assert) {
-      var result;
-     assert.throws(
-          function() {
-            var dm = new DecompositionModel(this.data, this.md_headers,
-                                            this.metadata);
-            result = dm.getPlottableByID('Does_not_exist');
-          },
-          Error,
-          'An error is raised if the id is not present in the Decomposition ' +
-          'Model object'
-          );
+   QUnit.test('Test getPlottableByID excepts unrecognized id',
+     function(assert) {
+         var result;
+         assert.throws(
+             function() {
+                 var dm = new DecompositionModel(this.data, this.md_headers,
+                                                 this.metadata);
+                 result = dm.getPlottableByID('Does_not_exist');
+             },
+             Error,
+             'An error is raised if the id is not present in the ' +
+             'Decomposition Model object'
+         );
     });
 
     /**
@@ -459,7 +468,7 @@ requirejs([
      * Test getPlottableByIDs returns the correct list of plottables
      *
      */
-   QUnit.test('Test getPlottableByIDs',  function(assert) {
+   QUnit.test('Test getPlottableByIDs', function(assert) {
       var dm = new DecompositionModel(this.data, this.md_headers,
                                       this.metadata);
 
@@ -494,19 +503,20 @@ requirejs([
      *
      */
 
-   QUnit.test('Test getPlottableByIDs excepts unrecognized id',  function(assert) {
-      var result;
-     assert.throws(
-          function() {
-            var dm = new DecompositionModel(this.data, this.md_headers,
-                                            this.metadata);
-            result = dm.getPlottableByIDs(['PC.636', 'PC.354',
-                                           'Does_not_exist']);
-          },
-          Error,
-          'An error is raised if one of the ids is not present in the ' +
-          'Decomposition Model object'
-          );
+   QUnit.test('Test getPlottableByIDs excepts unrecognized id',
+     function(assert) {
+         var result;
+         assert.throws(
+             function() {
+                 var dm = new DecompositionModel(this.data, this.md_headers,
+                                                 this.metadata);
+                 result = dm.getPlottableByIDs(['PC.636', 'PC.354',
+                                                'Does_not_exist']);
+             },
+             Error,
+             'An error is raised if one of the ids is not present in the ' +
+                 'Decomposition Model object'
+         );
     });
 
     /**
@@ -514,7 +524,7 @@ requirejs([
      * Test _getMetadataIndex returns the correct index of a category
      *
      */
-   QUnit.test('Test _getMetadataIndex',  function(assert) {
+   QUnit.test('Test _getMetadataIndex', function(assert) {
       var dm = new DecompositionModel(this.data, this.md_headers,
                                       this.metadata);
      assert.equal(dm._getMetadataIndex('Treatment'), 2,
@@ -527,18 +537,19 @@ requirejs([
      * exists in the DecompositionModel
      *
      */
-   QUnit.test('Test _getMetadataIndex excepts unrecognized header',  function(assert) {
-      var result;
-     assert.throws(
-          function() {
-            var dm = new DecompositionModel(this.data, this.md_headers,
-                                            this.metadata);
-            result = dm._getMetadataIndex('Does_not_exist');
-          },
-          Error,
-          'An error is raised if the metadata header does not exist in the ' +
-          'Decomposition Model object'
-          );
+   QUnit.test('Test _getMetadataIndex excepts unrecognized header',
+     function(assert) {
+         var result;
+         assert.throws(
+             function() {
+                 var dm = new DecompositionModel(this.data, this.md_headers,
+                                                 this.metadata);
+                 result = dm._getMetadataIndex('Does_not_exist');
+             },
+             Error,
+             'An error is raised if the metadata header does not exist in ' +
+             'the Decomposition Model object'
+         );
     });
 
     /**
@@ -547,7 +558,7 @@ requirejs([
      * with the metadata category value associated.
      *
      */
-   QUnit.test('Test getPlottablesByMetadataCategoryValue',  function(assert) {
+   QUnit.test('Test getPlottablesByMetadataCategoryValue', function(assert) {
       var dm = new DecompositionModel(this.data, this.md_headers,
                                       this.metadata);
       var obs = dm.getPlottablesByMetadataCategoryValue('Treatment',
@@ -595,8 +606,8 @@ requirejs([
      * metadata header does not exist in the Decomposition Model object.
      *
      */
-   QUnit.test('Test getPlottablesByMetadataCategoryValue excepts unrecognized ' +
-        'header', function(assert) {
+   QUnit.test('Test getPlottablesByMetadataCategoryValue excepts ' +
+              'unrecognized header', function(assert) {
           var result;
          assert.throws(
               function() {
@@ -618,8 +629,8 @@ requirejs([
      * values is not found in the given category
      *
      */
-   QUnit.test('Tests getPlottablesByMetadataCategoryValue excepts unrecognized ' +
-        'metadata category value', function(assert) {
+   QUnit.test('Tests getPlottablesByMetadataCategoryValue excepts ' +
+        'unrecognized metadata category value', function(assert) {
           var result;
          assert.throws(
               function() {
@@ -640,7 +651,7 @@ requirejs([
      * Test the function used to find minimum and maximum values works.
      *
      */
-   QUnit.test('Test the _minMaxReduce function',  function(assert) {
+   QUnit.test('Test the _minMaxReduce function', function(assert) {
         var p = new Plottable('PC.635', ['PC.635', 'YATGCTGCCTCCCGTAGGAGT',
                               'Fast', '20071112'], [-0.237661, 0.046053,
                               -0.138136, 0.159061, -0.247485, -0.115211,
@@ -660,7 +671,7 @@ requirejs([
      * metadata category of mixed types.
      *
      */
-   QUnit.test('Test getUniqueValuesByCategory mixed types',  function(assert) {
+   QUnit.test('Test getUniqueValuesByCategory mixed types', function(assert) {
       var mixedValues = ['b', '-1', '3', '0', '-5', '100', 'b', 'a', 'A'];
 
       this.metadata = _.map(this.metadata, function(row, index) {
@@ -674,7 +685,9 @@ requirejs([
       var obs = dm.getUniqueValuesByCategory('Mixed');
       var exp = ['a', 'A', 'b', '-5', '-1', '0', '3', '100'];
 
-     assert.deepEqual(obs, exp, 'Unique metadata values retrieved successfully');
+     assert.deepEqual(obs,
+                      exp,
+                      'Unique metadata values retrieved successfully');
     });
 
     /**
@@ -683,13 +696,15 @@ requirejs([
      * metadata category
      *
      */
-   QUnit.test('Test getUniqueValuesByCategory',  function(assert) {
+   QUnit.test('Test getUniqueValuesByCategory', function(assert) {
       var dm = new DecompositionModel(this.data, this.md_headers,
                                       this.metadata);
       var obs = dm.getUniqueValuesByCategory('Treatment').sort();
       var exp = ['Control', 'Fast'];
 
-     assert.deepEqual(obs, exp, 'Unique metadata values retrieved successfully');
+     assert.deepEqual(obs,
+                      exp,
+                      'Unique metadata values retrieved successfully');
     });
 
     /**
@@ -720,7 +735,7 @@ requirejs([
      * in the decomposition object
      *
      */
-   QUnit.test('Test apply',  function(assert) {
+   QUnit.test('Test apply', function(assert) {
       var dm = new DecompositionModel(this.data, this.md_headers,
                                       this.metadata);
       var obs = dm.apply(function(pl) {return pl.name;});
@@ -734,13 +749,15 @@ requirejs([
      * Test axes names are fixed appropriately.
      *
      */
-   QUnit.test('Fix axes names for scikit-bio',  function(assert) {
+   QUnit.test('Fix axes names for scikit-bio', function(assert) {
       this.data.axes_names = [0, 1, 2, 3, 4, 5, 6, 7, 8];
       var expected = ['pcoa 1', 'pcoa 2', 'pcoa 3', 'pcoa 4', 'pcoa 5',
                       'pcoa 6', 'pcoa 7', 'pcoa 8', 'pcoa 9'];
       var dm = new DecompositionModel(this.data, this.md_headers,
                                       this.metadata);
-     assert.deepEqual(dm.axesNames, expected, 'Integer names replaced correctly');
+     assert.deepEqual(dm.axesNames,
+                      expected,
+                      'Integer names replaced correctly');
     });
 
     /**
@@ -748,7 +765,7 @@ requirejs([
      * Test axes names are fixed appropriately with custom axes.
      *
      */
-   QUnit.test('Fix axes names for scikit-bio (custom axes)',  function(assert) {
+   QUnit.test('Fix axes names for scikit-bio (custom axes)', function(assert) {
       this.data.axes_names = ['days', 'ph', 0, 1, 2, 3, 4, 5, 6];
       this.data.name = undefined;
       var expected = ['days', 'ph', 'Axis 1', 'Axis 2', 'Axis 3', 'Axis 4',
@@ -763,7 +780,7 @@ requirejs([
      * Test axes names are not modified because they don't match scikit-bio
      *
      */
-   QUnit.test('Do not fix axes names for scikit-bio',  function(assert) {
+   QUnit.test('Do not fix axes names for scikit-bio', function(assert) {
       this.data.axes_names = ['days', 'ph', 0, 1, 20, 3, 4, 5, 6];
       var expected = ['days', 'ph', 0, 1, 20, 3, 4, 5, 6];
       var dm = new DecompositionModel(this.data, this.md_headers,
@@ -776,7 +793,7 @@ requirejs([
      * Tests the toString method
      *
      */
-   QUnit.test('Test toString',  function(assert) {
+   QUnit.test('Test toString', function(assert) {
       var data = {sample_ids: ['samp1', 'samp2'],
                   coordinates: [[1, 2, 3], [4, 5, 6]],
                   percents_explained: [0.5, 0.4, 0.1],

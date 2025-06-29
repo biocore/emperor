@@ -17,7 +17,7 @@ requirejs([
     var Plottable = model.Plottable;
 
     QUnit.module('ColorViewController', {
-      beforeEach () {
+      beforeEach() {
         this.sharedDecompositionViewDict = {};
 
         var UIState1 = new UIState();
@@ -90,7 +90,7 @@ requirejs([
                                                        'scatter',
                                                        UIState2);
       },
-      afterEach () {
+      afterEach() {
         this.sharedDecompositionViewDict = undefined;
         this.jackknifedDecView = undefined;
         $('#fooligans').remove();
@@ -116,7 +116,8 @@ requirejs([
            assert.equal(testColumn.field, 'value');
 
            // verify the color value is set properly
-           assert.equal(controller.$colormapSelect.val(), 'discrete-coloring-qiime');
+           assert.equal(controller.$colormapSelect.val(),
+                        'discrete-coloring-qiime');
            assert.equal(controller.$select.val(), null);
            assert.equal(controller.$searchBar.val(), '');
            assert.equal(controller.$searchBar.is(':hidden'), true);
@@ -128,7 +129,7 @@ requirejs([
        });
     });
 
-   QUnit.test('Is coloring continuous',  function(assert) {
+   QUnit.test('Is coloring continuous', function(assert) {
       const done = assert.async();
       var container = $('<div id="no-exist" style="height:11px; ' +
                         'width:12px"></div>');
@@ -159,7 +160,7 @@ requirejs([
        });
     });
 
-   QUnit.test('Test _nonNumericPlottables',  function(assert) {
+   QUnit.test('Test _nonNumericPlottables', function(assert) {
       const done = assert.async();
       var container = $('<div id="no-exist" style="height:11px; ' +
                         'width:12px"></div>');
@@ -210,29 +211,30 @@ requirejs([
        });
     });
 
-   QUnit.test('Test discrete colors are retrieved correctly',  function(assert) {
+   QUnit.test('Test discrete colors are retrieved correctly', function(assert) {
      assert.deepEqual(ColorViewController.getDiscreteColors([0, 1, 2]),
                 {0: '#ff0000', 1: '#0000ff', 2: '#f27304'});
     });
 
-   QUnit.test('Test discrete colors are retrieved on roll-over',  function(assert) {
-      var fifteen = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-      var obs = ColorViewController.getDiscreteColors(fifteen, 'Pastel1');
-      var exp = {'0': '#fbb4ae', '1': '#b3cde3', '2': '#ccebc5',
-                 '3': '#decbe4', '4': '#fed9a6', '5': '#ffffcc',
-                 '6': '#e5d8bd', '7': '#fddaec', '8': '#f2f2f2',
-                 '9': '#fbb4ae', '10': '#b3cde3', '11': '#ccebc5',
-                 '12': '#decbe4', '13': '#fed9a6', '14': '#ffffcc'};
-     assert.deepEqual(obs, exp);
+   QUnit.test('Test discrete colors are retrieved on roll-over',
+     function(assert) {
+         var fifteen = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+         var obs = ColorViewController.getDiscreteColors(fifteen, 'Pastel1');
+         var exp = {'0': '#fbb4ae', '1': '#b3cde3', '2': '#ccebc5',
+                    '3': '#decbe4', '4': '#fed9a6', '5': '#ffffcc',
+                    '6': '#e5d8bd', '7': '#fddaec', '8': '#f2f2f2',
+                    '9': '#fbb4ae', '10': '#b3cde3', '11': '#ccebc5',
+                    '12': '#decbe4', '13': '#fed9a6', '14': '#ffffcc'};
+         assert.deepEqual(obs, exp);
     });
 
-   QUnit.test('Test discrete colors with other maps',  function(assert) {
+   QUnit.test('Test discrete colors with other maps', function(assert) {
      assert.deepEqual(ColorViewController.getDiscreteColors([0], 'Set1'),
                 {0: '#e41a1c'});
     });
 
 
-   QUnit.test('Test getScaledColors',  function(assert) {
+   QUnit.test('Test getScaledColors', function(assert) {
       var five = ['0', '1', '2', '3', '4'];
       var color = ColorViewController.getScaledColors(five, 'Viridis');
      assert.deepEqual(color, [{0: '#440154', 1: '#3f4a8a', 2: '#26838f',
@@ -348,35 +350,37 @@ requirejs([
       ]);
     });
 
-   QUnit.test('Test getScaledColors: even number of vals & an outlier',  function(assert) {
-      var vals = ['5', '6', '7', '10000'];
-      var color = ColorViewController.getScaledColors(vals, 'PiYG');
-      // The outlier's effect is so strong that 5, 6, and 7 all get assigned
-      // the same hex color (because hex color doesn't have _that_ much
-      // resolution). This is as expected.
-     assert.deepEqual(
-          color[0],
-          {5: '#8e0152', 6: '#8e0152', 7: '#8e0152', 10000: '#276419'}
-      );
-      // Check that the gradient includes 0%, 50%, and 100% with the correct
-      // colors. Furthermore, check that the 100% stop color is the last one
-      // in the gradient.
-      // Note that the color at 50% should exactly correspond to the middle of
-      // this color map (i.e. if you go to Chroma.js' docs and type in
-      // chroma.scale("PiYG")(0.5) you should get #f7f7f7). The reason for this
-      // is that the range [0, 100] has 101 elements (i.e. an odd number of
-      // elements), of which 50 is the middle element.
-      // (This is also the case for the Viridis test above.)
-     assert.ok(/<stop offset="0%" stop-color="#8e0152"\/>/.test(color[1]));
-     assert.ok(/<stop offset="50%" stop-color="#f7f7f7"\/>/.test(color[1]));
-     assert.ok(
-          /<stop offset="100%" stop-color="#276419"\/><\/linearGradient>/.test(
-              color[1]
-          )
-      );
+   QUnit.test('Test getScaledColors: even number of vals & an outlier',
+     function(assert) {
+         var vals = ['5', '6', '7', '10000'];
+         var color = ColorViewController.getScaledColors(vals, 'PiYG');
+         // The outlier's effect is so strong that 5, 6, and 7 all get assigned
+         // the same hex color (because hex color doesn't have _that_ much
+         // resolution). This is as expected.
+         assert.deepEqual(
+             color[0],
+             {5: '#8e0152', 6: '#8e0152', 7: '#8e0152', 10000: '#276419'}
+         );
+         // Check that the gradient includes 0%, 50%, and 100% with the correct
+         // colors. Furthermore, check that the 100% stop color is the last one
+         // in the gradient.
+         // Note that the color at 50% should exactly correspond to the middle
+         // of this color map (i.e. if you go to Chroma.js' docs and type in
+         // chroma.scale("PiYG")(0.5) you should get #f7f7f7). The reason for
+         // this is that the range [0, 100] has 101 elements (i.e. an odd number
+         // of elements), of which 50 is the middle element.  (This is also the
+         // case for the Viridis test above.)
+         assert.ok(/<stop offset="0%" stop-color="#8e0152"\/>/.test(color[1]));
+         assert.ok(/<stop offset="50%" stop-color="#f7f7f7"\/>/.test(color[1]));
+         assert.ok(
+             /<stop offset="100%" stop-color="#276419"\/><\/linearGradient>/
+                 .test(
+                     color[1]
+                 )
+         );
     });
 
-   QUnit.test('Test getInterpolatedColors',  function(assert) {
+   QUnit.test('Test getInterpolatedColors', function(assert) {
       var five = ['0', '1', '2', '3', '4'];
       var color = ColorViewController.getInterpolatedColors(five, 'Viridis');
      assert.deepEqual(color, {
@@ -385,19 +389,21 @@ requirejs([
       });
     });
 
-   QUnit.test('Test ColorViewController.getScaledColors exceptions',  function(assert) {
-      var five = ['0', 'string1', 'string2', 'string3', 'string4'];
+   QUnit.test('Test ColorViewController.getScaledColors exceptions',
+     function(assert) {
+         var five = ['0', 'string1', 'string2', 'string3', 'string4'];
 
-     assert.throws(
-          function() {
-            var color = ColorViewController.getScaledColors(five, 'Viridis');
-          },
-          Error,
-          'An error is raised if there are not 2+ numeric values'
+         assert.throws(
+             function() {
+                 var color = ColorViewController.getScaledColors(five,
+                                                                 'Viridis');
+             },
+             Error,
+             'An error is raised if there are not 2+ numeric values'
           );
     });
 
-   QUnit.test('Test ColorViewController.getColorList works',  function(assert) {
+   QUnit.test('Test ColorViewController.getColorList works', function(assert) {
       var one, five, ten, twenty, scaled, colors;
 
       one = [0];
@@ -408,7 +414,8 @@ requirejs([
       scaled = [0, 1, 2, 3, 7, 20, 50];
 
       colors = ColorViewController.getColorList(scaled, 'Blues', false, true);
-     assert.deepEqual(colors[0], {'0': '#f7fbff', '1': '#f3f8fe', '2': '#eff6fc',
+     assert.deepEqual(colors[0],
+                      {'0': '#f7fbff', '1': '#f3f8fe', '2': '#eff6fc',
                             '20': '#94c4df', '3': '#ebf3fb', '50': '#08306b',
                             '7': '#dbe9f6'});
      assert.equal(colors[1],
@@ -539,7 +546,8 @@ requirejs([
       // assigned colors
       var interpolator = chroma.scale(chroma.brewer.BrBG).domain([0, 19]);
       for (var i = 0; i < 19; i++) {
-         assert.deepEqual(interpolatedColorList[0][String(i)], interpolator(i).hex());
+         assert.deepEqual(interpolatedColorList[0][String(i)],
+                          interpolator(i).hex());
       }
       // Lastly, check that the second element in interpolatedColorList is
       // undefined (since we're not drawing a gradient)
@@ -552,25 +560,27 @@ requirejs([
 
     });
 
-   QUnit.test('Test ColorViewController.getColorList exceptions',  function(assert) {
-      var five;
-      five = [0, 1, 2, 3, 4];
-     assert.throws(
-          function() {
-            ColorViewController.getColorList(five, false, 'Non-existant');
-          },
-          Error,
-          'An error is raised if the colormap does not exist'
-          );
+   QUnit.test('Test ColorViewController.getColorList exceptions',
+     function(assert) {
+         var five;
+         five = [0, 1, 2, 3, 4];
+         assert.throws(
+             function() {
+                 ColorViewController.getColorList(five, false, 'Non-existant');
+             },
+             Error,
+             'An error is raised if the colormap does not exist'
+         );
 
-      five = [0, 'string1', 'string2', 'string3', 'string4'];
-     assert.throws(
-          function() {
-            ColorViewController.getColorList(five, 'Blues', false, true);
-          },
-          Error,
-          'Error is raised if there are less than 2 numeric values when scaled'
-          );
+         five = [0, 'string1', 'string2', 'string3', 'string4'];
+         assert.throws(
+             function() {
+                 ColorViewController.getColorList(five, 'Blues', false, true);
+             },
+             Error,
+             'Error is raised if there are less than 2 numeric values when ' +
+             'scaled'
+         );
     });
 
    QUnit.test('Testing setPlottableAttributes helper function',
@@ -640,7 +650,7 @@ requirejs([
      assert.equal(dv.ellipsoids[1].material.color.getHexString(), '000000');
     });
 
-   QUnit.test('Testing toJSON',  function(assert) {
+   QUnit.test('Testing toJSON', function(assert) {
       const done = assert.async();
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(new UIState(),
@@ -674,10 +684,10 @@ requirejs([
       // The new version of SlickGrid depends on getComputedStyle to determine
       // its height and width. In turn, SlickGrid uses its dimensions to
       // determine which cells are visible. Hence, it's necessary to make the
-      // div big enough and put it in the qunit-fixture element.       
+      // div big enough and put it in the qunit-fixture element.
       var container = $('<div style="height:600px; width:600px"></div>');
-      $("#qunit-fixture").append(container);
-       
+      $('#qunit-fixture').append(container);
+
       var controller = new ColorViewController(new UIState(),
                                                container,
                                                this.sharedDecompositionViewDict
@@ -728,7 +738,7 @@ requirejs([
                                                container,
                                                this.sharedDecompositionViewDict
                                               );
-        
+
       $(function() {
           controller.setMetadataField('Treatment');
 
@@ -736,8 +746,8 @@ requirejs([
 
           // no grid data should be rendered (continuous is set to true)
           assert.ok(controller.$gridDiv.find(':contains(14.2)').length <= 0);
-          assert.ok(controller.$gridDiv.find(':contains(StringValue)').length
-                    <= 0);
+          assert.ok(controller.$gridDiv.find(':contains(StringValue)').length <=
+                    0);
           assert.ok(controller.$gridDiv.find(':contains(14.7)').length <= 0);
 
           var idx = 0;
@@ -757,7 +767,7 @@ requirejs([
         });
     });
 
-   QUnit.test('Testing toJSON (null)',  function(assert) {
+   QUnit.test('Testing toJSON (null)', function(assert) {
       const done = assert.async();
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(new UIState(),
@@ -766,7 +776,7 @@ requirejs([
                                               );
        $(function() {
            controller.setMetadataField(null);
-           
+
            var obs = controller.toJSON();
            var exp = {'category': null,
                       'colormap': 'discrete-coloring-qiime',
@@ -778,7 +788,7 @@ requirejs([
        });
     });
 
-   QUnit.test('Testing fromJSON (null)',  function(assert) {
+   QUnit.test('Testing fromJSON (null)', function(assert) {
       const done = assert.async();
       var json = {category: null,
                   colormap: 'discrete-coloring-qiime',
@@ -790,7 +800,7 @@ requirejs([
                                                container,
                                                this.sharedDecompositionViewDict
                                               );
-       
+
        $(function() {
            controller.fromJSON(json);
            var markers = controller.decompViewDict.scatter.markers;
@@ -808,7 +818,7 @@ requirejs([
        });
     });
 
-   QUnit.test('Test getDiscretePaletteColor(map)',  function(assert) {
+   QUnit.test('Test getDiscretePaletteColor(map)', function(assert) {
      assert.deepEqual(ColorViewController.getPaletteColor('OrRd'),
       ['#fff7ec', '#fee8c8', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548',
       '#d7301f', '#b30000', '#7f0000']);
@@ -820,7 +830,7 @@ requirejs([
       '#e5c494', '#b3b3b3']);
     });
 
-   QUnit.test('Test setEnabled',  function(assert) {
+   QUnit.test('Test setEnabled', function(assert) {
       const done = assert.async();
       var container = $('<div style="height:11px; width:12px"></div>');
       var controller = new ColorViewController(new UIState(),
@@ -842,8 +852,8 @@ requirejs([
      * Test large dataset.
      *
      */
-    QUnit.test('Test large dataset',  function(assert) {
-	const done = assert.async();
+    QUnit.test('Test large dataset', function(assert) {
+      const done = assert.async();
       var coords = [], metadata = [];
       for (var i = 0; i < 1001; i++) {
         coords.push([Math.random(), Math.random(), Math.random(),
@@ -873,7 +883,7 @@ requirejs([
        assert.equal(attr.$searchBar.val(), '');
        assert.equal(attr.$searchBar.is(':disabled'), true);
 
-	done();
+       done();
       });
     });
 
@@ -882,7 +892,7 @@ requirejs([
      * Test large dataset.
      *
      */
-    QUnit.test('Test large dataset',  function(assert) {
+    QUnit.test('Test large dataset', function(assert) {
       const done = assert.async();
       var coords = [], metadata = [];
       for (var i = 0; i < 1001; i++) {

@@ -8,10 +8,10 @@ requirejs(['draw', 'three'], function(draw, THREE) {
 
     QUnit.module('Drawing utilities', {
 
-      beforeEach () {
+      beforeEach() {
       },
 
-      afterEach () {
+      afterEach() {
       }
 
     });
@@ -100,16 +100,17 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      * The validity of the scaling factor was tested visually and by hand.
      *
      */
-   QUnit.test('Test makeLabel works correctly with color name', function(assert) {
-      var label = makeLabel([0, 0, 0], 'DaysSinceExperimentStart', 'red');
+   QUnit.test('Test makeLabel works correctly with color name',
+     function(assert) {
+         var label = makeLabel([0, 0, 0], 'DaysSinceExperimentStart', 'red');
 
-     assert.equal(label.material.color.r, 1);
-     assert.equal(label.material.color.g, 0);
-     assert.equal(label.material.color.b, 0);
+         assert.equal(label.material.color.r, 1);
+         assert.equal(label.material.color.g, 0);
+         assert.equal(label.material.color.b, 0);
 
-     assert.deepEqual(label.position.toArray(), [0, 0, 0]);
-     assert.equal(label.text, 'DaysSinceExperimentStart');
-     assert.deepEqual(label.scale.toArray(), [512, 32, 1]);
+         assert.deepEqual(label.position.toArray(), [0, 0, 0]);
+         assert.equal(label.text, 'DaysSinceExperimentStart');
+         assert.deepEqual(label.scale.toArray(), [512, 32, 1]);
     });
 
     /**
@@ -148,7 +149,8 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      assert.equal(arrow.position.y, 0);
      assert.equal(arrow.position.z, 0);
 
-     assert.deepEqual(arrow.cone.position.toArray(), arrow.label.position.toArray());
+     assert.deepEqual(arrow.cone.position.toArray(),
+                      arrow.label.position.toArray());
 
      assert.equal(arrow.quaternion.x, 0.07367677183061115);
      assert.equal(arrow.quaternion.y, 0);
@@ -176,7 +178,7 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      * Test that the SVG file is generated correctly.
      *
      */
-   QUnit.test('Test formatSVGLegend works correctly',  function(assert) {
+   QUnit.test('Test formatSVGLegend works correctly', function(assert) {
       var res, names = [], colors = [], e = '';
 
       e = '<svg xmlns="http://www.w3.org/2000/svg" width="168" height="191">' +
@@ -209,7 +211,8 @@ requirejs(['draw', 'three'], function(draw, THREE) {
      * Test that the SVG file is generated correctly when there are long labels.
      *
      */
-   QUnit.test('Test formatSVGLegend works correctly with long names',  function(assert) {
+   QUnit.test('Test formatSVGLegend works correctly with long names',
+     function(assert) {
       var res, names = [], colors = [], e = '';
 
       e = '<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="191"' +

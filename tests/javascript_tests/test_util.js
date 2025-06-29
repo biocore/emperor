@@ -7,10 +7,10 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
     QUnit.module('General utilities', {
 
-      beforeEach () {
+      beforeEach() {
       },
 
-      afterEach () {
+      afterEach() {
       }
 
     });
@@ -21,7 +21,7 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
      * contained.
      *
      */
-   QUnit.test('Test naturalSort with words only',  function(assert) {
+   QUnit.test('Test naturalSort with words only', function(assert) {
       var res, elements;
 
       elements = ['foo', 'Bar', 'BAZ', 'duck', 'duck', 'go'];
@@ -31,13 +31,15 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
       elements = ['foo', 'foo', 'FOO', 'FoO', 'FOOOO', 'fOO'];
       res = naturalSort(elements);
-     assert.deepEqual(res, ['foo', 'foo', 'FOO', 'FoO', 'fOO', 'FOOOO'], 'Arrays ' +
-                'is sorted correctly');
+     assert.deepEqual(res,
+                      ['foo', 'foo', 'FOO', 'FoO', 'fOO', 'FOOOO'],
+                      'Arrays is sorted correctly');
 
       elements = ['a', 'c', 'X', 'Y', 'Z', 'y'];
       res = naturalSort(elements);
-     assert.deepEqual(res, ['a', 'c', 'X', 'Y', 'y', 'Z'], 'Arrays is sorted ' +
-          'correctly');
+     assert.deepEqual(res,
+                      ['a', 'c', 'X', 'Y', 'y', 'Z'],
+                      'Arrays is sorted correctly');
 
     });
 
@@ -47,7 +49,7 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
      * are contained.
      *
      */
-   QUnit.test('Test naturalSort with numbers only',  function(assert) {
+   QUnit.test('Test naturalSort with numbers only', function(assert) {
       var res, elements;
 
       elements = ['8', '7', '3', '2', '1', '0'];
@@ -72,7 +74,7 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
     });
 
-   QUnit.test('Test Taxonomy Truncation',  function(assert) {
+   QUnit.test('Test Taxonomy Truncation', function(assert) {
      var lineage = 'k__qwerf;p__asdfjkj;c__';
 
         //Test if default string works
@@ -103,18 +105,20 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
      * mixture of numbers and words.
      *
      */
-   QUnit.test('Test naturalSort with numbers and words',  function(assert) {
+   QUnit.test('Test naturalSort with numbers and words', function(assert) {
       var res, elements;
 
       elements = ['foo', '7', 'bar', '2', 'baz', '0'];
       res = naturalSort(elements);
-     assert.deepEqual(res, ['bar', 'baz', 'foo', '0', '2', '7'], 'Arrays is sorted ' +
-          'correctly');
+     assert.deepEqual(res,
+                      ['bar', 'baz', 'foo', '0', '2', '7'],
+                      'Arrays is sorted correctly');
 
       elements = ['Foo', 'floo', 'BAAARR', '-1', '2', '0'];
       res = naturalSort(elements);
-     assert.deepEqual(res, ['BAAARR', 'floo', 'Foo', '-1', '0', '2'], 'Arrays is ' +
-          'sorted correctly');
+     assert.deepEqual(res,
+                      ['BAAARR', 'floo', 'Foo', '-1', '0', '2'],
+                      'Arrays is sorted correctly');
 
       elements = ['lorem', 'ipsum', '1e5', 'boom.mooo', '-2.345563353', '-2.4'];
       res = naturalSort(elements);
@@ -126,9 +130,9 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
 
       elements = ['lorem', 'ipsum', 'boom.mooo', '-2.345563353', '-2.4'];
       res = naturalSort(elements);
-     assert.deepEqual(res, ['boom.mooo', 'ipsum', 'lorem', '-2.4', '-2.345563353'],
-          'Arrays is sorted correctly');
-
+     assert.deepEqual(res,
+                      ['boom.mooo', 'ipsum', 'lorem', '-2.4', '-2.345563353'],
+                      'Arrays is sorted correctly');
     });
 
     /**
@@ -138,41 +142,42 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
      * from Empress.
      *
      */
-   QUnit.test("Test naturalSort doesn't treat Infinity/NaN as numbers",  function(assert) {
-      var eles = [
-        '1',
-        '2',
-        '3',
-        '10',
-        '4',
-        '5',
-        'invalid',
-        'nan',
-        'NaN',
-        'Infinity',
-        '-Infinity',
-        ' ',
-        'zzz',
-      ];
-     var res = naturalSort(eles);
-     assert.deepEqual(res, [
-        ' ',
-        '-Infinity',
-        'Infinity',
-        'invalid',
-        'nan',
-        'NaN',
-        'zzz',
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '10',
-      ]);
+   QUnit.test("Test naturalSort doesn't treat Infinity/NaN as numbers",
+     function(assert) {
+         var eles = [
+             '1',
+             '2',
+             '3',
+             '10',
+             '4',
+             '5',
+             'invalid',
+             'nan',
+             'NaN',
+             'Infinity',
+             '-Infinity',
+             ' ',
+             'zzz',
+         ];
+         var res = naturalSort(eles);
+         assert.deepEqual(res, [
+             ' ',
+             '-Infinity',
+             'Infinity',
+             'invalid',
+             'nan',
+             'NaN',
+             'zzz',
+             '1',
+             '2',
+             '3',
+             '4',
+             '5',
+             '10',
+         ]);
     });
 
-   QUnit.test('Test convertXMLToString',  function(assert) {
+   QUnit.test('Test convertXMLToString', function(assert) {
       var el;
 
       el = document.createElement('p');
@@ -190,7 +195,7 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
             'Test a div tag is converted correctly');
     });
 
-   QUnit.test('Test splitNumericValues',  function(assert) {
+   QUnit.test('Test splitNumericValues', function(assert) {
       var values = ['1.112', 'stringvalue', '', 'Other String Value', '-2.2',
                     '4', null, undefined, NaN, Infinity, -Infinity, 0, [],
                     ['string', 1.0], [1.0, 'string'], {}, {key: 'val'}];
@@ -212,12 +217,14 @@ requirejs(['jquery', 'underscore', 'util'], function($, _, util) {
      assert.deepEqual(split.nonNumeric, ['0.0.0', 'boaty']);
     });
 
-   QUnit.test('Test regular expressions are escaped correctly',  function(assert) {
-     assert.equal(escapeRegularExpression('some.sample.id'), 'some\\.sample\\.id');
-     assert.equal(escapeRegularExpression('some-sample.id'), 'some\\-sample\\.id');
-     assert.equal(escapeRegularExpression('s/.*?ome.sample.id'),
-                                    's/\\.\\*\\?ome\\.sample\\.id');
+   QUnit.test('Test regular expressions are escaped correctly',
+     function(assert) {
+         assert.equal(escapeRegularExpression('some.sample.id'),
+                      'some\\.sample\\.id');
+         assert.equal(escapeRegularExpression('some-sample.id'),
+                      'some\\-sample\\.id');
+         assert.equal(escapeRegularExpression('s/.*?ome.sample.id'),
+                      's/\\.\\*\\?ome\\.sample\\.id');
     });
-
   });
 });
