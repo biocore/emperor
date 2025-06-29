@@ -28,9 +28,9 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Node.js enviroment
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: '24.1.0'
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
@@ -40,7 +40,9 @@ jobs:
           auto-update-conda: true
 
       - name: Install Node.js modules
-        run: npm install -g jsdoc
+        run: |
+          npm install -g jsdoc
+          npm install -g node-qunit-puppeteer
 
       - name: Install JS Linter
         shell: bash -l {0}
@@ -52,8 +54,7 @@ jobs:
       - name: Install Emperor
         shell: bash -l {0}
         run: |
-          conda install pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
-          conda install -c conda-forge phantomjs --yes
+          conda install pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests "notebook<7"
           pip install -e ".[all]"
 
       - name: Build documentation
