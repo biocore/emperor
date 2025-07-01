@@ -201,6 +201,8 @@
                       test_animations_controller) {
               // now trigger the tests
               $( document ).ready(function() {
+                window.alert = () => {}
+                
                 QUnit.start();
               });
       });

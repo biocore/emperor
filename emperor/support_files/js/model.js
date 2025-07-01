@@ -214,7 +214,7 @@ function($, _, util) {
     }
 
     this.plottable = new Array(this.ids.length);
-    for (i = 0; i < this.ids.length; i++) {
+    for (let i = 0; i < this.ids.length; i++) {
       // note that ci[i] can be empty
       this.plottable[i] = new Plottable(this.ids[i], metadata[i], coords[i], i,
                                         ci[i]);
@@ -291,7 +291,7 @@ function($, _, util) {
    *
    */
   DecompositionModel.prototype.getPlottableByID = function(id) {
-    idx = this.ids.indexOf(id);
+    var idx = this.ids.indexOf(id);
     if (idx === -1) {
       throw new Error(id + ' is not found in the Decomposition Model ids');
     }
@@ -309,7 +309,7 @@ function($, _, util) {
    *
    */
   DecompositionModel.prototype.getPlottableByIDs = function(idArray) {
-    dm = this;
+    var dm = this;
     return _.map(idArray, function(id) {return dm.getPlottableByID(id);});
   };
 

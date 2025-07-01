@@ -623,7 +623,7 @@ DecompositionView.prototype.updatePositions = function() {
   }
   else if (this.decomp.isScatterType()) {
     this.decomp.apply(function(plottable) {
-      mesh = scope.markers[plottable.idx];
+      var mesh = scope.markers[plottable.idx];
 
       // always use the original data plus the axis orientation
       mesh.position.set(
@@ -692,9 +692,9 @@ DecompositionView.prototype._redrawEdges = function(plottables) {
     if (drawAll ||
         (plottables.indexOf(u) !== -1 || plottables.indexOf(v) !== -1)) {
 
-      center = [(u.coordinates[x] + v.coordinates[x]) / 2,
-                (u.coordinates[y] + v.coordinates[y]) / 2,
-                is2D ? 0 : (u.coordinates[z] + v.coordinates[z]) / 2];
+      var center = [(u.coordinates[x] + v.coordinates[x]) / 2,
+                    (u.coordinates[y] + v.coordinates[y]) / 2,
+                    is2D ? 0 : (u.coordinates[z] + v.coordinates[z]) / 2];
 
       left = [u.coordinates[x], u.coordinates[y],
               is2D ? 0 : u.coordinates[z]];
@@ -970,7 +970,7 @@ DecompositionView.prototype.setVisibility = function(visible, group) {
     _.each(group, function(plottable) {
       var startIndex = plottable.idx * numPoints;
       var endIndex = (plottable.idx + 1) * (numPoints);
-      for (i = startIndex; i < endIndex; i++)
+      for (let i = startIndex; i < endIndex; i++)
         lines.geometry.attributes.visible.setX(i, visible * 1);
     });
     lines.geometry.attributes.visible.needsUpdate = true;
@@ -1098,7 +1098,7 @@ DecompositionView.prototype.toggleLabelVisibility = function() {
   var scope = this;
 
   this.decomp.apply(function(plottable) {
-    arrow = scope.markers[plottable.idx];
+    var arrow = scope.markers[plottable.idx];
     arrow.label.visible = Boolean(arrow.label.visible ^ true);
   });
   this.needsUpdate = true;
@@ -1181,9 +1181,9 @@ DecompositionView.prototype.groupByColor = function(names) {
 
     groupping = function(plottable) {
       // taken from Color.getHexString in THREE.js
-      r = (colors.getX(plottable.idx * numPoints) * 255) << 16;
-      g = (colors.getY(plottable.idx * numPoints) * 255) << 8;
-      b = (colors.getZ(plottable.idx * numPoints) * 255) << 0;
+      var r = (colors.getX(plottable.idx * numPoints) * 255) << 16;
+      var g = (colors.getY(plottable.idx * numPoints) * 255) << 8;
+      var b = (colors.getZ(plottable.idx * numPoints) * 255) << 0;
       return ('000000' + (r ^ g ^ b).toString(16)).slice(-6);
     };
   }

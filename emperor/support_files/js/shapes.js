@@ -36,7 +36,7 @@ define(['jquery', 'three', 'underscore'], function($, THREE, _) {
       case SPHERE:
         return new THREE.SphereGeometry(factor, 8, 8);
       case SQUARE:
-        geom = new THREE.PlaneGeometry(factor * 2, factor * 2, 2, 2);
+        var geom = new THREE.PlaneGeometry(factor * 2, factor * 2, 2, 2);
         geom.rotateX(0.3);
         return geom;
       case CONE:

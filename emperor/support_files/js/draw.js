@@ -311,8 +311,9 @@ define(['underscore', 'three', 'jquery'], function(_, THREE, $) {
     // https://github.com/mrdoob/three.js/wiki/Drawing-lines
     var material, points = [], lineGeometry, limit = 0, path;
 
-    _trajectory = trajectory.representativeInterpolatedCoordinatesAtIndex(
-                                                                  currentFrame);
+    var _trajectory = trajectory.representativeInterpolatedCoordinatesAtIndex(
+        currentFrame
+    );
     if (_trajectory === null || _trajectory.length == 0)
       return null;
 

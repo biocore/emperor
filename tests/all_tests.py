@@ -73,14 +73,16 @@ def test(suppress_unit_tests, suppress_javascript_unit_tests, unittest_glob):
 
     if not suppress_javascript_unit_tests:
         click.echo("JavaScript Test Suite")
-        runner = join(test_dir, 'javascript_tests', 'runner.js')
         index = join(test_dir, 'javascript_tests', 'index.html')
 
         # phantomjs has some problems where the program will not terminate if
         # an error occurs during the execution of the test suite. That's why
         # all output is sent to standard output and standard error.
-        _, _, r = console('phantomjs %s %s' % (runner, index), sys.stdout,
-                          sys.stderr)
+        _, _, r = console(
+            'node-qunit-puppeteer %s' % (index,),
+            sys.stdout,
+            sys.stderr
+        )
 
         # if all the tests passed
         javascript_tests_passed = True if r == 0 else False
