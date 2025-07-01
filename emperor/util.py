@@ -186,9 +186,9 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
 
     # prevent obscure and obfuscated errors
     if is_comparison:
-        assert type(coords_data) == list, ("Cannot process a comparison with "
-                                           "the data from a single "
-                                           "coordinates file")
+        assert isinstance(coords_data, list), \
+            ("Cannot process a comparison with the data from a single "
+             "coordinates file")
 
     mapping_file = [mapping_header] + mapping_data
     coords_file = [coords_header, coords_data]
@@ -196,12 +196,12 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
     # number PCoA files; zero for any case except for comparison plots
     clones = 0
 
-    if custom_axes and type(coords_data) == np.ndarray:
+    if custom_axes and isinstance(coords_data, np.ndarray):
         # sequence ported from qiime/scripts/make_3d_plots.py @ 9115351
         get_custom_coords(custom_axes, mapping_file, coords_file)
         remove_nans(coords_file)
         scale_custom_coords(custom_axes, coords_file)
-    elif type(coords_data) == list and not is_comparison:
+    elif isinstance(coords_data, list) and not is_comparison:
         # take the first pcoa file as the master set of coordinates
         master_pcoa = [coords_header[0], coords_data[0],
                        coords_eigenvals[0], coords_pct[0]]
@@ -212,7 +212,7 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
                          coords_data, coords_eigenvals, coords_pct)]
 
         # do not apply procrustes, at least not for now
-        coords_data, coords_low, coords_high, eigenvalues_average,\
+        coords_data, coords_low, coords_high, eigenvalues_average, \
             identifiers = summarize_pcoas(master_pcoa, support_pcoas,
                                           method=jackknifing_method,
                                           apply_procrustes=False)
@@ -243,10 +243,10 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
             master_pcoa[3] = master_pcoa[3]*100
 
         # return a value containing coords_low and coords_high
-        return identifiers, coords_data, eigenvalues_average, master_pcoa[3],\
+        return identifiers, coords_data, eigenvalues_average, master_pcoa[3], \
             coords_low, coords_high, clones
     # comparison plots are processed almost individually
-    elif type(coords_data) == list and is_comparison:
+    elif isinstance(coords_data, list) and is_comparison:
 
         # indicates the number of files that were totally processed so other
         # functions/APIs are aware of how many times to replicate the metadata
@@ -285,8 +285,8 @@ def preprocess_coords_file(coords_header, coords_data, coords_eigenvals,
 
     # if no coords summary is applied, return None in the corresponding values
     # note that the value of clones will be != 0 for a comparison plot
-    return coords_file[0], coords_file[1], coords_eigenvals, coords_pct, None,\
-        None, clones
+    return coords_file[0], coords_file[1], coords_eigenvals, coords_pct, \
+        None, None, clones
 
 
 def validate_and_process_custom_axes(mf, custom_axes):

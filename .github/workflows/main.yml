@@ -17,7 +17,7 @@ jobs:
     # we can add more versions of node.js in the future
     strategy:
       matrix:
-        python-version: ['3.7', '3.8']
+        python-version: ['3.8']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -52,7 +52,7 @@ jobs:
       - name: Install Emperor
         shell: bash -l {0}
         run: |
-          conda install pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests
+          conda install pip numpy 'scipy>=0.17.0' matplotlib pandas flake8 pep8 jupyter coverage cython scikit-learn requests "notebook<7"
           conda install -c conda-forge phantomjs --yes
           pip install -e ".[all]"
 
@@ -63,6 +63,8 @@ jobs:
 
       - name: Run tests and measure coverage
         shell: bash -l {0}
+        env:
+          OPENSSL_CONF: /dev/null
         run: |
           coverage run tests/all_tests.py
           coverage report
