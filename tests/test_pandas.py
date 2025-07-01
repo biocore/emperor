@@ -66,10 +66,10 @@ class TopLevelTests(TestCase):
         self.assertTrue(isinstance(emp, Emperor))
         self.assertEqual(emp.dimensions, 4)
 
-        pd.util.testing.assert_frame_equal(self.df, emp.mf)
+        pd.testing.assert_frame_equal(self.df, emp.mf)
 
-        pd.util.testing.assert_frame_equal(emp.ordination.samples,
-                                           self.samples)
+        pd.testing.assert_frame_equal(emp.ordination.samples,
+                                      self.samples)
 
     def test_scatterplot_reordered(self):
         emp = scatterplot(self.df, x='num_3', y='num_2', z='num_1',
@@ -80,12 +80,12 @@ class TopLevelTests(TestCase):
         self.assertEqual(emp.base_url, 'https://cdn.rawgit.com/biocore/'
                          'emperor/new-api/emperor/support_files')
 
-        pd.util.testing.assert_frame_equal(self.df, emp.mf)
+        pd.testing.assert_frame_equal(self.df, emp.mf)
 
         reordered = self.samples[['num_3', 'num_2', 'num_1', 'num_4']].copy()
 
-        pd.util.testing.assert_frame_equal(emp.ordination.samples,
-                                           reordered)
+        pd.testing.assert_frame_equal(emp.ordination.samples,
+                                      reordered)
 
     def test_bad_column_names(self):
         np.testing.assert_raises(ValueError, scatterplot, self.df, x=':L')
