@@ -34,10 +34,10 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#### SlickGrid (v2.1.0-dev)
-[SlickGrid](https://github.com/6pac/SlickGrid) - A lightning fast JavaScript grid/spreadsheet (d05dcd5b9369cae4b61df895ef7f51e8248e11c2)
+#### SlickGrid (v5.15.4)
+[SlickGrid](https://github.com/6pac/SlickGrid) - A lightning fast JavaScript grid/spreadsheet
 
-Copyright (c) 2010 Michael Leibman, http://github.com/mleibman/slickgrid
+Copyright (c) 2009-present Michael Leibman and Ben McIntyre, http://github.com/6pac/slickgrid
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -57,7 +57,6 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 
 #### Chroma (v2.1.0)
 [chroma.js](https://github.com/gka/chroma.js) - JavaScript library for color conversions
@@ -165,10 +164,9 @@ THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### jQuery ([2.1.4](https://github.com/jquery/jquery/tree/2.1.4)) is released under the MIT License
+### jQuery ([3.7.1](https://github.com/jquery/jquery/tree/3.7.1)) is released under the MIT License
 
-Copyright 2013 jQuery Foundation and other contributors
-http://jquery.com/
+Copyright OpenJS Foundation and other contributors, https://openjsf.org/
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -319,7 +317,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-#### canvas-toBlob.js [f1a0189](https://github.com/eligrey/canvas-toBlob.js/commit/f1a01896135ab378aa5c0118eadd81da55e698d8)
+#### canvas-toBlob.js [f1a0189](https://github.com/eligrey/canvas-toBlob.js/tree/f1a01896135ab378aa5c0118eadd81da55e698d8)
 
 This software is licensed under the MIT license.
 
@@ -355,7 +353,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-### D3.js [3.5.17](https://github.com/d3/d3/releases/tag/v3.5.17)
+### D3.js [3.5.17](https://github.com/d3/d3/tree/v3.5.17)
 
 
 Copyright 2010-2016 Mike Bostock
@@ -385,3 +383,29 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+--------------------------------------------------------------------------------
+
+### Sortable.js [v1.15.6](https://github.com/SortableJS/Sortable/tree/1.15.6)
+
+MIT License
+
+Copyright (c) 2019 All contributors to Sortable
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

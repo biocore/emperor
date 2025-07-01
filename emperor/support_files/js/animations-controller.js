@@ -184,22 +184,25 @@ define([
                                             });
       scope.$trajectorySelect.chosen().change(function(e, p) {
                                                 scope._trajectoryChanged(e, p);
-                                              });
+      });
 
-      scope.$rewind.button({icons: {primary: 'ui-icon-seek-first'}});
+      scope.$rewind.button({icon: 'ui-icon-seek-first'});
       scope.$rewind.attr('title', 'Restart the animation');
+      scope.$rewind.addClass('media-control');
       scope.$rewind.on('click', function() {
         scope._rewindButtonClicked();
       });
 
-      scope.$play.button({icons: {primary: 'ui-icon-play'}});
+      scope.$play.button({icon: 'ui-icon-play'});
       scope.$play.attr('title', 'Start the animation');
+      scope.$play.addClass('media-control');
       scope.$play.on('click', function() {
         scope._playButtonClicked();
       });
 
-      scope.$pause.button({icons: {primary: 'ui-icon-pause'}});
+      scope.$pause.button({icon: 'ui-icon-pause'});
       scope.$pause.attr('title', 'Pause the animation');
+      scope.$pause.addClass('media-control');
       scope.$pause.on('click', function() {
         scope._pauseButtonClicked();
       });
@@ -277,7 +280,7 @@ define([
                    enableCellNavigation: true, forceFitColumns: true,
                    enableColumnReorder: false};
 
-    this._grid = new Slick.Grid(this.$gridDiv, [], columns, gridOptions);
+    this._grid = new Slick.Grid(this.$gridDiv[0], [], columns, gridOptions);
 
     // hide the header row of the grid
     // http://stackoverflow.com/a/29827664/379593

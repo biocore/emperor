@@ -190,9 +190,9 @@ define([
       'z-index': '3',
       'top': '10px',
       'right': '5px'
-    }).button({
-      text: false, icons: {primary: ' ui-icon-circle-arrow-s'}
-    }).attr('title', 'Download Scree Plot');
+    }).button(
+	{showLabel: false, icon: 'ui-icon-circle-arrow-s'}
+    ).attr('title', 'Download Scree Plot');
     this.$_screePlotContainer.append(this.$saveButton);
 
     /**

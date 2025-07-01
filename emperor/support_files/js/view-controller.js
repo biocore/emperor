@@ -389,7 +389,7 @@ define([
      * Container that lists the metadata categories described under the
      * metadata column and the attribute that can be modified.
      */
-    this.bodyGrid = new Slick.Grid(this.$gridDiv, dataView, columns,
+    this.bodyGrid = new Slick.Grid(this.$gridDiv[0], dataView, columns,
                                    gridOptions);
 
     this.$searchBar.on('input', function(e) {

@@ -9,6 +9,12 @@ Emperor ChangeLog
 
 ### Miscellaneous
 
+* Update jQuery to the newest stable version, 3.7.1.
+* Update jQuery UI to the newest stable version, 1.14.1.
+* Update SlickGrid to the newest stable version, 5.15.4.
+* Remove `jquery-drag` (no longer needed by SlickGrid).
+* Add Sortable.js 1.15.6 (now a dependency of SlickGrid) to vendored files.
+* Remove Python test cases that depend on exact HTML, CSS, or JavaScript output from Emperor.
 * Pin `notebook<7` for CI workflow.
 * Update Python unit tests for new Pandas versions.
 * Remove EOL Python version `3.7` from test matrix in CI workflow.
