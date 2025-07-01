@@ -9,6 +9,9 @@ Emperor ChangeLog
 
 ### Miscellaneous
 
+* Update QUnit to the newest stable version, 2.24.
+* Fix QUnit tests to work with jQuery 3 and QUnit 2.
+* Replace PhantomJS in CI workflow with node-qunit-puppeteer.
 
 # Emperor 1.0.4 (10 Jul 2023)
 -----------------------------
