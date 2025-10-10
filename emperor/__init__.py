@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 import importlib
-__version__ = importlib.metadata.version('emperor')
+__version__ = importlib.metadata.version('emperor')  # noqa
 
 from emperor.core import Emperor
 from emperor._pandas import scatterplot
