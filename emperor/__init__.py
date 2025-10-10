@@ -7,7 +7,6 @@
 # ----------------------------------------------------------------------------
 
 import importlib
-
 __version__ = importlib.metadata.version('emperor')
 
 from emperor.core import Emperor
