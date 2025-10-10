@@ -6,11 +6,7 @@
 # The full license is in the file LICENSE.md, distributed with this software.
 # ----------------------------------------------------------------------------
 
-try:
-    from importlib.metadata import version
-except ImportError:
-    from importlib_metadata import version
-
+from importlib.metadata import version
 __version__ = version('emperor')  # noqa
 
 from emperor.core import Emperor
