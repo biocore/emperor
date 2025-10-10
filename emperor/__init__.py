@@ -6,8 +6,12 @@
 # The full license is in the file LICENSE.md, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import importlib
-__version__ = importlib.metadata.version('emperor')  # noqa
+try:
+    from importlib.metadata import version
+except ImportError:
+    from importlib_metadata import version
+
+__version__ = version('emperor')  # noqa
 
 from emperor.core import Emperor
 from emperor._pandas import scatterplot
