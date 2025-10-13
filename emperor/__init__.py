@@ -6,8 +6,8 @@
 # The full license is in the file LICENSE.md, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import pkg_resources
-__version__ = pkg_resources.get_distribution('emperor').version  # noqa
+from importlib.metadata import version
+__version__ = version('emperor')  # noqa
 
 from emperor.core import Emperor
 from emperor._pandas import scatterplot
