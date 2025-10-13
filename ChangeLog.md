@@ -13,6 +13,7 @@ Emperor ChangeLog
 * Update Python unit tests for new Pandas versions.
 * Remove EOL Python version `3.7` from test matrix in CI workflow.
 * Apply a workaround (`OPENSSL_CONF=/dev/null`) for running PhantomJS on `ubuntu-latest` in CI workflow.
+* Replaced call to `pkg_resources` with the relevant `importlib` command.
 
 
 # Emperor 1.0.4 (10 Jul 2023)
