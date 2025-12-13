@@ -1,11 +1,8 @@
 Emperor ChangeLog
 =================
 
-# Emperor 1.0.4-dev (changes since 1.0.4 go here)
-
-### Bug Fixes
-
-### New Features
+# Emperor 1.0.5 (13 Dec 2025)
+-----------------------------
 
 ### Miscellaneous
 
