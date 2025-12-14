@@ -182,8 +182,7 @@ define([
     // This controller is not ready until the colormapSelect has signaled that
     // it is indeed ready.
     var ready = this.ready;
-      // this.ready = undefined;
-      this.ready = null;
+    this.ready = null;
 
     // account for the searchbar
     this.$colormapSelect.insertAfter(this.$select);
@@ -215,7 +214,7 @@ define([
    *
    * @param {String[]} uniqueVals Array of unique values for the category
    * @param {Object} data SlickGrid formatted data from setCategory function
-   *,
+   *
    * @return {Plottable[]} Array of plottables for all non-numeric values
    * @private
    *

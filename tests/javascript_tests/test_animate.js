@@ -134,7 +134,7 @@ requirejs([
       // a quick run through all the properties
      assert.equal(director.mappingFileHeaders,
                   this.mappingFileHeaders,
-                  'The  mapping file headers are set correctly');
+                  'The mapping file headers are set correctly');
 
      assert.equal(director.mappingFileData,
                   this.mappingFileData,

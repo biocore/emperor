@@ -82,22 +82,6 @@ requirejs([
 
       },
       afterEach() {
-        // cleanup all the unwanted DOM elements
-        // if (this.controller !== undefined) {
-        //     this.controller._$backgroundColor.spectrum('destroy');
-        //     this.controller._$axesColor.spectrum('destroy');
-        //     this.controller._$referenceEdgeColor.spectrum('destroy');
-        //     this.controller._$otherEdgeColor.spectrum('destroy');
-        // }
-        // if (this.controllerProcrustes !== undefined) {
-        //     this.controllerProcrustes._$backgroundColor.spectrum('destroy');
-        //     this.controllerProcrustes._$axesColor.spectrum('destroy');
-        //     this.controllerProcrustes._$referenceEdgeColor.spectrum('destroy');
-        //     this.controllerProcrustes._$otherEdgeColor.spectrum('destroy');
-        // }
-
-        // this.controller = undefined;
-
         this.sharedDecompositionViewDict = undefined;
         this.decomp = undefined;
         this.multiModel = undefined;

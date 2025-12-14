@@ -19,10 +19,12 @@ define([
    * @param {UIState} uiState The shared state
    * @param {Node} container Container node to create the controller in.
    * @param {Object} decompViewDict This is object is keyed by unique
-   * @param {Object} appendTo Where to append the spectrum containers.
    * identifiers and the values are DecompositionView objects referring to a
    * set of objects presented on screen. This dictionary will usually be shared
-   * by all the tabs in the application. This argument is passed by reference.
+   * by all the tabs in the application. This argument is passed by reference.   
+   * @param {Object} appendTo Where to append the spectrum containers. This is
+   * useful for QUnit tests where the spectrum containers must be added under
+   * the QUnit fixture for proper cleanup.
    *
    * @return {AxesController}
    * @constructs AxesController
@@ -195,9 +197,9 @@ define([
       'z-index': '3',
       'top': '10px',
       'right': '5px'
-    }).button(
-      {showLabel: false, icon: 'ui-icon-circle-arrow-s'}
-    ).attr('title', 'Download Scree Plot');
+    }).button({
+      text: false, icons: {primary: ' ui-icon-circle-arrow-s'}
+    }).attr('title', 'Download Scree Plot');
     this.$_screePlotContainer.append(this.$saveButton);
 
     /**
