@@ -9,6 +9,9 @@ Emperor ChangeLog
 
 ### Miscellaneous
 
+* Update QUnit to the newest stable version, 2.24.
+* Fix QUnit tests to work with jQuery 3 and QUnit 2.
+* Replace PhantomJS in CI workflow with node-qunit-puppeteer.
 
 # Emperor 1.0.5 (13 Dec 2025)
 -----------------------------
@@ -20,7 +23,6 @@ Emperor ChangeLog
 * Remove EOL Python version `3.7` from test matrix in CI workflow.
 * Apply a workaround (`OPENSSL_CONF=/dev/null`) for running PhantomJS on `ubuntu-latest` in CI workflow.
 * Replaced call to `pkg_resources` with the relevant `importlib` command.
-
 
 # Emperor 1.0.4 (10 Jul 2023)
 -----------------------------

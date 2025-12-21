@@ -201,6 +201,9 @@
                       test_animations_controller) {
               // now trigger the tests
               $( document ).ready(function() {
+                // Disable alerts so node-qunit-puppeteer does not hang.
+                window.alert = () => {}
+                
                 QUnit.start();
               });
       });
