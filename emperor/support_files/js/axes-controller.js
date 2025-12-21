@@ -22,12 +22,15 @@ define([
    * identifiers and the values are DecompositionView objects referring to a
    * set of objects presented on screen. This dictionary will usually be shared
    * by all the tabs in the application. This argument is passed by reference.
+   * @param {Object} appendTo Where to append the spectrum containers. This is
+   * useful for QUnit tests where the spectrum containers must be added under
+   * the QUnit fixture for proper cleanup.
    *
    * @return {AxesController}
    * @constructs AxesController
    * @extends EmperorViewController
    */
-  function AxesController(uiState, container, decompViewDict) {
+  function AxesController(uiState, container, decompViewDict, appendTo) {
     var helpmenu = 'Change the visible dimensions of the data';
     var title = 'Axes';
     var scope = this;
@@ -114,6 +117,10 @@ define([
                   scope._colorChanged($(this).attr('name'), color);
                 }
     };
+
+    if (appendTo !== undefined) {
+      opts.appendTo = appendTo;
+    }
 
 
     // Don't propagate the keydown and keypress events so that inputing a color

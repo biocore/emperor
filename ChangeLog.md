@@ -1,7 +1,7 @@
 Emperor ChangeLog
 =================
 
-# Emperor 1.0.4-dev (changes since 1.0.4 go here)
+# Emperor 1.0.5-dev (changes since 1.0.5 go here)
 
 ### Bug Fixes
 
@@ -15,11 +15,20 @@ Emperor ChangeLog
 * Remove `jquery-drag` (no longer needed by SlickGrid).
 * Add Sortable.js 1.15.6 (now a dependency of SlickGrid) to vendored files.
 * Remove Python test cases that depend on exact HTML, CSS, or JavaScript output from Emperor.
+* Update QUnit to the newest stable version, 2.24.
+* Fix QUnit tests to work with jQuery 3 and QUnit 2.
+* Replace PhantomJS in CI workflow with node-qunit-puppeteer.
+
+# Emperor 1.0.5 (13 Dec 2025)
+-----------------------------
+
+### Miscellaneous
+
 * Pin `notebook<7` for CI workflow.
 * Update Python unit tests for new Pandas versions.
 * Remove EOL Python version `3.7` from test matrix in CI workflow.
 * Apply a workaround (`OPENSSL_CONF=/dev/null`) for running PhantomJS on `ubuntu-latest` in CI workflow.
-
+* Replaced call to `pkg_resources` with the relevant `importlib` command.
 
 # Emperor 1.0.4 (10 Jul 2023)
 -----------------------------

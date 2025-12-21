@@ -14,9 +14,11 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
     // these are expected results needed for multiple tests
     var crunchedDataTwoCategories, crunchedDataOneCategory;
 
-    module('Trajectory', {
+    var expectedResult;
 
-      setup: function() {
+    QUnit.module('Trajectory', {
+
+      beforeEach() {
         // setup function
         mappingFileHeaders = ['SampleID', 'LinkerPrimerSequence', 'Treatment',
                               'DOB'];
@@ -125,7 +127,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
         };
       },
 
-      teardown: function() {
+      afterEach() {
         // teardown function
         mappingFileHeaders = null;
         mappingFileData = null;
@@ -144,39 +146,39 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * and check that the attributes are set correctly.
      *
      */
-    test('Test constructor', function() {
+   QUnit.test('Test constructor', function(assert) {
       var trajectory;
 
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
                                            gradientPoints, coordinates, 2, 10);
-      deepEqual(trajectory.sampleNames, ['PC.636', 'PC.635', 'PC.356',
+     assert.deepEqual(trajectory.sampleNames, ['PC.636', 'PC.635', 'PC.356',
           'PC.481', 'PC.354'], 'Sample names are set correctly');
-      equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata ' +
+     assert.equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata ' +
           'category name is set correctly');
-      deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient ' +
+     assert.deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient ' +
           'point values are set correctly');
-      deepEqual(trajectory.coordinates, [{'x': 0, 'y': 0, 'z': 0},
+     assert.deepEqual(trajectory.coordinates, [{'x': 0, 'y': 0, 'z': 0},
           {'x': 1, 'y': 1, 'z': 1}, {'x': -9, 'y': -9, 'z': -9},
           {'x': 3, 'y': 3, 'z': 3}, {'x': 8, 'y': 8, 'z': 8}], 'Coordinates' +
           ' values are set correctly');
-      equal(trajectory.minimumDelta, 2, 'Minimum delta is set correctly');
-      equal(trajectory.suppliedN, 10, 'Value of N is set correctly');
+     assert.equal(trajectory.minimumDelta, 2, 'Minimum delta is set correctly');
+     assert.equal(trajectory.suppliedN, 10, 'Value of N is set correctly');
 
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
           gradientPoints,
           coordinates, 2);
-      deepEqual(trajectory.sampleNames, ['PC.636', 'PC.635', 'PC.356',
+     assert.deepEqual(trajectory.sampleNames, ['PC.636', 'PC.635', 'PC.356',
           'PC.481', 'PC.354'], 'Sample names are set correctly');
-      equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata ' +
+     assert.equal(trajectory.metadataCategoryName, 'Treatment', 'Metadata ' +
           'category name is set correctly');
-      deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient' +
+     assert.deepEqual(trajectory.gradientPoints, [1, 4, 6, 8, 11], 'Gradient' +
           ' point values are set correctly');
-      deepEqual(trajectory.coordinates, [{'x': 0, 'y': 0, 'z': 0},
+     assert.deepEqual(trajectory.coordinates, [{'x': 0, 'y': 0, 'z': 0},
           {'x': 1, 'y': 1, 'z': 1}, {'x': -9, 'y': -9, 'z': -9},
           {'x': 3, 'y': 3, 'z': 3}, {'x': 8, 'y': 8, 'z': 8}], 'Coordinates' +
           ' values are set correctly');
-      equal(trajectory.minimumDelta, 2, 'Minimum delta is set correctly');
-      equal(trajectory.suppliedN, 5, 'Default value of N is set to 5');
+     assert.equal(trajectory.minimumDelta, 2, 'Minimum delta is set correctly');
+     assert.equal(trajectory.suppliedN, 5, 'Default value of N is set to 5');
     });
 
     /**
@@ -185,11 +187,11 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * constructing with bad arguments.
      *
      */
-    test('Test constructor exceptions', function() {
+   QUnit.test('Test constructor exceptions', function(assert) {
       var result;
 
       // check this happens for all the properties
-      throws(
+     assert.throws(
           function() {
             result = new TrajectoryOfSamples(sampleNames, 'foo', [1, 2, 3],
                 coordinates);
@@ -206,7 +208,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * correctly
      *
      */
-    test('Test _generateInterpolatedCoordinates', function() {
+   QUnit.test('Test _generateInterpolatedCoordinates', function(assert) {
 
       var trajectory;
       var expectedInterpolatedCoordinates = [{ 'x': 0, 'y': 0, 'z': 0},
@@ -262,13 +264,15 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
           10);
 
       // test the interpolated values and the interval values
-      deepEqual(trajectory.interpolatedCoordinates,
+     assert.deepEqual(trajectory.interpolatedCoordinates,
           expectedInterpolatedCoordinates,
           'Check the interpolated coordinates are computed correctly');
-      deepEqual(trajectory._intervalValues, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-          1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3,
-          3, 3, 3, 3, 3, 3, 3, 3] , 'Check the intervals array is ' +
-          'created properyl');
+
+     assert.deepEqual(trajectory._intervalValues,
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                       1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
+                       3, 3],
+                      'Check the intervals array is created properyl');
 
       expectedInterpolatedCoordinates = [{'x': 0, 'y': 0, 'z': 0},
       {'x': 0.25, 'y': 0.25, 'z': 0.25},
@@ -290,10 +294,10 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
           gradientPoints, coordinates, 2,
           3);
-      deepEqual(trajectory.interpolatedCoordinates,
+     assert.deepEqual(trajectory.interpolatedCoordinates,
           expectedInterpolatedCoordinates,
           'Check the interpolated coordinates are computed correctly');
-      deepEqual(trajectory._intervalValues,
+     assert.deepEqual(trajectory._intervalValues,
           [0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3] ,
           'Check the interpolated coordinates are computed correctly');
     });
@@ -304,26 +308,27 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * index (edge cases).
      *
      */
-    test('Test representativeCoordinatesAtIndex edge cases', function() {
-      trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
-          gradientPoints, coordinates, 2,
-          3);
-      deepEqual(trajectory.representativeCoordinatesAtIndex(0),
-          [{'x': 0, 'y': 0, 'z': 0}],
-          'Returns an empty array for index 0');
+   QUnit.test('Test representativeCoordinatesAtIndex edge cases',
+     function(assert) {
+       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
+                                            gradientPoints, coordinates, 2,
+                                            3);
+       assert.deepEqual(trajectory.representativeCoordinatesAtIndex(0),
+                        [{'x': 0, 'y': 0, 'z': 0}],
+                        'Returns an empty array for index 0');
 
-      var expectedCoordinates = [{'x': 0, 'y': 0, 'z': 0},
-      {'x': 1, 'y': 1, 'z': 1},
-      {'x': -9, 'y': -9, 'z': -9},
-      {'x': 3, 'y': 3, 'z': 3},
-      {'x': 8, 'y': 8, 'z': 8}];
-      // the interpolated array is 18 samples long
-      deepEqual(trajectory.representativeCoordinatesAtIndex(18),
-          expectedCoordinates, 'Returns an array with only the ' +
-          'original coordinates');
-      deepEqual(trajectory.representativeCoordinatesAtIndex(100),
-          expectedCoordinates, 'Returns an array with only the ' +
-          'original coordinates');
+       var expectedCoordinates = [{'x': 0, 'y': 0, 'z': 0},
+                                  {'x': 1, 'y': 1, 'z': 1},
+                                  {'x': -9, 'y': -9, 'z': -9},
+                                  {'x': 3, 'y': 3, 'z': 3},
+                                  {'x': 8, 'y': 8, 'z': 8}];
+       // the interpolated array is 18 samples long
+       assert.deepEqual(trajectory.representativeCoordinatesAtIndex(18),
+                        expectedCoordinates, 'Returns an array with only the ' +
+                        'original coordinates');
+       assert.deepEqual(trajectory.representativeCoordinatesAtIndex(100),
+                        expectedCoordinates, 'Returns an array with only the ' +
+                        'original coordinates');
     });
 
     /**
@@ -332,7 +337,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * index.
      *
      */
-    test('Test representativeCoordinatesAtIndex', function() {
+   QUnit.test('Test representativeCoordinatesAtIndex', function(assert) {
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
           gradientPoints, coordinates, 2,
           3);
@@ -362,13 +367,13 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
       {'x': 8, 'y': 8, 'z': 8}];
 
       var fullCoordinates3 = trajectory.representativeCoordinatesAtIndex(3);
-      deepEqual(fullCoordinates3,
+     assert.deepEqual(fullCoordinates3,
           [{'x': 0, 'y': 0, 'z': 0},
           {'x': 0.75, 'y': 0.75, 'z': 0.75}],
           'Coordinates are retrieved correctly at index 3');
 
       var fullCoordinates11 = trajectory.representativeCoordinatesAtIndex(11);
-      deepEqual(fullCoordinates11,
+     assert.deepEqual(fullCoordinates11,
           [{'x': 0, 'y': 0, 'z': 0}, {'x': 1, 'y': 1, 'z': 1},
           {'x': -9, 'y': -9, 'z': -9}, {'x': 3, 'y': 3, 'z': 3},
           {'x': 4.25, 'y': 4.25, 'z': 4.25}],
@@ -379,10 +384,10 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
       var dynamicCoordinates11 =
         trajectory.representativeInterpolatedCoordinatesAtIndex(11);
 
-      deepEqual(fullCoordinates3.slice(-2),
+     assert.deepEqual(fullCoordinates3.slice(-2),
                 dynamicCoordinates3,
                 'Dynamic coordinates match on frame 3');
-      deepEqual(fullCoordinates11.slice(-2),
+     assert.deepEqual(fullCoordinates11.slice(-2),
                 dynamicCoordinates11,
                 'Dynamic coordinates match on frame 11');
 
@@ -394,22 +399,27 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * delta correctly.
      *
      */
-    test('Test calculateNumberOfPointsForDelta', function() {
+   QUnit.test('Test calculateNumberOfPointsForDelta', function(assert) {
       var trajectory;
 
       trajectory = new TrajectoryOfSamples(sampleNames, 'Treatment',
           gradientPoints, coordinates, 2,
           10);
-      equal(trajectory.calculateNumberOfPointsForDelta(3), 15, 'Number of ' +
-          'points for delta is calculated correctly');
-      equal(trajectory.calculateNumberOfPointsForDelta(8), 40, 'Number of ' +
-          'points for delta is calculated correctly');
-      equal(trajectory.calculateNumberOfPointsForDelta(7), 35, 'Number of ' +
-          'points for delta is calculated correctly');
-      equal(trajectory.calculateNumberOfPointsForDelta(11), 55, 'Number of ' +
-          'points for delta is calculated correctly');
-      equal(trajectory.calculateNumberOfPointsForDelta(1), 5, 'Number of ' +
-          'points for delta is calculated correctly');
+     assert.equal(trajectory.calculateNumberOfPointsForDelta(3),
+                  15,
+                  'Number of points for delta is calculated correctly');
+     assert.equal(trajectory.calculateNumberOfPointsForDelta(8),
+                  40,
+                  'Number of points for delta is calculated correctly');
+     assert.equal(trajectory.calculateNumberOfPointsForDelta(7),
+                  35,
+                  'Number of points for delta is calculated correctly');
+     assert.equal(trajectory.calculateNumberOfPointsForDelta(11),
+                  55,
+                  'Number of points for delta is calculated correctly');
+     assert.equal(trajectory.calculateNumberOfPointsForDelta(1),
+                  5,
+                  'Number of points for delta is calculated correctly');
     });
 
     /**
@@ -417,7 +427,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * Test linearInterpolation function.
      *
      */
-    test('Test linearInterpolation', function() {
+   QUnit.test('Test linearInterpolation', function(assert) {
       var result;
       result = linearInterpolation(0, 0, 0, 1, 1, 1, 5);
       expectedResult = [{ 'x': 0, 'y': 0, 'z': 0},
@@ -427,8 +437,9 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
         'z': 0.6000000000000001 },
       { 'x': 0.8, 'y': 0.8, 'z': 0.8 },
       { 'x': 1, 'y': 1, 'z': 1}];
-      deepEqual(result, expectedResult, 'Linear interpolation is computed ' +
-          'correctly');
+     assert.deepEqual(result,
+                      expectedResult,
+                      'Linear interpolation is computed correctly');
 
         result = linearInterpolation(0, 0, 0, -1, -1, -1, 5);
       expectedResult = [{ 'x': 0, 'y': 0, 'z': 0},
@@ -438,8 +449,9 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
         'z': -0.6000000000000001 },
       { 'x': -0.8, 'y': -0.8, 'z': -0.8 },
       { 'x': -1, 'y': -1, 'z': -1}];
-      deepEqual(result, expectedResult, 'Linear interpolation is computed ' +
-          'correctly');
+     assert.deepEqual(result,
+                      expectedResult,
+                      'Linear interpolation is computed correctly');
     });
 
     /**
@@ -447,22 +459,24 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * Test distanceBetweenPoints function.
      *
      */
-    test('Test distanceBetweenPoints', function() {
+   QUnit.test('Test distanceBetweenPoints', function(assert) {
       var result;
       result = distanceBetweenPoints(0, 0, 0, 1, 1, 1);
-      equal(result, Math.sqrt(3), 'Distance between points is computed' +
+     assert.equal(result, Math.sqrt(3), 'Distance between points is computed' +
           'correctly');
 
       result = distanceBetweenPoints(-4, -3, -2, 84, 2, 11);
-      equal(result, 89.09545442950498, 'Distance between points is computed ' +
-          'correctly');
+     assert.equal(result,
+                  89.09545442950498,
+                  'Distance between points is computed correctly');
 
       result = distanceBetweenPoints(0, 0, 0, 0, 0, 0);
-      equal(result, 0, 'Distance between points is computed correctly');
+     assert.equal(result, 0, 'Distance between points is computed correctly');
 
       result = distanceBetweenPoints(-3, 17, -8888, 11, 0, 1);
-      equal(result, 8889.027280867125, 'Distance between points is computed ' +
-          'correctly');
+     assert.equal(result,
+                  8889.027280867125,
+                  'Distance between points is computed correctly');
 
     });
 
@@ -471,24 +485,31 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * Test getSampleNamesAndDataForSortedTrajectories function.
      *
      */
-    test('Test getSampleNamesAndDataForSortedTrajectories', function() {
-      var result, expectedResult;
+   QUnit.test('Test getSampleNamesAndDataForSortedTrajectories',
+     function(assert) {
+       var result, expectedResult;
 
-      result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
-          mappingFileData,
-          coordinatesData,
-          'Treatment',
-          'DOB');
-      deepEqual(result, crunchedDataTwoCategories, 'The data is computed ' +
-          'correctly for two trajectories');
+       result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
+                                                           mappingFileData,
+                                                           coordinatesData,
+                                                           'Treatment',
+                                                           'DOB');
+       assert.deepEqual(result,
+                        crunchedDataTwoCategories,
+                        'The data is computed correctly for two trajectories');
 
-      result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
-          mappingFileData,
-          coordinatesData,
-          'LinkerPrimerSequence',
-          'DOB');
-      deepEqual(result, crunchedDataOneCategory, 'The data is computed ' +
-          'correctly for a single trajectory');
+       result = getSampleNamesAndDataForSortedTrajectories(
+         mappingFileHeaders,
+         mappingFileData,
+         coordinatesData,
+         'LinkerPrimerSequence',
+         'DOB'
+       );
+       assert.deepEqual(
+         result,
+         crunchedDataOneCategory,
+         'The data is computed correctly for a single trajectory'
+       );
     });
 
     /**
@@ -497,30 +518,31 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * appropriate errors.
      *
      */
-    test('Test getSampleNamesAndDataForSortedTrajectories errors', function() {
-      throws(function() {
-        result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
-            mappingFileData,
-            coordinatesData,
-            'DOB',
-            'BAZ');
-      }, Error, 'Error is thrown when a category is not found');
+   QUnit.test('Test getSampleNamesAndDataForSortedTrajectories errors',
+     function(assert) {
+       assert.throws(function() {
+         result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
+                                                             mappingFileData,
+                                                             coordinatesData,
+                                                             'DOB',
+                                                             'BAZ');
+       }, Error, 'Error is thrown when a category is not found');
 
-      throws(function() {
-        result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
-            mappingFileData,
-            coordinatesData,
-            'SPAM',
-            'DOB');
-      }, Error, 'Error is thrown when a category is not found');
+       assert.throws(function() {
+         result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
+                                                             mappingFileData,
+                                                             coordinatesData,
+                                                             'SPAM',
+                                                             'DOB');
+       }, Error, 'Error is thrown when a category is not found');
 
-      throws(function() {
-        result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
-            mappingFileData,
-            coordinatesData,
-            'FOO',
-            'BAR');
-      }, Error, 'Error is thrown when a category is not found');
+       assert.throws(function() {
+         result = getSampleNamesAndDataForSortedTrajectories(mappingFileHeaders,
+                                                             mappingFileData,
+                                                             coordinatesData,
+                                                             'FOO',
+                                                             'BAR');
+       }, Error, 'Error is thrown when a category is not found');
 
     });
 
@@ -529,15 +551,17 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * Test getMinimumDelta function computes data correctly.
      *
      */
-    test('Test getMinimumDelta function', function() {
+   QUnit.test('Test getMinimumDelta function', function(assert) {
       var result;
       result = getMinimumDelta(crunchedDataOneCategory);
-      equal(result, 92, 'The minimum delta is computed correctly for one ' +
-          'category');
+     assert.equal(result,
+                  92,
+                  'The minimum delta is computed correctly for one category');
 
       result = getMinimumDelta(crunchedDataTwoCategories);
-      equal(result, 92, 'The minimum delta is computed correctly for one ' +
-          'category');
+     assert.equal(result,
+                  92,
+                  'The minimum delta is computed correctly for one category');
     });
 
     /**
@@ -545,7 +569,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
      * Test trajectories with duplicate points.
      *
      */
-    test('Test Duplicate Points In Trajectories', function() {
+   QUnit.test('Test Duplicate Points In Trajectories', function(assert) {
       var result;
       trajectory = new TrajectoryOfSamples(['A', 'B', 'C', 'D'],
           'Nonsense',
@@ -565,7 +589,7 @@ requirejs(['underscore', 'trajectory'], function(_, trajectory) {
           var dy = interpTubeCoords[1].y - interpTubeCoords[0].y;
           var dz = interpTubeCoords[1].z - interpTubeCoords[0].z;
           var lenSq = dx * dx + dy * dy + dz * dz;
-          notEqual(lenSq, 0,
+          assert.notEqual(lenSq, 0,
             'Interpolated tube should never be built between' +
             'consecutive duplicate points in a trajectory');
         }

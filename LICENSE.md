@@ -240,10 +240,9 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-### QUnit [1.12.0](https://github.com/jquery/qunit)
+### QUnit [2.24.1](https://github.com/qunitjs/qunit/tree/2.24.1)
 
-Copyright 2013 jQuery Foundation and other contributors
-http://jquery.com/
+Copyright OpenJS Foundation and other contributors, https://openjsf.org/
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

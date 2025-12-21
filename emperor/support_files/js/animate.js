@@ -288,7 +288,7 @@ function(_, trajectory) {
                        Math.abs(this.gradientPoints[i + 1]));
 
       // no need to truncate since we use Infinity when creating the trajectory
-      pointsPerStep = Math.floor((delta * this._n) / this.minimumDelta);
+      var pointsPerStep = Math.floor((delta * this._n) / this.minimumDelta);
 
       out.push(out[i] + pointsPerStep);
     }
