@@ -282,7 +282,7 @@ define([
     $(function() {
       // setup the jquery properties of the button
       scope.$optionsButton.button({showLabel: false,
-                                   icon:' ui-icon-gear'});
+                                   icon: ' ui-icon-gear'});
 
       scope._buildUI();
       // Hide the loading splashscreen
