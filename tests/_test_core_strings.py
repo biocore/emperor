@@ -59,6 +59,7 @@ if (document.querySelector("#emperor-css") === null){
     document.querySelector("head").insertAdjacentHTML("beforeend",[
         '<link id="emperor-css" rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/css/emperor.css">',
         '<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/css/jquery-ui.min.css">',
+	'<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/css/jquery-ui.theme.min.css">',
         '<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/css/slick.grid.min.css">',
         '<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/css/spectrum.min.css">',
         '<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/css/chosen.min.css">',
@@ -81,9 +82,8 @@ var emperorRequire = require.config({
 // relative to the baseUrl attribute, do NOT include the .js extension
 'paths': {
   /* jQuery */
-  'jquery': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/jquery-2.1.4.min',
+  'jquery': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/jquery-3.7.1.min',
   'jqueryui': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/jquery-ui.min',
-  'jquery_drag': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/jquery.event.drag-2.2.min',
 
   /* jQuery plugins */
   'chosen': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/chosen.jquery.min',
@@ -114,6 +114,7 @@ var emperorRequire = require.config({
   'slickformatters': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.editors.min',
   'slickeditors': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.formatters.min',
   'slickdataview': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.dataview.min',
+  'slickinteractions': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/slick.interactions.min',
 
   /* Emperor's objects */
   'util': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/util',
@@ -142,7 +143,10 @@ var emperorRequire = require.config({
   /* editors */
   'shape-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/shape-editor',
   'color-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/color-editor',
-  'scale-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/scale-editor'
+  'scale-editor': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/js/scale-editor',
+
+  /* Sortable */
+  'sortable': 'https://cdn.rawgit.com/biocore/emperor/new-api/emperor/support_files/vendor/js/Sortable.min'
 
 },
 /*
@@ -150,9 +154,6 @@ var emperorRequire = require.config({
    dependencies.
  */
 'shim': {
-  'jquery_drag': {
-    'deps': ['jquery', 'jqueryui']
-  },
   'chosen': {
     'deps': ['jquery'],
     'exports': 'jQuery.fn.chosen'
@@ -166,9 +167,13 @@ var emperorRequire = require.config({
   'canvastoblob' : {
     'deps': ['blob']
   },
-  'slickcore': ['jqueryui'],
-  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors',
-                'slickdataview']
+  'slickcore': ['jqueryui', 'sortable'],
+  'slickeditors': ['slickcore'],
+  'slickformatters': ['slickcore'],
+  'slickdataview': ['slickcore'],
+  'slickinteractions': ['slickcore'],
+  'slickgrid': ['slickcore', 'slickformatters', 'slickeditors',
+                'slickdataview', 'slickinteractions']
 }
 });
 
@@ -235,7 +240,7 @@ STANDALONE_HTML_STRING = """<!DOCTYPE html>
     <title>Emperor</title>
     <!-- core dependencies that are otherwise included via the jupyter notebook -->
 <script src="./some-local-path//vendor/js/require-2.1.22.min.js"></script>
-<script src="./some-local-path//vendor/js/jquery-2.1.4.min.js"></script>
+<script src="./some-local-path//vendor/js/jquery-3.7.1.min.js"></script>
     <meta charset="utf-8">
 
     <script type="text/javascript">
@@ -243,6 +248,7 @@ if (document.querySelector("#emperor-css") === null){
     document.querySelector("head").insertAdjacentHTML("beforeend",[
         '<link id="emperor-css" rel="stylesheet" type="text/css" href="./some-local-path//css/emperor.css">',
         '<link rel="stylesheet" type="text/css" href="./some-local-path//vendor/css/jquery-ui.min.css">',
+	'<link rel="stylesheet" type="text/css" href="./some-local-path//vendor/css/jquery-ui.theme.min.css">',
         '<link rel="stylesheet" type="text/css" href="./some-local-path//vendor/css/slick.grid.min.css">',
         '<link rel="stylesheet" type="text/css" href="./some-local-path//vendor/css/spectrum.min.css">',
         '<link rel="stylesheet" type="text/css" href="./some-local-path//vendor/css/chosen.min.css">',
@@ -280,9 +286,8 @@ var emperorRequire = require.config({
 // relative to the baseUrl attribute, do NOT include the .js extension
 'paths': {
   /* jQuery */
-  'jquery': './some-local-path//vendor/js/jquery-2.1.4.min',
+  'jquery': './some-local-path//vendor/js/jquery-3.7.1.min',
   'jqueryui': './some-local-path//vendor/js/jquery-ui.min',
-  'jquery_drag': './some-local-path//vendor/js/jquery.event.drag-2.2.min',
 
   /* jQuery plugins */
   'chosen': './some-local-path//vendor/js/chosen.jquery.min',
@@ -313,6 +318,7 @@ var emperorRequire = require.config({
   'slickformatters': './some-local-path//vendor/js/slick.editors.min',
   'slickeditors': './some-local-path//vendor/js/slick.formatters.min',
   'slickdataview': './some-local-path//vendor/js/slick.dataview.min',
+  'slickinteractions': './some-local-path//vendor/js/slick.interactions.min',
 
   /* Emperor's objects */
   'util': './some-local-path//js/util',
@@ -341,7 +347,10 @@ var emperorRequire = require.config({
   /* editors */
   'shape-editor': './some-local-path//js/shape-editor',
   'color-editor': './some-local-path//js/color-editor',
-  'scale-editor': './some-local-path//js/scale-editor'
+  'scale-editor': './some-local-path//js/scale-editor',
+
+  /* Sortable */
+  'sortable': './some-local-path//vendor/js/Sortable.min'
 
 },
 /*
@@ -349,9 +358,6 @@ var emperorRequire = require.config({
    dependencies.
  */
 'shim': {
-  'jquery_drag': {
-    'deps': ['jquery', 'jqueryui']
-  },
   'chosen': {
     'deps': ['jquery'],
     'exports': 'jQuery.fn.chosen'
@@ -365,9 +371,13 @@ var emperorRequire = require.config({
   'canvastoblob' : {
     'deps': ['blob']
   },
-  'slickcore': ['jqueryui'],
-  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors',
-                'slickdataview']
+  'slickcore': ['jqueryui', 'sortable'],
+  'slickeditors': ['slickcore'],
+  'slickformatters': ['slickcore'],
+  'slickdataview': ['slickcore'],
+  'slickinteractions': ['slickcore'],
+  'slickgrid': ['slickcore', 'slickformatters', 'slickeditors',
+                'slickdataview', 'slickinteractions']
 }
 });
 
@@ -435,6 +445,7 @@ if (document.querySelector("#emperor-css") === null){
     document.querySelector("head").insertAdjacentHTML("beforeend",[
         '<link id="emperor-css" rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/css/emperor.css">',
         '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/jquery-ui.min.css">',
+	'<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/jquery-ui.theme.min.css">',
         '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/slick.grid.min.css">',
         '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/spectrum.min.css">',
         '<link rel="stylesheet" type="text/css" href="/nbextensions/emperor/support_files/vendor/css/chosen.min.css">',
@@ -451,7 +462,7 @@ DIV_STRING = """<div id='emperor-notebook-0x9cb72f54' style="position: relative;
 
 DEPS_STRING = """<!-- core dependencies that are otherwise included via the jupyter notebook -->
 <script src="/nbextensions/emperor/support_files/vendor/js/require-2.1.22.min.js"></script>
-<script src="/nbextensions/emperor/support_files/vendor/js/jquery-2.1.4.min.js"></script>"""
+<script src="/nbextensions/emperor/support_files/vendor/js/jquery-3.7.1.min.js"></script>"""
 
 JS_STRING = """// When running in the Jupyter notebook we've encountered version conflicts
 // with some dependencies. So instead of polluting the global require context,
@@ -462,9 +473,8 @@ var emperorRequire = require.config({
 // relative to the baseUrl attribute, do NOT include the .js extension
 'paths': {
   /* jQuery */
-  'jquery': '/nbextensions/emperor/support_files/vendor/js/jquery-2.1.4.min',
+  'jquery': '/nbextensions/emperor/support_files/vendor/js/jquery-3.7.1.min',
   'jqueryui': '/nbextensions/emperor/support_files/vendor/js/jquery-ui.min',
-  'jquery_drag': '/nbextensions/emperor/support_files/vendor/js/jquery.event.drag-2.2.min',
 
   /* jQuery plugins */
   'chosen': '/nbextensions/emperor/support_files/vendor/js/chosen.jquery.min',
@@ -495,6 +505,7 @@ var emperorRequire = require.config({
   'slickformatters': '/nbextensions/emperor/support_files/vendor/js/slick.editors.min',
   'slickeditors': '/nbextensions/emperor/support_files/vendor/js/slick.formatters.min',
   'slickdataview': '/nbextensions/emperor/support_files/vendor/js/slick.dataview.min',
+  'slickinteractions': '/nbextensions/emperor/support_files/vendor/js/slick.interactions.min',
 
   /* Emperor's objects */
   'util': '/nbextensions/emperor/support_files/js/util',
@@ -523,7 +534,10 @@ var emperorRequire = require.config({
   /* editors */
   'shape-editor': '/nbextensions/emperor/support_files/js/shape-editor',
   'color-editor': '/nbextensions/emperor/support_files/js/color-editor',
-  'scale-editor': '/nbextensions/emperor/support_files/js/scale-editor'
+  'scale-editor': '/nbextensions/emperor/support_files/js/scale-editor',
+
+  /* Sortable */
+  'sortable': '/nbextensions/emperor/support_files/vendor/js/Sortable.min'
 
 },
 /*
@@ -531,9 +545,6 @@ var emperorRequire = require.config({
    dependencies.
  */
 'shim': {
-  'jquery_drag': {
-    'deps': ['jquery', 'jqueryui']
-  },
   'chosen': {
     'deps': ['jquery'],
     'exports': 'jQuery.fn.chosen'
@@ -547,9 +558,13 @@ var emperorRequire = require.config({
   'canvastoblob' : {
     'deps': ['blob']
   },
-  'slickcore': ['jqueryui'],
-  'slickgrid': ['slickcore', 'jquery_drag', 'slickformatters', 'slickeditors',
-                'slickdataview']
+  'slickcore': ['jqueryui', 'sortable'],
+  'slickeditors': ['slickcore'],
+  'slickformatters': ['slickcore'],
+  'slickdataview': ['slickcore'],
+  'slickinteractions': ['slickcore'],
+  'slickgrid': ['slickcore', 'slickformatters', 'slickeditors',
+                'slickdataview', 'slickinteractions']
 }
 });
 

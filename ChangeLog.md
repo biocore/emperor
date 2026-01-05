@@ -9,6 +9,11 @@ Emperor ChangeLog
 
 ### Miscellaneous
 
+* Update jQuery to the newest stable version, 3.7.1.
+* Update jQuery UI to the newest stable version, 1.14.1.
+* Update SlickGrid to the newest stable version, 5.15.4.
+* Remove `jquery-drag` (no longer needed by SlickGrid).
+* Add Sortable.js 1.15.6 (now a dependency of SlickGrid) to vendored files.
 * Update QUnit to the newest stable version, 2.24.
 * Fix QUnit tests to work with jQuery 3 and QUnit 2.
 * Replace PhantomJS in CI workflow with node-qunit-puppeteer.
