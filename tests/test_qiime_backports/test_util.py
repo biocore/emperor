@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import division
 
 __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2011, The QIIME Project"

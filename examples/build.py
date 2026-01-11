@@ -9,7 +9,6 @@ to generate a plot with 111 samples do:
 Note that you will need jinja2 installed, and to execute the program from
 within the examples folder.
 """
-from __future__ import division
 
 from random import sample, choice
 from sys import argv
