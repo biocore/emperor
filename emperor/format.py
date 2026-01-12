@@ -6,9 +6,6 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from __future__ import division
-
-
 from sys import argv
 from os.path import abspath
 from datetime import datetime

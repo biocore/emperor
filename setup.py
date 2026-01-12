@@ -35,7 +35,7 @@ with open('README.md') as f:
     long_description = f.read()
 
 base = ["numpy >= 1.7", "scipy >= 0.17.0", "click", "pandas",
-        "scikit-bio >= 0.4.1", "jinja2 >= 2.9", "future"]
+        "scikit-bio >= 0.4.1", "jinja2 >= 2.9"]
 doc = ["Sphinx<4", "jinja2 >= 2.9, < 3.1", "sphinx-bootstrap-theme",
        "numpydoc"]
 test = ["pep8", "flake8", "nose"]

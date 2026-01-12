@@ -5,7 +5,6 @@
 #
 # The full license is in the file LICENSE.md, distributed with this software.
 # ----------------------------------------------------------------------------
-from __future__ import division
 
 from emperor.format import format_emperor_autograph
 from unittest import TestCase, main
