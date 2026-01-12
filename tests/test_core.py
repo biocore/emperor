@@ -236,41 +236,41 @@ class TopLevelTests(TestCase):
         self.ord_res.proportion_explained = \
             self.ord_res.proportion_explained[:1].copy()
 
-        with self.assertRaisesRegexp(ValueError, "Ordinations with less than "
-                                     "two dimensions are not supported"):
+        with self.assertRaisesRegex(ValueError, "Ordinations with less than "
+                                    "two dimensions are not supported"):
             Emperor(self.ord_res, self.mf, remote=False)
 
     def test_initial_unbalanced_more_than_five(self):
         mf = self.mf.copy()
         mf.drop(['PC.354', 'PC.355', 'PC.356', 'PC.481', 'PC.607', 'PC.636'],
                 inplace=True)
-        with self.assertRaisesRegexp(KeyError, "There are samples not "
-                                     "included in the sample mapping file. "
-                                     "Override this error by using the "
-                                     "`ignore_missing_samples` argument. "
-                                     "Showing only the first 5 samples out of "
-                                     "6: PC.354, PC.355, PC.356, PC.481, "
-                                     "PC.607 ..."):
+        with self.assertRaisesRegex(KeyError, "There are samples not "
+                                    "included in the sample mapping file. "
+                                    "Override this error by using the "
+                                    "`ignore_missing_samples` argument. "
+                                    "Showing only the first 5 samples out of "
+                                    "6: PC.354, PC.355, PC.356, PC.481, "
+                                    "PC.607 ..."):
             Emperor(self.ord_res, mf, remote=self.url)
 
     def test_initial_unbalanced(self):
         mf = self.mf.copy()
         mf.drop(['PC.354'], inplace=True)
-        with self.assertRaisesRegexp(KeyError, "There are samples not "
-                                     "included in the sample mapping file. "
-                                     "Override this error by using the "
-                                     "`ignore_missing_samples` argument. "
-                                     "Offending samples: PC.354"):
+        with self.assertRaisesRegex(KeyError, "There are samples not "
+                                    "included in the sample mapping file. "
+                                    "Override this error by using the "
+                                    "`ignore_missing_samples` argument. "
+                                    "Offending samples: PC.354"):
             Emperor(self.ord_res, mf, remote=self.url)
 
         # test feature metadata
         fmf = self.feature_mf.copy()
         fmf.drop(['f.PC.636'], inplace=True)
-        with self.assertRaisesRegexp(KeyError, "There are features not "
-                                     "included in the feature mapping file. "
-                                     "Override this error by using the "
-                                     "`ignore_missing_samples` argument. "
-                                     "Offending features: f.PC.636"):
+        with self.assertRaisesRegex(KeyError, "There are features not "
+                                    "included in the feature mapping file. "
+                                    "Override this error by using the "
+                                    "`ignore_missing_samples` argument. "
+                                    "Offending features: f.PC.636"):
             Emperor(self.biplot, self.mf, fmf, remote=self.url)
 
     def test_initial_unbalanced_ignore(self):
@@ -322,21 +322,21 @@ class TopLevelTests(TestCase):
         mf = self.mf.copy()
         mf.index = mf.index + '.not'
 
-        with self.assertRaisesRegexp(ValueError, 'None of the sample '
-                                     'identifiers match between the metadata '
-                                     'and the coordinates. Verify that you are'
-                                     ' using metadata and coordinates '
-                                     'corresponding to the same dataset.'):
+        with self.assertRaisesRegex(ValueError, 'None of the sample '
+                                    'identifiers match between the metadata '
+                                    'and the coordinates. Verify that you are'
+                                    ' using metadata and coordinates '
+                                    'corresponding to the same dataset.'):
             Emperor(self.ord_res, mf, remote=self.url)
 
         fmf = self.feature_mf.copy()
         fmf.index = fmf.index + '.not'
 
-        with self.assertRaisesRegexp(ValueError, 'None of the feature '
-                                     'identifiers match between the metadata '
-                                     'and the coordinates. Verify that you are'
-                                     ' using metadata and coordinates '
-                                     'corresponding to the same dataset.'):
+        with self.assertRaisesRegex(ValueError, 'None of the feature '
+                                    'identifiers match between the metadata '
+                                    'and the coordinates. Verify that you are'
+                                    ' using metadata and coordinates '
+                                    'corresponding to the same dataset.'):
             Emperor(self.biplot, self.mf, fmf, remote=self.url)
 
     def test_get_template(self):
