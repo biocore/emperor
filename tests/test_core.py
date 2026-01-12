@@ -236,7 +236,7 @@ class TopLevelTests(TestCase):
         self.ord_res.proportion_explained = \
             self.ord_res.proportion_explained[:1].copy()
 
-        with self.assertRaisesRegexp(ValueError, "Ordinations with less than "
+        with self.assertRaisesRegex(ValueError, "Ordinations with less than "
                                      "two dimensions are not supported"):
             Emperor(self.ord_res, self.mf, remote=False)
 
@@ -244,7 +244,7 @@ class TopLevelTests(TestCase):
         mf = self.mf.copy()
         mf.drop(['PC.354', 'PC.355', 'PC.356', 'PC.481', 'PC.607', 'PC.636'],
                 inplace=True)
-        with self.assertRaisesRegexp(KeyError, "There are samples not "
+        with self.assertRaisesRegex(KeyError, "There are samples not "
                                      "included in the sample mapping file. "
                                      "Override this error by using the "
                                      "`ignore_missing_samples` argument. "
@@ -256,7 +256,7 @@ class TopLevelTests(TestCase):
     def test_initial_unbalanced(self):
         mf = self.mf.copy()
         mf.drop(['PC.354'], inplace=True)
-        with self.assertRaisesRegexp(KeyError, "There are samples not "
+        with self.assertRaisesRegex(KeyError, "There are samples not "
                                      "included in the sample mapping file. "
                                      "Override this error by using the "
                                      "`ignore_missing_samples` argument. "
@@ -266,7 +266,7 @@ class TopLevelTests(TestCase):
         # test feature metadata
         fmf = self.feature_mf.copy()
         fmf.drop(['f.PC.636'], inplace=True)
-        with self.assertRaisesRegexp(KeyError, "There are features not "
+        with self.assertRaisesRegex(KeyError, "There are features not "
                                      "included in the feature mapping file. "
                                      "Override this error by using the "
                                      "`ignore_missing_samples` argument. "
@@ -322,7 +322,7 @@ class TopLevelTests(TestCase):
         mf = self.mf.copy()
         mf.index = mf.index + '.not'
 
-        with self.assertRaisesRegexp(ValueError, 'None of the sample '
+        with self.assertRaisesRegex(ValueError, 'None of the sample '
                                      'identifiers match between the metadata '
                                      'and the coordinates. Verify that you are'
                                      ' using metadata and coordinates '
@@ -332,7 +332,7 @@ class TopLevelTests(TestCase):
         fmf = self.feature_mf.copy()
         fmf.index = fmf.index + '.not'
 
-        with self.assertRaisesRegexp(ValueError, 'None of the feature '
+        with self.assertRaisesRegex(ValueError, 'None of the feature '
                                      'identifiers match between the metadata '
                                      'and the coordinates. Verify that you are'
                                      ' using metadata and coordinates '
