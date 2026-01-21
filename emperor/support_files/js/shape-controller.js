@@ -107,6 +107,30 @@ define([
   };
 
   /**
+   *
+   * Analogue of _resetAttribute() above, but makes everything a circle instead
+   *
+   * NOTE: In the future, making this pay more close attention to the current
+   * shapes of each object (like how DecompositionView._buildVegaSpec() works)
+   * may be preferable. However, that may require adding more 2D shape options
+   * to Emperor.
+   *
+   * @extends EmperorAttributeABC
+   *
+   */
+  ShapeController.prototype.makeEverythingACircle = function() {
+    EmperorAttributeABC.prototype._resetAttribute.call(this);
+    var scope = this;
+
+    _.each(this.decompViewDict, function(view) {
+      scope.setPlottableAttributes(view, 'Circle', view.decomp.plottable);
+      view.needsUpdate = true;
+    });
+  };
+
+  
+
+  /**
    * Helper function to set the shape of plottable
    *
    * @param {Object} scope The scope where the plottables exist

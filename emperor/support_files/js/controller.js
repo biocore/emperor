@@ -276,6 +276,25 @@ define([
     });
     this.$plotSpace.append(this.$optionsButton);
 
+    /**
+     * @type {Node}
+     * jQuery object
+     */
+    this.$figureModeButton = $('<button name="dm-button">&nbsp;</button>');
+    this.$figureModeButton.css({
+      'position': 'absolute',
+      'z-index': '3',
+      'top': '5px',
+      'right': '40px'
+    }).attr('title', 'Figure Mode').on('click', function(event) {
+        scope.controllers.axes.updateVisibleAxes(null, 2);
+        scope.controllers.axes._colorChanged("axes-color", "#000000");
+        scope.controllers.axes._colorChanged("background-color", "#ffffff");
+        scope.controllers.shape.makeEverythingACircle();
+        // TODO: fix axis labels
+    });
+    this.$plotSpace.append(this.$figureModeButton);
+
     // default decomposition view uses the full window
     this.addSceneView();
 
@@ -283,6 +302,9 @@ define([
       // setup the jquery properties of the button
       scope.$optionsButton.button({showLabel: false,
                                    icon: ' ui-icon-gear'});
+
+      scope.$figureModeButton.button({text: false,
+                                      icons: {primary: ' ui-icon-lightbulb'}});
 
       scope._buildUI();
       // Hide the loading splashscreen

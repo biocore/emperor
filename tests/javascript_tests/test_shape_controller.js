@@ -19,8 +19,9 @@ requirejs([
     QUnit.module('Shape Controller', {
       beforeEach() {
         // setup function
-        this.shapesAvailable = ['Sphere', 'Diamond', 'Cone', 'Cylinder',
-                                'Ring', 'Square', 'Icosahedron', 'Star'];
+        this.shapesAvailable = ['Sphere', 'Circle', 'Diamond', 'Cone',
+                                'Cylinder', 'Ring', 'Square', 'Icosahedron',
+                                'Star'];
         this.sharedDecompositionViewDict = {};
 
         var UIState1 = new UIState();
